@@ -17,9 +17,13 @@ Route::get('reset_password/{token}', ['as' => 'password.reset', function($token)
 }]);
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
+});
+
+Route::get('/home', function () {
+	return view('home');
 });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');
