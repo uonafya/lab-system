@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app()->getLocale() }}">
+
 <head>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Page title -->
-    <title>HOMER | WebApp admin theme</title>
+    <title>{{ config('app.name', 'EID/VL') }}</title>
 
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!--<link rel="shortcut icon" type="image/ico" href="favicon.ico" />-->
-
-    <!-- Vendor styles -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/metisMenu/dist/metisMenu.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/animate.css/animate.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
 
-    <!-- App styles -->
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css') }}" />
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/helper.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
@@ -47,13 +43,13 @@
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a class="" href="login.html">Login</a>
+                        <a class="" href="#">Login</a>
                     </li>
                     <li>
-                        <a class="" href="login.html">Logout</a>
+                        <a class="" href="#">Logout</a>
                     </li>
                     <li>
-                        <a class="" href="profile.html">Profile</a>
+                        <a class="" href="#">Profile</a>
                     </li>
                 </ul>
             </div>
