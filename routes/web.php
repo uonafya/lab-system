@@ -28,6 +28,10 @@ Route::get('/addsample', function () {
 	return view('addsample');
 });
 
+Route::get('/checkboxes', function () {
+	return view('checkbox');
+});
+
 Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');

@@ -18,7 +18,7 @@
                         <div class="hpanel">
                             <div class="panel-body">
                                 <div class="form-group"><label class="col-sm-4 control-label input-sm">Facility</label>
-                                    <div class="col-sm-8"><select class="form-control m-b input-sm" name="account">
+                                    <div class="col-sm-8"><select class="form-control" name="account">
                                         <option>option 1</option>
                                         <option>option 2</option>
                                         <option>option 3</option>
@@ -47,8 +47,8 @@
                                 <center>Infant Information</center>
                             </div>
                             <div class="panel-body">
-                                <div class="form-group"><label class="col-sm-4 control-label input-sm">Patient/Sample ID</label>
-                                        <div class="col-sm-8"><input type="text" class="form-control input-sm"></div>
+                                <div class="form-group"><label class="col-sm-4 control-label">Patient/Sample ID</label>
+                                        <div class="col-sm-8"><input type="text" class="form-control"></div>
                                 </div>
                                 <div class="form-group"><label class="col-sm-4 control-label input-sm">AMRS Provider Identifier</label>
                                     <div class="col-sm-8"><input type="text" class="form-control input-sm"></div>
