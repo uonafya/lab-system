@@ -17,7 +17,7 @@
                             <label class="control-label" for="password">Password</label>
                             <input type="password" title="Please enter your password" placeholder="Password" required="" value="" name="password" id="password" class="form-control">
                         </div>
-                        <button class="btn btn-success btn-block">Login</button>
+                        <button class="btn btn-primary btn-block">Login</button>
                     </form>
                     <div class="text-center m-b-md facility-login">
                         <a href="#"><p>Click <strong class="font-extra-bold font-uppercase">here</strong> for facility login</p></a>

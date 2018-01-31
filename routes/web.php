@@ -24,6 +24,10 @@ Route::get('/home', function () {
 	return view('layouts/master');
 });
 
+Route::get('/addsample', function () {
+	return view('addsample');
+});
+
 Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');

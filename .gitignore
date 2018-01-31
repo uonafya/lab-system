@@ -4,5 +4,6 @@
 /vendor
 /.idea
 Homestead.json
+composer.lock
 Homestead.yaml
 .env
