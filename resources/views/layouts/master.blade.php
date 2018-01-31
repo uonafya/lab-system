@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/helper.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
 
+    @yield('css_scripts')
+
 </head>
 <body class="light-skin fixed-navbar sidebar-scroll">
 
@@ -449,6 +451,9 @@
 <script src="{{ asset('vendor/sparkline/index.js') }}"></script>
 <script src="{{ asset('js/homer.js') }}"></script>
 <script src="{{ asset('js/charts.js') }}"></script>
+
+@yield('scripts')
+
 
 <script>
 
