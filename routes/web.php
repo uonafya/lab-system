@@ -28,6 +28,8 @@ Route::get('/addsample', function () {
 	return view('addsample');
 });
 
+Route::resource('sample', 'SampleController');
+
 Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');

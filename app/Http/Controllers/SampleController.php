@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Sample;
+use App\Patient;
+use App\Mother;
+use App\Facility;
+use DB;
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
@@ -24,7 +28,29 @@ class SampleController extends Controller
      */
     public function create()
     {
-        //
+        $facilities = Facility::all();
+        $amrs_locations = DB::table('amrslocations')->get();
+        $genders = DB::table('gender')->get();
+        $feedings = DB::table('feedings')->get();
+        $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->orderBy('rank', 'asc')->get();
+        $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->orderBy('rank', 'asc')->get();
+        $entry_points = DB::table('entry_points')->get();
+        $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
+        $pcrtypes = DB::table('pcrtype')->get();
+        $receivedstatuses = DB::table('receivedstatus')->get();
+
+        return view('forms.samples', [
+            'facilities' => $facilities,
+            'amrs_locations' => $amrs_locations,
+            'genders' => $genders,
+            'feedings' => $feedings,
+            'iprophylaxis' => $iprophylaxis,
+            'interventions' => $interventions,
+            'entry_points' => $entry_points,
+            'hiv_statuses' => $hiv_statuses,
+            'pcrtypes' => $pcrtypes,
+            'receivedstatuses' => $receivedstatuses,
+        ]);
     }
 
     /**
