@@ -213,13 +213,13 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Entry Point</label>
-                            <div class="col-sm-8"><select class="form-control" required name="entry_point_id">
+                            <div class="col-sm-8"><select class="form-control" required name="entry_point">
 
                                 <option value=""> Select One </option>
                                 @foreach ($entry_points as $entry_point)
                                     <option value="{{ $entry_point->id }}"
 
-                                    @if (isset($sample) && $sample->entry_point_id == $entry_point->id)
+                                    @if (isset($sample) && $sample->patient->mother->entry_point == $entry_point->id)
                                         selected
                                     @endif
 
@@ -435,6 +435,34 @@
         });
 
     @endcomponent
+
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            
+        });
+
+        function check_new_patient(patient, facility){
+            $.ajax({
+               type: "GET",
+               url: "{{ url('/samples/new_patient') }}/"+patient+"/"+facility ,
+               success: function(data){
+
+                    console.log(data);
+
+                    if(data[0] == 0){
+                        localStorage.setItem("new_patient", 0);
+                    }
+                    else{
+                        localStorage.setItem("new_patient", 1);
+                    }
+
+                }
+            });
+
+        }
+    </script>
 
 
 

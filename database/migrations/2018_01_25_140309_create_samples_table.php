@@ -17,29 +17,29 @@ class CreateSamplesTable extends Migration
             $table->increments('id');
             $table->integer('lab_id')->unsigned()->index();
             $table->integer('patient_id')->unsigned()->index();
-            $table->integer('batch_id')->unsigned()->nullable()->index();
+            $table->integer('batch_id')->unsigned()->index();
             $table->integer('amrs_location')->unsigned()->nullable();
             $table->integer('siteentry')->unsigned()->nullable();
             $table->boolean('high_priority')->default(false);
             $table->integer('provider_identifier')->unsigned()->nullable();
             $table->integer('facility')->unsigned()->nullable()->index();
             $table->integer('receivedstatus')->unsigned()->nullable()->index();
+            $table->integer('age')->unsigned()->nullable()->index();
             $table->integer('pcrtype')->unsigned()->nullable()->index();
             $table->integer('regimen')->unsigned()->nullable()->index();
             $table->integer('mother_prophylaxis')->unsigned()->index();
+            $table->integer('feeding')->unsigned()->index();
             $table->integer('spots')->unsigned()->nullable();
             $table->string('comments')->nullable();
             $table->string('labcomment')->nullable();
             $table->integer('parentid')->unsigned()->nullable();
             $table->integer('rejectedreason')->unsigned()->nullable();
             $table->integer('reason_for_repeat')->unsigned()->nullable();
-            $table->integer('worksheet_id')->unsigned()->nullable();
             $table->string('intepretation')->nullable();
             $table->integer('result')->unsigned()->nullable()->index();
 
-            $table->boolean('inputcomplete')->default(false);
+            $table->integer('worksheet_id')->unsigned()->nullable();
             $table->boolean('inworksheet')->default(false);
-            $table->boolean('batchcomplete')->default(false);
 
             $table->integer('hei_validation')->unsigned()->nullable()->index();
             $table->string('enrollment_ccc_no')->nullable();

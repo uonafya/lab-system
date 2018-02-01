@@ -28,6 +28,7 @@ Route::get('/addsample', function () {
 	return view('addsample');
 });
 
+Route::get('sample/new_patient/{patient}/{facility_id} ', 'SampleController@new_patient');
 Route::resource('sample', 'SampleController');
 
 Auth::routes();

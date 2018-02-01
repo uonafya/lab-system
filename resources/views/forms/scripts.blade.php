@@ -18,6 +18,7 @@
                 showMethod: 'slideDown',
                 timeOut: 4000
             };
+            // toastr.success("Please fill out the form correctly.");
             toastr.success("{{ session()->pull('toast_message', 'Please fill out the form correctly.') }}");
         });
 
