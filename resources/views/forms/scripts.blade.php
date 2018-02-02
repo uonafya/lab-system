@@ -45,7 +45,7 @@
 
                 msg =  param[1] + " cannot be set to a date greater than " + param[2];
 
-                return this.optional(element) || (start_date < finish_date);
+                return this.optional(element) || (start_date <= finish_date);
 
             }
 

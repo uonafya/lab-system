@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Sample extends Model
 {
     protected $guarded = [];
-    protected $dates = ['datereceived', 'datecollected', 'datetested', 'datedispatchedfromfacility', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched', 'dateinitiatedontreatment'];
+    protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
+
+
+    protected $dateFormat = 'Y-m-d';
 
     public function setDatedispatchedfromfacilityAttribute($value)
     {

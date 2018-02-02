@@ -15,16 +15,13 @@ class CreateSamplesTable extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('lab_id')->unsigned()->index();
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('batch_id')->unsigned()->index();
-            $table->integer('amrs_location')->unsigned()->nullable();
-            $table->integer('siteentry')->unsigned()->nullable();
+            $table->string('amrs_location')->nullable();
             $table->boolean('high_priority')->default(false);
-            $table->integer('provider_identifier')->unsigned()->nullable();
-            $table->integer('facility')->unsigned()->nullable()->index();
+            $table->string('provider_identifier')->nullable();
             $table->integer('receivedstatus')->unsigned()->nullable()->index();
-            $table->integer('age')->unsigned()->nullable()->index();
+            $table->double('age', 6, 4)->unsigned()->nullable()->index();
             $table->integer('pcrtype')->unsigned()->nullable()->index();
             $table->integer('regimen')->unsigned()->nullable()->index();
             $table->integer('mother_prophylaxis')->unsigned()->index();
@@ -52,25 +49,14 @@ class CreateSamplesTable extends Migration
             $table->integer('repeatt')->unsigned()->nullable();
             $table->integer('eqa')->unsigned()->nullable();
 
-            $table->boolean('sent_email')->default(false);
-            $table->boolean('notice')->default(false);
-
-            $table->integer('user_id')->unsigned()->nullable();
-            $table->integer('receivedby')->unsigned()->nullable();
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();
-            $table->integer('printedby')->unsigned()->nullable();
 
             $table->date('datecollected')->nullable()->index();
-            $table->date('datedispatchedfromfacility')->nullable();
-            $table->date('datereceived')->nullable()->index();
             $table->date('datetested')->nullable()->index();
             $table->date('datemodified')->nullable();
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
-            $table->date('datedispatched')->nullable()->index();
-            $table->date('dateindividualresultprinted')->nullable();
-            $table->date('datebatchprinted')->nullable();
             $table->date('dateinitiatedontreatment')->nullable();
 
             $table->boolean('synched')->default(false);
