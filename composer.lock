@@ -3723,11 +3723,7 @@
                 "jwt",
                 "laravel"
             ],
-<<<<<<< HEAD
-            "time": "2017-10-09 19:07:36"
-=======
             "time": "2018-01-23 20:46:12"
->>>>>>> d1bc612886452da936fbf54aa22a1848b3777db6
         },
         {
             "name": "venturecraft/revisionable",
