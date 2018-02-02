@@ -21,16 +21,20 @@ Route::get('/', function () {
 });
 
 Route::get('/home', function () {
-	return view('home');
+	return view('layouts/master');
 });
 
 Route::get('/addsample', function () {
 	return view('addsample');
 });
 
+
 Route::get('/checkboxes', function () {
 	return view('checkbox');
 });
+
+Route::get('sample/new_patient/{patient}/{facility_id} ', 'SampleController@new_patient');
+Route::resource('sample', 'SampleController');
 
 Auth::routes();
 

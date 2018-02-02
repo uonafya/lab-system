@@ -1,23 +1,32 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-
+<html>
 <head>
 
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Page title -->
-    <title>{{ config('app.name', 'EID/VL') }}</title>
+    <title>HOMER | WebApp admin theme</title>
 
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!--<link rel="shortcut icon" type="image/ico" href="favicon.ico" />-->
+
+    <!-- Vendor styles -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/metisMenu/dist/metisMenu.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/animate.css/animate.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
 
+    <!-- App styles -->
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css') }}" />
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/helper.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+
+    @yield('css_scripts')
 
 </head>
 <body class="light-skin fixed-navbar sidebar-scroll">
@@ -43,13 +52,13 @@
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a class="" href="#">Login</a>
+                        <a class="" href="login.html">Login</a>
                     </li>
                     <li>
-                        <a class="" href="#">Logout</a>
+                        <a class="" href="login.html">Logout</a>
                     </li>
                     <li>
-                        <a class="" href="#">Profile</a>
+                        <a class="" href="profile.html">Profile</a>
                     </li>
                 </ul>
             </div>
@@ -446,70 +455,84 @@
 <script src="{{ asset('js/homer.js') }}"></script>
 <script src="{{ asset('js/charts.js') }}"></script>
 
+<script type="text/javascript">
+    
+    $(document).ready(function(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    });
+</script>
+
+@yield('scripts')
+
+
 <script>
 
-    $(function () {
+    // $(function () {
 
-        /**
-         * Flot charts data and options
-         */
-        var data1 = [ [0, 55], [1, 48], [2, 40], [3, 36], [4, 40], [5, 60], [6, 50], [7, 51] ];
-        var data2 = [ [0, 56], [1, 49], [2, 41], [3, 38], [4, 46], [5, 67], [6, 57], [7, 59] ];
+    //     /**
+    //      * Flot charts data and options
+    //      */
+    //     var data1 = [ [0, 55], [1, 48], [2, 40], [3, 36], [4, 40], [5, 60], [6, 50], [7, 51] ];
+    //     var data2 = [ [0, 56], [1, 49], [2, 41], [3, 38], [4, 46], [5, 67], [6, 57], [7, 59] ];
 
-        var chartUsersOptions = {
-            series: {
-                splines: {
-                    show: true,
-                    tension: 0.4,
-                    lineWidth: 1,
-                    fill: 0.4
-                },
-            },
-            grid: {
-                tickColor: "#f0f0f0",
-                borderWidth: 1,
-                borderColor: 'f0f0f0',
-                color: '#6a6c6f'
-            },
-            colors: [ "#62cb31", "#efefef"],
-        };
+    //     var chartUsersOptions = {
+    //         series: {
+    //             splines: {
+    //                 show: true,
+    //                 tension: 0.4,
+    //                 lineWidth: 1,
+    //                 fill: 0.4
+    //             },
+    //         },
+    //         grid: {
+    //             tickColor: "#f0f0f0",
+    //             borderWidth: 1,
+    //             borderColor: 'f0f0f0',
+    //             color: '#6a6c6f'
+    //         },
+    //         colors: [ "#62cb31", "#efefef"],
+    //     };
 
-        $.plot($("#flot-line-chart"), [data1, data2], chartUsersOptions);
+    //     $.plot($("#flot-line-chart"), [data1, data2], chartUsersOptions);
 
-        /**
-         * Flot charts 2 data and options
-         */
-        var chartIncomeData = [
-            {
-                label: "line",
-                data: [ [1, 10], [2, 26], [3, 16], [4, 36], [5, 32], [6, 51] ]
-            }
-        ];
+    //     /**
+    //      * Flot charts 2 data and options
+    //      */
+    //     var chartIncomeData = [
+    //         {
+    //             label: "line",
+    //             data: [ [1, 10], [2, 26], [3, 16], [4, 36], [5, 32], [6, 51] ]
+    //         }
+    //     ];
 
-        var chartIncomeOptions = {
-            series: {
-                lines: {
-                    show: true,
-                    lineWidth: 0,
-                    fill: true,
-                    fillColor: "#64cc34"
+    //     var chartIncomeOptions = {
+    //         series: {
+    //             lines: {
+    //                 show: true,
+    //                 lineWidth: 0,
+    //                 fill: true,
+    //                 fillColor: "#64cc34"
 
-                }
-            },
-            colors: ["#62cb31"],
-            grid: {
-                show: false
-            },
-            legend: {
-                show: false
-            }
-        };
+    //             }
+    //         },
+    //         colors: ["#62cb31"],
+    //         grid: {
+    //             show: false
+    //         },
+    //         legend: {
+    //             show: false
+    //         }
+    //     };
 
-        $.plot($("#flot-income-chart"), chartIncomeData, chartIncomeOptions);
+    //     $.plot($("#flot-income-chart"), chartIncomeData, chartIncomeOptions);
 
 
 
-    });
+    // });
 
 </script>
 </body>
