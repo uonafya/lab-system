@@ -20,7 +20,7 @@ class CreateMothersTable extends Migration
             $table->integer('facility_id')->unsigned()->index();
             $table->integer('entry_point')->unsigned()->index();
             $table->integer('hiv_status')->unsigned();
-            $table->integer('age')->unsigned();
+            $table->integer('age')->unsigned()->nullable();
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
             $table->timestamps();

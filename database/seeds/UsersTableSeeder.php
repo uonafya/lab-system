@@ -19,7 +19,6 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '3', 'user_type' => 'Program Officers'],
 		    ['id' => '4', 'user_type' => 'Data Clerk'],
 		    ['id' => '5', 'user_type' => 'Facility Users'],
-		    ['id' => '6', 'user_type' => 'Facility'],
 		]);
 
 

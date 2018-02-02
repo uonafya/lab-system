@@ -27,6 +27,8 @@
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal']) }}
         @endif
 
+        <input type="hidden" value=1 name="new_patient">
+
         <div class="row">
             <div class="col-lg-7 col-lg-offset-2">
                 <div class="hpanel">
@@ -40,7 +42,7 @@
                               @foreach ($facilities as $facility)
                                   <option value="{{ $facility->id }}"
 
-                                  @if (isset($sample) && $sample->facility_id == $facility->id)
+                                  @if (isset($sample) && $sample->patient->facility_id == $facility->id)
                                       selected
                                   @endif
 
@@ -54,13 +56,13 @@
 
                       <div class="form-group">
                           <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
-                          <div class="col-sm-8"><select class="form-control ampath-only" name="amrs_location_id">
+                          <div class="col-sm-8"><select class="form-control ampath-only" name="amrs_location">
 
                               <option value=""> Select One </option>
                               @foreach ($amrs_locations as $amrs_location)
                                   <option value="{{ $amrs_location->id }}"
 
-                                  @if (isset($sample) && $sample->facility_id == $amrs_location->id)
+                                  @if (isset($sample) && $sample->amrs_location == $amrs_location->id)
                                       selected
                                   @endif
 
@@ -88,7 +90,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient / Sample ID</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required name="patient_id" type="text" value="{{ $sample->patient_id or '' }}">
+                                <input class="form-control" required name="patient" type="text" value="{{ $sample->patient->patient or '' }}" id="patient">
                             </div>
                         </div>
 
@@ -102,7 +104,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) Patient Names</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" required name="patient_name" type="text" value="{{ $sample->patient_name or '' }}">
+                                <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $sample->patient_name or '' }}">
                             </div>
                         </div>
 
@@ -127,13 +129,24 @@
 
                         <div class="hr-line-dashed"></div>
 
+                        @isset($sample)
+
+                            @php
+
+                                $months = (int) $sample->age;
+                                $weeks = $sample->age - (int) $sample->age;
+
+                            @endphp
+
+                        @endisset
+
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Age</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $sample->sample_months or '' }}">
+                                <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months or '' }}">
                             </div>
                             <div class="col-sm-8 col-sm-offset-4 input-sm" style="margin-top: 1em;">
-                                <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $sample->sample_weeks or '' }}">
+                                <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks or '' }}">
                             </div>
                         </div>
 
@@ -194,13 +207,13 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Feeding Types</label>
-                            <div class="col-sm-8"><select class="form-control" required name="feeding_id">
+                            <div class="col-sm-8"><select class="form-control" required name="feeding">
 
                                 <option value=""> Select One </option>
                                 @foreach ($feedings as $feeding)
                                     <option value="{{ $feeding->id }}"
 
-                                    @if (isset($sample) && $sample->feeding_id == $feeding->id)
+                                    @if (isset($sample) && $sample->feeding == $feeding->id)
                                         selected
                                     @endif
 
@@ -292,7 +305,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datedispatched" class="form-control" value="{{ $sample->datedispatched or '' }}" name="datedispatched">
+                                    <input type="text" id="datedispatched" class="form-control" value="{{ $sample->datedispatched or '' }}" name="datedispatchedfromfacility">
                                 </div>
                             </div>                            
                         </div> 
@@ -377,10 +390,10 @@
                 <div class="hpanel">
                     <div class="panel-body">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
-                            <div class="col-sm-8"><textarea  class="form-control"></textarea></div>
+                            <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
                         </div>
                         <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                            <div class="col-sm-8"><textarea  class="form-control"></textarea></div>
+                            <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
                         </div>
                     </div>
                 </div>
@@ -389,7 +402,7 @@
                     <div class="col-sm-8 col-sm-offset-2">
                         <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
                         <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
-                        <button class="btn btn-danger" type="submit" name="submit_type" value="cancel">Cancel & Release</button>
+                        <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
                     </div>
                 </div>
             </div>
@@ -430,7 +443,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: new Date(),
+            endDate: new Date(),
             format: "yyyy-mm-dd"
         });
 
@@ -460,6 +473,12 @@
 
                 }
             });
+
+            $('<input>').attr({
+                type: 'hidden',
+                id: 'foo',
+                name: 'bar'
+            }).appendTo('form');
 
         }
     </script>
