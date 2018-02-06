@@ -55,7 +55,7 @@
                         <a class="" href="login.html">Login</a>
                     </li>
                     <li>
-                        <a class="" href="login.html">Logout</a>
+                        
                     </li>
                     <li>
                         <a class="" href="profile.html">Profile</a>
@@ -181,6 +181,19 @@
                     <a href="login.html">
                         <i class="pe-7s-upload pe-rotate-90"></i>
                     </a>
+                        
+                    <a href="{{ url('/logout') }}"
+                        onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();"
+                    >
+                        <i class="pe-7s-upload pe-rotate-90"></i>
+                        <!-- <i class="fa fa-sign-out"></i> Log out -->
+
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
+
                 </li>
             </ul>
         </div>

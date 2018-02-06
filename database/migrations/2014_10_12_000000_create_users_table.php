@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->integer('user_type_id')->unsigned();
             $table->integer('lab_id')->unsigned();
             $table->integer('account_id')->unsigned()->nullable();
+            $table->integer('facility_id')->unsigned()->nullable();
             $table->string('surname');
             $table->string('oname');
             $table->string('email')->unique();

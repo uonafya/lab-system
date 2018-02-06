@@ -37,5 +37,3 @@ Route::get('sample/new_patient/{patient}/{facility_id} ', 'SampleController@new_
 Route::resource('sample', 'SampleController');
 
 Auth::routes();
-
-// Route::get('/home', 'HomeController@index')->name('home');

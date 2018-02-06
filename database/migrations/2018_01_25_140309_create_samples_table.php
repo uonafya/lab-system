@@ -18,7 +18,6 @@ class CreateSamplesTable extends Migration
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('batch_id')->unsigned()->index();
             $table->string('amrs_location')->nullable();
-            $table->boolean('high_priority')->default(false);
             $table->string('provider_identifier')->nullable();
             $table->integer('receivedstatus')->unsigned()->nullable()->index();
             $table->double('age', 6, 4)->unsigned()->nullable()->index();

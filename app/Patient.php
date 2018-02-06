@@ -14,6 +14,8 @@ class Patient extends Model
     protected $guarded = [];
     protected $dates = ['datesynched', 'dob'];
 
+    // protected $dateFormat = 'Y-m-d';
+
     public function sample()
     {
     	return $this->hasMany('App\Sample');
