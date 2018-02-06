@@ -24,35 +24,41 @@
         @if (isset($sample))
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
-            {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal']) }}
+            {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
         @endif
 
-        <input type="hidden" value=1 name="new_patient">
+        <input type="hidden" value=1 name="new_patient" id="new_patient">
 
         <div class="row">
             <div class="col-lg-7 col-lg-offset-2">
                 <div class="hpanel">
                     <div class="panel-body">
 
-                      <div class="form-group">
-                          <label class="col-sm-4 control-label">Facility</label>
-                          <div class="col-sm-8"><select class="form-control" required name="facility_id">
+                        @if($facility_id == 0)    
+                          <div class="form-group">
+                              <label class="col-sm-4 control-label">Facility</label>
+                              <div class="col-sm-8">
+                                <select class="form-control" required name="facility_id" id="facility_id">
 
-                              <option value=""> Select One </option>
-                              @foreach ($facilities as $facility)
-                                  <option value="{{ $facility->id }}"
+                                  <option value=""> Select One </option>
+                                  @foreach ($facilities as $facility)
+                                      <option value="{{ $facility->id }}"
 
-                                  @if (isset($sample) && $sample->patient->facility_id == $facility->id)
-                                      selected
-                                  @endif
+                                      @if (isset($sample) && $sample->patient->facility_id == $facility->id)
+                                          selected
+                                      @endif
 
-                                  > {{ $facility->name }}
-                                  </option>
-                              @endforeach
+                                      > {{ $facility->name }}
+                                      </option>
+                                  @endforeach
 
-                          </select></div>
-                      </div>
-
+                                </select>
+                              </div>
+                          </div>
+                        @else
+                            <p>Facility - {{ $facility_name }}  Batch {{ $batch_no }} </p>
+                            <input type="hidden" name="facility_id" id="facility_id" value="{{$facility_id}}">
+                        @endif
 
                       <div class="form-group">
                           <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
@@ -110,7 +116,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Sex</label>
-                            <div class="col-sm-8"><select class="form-control" required name="gender">
+                            <div class="col-sm-8"><select class="form-control lockable" required name="gender" id="gender">
 
                                 <option value=""> Select One </option>
                                 @foreach ($genders as $gender)
@@ -140,7 +146,7 @@
 
                         @endisset
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label class="col-sm-4 control-label">Age</label>
                             <div class="col-sm-8">
                                 <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months or '' }}">
@@ -148,6 +154,16 @@
                             <div class="col-sm-8 col-sm-offset-4 input-sm" style="margin-top: 1em;">
                                 <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks or '' }}">
                             </div>
+                        </div> -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date of Birth</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="dob" required class="form-control lockable" value="{{ $sample->patient->dob or '' }}" name="dob">
+                                </div>
+                            </div>                            
                         </div>
 
                         <div class="hr-line-dashed"></div>
@@ -226,7 +242,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Entry Point</label>
-                            <div class="col-sm-8"><select class="form-control" required name="entry_point">
+                            <div class="col-sm-8"><select class="form-control lockable" required name="entry_point" id="entry_point">
 
                                 <option value=""> Select One </option>
                                 @foreach ($entry_points as $entry_point)
@@ -246,7 +262,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">HIV Status</label>
                             <div class="col-sm-8">
-                                    <select class="form-control" required name="hiv_status">
+                                    <select class="form-control lockable" required name="hiv_status" id="hiv_status">
 
                                     <option value=""> Select One </option>
                                     @foreach ($hiv_statuses as $hiv_status)
@@ -300,30 +316,41 @@
                             </div>                            
                         </div> 
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datedispatched" class="form-control" value="{{ $sample->datedispatched or '' }}" name="datedispatchedfromfacility">
-                                </div>
-                            </div>                            
-                        </div> 
+                        @if($batch_dispatch == 0)
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Received</label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datereceived" required class="form-control" value="{{ $sample->datereceived or '' }}" name="datereceived">
-                                </div>
-                            </div>                            
-                        </div> 
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="datedispatched" class="form-control" value="{{ $sample->batch->datedispatched or '' }}" name="datedispatchedfromfacility">
+                                    </div>
+                                </div>                            
+                            </div> 
+                        @else
+                            <input type="hidden" value="{{ $batch_dispatched }}" name="datedispatchedfromfacility" id="datedispatched">
+                        @endif
+
+                        <div></div>
+
+                        @if($batch_no == 0)  
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date Received</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="datereceived" required class="form-control" value="{{ $sample->batch->datereceived or '' }}" name="datereceived">
+                                    </div>
+                                </div>                            
+                            </div> 
+                        @else
+                            <input type="hidden" value="{{ $batch_received }}" name="datereceived" id="datereceived">
+                        @endif
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PCR Type</label>
                             <div class="col-sm-8">
-                                    <select class="form-control" required name="pcrtype">
+                                <select class="form-control" required name="pcrtype" id="pcrtype" disabled>
 
                                     <option value=""> Select One </option>
                                     @foreach ($pcrtypes as $pcrtype)
@@ -339,7 +366,9 @@
 
                                 </select>
                             </div>
-                        </div> 
+                        </div>
+
+                        <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Received Status</label>
@@ -426,8 +455,14 @@
         @slot('val_rules')
            ,
             rules: {
+                dob: {
+                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
+                },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"]
+                },
+                datecollected: {
+                    lessThan: ["#datereceived", "Date Collected", "Date Received"]
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date of Dispatch", "Date Received"]
@@ -452,33 +487,85 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+            $("#patient").blur(function(){
+                var patient = $(this).val();
+                var facility = $("#facility_id").val();
+                check_new_patient(patient, facility);
+            });
 
             
         });
 
-        function check_new_patient(patient, facility){
+        function check_new_patient(patient_id, facility){
             $.ajax({
                type: "GET",
-               url: "{{ url('/samples/new_patient') }}/"+patient+"/"+facility ,
+               url: "{{ url('/sample/new_patient') }}/"+patient_id+"/"+facility ,
                success: function(data){
 
                     console.log(data);
 
+                    $("#new_patient").val(data[0]);
+
                     if(data[0] == 0){
                         localStorage.setItem("new_patient", 0);
+                        var patient = data[1];
+                        var mother = data[2];
+                        var prev = data[3];
+
+                        console.log(patient.dob);
+
+                        $("#dob").val(patient.dob);
+                        // $('#gender option[value='+ patient.gender + ']').attr('selected','selected').change();
+
+                        $("#gender").val(patient.gender).change();
+                        $("#hiv_status").val(mother.hiv_status).change();
+                        $("#entry_point").val(mother.entry_point).change();
+
+                        $('#pcrtype option[value=2]').attr('selected','selected').change();
+                        $("#hidden_pcr").val(2);
+
+                        if(prev.previous_positive == 1){
+                            $('#pcrtype option[value=3]').attr('selected','selected').change();
+                            $("#hidden_pcr").val(3);
+                        }
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'patient_id',
+                            value: patient.id,
+                            id: 'hidden_patient',
+                            class: 'patient_details'
+                        }).appendTo("#samples_form");
+
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'patient_dob',
+                            value: patient.dob,
+                            class: 'patient_details'
+                        }).appendTo("#samples_form");
+
+
+                        $(".lockable").attr("disabled", "disabled");
                     }
                     else{
                         localStorage.setItem("new_patient", 1);
+                        $(".lockable").removeAttr("disabled");
+                        $(".lockable").val('').change();
+                        $('#pcrtype option[value=1]').attr('selected','selected').change();
+                        $("#hidden_pcr").val(1);
+
+                        $('.patient_details').remove();
                     }
 
                 }
             });
 
-            $('<input>').attr({
+
+
+            /*$('<input>').attr({
                 type: 'hidden',
                 id: 'foo',
                 name: 'bar'
-            }).appendTo('form');
+            }).appendTo('form');*/
 
         }
     </script>
