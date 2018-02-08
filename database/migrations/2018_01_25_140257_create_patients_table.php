@@ -17,12 +17,14 @@ class CreatePatientsTable extends Migration
             $table->increments('id');
             $table->string('patient_name')->nullable();
             $table->integer('mother_id')->unsigned();
-            $table->integer('facility_id')->unsigned();
+            $table->integer('facility_id')->unsigned()->index();
             $table->string('patient');
             $table->string('fullnames')->nullable();
             $table->string('caregiver_phone')->nullable();
-            $table->string('gender');
-            $table->date('dob')->nullable();
+            $table->string('gender')->nullable();
+            $table->tinyInteger('sex')->unsigned()->index();
+            $table->date('dob')->index();
+            $table->date('dateinitiatedontreatment')->nullable();
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
 

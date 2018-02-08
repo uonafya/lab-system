@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Worksheet;
+use App\Sample;
+use DB;
 use Illuminate\Http\Request;
 
 class WorksheetController extends Controller
@@ -14,7 +16,6 @@ class WorksheetController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -24,7 +25,50 @@ class WorksheetController extends Controller
      */
     public function create()
     {
-        //
+        $samples = Sample::selectRaw("samples.id, patient_id, parentid, datereceived, high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            ->join('batches', 'samples.batch_id', '=', 'batches.id')
+            ->whereYear('datereceived', '>', 2014)
+            ->where('inworksheet', 0)
+            ->where('input_complete', true)
+            ->whereIn('receivedstatus', [1, 3])
+            ->whereRaw('((result IS NULL ) OR (result =0 ))')
+            ->orderBy('isnull', 'asc')
+            ->orderBy('high_priority', 'asc')
+            ->orderBy('datereceived', 'asc')
+            ->orderBy('samples.id', 'asc')
+            ->limit(22);
+
+        $count = $samples->count();
+
+        if($count == 22){
+            return view('forms.worksheets', ['create' => true, 'machine_type' => 1]);
+        }
+
+        return view('forms.worksheets', ['create' => true, 'machine_type' => 1, 'count' => $count]);
+    }
+
+    public function abbot()
+    {
+        $samples = Sample::selectRaw("samples.id, patient_id, parentid, datereceived, high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            ->join('batches', 'samples.batch_id', '=', 'batches.id')
+            ->whereYear('datereceived', '>', 2014)
+            ->where('inworksheet', 0)
+            ->where('input_complete', true)
+            ->whereIn('receivedstatus', [1, 3])
+            ->whereRaw('((result IS NULL ) OR (result =0 ))')
+            ->orderBy('isnull', 'asc')
+            ->orderBy('high_priority', 'asc')
+            ->orderBy('datereceived', 'asc')
+            ->orderBy('samples.id', 'asc')
+            ->limit(94);
+
+        $count = $samples->count();
+
+        if($count == 94){
+            return view('forms.worksheets', ['create' => true, 'machine_type' => 2]);
+        }
+
+        return view('forms.worksheets', ['create' => true, 'machine_type' => 2, 'count' => $count]);
     }
 
     /**
@@ -35,7 +79,36 @@ class WorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $worksheet = new Worksheet;
+        $worksheet->fill($request->except('_token'));
+        $worksheet->createdby = auth()->user()->id;
+        $worksheet->save();
+
+        $samples = Sample::selectRaw("samples.id, patient_id, parentid, datereceived, high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            ->join('batches', 'samples.batch_id', '=', 'batches.id')
+            ->whereYear('datereceived', '>', 2014)
+            ->where('inworksheet', 0)
+            ->where('input_complete', true)
+            ->whereIn('receivedstatus', [1, 3])
+            ->whereRaw('((result IS NULL ) OR (result = 0 ))')
+            ->orderBy('isnull', 'asc')
+            ->orderBy('high_priority', 'asc')
+            ->orderBy('datereceived', 'asc')
+            ->orderBy('samples.id', 'asc')
+            ->when($worksheet, function($query) use ($worksheet){
+                if($worksheet->machine_type == 1){
+                    return $query->limit(22);
+                }
+                else{
+                    return $query->limit(94);
+                }
+            });
+
+        $sample_ids = $samples->pluck('id');
+
+        DB::table('samples')->whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id, 'inworksheet' => true]);
+
+        return redirect()->route('worksheet.print', ['worksheet' => $worksheet->id]);
     }
 
     /**
@@ -81,5 +154,10 @@ class WorksheetController extends Controller
     public function destroy(Worksheet $worksheet)
     {
         //
+    }
+
+    public function print(Worksheet $worksheet)
+    {
+        
     }
 }
