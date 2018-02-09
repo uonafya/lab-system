@@ -10,7 +10,7 @@ class Sample extends Model
     protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
 
-    protected $dateFormat = 'Y-m-d';
+    // protected $dateFormat = 'Y-m-d';
 
     public function setDatedispatchedfromfacilityAttribute($value)
     {
@@ -26,6 +26,11 @@ class Sample extends Model
     public function batch()
     {
         return $this->belongsTo('App\Batch');
+    }
+
+    public function worksheet()
+    {
+        return $this->belongsTo('App\Worksheet');
     }
 
 

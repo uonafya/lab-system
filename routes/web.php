@@ -28,12 +28,16 @@ Route::get('/addsample', function () {
 	return view('addsample');
 });
 
-
 Route::get('/checkboxes', function () {
 	return view('checkbox');
 });
 
-Route::get('sample/new_patient/{patient}/{facility_id} ', 'SampleController@new_patient');
+Route::get('sample/new_patient/{patient}/{facility_id}', 'SampleController@new_patient');
+
 Route::resource('sample', 'SampleController');
+
+Route::get('worksheet/create_abbot', 'WorksheetController@abbot')->name('worksheet.create_abbot');
+Route::get('worksheet/print/{worksheet}', 'WorksheetController@print')->name('worksheet.print');
+Route::resource('worksheet', 'WorksheetController');
 
 Auth::routes();

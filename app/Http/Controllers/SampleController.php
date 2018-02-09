@@ -124,10 +124,19 @@ class SampleController extends Controller
             session(['batch_dispatch' => 1]);
         }
 
+
         $new_patient = $request->input('new_patient');
 
         if($new_patient == 0){
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'gender', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'patient_dob']);
+
+            $repeat_test = Sample::where(['patient_id' => $request->input('patient_id'),
+            'batch_id' => $batch_no])->first();
+
+            if($repeat_test){
+                return redirect()->route('sample.create');
+            }
+
+            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'patient_dob']);
             $sample = new Sample;
             $sample->fill($data);
             $sample->batch_id = $batch_no;
@@ -137,10 +146,7 @@ class SampleController extends Controller
             $dob = Carbon::parse( $request->input('patient_dob') );
             $months = $dc->diffInMonths($dob);
             $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
-
             $sample->age = $months + ($weeks / 4);
-
-
             $sample->save();
         }
 
@@ -151,7 +157,7 @@ class SampleController extends Controller
             $mother->fill($data);
             $mother->save();
 
-            $data = $request->only(['gender', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
             $patient = new Patient;
             $patient->fill($data);
             $patient->mother_id = $mother->id;
@@ -169,7 +175,7 @@ class SampleController extends Controller
 
             $patient_age = $months + ($weeks / 4);
 
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'gender', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob']);
+            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob']);
             $sample = new Sample;
             $sample->fill($data);
             $sample->patient_id = $patient->id;

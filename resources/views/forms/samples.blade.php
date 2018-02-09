@@ -116,13 +116,13 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Sex</label>
-                            <div class="col-sm-8"><select class="form-control lockable" required name="gender" id="gender">
+                            <div class="col-sm-8"><select class="form-control lockable" required name="sex" id="sex">
 
                                 <option value=""> Select One </option>
                                 @foreach ($genders as $gender)
                                     <option value="{{ $gender->gender }}"
 
-                                    @if (isset($sample) && $sample->patient->gender == $gender->gender)
+                                    @if (isset($sample) && $sample->patient->gender == $gender->id)
                                         selected
                                     @endif
 
@@ -515,9 +515,9 @@
                         console.log(patient.dob);
 
                         $("#dob").val(patient.dob);
-                        // $('#gender option[value='+ patient.gender + ']').attr('selected','selected').change();
+                        // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
-                        $("#gender").val(patient.gender).change();
+                        $("#sex").val(patient.sex).change();
                         $("#hiv_status").val(mother.hiv_status).change();
                         $("#entry_point").val(mother.entry_point).change();
 
