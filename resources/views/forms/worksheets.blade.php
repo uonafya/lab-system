@@ -209,8 +209,8 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-5d",
-            endDate: "+5y",
+            startDate: "-7d",
+            endDate: "+0d",
             format: "yyyy-mm-dd"
         });
 
@@ -220,8 +220,8 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-7d",
-            endDate: "+0d",
+            startDate: "-5d",
+            endDate: "+5y",
             format: "yyyy-mm-dd"
         });
 

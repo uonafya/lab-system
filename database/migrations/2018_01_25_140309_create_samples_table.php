@@ -43,9 +43,9 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('referredfromsite')->unsigned()->nullable();
             $table->string('otherreason')->nullable();
 
-            $table->tinyInteger('flag')->unsigned()->nullable();
-            $table->tinyInteger('run')->unsigned()->nullable();
-            $table->tinyInteger('repeatt')->unsigned()->nullable();
+            $table->tinyInteger('flag')->unsigned()->default(1);
+            $table->tinyInteger('run')->unsigned()->default(0);
+            $table->tinyInteger('repeatt')->unsigned()->default(0);
             $table->tinyInteger('eqa')->unsigned()->nullable();
 
             $table->integer('approvedby')->unsigned()->nullable();

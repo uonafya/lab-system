@@ -25,7 +25,7 @@ class WorksheetController extends Controller
      */
     public function create()
     {
-        $samples = Sample::selectRaw("samples.id, patient_id, parentid, datereceived, high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
@@ -36,7 +36,8 @@ class WorksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
-            ->limit(22);
+            ->limit(22)
+            ->get();
 
         $count = $samples->count();
 
@@ -44,12 +45,12 @@ class WorksheetController extends Controller
             return view('forms.worksheets', ['create' => true, 'machine_type' => 1]);
         }
 
-        return view('forms.worksheets', ['create' => true, 'machine_type' => 1, 'count' => $count]);
+        return view('forms.worksheets', ['create' => false, 'machine_type' => 1, 'count' => $count]);
     }
 
     public function abbot()
     {
-        $samples = Sample::selectRaw("samples.id, patient_id, parentid, datereceived, high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
@@ -60,7 +61,8 @@ class WorksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
-            ->limit(94);
+            ->limit(94)
+            ->get();
 
         $count = $samples->count();
 
@@ -68,7 +70,7 @@ class WorksheetController extends Controller
             return view('forms.worksheets', ['create' => true, 'machine_type' => 2]);
         }
 
-        return view('forms.worksheets', ['create' => true, 'machine_type' => 2, 'count' => $count]);
+        return view('forms.worksheets', ['create' => false, 'machine_type' => 2, 'count' => $count]);
     }
 
     /**
@@ -82,9 +84,10 @@ class WorksheetController extends Controller
         $worksheet = new Worksheet;
         $worksheet->fill($request->except('_token'));
         $worksheet->createdby = auth()->user()->id;
+        $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $samples = Sample::selectRaw("samples.id, patient_id, parentid, datereceived, high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
@@ -158,6 +161,15 @@ class WorksheetController extends Controller
 
     public function print(Worksheet $worksheet)
     {
-        
+        $worksheet->load(['creator']);
+        // $samples = $worksheet->sample;
+        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+
+        if($worksheet->machine_type == 1){
+            return view('worksheets.other-table', ['worksheet' => $worksheet, 'samples' => $samples]);
+        }
+        else{
+            return view('worksheets.abbot-table', ['worksheet' => $worksheet, 'samples' => $samples]);
+        }
     }
 }

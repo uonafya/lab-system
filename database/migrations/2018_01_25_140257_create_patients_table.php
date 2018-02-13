@@ -19,7 +19,6 @@ class CreatePatientsTable extends Migration
             $table->integer('mother_id')->unsigned();
             $table->integer('facility_id')->unsigned()->index();
             $table->string('patient');
-            $table->string('fullnames')->nullable();
             $table->string('caregiver_phone')->nullable();
             $table->string('gender')->nullable();
             $table->tinyInteger('sex')->unsigned()->index();

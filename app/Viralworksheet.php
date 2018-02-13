@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ViralWorksheet extends Model
+class Viralworksheet extends Model
 {
     //
 }
