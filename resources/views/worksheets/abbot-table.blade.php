@@ -1,107 +1,137 @@
-<table border="0" class="data-table">
-	<tr class="odd">
-		<td colspan="3"><strong>WorkSheet Details</strong>	</td>
-		<td colspan="2"><strong>Extraction Reagent</strong>	</td>
-		<td colspan="3"><strong>Amplification Reagent</strong></td>
-	</tr>
-	<tr class="odd">
-		
-		<td> <strong>Worksheet/Template No</strong> </td>
-		<td> {{ $worksheet->id }} </td>
-		<td><strong>&nbsp;</strong>	</td>
-		<td><strong>Sample Prep</strong>	</td>
-		<td><strong>Bulk Lysis Buffer</strong>	</td>
-		<td><strong>Control</strong>	</td>
-		<td><strong>Calibrator</strong>	</td>
-		<td><strong>Amplification Kit</strong>	</td>			
-	</tr>
-	<tr class="even">
-		<td ><strong>Date Created</strong>		</td>
-		<td > {{ $worksheet->created_at }} </td>
-		<td><strong>Lot No	</strong>	</td>
-		<td> {{ $worksheet->sample_prep_lot_no }} </td>
-		<td> {{ $worksheet->bulklysis_lot_no }} </td>
-		<td> {{ $worksheet->control_lot_no }} </td>
-		<td> {{ $worksheet->calibrator_lot_no }} </td>
-		<td> {{ $worksheet->amplification_kit_lot_no }} </td>
-	</tr>
-	<tr class="even">
-		<td><strong>Created By	</strong>    </td>
-		<td> {{ $worksheet->creator->full_name }} </td>
-		<td><strong>Expiry Dates</strong>	</td>
-		<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString() or '' }} </td>
-		<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() or '' }} </td>
-		<td> {{ $worksheet->controlexpirydate->toFormattedDateString() or '' }} </td>
-		<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString() or '' }} </td>
-		<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() or '' }} </td>
-	</tr>
-	<tr class="even">
-		<td><strong>Sorted By	</strong>    </td>
-		<td>_____________________________	</td>
-		<td><strong>Bulked By	</strong>    </td>
-		<td>_____________________________	</td>
-		<td><strong>Run By	</strong>    </td>
-		<td>_____________________________	</td>
-	</tr>
-	<tr >
-		<th colspan="8" ><small> <strong> WORKSHEET SAMPLES [2 Controls]</strong></small>		</th>
-	</tr>
+<html>
+<link rel="stylesheet" type="text/css" href="{{ asset('css/worksheet_style.css') }}" media="screen" />
+<style type="text/css">
+<!--
+.style1 {font-family: "Courier New", Courier, monospace}
+.style4 {font-size: 12}
+.style5 {font-family: "Courier New", Courier, monospace; font-size: 12; }
+.style7 {font-size: x-small}
+-->
+</style>
+<style>
 
-	<tr>
-		@php $count = 1; @endphp
+ td
+ {
 
-		@foreach($samples as $sample)
-			@if($sample->parentid != 0)
+ }
+ .oddrow
+ {
+ background-color : #CCCCCC;
+ }
+ .evenrow
+ {
+ background-color : #F0F0F0;
+ } #table1 {
+border : solid 1px black;
+width:1100px;
+width:1180px;
+}
+ .style7 {font-size: medium}
+.style10 {font-size: 16px}
+</style>
 
-				- {{ $sample->parentid }}
-				<div align='right'> 
-					<table>
-						<tr>
-							<td style='background-color:#FAF156'><small>R </small></td>
-						</tr>
-					</table> 
-				</div>
-			@else
+<STYLE TYPE="text/css">
+     P.breakhere {page-break-before: always}
 
-			@endif
+}
 
-			@php
-				if($sample->parentid == 0){
-					$parent = "";
-					$rr = "";
-				}else{
-					$parent = "- {$sample->parentid}";
-					$rr = "
-							<div align='right'> 
-								<table>
-									<tr>
-										<td style='background-color:#FAF156'><small>R </small></td>
-									</tr>
-								</table> 
-							</div>
-							";
-				}
-			@endphp
+</STYLE> 
+<body onLoad="JavaScript:window.print();">
+	<div align="center">
+		<table border="0" class="data-table">
+			<tr class="odd">
+				<td colspan="3"><strong>WorkSheet Details</strong>	</td>
+				<td colspan="2"><strong>Extraction Reagent</strong>	</td>
+				<td colspan="3"><strong>Amplification Reagent</strong></td>
+			</tr>
+			<tr class="odd">
+				
+				<td> <strong>Worksheet/Template No</strong> </td>
+				<td> {{ $worksheet->id }} </td>
+				<td><strong>&nbsp;</strong>	</td>
+				<td><strong>Sample Prep</strong>	</td>
+				<td><strong>Bulk Lysis Buffer</strong>	</td>
+				<td><strong>Control</strong>	</td>
+				<td><strong>Calibrator</strong>	</td>
+				<td><strong>Amplification Kit</strong>	</td>			
+			</tr>
+			<tr class="even">
+				<td ><strong>Date Created</strong>		</td>
+				<td > {{ $worksheet->created_at }} </td>
+				<td><strong>Lot No	</strong>	</td>
+				<td> {{ $worksheet->sample_prep_lot_no }} </td>
+				<td> {{ $worksheet->bulklysis_lot_no }} </td>
+				<td> {{ $worksheet->control_lot_no }} </td>
+				<td> {{ $worksheet->calibrator_lot_no }} </td>
+				<td> {{ $worksheet->amplification_kit_lot_no }} </td>
+			</tr>
+			<tr class="even">
+				<td><strong>Created By	</strong>    </td>
+				<td> {{ $worksheet->creator->full_name }} </td>
+				<td><strong>Expiry Dates</strong>	</td>
+				<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString() or '' }} </td>
+				<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() or '' }} </td>
+				<td> {{ $worksheet->controlexpirydate->toFormattedDateString() or '' }} </td>
+				<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString() or '' }} </td>
+				<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() or '' }} </td>
+			</tr>
+			<tr class="even">
+				<td><strong>Sorted By	</strong>    </td>
+				<td>_____________________________	</td>
+				<td><strong>Bulked By	</strong>    </td>
+				<td>_____________________________	</td>
+				<td><strong>Run By	</strong>    </td>
+				<td>_____________________________	</td>
+			</tr>
+			<tr >
+				<th colspan="8" ><small> <strong> WORKSHEET SAMPLES [2 Controls]</strong></small>		</th>
+			</tr>
 
-			<td > 
-				{{ $RR }} 
-				<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
+			<tr>
+				@php $count = 0; @endphp
 
-				<img src="data:image/png;base64,{{DNS1D::getBarcodePNG($sample->id, 'C39+', 3, 33, [255, 255, 255], true)}}" alt="barcode" />
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+				@foreach($samples as $sample)
 
-			</td>
+					@php
+						if($sample->parentid == 0){
+							$parent = "";
+							$rr = "";
+						}else{
+							$parent = "- {$sample->parentid}";
+							$rr = "
+									<div align='right'> 
+										<table>
+											<tr>
+												<td style='background-color:#FAF156'><small>R </small></td>
+											</tr>
+										</table> 
+									</div>
+									";
+						}
+					@endphp
+
+					<td > 
+						{{ $RR }} 
+						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
+
+						<img src="data:image/png;base64,{{DNS1D::getBarcodePNG($sample->id, 'C39+', 2, 33, [1, 1, 1], true)}}" alt="barcode" />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+
+					</td>
 
 
 
-			@php $count++; @endphp
+					@php $count++; @endphp
 
-			@if($count % 8 == 0)
-				</tr><tr><td colspan=8>&nbsp;</td></tr><tr>
-			@endif
-		@endforeach
+					@if($count % 8 == 0)
+						</tr><tr><td colspan=8>&nbsp;</td></tr><tr>
+					@endif
+				@endforeach
 
-		<td align=center > PC </td><td  align=center > NC </td>
-	</tr>
-		
-</table>
+				<td align=center > PC </td><td  align=center > NC </td>
+			</tr>
+				
+		</table>
+	</div>
+</body>
+</html>

@@ -29,3 +29,40 @@ $factory->define(App\User::class, function (Faker $faker) {
         'remember_token' => str_random(10),
     ];
 });
+
+$factory->define(App\Batch::class, function (Faker $faker) {
+    return [
+        'received_by' => 1,
+        'user_id' => 1,
+
+        'input_complete' => 1,
+        'lab_id' => rand(1, 20),
+        'facility_id' => rand(1, 1000),
+        'datereceived' => $faker->dateTimeThisYear($max = 'now'),
+    ];
+});
+
+$factory->define(App\Sample::class, function (Faker $faker) {
+    return [
+        'patient_id' => rand(1, 100),
+        'batch_id' => rand(1, 20),
+        'receivedstatus' => 1,
+        'age' => rand(1, 12),
+        'pcrtype' => rand(1, 3),
+        'regimen' => rand(1, 10),
+        'mother_prophylaxis' => rand(1, 5),
+        'feeding' => rand(1, 5),
+        'spots' => rand(1, 5),
+        'datecollected' => $faker->dateTimeThisYear($max = 'now'),
+    ];
+});
+
+$factory->define(App\Patient::class, function (Faker $faker) {
+    return [
+        'patient' => $faker->bothify('#####-?????'),
+        'mother_id' => rand(1, 100),
+        'facility_id' => rand(1, 1000),
+        'dob' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
+        'sex' => rand(1, 2),
+    ];
+});

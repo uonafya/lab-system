@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\ViralWorksheet;
+use App\Viralworksheet;
 use Illuminate\Http\Request;
 
-class ViralWorksheetController extends Controller
+class ViralworksheetController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class ViralWorksheetController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\ViralWorksheet  $viralWorksheet
+     * @param  \App\Viralworksheet  $Viralworksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(ViralWorksheet $viralWorksheet)
+    public function show(Viralworksheet $Viralworksheet)
     {
         //
     }
@@ -52,10 +52,10 @@ class ViralWorksheetController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\ViralWorksheet  $viralWorksheet
+     * @param  \App\Viralworksheet  $Viralworksheet
      * @return \Illuminate\Http\Response
      */
-    public function edit(ViralWorksheet $viralWorksheet)
+    public function edit(Viralworksheet $Viralworksheet)
     {
         //
     }
@@ -64,10 +64,10 @@ class ViralWorksheetController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ViralWorksheet  $viralWorksheet
+     * @param  \App\Viralworksheet  $Viralworksheet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ViralWorksheet $viralWorksheet)
+    public function update(Request $request, Viralworksheet $Viralworksheet)
     {
         //
     }
@@ -75,10 +75,10 @@ class ViralWorksheetController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ViralWorksheet  $viralWorksheet
+     * @param  \App\Viralworksheet  $Viralworksheet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ViralWorksheet $viralWorksheet)
+    public function destroy(Viralworksheet $Viralworksheet)
     {
         //
     }

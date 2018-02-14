@@ -13,7 +13,7 @@ class CreateViralWorksheetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('viral_worksheets', function (Blueprint $table) {
+        Schema::create('viralworksheets', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ class CreateViralWorksheetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('viral_worksheets');
+        Schema::dropIfExists('viralworksheets');
     }
 }

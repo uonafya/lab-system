@@ -18,7 +18,11 @@ class CreateBatchesTable extends Migration
             $table->boolean('high_priority')->default(false);
             $table->boolean('input_complete')->default(false);
             $table->boolean('batch_full')->default(false);
-            $table->boolean('batch_complete')->default(false);
+
+            // 0 is default i.e. new
+            // 1 is dispatched
+            // 2 is staging i.e. all samples are ready, batch awaiting dispatch
+            $table->tinyInteger('batch_complete')->default(0);
             $table->integer('site_entry')->unsigned()->nullable();
 
             $table->boolean('sent_email')->default(false);
@@ -28,7 +32,7 @@ class CreateBatchesTable extends Migration
             $table->integer('received_by')->unsigned()->nullable();
 
             $table->tinyInteger('lab_id')->unsigned()->index();
-            $table->integer('facility_id')->unsigned()->nullable()->index();
+            $table->integer('facility_id')->unsigned()->index();
 
             $table->date('datedispatchedfromfacility')->nullable();
             $table->date('datereceived')->nullable()->index();

@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('user_type_id')->references('id')->on('user_types');
+            // $table->foreign('user_type_id')->references('id')->on('user_types');
             // $table->foreign('lab_id')->references('id')->on('labs');
             // $table->foreign('account_id')->references('id')->on('accounts');
         });

@@ -36,12 +36,11 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
-            $table->string('interpretation')->nullable();
             $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
 
-            $table->string('result')->unsigned()->nullable()->index();
-            $table->string('units')->unsigned()->nullable()->index();
-            $table->string('intepretation')->unsigned()->nullable()->index();
+            $table->tinyInteger('result')->unsigned()->nullable()->index();
+            $table->string('units')->nullable();
+            $table->string('interpretation')->nullable();
 
             $table->integer('worksheet_id')->unsigned()->nullable();
             $table->boolean('inworksheet')->default(false);
