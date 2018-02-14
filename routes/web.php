@@ -40,4 +40,8 @@ Route::get('worksheet/create_abbot', 'WorksheetController@abbot')->name('workshe
 Route::get('worksheet/print/{worksheet}', 'WorksheetController@print')->name('worksheet.print');
 Route::resource('worksheet', 'WorksheetController');
 
+Route::get('datatables', function () {
+	return view('datatables');
+});
+
 Auth::routes();
