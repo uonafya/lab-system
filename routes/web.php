@@ -33,6 +33,9 @@ Route::resource('sample', 'SampleController');
 
 Route::get('worksheet/create_abbot', 'WorksheetController@abbot')->name('worksheet.create_abbot');
 Route::get('worksheet/print/{worksheet}', 'WorksheetController@print')->name('worksheet.print');
+Route::get('worksheet/cancel/{worksheet}', 'WorksheetController@cancel')->name('worksheet.cancel');
+Route::get('worksheet/upload/{worksheet}', 'WorksheetController@upload')->name('worksheet.upload');
+Route::put('worksheet/upload/{worksheet}', 'WorksheetController@save_results')->name('worksheet.save_results');
 Route::resource('worksheet', 'WorksheetController');
 
 Auth::routes();

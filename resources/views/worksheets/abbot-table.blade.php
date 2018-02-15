@@ -69,11 +69,12 @@ width:1180px;
 				<td><strong>Created By	</strong>    </td>
 				<td> {{ $worksheet->creator->full_name }} </td>
 				<td><strong>Expiry Dates</strong>	</td>
-				<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString() or '' }} </td>
-				<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() or '' }} </td>
-				<td> {{ $worksheet->controlexpirydate->toFormattedDateString() or '' }} </td>
-				<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString() or '' }} </td>
-				<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() or '' }} </td>
+
+				<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString()  }} </td>
+				<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() }} </td>
+				<td> {{ $worksheet->controlexpirydate->toFormattedDateString() }} </td>
+				<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString()  }} </td>
+				<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() }} </td> 
 			</tr>
 			<tr class="even">
 				<td><strong>Sorted By	</strong>    </td>
@@ -111,7 +112,7 @@ width:1180px;
 					@endphp
 
 					<td > 
-						{{ $RR }} 
+						{{ $rr }} 
 						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
 
 						<img src="data:image/png;base64,{{DNS1D::getBarcodePNG($sample->id, 'C39+', 2, 33, [1, 1, 1], true)}}" alt="barcode" />

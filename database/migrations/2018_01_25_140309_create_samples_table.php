@@ -31,7 +31,7 @@ class CreateSamplesTable extends Migration
             $table->integer('parentid')->unsigned()->default(0);
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
-            $table->string('intepretation')->nullable();
+            $table->string('interpretation')->nullable();
             $table->tinyInteger('result')->unsigned()->nullable()->index();
 
             $table->integer('worksheet_id')->unsigned()->nullable();

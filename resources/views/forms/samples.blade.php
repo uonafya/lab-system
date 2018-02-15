@@ -120,15 +120,16 @@
 
                                 <option value=""> Select One </option>
                                 @foreach ($genders as $gender)
-                                    <option value="{{ $gender->gender }}"
+                                    <option value="{{ $gender->id }}"
 
-                                    @if (isset($sample) && $sample->patient->gender == $gender->id)
+                                    @if (isset($sample) && $sample->patient->sex == $gender->id)
                                         selected
                                     @endif
 
                                     > {{ $gender->gender_description }}
                                     </option>
                                 @endforeach
+
 
                             </select></div>
                         </div>
@@ -201,6 +202,11 @@
                         <center>Mother Information</center>
                     </div>
                     <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CCC No</label>
+                            <div class="col-sm-8"><input class="form-control" name="ccc_no" type="text" value="{{ $sample->patient->mother->ccc_no or '' }}"></div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PMTCT Intervention</label>
