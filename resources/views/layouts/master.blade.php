@@ -178,9 +178,6 @@
                     </a>
                 </li>
                 <li class="dropdown">
-                    <a href="login.html">
-                        <i class="pe-7s-upload pe-rotate-90"></i>
-                    </a>
                         
                     <a href="{{ url('/logout') }}"
                         onclick="event.preventDefault();

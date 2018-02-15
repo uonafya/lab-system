@@ -117,6 +117,8 @@ width:1180px;
 
 						<img src="data:image/png;base64,{{DNS1D::getBarcodePNG($sample->id, 'C39+', 2, 33, [1, 1, 1], true)}}" alt="barcode" />
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+						<br /> 
+						{{ $sample->id or '' }}
 
 					</td>
 

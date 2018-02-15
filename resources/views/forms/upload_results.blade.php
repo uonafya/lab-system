@@ -28,7 +28,7 @@
 
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-8 col-lg-offset-2">
                 <div class="hpanel">
                     <div class="panel-heading">
                         <center>Worksheet Information</center>
@@ -87,7 +87,7 @@
                         <div class="hr-line-dashed"></div>
 
                         @if($worksheet->machine_type == 2)
-                            <p>The file must be text file eg {{ $worksheet->id }}.txt </p>
+                            <p>The file must be an excel file eg {{ $worksheet->id }}.xlsx </p>
 
 
                             <div class="fileinput fileinput-new input-group" data-provides="fileinput">
@@ -96,9 +96,9 @@
                                     <span class="fileinput-filename"></span>
                                 </div>
                                 <span class="input-group-addon btn btn-default btn-file">
-                                    <span class="fileinput-new">Select TXT</span>
+                                    <span class="fileinput-new">Select Excel</span>
                                     <span class="fileinput-exists">Change</span>
-                                    <input id="upload" type="file" accept=".txt" name="upload" >
+                                    <input id="upload" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="upload" >
                                 </span>
                                 <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                             </div>

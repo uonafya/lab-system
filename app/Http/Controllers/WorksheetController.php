@@ -6,6 +6,7 @@ use App\Worksheet;
 use App\Sample;
 use App\User;
 use DB;
+use Excel;
 use Illuminate\Http\Request;
 
 class WorksheetController extends Controller
@@ -233,11 +234,6 @@ class WorksheetController extends Controller
         return redirect("/worksheet");
     }
 
-    public function sample_totals($worksheet_ids)
-    {
-
-    }
-
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
@@ -245,17 +241,100 @@ class WorksheetController extends Controller
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users]);
     }
 
+
+
+
+    /**
+     * Update the specified resource in storage with results file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Worksheet  $worksheet
+     * @return \Illuminate\Http\Response
+     */
     public function save_results(Request $request, Worksheet $worksheet)
     {
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
-        $today = date("Y-m-d");
+        $today = $dateoftest = date("Y-m-d");
         $positive_control;
         $negative_control;
 
         if($worksheet->machine_type == 2)
         {
+            $dateoftest = $today;
+            // config(['excel.import.heading' => false]);
+            $data = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
 
+            $check = array();
+
+            // dd($data);
+
+            $bool = false;
+            $positive_control = $negative_control = "Passed";
+
+            foreach ($data as $key => $value) {
+                if($value[5] == "RESULT"){
+                    $bool = true;
+                    continue;
+                }
+
+                if($bool){
+                    $sample_id = $value[1];
+                    $interpretation = $value[5];
+                    $error = $value[10];
+
+                    switch ($interpretation) {
+                        case 'Not Detected':
+                            $result = 1;
+                            break;
+                        case 'HIV-1 Detected':
+                            $result = 2;
+                            break;
+                        case 'Detected':
+                            $result = 2;
+                            break;
+                        case 'Collect New Sample':
+                            $result = 5;
+                            break;
+                        default:
+                            $result = 3;
+                            $interpretation = $error;
+                            break;
+                    }
+
+                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
+                    $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                    DB::table('samples')->where($search)->update($data_array);
+
+                    $check[] = $search;
+
+                    if($sample_id == "HIV_NEG"){
+                        $negative_control = $result;
+                    }
+                    else if($sample_id == "HIV_HIPOS"){
+                        $positive_control = $result;
+                    }
+
+                }
+
+                if($bool && $value[5] == "RESULT") break;
+            }
+
+            if($positive_control == "Passed"){
+                $pos_result = 6;
+            }
+            else{
+                $pos_result = 7;
+            }
+
+            if($negative_control == "Passed"){
+                $neg_result = 6;
+            }
+            else{
+                $neg_result = 7;
+            }
         }
         else
         {
@@ -343,8 +422,9 @@ class WorksheetController extends Controller
         $worksheet->pos_control_interpretation = $positive_control;
         $worksheet->pos_control_result = $pos_result;
         $worksheet->daterun = $dateoftest;
-        $worksheet->daterun = $dateoftest;
         $worksheet->save();
+
+        // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
         return redirect('worksheet');
     }
