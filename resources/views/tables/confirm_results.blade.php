@@ -46,7 +46,7 @@
                     Standard table
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('confirm_results') }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
+                    <form  method="post" action="{{ url('worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
                         {{ method_field('PUT') }} {{ csrf_field() }}
 
                         <table class="table table-striped table-bordered table-hover data-table" >
@@ -99,7 +99,11 @@
 
                                 @foreach($samples as $key => $sample)
                                     <tr>
-                                        <td> {{ $sample->patient->patient }}  </td>
+                                        <td> 
+                                            {{ $sample->patient->patient }}  
+                                            <input type="hidden" name="samples[]" value="{{ $sample->id }} ">
+                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }} ">
+                                        </td>
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
@@ -112,7 +116,7 @@
                                                 @endforeach
 
                                             @else
-                                                <select name="action[]">
+                                                <select name="results[]">
                                                     @foreach($results as $result)
                                                         <option value="{{$result->id}}"
                                                             @if($sample->result == $result->id)
@@ -150,15 +154,32 @@
 
                                         <td> <div align="center"><input name="approved[]" type="checkbox"  value="{{ $key }}" checked /></div> </td>
                                         <td> {{ $sample->dateapproved }} </td>
-                                        <td> {{ $sample->approver->full_name }} </td>
-                                        <td> {{  }} </td>
+                                        <td> {{ $sample->approver->full_name or '' }} </td>
+                                        <td> 
+                                            <a href="{{ url('sample/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
+                                            <a href="{{ url('sample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
+                                        </td>
                                     </tr>
 
                                 @endforeach
 
+                                @if($worksheet->status != 3)
+
+                                    <tr bgcolor="#999999">
+                                        <td  colspan="10" bgcolor="#00526C" >
+                                            <center>
+                                                <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  />
+                                            </center>
+                                        </td>
+                                    </tr>
+
+                                @endif
+
 
                             </tbody>
                         </table>
+
+
                     </form>
                 </div>
             </div>

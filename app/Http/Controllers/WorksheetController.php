@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Worksheet;
 use App\Sample;
 use App\User;
+use App\Misc;
 use DB;
 use Excel;
 use Illuminate\Http\Request;
@@ -414,7 +415,7 @@ class WorksheetController extends Controller
 
         }
 
-        DB::table('samples')->where(['worksheet_id' => $worksheet->id])->whereNull('run')->update(['run' => 1]);
+        DB::table('samples')->where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
 
         $worksheet->neg_control_interpretation = $negative_control;
         $worksheet->neg_control_result = $neg_result;
@@ -424,9 +425,58 @@ class WorksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
+        $my = new Misc;
+        $my->requeue($worksheet->id);
+
         // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
         return redirect('worksheet');
+    }
+
+    public function approve_results(Worksheet $worksheet)
+    {
+        $results = DB::table('results')->get();
+        $actions = DB::table('actions')->get();
+        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'worksheet' => $worksheet]);
+    }
+
+    public function approve(Request $request, Worksheet $worksheet)
+    {
+        $samples = $request->input('samples');
+        $batches = $request->input('batches');
+        $results = $request->input('results');
+        $actions = $request->input('actions');
+        $today = date('Y-m-d');
+        $approver = auth()->user()->id;
+
+        $batch = array();
+        $my = new Misc;
+
+        foreach ($samples as $key => $value) {
+            $batch = $batches[$key];
+            $data = [
+                'approvedby' => $approver,
+                'dateapproved' => $today,
+                'result' => $results[$key],
+                'repeatt' => $actions[$key],
+            ];
+
+            DB::table('samples')->update($data)->where('id', $samples[$key]);
+
+            if($actions[$key] == 1){
+                $my->save_repeat($samples[$key]);
+            }
+        }
+
+        $batch = collect($batch);
+        $b = $batch->unique();
+        $unique = $b->values()->all();
+
+        foreach ($unique as $value) {
+            $my->check_batch($value);
+        }
+
     }
 
     public function mtype($machine)

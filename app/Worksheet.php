@@ -39,4 +39,9 @@ class Worksheet extends Model
         return $this->belongsTo('App\User', 'reviewedby');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
+
 }

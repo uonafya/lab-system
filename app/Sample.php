@@ -34,6 +34,8 @@ class Sample extends Model
     }
 
 
+
+
     // Parent sample
     public function parent()
     {
@@ -44,6 +46,28 @@ class Sample extends Model
     public function child()
     {
         return $this->hasMany('App\Sample', 'parentid');
+    }
+
+    
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'createdby');
+    }
+
+    public function canceller()
+    {
+        return $this->belongsTo('App\User', 'cancelledby');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo('App\User', 'reviewedby');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
     }
 
 }
