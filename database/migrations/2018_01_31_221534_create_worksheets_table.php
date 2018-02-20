@@ -21,6 +21,7 @@ class CreateWorksheetsTable extends Migration
             // 1 is in process
             // 2 is tested, results uploaded awaiting approval
             // 3 is results uploaded and approved
+            // 4 is cancelled
             $table->tinyInteger('status_id')->unsigned()->default(1);
 
             $table->integer('runby')->unsigned()->nullable();
@@ -46,8 +47,8 @@ class CreateWorksheetsTable extends Migration
             $table->tinyInteger('neg_control_result')->unsigned()->nullable();
             $table->tinyInteger('pos_control_result')->unsigned()->nullable();
 
-            $table->string('neg_control_intepretation')->nullable();
-            $table->string('pos_control_intepretation')->nullable();
+            $table->string('neg_control_interpretation')->nullable();
+            $table->string('pos_control_interpretation')->nullable();
 
             $table->string('cdcworksheetno')->nullable();
 
@@ -59,7 +60,8 @@ class CreateWorksheetsTable extends Migration
             $table->date('amplificationexpirydate')->nullable();
 
             $table->date('datecut')->nullable();
-            $table->date('date_uploaded')->nullable();
+            $table->date('datereviewed')->nullable();
+            $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
             $table->date('daterun')->nullable();
             $table->date('dateapproved')->nullable();
