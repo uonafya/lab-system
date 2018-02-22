@@ -6,16 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sample extends Model
 {
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionEnabled = true;
+    protected $revisionCleanup = true; 
+    protected $historyLimit = 500; 
+    
     protected $guarded = [];
     protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
-
-    // protected $dateFormat = 'Y-m-d';
+    protected $dateFormat = 'Y-m-d';
 
     public function setDatedispatchedfromfacilityAttribute($value)
     {
         $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
-        // $this->attributes['date_of_expiry'] = $value;
     }
 
     public function patient()

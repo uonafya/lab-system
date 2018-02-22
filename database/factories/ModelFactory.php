@@ -34,11 +34,13 @@ $factory->define(App\Batch::class, function (Faker $faker) {
     return [
         'received_by' => 1,
         'user_id' => 1,
-
+        'batch_full' => 1,
         'input_complete' => 1,
         'lab_id' => rand(1, 20),
         'facility_id' => rand(1, 1000),
-        'datereceived' => $faker->dateTimeThisYear($max = 'now'),
+        // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
+        'datereceived' => $faker->numerify('2017-0#-1#'),
+        // 'datereceived' => $faker->regexify('2017\-+0[1-9]+\-[1-2]+[0-9]'),
     ];
 });
 
@@ -53,16 +55,27 @@ $factory->define(App\Sample::class, function (Faker $faker) {
         'mother_prophylaxis' => rand(1, 5),
         'feeding' => rand(1, 5),
         'spots' => rand(1, 5),
-        'datecollected' => $faker->dateTimeThisYear($max = 'now'),
+        'datecollected' => $faker->numerify('2017-0#-1#'),
+        // 'datecollected' => $faker->dateTimeThisYear($max = 'now'),
     ];
 });
 
 $factory->define(App\Patient::class, function (Faker $faker) {
     return [
         'patient' => $faker->bothify('#####-?????'),
-        'mother_id' => rand(1, 100),
+        // 'mother_id' => rand(1, 100),
+        'mother_id' => 1,
         'facility_id' => rand(1, 1000),
         'dob' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
         'sex' => rand(1, 2),
+    ];
+});
+
+$factory->define(App\Mother::class, function (Faker $faker) {
+    return [
+        'ccc_no' => $faker->bothify('#####-?????'),
+        'facility_id' => rand(1, 1000),
+        'entry_point' => rand(1, 5),
+        'hiv_status' => rand(1, 5),
     ];
 });

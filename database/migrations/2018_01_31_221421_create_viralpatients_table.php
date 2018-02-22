@@ -27,7 +27,9 @@ class CreateViralpatientsTable extends Migration
             $table->date('initiation_date')->nullable();
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->timestamps();
+            $table->date('created_at')->nullable();
+            $table->date('updated_at')->nullable();
+            // $table->timestamps();
         });
     }
 

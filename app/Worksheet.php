@@ -14,6 +14,8 @@ class Worksheet extends Model
     protected $guarded = [];
     protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
 
+    protected $dateFormat = 'Y-m-d';
+
     public function sample()
     {
     	return $this->hasMany('App\Sample');

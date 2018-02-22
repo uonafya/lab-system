@@ -29,6 +29,20 @@
 
 
         @if($create)
+
+            <div class="row">
+                <div class="col-lg-9 col-lg-offset-1">
+                    <div class="hpanel">
+                        <div class="panel-heading">
+                            <center>Samples</center>
+                        </div>
+                        <div class="panel-body">
+                            @include('shared/samples-partial')
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
             <div class="row">

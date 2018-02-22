@@ -16,14 +16,15 @@ class CreateMothersTable extends Migration
         Schema::create('mothers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ccc_no')->nullable()->index();
-            $table->integer('fcode')->unsigned()->index()->nullable();
+            $table->integer('fcode')->unsigned()->nullable();
             $table->integer('facility_id')->unsigned()->index();
             $table->integer('entry_point')->unsigned()->index();
             $table->integer('hiv_status')->unsigned();
-            $table->integer('age')->unsigned()->nullable();
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->timestamps();
+            $table->date('created_at')->nullable();
+            $table->date('updated_at')->nullable();
+            // $table->timestamps();
         });
     }
 

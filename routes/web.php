@@ -31,6 +31,8 @@ Route::get('/addsample', function () {
 Route::get('sample/new_patient/{patient}/{facility_id}', 'SampleController@new_patient');
 Route::resource('sample', 'SampleController');
 
+Route::get('batch/dispatch/', 'BatchController@batch_dispatch');
+
 Route::get('worksheet/create_abbot', 'WorksheetController@abbot')->name('worksheet.create_abbot');
 Route::get('worksheet/print/{worksheet}', 'WorksheetController@print')->name('worksheet.print');
 Route::get('worksheet/cancel/{worksheet}', 'WorksheetController@cancel')->name('worksheet.cancel');

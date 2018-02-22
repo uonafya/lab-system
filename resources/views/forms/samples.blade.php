@@ -205,7 +205,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
-                            <div class="col-sm-8"><input class="form-control" name="ccc_no" type="text" value="{{ $sample->patient->mother->ccc_no or '' }}"></div>
+                            <div class="col-sm-8"><input class="form-control" id="ccc_no" name="ccc_no" type="text" value="{{ $sample->patient->mother->ccc_no or '' }}"></div>
                         </div>
 
                         <div class="form-group">
@@ -526,6 +526,7 @@
                         $("#sex").val(patient.sex).change();
                         $("#hiv_status").val(mother.hiv_status).change();
                         $("#entry_point").val(mother.entry_point).change();
+                        $("#ccc_no").val(mother.ccc_no).change();
 
                         $('#pcrtype option[value=2]').attr('selected','selected').change();
                         $("#hidden_pcr").val(2);
