@@ -39,9 +39,6 @@ class LoginController extends Controller
             // return 'student_intake/set_intake';
         }
         return '/';
-        
-
-        
     }
 
     /**

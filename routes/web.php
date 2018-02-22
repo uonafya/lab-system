@@ -17,12 +17,14 @@ Route::get('reset_password/{token}', ['as' => 'password.reset', function($token)
 }]);
 
 Route::get('/', function () {
-    return view('login');
+    // return view('auth.login');
+    return view('emergency');
 });
 
-Route::get('/home', function () {
-	return view('layouts/master');
-});
+// Route::get('/home', function () {
+// 	return view('home');
+// });
+Route::get('/home', 'HomeController@index');
 
 Route::get('/addsample', function () {
 	return view('addsample');
