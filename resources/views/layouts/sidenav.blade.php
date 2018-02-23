@@ -14,16 +14,16 @@
                 <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href="{{ url('sample/create') }}">Add</a></li>
-                    <li><a href="#">View</a></li>
+                    <li><a href="{{ url('sample') }}">View</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
-                    <li><a href="#">Create Abbott Worksheet(24)</a></li>
-                    <li><a href="#">Create Abbott Worksheet(48)</a></li>
-                    <li><a href="#">Create Abbott Worksheet(96)</a></li>
+                    <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(24)</a></li>
+                    <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(48)</a></li>
+                    <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(96)</a></li>
                 </ul>
             </li>
         @endif
