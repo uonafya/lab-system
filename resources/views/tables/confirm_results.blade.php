@@ -35,6 +35,31 @@
 </div>
  
 <div class="content">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="hpanel">
+                <div class="panel-heading">
+                    Worksheet Summary
+                    <div class="panel-tools">
+                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                        <a class="closebox"><i class="fa fa-times"></i></a>
+                    </div>
+                    
+                </div>
+                <div class="panel-body">
+
+                    @if($worksheet->machine_type == 1)
+                        @include('shared/other-header-partial')
+                    @else
+                        @include('shared/abbot-header-partial')
+                    @endif
+
+                </div>
+            </div>
+        </div>        
+    </div>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
@@ -102,7 +127,7 @@
                                         <td> 
                                             {{ $sample->patient->patient }}  
                                             <input type="hidden" name="samples[]" value="{{ $sample->id }} ">
-                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }} ">
+                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}">
                                         </td>
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
@@ -138,7 +163,8 @@
                                                 @endforeach
 
                                             @else
-                                                <select name="action[]">
+                                                <select name="actions[]">
+                                                    <option>Choose an action</option>
                                                     @foreach($actions as $action)
                                                         <option value="{{$action->id}}"
                                                             @if($sample->repeatt == $action->id)

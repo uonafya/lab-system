@@ -9,6 +9,11 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionEnabled = true;
+    protected $revisionCleanup = true; 
+    protected $historyLimit = 500; 
+    
     use Notifiable;
 
     /**

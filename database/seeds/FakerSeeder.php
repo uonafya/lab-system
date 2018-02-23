@@ -23,5 +23,9 @@ class FakerSeeder extends Seeder
 				})
 			);
 		});
+
+		// $batch = factory(App\Batch::class)->create();
+
+		$mothers = factory(App\Mother::class, 10)->create();
     }
 }

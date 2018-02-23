@@ -53,13 +53,15 @@ class CreateSamplesTable extends Migration
 
             $table->date('datecollected')->nullable()->index();
             $table->date('datetested')->nullable()->index();
-            $table->date('datemodified')->nullable();
+            $table->date('datemodified')->nullable()->index();
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->timestamps();
+            $table->date('created_at')->nullable();
+            $table->date('updated_at')->nullable();
+            // $table->timestamps();
         });
     }
 

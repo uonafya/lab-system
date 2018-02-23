@@ -26,12 +26,7 @@ class WorksheetController extends Controller
         })
         ->get();
 
-        $samples = Sample::selectRaw("count(*) as totals, worksheet_id, result")
-            ->whereNotNull('worksheet_id')
-            ->whereNotNull('result')
-            ->where('inworksheet', 1)
-            ->groupBy('worksheet_id', 'result')
-            ->get();
+        $samples = $this->get_worksheets();
 
         $table_rows = "";
 
@@ -47,8 +42,8 @@ class WorksheetController extends Controller
                 $failed = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 3));
                 $redraw = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 5));
                 $noresult = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 0));
-                $total = $neg + $pos + $failed + $redraw + $noresult;
 
+                $total = $neg + $pos + $failed + $redraw + $noresult;
 
             }
             else{
@@ -73,8 +68,10 @@ class WorksheetController extends Controller
      */
     public function create()
     {
-        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.*, patients.patient, view_facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
+            ->join('patients', 'samples.patient_id', '=', 'patients.id')
+            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
@@ -87,10 +84,12 @@ class WorksheetController extends Controller
             ->limit(22)
             ->get();
 
+        // dd($samples);
+
         $count = $samples->count();
 
         if($count == 22){
-            return view('forms.worksheets', ['create' => true, 'machine_type' => 1]);
+            return view('forms.worksheets', ['create' => true, 'machine_type' => 1, 'samples' => $samples]);
         }
 
         return view('forms.worksheets', ['create' => false, 'machine_type' => 1, 'count' => $count]);
@@ -98,8 +97,10 @@ class WorksheetController extends Controller
 
     public function abbot()
     {
-        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.*, patients.patient, view_facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
+            ->join('patients', 'samples.patient_id', '=', 'patients.id')
+            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
@@ -115,7 +116,7 @@ class WorksheetController extends Controller
         $count = $samples->count();
 
         if($count == 94){
-            return view('forms.worksheets', ['create' => true, 'machine_type' => 2]);
+            return view('forms.worksheets', ['create' => true, 'machine_type' => 2, 'samples' => $samples]);
         }
 
         return view('forms.worksheets', ['create' => false, 'machine_type' => 2, 'count' => $count]);
@@ -345,6 +346,12 @@ class WorksheetController extends Controller
                 $interpretation = $data[8];
                 $dateoftest=date("Y-m-d", strtotime($data[3]));
 
+                $flag = $data[10];
+
+                if($flag != NULL){
+                    $interpretation = $flag;
+                }
+
                 if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
                 {
                     $result = 1;
@@ -430,15 +437,30 @@ class WorksheetController extends Controller
 
         // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
-        return redirect('worksheet');
+        return redirect('worksheet/approve/' . $worksheet->id);
     }
 
     public function approve_results(Worksheet $worksheet)
     {
+        $worksheet->load(['reviewer', 'creator', 'runner']);
+
         $results = DB::table('results')->get();
         $actions = DB::table('actions')->get();
         $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'worksheet' => $worksheet]);
+
+        $s = $this->get_worksheets($worksheet->id);
+
+        $neg = $this->checknull($s->where('result', 1));
+        $pos = $this->checknull($s->where('result', 2));
+        $failed = $this->checknull($s->where('result', 3));
+        $redraw = $this->checknull($s->where('result', 5));
+        $noresult = $this->checknull($s->where('result', 0));
+
+        $total = $neg + $pos + $failed + $redraw + $noresult;
+
+        $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
+
+        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
     }
 
     public function approve(Request $request, Worksheet $worksheet)
@@ -447,6 +469,7 @@ class WorksheetController extends Controller
         $batches = $request->input('batches');
         $results = $request->input('results');
         $actions = $request->input('actions');
+        // dd($batches);
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
@@ -454,7 +477,6 @@ class WorksheetController extends Controller
         $my = new Misc;
 
         foreach ($samples as $key => $value) {
-            $batch = $batches[$key];
             $data = [
                 'approvedby' => $approver,
                 'dateapproved' => $today,
@@ -462,20 +484,24 @@ class WorksheetController extends Controller
                 'repeatt' => $actions[$key],
             ];
 
-            DB::table('samples')->update($data)->where('id', $samples[$key]);
+            DB::table('samples')->where('id', $samples[$key])->update($data);
 
             if($actions[$key] == 1){
                 $my->save_repeat($samples[$key]);
             }
         }
 
-        $batch = collect($batch);
+        $batch = collect($batches);
         $b = $batch->unique();
         $unique = $b->values()->all();
 
         foreach ($unique as $value) {
             $my->check_batch($value);
         }
+
+        $worksheet->status_id = 3;
+        $worksheet->save();
+        return redirect('/worksheet');
 
     }
 
@@ -536,6 +562,21 @@ class WorksheetController extends Controller
 
         }
         return $d;
+    }
+
+    public function get_worksheets($worksheet_id=NULL)
+    {
+        $samples = Sample::selectRaw("count(*) as totals, worksheet_id, result")
+            ->whereNotNull('worksheet_id')
+            ->when($worksheet_id, function($query) use ($worksheet_id){
+                return $query->where('worksheet_id', $worksheet_id);
+            })
+            ->where('inworksheet', 1)
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('worksheet_id', 'result')
+            ->get();
+
+        return $samples;
     }
 
     public function checknull($var)
