@@ -21,6 +21,7 @@ class CreateViralsamplesTable extends Migration
             $table->string('provider_identifier')->nullable();
             $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();
 
+            // This will be used instead
             $table->tinyInteger('age')->unsigned()->nullable()->index();
             $table->tinyInteger('justification')->unsigned()->nullable()->index();
             $table->tinyInteger('sampletype')->unsigned()->nullable()->index();

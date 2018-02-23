@@ -16,7 +16,6 @@ class CreateViralpatientsTable extends Migration
         Schema::create('viralpatients', function (Blueprint $table) {
             $table->increments('id');
             $table->string('patient_name')->nullable();
-            $table->integer('mother_id')->unsigned();
             $table->integer('facility_id')->unsigned()->index();
             $table->string('patient');
             $table->string('fullnames')->nullable();

@@ -32,7 +32,7 @@
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">20<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
                     <li><a href="#">Update Results</a></li>
-                    <li><a href="#">Dispatch Results<span class="label label-warning pull-right">20</span></a></li>
+                    <li><a href="{{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">20</span></a></li>
                 </ul>
             </li>
             <li>

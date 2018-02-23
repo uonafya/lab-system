@@ -24,8 +24,16 @@ class FakerSeeder extends Seeder
 			);
 		});
 
-		// $batch = factory(App\Batch::class)->create();
-
 		$mothers = factory(App\Mother::class, 10)->create();
+
+		$viralbatches = factory(App\Viralbatch::class, 20)->create()
+		->each(function ($b){
+			$b->sample()->saveMany(
+				factory(App\Viralsample::class, 10)->create(['batch_id' => $b->id])
+				->each(function ($s) use ($b){
+					$patient = factory(App\Viralpatient::class)->create(['facility_id' => $b->facility_id]);
+				})
+			);
+		});
     }
 }

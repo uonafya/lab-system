@@ -23,7 +23,7 @@ class Misc extends Model
 				}
 			}
 			else{
-				$original = $this->check_original($sample_id);
+				$original = $this->check_original($sample->id);
 
 				if($sample->run == 2){
 					if( ($sample->result == 3 && $original->result == 3) || 
@@ -36,7 +36,7 @@ class Misc extends Model
 				}
 
 				else if($sample->run == 3){
-					$second = $this->check_run($sample_id, 2);
+					$second = $this->check_run($sample->id, 2);
 
 					if( ($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
 						($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
@@ -87,11 +87,17 @@ class Misc extends Model
 
 	public function check_original($sample_id)
 	{
-		$lab = session()->auth()->id;
+		// $lab = session()->auth()->id;
+
+		// $sample = Sample::select('samples.*')
+		// ->join('batches', 'samples.batch_id', '=', 'batches.id')
+		// ->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
+		// ->get()
+		// ->first();
 
 		$sample = Sample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
+		->where(['samples.id' => $sample_id])
 		->get()
 		->first();
 
@@ -100,11 +106,16 @@ class Misc extends Model
 
 	public function check_previous($sample_id)
 	{
-		$lab = session()->auth()->id;
+		// $lab = auth()->user()->lab_id;
+
+		// $samples = Sample::select('samples.*')
+		// ->join('batches', 'samples.batch_id', '=', 'batches.id')
+		// ->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id])
+		// ->get();
 
 		$samples = Sample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id])
+		->where(['samples.parentid' => $sample_id])
 		->get();
 
 		return $samples;
@@ -112,11 +123,17 @@ class Misc extends Model
 
 	public function check_run($sample_id, $run=2)
 	{
-		$lab = session()->auth()->id;
+		// $lab = auth()->user()->lab_id;
+
+		// $sample = Sample::select('samples.*')
+		// ->join('batches', 'samples.batch_id', '=', 'batches.id')
+		// ->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id, 'run' => $run])
+		// ->get()
+		// ->first();
 
 		$sample = Sample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id, 'run' => $run])
+		->where(['samples.parentid' => $sample_id, 'run' => $run])
 		->get()
 		->first();
 
