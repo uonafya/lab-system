@@ -1,62 +1,59 @@
 <p>
 
-	Hello {{$facilityname}},
+	Hello {{ $facility->name }},
+
+	<br />
+	<br />
 
 
-	Batch No $BatchNo[$a] with $snumsamples samples that were received on $sdreceived  have been processed and results have been dispatched. 
+	Batch No {{ $batch->id }} with {{ $batch->sample->count() }} samples that were received on {{ $batch->datereceived->toFormattedDateString() }}  have been processed and results have been dispatched. 
+	<br />
 
-	The samples results can be collected at your nearest G4S branch in $g4sbranchlocation.
+	@isset($g4sbranchlocation)
+		The samples results can be collected at your nearest G4S branch in {{$g4sbranchlocation}}.
+	@endisset
 
-	Please confirm that this email address and the G4S branch above is correct by responding receipt of this email to the following email address: $replyemail 
+	<br />
+	
+	Please confirm that this email address
+
+	@isset($g4sbranchlocation)
+		and the G4S branch above 
+	@endisset
+
+	 is correct by responding receipt of this email to the following email address: {{ config('mail.from.address') }} 
+
+	<br />
 
 	------------------------------------------------------------------------------------------ 
+
+	<br />
 
 	Click this link to access and download the results as well as view your historical batches:
 
-	$site_url 
+	<br />
+
+	{{$site_url}} 
+
+	<br />
 
 	------------------------------------------------------------------------------------------
 
-	The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.  Call the official EID lines for more information.  
+	<br />
+
+	The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.  Call the official EID lines for more information.
+
+	<br />  
 
 	This email was automatically generated. Please do not respond to this or it will be ignored.
 
-	Regards,
+	<br />
 
-	--
-	KEMRI CIPDCR -Alupe
-	Busia - Malaba Rd, Busia
-	Email: eid-alupe@googlegroups.com
-	Phone:0726156679
+	Regards, <br />
+	-- <br />
+	KEMRI CIPDCR -Alupe <br />
+	Busia - Malaba Rd, Busia <br />
+	Email: eid-alupe@googlegroups.com <br />
+	Phone:0726156679 <br />
 
-</p>
-
-<p>
-	Hello $facilityname,
-
-
-	Batch No $BatchNo[$a] with $snumsamples samples that were received on $sdreceived  have been processed and results have been dispatched. 
-
-
-	Please confirm that this email address is correct by responding receipt of this email to the following email address: $replyemail 
-
-	------------------------------------------------------------------------------------------
-
-	Click this link to access and download the results: 
-
-	$site_url 
-
-	------------------------------------------------------------------------------------------ 
-
-	The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.  Call the official EID lines for more information. 
-
-	This email was automatically generated. Please do not respond to this or it will be ignored.
-
-	Regards,
-
-	--
-	KEMRI CIPDCR -Alupe
-	Busia - Malaba Rd, Busia
-	Email: eid-alupe@googlegroups.com
-	Phone:0726156679
 </p>

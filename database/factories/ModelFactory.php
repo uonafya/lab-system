@@ -36,7 +36,8 @@ $factory->define(App\Batch::class, function (Faker $faker) {
         'user_id' => 1,
         'batch_full' => 1,
         'input_complete' => 1,
-        'lab_id' => rand(1, 20),
+        // 'lab_id' => rand(1, 7),
+        'lab_id' => 3,
         'facility_id' => rand(1, 1000),
         // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
         'datereceived' => $faker->numerify('2017-0#-1#'),
@@ -77,5 +78,46 @@ $factory->define(App\Mother::class, function (Faker $faker) {
         'facility_id' => rand(1, 1000),
         'entry_point' => rand(1, 5),
         'hiv_status' => rand(1, 5),
+    ];
+});
+
+
+$factory->define(App\Viralbatch::class, function (Faker $faker) {
+    return [
+        'received_by' => 1,
+        'user_id' => 1,
+        'batch_full' => 1,
+        'input_complete' => 1,
+        // 'lab_id' => rand(1, 7),
+        'lab_id' => 3,
+        'facility_id' => rand(1, 1000),
+        // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
+        'datereceived' => $faker->numerify('2017-0#-1#'),
+        // 'datereceived' => $faker->regexify('2017\-+0[1-9]+\-[1-2]+[0-9]'),
+    ];
+});
+
+$factory->define(App\Viralsample::class, function (Faker $faker) {
+    return [
+        'patient_id' => rand(1, 100),
+        'batch_id' => rand(1, 20),
+        'receivedstatus' => 1,
+        'age' => rand(6, 11),
+        'justification' => rand(1, 7),
+        'sampletype' => rand(1, 4),
+        'prophylaxis' => rand(1, 20),
+        'regimenline' => rand(1, 3),
+        'pmtct' => rand(1, 3),
+        'datecollected' => $faker->numerify('2017-0#-1#'),
+        // 'datecollected' => $faker->dateTimeThisYear($max = 'now'),
+    ];
+});
+
+$factory->define(App\Viralpatient::class, function (Faker $faker) {
+    return [
+        'patient' => $faker->bothify('#####-?????'),
+        'facility_id' => rand(1, 1000),
+        'dob' => $faker->dateTimeBetween($startDate = '-60 years', $endDate = 'now'),
+        'sex' => rand(1, 2),
     ];
 });

@@ -32,6 +32,7 @@ class SampleController extends Controller
     {
         $facilities = Facility::select('id', 'name')->get();
         $amrs_locations = DB::table('amrslocations')->get();
+        $rejectedreasons = DB::table('rejectedreasons')->get();
         $genders = DB::table('gender')->get();
         $feedings = DB::table('feedings')->get();
         $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
@@ -44,6 +45,7 @@ class SampleController extends Controller
         return view('forms.samples', [
             'facilities' => $facilities,
             'amrs_locations' => $amrs_locations,
+            'rejectedreasons' => $rejectedreasons,
             'genders' => $genders,
             'feedings' => $feedings,
             'iprophylaxis' => $iprophylaxis,

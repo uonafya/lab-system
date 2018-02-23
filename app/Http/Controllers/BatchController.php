@@ -6,6 +6,8 @@ use App\Batch;
 use App\Sample;
 use App\Misc;
 
+use DB;
+
 use App\Mail\EidDispatch;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -100,7 +102,12 @@ class BatchController extends Controller
 
         foreach ($batches as $key => $value) {
             $batch = Batch::find($value);
-            Mail::to($request->user())->send(new EidDispatch($batch));
+            $facility = DB::table('facilitys')->where('id', $batch->facility_id)->get()->first();
+            // if($facility->email != null || $facility->email != '')
+            // {
+                // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
+                Mail::to('joelkith@gmail.com')->send(new EidDispatch($batch, $facility));
+            // }            
         }
 
         DB::table('batches')->whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);

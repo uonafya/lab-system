@@ -109,7 +109,7 @@ width:1180px;
 						<span class='style7'>Sample: {{ $sample->patient->patient or '' }}  {{$parent}}</span>
 						<br /> 
 
-						<img src="data:image/png;base64,{{DNS1D::getBarcodePNG($sample->id, 'C39+', 2, 40)}}" alt="barcode" />
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100" />
 						<br /> 
 						{{ $sample->id or '' }}
 
