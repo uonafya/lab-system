@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
-use App\NewModel;
+use App\User;
+use App\Batch;
+use App\Viralbatch;
 
 class LoginController extends Controller
 {
@@ -27,22 +30,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = '/student_intake/set_intake';
-
-    protected function redirectTo()
-    {
-        // $u_type = (int) auth()->user()->user_type_id;
-        if(auth()->user()->user_type_id == 7){
-            // dd(auth()->user());
-            $n = new NewModel;
-            $n->set_intake();
-            // return 'student_intake/set_intake';
-        }
-        return '/';
-        
-
-        
-    }
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -52,5 +40,50 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+
+    public function facility_login(Request $request)
+    {
+        $facility_id = $request->input('facility_id');
+        $batch_no = $request->input('batch_no');
+
+        $batch = Batch::find($batch_no);
+
+        if($batch){
+            if($batch->facility_id == $facility_id){
+                $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
+                
+                if($user){
+                    Auth::login($user);
+                    return redirect('/viralsample/create');                    
+                }
+            }
+        }
+
+        $batch = Viralbatch::find($batch_no);
+
+        if($batch){
+            if($batch->facility_id == $facility_id){
+                $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
+
+                if($user){
+                    Auth::login($user);
+                    return redirect('/viralsample/create');                    
+                }
+
+                // if(Auth::attempt(['email' => $user->email, 'password' => 'password'])){
+                //     return redirect('/viralsample/create');
+                // }
+
+            }
+        }
+        return $this->failed_facility_login(); 
+
+    }
+
+    public function failed_facility_login()
+    {
+        return redirect('/login');
     }
 }

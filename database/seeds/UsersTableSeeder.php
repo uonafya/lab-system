@@ -49,5 +49,17 @@ class UsersTableSeeder extends Seeder
 	        'oname' => 'Tim',
 	        'email' => 'tim@gmail.com',
     	]);
+
+    	$facilitys = DB::table('facilitys')->get();
+
+    	foreach ($facilitys as $key => $facility) {
+    		$fac = factory(App\User::class, 1)->create([
+		        'user_type_id' => 5,
+		        'surname' => '',
+		        'oname' => '',
+		        'facility_id' => $facility->id,
+		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
+	    	]);
+    	}
     }
 }
