@@ -4,6 +4,18 @@
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
 @endcomponent
 
+@section('custom_css')
+    <style type="text/css">
+        .hpanel {
+            margin-bottom: 4px;
+        }
+        .hpanel.panel-heading {
+            padding-bottom: 2px;
+            padding-top: 4px;
+        }
+    </style>
+@endsection
+
 @section('content')
 
     <div class="small-header">
@@ -30,9 +42,9 @@
         <input type="hidden" value=1 name="new_patient" id="new_patient">
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding-bottom: 6px;">
 
                         @if($facility_id == 0)    
                           <div class="form-group">
@@ -86,12 +98,12 @@
 
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                         <center>Infant Information</center>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding-bottom: 6px;">
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient / Sample ID</label>
@@ -196,12 +208,12 @@
 
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                         <center>Mother Information</center>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding-bottom: 6px;">
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
@@ -298,12 +310,12 @@
 
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                         <center>Sample Information</center>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding-bottom: 6px;">
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">No of Spots</label>
@@ -442,9 +454,9 @@
 
                 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding-bottom: 6px;">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
                             <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
                         </div>
@@ -455,11 +467,13 @@
                 </div>
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
-                    <div class="col-sm-8 col-sm-offset-2">
-                        <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
-                        <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
-                        <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
-                    </div>
+                    <center>
+                        <div class="col-sm-10 col-sm-offset-1">
+                            <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
+                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
+                            <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
+                        </div>
+                    </center>
                 </div>
             </div>
         </div>

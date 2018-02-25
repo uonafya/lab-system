@@ -36,9 +36,6 @@ class Sample extends Model
         return $this->belongsTo('App\Worksheet');
     }
 
-
-
-
     // Parent sample
     public function parent()
     {
@@ -50,8 +47,6 @@ class Sample extends Model
     {
         return $this->hasMany('App\Sample', 'parentid');
     }
-
-    
 
     public function creator()
     {

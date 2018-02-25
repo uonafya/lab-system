@@ -17,18 +17,25 @@ Route::get('reset_password/{token}', ['as' => 'password.reset', function($token)
 }]);
 
 Route::get('/', function () {
-    return view('login');
+    // return view('auth.login');
+    return view('emergency');
 });
 
-Route::get('/home', function () {
-	return view('layouts/master');
-});
+// Route::get('/home', function () {
+// 	return view('home');
+// });
+Route::get('/home', 'HomeController@index');
 
 Route::get('/addsample', function () {
 	return view('addsample');
 });
 
+Route::get('/checkboxes', function () {
+	return view('checkbox');
+});
+
 Route::get('sample/new_patient/{patient}/{facility_id}', 'SampleController@new_patient');
+
 Route::resource('sample', 'SampleController');
 
 Route::get('batch/dispatch/', 'BatchController@batch_dispatch');
@@ -45,7 +52,9 @@ Route::put('worksheet/approve/{worksheet}', 'WorksheetController@approve')->name
 
 Route::resource('worksheet', 'WorksheetController');
 
-
+Route::get('datatables', function () {
+	return view('datatables');
+});
 
 Route::get('viralsample/new_patient/{patient}/{facility_id}', 'ViralsampleController@new_patient');
 Route::resource('viralsample', 'ViralsampleController');
