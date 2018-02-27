@@ -14,7 +14,7 @@ class ComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->composer(
-            'layouts.sidenav','App\Http\ViewComposers\DashboardComposer'
+            ['layouts.sidenav','home'],'App\Http\ViewComposers\DashboardComposer'
         );
     }
 

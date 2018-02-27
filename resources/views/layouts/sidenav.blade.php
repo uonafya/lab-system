@@ -3,7 +3,11 @@
         <ul class="nav" id="side-menu">
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li class="active">
-                <a href="{{ url('home') }}"> <span class="nav-label">Tasks</span> <span class="label label-success pull-right">12</span> </a>
+                <a href="{{ url('home') }}"> <span class="nav-label">Tasks</span> 
+                    <span class="label label-success pull-right">
+                    {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
+                    </span>
+                </a>
             </li>
         @endif
             <li>
@@ -29,10 +33,14 @@
         @endif
         @if (auth()->user()->user_type_id == 1)
             <li>
-                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">20<span class="fa arrow"></span></span></a>
+                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
                     <li><a href="#">Update Results</a></li>
-                    <li><a href="{{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">20</span></a></li>
+                    <li>
+                        <a href="{{ url('batch/dispatch') }}">Dispatch Results
+                            <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li>

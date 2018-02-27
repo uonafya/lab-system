@@ -29,8 +29,7 @@ class DashboardComposer
      */
     public function compose(View $view)
     {
-    	dd($this->DashboardData);
-		$view->with('sidebar',$this->DashboardData);
+    	$view->with('widgets',$this->DashboardData);
     }
 
 	public function sidenav(View $view)
@@ -81,15 +80,17 @@ class DashboardComposer
 	public function samplesAwaitingRepeat()
 	{
 		return DB::table('samples')
-                    ->select('samples.id','patients.patient','batches.datereceived','spots', 'datecollected','receivedstatus','batches.facility_id','samples.worksheet_id', DB::raw('IF(samples.patient_id > 0 OR samples.parentid IS NULL, 0, 1) AS isnull'))
+                    ->select('samples.id','patient_id','batches.datereceived','spots', 'datecollected','receivedstatus','batches.facility_id','samples.worksheet_id', DB::raw('IF(samples.patient_id > 0 OR samples.parentid IS NULL, 0, 1) AS isnull'))
                     ->join('batches', 'batches.id', '=', 'samples.batch_id')
                     ->join('patients', 'patients.id', '=', 'samples.patient_id')
                     ->where('samples.inworksheet', '=', 0)
-                    // ->where(DB::raw('YEAR(batches.datereceived)'), '>', '2014')
                     ->where('samples.receivedstatus', '<>', '0')
                     ->where('samples.receivedstatus', '<>', '2')
-                    ->where(DB::raw('samples.result is null or samples.result = 0'))
-                    ->where('batches.input_complete', '=', '1')
+                    ->where(function ($query) {
+					    $query->whereNull('samples.result')
+					          ->orWhere('samples.result', '=', 0);
+					})
+                    // ->where(DB::raw(('samples.result is null or samples.result = 0')))
                     ->where('samples.flag', '=', '1')
                     ->where('samples.parentid', '>', '0')
                     ->orderBy('isnull', 'ASC')
@@ -101,7 +102,14 @@ class DashboardComposer
 
 	public function rejectedSamplesAwaitingDispatch()
 	{
-
+		$year = Date('Y')-3;
+		return DB::table('samples')
+					->select(DB::raw('count(*) as rejectfordispatch'))
+					->join('batches', 'batches.id', '=', 'samples.batch_id')
+					->where('samples.receivedstatus', '=', 2)
+					->whereNotNull('batches.datereceived')
+					->where(DB::raw('YEAR(batches.datereceived) > '.$year))
+					->get();
 	}
 }
 
