@@ -16,6 +16,10 @@ class ComposerServiceProvider extends ServiceProvider
         view()->composer(
             ['layouts.sidenav','home'],'App\Http\ViewComposers\DashboardComposer'
         );
+
+        view()->composer(
+            'home', 'App\Http\ViewComposers\DashboardComposer@tasks'
+        );
     }
 
     /**

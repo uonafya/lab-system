@@ -4,7 +4,7 @@ namespace App\Http\ViewComposers;
 use DB;
 use Illuminate\View\View;
 use App\Batch;
-
+use App\Facility;
 /**
 * 
 */
@@ -12,6 +12,7 @@ class DashboardComposer
 {
 	
 	public $DashboardData = [];
+	public $tasks = [];
 	function __construct()
 	{
 		$this->DashboardData['pendingSamples'] = sizeof(self::pendingSamplesAwaitingTesting());
@@ -30,6 +31,23 @@ class DashboardComposer
     public function compose(View $view)
     {
     	$view->with('widgets',$this->DashboardData);
+
+    }
+
+    public function tasks(View $view)
+    {
+    	$this->tasks['labname'] = DB::table('labs')->select('name')->where('id', '=', Auth()->user()->lab_id)->get();
+    	$this->tasks['facilityServed'] = Facility::where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->count();
+    	$this->tasks['facilitieswithSmsPrinters'] = Facility::where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->where('smsprinter', '<>', '')->count();
+    	$this->tasks['facilitiesWithoutEmails'] = Facility::where('Flag', '=', 1)
+    											->where('lab', '=', Auth()->user()->lab_id)
+    											->whereRaw("((email = '' and ContactEmail ='') or (email = '' and ContactEmail is null) or (email is null and ContactEmail ='') or ((email is null and ContactEmail is null)))")
+    											->count();
+    	$this->tasks['facilitiesWithoutG4s'] = Facility::where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)
+    													->where('G4Sbranchname', '=', '')->where('G4Slocation', '=', '')
+    													->count();
+    	
+    	$view->with('tasks', $this->tasks);
     }
 
 	public function sidenav(View $view)
