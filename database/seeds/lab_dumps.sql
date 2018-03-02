@@ -495,7 +495,7 @@ DROP TABLE IF EXISTS `rejectedreasons`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rejectedreasons` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(50) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
