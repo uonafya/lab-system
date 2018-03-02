@@ -108,6 +108,7 @@ $factory->define(App\Viralsample::class, function (Faker $faker) {
         'prophylaxis' => rand(1, 20),
         'regimenline' => rand(1, 3),
         'pmtct' => rand(1, 3),
+        'spots' => rand(1, 5),
         'datecollected' => $faker->numerify('2017-0#-1#'),
         // 'datecollected' => $faker->dateTimeThisYear($max = 'now'),
     ];

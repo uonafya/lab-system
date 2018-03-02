@@ -281,6 +281,21 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+    public function release_redraw(Sample $sample)
+    {
+        $sample->repeatt = 0;
+        $sample->result = "Collect New Sample";
+        $sample->save();
+        return back();
+    }
+
+    public function release_redraws(Request $request)
+    {
+        $samples = $request->input('samples');
+        DB::table('samples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => 5]);
+        return back();
+    }
+
     private function clear_session(){
         session()->forget('viral_batch_no');
         session()->forget('viral_batch_total');

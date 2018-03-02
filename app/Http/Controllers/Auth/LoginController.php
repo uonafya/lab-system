@@ -42,6 +42,12 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function fac_login()
+    {
+        $facilities = DB::table('facilitys')->select('id', 'name')->get();
+        return view('auth.fac-login', ['facilities' => $facilities]);
+    }
+
 
     public function facility_login(Request $request)
     {
@@ -84,6 +90,6 @@ class LoginController extends Controller
 
     public function failed_facility_login()
     {
-        return redirect('/login');
+        return redirect('/login/facility');
     }
 }
