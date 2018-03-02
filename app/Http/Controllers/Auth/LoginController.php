@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 use App\User;
 use App\Batch;
 use App\Viralbatch;
+
+use DB;
 
 class LoginController extends Controller
 {
@@ -45,7 +48,7 @@ class LoginController extends Controller
     public function fac_login()
     {
         $facilities = DB::table('facilitys')->select('id', 'name')->get();
-        return view('auth.fac-login', ['facilities' => $facilities]);
+        return view('auth.fac-login', ['facilities' => $facilities, 'login_error' => session()->pull('login_error')]);
     }
 
 
@@ -90,6 +93,7 @@ class LoginController extends Controller
 
     public function failed_facility_login()
     {
+        session(['login_error' => 'There was no batch for that facility']);
         return redirect('/login/facility');
     }
 }

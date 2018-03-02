@@ -64,12 +64,12 @@ class ViralworksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(94)
+            ->limit(93)
             ->get();
 
         $count = $samples->count();
 
-        if($count == 94){
+        if($count == 93){
             return view('forms.viralworksheets', ['create' => true, 'machine_type' => 2, 'samples' => $samples]);
         }
 
@@ -103,7 +103,7 @@ class ViralworksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(94)
+            ->limit(93)
             ->get();
 
         // if($samples->count() != 22 || $samples->count() != 94){

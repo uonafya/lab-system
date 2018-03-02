@@ -83,3 +83,8 @@ Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 Route::resource('viralworksheet', 'ViralworksheetController');
 
 Auth::routes();
+
+Route::get('test', 'FacilityController@test');
+
+Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
+Route::post('login/facility', 'Auth\\LoginController@facility_login');
