@@ -14,8 +14,6 @@ class Worksheet extends Model
     protected $guarded = [];
     protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
 
-    protected $dateFormat = 'Y-m-d';
-
     public function sample()
     {
     	return $this->hasMany('App\Sample');
@@ -44,6 +42,16 @@ class Worksheet extends Model
     public function approver()
     {
         return $this->belongsTo('App\User', 'approvedby');
+    }
+
+
+    public function getDateuploadedAttribute($value)
+    {
+        if($value){
+            $date = \DateTime::createFromFormat('Y-m-d', $value);
+            return $date->format('Y-m-d');            
+        }
+        return $value;
     }
 
 }

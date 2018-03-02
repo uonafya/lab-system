@@ -20,6 +20,7 @@ class CreateViralsamplesTable extends Migration
             $table->string('amrs_location')->nullable();
             $table->string('provider_identifier')->nullable();
             $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();
+            
 
             // This will be used instead
             $table->tinyInteger('age')->unsigned()->nullable()->index();
@@ -34,6 +35,7 @@ class CreateViralsamplesTable extends Migration
 
             $table->string('comments')->nullable();
             $table->string('labcomment')->nullable();
+            $table->integer('parentid')->unsigned()->default(0);
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
@@ -62,9 +64,9 @@ class CreateViralsamplesTable extends Migration
 
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->date('created_at')->nullable();
-            $table->date('updated_at')->nullable();
-            // $table->timestamps();
+            // $table->date('created_at')->nullable();
+            // $table->date('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 

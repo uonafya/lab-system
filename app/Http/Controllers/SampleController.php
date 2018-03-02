@@ -234,6 +234,7 @@ class SampleController extends Controller
         $sample->load(['patient.mother', 'batch']);
         $facilities = Facility::select('id', 'name')->get();
         $amrs_locations = DB::table('amrslocations')->get();
+        $rejectedreasons = DB::table('rejectedreasons')->get();
         $genders = DB::table('gender')->get();
         $feedings = DB::table('feedings')->get();
         $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
@@ -247,6 +248,7 @@ class SampleController extends Controller
             'sample' => $sample,
             'facilities' => $facilities,
             'amrs_locations' => $amrs_locations,
+            'rejectedreasons' => $rejectedreasons,
             'genders' => $genders,
             'feedings' => $feedings,
             'iprophylaxis' => $iprophylaxis,
@@ -312,6 +314,21 @@ class SampleController extends Controller
             $data[0] = 1;
         }
         return $data;
+    }
+
+    public function release_redraw(Sample $sample)
+    {
+        $sample->repeatt = 0;
+        $sample->result = 5;
+        $sample->save();
+        return back();
+    }
+
+    public function release_redraws(Request $request)
+    {
+        $samples = $request->input('samples');
+        DB::table('samples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => 5]);
+        return back();
     }
 
     private function clear_session(){

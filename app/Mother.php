@@ -14,8 +14,6 @@ class Mother extends Model
     protected $guarded = [];
     protected $dates = ['datesynched'];
 
-    protected $dateFormat = 'Y-m-d';
-
 
     public function patient()
     {

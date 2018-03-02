@@ -27,9 +27,9 @@ class CreatePatientsTable extends Migration
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
 
-            $table->date('created_at')->nullable();
-            $table->date('updated_at')->nullable();
-            // $table->timestamps();
+            // $table->date('created_at')->nullable();
+            // $table->date('updated_at')->nullable();
+            $table->timestamps();
 
             // $table->foreign('mother_id')->references('id')->on('mothers');
             // $table->foreign('facility_id')->references('id')->on('facilitys');

@@ -26,19 +26,19 @@
                 <div class="col-lg-9 col-lg-offset-1">
                     <div class="hpanel">
                         <div class="panel-heading">
-                            <center>Samples</center>
+                            <center>Viralload Samples</center>
                         </div>
                         <div class="panel-body">
-                            @include('shared/samples-partial')
+                            @include('shared/viralsamples-partial')
                         </div>
                     </div>
                 </div>                
             </div>
 
             @if (isset($worksheet))
-                {{ Form::open(['url' => '/worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+                {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
             @else
-                {{ Form::open(['url'=>'/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form']) }}
+                {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form']) }}
             @endif
 
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >

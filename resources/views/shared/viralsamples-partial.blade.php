@@ -22,10 +22,10 @@
 				<td> {{ $sample->run }} </td>
 				<td> {{ $sample->datecollected }} </td>
 
-                <td> <a href="{{ url('sample/release/' . $sample->id) }}"> Release</a> </td>
-                <td> <a href="{{ url('sample/' . $sample->id . '/edit') }}"> Edit</a> </td>
+                <td> <a href="{{ url('viralsample/release/' . $sample->id) }}"> Release</a> </td>
+                <td> <a href="{{ url('viralsample/' . $sample->id . '/edit') }}"> Edit</a> </td>
                 <td> 
-                    {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete']) }}
+                    {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete']) }}
                         <button type="submit" class="btn btn-xs btn-primary">Delete</button>
                     {{ Form::close() }} 
                 </td>

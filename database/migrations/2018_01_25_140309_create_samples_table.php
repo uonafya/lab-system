@@ -59,9 +59,9 @@ class CreateSamplesTable extends Migration
 
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->date('created_at')->nullable();
-            $table->date('updated_at')->nullable();
-            // $table->timestamps();
+            // $table->date('created_at')->nullable();
+            // $table->date('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 

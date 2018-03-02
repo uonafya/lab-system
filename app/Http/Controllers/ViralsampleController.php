@@ -33,7 +33,7 @@ class ViralsampleController extends Controller
         $amrs_locations = DB::table('amrslocations')->get();
         $rejectedreasons = DB::table('viralrejectedreasons')->get();
         $genders = DB::table('gender')->get();
-        $pmtct_types = DB::table('viralpmtcttype')->get();
+        $pmtct_types = DB::table('viralpmtcttype')->where('id', '<', 3)->get();
         $receivedstatuses = DB::table('receivedstatus')->get();
         $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
         $justifications = DB::table('viraljustifications')->get();
@@ -59,6 +59,8 @@ class ViralsampleController extends Controller
 
             'facility_id' => session('viral_facility_id', 0),
             'facility_name' => session('viral_facility_name', 0),
+
+            'message' => session()->pull('viral_message'),
         ]);
     }
 
@@ -85,6 +87,35 @@ class ViralsampleController extends Controller
 
         $ddispatched = $request->input('datedispatchedfromfacility');
 
+        $high_priority = $request->input('high_priority');
+
+        if($high_priority == 1)
+        {
+            $facility_id = $request->input('facility_id');
+
+            $batch = new Viralbatch;
+            $batch->user_id = auth()->user()->id;
+            $batch->lab_id = auth()->user()->lab_id;
+            $batch->facility_id = $facility_id;
+            $batch->datereceived = $request->input('datereceived');
+
+            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+                $batch->received_by = auth()->user()->id;
+                $batch->site_entry = 1;
+            }
+
+            if(auth()->user()->user_type_id == 5){
+                $batch->site_entry = 2;
+            }
+
+            $batch->save();
+            $message = 'The high priority sample has been saved in batch no ' . $batch->id . '.';
+
+            session(['viral_message' => $message]);
+            return redirect()->route('viralsample.create');
+        }
+
+
         if($batch_no == 0){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
@@ -104,15 +135,6 @@ class ViralsampleController extends Controller
                 $batch->datedispatchedfromfacility = $ddispatched;
             }
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
-                $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 1;
-            }
-
-            if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 2;
-            }
-
             $batch->save();
             $batch_no = $batch->id;
             session(['viral_batch_no' => $batch_no]);
@@ -122,7 +144,6 @@ class ViralsampleController extends Controller
             DB::table('viralbatches')->where('id', $batch_no)->update(['datedispatchedfromfacility' => $ddispatched]);
             session(['viral_batch_dispatch' => 1]);
         }
-
 
         $new_patient = $request->input('new_patient');
 
@@ -135,45 +156,30 @@ class ViralsampleController extends Controller
                 return redirect()->route('viralsample.create');
             }
 
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
             $sample = new Viralsample;
             $sample->fill($data);
             $sample->batch_id = $batch_no;
-            // $sample->age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
 
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
             $dob = Carbon::parse( $request->input('dob') );
             $years = $dc->diffInYears($dob, true);
 
-            // $months = $dc->diffInMonths($dob);
-            // $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
             $sample->age = $years;
             $sample->save();
         }
 
         else{
-
             $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
             $patient = new Viralpatient;
             $patient->fill($data);
-            $patient->mother_id = $mother->id;
             $patient->save();
 
-            // $patient_age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
-            // $dt = Carbon::today();
-            // $dt->subMonths($request->input('sample_months'));
-            // $dt->subWeeks($request->input('sample_weeks'));
-            // $patient->dob = $dt->toDateString();
-
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $years = $dc->diffInYears($dob, true);
+            $dob = Carbon::parse( $request->input('dob') );
+            $patient_age = $dc->diffInYears($dob, true);
 
-            // $months = $dc->diffInMonths($patient->dob);
-            // $weeks = $dc->diffInWeeks($patient->dob->copy()->addMonths($months));
-
-            // $patient_age = $months + ($weeks / 4);
-
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
             $sample = new Viralsample;
             $sample->fill($data);
             $sample->patient_id = $patient->id;
@@ -251,5 +257,37 @@ class ViralsampleController extends Controller
     public function destroy(Viralsample $viralsample)
     {
         //
+    }
+
+    public function new_patient($patient, $facility_id)
+    {
+        $patient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
+        $data;
+        if($patient){
+            $data[0] = 0;
+            $data[1] = $patient->toArray();
+
+            $sample = Viralsample::select('id')->where(['patient_id' => $patient->id])->where('rcategory', '>', 2)->first();
+            if($sample){
+                $data[2] = ['previous_nonsuppressed' => 1];
+            }
+            else{
+                $data[2] = ['previous_nonsuppressed' => 0];
+            }
+        }
+        else{
+            $data[0] = 1;
+        }
+        return $data;
+    }
+
+    private function clear_session(){
+        session()->forget('viral_batch_no');
+        session()->forget('viral_batch_total');
+        session()->forget('viral_batch_dispatch');
+        session()->forget('viral_batch_dispatched');
+        session()->forget('viral_batch_received');
+        session()->forget('viral_facility_id');
+        session()->forget('viral_facility_name');
     }
 }
