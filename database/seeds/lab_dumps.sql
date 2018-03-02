@@ -230,32 +230,6 @@ INSERT INTO `worksheetstatus` VALUES (1,'In-Process',1),(2,'Tested',1),(3,'Appro
 /*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Temporary table structure for view `view_facilitys`
---
-
-DROP TABLE IF EXISTS `view_facilitys`;
-/*!50001 DROP VIEW IF EXISTS `view_facilitys`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE TABLE `view_facilitys` (
-  `id` tinyint NOT NULL,
-  `facilitycode` tinyint NOT NULL,
-  `longitude` tinyint NOT NULL,
-  `latitude` tinyint NOT NULL,
-  `district` tinyint NOT NULL,
-  `subcounty` tinyint NOT NULL,
-  `name` tinyint NOT NULL,
-  `partner` tinyint NOT NULL,
-  `partnerdesc` tinyint NOT NULL,
-  `smsprinter` tinyint NOT NULL,
-  `flag` tinyint NOT NULL,
-  `lab` tinyint NOT NULL,
-  `county` tinyint NOT NULL,
-  `countydesc` tinyint NOT NULL,
-  `province` tinyint NOT NULL
-) ENGINE=MyISAM */;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `viralrejectedreasons`
