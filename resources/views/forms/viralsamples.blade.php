@@ -139,7 +139,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PMTCT(If Female)</label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="pmtct" id="pmtct">
+                                <select class="form-control" name="pmtct" id="pmtct">
 
                                     <option value=""> Select One </option>
                                     @foreach ($pmtct_types as $pmtct)
@@ -169,17 +169,6 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
-
-                        @isset($viralsample)
-
-                            @php
-
-                                $months = (int) $viralsample->age;
-                                $weeks = $viralsample->age - (int) $viralsample->age;
-
-                            @endphp
-
-                        @endisset
 
                         <!-- <div class="form-group">
                             <label class="col-sm-4 control-label">Age</label>
@@ -222,13 +211,6 @@
                     <div class="panel-body">
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">No of Spots</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" required name="spots" number="number" min=1 max=5 type="text" value="{{ $viralsample->spots or '' }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             <label class="col-sm-4 control-label">Type of Sample</label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="sampletype" id="sampletype">
@@ -269,18 +251,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Current Regimen</label>
+                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen</label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="prophylaxis" id="prophylaxis">
+                                <select class="form-control" required name="regimenline" id="regimenline">
                                     <option value=""> Select One </option>
-                                    @foreach ($prophylaxis as $proph)
-                                        <option value="{{ $proph->id }}"
+                                    @foreach ($regimenlines as $regimenline)
+                                        <option value="{{ $regimenline->id }}"
 
-                                        @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
+                                        @if (isset($viralsample) && $viralsample->regimenline == $regimenline->id)
                                             selected
                                         @endif
 
-                                        > {{ $proph->displaylabel }}
+                                        > {{ $regimenline->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -288,18 +270,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen</label>
+                            <label class="col-sm-4 control-label">Justification</label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="prophylaxis" id="prophylaxis">
+                                <select class="form-control" required name="justification" id="justification">
                                     <option value=""> Select One </option>
-                                    @foreach ($regimenlines as $regimenline)
-                                        <option value="{{ $regimenline->id }}"
+                                    @foreach ($justifications as $justification)
+                                        <option value="{{ $justification->id }}"
 
-                                        @if (isset($viralsample) && $viralsample->prophylaxis == $regimenline->id)
+                                        @if (isset($viralsample) && $viralsample->justification == $justification->id)
                                             selected
                                         @endif
 
-                                        > {{ $regimenline->name }}
+                                        > {{ $justification->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -331,7 +313,7 @@
                                 </div>                            
                             </div> 
                         @else
-                            <input type="hidden" value="{{ $batch_dispatched }}" name="datedispatchedfromfacility" id="datedispatched">
+                            <input type="hidden" value="{{ $batch_dispatched }}" id="datedispatched">
                         @endif
 
                         <div></div>
@@ -347,36 +329,13 @@
                                 </div>                            
                             </div> 
                         @else
-                            <input type="hidden" value="{{ $batch_received }}" name="datereceived" id="datereceived">
+                            <input type="hidden" value="{{ $batch_received }}" id="datereceived">
                         @endif
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">PCR Type</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" required name="pcrtype" id="pcrtype" disabled>
-
-                                    <option value=""> Select One </option>
-                                    @foreach ($pcrtypes as $pcrtype)
-                                        <option value="{{ $pcrtype->id }}"
-
-                                        @if (isset($viralsample) && $viralsample->pcrtype == $pcrtype->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $pcrtype->alias }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div>
-
-                        <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Received Status</label>
                             <div class="col-sm-8">
-                                    <select class="form-control" required name="receivedstatus">
+                                    <select class="form-control" required name="receivedstatus" id="receivedstatus">
 
                                     <option value=""> Select One </option>
                                     @foreach ($receivedstatuses as $receivedstatus)
@@ -387,6 +346,27 @@
                                         @endif
 
                                         > {{ $receivedstatus->name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="rejection" >
+                            <label class="col-sm-4 control-label">Rejected Reason</label>
+                            <div class="col-sm-8">
+                                    <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+
+                                    <option value=""> Select One </option>
+                                    @foreach ($rejectedreasons as $rejectedreason)
+                                        <option value="{{ $rejectedreason->id }}"
+
+                                        @if (isset($viralsample) && $viralsample->rejectedreason == $rejectedreason->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $rejectedreason->name }}
                                         </option>
                                     @endforeach
 
@@ -490,10 +470,37 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+
+            $("#rejection").hide();
+
             $("#patient").blur(function(){
                 var patient = $(this).val();
                 var facility = $("#facility_id").val();
                 check_new_patient(patient, facility);
+            });
+
+            $("#sex").change(function(){
+                var val = $(this).val();
+                if(val == 2){
+                    $("#pmtct").removeAttr("disabled");
+                    $("#pmtct").attr("required", "required");
+                }
+                else{
+                    $("#pmtct").attr("disabled", "disabled");
+                    $("#pmtct").removeAttr("required");
+                }
+            });
+
+            $("#receivedstatus").change(function(){
+                var val = $(this).val();
+                if(val == 2){
+                    $("#rejection").show();
+                    $("#rejectedreason").removeAttr("disabled");
+                }
+                else{
+                    $("#rejection").hide();
+                    $("#rejectedreason").attr("disabled", "disabled");
+                }
             });
 
             
@@ -512,8 +519,7 @@
                     if(data[0] == 0){
                         localStorage.setItem("new_patient", 0);
                         var patient = data[1];
-                        var mother = data[2];
-                        var prev = data[3];
+                        var prev = data[2];
 
                         console.log(patient.dob);
 
@@ -521,17 +527,7 @@
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
                         $("#sex").val(patient.sex).change();
-                        $("#hiv_status").val(mother.hiv_status).change();
-                        $("#entry_point").val(mother.entry_point).change();
-                        $("#ccc_no").val(mother.ccc_no).change();
 
-                        $('#pcrtype option[value=2]').attr('selected','selected').change();
-                        $("#hidden_pcr").val(2);
-
-                        if(prev.previous_positive == 1){
-                            $('#pcrtype option[value=3]').attr('selected','selected').change();
-                            $("#hidden_pcr").val(3);
-                        }
                         $('<input>').attr({
                             type: 'hidden',
                             name: 'patient_id',
@@ -539,14 +535,6 @@
                             id: 'hidden_patient',
                             class: 'patient_details'
                         }).appendTo("#samples_form");
-
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'patient_dob',
-                            value: patient.dob,
-                            class: 'patient_details'
-                        }).appendTo("#samples_form");
-
 
                         $(".lockable").attr("disabled", "disabled");
                     }
@@ -562,15 +550,6 @@
 
                 }
             });
-
-
-
-            /*$('<input>').attr({
-                type: 'hidden',
-                id: 'foo',
-                name: 'bar'
-            }).appendTo('form');*/
-
         }
     </script>
 

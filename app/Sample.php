@@ -14,8 +14,6 @@ class Sample extends Model
     protected $guarded = [];
     protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
-    protected $dateFormat = 'Y-m-d';
-
     public function setDatedispatchedfromfacilityAttribute($value)
     {
         $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
@@ -36,9 +34,6 @@ class Sample extends Model
         return $this->belongsTo('App\Worksheet');
     }
 
-
-
-
     // Parent sample
     public function parent()
     {
@@ -50,8 +45,6 @@ class Sample extends Model
     {
         return $this->hasMany('App\Sample', 'parentid');
     }
-
-    
 
     public function creator()
     {

@@ -14,8 +14,6 @@ class Viralpatient extends Model
     protected $guarded = [];
     protected $dates = ['datesynched', 'dob'];
 
-    protected $dateFormat = 'Y-m-d';
-
     public function sample()
     {
     	return $this->hasMany('App\Viralsample', 'patient_id');

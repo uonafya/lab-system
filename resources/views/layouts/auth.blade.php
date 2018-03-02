@@ -26,18 +26,23 @@
 <body class="light-skin blank">
 
 <div class="back-link">
-    <a href="#" class="btn btn-primary" style="background-color: rgba(0, 0, 0, 0); color: black; border: none;">{{ @Date("l, d F Y") }}</a>
+    <img src="{{ asset('img/nascoplogo.png') }}">
+</div>
+<div class="pull-right" style="margin: 1.5em;">
+    <a href="#" class="btn btn-primary" style="background-color: rgba(0, 0, 0, 0); color: black; border: none;"><strong class="font-extra-bold font-uppercase">{{ @Date("l, d F Y") }}</strong></a>
 </div>
 
-<div class="login-container">
 
+<div class="login-container">
+    <div class="hr-line-dashed"></div>
     @yield('content')
-    
+    <div class="hr-line-dashed"></div>
     <div class="row">
         <div class="col-md-12 text-center">
             <strong>&copy; NASCOP</strong> - 1987 - {{ @Date('Y') }} | All Rights Reserved.
         </div>
     </div>
+    <div class="hr-line-dashed"></div>
 </div>
 
 <script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>

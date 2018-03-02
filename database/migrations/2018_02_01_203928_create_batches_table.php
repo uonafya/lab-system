@@ -23,7 +23,7 @@ class CreateBatchesTable extends Migration
             // 1 is dispatched
             // 2 is staging i.e. all samples are ready, batch awaiting dispatch
             $table->tinyInteger('batch_complete')->default(0);
-            $table->integer('site_entry')->unsigned()->nullable();
+            $table->tinyInteger('site_entry')->unsigned()->nullable();
 
             $table->boolean('sent_email')->default(false);
 
@@ -41,9 +41,9 @@ class CreateBatchesTable extends Migration
 
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->date('created_at')->nullable();
-            $table->date('updated_at')->nullable();
-            // $table->timestamps();
+            // $table->date('created_at')->nullable();
+            // $table->date('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 

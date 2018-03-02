@@ -67,9 +67,9 @@ class CreateViralWorksheetsTable extends Migration
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 
-            $table->date('created_at')->nullable();
-            $table->date('updated_at')->nullable();
-            // $table->timestamps();
+            // $table->date('created_at')->nullable();
+            // $table->date('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 
