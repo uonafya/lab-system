@@ -23,6 +23,7 @@ class CreateViralWorksheetsTable extends Migration
             // 3 is results uploaded and approved
             // 4 is cancelled
             $table->tinyInteger('status_id')->unsigned()->default(1);
+            $table->tinyInteger('calibration')->unsigned()->nullable();
 
             $table->integer('runby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();
@@ -45,10 +46,16 @@ class CreateViralWorksheetsTable extends Migration
             $table->string('amplification_kit_lot_no')->nullable();
 
             $table->tinyInteger('neg_control_result')->unsigned()->nullable();
-            $table->tinyInteger('pos_control_result')->unsigned()->nullable();
+            $table->tinyInteger('highpos_control_result')->unsigned()->nullable();
+            $table->tinyInteger('lowpos_control_result')->unsigned()->nullable();
 
             $table->string('neg_control_interpretation')->nullable();
-            $table->string('pos_control_interpretation')->nullable();
+            $table->string('highpos_control_interpretation')->nullable();
+            $table->string('lowpos_control_interpretation')->nullable();
+
+            $table->string('neg_units')->nullable();
+            $table->string('hpc_units')->nullable();
+            $table->string('lpc_units')->nullable();
 
             $table->string('cdcworksheetno')->nullable();
 

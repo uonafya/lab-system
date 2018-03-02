@@ -37,7 +37,7 @@
                         <button type="submit" class="btn btn-danger btn-block" style="background-color: #16A085;border-color: #16A085;margin-top: 2em;">Login</button>
                     </form>
                     <div class="text-center m-b-md">
-                        <a href="#" style="color: white;"><button class="btn btn-primary btn-block" style="margin-top: 2em;">Click <strong class="font-extra-bold font-uppercase">here</strong> for facility login</button></a>
+                        <a href="{{ url('login/facility') }} " style="color: white;"><button class="btn btn-primary btn-block" style="margin-top: 2em;">Click <strong class="font-extra-bold font-uppercase">here</strong> for facility login</button></a>
                     </div>
                 </div>
             </div>

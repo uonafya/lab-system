@@ -49,7 +49,7 @@ class CreateViralsamplesTable extends Migration
             $table->boolean('inworksheet')->default(false);
 
             $table->tinyInteger('flag')->unsigned()->nullable();
-            $table->tinyInteger('run')->unsigned()->nullable();
+            $table->tinyInteger('run')->unsigned()->default(1);
             $table->tinyInteger('repeatt')->unsigned()->nullable();
             $table->tinyInteger('eqa')->unsigned()->nullable();
 

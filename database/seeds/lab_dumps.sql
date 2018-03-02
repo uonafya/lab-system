@@ -721,6 +721,56 @@ INSERT INTO `viraljustifications` VALUES (1,'1 &nbsp;Routine VL','Routine VL',1,
 /*!40000 ALTER TABLE `viraljustifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `viraldilutionfactors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `viraldilutionfactors` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `dilutiontype` varchar(100) DEFAULT NULL,
+  `dilutionfactor` int(10) DEFAULT NULL,
+  `flag` int(10) DEFAULT '1',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `viraldilutionfactors`
+--
+
+LOCK TABLES `viraldilutionfactors` WRITE;
+/*!40000 ALTER TABLE `viraldilutionfactors` DISABLE KEYS */;
+INSERT INTO `viraldilutionfactors` VALUES (1,'1:2',2,1),(2,'1:4',4,1),(3,'No Dilution',1,1),(4,'1:8',8,1);
+/*!40000 ALTER TABLE `viraldilutionfactors` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vlresultsguidelines`
+--
+
+DROP TABLE IF EXISTS `vlresultsguidelines`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vlresultsguidelines` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `sampletype` int(10) NOT NULL COMMENT '1 - dbs 2-plasma/edta',
+  `test` int(10) DEFAULT NULL,
+  `triagecode` varchar(10) DEFAULT NULL,
+  `triage` varchar(10) DEFAULT NULL,
+  `indication` varchar(1000) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vlresultsguidelines`
+--
+
+LOCK TABLES `vlresultsguidelines` WRITE;
+/*!40000 ALTER TABLE `vlresultsguidelines` DISABLE KEYS */;
+INSERT INTO `vlresultsguidelines` VALUES (1,2,1,'a','< 1000','Confirm adherence & Routine follow up.'),(2,2,1,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(3,2,2,'a','< 1000','Confirm adherence & Routine follow up.'),(4,2,2,'b','> 1000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(6,2,3,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(5,2,3,'a','< 1000','Confirm adherence & Routine follow up.'),(7,1,1,'a','< 5000','Confirm adherence & Routine follow up.'),(8,1,1,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(9,1,2,'a','< 5000','Confirm adherence & Routine follow up.'),(10,1,2,'b','> 5000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(11,1,3,'a','< 5000','Confirm adherence & Routine follow up.'),(12,1,3,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.');
+/*!40000 ALTER TABLE `vlresultsguidelines` ENABLE KEYS */;
+UNLOCK TABLES;
+
 CREATE OR REPLACE
 VIEW view_facilitys AS
 SELECT facilitys.id,facilitys.facilitycode,facilitys.longitude,facilitys.latitude,facilitys.email, facilitys.district,

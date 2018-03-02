@@ -41,7 +41,6 @@ class ViralworksheetController extends Controller
         // dd($statuses->where('status', 1)[0]);
         // dd($worksheets);
 
-
         return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
     }
 
@@ -65,12 +64,12 @@ class ViralworksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(94)
+            ->limit(93)
             ->get();
 
         $count = $samples->count();
 
-        if($count == 94){
+        if($count == 93){
             return view('forms.viralworksheets', ['create' => true, 'machine_type' => 2, 'samples' => $samples]);
         }
 
@@ -104,7 +103,7 @@ class ViralworksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(94)
+            ->limit(93)
             ->get();
 
         // if($samples->count() != 22 || $samples->count() != 94){
@@ -205,7 +204,7 @@ class ViralworksheetController extends Controller
      * @param  \App\Worksheet  $worksheet
      * @return \Illuminate\Http\Response
      */
-    public function save_results(Request $request, Worksheet $worksheet)
+    public function save_results(Request $request, Viralworksheet $worksheet)
     {
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
@@ -236,39 +235,54 @@ class ViralworksheetController extends Controller
 
                 if($bool){
                     $sample_id = $value[1];
-                    $interpretation = $value[5];
+                    $result = $value[5];
+                    $interpretation = $value[6];
                     $error = $value[10];
 
-                    switch ($interpretation) {
-                        case 'Not Detected':
-                            $result = 1;
-                            break;
-                        case 'HIV-1 Detected':
-                            $result = 2;
-                            break;
-                        case 'Detected':
-                            $result = 2;
-                            break;
-                        case 'Collect New Sample':
-                            $result = 5;
-                            break;
-                        default:
-                            $result = 3;
-                            $interpretation = $error;
-                            break;
+                    if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
+                    {
+                        $res= "< LDL copies/ml";
+                        $interpret="Target Not Detected";
+                        $units="";                        
                     }
 
-                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
+                    else if($result == 'Collect New Sample')
+                    {
+                        $res= "Collect New Sample";
+                        $interpret="Collect New Sample";
+                        $units="";                         
+                    }
+
+                    else if($result == 'Failed' || $result == '')
+                    {
+                        $res= "Failed";
+                        $interpret = $error;
+                        $units="";                         
+                    }
+
+                    else{
+                        $res = preg_replace("/[^<0-9]/", "", $result);
+                        $interpret = $result;
+                        $units="cp/mL";
+                    }
+
+                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpret, 'result' => $res, 'units' => $units];
                     $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    DB::table('samples')->where($search)->update($data_array);
+                    DB::table('viralsamples')->where($search)->update($data_array);
 
                     $check[] = $search;
 
                     if($sample_id == "HIV_NEG"){
-                        $negative_control = $result;
+                        $nc = $res;
+                        $nc_int = $interpret;
                     }
                     else if($sample_id == "HIV_HIPOS"){
-                        $positive_control = $result;
+                        $hpc = $res;
+                        $hpc_int = $interpret;
+                    }
+                    else if($sample_id == "HIV_LOPOS"){
+                        $lpc = $res;
+                        $lpc_int = $interpret;
                     }
 
                 }
@@ -276,19 +290,6 @@ class ViralworksheetController extends Controller
                 if($bool && $value[5] == "RESULT") break;
             }
 
-            if($positive_control == "Passed"){
-                $pos_result = 6;
-            }
-            else{
-                $pos_result = 7;
-            }
-
-            if($negative_control == "Passed"){
-                $neg_result = 6;
-            }
-            else{
-                $neg_result = 7;
-            }
         }
         else
         {
@@ -374,13 +375,17 @@ class ViralworksheetController extends Controller
 
         }
 
-        DB::table('samples')->where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
+        DB::table('viralsamples')->where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
 
-        $worksheet->neg_control_interpretation = $negative_control;
-        $worksheet->neg_control_result = $neg_result;
+        $worksheet->neg_control_interpretation = $nc_int;
+        $worksheet->neg_control_result = $nc;
 
-        $worksheet->pos_control_interpretation = $positive_control;
-        $worksheet->pos_control_result = $pos_result;
+        $worksheet->highpos_control_interpretation = $hpc_int;
+        $worksheet->highpos_control_result = $hpc;
+
+        $worksheet->lowpos_control_interpretation = $lpc_int;
+        $worksheet->lowpos_control_result = $lpc;
+
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
