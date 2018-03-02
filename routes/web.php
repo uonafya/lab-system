@@ -43,6 +43,7 @@ Route::resource('facility', 'FacilityController');
 Route::get('/home', 'HomeController@index');
 
 Route::get('sample/new_patient/{patient}/{facility_id}', 'SampleController@new_patient');
+Route::get('sample/release/{sample}', 'SampleController@release_redraw');
 Route::resource('sample', 'SampleController');
 
 Route::get('viralsample/new_patient/{patient}/{facility_id}', 'ViralsampleController@new_patient');
@@ -58,5 +59,27 @@ Route::put('worksheet/upload/{worksheet}', 'WorksheetController@save_results')->
 Route::get('worksheet/approve/{worksheet}', 'WorksheetController@approve_results')->name('worksheet.approve_results');
 Route::put('worksheet/approve/{worksheet}', 'WorksheetController@approve')->name('worksheet.approve');
 Route::resource('worksheet', 'WorksheetController');
+
+Route::get('viralsample/new_patient/{patient}/{facility_id}', 'ViralsampleController@new_patient');
+Route::resource('viralsample', 'ViralsampleController');
+
+Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
+Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+
+
+Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
+
+	Route::get('create_abbot', 'ViralworksheetController@abbot')->name('create_abbot');
+	Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
+	Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
+	Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
+	Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
+
+	Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
+	Route::put('approve/{worksheet}', 'ViralworksheetController@approve')->name('approve');
+
+});
+
+Route::resource('viralworksheet', 'ViralworksheetController');
 
 Auth::routes();

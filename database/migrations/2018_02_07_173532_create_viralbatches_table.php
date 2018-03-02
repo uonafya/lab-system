@@ -19,7 +19,7 @@ class CreateViralbatchesTable extends Migration
             $table->boolean('input_complete')->default(false);
             $table->boolean('batch_full')->default(false);
             $table->boolean('batch_complete')->default(false);
-            $table->integer('site_entry')->unsigned()->nullable();
+            $table->tinyInteger('site_entry')->unsigned()->nullable();
 
             $table->boolean('sent_email')->default(false);
 
@@ -38,9 +38,9 @@ class CreateViralbatchesTable extends Migration
 
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();
-            $table->date('created_at')->nullable();
-            $table->date('updated_at')->nullable();
-            // $table->timestamps();
+            // $table->date('created_at')->nullable();
+            // $table->date('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 

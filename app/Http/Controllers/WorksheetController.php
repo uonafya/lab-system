@@ -78,7 +78,7 @@ class WorksheetController extends Controller
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('high_priority', 'asc')
+            ->orderBy('high_priority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
             ->limit(22)
@@ -155,6 +155,10 @@ class WorksheetController extends Controller
                     return $query->limit(94);
                 }
             });
+
+        if($samples->count() != 22 || $samples->count() != 94){
+            return back();
+        }
 
         $sample_ids = $samples->pluck('id');
 
@@ -239,7 +243,7 @@ class WorksheetController extends Controller
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::all();
+        $users = User::where('user_type_id', '<', 5)->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users]);
     }
 
@@ -500,6 +504,8 @@ class WorksheetController extends Controller
         }
 
         $worksheet->status_id = 3;
+        $worksheet->datereviewed = $today;
+        $worksheet->reviewedby = $approver;
         $worksheet->save();
         return redirect('/worksheet');
 

@@ -14,8 +14,6 @@ class Sample extends Model
     protected $guarded = [];
     protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
-    protected $dateFormat = 'Y-m-d';
-
     public function setDatedispatchedfromfacilityAttribute($value)
     {
         $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;

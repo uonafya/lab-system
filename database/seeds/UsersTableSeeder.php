@@ -52,6 +52,9 @@ class UsersTableSeeder extends Seeder
 
     	$facilitys = DB::table('facilitys')->get();
 
+    	$i=0;
+    	$data= null;
+
     	foreach ($facilitys as $key => $facility) {
     		$fac = factory(App\User::class, 1)->create([
 		        'user_type_id' => 5,
@@ -60,6 +63,25 @@ class UsersTableSeeder extends Seeder
 		        'facility_id' => $facility->id,
 		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
 	    	]);
+
+	    	if($key==100) break;
+
+    		// $data[$i] = [
+		    //     'user_type_id' => 5,
+		    //     'surname' => '',
+		    //     'oname' => '',
+		    //     'facility_id' => $facility->id,
+		    //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		    //     'password' => bcrypt('password'),
+	    	// ];
+
+	    	// if($i == 200){
+	    	// 	DB::table('users')->insert($data);
+	    	// 	$i=0;
+	    	// 	$data = NULL;
+	    	// }
     	}
+    	// DB::table('users')->insert($data);
+
     }
 }

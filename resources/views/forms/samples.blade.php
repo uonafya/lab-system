@@ -409,6 +409,7 @@
                             </div>
                         </div>
 
+
                         <div class="form-group" id="rejection" >
                             <label class="col-sm-4 control-label">Rejected Reason</label>
                             <div class="col-sm-8">
@@ -430,7 +431,6 @@
                             </div>
                         </div>
 
-
                     </div>
                 </div>
             </div>
@@ -450,7 +450,6 @@
                 </div>
             </div>
         </div> -->
-
 
                 
         <div class="row">
@@ -546,7 +545,7 @@
                     $("#rejectedreason").attr("disabled", "disabled");
 
                 }
-            })
+            });
 
             
         });
@@ -594,7 +593,7 @@
 
                         $('<input>').attr({
                             type: 'hidden',
-                            name: 'patient_dob',
+                            name: 'dob',
                             value: patient.dob,
                             class: 'patient_details'
                         }).appendTo("#samples_form");
