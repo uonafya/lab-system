@@ -39,7 +39,7 @@ class FacilityController extends Controller
             $table .= '<td>'.$value->contacttelephone2.'</td>';
             $table .= '<td>'.$value->ContactEmail.'</td>';
             $table .= '<td>'.$value->G4Sbranchname.'</td>';
-            $table .= '<td>'.$value->id.'</td>';
+            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
             $table .= '</tr>';
         }
   // +"ftype": "Medical Clinic - Clinical officer"
@@ -77,7 +77,9 @@ class FacilityController extends Controller
      */
     public function show($id)
     {
-        //
+        $facility = Facility::find($id);
+
+        return view('facilities.facility', compact($facility));
     }
 
     /**
@@ -88,7 +90,8 @@ class FacilityController extends Controller
      */
     public function edit($id)
     {
-        //
+        $facility = Facility::find($id);
+        dd($facility);
     }
 
     /**
