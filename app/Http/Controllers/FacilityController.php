@@ -69,6 +69,17 @@ class FacilityController extends Controller
         //
     }
 
+    public function getFacility($id)
+    {
+        return DB::table('facilitys')->select('facilitys.facilitycode', 'facilitys.name as facility', 'districts.name as subcounty', 'countys.name as county', 'labs.name as lab','facilitys.physicaladdress', 'facilitys.PostalAddress','facilitys.telephone', 'facilitys.telephone2', 'facilitys.fax','facilitys.email', 'facilitys.contactperson', 'facilitys.ContactEmail', 'facilitys.contacttelephone', 'facilitys.contacttelephone2','facilitys.smsprinterphoneno')
+                        ->join('labs' ,'labs.id', '=', 'facilitys.lab')
+                        ->join('districts', 'districts.id', '=', 'facilitys.district')
+                        ->join('view_facilitys', 'view_facilitys.id', '=', 'facilitys.id')
+                        ->join('countys', 'countys.id', '=', 'view_facilitys.county')
+                        ->where('facilitys.id', '=', $id)
+                        ->get();
+    }
+
     /**
      * Display the specified resource.
      *
@@ -77,9 +88,10 @@ class FacilityController extends Controller
      */
     public function show($id)
     {
-        $facility = Facility::find($id);
-
-        return view('facilities.facility', compact($facility));
+        // $facility = Facility::find($id);
+        $facility = self::getFacility($id);
+        // dd($facility[0]);
+        return view('facilities.facility', ['facility' => $facility[0], 'disabled' => 'disabled']);
     }
 
     /**
@@ -90,8 +102,9 @@ class FacilityController extends Controller
      */
     public function edit($id)
     {
-        $facility = Facility::find($id);
-        dd($facility);
+        $facility = self::getFacility($id);
+        // dd($facility[0]);
+        return view('facilities.facility', ['facility' => $facility[0], 'disabled' => '']);
     }
 
     /**
@@ -103,7 +116,7 @@ class FacilityController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**
