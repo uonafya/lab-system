@@ -36,6 +36,7 @@ Route::get('datatables', function () {
 	return view('datatables');
 });
 
+Route::get('facility/served', 'FacilityController@served');
 Route::resource('facility', 'FacilityController');
 // Route::get('/home', function () {
 // 	return view('home');

@@ -40,7 +40,7 @@
 		                		<tr>
 		                			<td>Served by {{ $tasks['labname'][0]->name }}</td>
 		                			<td>{{ $tasks['facilityServed'] }}</td>
-		                			<td><a href="#">View</a></td>
+		                			<td><a href="{{ url('facility/served') }}">View</a></td>
 		                		</tr>
 		                		<tr>
 		                			<td>With SMS Printers</td>

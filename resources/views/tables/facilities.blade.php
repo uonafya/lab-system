@@ -9,6 +9,24 @@
         <div class="col-lg-12">
             <div class="hpanel">
             	<div class="panel-heading">
+                    @if ($message = Session::get('success'))
+
+                        <div class="alert alert-success" id="message">
+
+                            <center><p>{{ $message }}</p></center>
+
+                        </div>
+
+                    @endif
+                    @if ($message = Session::get('failed'))
+
+                        <div class="alert alert-danger" id="message">
+
+                            <center><p>{{ $message }}</p></center>
+
+                        </div>
+
+                    @endif
             		<div class="alert alert-success" style="/*padding-top: 4px;padding-bottom: 4px;">
 		                <p>
 		                    <center>FACILITIES</center>
@@ -19,7 +37,10 @@
             	    <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;" >
                         <thead>
                             <tr class="colhead">
-                                <th>MFL</th>
+                                @php
+                                    echo $columns 
+                                @endphp
+                                <!-- <th>MFL</th>
                                 <th>Facility Name</th>
                                 <th>County</th>
                                 <th>District</th>
@@ -32,7 +53,7 @@
                                 <th>Contact Phone 2</th>
                                 <th>Contact Email</th>
                                 <th>G4S Branch</th>
-                                <th>Task</th>
+                                <th>Task</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -56,4 +77,9 @@
 
     @endcomponent
 
+    <script type="text/javascript">
+        setTimeout(function(){
+            $("#message").hide();
+        }, 2000);
+    </script>
 @endsection
