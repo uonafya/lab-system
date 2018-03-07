@@ -45,7 +45,7 @@
 		                		<tr>
 		                			<td>With SMS Printers</td>
 		                			<td>{{ $tasks['facilitieswithSmsPrinters'] }}</td>
-		                			<td><a href="#">View</a></td>
+		                			<td><a href="{{ url('facility/smsprinters') }}">View</a></td>
 		                		</tr>
 		                		<tr>
 		                			<td>* Without emails</td>

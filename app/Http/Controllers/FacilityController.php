@@ -92,6 +92,48 @@ class FacilityController extends Controller
         return view('tables.facilities', ['row' => $table, 'columns' => $column]);
     }
 
+    public function smsprinters()
+    {
+        $facilities = DB::table('facilitys')
+                            ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county','ftype','telephone','telephone2','facilitys.email','facilitys.contactperson','facilitys.PostalAddress','facilitys.contacttelephone','facilitys.contacttelephone2','facilitys.ContactEmail','partners.name as partner','facilitys.smsprinterphoneno','facilitys.serviceprovider')
+                            ->join('view_facilitys', 'view_facilitys.ID', '=', 'facilitys.ID')
+                            ->join('districts', 'districts.ID', '=', 'facilitys.district')
+                            ->join('countys', 'countys.ID', '=', 'view_facilitys.county')
+                            ->join('partners', 'partners.ID', '=', 'view_facilitys.partner')
+                            ->where('facilitys.flag', '=', 1)
+                            ->where('facilitys.lab', '=', Auth()->user()->lab_id)
+                            ->where('facilitys.smsprinter', '<>', '')
+                            ->get();
+        
+        $columns = ['#','MFL Code', 'Facility Name', 'County', 'Sub-county', 'Email Address', 
+                    'Contact Person', 'CP Telephone', 'CP Email', 'Supporting Partner', 'SMS Printer No.', 'Service Provider'];
+        $column = '<tr>';
+        foreach ($columns as $key => $value) {
+            $column .= '<th>'.$value.'</th>';
+        }
+        $count = 0;
+        $table = '';
+        foreach ($facilities as $key => $value) {
+            $count++;
+            $table .= '<tr>';
+            $table .= '<td>'.$count.'</td>';
+            $table .= '<td>'.$value->facilitycode.'</td>';
+            $table .= '<td>'.$value->facility.'</td>';
+            $table .= '<td>'.$value->county.'</td>';
+            $table .= '<td>'.$value->district.'</td>';
+            $table .= '<td>'.$value->email.'</td>';
+            $table .= '<td>'.$value->contactperson.'</td>';
+            $table .= '<td>'.$value->contacttelephone.'</td>';
+            $table .= '<td>'.$value->ContactEmail.'</td>';
+            $table .= '<td>'.$value->partner.'</td>';
+            $table .= '<td>'.$value->smsprinterphoneno.'</td>';
+            $table .= '<td>'.$value->serviceprovider.'</td>';
+            $table .= '</tr>';
+        }
+        $column .= '</tr>';
+        return view('tables.facilities', ['row' => $table, 'columns' => $column]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
