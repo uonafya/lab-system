@@ -5,6 +5,8 @@
 
 @section('content')
 
+
+
 <div class="normalheader ">
     <div class="hpanel">
         <div class="panel-body">
@@ -67,29 +69,16 @@
                                 <td> {{ $worksheet->created_at }} </td>
                                 <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
 
-                                {{-- @switch($worksheet->machine_type)
-                                    @case(2)
-                                        <td> <strong><font color='#0000FF'> Abbott </font></strong> </td>
-                                        @break
-                                    @case(3)
-                                        <td> <strong> C8800 </strong> </td>
-                                        @break
-                                    @case(4)
-                                        <td><strong><font color='#FF00FB'> Panther </font></strong> </td>
-                                        @break
-                                    @default
-                                        <td><strong> TaqMan </strong></td>
-                                        @break
-                                @endswitch --}}
-
                                 <td> {!! $machines->where('machine', $worksheet->machine_type)->first()['string'] !!} </td>
-                                <td> {!! $statuses->where('status', $worksheet->status_id)[0]['string'] !!} </td>
+                                <td> {!! $statuses->where('status', $worksheet->status_id)->first()['string'] !!} </td>
 
                                 <td> {{ $worksheet->samples_no }} </td>
                                 <td> {{ $worksheet->daterun }} </td>
                                 <td> {{ $worksheet->dateuploaded }} </td>
                                 <td> {{ $worksheet->datereviewed }} </td>
-                                <td>  </td>
+                                <td> 
+                                    @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
+                                </td>
                             @endforeach
                         </tbody>
                     </table>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Viralworksheet;
 use App\Viralsample;
 use App\User;
-use App\Misc;
+use App\MiscViral;
 use DB;
 use Excel;
 use Illuminate\Http\Request;
@@ -38,8 +38,8 @@ class ViralworksheetController extends Controller
 
         $statuses = collect($this->wstatus());
         $machines = collect($this->wmachine());
-        // dd($statuses->where('status', 1)[0]);
-        // dd($worksheets);
+
+        // dd($statuses);
 
         return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
     }
@@ -165,7 +165,7 @@ class ViralworksheetController extends Controller
     public function print(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+        $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', ['worksheet' => $worksheet, 'samples' => $samples]);
@@ -183,14 +183,14 @@ class ViralworksheetController extends Controller
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
 
-        return redirect("/worksheet");
+        return redirect("/viralworksheet");
     }
 
     public function upload(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', '<', 5)->get();
-        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users]);
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload']);
     }
 
 
@@ -389,13 +389,14 @@ class ViralworksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
-        $my = new Misc;
+        $my = new MiscViral;
         $my->requeue($worksheet->id);
 
         // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
-        return redirect('worksheet/approve/' . $worksheet->id);
+        return redirect('viralworksheet/approve/' . $worksheet->id);
     }
+
 
     public function approve_results(Viralworksheet $worksheet)
     {
@@ -403,45 +404,47 @@ class ViralworksheetController extends Controller
 
         $results = DB::table('results')->get();
         $actions = DB::table('actions')->get();
+        $dilutions = DB::table('viraldilutionfactors')->get();
         $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
 
-        $s = $this->get_worksheets($worksheet->id);
+        $noresult = $this->checknull($this->get_worksheets(0, $worksheet->id));
+        $failed = $this->checknull($this->get_worksheets(3, $worksheet->id));
+        $detected = $this->checknull($this->get_worksheets(2, $worksheet->id));
+        $undetected = $this->checknull($this->get_worksheets(1, $worksheet->id));
 
-        $neg = $this->checknull($s->where('result', 1));
-        $pos = $this->checknull($s->where('result', 2));
-        $failed = $this->checknull($s->where('result', 3));
-        $redraw = $this->checknull($s->where('result', 5));
-        $noresult = $this->checknull($s->where('result', 0));
+        $total = $detected + $undetected + $failed + $noresult;
 
-        $total = $neg + $pos + $failed + $redraw + $noresult;
+        $subtotals = ['detected' => $detected, 'undetected' => $undetected, 'failed' => $failed, 'noresult' => $noresult, 'total' => $total];
 
-        $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
+        return view('tables.confirm_viral_results', ['results' => $results, 'actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
     }
 
-    public function approve(Request $request, Worksheet $worksheet)
+    public function approve(Request $request, Viralworksheet $worksheet)
     {
         $samples = $request->input('samples');
         $batches = $request->input('batches');
-        $results = $request->input('results');
+        $redraws = $request->input('redraws');
         $actions = $request->input('actions');
-        // dd($batches);
+        $dilutions = $request->input('dilutiontype');
+
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
         $batch = array();
-        $my = new Misc;
+        $my = new MiscViral;
 
         foreach ($samples as $key => $value) {
             $data = [
                 'approvedby' => $approver,
                 'dateapproved' => $today,
-                'result' => $results[$key],
                 'repeatt' => $actions[$key],
+                'dilutiontype' => $dilutions[$key],
             ];
 
-            DB::table('samples')->where('id', $samples[$key])->update($data);
+            if(isset($redraws[$key])) $data['result'] = "Collect New Sample";
+
+            DB::table('viralsamples')->where('id', $samples[$key])->update($data);
 
             if($actions[$key] == 1){
                 $my->save_repeat($samples[$key]);
@@ -460,7 +463,7 @@ class ViralworksheetController extends Controller
         $worksheet->datereviewed = $today;
         $worksheet->reviewedby = $approver;
         $worksheet->save();
-        return redirect('/worksheet');
+        return redirect('/viralworksheet');
 
     }
 
@@ -470,10 +473,10 @@ class ViralworksheetController extends Controller
     public function wstatus()
     {
         $statuses = [
-            ['status' => 1, 'string' => "<strong><font color='#FFD324'>In-Process</font></strong>"],
-            ['status' => 2, 'string' => "<strong><font color='#0000FF'>Tested</font></strong>"],
-            ['status' => 3, 'string' => "<strong><font color='#339900'>Approved</font></strong>"],
-            ['status' => 4, 'string' => "<strong><font color='#FF0000'>Cancelled</font></strong>"],
+            collect(['status' => 1, 'string' => "<strong><font color='#FFD324'>In-Process</font></strong>"]),
+            collect(['status' => 2, 'string' => "<strong><font color='#0000FF'>Tested</font></strong>"]),
+            collect(['status' => 3, 'string' => "<strong><font color='#339900'>Approved</font></strong>"]),
+            collect(['status' => 4, 'string' => "<strong><font color='#FF0000'>Cancelled</font></strong>"]),
         ];
 
         return $statuses;
@@ -493,30 +496,40 @@ class ViralworksheetController extends Controller
 
     public function get_worksheets($result, $worksheet_id=NULL)
     {
-        $samples = Viralsample::selectRaw("count(*) as totals, worksheet_id, result")
+        $samples = Viralsample::selectRaw("count(*) as totals, worksheet_id")
             ->whereNotNull('worksheet_id')
             ->when($worksheet_id, function($query) use ($worksheet_id){
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->where('inworksheet', 1)
             ->where('receivedstatus', '!=', 2)
-            ->when($result, function($query) use ($result){
+            ->when(true, function($query) use ($result){
                 if ($result == 0) {
-                    return $query->where('result', '');
+                    return $query->whereNull('result');
                 }
                 else if ($result == 1) {
-                    return $query->where('result', '!=', 'Failed')->where('result', '!=', '< LDL copies/ml');
+                    return $query->where('result', '< LDL copies/ml');
                 }
                 else if ($result == 2) {
-                    return $query->where('result', '< LDL copies/ml');
+                    return $query->where('result', '!=', 'Failed')->where('result', '!=', '< LDL copies/ml');
                 }
                 else if ($result == 3) {
                     return $query->where('result', 'Failed');
                 }                
             })
-            ->groupBy('worksheet_id', 'result')
+            ->groupBy('worksheet_id')
             ->get();
 
         return $samples;
+    }
+
+    public function checknull($var)
+    {
+        if($var->isEmpty()){
+            return 0;
+        }else{
+            // return $var->sum('totals');
+            return $var->first()->totals;
+        }
     }
 }

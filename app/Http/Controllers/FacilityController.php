@@ -16,7 +16,7 @@ class FacilityController extends Controller
     public function index()
     {
         $facilities = DB::table('facilitys')
-                            ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county','ftype','telephone','telephone2','email','contactperson','PostalAddress','contacttelephone','contacttelephone2','ContactEmail','partners.name as partner','smsprinterphoneno','G4Sbranchname','G4Slocation')
+                            ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county','ftype','telephone','telephone2','facilitys.email','contactperson','PostalAddress','contacttelephone','contacttelephone2','ContactEmail','partners.name as partner','smsprinterphoneno','G4Sbranchname','G4Slocation')
                             ->join('view_facilitys', 'view_facilitys.ID', '=', 'facilitys.ID')
                             ->join('districts', 'districts.ID', '=', 'facilitys.district')
                             ->join('countys', 'countys.ID', '=', 'view_facilitys.county')

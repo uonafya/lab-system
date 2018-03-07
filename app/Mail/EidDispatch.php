@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EidDispatch extends Mailable
+class EidDispatch extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

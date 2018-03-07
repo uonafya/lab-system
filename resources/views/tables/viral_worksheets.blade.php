@@ -66,7 +66,7 @@
                             <tbody>
 
                                 @foreach($worksheets as $key => $worksheet)
-                                    <td> {{ $key+1 }} </td>
+                                    <td> {{ $key+1  }} </td>
                                     <td> {{ $worksheet->created_at }} </td>
                                     <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
 
@@ -85,7 +85,7 @@
                                             @break
                                     @endswitch --}}
 
-                                    <td> {{ $statuses->where('machine', $worksheet->machine_type)->first()->string }} </td>
+                                    <td> {{ $machines->where('machine', $worksheet->machine_type)->first()->string }} </td>
                                     <td> {{ $statuses->where('status', $worksheet->status)->first()->string }} </td>
 
                                     <td> {{ $worksheet->samples_no }} </td>

@@ -41,7 +41,7 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
             $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
 
-            $table->tinyInteger('result')->unsigned()->nullable()->index();
+            $table->string('result')->nullable()->index();
             $table->string('units')->nullable();
             $table->string('interpretation')->nullable();
 

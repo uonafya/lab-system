@@ -33,8 +33,6 @@
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }
-
-
         
 
         $(".form-horizontal").validate({

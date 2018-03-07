@@ -267,7 +267,7 @@ class ViralsampleController extends Controller
             $data[0] = 0;
             $data[1] = $patient->toArray();
 
-            $sample = Viralsample::select('id')->where(['patient_id' => $patient->id])->where('rcategory', '>', 2)->first();
+            $sample = Viralsample::select('id')->where(['patient_id' => $patient->id])->where('result', '>', 1000)->first();
             if($sample){
                 $data[2] = ['previous_nonsuppressed' => 1];
             }
@@ -281,7 +281,7 @@ class ViralsampleController extends Controller
         return $data;
     }
 
-    public function release_redraw(Sample $sample)
+    public function release_redraw(Viralsample $sample)
     {
         $sample->repeatt = 0;
         $sample->result = "Collect New Sample";
@@ -292,7 +292,7 @@ class ViralsampleController extends Controller
     public function release_redraws(Request $request)
     {
         $samples = $request->input('samples');
-        DB::table('samples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => 5]);
+        DB::table('viralsamples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => "Collect New Sample"]);
         return back();
     }
 

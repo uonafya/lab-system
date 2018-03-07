@@ -154,9 +154,10 @@ class WorksheetController extends Controller
                 else{
                     return $query->limit(94);
                 }
-            });
+            })
+            ->get();
 
-        if($samples->count() != 22 || $samples->count() != 94){
+        if($samples->count() != 22 && $samples->count() != 94){
             return back();
         }
 

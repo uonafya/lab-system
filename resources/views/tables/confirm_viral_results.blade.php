@@ -49,11 +49,7 @@
                 </div>
                 <div class="panel-body">
 
-                    @if($worksheet->machine_type == 1)
-                        @include('shared/other-header-partial')
-                    @else
-                        @include('shared/abbot-header-partial')
-                    @endif
+                    @include('shared/viral-abbot-header-partial')
 
                 </div>
             </div>
@@ -71,17 +67,19 @@
                     Standard table
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
+                    <form  method="post" action="{{ url('viralworksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
                         {{ method_field('PUT') }} {{ csrf_field() }}
 
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
-                                <tr>
+                                <tr class="colhead">
                                     <th>Sample ID</th>
                                     <th>Lab ID</th>
                                     <th>Run</th>
                                     <th>Result</th>                
+                                    <th>Dilution Factor</th>                
                                     <th>Interpretation</th>                
+                                    <th>Units</th>                
                                     <th>Action</th>                
                                     <th>Approved</th>                
                                     <th>Approved Date</th>                
@@ -91,18 +89,37 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td >HPC</td>
+                                    <td >-</td>
+                                    <td >-</td>
+                                    <td ><small><strong><font color='#FF0000'> {{ $worksheet->highpos_control_interpretation }} </font></strong></small> </td>
+                                    <td >&nbsp; </td>
+                                    <td ><small><strong>
+                                        <font color='#FF0000'> {{ $worksheet->highpos_control_result }} </font>
+                                         </strong></small>
+                                     </td>
+                                    <td >&nbsp; </td>
+                                    <td >&nbsp; </td>
+                                    <td >&nbsp; </td>
+                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>   
+                                </tr>
+                                <tr>
                                     <td >LPC</td>
                                     <td >-</td>
                                     <td >-</td>
+                                    <td ><small><strong><font color='#FF0000'> {{ $worksheet->lowpos_control_interpretation }} </font></strong></small> </td>
+                                    <td >&nbsp; </td>
                                     <td ><small><strong>
-                                        <font color='#FF0000'> {{ $worksheet->pos_control_result }} </font>
+                                        <font color='#FF0000'> {{ $worksheet->lowpos_control_result }} </font>
                                          </strong></small>
                                      </td>
-                                    <td ><small><strong><font color='#FF0000'> {{ $worksheet->pos_control_interpretation }} </font></strong></small> </td>
-                                    <td >Control </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
+                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
 
@@ -110,15 +127,17 @@
                                     <td >NC</td>
                                     <td >-</td>
                                     <td >-</td>
+                                    <td ><small><strong><font color='#339900'> {{ $worksheet->neg_control_interpretation }} </font></strong></small> </td>
+                                    <td >&nbsp; </td>
                                     <td ><small><strong>
                                         <font color='#339900'> {{ $worksheet->neg_control_result }} </font>
                                          </strong></small>
                                      </td>
-                                    <td ><small><strong><font color='#339900'> {{ $worksheet->neg_control_interpretation }} </font></strong></small> </td>
-                                    <td >Control </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
+                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
 
@@ -132,27 +151,29 @@
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
+
+
+                                        <td> 
+                                            <select class="dilutionfactor" name="dilutiontype[]">
+                                                @foreach($dilutions as $dilution)
+                                                    <option value="{{$dilution->id}}"
+                                                        @if($sample->dilutionfactor == $dilution->id)
+                                                            selected
+                                                        @endif
+                                                        > {{ $dilution->dilutiontype }} </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+
                                         <td> 
                                             @if($sample->approvedby)
-                                                @foreach($results as $result)
-                                                    @if($sample->result == $result->id)
-                                                        {{ $result->name }}
-                                                    @endif
-                                                @endforeach
-
+                                                {{ $sample->result }}
                                             @else
-                                                <select name="results[]">
-                                                    @foreach($results as $result)
-                                                        <option value="{{$result->id}}"
-                                                            @if($sample->result == $result->id)
-                                                                selected
-                                                            @endif
-                                                            > {{ $result->name }} </option>
-                                                    @endforeach
-                                                </select>
-
+                                                <div><label> <input type="checkbox" class="i-checks"  name="redraws[]" value="{{ $key }}"> Collect New Sample </label></div>
                                             @endif
                                         </td>
+
+                                        <td></td>
 
                                         <td> 
                                             @if($sample->approvedby)
@@ -164,7 +185,7 @@
 
                                             @else
                                                 <select name="actions[]">
-                                                    <option>Choose an action</option>
+                                                    <option>Choose Action</option>
                                                     @foreach($actions as $action)
                                                         <option value="{{$action->id}}"
                                                             @if($sample->repeatt == $action->id)
@@ -176,7 +197,6 @@
 
                                             @endif
                                         </td>
-
 
                                         <td> <div align="center"><input name="approved[]" type="checkbox"  value="{{ $key }}" checked /></div> </td>
                                         <td> {{ $sample->dateapproved }} </td>
@@ -192,7 +212,7 @@
                                 @if($worksheet->status != 3)
 
                                     <tr bgcolor="#999999">
-                                        <td  colspan="10" bgcolor="#00526C" >
+                                        <td  colspan="12" bgcolor="#00526C" >
                                             <center>
                                                 <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  />
                                             </center>
@@ -219,7 +239,7 @@
 @section('scripts') 
 
     @component('/tables/scripts')
-
+        $(".dilutionfactor").val(3).change();        
     @endcomponent
 
 @endsection
