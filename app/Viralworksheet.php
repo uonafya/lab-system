@@ -43,4 +43,14 @@ class Viralworksheet extends Model
     {
         return $this->belongsTo('App\User', 'approvedby');
     }
+
+
+    public function getDateuploadedAttribute($value)
+    {
+        if($value){
+            $date = \DateTime::createFromFormat('Y-m-d', $value);
+            return $date->format('Y-m-d');            
+        }
+        return $value;
+    }
 }

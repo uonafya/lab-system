@@ -147,6 +147,7 @@
                                             {{ $sample->patient->patient }}  
                                             <input type="hidden" name="samples[]" value="{{ $sample->id }} ">
                                             <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}">
+                                            <input type="hidden" name="results[]" value="{{ $sample->result }}">
                                         </td>
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
@@ -154,10 +155,10 @@
 
 
                                         <td> 
-                                            <select class="dilutionfactor" name="dilutiontype[]">
+                                            <select class="dilutionfactor" name="dilutionfactors[]">
                                                 @foreach($dilutions as $dilution)
-                                                    <option value="{{$dilution->id}}"
-                                                        @if($sample->dilutionfactor == $dilution->id)
+                                                    <option value="{{$dilution->dilutionfactor  }}"
+                                                        @if($sample->dilutionfactor == $dilution->dilutionfactor    )
                                                             selected
                                                         @endif
                                                         > {{ $dilution->dilutiontype }} </option>

@@ -19,7 +19,6 @@ class EidDispatch extends Mailable implements ShouldQueue
     public $view_facility;
     public $site_url;
 
-
     /**
      * Create a new message instance.
      *

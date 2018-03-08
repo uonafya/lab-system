@@ -57,7 +57,7 @@ class MiscViral extends Model
 	{		
 		$total = Viralsample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
 		$tests = Viralsample::where('batch_id', $batch)
-		->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND repeatt = 0 AND approvedby IS NOT NULL) )")
+		->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Collect New Sample' AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL) )")
 		->get()
 		->count();
 

@@ -425,8 +425,9 @@ class ViralworksheetController extends Controller
         $samples = $request->input('samples');
         $batches = $request->input('batches');
         $redraws = $request->input('redraws');
+        $results = $request->input('results');
         $actions = $request->input('actions');
-        $dilutions = $request->input('dilutiontype');
+        $dilutions = $request->input('dilutionfactors');
 
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
@@ -439,8 +440,15 @@ class ViralworksheetController extends Controller
                 'approvedby' => $approver,
                 'dateapproved' => $today,
                 'repeatt' => $actions[$key],
-                'dilutiontype' => $dilutions[$key],
+                'dilutionfactor' => $dilutions[$key],
             ];
+
+            if(is_int($results[$key])){
+                $data['result'] = $results[$key] * $dilutions[$key];
+            }
+            else{
+                $data['result'] = $results[$key];
+            }
 
             if(isset($redraws[$key])) $data['result'] = "Collect New Sample";
 

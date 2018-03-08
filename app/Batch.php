@@ -14,6 +14,11 @@ class Batch extends Model
 
     protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
+    public function setDatedispatchedfromfacilityAttribute($value)
+    {
+        $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
+    }
+
 	public function sample()
     {
         return $this->hasMany('App\Sample');

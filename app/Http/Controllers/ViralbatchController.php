@@ -100,7 +100,6 @@ class ViralbatchController extends Controller
     {
         $batches = $request->input('batches');
 
-
         foreach ($batches as $key => $value) {
             $batch = Batch::find($value);
             $facility = DB::table('facilitys')->where('id', $batch->facility_id)->get()->first();
@@ -138,6 +137,7 @@ class ViralbatchController extends Controller
     public function get_totals($result, $batch_id=NULL)
     {
         $samples = Viralsample::selectRaw("count(*) as totals, batch_id")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->whereNotNull('batch_id')
             ->when($batch_id, function($query) use ($batch_id){
                 return $query->where('batch_id', $batch_id);
@@ -254,26 +254,39 @@ class ViralbatchController extends Controller
 
             $delays = $my->working_days($maxdate, $currentdate);
 
+            switch ($batch->batch_complete) {
+                case 0:
+                    $status = "In process";
+                    break;
+                case 1:
+                    $status = "Dispatched";
+                    break;
+                case 2:
+                    $status = "Awaiting Dispatch";
+                    break;
+                default:
+                    break;
+            }
+
             $table_rows .= "<tr> 
             <td><div align='center'><input name='batches[]' type='checkbox' id='batches[]' value='{$batch->id}' /> </div></td>
             <td>{$batch->id}</td>
             <td>{$batch->name}</td>
             <td>{$batch->email}</td>
             <td>{$batch->datereceived}</td>
+            <td>{$batch->created_at}</td>
+            <td>{$delays}</td>
             <td>{$total}</td>
             <td>{$rej}</td>
             <td>{$results}</td>
-            <td>{$dm}</td>
-            <td>{$pos}</td>
-            <td>{$neg}</td>
-            <td>{$redraw}</td>
             <td>{$failed}</td>
-            <td>{$delays}</td>
+            <td>{$status}</td>
+            <td><a href='" . url("/viralbatch/" . $batch->id) . "'>View</a> </td>
             </tr>";
         }
 
 
-        return view('tables.dispatch', ['rows' => $table_rows, 'pending' => $batches->count()]);
+        return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()]);
 
     }
 
