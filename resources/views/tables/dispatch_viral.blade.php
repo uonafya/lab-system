@@ -62,12 +62,12 @@
                                     <th> Rejected </th>
                                     <th> Results </th>
                                     <th> No Results </th>
+                                    <th> Redraw </th>
                                     <th> Status </th>
                                     <th> Task </th>            
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @php
                                     echo $rows;
                                 @endphp 

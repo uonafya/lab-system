@@ -155,8 +155,11 @@ class ViralbatchController extends Controller
                     ->where('result', '!=', '< LDL copies/ml');
                 }
                 else if ($result == 3) {
-                    return $query->whereRaw("(result='Failed' or result='Collect New Sample')");
-                }                
+                    return $query->where('result', 'Failed');
+                } 
+                else if ($result == 5) {
+                    return $query->where('result', 'Collect New Sample');
+                }               
             })
             ->where('batch_complete', 2)
             ->where('repeatt', 0)
@@ -225,6 +228,7 @@ class ViralbatchController extends Controller
 
 
         $noresult_a = $this->get_totals(0);
+        $redraw_a = $this->get_totals(5);
         $failed_a = $this->get_totals(3);
         $detected_a = $this->get_totals(2);
         $undetected_a = $this->get_totals(1);
@@ -239,13 +243,14 @@ class ViralbatchController extends Controller
         foreach ($batches as $key => $batch) {
 
             $noresult = $this->checknull($noresult_a->where('batch_id', $batch->id));
+            $redraw = $this->checknull($redraw_a->where('batch_id', $batch->id));
             $failed = $this->checknull($failed_a->where('batch_id', $batch->id));
             $detected = $this->checknull($detected_a->where('batch_id', $batch->id));
             $undetected = $this->checknull($undetected_a->where('batch_id', $batch->id));
             $rej = $this->checknull($rejected->where('batch_id', $batch->id));
 
             $results = $undetected + $detected;
-            $total = $noresult + $failed + $results + $rej;
+            $total = $noresult + $failed + $redraw + $results + $rej;
 
             $dm = $date_modified->where('batch_id', $batch->id)->first()->mydate;
             $dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
@@ -254,19 +259,19 @@ class ViralbatchController extends Controller
 
             $delays = $my->working_days($maxdate, $currentdate);
 
-            switch ($batch->batch_complete) {
-                case 0:
-                    $status = "In process";
-                    break;
-                case 1:
-                    $status = "Dispatched";
-                    break;
-                case 2:
-                    $status = "Awaiting Dispatch";
-                    break;
-                default:
-                    break;
-            }
+            // switch ($batch->batch_complete) {
+            //     case 0:
+            //         $status = "In process";
+            //         break;
+            //     case 1:
+            //         $status = "Dispatched";
+            //         break;
+            //     case 2:
+            //         $status = "Awaiting Dispatch";
+            //         break;
+            //     default:
+            //         break;
+            // }
 
             $table_rows .= "<tr> 
             <td><div align='center'><input name='batches[]' type='checkbox' id='batches[]' value='{$batch->id}' /> </div></td>
@@ -280,6 +285,7 @@ class ViralbatchController extends Controller
             <td>{$rej}</td>
             <td>{$results}</td>
             <td>{$failed}</td>
+            <td>{$redraw}</td>
             <td>{$status}</td>
             <td><a href='" . url("/viralbatch/" . $batch->id) . "'>View</a> </td>
             </tr>";
