@@ -259,19 +259,19 @@ class ViralbatchController extends Controller
 
             $delays = $my->working_days($maxdate, $currentdate);
 
-            // switch ($batch->batch_complete) {
-            //     case 0:
-            //         $status = "In process";
-            //         break;
-            //     case 1:
-            //         $status = "Dispatched";
-            //         break;
-            //     case 2:
-            //         $status = "Awaiting Dispatch";
-            //         break;
-            //     default:
-            //         break;
-            // }
+            switch ($batch->batch_complete) {
+                case 0:
+                    $status = "In process";
+                    break;
+                case 1:
+                    $status = "Dispatched";
+                    break;
+                case 2:
+                    $status = "Awaiting Dispatch";
+                    break;
+                default:
+                    break;
+            }
 
             $table_rows .= "<tr> 
             <td><div align='center'><input name='batches[]' type='checkbox' id='batches[]' value='{$batch->id}' /> </div></td>
