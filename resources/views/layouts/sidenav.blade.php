@@ -25,9 +25,24 @@
                 <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
-                    <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(24)</a></li>
-                    <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(48)</a></li>
+                    <li><a href="{{ url('worksheet/create') }}">Create Taqman(24)</a></li>
                     <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(96)</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
+                <ul class="nav nav-second-level">
+                    <li><a href="{{ url('viralsample/create') }}">Add</a></li>
+                    <li><a href="{{ url('viralsample') }}">View</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
+                <ul class="nav nav-second-level">
+                    <li><a href=" {{ url('Viralworksheet') }}">Worksheets</a></li>
+                    <li><a href="{{ url('Viralworksheet/create') }}">Create Taqman(24)</a></li>
+                    <li><a href="{{ url('Viralworksheet/create') }}">Create Abbott Worksheet(96)</a></li>
                 </ul>
             </li>
         @endif
