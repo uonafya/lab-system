@@ -725,7 +725,7 @@ DROP TABLE IF EXISTS `viraldilutionfactors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viraldilutionfactors` (
-  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `dilutiontype` varchar(100) DEFAULT NULL,
   `dilutionfactor` int(10) DEFAULT NULL,
   `flag` int(10) DEFAULT '1',
@@ -751,7 +751,7 @@ DROP TABLE IF EXISTS `vlresultsguidelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `vlresultsguidelines` (
-  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `sampletype` int(10) NOT NULL COMMENT '1 - dbs 2-plasma/edta',
   `test` int(10) DEFAULT NULL,
   `triagecode` varchar(10) DEFAULT NULL,

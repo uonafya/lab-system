@@ -16,7 +16,8 @@
         "guzzlehttp/guzzle": "^6.3",
         "maatwebsite/excel": "^2.1",
         "venturecraft/revisionable": "^1.28",
-        "milon/barcode": "^5.3"
+        "milon/barcode": "^5.3",
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

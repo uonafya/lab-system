@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Batch;
+use App\Viralbatch;
 use DB;
 
 use Illuminate\Bus\Queueable;
@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EidDispatch extends Mailable implements ShouldQueue
+class VlDispatch extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -24,7 +24,7 @@ class EidDispatch extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Batch $batch, $facility)
+    public function __construct(Viralbatch $batch, $facility)
     {
         $batch->load(['sample']);
         $this->batch = $batch;

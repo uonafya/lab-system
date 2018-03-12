@@ -3,49 +3,30 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Sample;
+use App\Viralsample;
 use DB;
 
-class Misc extends Model
+class MiscViral extends Model
 {
 
 	public function requeue($worksheet_id)
 	{
-		$samples = Sample::where('worksheet_id', $worksheet_id)->get();
+		$samples = Viralsample::where('worksheet_id', $worksheet_id)->get();
 
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {
 			if($sample->parentid == 0){
-				if($sample->result == 2 || $sample->result == 3){
+				if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
 					$sample->repeatt = 1;
 					$sample->save();
 				}
 			}
 			else{
-				$original = $this->check_original($sample->id);
-
-				if($sample->run == 2){
-					if( ($sample->result == 3 && $original->result == 3) || 
-						($sample->result == 2 && $original->result == 3) || 
-						($sample->result != 2 && $original->result == 2) )
-					{
-						$sample->repeatt = 1;
-						$sample->save();
-					}
-				}
-
-				else if($sample->run == 3){
-					$second = $this->check_run($sample->id, 2);
-
-					if( ($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
-						($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
-						($original->result == 2 && $second->result == 3 && $sample->result == 3) )
-					{
-						$sample->repeatt = 1;
-						$sample->save();
-					}
-				}
+				if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
+					$sample->repeatt = 1;
+					$sample->save();
+				}				
 			}
 		}
 		return true;
@@ -53,8 +34,8 @@ class Misc extends Model
 
 	public function save_repeat($sample_id)
 	{
-		$sample = new Sample;
-		$sample->fill( Sample::find($sample_id)->toArray() );
+		$sample = new Viralsample;
+		$sample->fill( Viralsample::find($sample_id)->toArray() );
 
 		if($sample->run == 4){
 			return false;
@@ -74,14 +55,14 @@ class Misc extends Model
 
 	public function check_batch($batch)
 	{		
-		$total = Sample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
-		$tests = Sample::where('batch_id', $batch)
-		->whereRaw("( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL) )")
+		$total = Viralsample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
+		$tests = Viralsample::where('batch_id', $batch)
+		->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Collect New Sample' AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL) )")
 		->get()
 		->count();
 
 		if($total == $tests){
-			DB::table('batches')->where('id', $batch)->update(['batch_complete' => 2]);
+			DB::table('viralbatches')->where('id', $batch)->update(['batch_complete' => 2]);
 		}
 	}
 
@@ -89,7 +70,7 @@ class Misc extends Model
 	{
 		$lab = session()->auth()->id;
 
-		$sample = Sample::select('samples.*')
+		$sample = Viralsample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
 		->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
 		->get()
@@ -102,7 +83,7 @@ class Misc extends Model
 	{
 		$lab = auth()->user()->lab_id;
 
-		$samples = Sample::select('samples.*')
+		$samples = Viralsample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
 		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id])
 		->get();

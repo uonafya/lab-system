@@ -158,7 +158,7 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id', 'result')
+            ->groupBy('batch_id')
             ->get();
 
         return $samples;
@@ -173,7 +173,7 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id', 'result')
+            ->groupBy('batch_id')
             ->get();
 
         return $samples;

@@ -37,4 +37,24 @@ class Viralsample extends Model
     {
         return $this->hasMany('App\Viralsample', 'parentid');
     }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'createdby');
+    }
+
+    public function canceller()
+    {
+        return $this->belongsTo('App\User', 'cancelledby');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo('App\User', 'reviewedby');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
 }

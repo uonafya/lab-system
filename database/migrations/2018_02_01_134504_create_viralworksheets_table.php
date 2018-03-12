@@ -45,9 +45,9 @@ class CreateViralWorksheetsTable extends Migration
             $table->string('calibrator_lot_no')->nullable();
             $table->string('amplification_kit_lot_no')->nullable();
 
-            $table->tinyInteger('neg_control_result')->unsigned()->nullable();
-            $table->tinyInteger('highpos_control_result')->unsigned()->nullable();
-            $table->tinyInteger('lowpos_control_result')->unsigned()->nullable();
+            $table->string('neg_control_result')->nullable();
+            $table->string('highpos_control_result')->nullable();
+            $table->string('lowpos_control_result')->nullable();
 
             $table->string('neg_control_interpretation')->nullable();
             $table->string('highpos_control_interpretation')->nullable();

@@ -14,11 +14,6 @@ class Sample extends Model
     protected $guarded = [];
     protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
-    public function setDatedispatchedfromfacilityAttribute($value)
-    {
-        $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
-    }
-
     public function patient()
     {
     	return $this->belongsTo('App\Patient');
