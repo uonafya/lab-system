@@ -36,6 +36,10 @@ Route::get('datatables', function () {
 	return view('datatables');
 });
 
+Route::get('error', function(){
+	return view('errors.error', ['code' => '500', 'title' => 'Internal server error', 'description' => 'Sorry, there was an internal server error that occured. Please try again later']);
+});
+
 Route::get('facility/served', 'FacilityController@served');
 Route::resource('facility', 'FacilityController');
 // Route::get('/home', function () {
