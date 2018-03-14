@@ -21,14 +21,6 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '5', 'user_type' => 'Facility Users'],
 		]);
 
-
-
-        DB::table('gender')->insert([
-		    ['gender' => 'M', 'gender_description' => 'Male'],
-		    ['gender' => 'F', 'gender_description' => 'Female'],
-		    ['gender' => 'No Data', 'gender_description' => 'No data'],
-		]);
-
         $users = factory(App\User::class, 1)->create([
 	        'user_type_id' => 1,
 	        'surname' => 'Kithinji',

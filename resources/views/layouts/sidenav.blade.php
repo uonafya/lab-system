@@ -29,6 +29,13 @@
                     <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(96)</a></li>
                 </ul>
             </li>
+            <li>
+                <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
+                <ul class="nav nav-second-level">
+                    <li><a href=" {{ url('batch') }}">View</a></li>
+                    <li><a href=" {{ url('batch/dispatch') }}">Dispatch</a></li>
+                </ul>
+            </li>
 
             <li>
                 <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>

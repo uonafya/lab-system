@@ -725,6 +725,31 @@ INSERT INTO `pcrtype` VALUES (1,'1 &nbsp;Initial PCR','Initial PCR'),(2,'2 &nbsp
 /*!40000 ALTER TABLE `pcrtype` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Table structure for table `gender`
+--
+
+DROP TABLE IF EXISTS `gender`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gender` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `gender` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `gender_description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gender`
+--
+
+LOCK TABLES `gender` WRITE;
+/*!40000 ALTER TABLE `gender` DISABLE KEYS */;
+INSERT INTO `gender` VALUES (1,'M','Male'),(2,'F','Female'),(3,'No Data','No data');
+/*!40000 ALTER TABLE `gender` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 DROP TABLE IF EXISTS `viraljustifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -808,5 +833,3 @@ districts.province
 from facilitys,districts,countys,partners 
 where facilitys.district=districts.id and districts.county=countys.id 
 and facilitys.partner=partners.id and facilitys.Flag=1;
-​
-
