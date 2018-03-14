@@ -41,7 +41,9 @@ Route::get('error', function(){
 });
 
 Route::get('facility/served', 'FacilityController@served');
+Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 Route::resource('facility', 'FacilityController');
+
 // Route::get('/home', function () {
 // 	return view('home');
 // });

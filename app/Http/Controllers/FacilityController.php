@@ -42,14 +42,9 @@ class FacilityController extends Controller
             $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
             $table .= '</tr>';
         }
-        $columns = ['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email','Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task'];
-        $column = '<tr>';
-        foreach ($columns as $key => $value) {
-            $column .= '<th>'.$value.'</th>';
-        }
-        $column .= '</tr>';
+        $columns = self::_columnBuilder(['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email','Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task']);
         
-        return view('tables.facilities', ['row' => $table, 'columns' => $column]);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns]);
     }
 
     public function served()
@@ -81,15 +76,10 @@ class FacilityController extends Controller
             $table .= '<td>'.$value->partner.'</td>';
             $table .= '</tr>';
         }
-        $columns = ['#','MFL Code', 'Facility Name', 'County', 'Sub-county', 'Mobile', 'Email Address', 
-                    'Contact Person', 'CP Telephone', 'CP Email', 'Supporting Partner'];
-        $column = '<tr>';
-        foreach ($columns as $key => $value) {
-            $column .= '<th>'.$value.'</th>';
-        }
-        $column .= '</tr>';
+        $columns = self::_columnBuilder(['#','MFL Code', 'Facility Name', 'County', 'Sub-county', 'Mobile', 'Email Address', 
+                    'Contact Person', 'CP Telephone', 'CP Email', 'Supporting Partner']);
         
-        return view('tables.facilities', ['row' => $table, 'columns' => $column]);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns]);
     }
 
     public function smsprinters()
@@ -105,12 +95,9 @@ class FacilityController extends Controller
                             ->where('facilitys.smsprinter', '<>', '')
                             ->get();
         
-        $columns = ['#','MFL Code', 'Facility Name', 'County', 'Sub-county', 'Email Address', 
-                    'Contact Person', 'CP Telephone', 'CP Email', 'Supporting Partner', 'SMS Printer No.', 'Service Provider'];
-        $column = '<tr>';
-        foreach ($columns as $key => $value) {
-            $column .= '<th>'.$value.'</th>';
-        }
+        $columns = self::_columnBuilder(['#','MFL Code', 'Facility Name', 'County', 'Sub-county', 'Email Address', 
+                    'Contact Person', 'CP Telephone', 'CP Email', 'Supporting Partner', 'SMS Printer No.', 'Service Provider']);
+        
         $count = 0;
         $table = '';
         foreach ($facilities as $key => $value) {
@@ -130,8 +117,41 @@ class FacilityController extends Controller
             $table .= '<td>'.$value->serviceprovider.'</td>';
             $table .= '</tr>';
         }
-        $column .= '</tr>';
-        return view('tables.facilities', ['row' => $table, 'columns' => $column]);
+        
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns]);
+    }
+
+    public function withoutemails()
+    {
+        $columns = self::_columnBuilder(['Facility Code', 'Facility Name', 'Mobile No', 'Email Address', 'Contact Person', 'CP Telephone', 'CP Email']);
+        
+        $facilities = DB::table('facilitys')
+                            ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county', 'partners.name as partner','ftype','telephone','telephone2','facilitys.email','facilitys.contactperson','facilitys.PostalAddress','facilitys.contacttelephone','facilitys.contacttelephone2','facilitys.ContactEmail','partners.name as partner','facilitys.smsprinterphoneno','facilitys.serviceprovider')
+                            ->join('view_facilitys', 'view_facilitys.ID', '=', 'facilitys.ID')
+                            ->join('districts', 'districts.ID', '=', 'facilitys.district')
+                            ->join('countys', 'countys.ID', '=', 'view_facilitys.county')
+                            ->join('partners', 'partners.ID', '=', 'view_facilitys.partner')
+                            ->where('facilitys.flag', '=', 1)
+                            ->where('facilitys.lab', '=', Auth()->user()->lab_id)
+                            ->whereRaw("((facilitys.email = '' and facilitys.ContactEmail ='') or (facilitys.email = '' and facilitys.ContactEmail is null) or (facilitys.email is null and facilitys.ContactEmail ='') or ((facilitys.email is null and facilitys.ContactEmail is null)))")
+                            ->get();
+        // dd($facilities);
+        $table = '';
+        foreach ($facilities as $key => $value) {
+            $table .= '<tr>';
+            $table .= '<td>'.$value->facilitycode.'</td>';
+            $table .= '<td>'.$value->facility.'</td>';
+            $table .= '<td>'.$value->telephone.'</td>';
+            $table .= '<td>
+                            <input type="hidden" name="id[]" value="'.$value->id.'">
+                            <input type="text" class="form-control m-b input-sm" size="20" name="email[]" value="'.$value->email.'">
+                        </td>';
+            $table .= '<td><input type="text" class="form-control m-b input-sm" size="20" name="contactperson[]" value="'.$value->contactperson.'"></td>';
+            $table .= '<td><input type="text" class="form-control m-b input-sm" size="20" name="contacttelephone[]" value="'.$value->contacttelephone.'"></td>';
+            $table .= '<td><input type="text" class="form-control m-b input-sm" size="20" name="ContactEmail[]" value="'.$value->ContactEmail.'"></td>';
+            $table .= '</tr>';
+        }
+        return view('tables.editable', ['row' => $table, 'columns' => $columns, 'function' => 'update']);
     }
 
     /**
@@ -211,8 +231,26 @@ class FacilityController extends Controller
         //     'county' => 'required',
         //     'lab' => 'required',
         // ]);
-
-        $data = ['facilitycode' => $request->facilitycode, 'name' => $request->name,
+        // dd($request->contacttelephone[199]);
+        if (gettype($request->id) == "array") {
+            $count = 0;
+            foreach ($request->id as $key => $value) {
+                $data = ['id' => $request->id[$count],'email' => $request->email[$count],'contactperson' => $request->contactperson[$count],
+                            'contacttelephone' => $request->contacttelephone[$count],'ContactEmail' => $request->ContactEmail[$count]];
+                $update = DB::table('facilitys')
+                    ->where('id', $request->id[$count])
+                    ->update($data);    
+                $count ++;
+            }
+            if ($update) {
+                return redirect()->route('withoutemails')
+                            ->with('success', 'Update was sucessfull');
+            } else {
+                return redirect()->route('withoutemails')
+                            ->with('failed', 'Updated failed try again later');
+            }
+        } else {
+            $data = ['facilitycode' => $request->facilitycode, 'name' => $request->name,
                 'PostalAddress' => $request->PostalAddress, 'physicaladdress' => $request->physicaladdress,
                 'telephone' => $request->telephone, 'fax' => $request->fax,
                 'telephone2' => $request->telephone2, 'email' => $request->email,
@@ -221,17 +259,19 @@ class FacilityController extends Controller
                 'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
                 'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
                 'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
-        $update = DB::table('facilitys')
+            $update = DB::table('facilitys')
                     ->where('id', $id)
                     ->update($data);
-                    // dd($update);
-        if ($update) {
-            return redirect()->route('facility.index')
-                        ->with('success', 'Update was sucessfull');
-        } else {
-            return redirect()->route('facility.index')
-                        ->with('failed', 'Updated failed try again later');
+            if ($update) {
+                return redirect()->route('facility.index')
+                            ->with('success', 'Update was sucessfull');
+            } else {
+                return redirect()->route('facility.index')
+                            ->with('failed', 'Updated failed try again later');
+            }
         }
+        
+        
     }
 
     /**
@@ -243,5 +283,19 @@ class FacilityController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function _columnBuilder($columns = null)
+    {
+        $column = '<tr>';
+        if ($columns == null) {
+            $column .= '<th><center>No Data available</center></th>';
+        } else {
+            foreach ($columns as $key => $value) {
+                $column .= '<th>'.$value.'</th>';
+            }
+        }
+        $column .= '</tr>';
+        return $column;
     }
 }

@@ -50,7 +50,7 @@
 		                		<tr>
 		                			<td>* Without emails</td>
 		                			<td>{{ $tasks['facilitiesWithoutEmails'] }}</td>
-		                			<td><a href="#">Update</a></td>
+		                			<td><a href="{{ url('facility/withoutemails') }}">Update</a></td>
 		                		</tr>
 		                		<tr>
 		                			<td>* Without G4S Details</td>
