@@ -52,8 +52,8 @@ $factory->define(App\Sample::class, function (Faker $faker) {
         'receivedstatus' => 1,
         'age' => rand(1, 12),
         'pcrtype' => rand(1, 3),
-        'regimen' => rand(1, 10),
-        'mother_prophylaxis' => rand(1, 5),
+        'regimen' => $faker->randomElement([12, 13, 14, 15, 16]),
+        'mother_prophylaxis' => $faker->randomElement([5, 6, 7, 18, 17, 19, 20, 21, 22, 23, 24]),
         'feeding' => rand(1, 5),
         'spots' => rand(1, 5),
         'datecollected' => $faker->numerify('2017-0#-1#'),
@@ -77,7 +77,7 @@ $factory->define(App\Mother::class, function (Faker $faker) {
         'ccc_no' => $faker->bothify('#####-?????'),
         'facility_id' => rand(1, 1000),
         'entry_point' => rand(1, 5),
-        'hiv_status' => rand(1, 5),
+        'hiv_status' => rand(1, 2),
     ];
 });
 

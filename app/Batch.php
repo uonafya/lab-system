@@ -12,7 +12,7 @@ class Batch extends Model
     protected $historyLimit = 500; 
     protected $guarded = [];
 
-    protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
+    // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
     public function setDatedispatchedfromfacilityAttribute($value)
     {
@@ -22,6 +22,21 @@ class Batch extends Model
 	public function sample()
     {
         return $this->hasMany('App\Sample');
+    }
+
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo('App\User', 'received_by');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'user_id');
     }
 
     // public function scopeGreatest($query)

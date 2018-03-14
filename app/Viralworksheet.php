@@ -12,7 +12,7 @@ class Viralworksheet extends Model
     protected $historyLimit = 500; 
 
     protected $guarded = [];
-    protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
+    // protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
 
     public function sample()
     {

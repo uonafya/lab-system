@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Viralsample extends Model
 {
     protected $guarded = [];
-    protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
+    // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
 
     public function patient()

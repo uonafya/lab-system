@@ -12,7 +12,7 @@ class Sample extends Model
     protected $historyLimit = 500; 
     
     protected $guarded = [];
-    protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
+    // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
     public function patient()
     {

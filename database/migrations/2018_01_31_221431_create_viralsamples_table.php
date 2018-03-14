@@ -17,10 +17,9 @@ class CreateViralsamplesTable extends Migration
             $table->increments('id');
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('batch_id')->unsigned()->index();
-            $table->string('amrs_location')->nullable();
+            $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier')->nullable();
-            $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();
-            
+            $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();            
 
             // This will be used instead
             $table->tinyInteger('age')->unsigned()->nullable()->index();
@@ -38,7 +37,7 @@ class CreateViralsamplesTable extends Migration
             $table->integer('parentid')->unsigned()->default(0);
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
-            $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
+            $table->string('reason_for_repeat')->nullable();
             $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
 
             $table->string('result')->nullable()->index();

@@ -36,7 +36,11 @@ width:1180px;
 }
 
 </STYLE> 
-<body onLoad="JavaScript:window.print();">
+<body
+	@isset($print)
+		onLoad="JavaScript:window.print();"
+	@endisset
+	>
 	<div align="center">
 
 		<table border="0" class="data-table">

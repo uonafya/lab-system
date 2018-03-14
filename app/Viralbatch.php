@@ -12,7 +12,7 @@ class Viralbatch extends Model
     protected $historyLimit = 500; 
     protected $guarded = [];
 
-    protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
+    // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
     public function setDatedispatchedfromfacilityAttribute($value)
     {
@@ -22,5 +22,10 @@ class Viralbatch extends Model
 	public function sample()
     {
         return $this->hasMany('App\Viralsample', 'batch_id');
+    }
+
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
     }
 }

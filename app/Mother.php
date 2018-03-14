@@ -12,7 +12,7 @@ class Mother extends Model
     protected $historyLimit = 500; 
     
     protected $guarded = [];
-    protected $dates = ['datesynched'];
+    // protected $dates = ['datesynched'];
 
 
     public function patient()
