@@ -132,7 +132,6 @@ class BatchController extends Controller
 
         $samples = Sample::selectRaw("count(samples.id) as totals, batch_id, result")
             ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            // ->whereIn('batch_id', $batch_id)
             ->when($batch_id, function($query) use ($batch_id){
                 if (is_array($batch_id)) {
                     return $query->whereIn('batch_id', $batch_id);
@@ -357,50 +356,13 @@ class BatchController extends Controller
             <td>{$total}</td>
             <td>{$rej}</td>
             <td>{$result}</td>
-            <td>{$noresult}</td>" . $this->batch_status($batch->id, $batch->batch_complete) . "
+            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete) . "
             </tr>";
         }
 
-        $links = $this->page_links($page, $last_page, $date_start, $date_end);
+        $links = $my->page_links($page, $last_page, $date_start, $date_end);
 
         return view('tables.batches', ['rows' => $table_rows, 'links' => $links]);
-    }
-
-    public function batch_status($batch_id, $batch_complete){
-        if($batch_complete == 0){
-            return "<td>In Process</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
-        }
-        else{
-            return "<td>Complete</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
-        }
-    }
-
-    public function page_links($page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
-    {
-        $str = "";
-        $datestring = "";
-
-        if($date_start){
-            $datestring .= '/' . $date_start;
-            if($date_end){
-                $datestring .= '/' . $date_end;
-            }
-        }
-        $next = $page+1;
-        $previous = $page-1;
-
-        if($page != 1){
-            $str .= "<a href='" . url('batch/index/1' . $datestring) . "'>First Page</a> |";
-            $str .= "<a href='" . url('batch/index/' . $previous . $datestring) . "'>Prev</a> |";
-        }
-
-        $str .= "<a href='" . url('batch/index/' . $page . $datestring) . "'>{$page}</a> |";
-
-        if($page < $last_page ){
-            $str .= "<a href='" . url('batch/index/' . $next . $datestring) . "'>Next</a> | ";
-            $str .= "<a href='" . url('batch/index/' . $last_page . $datestring) . "'>Last Page</a>";
-        }
-        return $str;
     }
 
     public function checknull($var)

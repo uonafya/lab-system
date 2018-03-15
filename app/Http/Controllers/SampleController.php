@@ -7,6 +7,7 @@ use App\Patient;
 use App\Mother;
 use App\Facility;
 use App\Batch;
+use App\Lookup;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,39 +31,9 @@ class SampleController extends Controller
      */
     public function create()
     {
-        $facilities = Facility::select('id', 'name')->get();
-        $amrs_locations = DB::table('amrslocations')->get();
-        $rejectedreasons = DB::table('rejectedreasons')->get();
-        $genders = DB::table('gender')->get();
-        $feedings = DB::table('feedings')->get();
-        $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $entry_points = DB::table('entry_points')->get();
-        $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
-        $pcrtypes = DB::table('pcrtype')->get();
-        $receivedstatuses = DB::table('receivedstatus')->get();
-
-        return view('forms.samples', [
-            'facilities' => $facilities,
-            'amrs_locations' => $amrs_locations,
-            'rejectedreasons' => $rejectedreasons,
-            'genders' => $genders,
-            'feedings' => $feedings,
-            'iprophylaxis' => $iprophylaxis,
-            'interventions' => $interventions,
-            'entry_points' => $entry_points,
-            'hiv_statuses' => $hiv_statuses,
-            'pcrtypes' => $pcrtypes,
-            'receivedstatuses' => $receivedstatuses,
-
-            'batch_no' => session('batch_no', 0),
-            'batch_dispatch' => session('batch_dispatch', 0),
-            'batch_dispatched' => session('batch_dispatched', 0),
-            'batch_received' => session('batch_received', 0),
-
-            'facility_id' => session('facility_id', 0),
-            'facility_name' => session('facility_name', 0),
-        ]);
+        $lookup = new Lookup;
+        $data = $lookup->samples_form();
+        return view('forms.samples', $data);
     }
 
     /**
@@ -233,40 +204,10 @@ class SampleController extends Controller
     public function edit(Sample $sample)
     {
         $sample->load(['patient.mother', 'batch']);
-        $facilities = Facility::select('id', 'name')->get();
-        $amrs_locations = DB::table('amrslocations')->get();
-        $rejectedreasons = DB::table('rejectedreasons')->get();
-        $genders = DB::table('gender')->get();
-        $feedings = DB::table('feedings')->get();
-        $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $entry_points = DB::table('entry_points')->get();
-        $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
-        $pcrtypes = DB::table('pcrtype')->get();
-        $receivedstatuses = DB::table('receivedstatus')->get();
-
-        return view('forms.samples', [
-            'sample' => $sample,
-            'facilities' => $facilities,
-            'amrs_locations' => $amrs_locations,
-            'rejectedreasons' => $rejectedreasons,
-            'genders' => $genders,
-            'feedings' => $feedings,
-            'iprophylaxis' => $iprophylaxis,
-            'interventions' => $interventions,
-            'entry_points' => $entry_points,
-            'hiv_statuses' => $hiv_statuses,
-            'pcrtypes' => $pcrtypes,
-            'receivedstatuses' => $receivedstatuses,
-
-            'batch_no' => session('batch_no', 0),
-            'batch_dispatch' => session('batch_dispatch', 0),
-            'batch_dispatched' => session('batch_dispatched', 0),
-            'batch_received' => session('batch_received', 0),
-
-            'facility_id' => session('facility_id', 0),
-            'facility_name' => session('facility_name', 0),
-        ]);
+        $lookup = new Lookup;
+        $data = $lookup->samples_form();
+        $data['sample'] = $sample;
+        return view('forms.samples', $data);
     }
 
     /**

@@ -84,8 +84,8 @@ class MiscViral extends Model
 		$lab = auth()->user()->lab_id;
 
 		$samples = Viralsample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id])
+		->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+		->where(['lab_id' => $lab, 'parentid' => $sample_id])
 		->get();
 
 		return $samples;
@@ -95,9 +95,9 @@ class MiscViral extends Model
 	{
 		$lab = auth()->user()->lab_id;
 
-		$sample = Sample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id, 'run' => $run])
+		$sample = Viralsample::select('samples.*')
+		->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+		->where(['lab_id' => $lab, 'parentid' => $sample_id, 'run' => $run])
 		->get()
 		->first();
 
@@ -151,4 +151,84 @@ class MiscViral extends Model
 
 	    return $workingDays;
 	}
+
+
+    public function get_totals($result, $batch_id=NULL, $complete=true)
+    {
+        $samples = Viralsample::selectRaw("count(*) as totals, batch_id")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when(true, function($query) use ($result){
+                if ($result == 0) {
+                    return $query->whereNull('result');
+                }
+                else if ($result == 1) {
+                    return $query->where('result', '< LDL copies/ml');
+                }
+                else if ($result == 2) {
+                    return $query->where('result', '!=', 'Failed')
+                    ->where('result', '!=', 'Collect New Sample')
+                    ->where('result', '!=', '< LDL copies/ml');
+                }
+                else if ($result == 3) {
+                    return $query->where('result', 'Failed');
+                } 
+                else if ($result == 5) {
+                    return $query->where('result', 'Collect New Sample');
+                }               
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
+	
+
+    public function batch_status($batch_id, $batch_complete){
+        if($batch_complete == 0){
+            return "<td>In Process</td><td><a href='" . url('/viralbatch/' . $batch_id) . "'>View</a>";
+        }
+        else{
+            return "<td>Complete</td><td><a href='" . url('/viralbatch/' . $batch_id) . "'>View</a>";
+        }
+    }
+
+    public function page_links($page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
+    {
+        $str = "";
+        $datestring = "";
+
+        if($date_start){
+            $datestring .= '/' . $date_start;
+            if($date_end){
+                $datestring .= '/' . $date_end;
+            }
+        }
+        $next = $page+1;
+        $previous = $page-1;
+
+        if($page != 1){
+            $str .= "<a href='" . url('viralbatch/index/1' . $datestring) . "'>First Page</a> |";
+            $str .= "<a href='" . url('viralbatch/index/' . $previous . $datestring) . "'>Prev</a> |";
+        }
+
+        $str .= "<a href='" . url('viralbatch/index/' . $page . $datestring) . "'>{$page}</a> |";
+
+        if($page < $last_page ){
+            $str .= "<a href='" . url('viralbatch/index/' . $next . $datestring) . "'>Next</a> | ";
+            $str .= "<a href='" . url('viralbatch/index/' . $last_page . $datestring) . "'>Last Page</a>";
+        }
+        return $str;
+    }
 }

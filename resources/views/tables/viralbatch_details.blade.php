@@ -49,6 +49,9 @@
                         <b>Facility: {{ $batch->facility->name or '' }} </b> <br />
                         <b>Date Received: {{ $batch->datereceived or '' }} </b> <br />
                         <b>Date Entered: {{ $batch->created_at->toDateString() }} </b> <br />
+                        @if($batch->high_priority)
+                            <b>High Priority Batch </b> <br />
+                        @endif
                         <br />
                         <br />                        
                     </div>
@@ -59,23 +62,23 @@
                             </tr>
                             <tr>
                                 <th colspan="5">Patient Information</th>
-                                <th colspan="3">Sample Information</th>
-                                <th colspan="6">Mother Information</th>
+                                <th colspan="4">Sample Information</th>
+                                <th colspan="5">History Information</th>
                             </tr>
                             <tr>
-                                <th>No</th>
-                                <th>Patient ID</th>
+                                <th>#</th>
+                                <th>Patient CCC No</th>
                                 <th>Sex</th>
-                                <th>Age (Months)</th>
-                                <th>Infant Prophylaxis</th>
-                                <th>Date Collected</th>
-                                <th>Status</th>
-                                <th>Spots</th>
-                                <th>HIV Status</th>
-                                <th>PMTCT Intervention</th>
-                                <th>Feeding Type</th>
-                                <th>Entry Point</th>
-                                <th>Result</th>
+                                <th>Age</th>
+                                <th>DOB</th>
+                                <th>Sample Type</th>
+                                <th>Collection Date</th>
+                                <th>Received Status</th>
+                                <th>High Priority</th>
+                                <th>Current Regimen</th>
+                                <th>ART Initiation Date</th>
+                                <th>Justification</th>
+                                <th>Viral Load</th>
                                 <th>Task</th>
                             </tr>
                         </thead>
@@ -92,10 +95,11 @@
                                         @endforeach
                                     </td>
                                     <td> {{ $sample->age }} </td>
+                                    <td> {{ $sample->patient->dob }} </td>
                                     <td>
-                                        @foreach($iprophylaxis as $iproph)
-                                            @if($sample->regimen == $iproph->id)
-                                                {{ $iproph->name }}
+                                        @foreach($sample_types as $sample_type)
+                                            @if($sample->sampletype == $sample_type->id)
+                                                {{ $sample_type->name }}
                                             @endif
                                         @endforeach
                                     </td>
@@ -107,47 +111,28 @@
                                             @endif
                                         @endforeach
                                     </td>
-                                    <td> {{ $sample->spots }} </td>
+                                    <td></td>
                                     <td>
-                                        @foreach($results as $result)
-                                            @if($sample->patient->mother->hiv_status == $result->id)
-                                                {{ $result->name }}
+                                        @foreach($prophylaxis as $proph)
+                                            @if($sample->prophylaxis == $proph->id)
+                                                {{ $proph->name }}
                                             @endif
                                         @endforeach
                                     </td>
+                                    <td> {{ $sample->patient->initiation_date }} </td>
                                     <td>
-                                        @foreach($interventions as $intervention)
-                                            @if($sample->mother_prophylaxis == $intervention->id)
-                                                {{ $intervention->name }}
+                                        @foreach($justifications as $justification)
+                                            @if($sample->justification == $justification->id)
+                                                {{ $justification->name }}
                                             @endif
                                         @endforeach
                                     </td>
+                                    <td> {{ $sample->result }} </td>
                                     <td>
-                                        @foreach($feedings as $feeding)
-                                            @if($sample->feeding == $feeding->id)
-                                                {{ $feeding->feeding }}
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach($entry_points as $entry_point)
-                                            @if($sample->patient->mother->entry_point == $entry_point->id)
-                                                {{ $entry_point->name }}
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach($results as $result)
-                                            @if($sample->result == $result->id)
-                                                {{ $result->name }}
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        <a href="{{ url('/sample/' . $sample->id) }} ">View</a> |
-                                        <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
+                                        <a href="{{ url('/viralsample/' . $sample->id) }} ">View</a> |
+                                        <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
-                                        {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete']) }}
+                                        {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete']) }}
                                             <button type="submit" class="btn btn-xs btn-primary">Delete</button>
                                         {{ Form::close() }}
                                     </td>

@@ -40,6 +40,11 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('batch/index/{page?}/{date_start?}/{date_end?}', 'BatchController@display_batches');
 	Route::resource('batch', 'BatchController');
 
+	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
+	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+	Route::get('viralbatch/index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@display_batches');
+	Route::resource('viralbatch', 'ViralbatchController');
+
 	Route::get('/checkboxes', function () {
 		return view('checkbox');
 	});

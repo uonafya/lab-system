@@ -28,4 +28,14 @@ class Viralbatch extends Model
     {
         return $this->belongsTo('App\Facility');
     }
+
+    public function receiver()
+    {
+        return $this->belongsTo('App\User', 'received_by');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
 }

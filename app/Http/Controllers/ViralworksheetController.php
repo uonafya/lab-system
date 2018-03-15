@@ -419,10 +419,10 @@ class ViralworksheetController extends Controller
         $dilutions = DB::table('viraldilutionfactors')->get();
         $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
 
-        $noresult = $this->checknull($this->get_worksheets(0, $worksheet->id));
-        $failed = $this->checknull($this->get_worksheets(3, $worksheet->id));
-        $detected = $this->checknull($this->get_worksheets(2, $worksheet->id));
-        $undetected = $this->checknull($this->get_worksheets(1, $worksheet->id));
+        $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
+        $failed = $this->checknull($this->get_worksheet_results(3, $worksheet->id));
+        $detected = $this->checknull($this->get_worksheet_results(2, $worksheet->id));
+        $undetected = $this->checknull($this->get_worksheet_results(1, $worksheet->id));
 
         $total = $detected + $undetected + $failed + $noresult;
 
@@ -514,7 +514,7 @@ class ViralworksheetController extends Controller
         return $machines;
     }
 
-    public function get_worksheets($result, $worksheet_id=NULL)
+    public function get_worksheet_results($result, $worksheet_id=NULL)
     {
         $samples = Viralsample::selectRaw("count(*) as totals, worksheet_id")
             ->whereNotNull('worksheet_id')
