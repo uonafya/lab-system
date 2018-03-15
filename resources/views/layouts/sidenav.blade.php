@@ -47,12 +47,23 @@
             <li>
                 <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
-                    <li><a href=" {{ url('Viralworksheet') }}">Worksheets</a></li>
-                    <li><a href="{{ url('Viralworksheet/create') }}">Create Taqman(24)</a></li>
-                    <li><a href="{{ url('Viralworksheet/create') }}">Create Abbott Worksheet(96)</a></li>
+                    <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
+                    <li><a href="{{ url('viralworksheet/create') }}">Create Taqman(24)</a></li>
+                    <li><a href="{{ url('viralworksheet/create') }}">Create Abbott Worksheet(96)</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{{ url('batch/dispatch') }}">Dispatch Results
+                            <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endif
+        {{--
         @if (auth()->user()->user_type_id == 1)
             <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
@@ -130,6 +141,7 @@
                 </ul>
             </li>
         @endif
+        --}}
         </ul>
     </div>
 </aside>

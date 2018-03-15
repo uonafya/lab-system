@@ -37,7 +37,7 @@ class ViralsampleController extends Controller
         $receivedstatuses = DB::table('receivedstatus')->get();
         $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
         $justifications = DB::table('viraljustifications')->get();
-        $sampletypes = DB::table('viralsampletype')->where('flag', 1)->get();
+        $viralsampletypes = DB::table('viralsampletype')->where('flag', 1)->get();
         $regimenlines = DB::table('viralregimenline')->where('flag', 1)->get();
 
         return view('forms.viralsamples', [
@@ -49,7 +49,7 @@ class ViralsampleController extends Controller
             'pmtct_types' => $pmtct_types,
             'prophylaxis' => $prophylaxis,
             'justifications' => $justifications,
-            'sampletypes' => $sampletypes,
+            'sampletypes' => $viralsampletypes,
             'regimenlines' => $regimenlines,
 
             'batch_no' => session('viral_batch_no', 0),
@@ -157,35 +157,35 @@ class ViralsampleController extends Controller
             }
 
             $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
-            $sample = new Viralsample;
-            $sample->fill($data);
-            $sample->batch_id = $batch_no;
+            $viralsample = new Viralsample;
+            $viralsample->fill($data);
+            $viralsample->batch_id = $batch_no;
 
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
             $dob = Carbon::parse( $request->input('dob') );
             $years = $dc->diffInYears($dob, true);
 
-            $sample->age = $years;
-            $sample->save();
+            $viralsample->age = $years;
+            $viralsample->save();
         }
 
         else{
             $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
-            $patient = new Viralpatient;
-            $patient->fill($data);
-            $patient->save();
+            $viralpatient = new Viralpatient;
+            $viralpatient->fill($data);
+            $viralpatient->save();
 
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
             $dob = Carbon::parse( $request->input('dob') );
-            $patient_age = $dc->diffInYears($dob, true);
+            $viralpatient_age = $dc->diffInYears($dob, true);
 
             $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
-            $sample = new Viralsample;
-            $sample->fill($data);
-            $sample->patient_id = $patient->id;
-            $sample->age = $patient_age;
-            $sample->batch_id = $batch_no;
-            $sample->save();
+            $viralsample = new Viralsample;
+            $viralsample->fill($data);
+            $viralsample->patient_id = $viralpatient->id;
+            $viralsample->age = $viralpatient_age;
+            $viralsample->batch_id = $batch_no;
+            $viralsample->save();
 
         }
 
@@ -233,7 +233,40 @@ class ViralsampleController extends Controller
      */
     public function edit(Viralsample $viralsample)
     {
-        //
+        $facilities = Facility::select('id', 'name')->get();
+        $amrs_locations = DB::table('amrslocations')->get();
+        $rejectedreasons = DB::table('viralrejectedreasons')->get();
+        $genders = DB::table('gender')->get();
+        $pmtct_types = DB::table('viralpmtcttype')->where('id', '<', 3)->get();
+        $receivedstatuses = DB::table('receivedstatus')->get();
+        $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
+        $justifications = DB::table('viraljustifications')->get();
+        $viralsampletypes = DB::table('viralsampletype')->where('flag', 1)->get();
+        $regimenlines = DB::table('viralregimenline')->where('flag', 1)->get();
+
+        return view('forms.viralsamples', [
+            'viralsample' => $viralsample,
+            'facilities' => $facilities,
+            'amrs_locations' => $amrs_locations,
+            'rejectedreasons' => $rejectedreasons,
+            'genders' => $genders,
+            'receivedstatuses' => $receivedstatuses,
+            'pmtct_types' => $pmtct_types,
+            'prophylaxis' => $prophylaxis,
+            'justifications' => $justifications,
+            'sampletypes' => $viralsampletypes,
+            'regimenlines' => $regimenlines,
+
+            'batch_no' => session('viral_batch_no', 0),
+            'batch_dispatch' => session('viral_batch_dispatch', 0),
+            'batch_dispatched' => session('viral_batch_dispatched', 0),
+            'batch_received' => session('viral_batch_received', 0),
+
+            'facility_id' => session('viral_facility_id', 0),
+            'facility_name' => session('viral_facility_name', 0),
+
+            'message' => session()->pull('viral_message'),
+        ]);
     }
 
     /**
@@ -245,7 +278,34 @@ class ViralsampleController extends Controller
      */
     public function update(Request $request, Viralsample $viralsample)
     {
-        //
+        $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
+        $viralsample->fill($data);
+
+        $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
+        $dob = Carbon::parse( $request->input('dob') );
+        $years = $dc->diffInYears($dob, true);
+
+        $viralsample->age = $years;
+
+        $batch = Viralbatch::find($viralsample->batch_id);
+        $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
+        $batch->save();
+
+        $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+
+        if($new_patient == 0){            
+            $viralpatient = Viralpatient::find($viralsample->patient_id);
+        }
+
+        else{
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $viralpatient = new Viralpatient;
+        }
+        $viralpatient->fill($data);
+        $viralpatient->save();
+
+        $viralsample->patient_id = $viralpatient->id;
+        $viralsample->save();
     }
 
     /**
@@ -256,19 +316,20 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        //
+        $viralsample->delete();
+        return back();
     }
 
-    public function new_patient($patient, $facility_id)
+    public function new_patient($viralpatient, $facility_id)
     {
-        $patient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
+        $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $viralpatient])->first();
         $data;
-        if($patient){
+        if($viralpatient){
             $data[0] = 0;
-            $data[1] = $patient->toArray();
+            $data[1] = $viralpatient->toArray();
 
-            $sample = Viralsample::select('id')->where(['patient_id' => $patient->id])->where('result', '>', 1000)->first();
-            if($sample){
+            $viralsample = Viralsample::select('id')->where(['patient_id' => $viralpatient->id])->where('result', '>', 1000)->first();
+            if($viralsample){
                 $data[2] = ['previous_nonsuppressed' => 1];
             }
             else{
@@ -281,18 +342,18 @@ class ViralsampleController extends Controller
         return $data;
     }
 
-    public function release_redraw(Viralsample $sample)
+    public function release_redraw(Viralsample $viralsample)
     {
-        $sample->repeatt = 0;
-        $sample->result = "Collect New Sample";
-        $sample->save();
+        $viralsample->repeatt = 0;
+        $viralsample->result = "Collect New Sample";
+        $viralsample->save();
         return back();
     }
 
     public function release_redraws(Request $request)
     {
-        $samples = $request->input('samples');
-        DB::table('viralsamples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => "Collect New Sample"]);
+        $viralsamples = $request->input('samples');
+        DB::table('viralsamples')->whereIn('id', $viralsamples)->update(['repeatt' => 0, 'result' => "Collect New Sample"]);
         return back();
     }
 

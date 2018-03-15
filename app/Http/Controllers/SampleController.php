@@ -172,8 +172,9 @@ class SampleController extends Controller
             // $patient->dob = $dt->toDateString();
 
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $months = $dc->diffInMonths($patient->dob);
-            $weeks = $dc->diffInWeeks($patient->dob->copy()->addMonths($months));
+            $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
+            $months = $dc->diffInMonths($dob);
+            $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
 
             $patient_age = $months + ($weeks / 4);
 
@@ -277,7 +278,52 @@ class SampleController extends Controller
      */
     public function update(Request $request, Sample $sample)
     {
-        //
+        $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+        $sample->fill($data);
+        // $sample->save();
+
+        $batch = Batch::find($sample->batch_id);
+        $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
+        $batch->save();
+
+        $new_patient = $request->input('new_patient');
+
+        if($new_patient == 0)
+        {
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $patient = Patient::find($sample->patient_id);
+            $patient->fill($data);
+            $patient->save();
+
+            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $mother = Mother::find($patient->mother_id);
+            $mother->fill($data);
+            $mother->save();
+        }
+        else
+        {
+            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $mother = new Mother;
+            $mother->fill($data);
+            $mother->save();
+
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $patient = new Patient;
+            $patient->fill($data);
+            $patient->mother_id = $mother->id;
+            $patient->save();
+        }
+
+        $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
+        $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
+        $months = $dc->diffInMonths($dob);
+        $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
+        $patient_age = $months + ($weeks / 4);
+        $sample->age = $patient_age;
+        $sample->patient_id = $patient->id;
+        $sample->save();
+        return redirect('batch/' . $batch->id);
+
     }
 
     /**
@@ -289,7 +335,7 @@ class SampleController extends Controller
     public function destroy(Sample $sample)
     {
         $sample->delete();
-        return redirect(url()->previous());
+        return back();
     }
 
     public function new_patient($patient, $facility_id)

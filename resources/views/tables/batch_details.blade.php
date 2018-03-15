@@ -45,6 +45,13 @@
                     Standard table
                 </div>
                 <div class="panel-body">
+                    {{--<div>
+                        <b>Facility: {{ $batch->facility->name or '' }} </b> <br />
+                        <b>Date Received: {{ $batch->datereceived or '' }} </b> <br />
+                        <b>Date Entered: {{ $batch->created_at->toDateString() }} </b> <br />
+                        <br />
+                        <br />                        
+                    </div>--}}
                     <table class="table table-striped table-bordered table-hover" >
                         <thead>
                             <tr>

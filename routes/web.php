@@ -16,10 +16,12 @@ Route::get('reset_password/{token}', ['as' => 'password.reset', function($token)
     // implement your reset password route here!
 }]);
 
-Route::get('/', function () {
+// Route::get('/', function () {
     // return view('auth.login');
-    return view('emergency');
-});
+    // return view('emergency');
+// });
+
+Route::redirect('/', '/login');
 
 Route::get('/addsample', function () {
 	return view('addsample');
