@@ -206,6 +206,31 @@ INSERT INTO `provinces` VALUES (1,'Central'),(2,'Coast'),(3,'Eastern'),(5,'Nairo
 UNLOCK TABLES;
 
 --
+-- Table structure for table `machines`
+--
+
+DROP TABLE IF EXISTS `machines`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `machines` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `machine` varchar(20) DEFAULT NULL,
+  `output` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `machines`
+--
+
+LOCK TABLES `machines` WRITE;
+/*!40000 ALTER TABLE `machines` DISABLE KEYS */;
+INSERT INTO `machines` VALUES (1,'TaqMan','<strong> TaqMan </strong>'),(2,'Abbott','<strong><font color=\'#0000FF\'> Abbott </font></strong>'),(3,'C8800','<strong> C8800 </strong>'),(4,'Panther','<strong><font color=\'#FF00FB\'> Panther </font></strong>');
+/*!40000 ALTER TABLE `machines` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `worksheetstatus`
 --
 
@@ -215,6 +240,7 @@ DROP TABLE IF EXISTS `worksheetstatus`;
 CREATE TABLE `worksheetstatus` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `state` varchar(100) DEFAULT NULL,
+  `output` varchar(150) DEFAULT NULL,
   `active` int(10) DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
@@ -226,9 +252,11 @@ CREATE TABLE `worksheetstatus` (
 
 LOCK TABLES `worksheetstatus` WRITE;
 /*!40000 ALTER TABLE `worksheetstatus` DISABLE KEYS */;
-INSERT INTO `worksheetstatus` VALUES (1,'In-Process',1),(2,'Tested',1),(3,'Approved',1),(4,'Cancelled',1);
+INSERT INTO `worksheetstatus` VALUES (1,'In-Process','<strong><font color=\'#FFD324\'>In-Process</font></strong>',1),(2,'Tested','<strong><font color=\'#0000FF\'>Tested</font></strong>',1),(3,'Approved','<strong><font color=\'#339900\'>Approved</font></strong>',1),(4,'Cancelled','<strong><font color=\'#FF0000\'>Cancelled</font></strong>',1);
 /*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
 
 
 --
@@ -697,6 +725,31 @@ INSERT INTO `pcrtype` VALUES (1,'1 &nbsp;Initial PCR','Initial PCR'),(2,'2 &nbsp
 /*!40000 ALTER TABLE `pcrtype` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Table structure for table `gender`
+--
+
+DROP TABLE IF EXISTS `gender`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gender` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `gender` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `gender_description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gender`
+--
+
+LOCK TABLES `gender` WRITE;
+/*!40000 ALTER TABLE `gender` DISABLE KEYS */;
+INSERT INTO `gender` VALUES (1,'M','Male'),(2,'F','Female'),(3,'No Data','No data');
+/*!40000 ALTER TABLE `gender` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 DROP TABLE IF EXISTS `viraljustifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -780,5 +833,3 @@ districts.province
 from facilitys,districts,countys,partners 
 where facilitys.district=districts.id and districts.county=countys.id 
 and facilitys.partner=partners.id and facilitys.Flag=1;
-​
-

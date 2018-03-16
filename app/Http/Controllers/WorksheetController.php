@@ -176,7 +176,17 @@ class WorksheetController extends Controller
      */
     public function show(Worksheet $worksheet)
     {
-        //
+        $worksheet->load(['creator']);
+        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+
+        $data = ['worksheet' => $worksheet, 'samples' => $samples];
+
+        if($worksheet->machine_type == 1){
+            return view('worksheets.other-table', $data);
+        }
+        else{
+            return view('worksheets.abbot-table', $data);
+        }
     }
 
     /**
@@ -222,11 +232,13 @@ class WorksheetController extends Controller
         $worksheet->load(['creator']);
         $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
 
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
+
         if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', ['worksheet' => $worksheet, 'samples' => $samples]);
+            return view('worksheets.other-table', $data);
         }
         else{
-            return view('worksheets.abbot-table', ['worksheet' => $worksheet, 'samples' => $samples]);
+            return view('worksheets.abbot-table', $data);
         }
     }
 

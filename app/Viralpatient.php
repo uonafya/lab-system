@@ -12,7 +12,7 @@ class Viralpatient extends Model
     protected $historyLimit = 500; 
 
     protected $guarded = [];
-    protected $dates = ['datesynched', 'dob'];
+    // protected $dates = ['datesynched', 'dob'];
 
     public function sample()
     {

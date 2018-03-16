@@ -53,6 +53,5 @@ width:1180px;
 	@endif
 
 
-
 </body>
 </html>

@@ -7,6 +7,7 @@ use App\Patient;
 use App\Mother;
 use App\Facility;
 use App\Batch;
+use App\Lookup;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,39 +31,9 @@ class SampleController extends Controller
      */
     public function create()
     {
-        $facilities = Facility::select('id', 'name')->get();
-        $amrs_locations = DB::table('amrslocations')->get();
-        $rejectedreasons = DB::table('rejectedreasons')->get();
-        $genders = DB::table('gender')->get();
-        $feedings = DB::table('feedings')->get();
-        $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $entry_points = DB::table('entry_points')->get();
-        $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
-        $pcrtypes = DB::table('pcrtype')->get();
-        $receivedstatuses = DB::table('receivedstatus')->get();
-
-        return view('forms.samples', [
-            'facilities' => $facilities,
-            'amrs_locations' => $amrs_locations,
-            'rejectedreasons' => $rejectedreasons,
-            'genders' => $genders,
-            'feedings' => $feedings,
-            'iprophylaxis' => $iprophylaxis,
-            'interventions' => $interventions,
-            'entry_points' => $entry_points,
-            'hiv_statuses' => $hiv_statuses,
-            'pcrtypes' => $pcrtypes,
-            'receivedstatuses' => $receivedstatuses,
-
-            'batch_no' => session('batch_no', 0),
-            'batch_dispatch' => session('batch_dispatch', 0),
-            'batch_dispatched' => session('batch_dispatched', 0),
-            'batch_received' => session('batch_received', 0),
-
-            'facility_id' => session('facility_id', 0),
-            'facility_name' => session('facility_name', 0),
-        ]);
+        $lookup = new Lookup;
+        $data = $lookup->samples_form();
+        return view('forms.samples', $data);
     }
 
     /**
@@ -172,8 +143,9 @@ class SampleController extends Controller
             // $patient->dob = $dt->toDateString();
 
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $months = $dc->diffInMonths($patient->dob);
-            $weeks = $dc->diffInWeeks($patient->dob->copy()->addMonths($months));
+            $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
+            $months = $dc->diffInMonths($dob);
+            $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
 
             $patient_age = $months + ($weeks / 4);
 
@@ -232,40 +204,10 @@ class SampleController extends Controller
     public function edit(Sample $sample)
     {
         $sample->load(['patient.mother', 'batch']);
-        $facilities = Facility::select('id', 'name')->get();
-        $amrs_locations = DB::table('amrslocations')->get();
-        $rejectedreasons = DB::table('rejectedreasons')->get();
-        $genders = DB::table('gender')->get();
-        $feedings = DB::table('feedings')->get();
-        $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-        $entry_points = DB::table('entry_points')->get();
-        $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
-        $pcrtypes = DB::table('pcrtype')->get();
-        $receivedstatuses = DB::table('receivedstatus')->get();
-
-        return view('forms.samples', [
-            'sample' => $sample,
-            'facilities' => $facilities,
-            'amrs_locations' => $amrs_locations,
-            'rejectedreasons' => $rejectedreasons,
-            'genders' => $genders,
-            'feedings' => $feedings,
-            'iprophylaxis' => $iprophylaxis,
-            'interventions' => $interventions,
-            'entry_points' => $entry_points,
-            'hiv_statuses' => $hiv_statuses,
-            'pcrtypes' => $pcrtypes,
-            'receivedstatuses' => $receivedstatuses,
-
-            'batch_no' => session('batch_no', 0),
-            'batch_dispatch' => session('batch_dispatch', 0),
-            'batch_dispatched' => session('batch_dispatched', 0),
-            'batch_received' => session('batch_received', 0),
-
-            'facility_id' => session('facility_id', 0),
-            'facility_name' => session('facility_name', 0),
-        ]);
+        $lookup = new Lookup;
+        $data = $lookup->samples_form();
+        $data['sample'] = $sample;
+        return view('forms.samples', $data);
     }
 
     /**
@@ -277,7 +219,52 @@ class SampleController extends Controller
      */
     public function update(Request $request, Sample $sample)
     {
-        //
+        $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+        $sample->fill($data);
+        // $sample->save();
+
+        $batch = Batch::find($sample->batch_id);
+        $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
+        $batch->save();
+
+        $new_patient = $request->input('new_patient');
+
+        if($new_patient == 0)
+        {
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $patient = Patient::find($sample->patient_id);
+            $patient->fill($data);
+            $patient->save();
+
+            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $mother = Mother::find($patient->mother_id);
+            $mother->fill($data);
+            $mother->save();
+        }
+        else
+        {
+            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $mother = new Mother;
+            $mother->fill($data);
+            $mother->save();
+
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $patient = new Patient;
+            $patient->fill($data);
+            $patient->mother_id = $mother->id;
+            $patient->save();
+        }
+
+        $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
+        $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
+        $months = $dc->diffInMonths($dob);
+        $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
+        $patient_age = $months + ($weeks / 4);
+        $sample->age = $patient_age;
+        $sample->patient_id = $patient->id;
+        $sample->save();
+        return redirect('batch/' . $batch->id);
+
     }
 
     /**
@@ -289,7 +276,7 @@ class SampleController extends Controller
     public function destroy(Sample $sample)
     {
         $sample->delete();
-        return redirect(url()->previous());
+        return back();
     }
 
     public function new_patient($patient, $facility_id)

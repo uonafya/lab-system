@@ -36,7 +36,11 @@ width:1180px;
 }
 
 </STYLE> 
-<body onLoad="JavaScript:window.print();">
+<body 
+	@isset($print)
+		onLoad="JavaScript:window.print();"
+	@endisset
+>
 	<div align="center">
 		<table border="0" class="data-table">
 			<tr class="odd">
@@ -70,11 +74,17 @@ width:1180px;
 				<td> {{ $worksheet->creator->full_name }} </td>
 				<td><strong>Expiry Dates</strong>	</td>
 
-				<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString()  }} </td>
+				{{-- <td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString()  }} </td>
 				<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() }} </td>
 				<td> {{ $worksheet->controlexpirydate->toFormattedDateString() }} </td>
 				<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString()  }} </td>
-				<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() }} </td> 
+				<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() }} </td> --}}
+
+				<td> {{ $worksheet->sampleprepexpirydate }} </td>
+				<td> {{ $worksheet->bulklysisexpirydate }} </td>
+				<td> {{ $worksheet->controlexpirydate }} </td>
+				<td> {{ $worksheet->calibratorexpirydate }} </td>
+				<td> {{ $worksheet->amplificationexpirydate }} </td>
 			</tr>
 			<tr class="even">
 				<td><strong>Sorted By	</strong>    </td>
@@ -87,6 +97,8 @@ width:1180px;
 			<tr >
 				<th colspan="8" ><small> <strong> WORKSHEET SAMPLES [2 Controls]</strong></small>		</th>
 			</tr>
+		</table>
+		<table border="0" class="data-table">
 
 			<tr>
 				@php $count = 0; @endphp

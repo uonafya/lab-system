@@ -39,7 +39,7 @@
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
         @endif
 
-        <input type="hidden" value=1 name="new_patient" id="new_patient">
+        <input type="hidden" value=0 name="new_patient" id="new_patient">
 
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1">
@@ -467,11 +467,17 @@
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
                     <center>
-                        <div class="col-sm-10 col-sm-offset-1">
-                            <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
-                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
-                            <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
-                        </div>
+                        @if (isset($sample))
+                            <div class="col-sm-4 col-sm-offset-4">
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">Update Sample</button>
+                            </div>
+                        @else
+                            <div class="col-sm-10 col-sm-offset-1">
+                                <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
+                                <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
+                            </div>
+                        @endif
                     </center>
                 </div>
             </div>

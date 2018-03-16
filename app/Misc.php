@@ -101,7 +101,6 @@ class Misc extends Model
 	public function check_previous($sample_id)
 	{
 		$lab = auth()->user()->lab_id;
-
 		$samples = Sample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
 		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id])
@@ -113,7 +112,6 @@ class Misc extends Model
 	public function check_run($sample_id, $run=2)
 	{
 		$lab = auth()->user()->lab_id;
-
 		$sample = Sample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
 		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id, 'run' => $run])
@@ -170,4 +168,43 @@ class Misc extends Model
 
 	    return $workingDays;
 	}
+
+
+
+    public function batch_status($batch_id, $batch_complete){
+        if($batch_complete == 0){
+            return "<td>In Process</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+        }
+        else{
+            return "<td>Complete</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+        }
+    }
+
+    public function page_links($page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
+    {
+        $str = "";
+        $datestring = "";
+
+        if($date_start){
+            $datestring .= '/' . $date_start;
+            if($date_end){
+                $datestring .= '/' . $date_end;
+            }
+        }
+        $next = $page+1;
+        $previous = $page-1;
+
+        if($page != 1){
+            $str .= "<a href='" . url('batch/index/1' . $datestring) . "'>First Page</a> |";
+            $str .= "<a href='" . url('batch/index/' . $previous . $datestring) . "'>Prev</a> |";
+        }
+
+        $str .= "<a href='" . url('batch/index/' . $page . $datestring) . "'>{$page}</a> |";
+
+        if($page < $last_page ){
+            $str .= "<a href='" . url('batch/index/' . $next . $datestring) . "'>Next</a> | ";
+            $str .= "<a href='" . url('batch/index/' . $last_page . $datestring) . "'>Last Page</a>";
+        }
+        return $str;
+    }
 }
