@@ -292,8 +292,10 @@ class ViralbatchController extends Controller
 
     public function display_batches($page=NULL, $date_start=NULL, $date_end=NULL)
     {
+        $user = auth()->user();
         $my = new MiscViral;
         $test = false;
+        
         if($user->user_type_id == 5) $test=true;
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
