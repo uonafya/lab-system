@@ -214,8 +214,8 @@ class ViralbatchController extends Controller
     {
         $my = new MiscViral;
 
-        $batches = Viralbatch::select('viralbatches.*', 'view_facilitys.email', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+        $batches = Viralbatch::select('viralbatches.*', 'facilitys.email', 'facilitys.name')
+            ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('viralbatches.id', $batch_list);
             })
@@ -405,8 +405,8 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Viralbatch::select('viralbatches.*', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+        $batches = Viralbatch::select('viralbatches.*', 'facilitys.name')
+            ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereNull('received_by')
             ->where('site_entry', 2)
             ->get();

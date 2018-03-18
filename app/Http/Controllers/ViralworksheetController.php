@@ -66,10 +66,10 @@ class ViralworksheetController extends Controller
             return back();
         }
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, view_facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
@@ -109,10 +109,10 @@ class ViralworksheetController extends Controller
         $machines = $lookup->get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, view_facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)

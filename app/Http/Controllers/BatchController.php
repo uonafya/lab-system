@@ -215,8 +215,8 @@ class BatchController extends Controller
     {
         $my = new Misc;
 
-        $batches = Batch::select('batches.*', 'view_facilitys.email', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+        $batches = Batch::select('batches.*', 'facilitys.email', 'facilitys.name')
+            ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('batches.id', $batch_list);
             })
@@ -379,8 +379,8 @@ class BatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Batch::select('batches.*', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+        $batches = Batch::select('batches.*', 'facilitys.name')
+            ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereNull('received_by')
             ->where('site_entry', 2)
             ->get();

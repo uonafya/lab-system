@@ -86,10 +86,10 @@ class WorksheetController extends Controller
             return back();
         }
 
-        $samples = Sample::selectRaw("samples.*, patients.patient, view_facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
