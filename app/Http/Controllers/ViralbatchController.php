@@ -326,8 +326,8 @@ class ViralbatchController extends Controller
 
         $offset = ($page-1) * $page_limit;
 
-        $batches = Viralbatch::select('viralbatches.*', 'view_facilitys.name')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+        $batches = Viralbatch::select('viralbatches.*', 'facilitys.name')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
                 {
