@@ -45,7 +45,7 @@
                     Standard table
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover" >
+                    <table class="table table-striped table-bordered table-hover table-responsive" >
                         <thead>
                             <tr class="colhead">
                                 <th rowspan="2">Batch No</th>

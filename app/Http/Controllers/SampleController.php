@@ -6,7 +6,6 @@ use App\Sample;
 use App\Patient;
 use App\Mother;
 use App\Facility;
-use App\Batch;
 use App\Lookup;
 use DB;
 use Carbon\Carbon;
@@ -44,7 +43,6 @@ class SampleController extends Controller
      */
     public function store(Request $request)
     {
-
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "cancel"){
@@ -223,7 +221,7 @@ class SampleController extends Controller
         $sample->fill($data);
         // $sample->save();
 
-        $batch = Batch::find($sample->batch_id);
+        $batch = \App\Batch::find($sample->batch_id);
         $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
         $batch->save();
 
@@ -307,14 +305,24 @@ class SampleController extends Controller
     {
         $sample->repeatt = 0;
         $sample->result = 5;
+        $sample->approvedby = auth()->user()->id;
+        $sample->dateapproved = date('Y-m-d');
         $sample->save();
+        $my = new \App\Misc;
+        $my->check_batch($sample->batch_id);
         return back();
     }
 
     public function release_redraws(Request $request)
     {
-        $samples = $request->input('samples');
-        DB::table('samples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => 5]);
+        $samples_input = $request->input('samples');
+        // DB::table('samples')->whereIn('id', $samples_input)->update(['repeatt' => 0, 'result' => 5, 'approvedby' => auth()->user()->id, 'dateapproved' => date('Y-m-d')]);
+
+        $samples = Sample::whereIn('id', $samples_input)->get();
+
+        foreach ($samples as $key => $sample) {
+            $this->release_redraw($sample);
+        }
         return back();
     }
 

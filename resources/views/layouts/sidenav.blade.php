@@ -10,10 +10,11 @@
                 </a>
             </li>
         @endif
+        
+        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
                 <a href="#"> <span class="nav-label">Dashboard</span> </a>
             </li>
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
                 <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
@@ -25,14 +26,15 @@
                 <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
-                    <li><a href="{{ url('worksheet/create') }}">Create Taqman(24)</a></li>
-                    <li><a href="{{ url('worksheet/create_abbot') }}">Create Abbott Worksheet(96)</a></li>
+                    <li><a href="{{ url('worksheet/create/1') }}">Create Taqman(24)</a></li>
+                    <li><a href="{{ url('worksheet/create') }}">Create Abbott Worksheet(96)</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('batch') }}">View</a></li>
+                    <li><a href=" {{ url('batch/approve') }}">Approve Site Entry</a></li>
                     <li><a href=" {{ url('batch/dispatch') }}">Dispatch</a></li>
                 </ul>
             </li>
@@ -56,6 +58,7 @@
                 <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('viralbatch') }}">View</a></li>
+                    <li><a href=" {{ url('viralbatch/approve') }}">Approve Site Entry</a></li>
                     <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
                 </ul>
             </li>
@@ -69,6 +72,24 @@
                     </li>
                 </ul>
             </li>
+        @endif
+        @if (auth()->user()->user_type_id == 5)
+            <li>
+                <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
+                <ul class="nav nav-second-level">
+                    <li><a href="{{ url('sample/create') }}">Add</a></li>
+                    <li><a href="{{ url('batch') }}">View</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
+                <ul class="nav nav-second-level">
+                    <li><a href="{{ url('viralsample/create') }}">Add</a></li>
+                    <li><a href="{{ url('viralbatch') }}">View</a></li>
+                </ul>
+            </li>
+
         @endif
         {{--
         @if (auth()->user()->user_type_id == 1)

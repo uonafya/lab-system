@@ -9,6 +9,27 @@ use DB;
 class Lookup extends Model
 {
 
+    public function get_machines()
+    {
+        $this->cacher();
+        return Cache::get('machines');
+    }
+
+    public function get_facilities()
+    {
+        $this->cacher();
+        return Cache::get('facilities');
+    }
+
+    public function worksheet_lookups()
+    {
+        $this->cacher();
+        return [
+            'machines' => Cache::get('machines'),
+            'worksheet_statuses' => Cache::get('worksheet_statuses'),
+        ];
+    }
+
     public function get_lookups()
     {
         $this->cacher();
@@ -113,7 +134,7 @@ class Lookup extends Model
 
             // Viralload Lookup Data
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
-            $pmtct_types = DB::table('viralpmtcttype')->where('id', '<', 3)->get();
+            $pmtct_types = DB::table('viralpmtcttype')->get();
             $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
             $justifications = DB::table('viraljustifications')->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();

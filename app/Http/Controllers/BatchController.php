@@ -273,6 +273,12 @@ class BatchController extends Controller
 
     public function display_batches($page=NULL, $date_start=NULL, $date_end=NULL)
     {
+        $user = auth()->user();
+        $test = false;
+        if($user->user_type_id == 5) $test=true;
+
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+
         $my = new Misc;
         $b = Batch::selectRaw('count(id) as mycount')
             ->when($date_start, function($query) use ($date_start, $date_end){
@@ -282,6 +288,9 @@ class BatchController extends Controller
                     ->whereDate('batches.datereceived', '<=', $date_end);
                 }
                 return $query->whereDate('batches.datereceived', $date_start);
+            })
+            ->when($test, function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->get()
             ->first();
@@ -307,6 +316,9 @@ class BatchController extends Controller
                 }
                 return $query->whereDate('batches.datereceived', $date_start);
             })
+            ->when($test, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
             ->limit($page_limit)
             ->offset($offset)
             ->get();
@@ -316,7 +328,7 @@ class BatchController extends Controller
         }
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $get_subtotals = $this->get_subtotals($batch_ids, false);
+        $subtotals = $this->get_subtotals($batch_ids, false);
         $rejected = $this->get_rejected($batch_ids, false);
         $currentdate=date('d-m-Y');
 
@@ -324,11 +336,11 @@ class BatchController extends Controller
 
         foreach ($batches as $key => $batch) {
 
-            $neg = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 1));
-            $pos = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 2));
-            $failed = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 3));
-            $redraw = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 5));
-            $noresult = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 0));
+            $neg = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 1));
+            $pos = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 2));
+            $failed = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 3));
+            $redraw = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 5));
+            $noresult = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 0));
 
             $rej = $this->checknull($rejected->where('batch_id', $batch->id));
             $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
@@ -363,6 +375,48 @@ class BatchController extends Controller
         $links = $my->page_links($page, $last_page, $date_start, $date_end);
 
         return view('tables.batches', ['rows' => $table_rows, 'links' => $links]);
+    }
+
+    public function approve_site_entry()
+    {
+        $batches = Batch::select('batches.*', 'view_facilitys.name')
+            ->join('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+            ->whereNull('received_by')
+            ->where('site_entry', 2)
+            ->get();
+
+        $my = new Misc;
+        $batch_ids = $batches->pluck(['id'])->toArray();
+        $subtotals = $this->get_subtotals($batch_ids, false);
+        $rejected = $this->get_rejected($batch_ids, false);
+
+        $table_rows = "";
+
+        foreach ($batches as $key => $batch) {
+
+            $noresult = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 0));
+
+            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $total = $noresult + $rej;
+
+            $result = $noresult = $datereceived = '';
+
+            $table_rows .= "<tr> 
+            <td>{$batch->id}</td>
+            <td>{$batch->name}</td>
+            <td>{$batch->datereceived}</td>
+            <td>" . $batch->created_at->toDateString() . "</td>
+            <td></td>
+            <td></td>
+            <td>{$total}</td>
+            <td>{$rej}</td>
+            <td>{$result}</td>
+            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
+            </tr>";
+        }
+
+        return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+
     }
 
     public function checknull($var)

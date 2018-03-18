@@ -171,12 +171,20 @@ class Misc extends Model
 
 
 
-    public function batch_status($batch_id, $batch_complete){
+    public function batch_status($batch_id, $batch_complete, $approval=false){
+
+    	if($approval){
+    		$url = "<td><a href='" . url('/batch/site_approval/' . $batch_id) . "'>View Samples For Approve</a></td>";
+    	}
+    	else{
+    		$url = "<td><a href='" . url('/batch/' . $batch_id) . "'>View</a></td>";
+    	}
+
         if($batch_complete == 0){
-            return "<td>In Process</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+            return "<td>In Process</td>" . $url;
         }
         else{
-            return "<td>Complete</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+            return "<td>Complete</td><td>" . $url;
         }
     }
 

@@ -293,6 +293,11 @@ class ViralbatchController extends Controller
     public function display_batches($page=NULL, $date_start=NULL, $date_end=NULL)
     {
         $my = new MiscViral;
+        $test = false;
+        if($user->user_type_id == 5) $test=true;
+
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        
         $b = Viralbatch::selectRaw('count(id) as mycount')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
@@ -301,6 +306,9 @@ class ViralbatchController extends Controller
                     ->whereDate('viralbatches.datereceived', '<=', $date_end);
                 }
                 return $query->whereDate('viralbatches.datereceived', $date_start);
+            })
+            ->when($test, function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->get()
             ->first();
@@ -325,6 +333,9 @@ class ViralbatchController extends Controller
                     ->whereDate('viralbatches.datereceived', '<=', $date_end);
                 }
                 return $query->whereDate('viralbatches.datereceived', $date_start);
+            })
+            ->when($test, function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->limit($page_limit)
             ->offset($offset)
@@ -388,6 +399,50 @@ class ViralbatchController extends Controller
         $links = $my->page_links($page, $last_page, $date_start, $date_end);
 
         return view('tables.batches', ['rows' => $table_rows, 'links' => $links]);
+    }
+
+    public function approve_site_entry()
+    {
+        $batches = Viralbatch::select('viralbatches.*', 'view_facilitys.name')
+            ->join('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+            ->whereNull('received_by')
+            ->where('site_entry', 2)
+            ->get();
+
+        $my = new MiscViral;
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        $noresult_a = $my->get_totals(0, $batch_ids, false);
+
+        $rejected = $this->get_rejected($batch_ids, false);
+
+        $table_rows = "";
+
+        foreach ($batches as $key => $batch) {
+
+            $noresult = $this->checknull($noresult_a->where('batch_id', $batch->id));
+
+            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $total = $noresult + $rej;
+
+            $result = $noresult = $datereceived = '';
+
+            $table_rows .= "<tr> 
+            <td>{$batch->id}</td>
+            <td>{$batch->name}</td>
+            <td>{$batch->datereceived}</td>
+            <td>" . $batch->created_at->toDateString() . "</td>
+            <td></td>
+            <td></td>
+            <td>{$total}</td>
+            <td>{$rej}</td>
+            <td>{$result}</td>
+            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
+            </tr>";
+        }
+
+        return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+
     }
 
     public function checknull($var)

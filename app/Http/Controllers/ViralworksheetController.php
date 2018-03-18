@@ -6,6 +6,7 @@ use App\Viralworksheet;
 use App\Viralsample;
 use App\User;
 use App\MiscViral;
+use App\Lookup;
 use DB;
 use Excel;
 use Illuminate\Http\Request;
@@ -17,15 +18,8 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=0, $date_start=NULL, $date_end=NULL)
     {
-        $state = session()->pull('viral_worksheet_state', null);
-        // $worksheets = Viralworksheet::with(['creator', 'sample'])
-        // ->when($state, function ($query) use ($state){
-        //     return $query->where('status_id', $state);
-        // })
-        // ->get();
-
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
@@ -33,15 +27,27 @@ class ViralworksheetController extends Controller
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
+            ->when($date_start, function($query) use ($date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate('viralworksheets.created_at', '>=', $date_start)
+                    ->whereDate('viralworksheets.created_at', '<=', $date_end);
+                }
+                return $query->whereDate('viralworksheets.created_at', $date_start);
+            })
             ->groupBy('viralworksheets.id')
             ->get();
 
-        $statuses = collect($this->wstatus());
-        $machines = collect($this->wmachine());
+        // return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
+        
+        // $statuses = collect($this->wstatus());
+        // $machines = collect($this->wmachine());
 
-        // dd($statuses);
-
-        return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
+        $lookup = new Lookup;
+        $data = $lookup->worksheet_lookups();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('viralworksheet/index/' . $state . '/');
+        return view('tables.viralworksheets', $data);
     }
 
     /**
@@ -49,8 +55,17 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($machine_type=2)
     {
+        $lookup = new Lookup;
+        $machines = $lookup->get_machines();
+        $machine = $machines->where('id', $machine_type)->first();
+
+        if($machine == NULL || $machine->vl_limit == NULL)
+        {
+            return back();
+        }
+
         $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, view_facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
@@ -64,16 +79,16 @@ class ViralworksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(93)
+            ->limit($machine->vl_limit)
             ->get();
 
         $count = $samples->count();
 
-        if($count == 93){
-            return view('forms.viralworksheets', ['create' => true, 'machine_type' => 2, 'samples' => $samples]);
+        if($count == $machine->vl_limit){
+            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
         }
 
-        return view('forms.viralworksheets', ['create' => false, 'machine_type' => 2, 'count' => $count]);
+        return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count]);
     }
 
     /**
@@ -90,6 +105,10 @@ class ViralworksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
+        $lookup = new Lookup;
+        $machines = $lookup->get_machines();
+        $machine = $machines->where('id', $worksheet->machine_type)->first();
+
         $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, view_facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
@@ -104,11 +123,14 @@ class ViralworksheetController extends Controller
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
             ->limit(93)
+            ->limit($machine->vl_limit)
             ->get();
 
-        // if($samples->count() != 22 || $samples->count() != 94){
-        //     return back();
-        // }
+
+        if($samples->count() != $machine->vl_limit){
+            $worksheet->delete();
+            return back();
+        }
 
         $sample_ids = $samples->pluck('id');
 
@@ -223,6 +245,8 @@ class ViralworksheetController extends Controller
         $today = $dateoftest = date("Y-m-d");
         $positive_control;
         $negative_control;
+
+        $path = $request->upload->store('results/vl');
 
         if($worksheet->machine_type == 2)
         {

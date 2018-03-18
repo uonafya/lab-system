@@ -11,8 +11,6 @@ class FakerSeeder extends Seeder
      */
     public function run()
     {
-        //
-
 
 		$batches = factory(App\Batch::class, 20)->create()
 		->each(function ($b){
