@@ -307,7 +307,7 @@ class BatchController extends Controller
         $offset = ($page-1) * $page_limit;
 
         $batches = Batch::select('batches.*', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
                 {

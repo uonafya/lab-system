@@ -295,7 +295,7 @@ class ViralbatchController extends Controller
         $user = auth()->user();
         $my = new MiscViral;
         $test = false;
-        
+
         if($user->user_type_id == 5) $test=true;
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
@@ -327,7 +327,7 @@ class ViralbatchController extends Controller
         $offset = ($page-1) * $page_limit;
 
         $batches = Viralbatch::select('viralbatches.*', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
                 {
