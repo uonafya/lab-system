@@ -65,6 +65,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
 	Route::get('viralbatch/approve/', 'ViralbatchController@approve_site_entry');
 	Route::get('viralbatch/index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@display_batches');
+	Route::get('viralbatch/summary/{batch}', 'ViralbatchController@summary');
+	Route::get('viralbatch/individual/{batch}', 'ViralbatchController@individual');
 	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::get('/checkboxes', function () {
