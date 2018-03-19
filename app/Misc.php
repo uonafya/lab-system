@@ -168,6 +168,93 @@ class Misc extends Model
 
 	    return $workingDays;
 	}
+	
+
+    public function get_subtotals($batch_id=NULL, $complete=true)
+    {
+
+        $samples = Sample::selectRaw("count(samples.id) as totals, batch_id, result")
+            ->join('batches', 'batches.id', '=', 'samples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('repeatt', 0)
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id', 'result')
+            ->get();
+
+        return $samples;
+    }
+
+    public function get_rejected($batch_id=NULL, $complete=true)
+    {
+        $samples = Sample::selectRaw("count(samples.id) as totals, batch_id")
+            ->join('batches', 'batches.id', '=', 'samples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                return $query->where('batch_id', $batch_id);
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
+
+
+
+    public function get_maxdatemodified($batch_id=NULL, $complete=true)
+    {
+        $samples = Sample::selectRaw("max(datemodified) as mydate, batch_id")
+            ->join('batches', 'batches.id', '=', 'samples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                return $query->where('batch_id', $batch_id);
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
+
+    public function get_maxdatetested($batch_id=NULL, $complete=true)
+    {
+        $samples = Sample::selectRaw("max(datetested) as mydate, batch_id")
+            ->join('batches', 'batches.id', '=', 'samples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                return $query->where('batch_id', $batch_id);
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
 
 
 
@@ -177,14 +264,20 @@ class Misc extends Model
     		$url = "<td><a href='" . url('/batch/site_approval/' . $batch_id) . "'>View Samples For Approve</a></td>";
     	}
     	else{
-    		$url = "<td><a href='" . url('/batch/' . $batch_id) . "'>View</a></td>";
+    		$url = "<td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+
+    		if($batch_complete==1){
+    			$url .= "| <a href='" . url('/batch/summary/' . $batch_id) . "'><i class='fa fa-print'></i> Summary</a> | <a href='" . url('/batch/individual/' . $batch_id) . "'><i class='fa fa-print'></i> Individual </a> | <a href='" . url('/batch/email/' . $batch_id) . "'><i class='fa fa-print'></i> Email </a>"; 
+    		}
+
+    		$url .= "</td>";
     	}
 
         if($batch_complete == 0){
             return "<td>In Process</td>" . $url;
         }
         else{
-            return "<td>Complete</td><td>" . $url;
+            return "<td>Complete</td>" . $url;
         }
     }
 

@@ -31,7 +31,7 @@ class EidDispatch extends Mailable implements ShouldQueue
         $this->facility = $facility;
         $this->view_facility = DB::table('view_facilitys')->where('id', $batch->facility_id)->get()->first();
         $sessionVar = md5('nasc0peId1234561987');
-        $lab = auth()->user()->id;
+        $lab = auth()->user()->lab_id;
         $this->site_url ='http://www.nascop.org/eid/users/facilityresults.php?key='.$sessionVar.'&BatchNo='.$batch->id.'&LabID='.$lab.'&fauto='.$facility->id;
     }
 

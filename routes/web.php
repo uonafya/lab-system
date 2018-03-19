@@ -39,6 +39,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::post('batch/complete_dispatch/', 'BatchController@confirm_dispatch');
 	Route::get('batch/approve/', 'BatchController@approve_site_entry');
 	Route::get('batch/index/{page?}/{date_start?}/{date_end?}', 'BatchController@display_batches');
+	Route::get('batch/summary/{batch}', 'BatchController@summary');
+	Route::get('batch/individual/{batch}', 'BatchController@individual');
 	Route::resource('batch', 'BatchController');
 
 	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');

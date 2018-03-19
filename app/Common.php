@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Common extends Model
 {
+
 	public function working_days($startDate,$endDate){
 
 	    //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24
@@ -55,12 +56,12 @@ class Common extends Model
 	    return $workingDays;
 	}	
 
-    public function batch_status($batch_id, $batch_complete){
+    public function batch_status($base, $batch_id, $batch_complete){
         if($batch_complete == 0){
-            return "<td>In Process</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+            return "<td>In Process</td><td><a href='" . url($base . '/' . $batch_id) . "'>View</a>";
         }
         else{
-            return "<td>Complete</td><td><a href='" . url('/batch/' . $batch_id) . "'>View</a>";
+            return "<td>Complete</td><td><a href='" . url($base . '/' . $batch_id) . "'>View</a>";
         }
     }
 

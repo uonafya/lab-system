@@ -116,98 +116,12 @@ class ViralbatchController extends Controller
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new VlDispatch($batch, $facility));
-                Mail::to('joelkith@gmail.com')->send(new VlDispatch($batch, $facility));
+                $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+                Mail::to($mail_array)->send(new VlDispatch($batch, $facility));
             // }            
         }
 
         DB::table('viralbatches')->whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
-    }
-
-    public function get_results()
-    {
-
-    }
-
-    public function get_subtotals($batch_id=NULL)
-    {
-        $samples = Viralsample::selectRaw("count(viralsamples.id) as totals, batch_id, result")
-            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                return $query->where('batch_id', $batch_id);
-            })
-            ->where('batch_complete', 2)
-            ->where('repeatt', 0)
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id', 'result')
-            ->get();
-
-        return $samples;
-    }
-
-    public function get_rejected($batch_id=NULL, $complete=true)
-    {
-        $samples = Viralsample::selectRaw("count(viralsamples.id) as totals, batch_id")
-            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                else{
-                    return $query->where('batch_id', $batch_id);
-                }
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
-    public function get_maxdatemodified($batch_id=NULL, $complete=true)
-    {
-        $samples = Viralsample::selectRaw("max(datemodified) as mydate, batch_id")
-            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                else{
-                    return $query->where('batch_id', $batch_id);
-                }
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
-    public function get_maxdatetested($batch_id=NULL, $complete=true)
-    {
-        $samples = Viralsample::selectRaw("max(datetested) as mydate, batch_id")
-            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                else{
-                    return $query->where('batch_id', $batch_id);
-                }
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
     }
 
     public function get_rows($batch_list=NULL)
@@ -227,9 +141,9 @@ class ViralbatchController extends Controller
         $detected_a = $my->get_totals(2);
         $undetected_a = $my->get_totals(1);
 
-        $rejected = $this->get_rejected();
-        $date_modified = $this->get_maxdatemodified();
-        $date_tested = $this->get_maxdatetested();
+        $rejected = $my->get_rejected();
+        $date_modified = $my->get_maxdatemodified();
+        $date_tested = $my->get_maxdatetested();
         $currentdate=date('d-m-Y');
 
         $table_rows = "";
@@ -355,7 +269,7 @@ class ViralbatchController extends Controller
         $detected_a = $my->get_totals(2, $batch_ids, false);
         $undetected_a = $my->get_totals(1, $batch_ids, false);
 
-        $rejected = $this->get_rejected($batch_ids, false);
+        $rejected = $my->get_rejected($batch_ids, false);
         $currentdate=date('d-m-Y');
 
         $table_rows = "";
@@ -416,7 +330,7 @@ class ViralbatchController extends Controller
 
         $noresult_a = $my->get_totals(0, $batch_ids, false);
 
-        $rejected = $this->get_rejected($batch_ids, false);
+        $rejected = $my->get_rejected($batch_ids, false);
 
         $table_rows = "";
 
@@ -445,6 +359,47 @@ class ViralbatchController extends Controller
 
         return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
 
+    }
+
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Viralbatch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function individual(Viralbatch $batch)
+    {
+        $samples = $batch->sample;
+        $samples->load(['patient']);
+        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $lookup = new Lookup;
+        $data = $lookup->get_viral_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        return view('exports.viralsamples', $data);
+    }
+
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Viralbatch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function summary(Viralbatch $batch)
+    {
+        $samples = $batch->sample;
+        $samples->load(['patient']);
+        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $lookup = new Lookup;
+        $data = $lookup->get_viral_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        // $pdf = DOMPDF::loadView('exports.samples_summary', $data);
+        // return $pdf->download('summary.pdf');
+
+        return view('exports.samples_summary', $data);
     }
 
     public function checknull($var)

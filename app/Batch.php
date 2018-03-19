@@ -14,10 +14,10 @@ class Batch extends Model
 
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
-    public function setDatedispatchedfromfacilityAttribute($value)
-    {
-        $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
-    }
+    // public function setDatedispatchedfromfacilityAttribute($value)
+    // {
+    //     $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
+    // }
 
 	public function sample()
     {
@@ -29,6 +29,11 @@ class Batch extends Model
         return $this->belongsTo('App\Facility');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab');
+    }
+
     public function receiver()
     {
         return $this->belongsTo('App\User', 'received_by');
@@ -38,9 +43,5 @@ class Batch extends Model
     {
         return $this->belongsTo('App\User', 'user_id');
     }
-
-    // public function scopeGreatest($query)
-    // {
-    //     return $query->whereRaw('id', );
-    // }
+    
 }

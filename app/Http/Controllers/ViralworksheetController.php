@@ -201,11 +201,11 @@ class ViralworksheetController extends Controller
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
-        if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+        if($worksheet->machine_type == 2){
+            return view('worksheets.abbot-table', $data);
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.other-table', $data);
         }
     }
 
@@ -243,10 +243,10 @@ class ViralworksheetController extends Controller
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $today = $dateoftest = date("Y-m-d");
-        $positive_control;
-        $negative_control;
+        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = NULL;
 
         $path = $request->upload->store('results/vl');
+        $my = new MiscViral;
 
         if($worksheet->machine_type == 2)
         {
@@ -256,12 +256,7 @@ class ViralworksheetController extends Controller
                 $reader->toArray();
             })->get();
 
-            $check = array();
-
-            // dd($data);
-
             $bool = false;
-            $positive_control = $negative_control = "Passed";
 
             foreach ($data as $key => $value) {
                 if($value[5] == "RESULT"){
@@ -275,139 +270,62 @@ class ViralworksheetController extends Controller
                     $interpretation = $value[6];
                     $error = $value[10];
 
-                    if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-                    {
-                        $res= "< LDL copies/ml";
-                        $interpret="Target Not Detected";
-                        $units="";                        
-                    }
+                    $result_array = $my->sample_result($result, $error);
 
-                    else if($result == 'Collect New Sample')
-                    {
-                        $res= "Collect New Sample";
-                        $interpret="Collect New Sample";
-                        $units="";                         
-                    }
-
-                    else if($result == 'Failed' || $result == '')
-                    {
-                        $res= "Failed";
-                        $interpret = $error;
-                        $units="";                         
-                    }
-
-                    else{
-                        $res = preg_replace("/[^<0-9]/", "", $result);
-                        $interpret = $result;
-                        $units="cp/mL";
-                    }
-
-                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpret, 'result' => $res, 'units' => $units];
+                    $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                     $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     DB::table('viralsamples')->where($search)->update($data_array);
 
-                    $check[] = $search;
-
                     if($sample_id == "HIV_NEG"){
-                        $nc = $res;
-                        $nc_int = $interpret;
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
                     }
                     else if($sample_id == "HIV_HIPOS"){
-                        $hpc = $res;
-                        $hpc_int = $interpret;
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
                     }
                     else if($sample_id == "HIV_LOPOS"){
-                        $lpc = $res;
-                        $lpc_int = $interpret;
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
                     }
-
                 }
-
                 if($bool && $value[5] == "RESULT") break;
             }
-
         }
         else
         {
             $handle = fopen($file, "r");
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $interpretation = $data[8];
                 $dateoftest=date("Y-m-d", strtotime($data[3]));
 
-                $flag = $data[10];
+                $sample_id = $value[4];
+                $result = $value[8];
+                $error = $value[10];
 
-                if($flag != NULL){
-                    $interpretation = $flag;
+                $result_array = $my->sample_result($result, $error);
+
+                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                DB::table('viralsamples')->where($search)->update($data_array);
+
+                $sample_type = $value[5];
+
+                if($sample_type == "NC"){
+                    $nc = $result_array['result'];
+                    $nc_int = $result_array['interpretation']; 
                 }
-
-                if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
-                {
-                    $result = 1;
-                } 
-                else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
-                {
-                    $result = 2;
+                else if($sample_type == "HPC"){
+                    $hpc = $result_array['result'];
+                    $hpc_int = $result_array['interpretation'];
                 }
-                else
-                {
-                    $result = 3;
-                }
-
-                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $interpretation, 'result' => $result];
-
-                $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
-                DB::table('samples')->where($search)->update($data_array);
-
-                if($data[5] == "NC"){
-                    // $worksheet->neg_control_interpretation = $interpretation;
-                    $negative_control = $result;
-                }
-                if($data[5] == "LPC" || $data[5] == "PC"){
-                    $positive_control = $result;
+                else if($sample_type == "LPC"){
+                    $lpc = $result_array['result'];
+                    $lpc_int = $result_array['interpretation'];
                 }
 
             }
             fclose($handle);
-
-            switch ($negative_control) {
-                case 'Target Not Detected':
-                    $neg_result = 1;
-                    break;
-                case 'Valid':
-                    $neg_result = 6;
-                    break;
-                case 'Invalid':
-                    $neg_result = 7;
-                    break;
-                case '5':
-                    $neg_result = 5;
-                    break;                
-                default:
-                    $neg_result = 3;
-                    break;
-            }
-
-            if($positive_control == 1 || $positive_control == "1" || $positive_control == ">1" || $positive_control == "> 1 " || $positive_control == "> 1" || $positive_control == "1.00E+00" || $positive_control == ">1.00E+00" || $positive_control == "> 1.00E+00" || $positive_control == "> 1.00E+00 ")
-            {
-                $pos_result = 2;
-            }
-            else if($positive_control == "5")
-            {
-                $pos_result = 5;
-            }
-            else if($positive_control == "Valid")
-            {
-                $pos_result = 6;
-            }
-            else if($positive_control == "Invalid")
-            {
-                $pos_result = 7;
-            }
-            else
-            {
-                $pos_result = 3;
-            }
 
         }
 
@@ -425,10 +343,7 @@ class ViralworksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
-        $my = new MiscViral;
         $my->requeue($worksheet->id);
-
-        // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
         return redirect('viralworksheet/approve/' . $worksheet->id);
     }

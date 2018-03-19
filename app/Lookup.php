@@ -42,6 +42,7 @@ class Lookup extends Model
             'entry_points' => Cache::get('entry_points'),
             'results' => Cache::get('results'),
             'received_statuses' => Cache::get('received_statuses'),
+            'pcrtypes' => Cache::get('pcr_types'),
         ];
     }
 
@@ -76,6 +77,8 @@ class Lookup extends Model
     {
         $this->cacher();
         return [
+            'viral_rejected_reasons' => Cache::get('viral_rejected_reasons'),
+            'vl_result_guidelines' => Cache::get('vl_result_guidelines'),
             'genders' => Cache::get('genders'),
             'sample_types' => Cache::get('sample_types'),
             'received_statuses' => Cache::get('received_statuses'),
@@ -139,6 +142,7 @@ class Lookup extends Model
             $justifications = DB::table('viraljustifications')->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
             $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
+            $vl_result_guidelines = DB::table('vlresultsguidelines')->where('flag', 1)->get();
 
             // Worksheet Lookup Data
             $machines = DB::table('machines')->get();
@@ -165,6 +169,7 @@ class Lookup extends Model
             Cache::put('justifications', $justifications, 60);
             Cache::put('sample_types', $sample_types, 60);
             Cache::put('regimen_lines', $regimen_lines, 60);
+            Cache::put('vl_result_guidelines', $vl_result_guidelines, 60);
 
             Cache::put('machines', $machines, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);

@@ -1,6 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `vl_kemri3`;
 USE `vl_kemri3`;
-
 
 DROP TABLE IF EXISTS `results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

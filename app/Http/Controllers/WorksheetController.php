@@ -267,8 +267,6 @@ class WorksheetController extends Controller
         $positive_control;
         $negative_control;
 
-        $path = $request->upload->store('results/eid');
-
         if($worksheet->machine_type == 2)
         {
             $dateoftest = $today;
@@ -440,10 +438,10 @@ class WorksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
+        $path = $request->upload->store('results/eid');
+
         $my = new Misc;
         $my->requeue($worksheet->id);
-
-        // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
         return redirect('worksheet/approve/' . $worksheet->id);
     }
