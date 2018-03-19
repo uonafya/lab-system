@@ -10,4 +10,18 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function _columnBuilder($columns = null)
+    {
+        $column = '<tr>';
+        if ($columns == null) {
+            $column .= '<th><center>No Data available</center></th>';
+        } else {
+            foreach ($columns as $key => $value) {
+                $column .= '<th>'.$value.'</th>';
+            }
+        }
+        $column .= '</tr>';
+        return $column;
+    }
 }

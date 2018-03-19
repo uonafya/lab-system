@@ -32,6 +32,24 @@ Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
 Auth::routes();
 
+Route::get('datatables', function () {
+	return view('datatables');
+});
+Route::resource('district', 'DistrictController');
+
+Route::get('error', function(){
+	return view('errors.error', ['code' => '500', 'title' => 'Internal server error', 'description' => 'Sorry, there was an internal server error that occured. Please try again later']);
+});
+
+Route::get('facility/served', 'FacilityController@served');
+Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
+Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+Route::resource('facility', 'FacilityController');
+
+// Route::get('/home', function () {
+// 	return view('home');
+// });
+Route::get('/home', 'HomeController@index');
 
 Route::middleware(['web', 'auth'])->group(function(){
 

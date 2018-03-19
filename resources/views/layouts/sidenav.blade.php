@@ -119,12 +119,12 @@
         @endif
         @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 4)
         	<li>
-                <a href="#"> <span class="nav-label">Facilities</span></a>
+                <a href="{{ route('facility.index') }}"> <span class="nav-label">Facilities</span></a>
             </li>
         @endif
         @if (auth()->user()->user_type_id == 2)
         	<li>
-                <a href="#"> <span class="nav-label">Districts</span></a>
+                <a href="{{ route('district.index') }}"> <span class="nav-label">Districts</span></a>
             </li>
             <li>
                 <a href="#"> <span class="nav-label">User Activity Log</span></a>

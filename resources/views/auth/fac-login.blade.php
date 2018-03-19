@@ -9,7 +9,9 @@
 @section('content')
 
 @isset($login_error)
-    {{ $login_error }}
+    <div class="alert alert-danger" id="login_error">
+        {{ $login_error }}
+    </div>
 @endisset
 
 <div class="row">
@@ -18,8 +20,8 @@
                 <div class="panel-body" style="padding: 20px;">
                     <form class="form-horizontal" method="POST" action="{{ url('login/facility') }}">
                         {{ csrf_field() }}
-                        <div class="form-group" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 0px;">
-                            <label class="control-label" for="email" style="color: black;">Facility:</label>
+                        <div class="form-group" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 16px;margin-top: 10px;">
+                            <label class="control-label" for="email" style="color: black;margin-bottom: 8px;">Facility:</label>
                                 <select class="form-control" required name="facility_id" id="facility_id">
 
                                   <option value=""> Select One </option>
@@ -41,8 +43,8 @@
                                 </span>
                             @endif
                         </div>
-                        <div class="form-group" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 0px;">
-                            <label class="control-label" for="password" style="color: black;">Batch No:</label>
+                        <div class="form-group" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 16px;">
+                            <label class="control-label" for="password" style="color: black;margin-bottom: 8px;">Batch No:</label>
                             <div class="input-group m-b" style="margin-bottom: 0px;">
                                 <span class="input-group-addon"><span class="pe-7s-unlock"></span></span>
                                 <input type="text" title="Please enter your password" placeholder="Batch" required="" value="" name="batch_no" id="batch_no" class="form-control">
@@ -70,6 +72,15 @@
 
         $("#facility_id").select2();
 
+        @php
+            if (isset($login_error)) {
+        @endphp
+                setTimeout(function(){
+                    $("#login_error").fadeOut("slow");
+                }, 4000);
+        @php
+            }
+        @endphp
     });
 
 </script>

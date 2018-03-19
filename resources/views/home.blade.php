@@ -40,22 +40,22 @@
 		                		<tr>
 		                			<td>Served by {{ $tasks['labname'][0]->name }}</td>
 		                			<td>{{ $tasks['facilityServed'] }}</td>
-		                			<td><a href="#">View</a></td>
+		                			<td><a href="{{ url('facility/served') }}">View</a></td>
 		                		</tr>
 		                		<tr>
 		                			<td>With SMS Printers</td>
 		                			<td>{{ $tasks['facilitieswithSmsPrinters'] }}</td>
-		                			<td><a href="#">View</a></td>
+		                			<td><a href="{{ url('facility/smsprinters') }}">View</a></td>
 		                		</tr>
 		                		<tr>
 		                			<td>* Without emails</td>
 		                			<td>{{ $tasks['facilitiesWithoutEmails'] }}</td>
-		                			<td><a href="#">Update</a></td>
+		                			<td><a href="{{ url('facility/withoutemails') }}">Update</a></td>
 		                		</tr>
 		                		<tr>
 		                			<td>* Without G4S Details</td>
 		                			<td>{{ $tasks['facilitiesWithoutG4s'] }}</td>
-		                			<td><a href="#">Update</a></td>
+		                			<td><a href="{{ url('facility/withoutG4S') }}">Update</a></td>
 		                		</tr>
 		                	</tbody>
 		                </table>

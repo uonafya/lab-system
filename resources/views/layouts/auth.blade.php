@@ -35,9 +35,9 @@
     <a href="#" class="btn btn-primary" style="background-color: rgba(0, 0, 0, 0); color: black; border: none;"><strong class="font-extra-bold font-uppercase">{{ @Date("l, d F Y") }}</strong></a>
 </div>
 
-
+<div class="hr-line-dashed"></div>
 <div class="login-container">
-    <div class="hr-line-dashed"></div>
+    <div class="hr-line-dashed" style="margin-top: 40px;"></div>
     @yield('content')
     <div class="hr-line-dashed"></div>
     <div class="row">
