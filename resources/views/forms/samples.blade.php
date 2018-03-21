@@ -476,6 +476,7 @@
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
                     <center>
+
                         @if (isset($sample))
                             <div class="col-sm-4 col-sm-offset-4">
                                 <button class="btn btn-primary" type="submit" name="submit_type" value="add">Update Sample</button>
@@ -567,6 +568,7 @@
             $.ajax({
                type: "GET",
                url: "{{ url('/sample/new_patient') }}/"+patient_id+"/"+facility ,
+
                success: function(data){
 
                     console.log(data);
