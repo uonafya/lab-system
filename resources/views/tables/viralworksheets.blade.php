@@ -133,25 +133,27 @@
                         <tbody>
 
                             @foreach($worksheets as $key => $worksheet)
-                                <td> {{ $key+1 }} </td>
-                                <td> {{ $worksheet->created_at }} </td>
-                                <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
+                                <tr>
+                                    <td> {{ $key+1 }} </td>
+                                    <td> {{ $worksheet->created_at }} </td>
+                                    <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
 
-                                {{--<td> {!! $machines->where('machine', $worksheet->machine_type)->first()['string'] !!} </td>
-                                <td> {!! $statuses->where('status', $worksheet->status_id)->first()['string'] !!} </td>--}}
+                                    {{--<td> {!! $machines->where('machine', $worksheet->machine_type)->first()['string'] !!} </td>
+                                    <td> {!! $statuses->where('status', $worksheet->status_id)->first()['string'] !!} </td>--}}
 
-                                <td> {!! $machines->where('id', $worksheet->machine_type)->first()->output !!} </td>
+                                    <td> {!! $machines->where('id', $worksheet->machine_type)->first()->output !!} </td>
 
 
-                                <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
+                                    <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
 
-                                <td> {{ $worksheet->samples_no }} </td>
-                                <td> {{ $worksheet->daterun }} </td>
-                                <td> {{ $worksheet->dateuploaded }} </td>
-                                <td> {{ $worksheet->datereviewed }} </td>
-                                <td> 
-                                    @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
+                                    <td> {{ $worksheet->samples_no }} </td>
+                                    <td> {{ $worksheet->daterun }} </td>
+                                    <td> {{ $worksheet->dateuploaded }} </td>
+                                    <td> {{ $worksheet->datereviewed }} </td>
+                                    <td> 
+                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
                                 </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
