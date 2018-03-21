@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `vl_kemri3`;
-USE `vl_kemri3`;
+-- CREATE DATABASE  IF NOT EXISTS `vl_kemri3`;
+-- USE `vl_kemri3`;
 
 
 DROP TABLE IF EXISTS `results`;
