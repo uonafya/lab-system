@@ -360,9 +360,9 @@ class ViralbatchController extends Controller
 
     public function site_entry_approval(Viralbatch $batch)
     {
-        $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+        $viralsample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
 
-        if($sample){
+        if($viralsample){
             session(['site_entry_approval' => true]);
             $viralsample->load(['patient', 'batch']);
             $data = Lookup::viralsample_form();
