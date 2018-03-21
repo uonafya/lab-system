@@ -67,9 +67,9 @@ class ViralsampleController extends Controller
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
             $batch->facility_id = $facility_id;
-            $batch->datereceived = $request->input('datereceived');
 
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+                $batch->datereceived = $request->input('datereceived');
                 $batch->received_by = auth()->user()->id;
                 $batch->site_entry = 1;
             }
@@ -95,7 +95,18 @@ class ViralsampleController extends Controller
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
             $batch->facility_id = $facility_id;
-            $batch->datereceived = $request->input('datereceived');
+
+            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+                $batch->datereceived = $request->input('datereceived');
+                $batch->received_by = auth()->user()->id;
+                $batch->site_entry = 1;
+            }
+
+            if(auth()->user()->user_type_id == 5){
+                $batch->site_entry = 2;
+            }
+
+            
 
             if($ddispatched == null){
                 session(['viral_batch_dispatch' => 0]);
@@ -272,6 +283,7 @@ class ViralsampleController extends Controller
 
     public function new_patient($viralpatient, $facility_id)
     {
+
         $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $viralpatient])->first();
         $data;
         if($viralpatient){
