@@ -17,10 +17,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
     	$(".form-control").attr('autocomplete', 'off');
-
-
         
-       $('.data-table').dataTable({
+        $('.data-table').dataTable({
             dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
             "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
             buttons: [

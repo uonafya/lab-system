@@ -1,7 +1,8 @@
 {
-    "name": "francescomalatesta/laravel-api-boilerplate-jwt",
-    "description": "An API Boilerplate to create a ready-to-use REST API in seconds.",
-    "keywords": ["laravel", "api", "boilerplate", "jwt", "auth", "rest"],
+    "name": "Viralload and Eid Testing and Results System",
+    "description": "A system used for testing eid and viralload samples.",
+    "keywords": ["eid", "viralload", "testing", "results"],
+    "homepage": "http://lab.test.nascop.org",
     "license": "MIT",
     "type": "project",
     "require": {
@@ -18,7 +19,10 @@
         "venturecraft/revisionable": "^1.28",
         "milon/barcode": "^5.3",
         "predis/predis": "^1.1",
-        "niklasravnsborg/laravel-pdf": "^2.0"
+        "niklasravnsborg/laravel-pdf": "^2.0",
+        "barryvdh/laravel-dompdf": "^0.8.2",
+        "mpdf/mpdf": "^7.0",
+        "laurentbrieu/tcpdf": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

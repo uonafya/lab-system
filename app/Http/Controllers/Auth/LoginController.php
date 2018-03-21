@@ -65,7 +65,7 @@ class LoginController extends Controller
                 
                 if($user){
                     Auth::login($user);
-                    return redirect('/viralsample/create');                    
+                    return redirect('/sample/create');                    
                 }
             }
         }

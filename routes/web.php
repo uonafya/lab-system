@@ -55,12 +55,20 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('batch/dispatch/', 'BatchController@batch_dispatch');
 	Route::post('batch/complete_dispatch/', 'BatchController@confirm_dispatch');
+	Route::get('batch/site_approval/', 'BatchController@approve_site_entry');
+	Route::get('batch/site_approval/{batch}', 'BatchController@site_entry_approval');
 	Route::get('batch/index/{page?}/{date_start?}/{date_end?}', 'BatchController@display_batches');
+	Route::get('batch/summary/{batch}', 'BatchController@summary');
+	Route::get('batch/individual/{batch}', 'BatchController@individual');
 	Route::resource('batch', 'BatchController');
 
 	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
 	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+	Route::get('viralbatch/site_approval/', 'ViralbatchController@approve_site_entry');
+	Route::get('batch/site_approval/{batch}', 'ViralbatchController@site_entry_approval');
 	Route::get('viralbatch/index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@display_batches');
+	Route::get('viralbatch/summary/{batch}', 'ViralbatchController@summary');
+	Route::get('viralbatch/individual/{batch}', 'ViralbatchController@individual');
 	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::get('/checkboxes', function () {
@@ -86,13 +94,18 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
 	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
 
-	Route::get('worksheet/create_abbot', 'WorksheetController@abbot')->name('worksheet.create_abbot');
-	Route::get('worksheet/print/{worksheet}', 'WorksheetController@print')->name('worksheet.print');
-	Route::get('worksheet/cancel/{worksheet}', 'WorksheetController@cancel')->name('worksheet.cancel');
-	Route::get('worksheet/upload/{worksheet}', 'WorksheetController@upload')->name('worksheet.upload');
-	Route::put('worksheet/upload/{worksheet}', 'WorksheetController@save_results')->name('worksheet.save_results');
-	Route::get('worksheet/approve/{worksheet}', 'WorksheetController@approve_results')->name('worksheet.approve_results');
-	Route::put('worksheet/approve/{worksheet}', 'WorksheetController@approve')->name('worksheet.approve');
+	Route::prefix('worksheet')->name('worksheet.')->group(function () {
+
+		Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('index_two');
+		Route::get('create/{machine_type}', 'WorksheetController@create')->name('create_any');
+		Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
+		Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
+		Route::get('upload/{worksheet}', 'WorksheetController@upload')->name('upload');
+		Route::put('upload/{worksheet}', 'WorksheetController@save_results')->name('save_results');
+		Route::get('approve/{worksheet}', 'WorksheetController@approve_results')->name('approve_results');
+		Route::put('approve/{worksheet}', 'WorksheetController@approve')->name('approve');
+	});
+
 	Route::resource('worksheet', 'WorksheetController');
 
 	Route::get('viralsample/new_patient/{patient}/{facility_id}', 'ViralsampleController@new_patient');
@@ -104,7 +117,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 
-		Route::get('create_abbot', 'ViralworksheetController@abbot')->name('create_abbot');
+		Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('index_two');
+		// Route::get('create_abbot', 'ViralworksheetController@abbot')->name('create_abbot');
+		Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
 		Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 		Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
 		Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
@@ -115,8 +130,14 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	});
 
-	Route::resource('viralworksheet', 'ViralworksheetController');
+	Route::resource('viralworksheet', 'ViralworksheetController', ['except' => ['edit']]);
 
 	Route::get('test', 'FacilityController@test');
+
+	Route::get('refresh_cache', function () {
+		$lookup = new \App\Lookup;
+		$lookup->refresh_cache();
+		return back();
+	});
 
 });

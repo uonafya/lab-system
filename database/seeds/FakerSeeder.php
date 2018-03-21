@@ -11,10 +11,8 @@ class FakerSeeder extends Seeder
      */
     public function run()
     {
-        //
 
-
-		$batches = factory(App\Batch::class, 20)->create()
+		$batches = factory(App\Batch::class, 30)->create()
 		->each(function ($b){
 			$b->sample()->saveMany(
 				factory(App\Sample::class, 10)->create(['batch_id' => $b->id])
@@ -26,7 +24,7 @@ class FakerSeeder extends Seeder
 
 		$mothers = factory(App\Mother::class, 10)->create();
 
-		$viralbatches = factory(App\Viralbatch::class, 20)->create()
+		$viralbatches = factory(App\Viralbatch::class, 30)->create()
 		->each(function ($b){
 			$b->sample()->saveMany(
 				factory(App\Viralsample::class, 10)->create(['batch_id' => $b->id])

@@ -318,61 +318,63 @@
 
                         <div></div>
 
-                        @if($batch_no == 0)  
+                        @if(auth()->user()->user_type_id != 5)
+                            @if($batch_no == 0)  
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Date Received</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived or '' }}" name="datereceived">
+                                        </div>
+                                    </div>                            
+                                </div> 
+                            @else
+                                <input type="hidden" value="{{ $batch_received }}" id="datereceived">
+                            @endif
+
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received</label>
+                                <label class="col-sm-4 control-label">Received Status</label>
                                 <div class="col-sm-8">
-                                    <div class="input-group date">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived or '' }}" name="datereceived">
-                                    </div>
-                                </div>                            
-                            </div> 
-                        @else
-                            <input type="hidden" value="{{ $batch_received }}" id="datereceived">
+                                        <select class="form-control" required name="receivedstatus" id="receivedstatus">
+
+                                        <option value=""> Select One </option>
+                                        @foreach ($receivedstatuses as $receivedstatus)
+                                            <option value="{{ $receivedstatus->id }}"
+
+                                            @if (isset($viralsample) && $viralsample->receivedstatus == $receivedstatus->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $receivedstatus->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="rejection" >
+                                <label class="col-sm-4 control-label">Rejected Reason</label>
+                                <div class="col-sm-8">
+                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+
+                                        <option value=""> Select One </option>
+                                        @foreach ($rejectedreasons as $rejectedreason)
+                                            <option value="{{ $rejectedreason->id }}"
+
+                                            @if (isset($viralsample) && $viralsample->rejectedreason == $rejectedreason->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $rejectedreason->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                            </div>
                         @endif
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Received Status</label>
-                            <div class="col-sm-8">
-                                    <select class="form-control" required name="receivedstatus" id="receivedstatus">
-
-                                    <option value=""> Select One </option>
-                                    @foreach ($receivedstatuses as $receivedstatus)
-                                        <option value="{{ $receivedstatus->id }}"
-
-                                        @if (isset($viralsample) && $viralsample->receivedstatus == $receivedstatus->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $receivedstatus->name }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="rejection" >
-                            <label class="col-sm-4 control-label">Rejected Reason</label>
-                            <div class="col-sm-8">
-                                    <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
-
-                                    <option value=""> Select One </option>
-                                    @foreach ($rejectedreasons as $rejectedreason)
-                                        <option value="{{ $rejectedreason->id }}"
-
-                                        @if (isset($viralsample) && $viralsample->rejectedreason == $rejectedreason->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $rejectedreason->name }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div>
 
 
                     </div>
@@ -404,9 +406,11 @@
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
                             <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
                         </div>
-                        <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
-                        </div>
+                        @if(auth()->user()->user_type_id != 5)
+                            <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
+                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>

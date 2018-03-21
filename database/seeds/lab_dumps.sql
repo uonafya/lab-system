@@ -1,7 +1,3 @@
--- CREATE DATABASE  IF NOT EXISTS `vl_kemri3`;
--- USE `vl_kemri3`;
-
-
 DROP TABLE IF EXISTS `results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -11,7 +7,7 @@ CREATE TABLE `results` (
   PRIMARY KEY (`id`),
   KEY `id` (`id`),
   KEY `id_2` (`id`,`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +33,7 @@ CREATE TABLE `actions` (
   `name` varchar(100) DEFAULT NULL,
   `active` int(10) DEFAULT '1',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +57,7 @@ CREATE TABLE `sites` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `facility` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +83,7 @@ CREATE TABLE `feedings` (
   `feeding_description` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +107,7 @@ CREATE TABLE `prophylaxis_types` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
   `prophylaxis_type` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -135,7 +131,7 @@ CREATE TABLE `facilitytype` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,7 +188,7 @@ CREATE TABLE `provinces` (
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`,`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,6 +212,8 @@ CREATE TABLE `machines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `machine` varchar(20) DEFAULT NULL,
   `output` varchar(150) DEFAULT NULL,
+  `eid_limit` tinyint(4) unsigned  DEFAULT NULL,
+  `vl_limit` tinyint(4) unsigned  DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -226,7 +224,7 @@ CREATE TABLE `machines` (
 
 LOCK TABLES `machines` WRITE;
 /*!40000 ALTER TABLE `machines` DISABLE KEYS */;
-INSERT INTO `machines` VALUES (1,'TaqMan','<strong> TaqMan </strong>'),(2,'Abbott','<strong><font color=\'#0000FF\'> Abbott </font></strong>'),(3,'C8800','<strong> C8800 </strong>'),(4,'Panther','<strong><font color=\'#FF00FB\'> Panther </font></strong>');
+INSERT INTO `machines` VALUES (1,'TaqMan','<strong> TaqMan </strong>',22,21),(2,'Abbott','<strong><font color=\'#0000FF\'> Abbott </font></strong>',94,93),(3,'C8800','<strong> C8800 </strong>',NULL,93),(4,'Panther','<strong><font color=\'#FF00FB\'> Panther </font></strong>',NULL,93);
 /*!40000 ALTER TABLE `machines` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +241,7 @@ CREATE TABLE `worksheetstatus` (
   `output` varchar(150) DEFAULT NULL,
   `active` int(10) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -270,7 +268,7 @@ CREATE TABLE `viralrejectedreasons` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +292,7 @@ CREATE TABLE `entry_points` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,7 +320,7 @@ CREATE TABLE `prophylaxis` (
   `rank` int(14) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -378,7 +376,7 @@ CREATE TABLE `viralregimenline` (
   `name` varchar(100) DEFAULT NULL,
   `flag` int(100) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -403,7 +401,7 @@ CREATE TABLE `receivedstatus` (
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`,`Name`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -525,7 +523,7 @@ CREATE TABLE `rejectedreasons` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -554,7 +552,7 @@ CREATE TABLE `viralprophylaxis` (
   `ptype` int(14) NOT NULL DEFAULT '2',
   `category` int(14) NOT NULL DEFAULT '3',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -580,7 +578,7 @@ CREATE TABLE `viralsampletype` (
   `typecode` int(100) DEFAULT NULL,
   `flag` int(10) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -606,7 +604,7 @@ CREATE TABLE `countys` (
   `letter` varchar(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`,`letter`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -663,7 +661,7 @@ CREATE TABLE `labs` (
   `taqman` int(1) DEFAULT '1',
   `abbott` int(1) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -761,7 +759,7 @@ CREATE TABLE `viraljustifications` (
   `flag` int(50) DEFAULT '1',
   `rank` int(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -783,7 +781,7 @@ CREATE TABLE `viraldilutionfactors` (
   `dilutionfactor` int(10) DEFAULT NULL,
   `flag` int(10) DEFAULT '1',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -811,7 +809,7 @@ CREATE TABLE `vlresultsguidelines` (
   `triage` varchar(10) DEFAULT NULL,
   `indication` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

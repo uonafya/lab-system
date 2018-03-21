@@ -55,7 +55,7 @@
                         <br />
                         <br />                        
                     </div>
-                    <table class="table table-striped table-bordered table-hover" >
+                    <table class="table table-striped table-bordered table-hover table-responsive" >
                         <thead>
                             <tr>
                                 <th colspan="14"><center> Sample Log</center></th>

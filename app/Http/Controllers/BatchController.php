@@ -8,6 +8,8 @@ use App\Misc;
 use App\Lookup;
 
 use DB;
+// use PDF;
+// use DOMPDF;
 
 use App\Mail\EidDispatch;
 use Illuminate\Support\Facades\Mail;
@@ -57,8 +59,7 @@ class BatchController extends Controller
         $samples = $batch->sample;
         $samples->load(['patient.mother']);
         $batch->load(['facility', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_lookups();
+        $data = Lookup::get_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
@@ -115,117 +116,29 @@ class BatchController extends Controller
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
-                Mail::to('joelkith@gmail.com')->send(new EidDispatch($batch, $facility));
+                $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+                Mail::to($mail_array)->send(new EidDispatch($batch, $facility));
             // }            
         }
 
         DB::table('batches')->whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
     }
 
-    public function get_results()
-    {
-
-    }
-
-    public function get_subtotals($batch_id=NULL, $complete=true)
-    {
-
-        $samples = Sample::selectRaw("count(samples.id) as totals, batch_id, result")
-            ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                else{
-                    return $query->where('batch_id', $batch_id);
-                }
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('repeatt', 0)
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id', 'result')
-            ->get();
-
-        return $samples;
-    }
-
-    public function get_rejected($batch_id=NULL, $complete=true)
-    {
-        $samples = Sample::selectRaw("count(samples.id) as totals, batch_id")
-            ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                return $query->where('batch_id', $batch_id);
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
-    public function get_maxdatemodified($batch_id=NULL, $complete=true)
-    {
-        $samples = Sample::selectRaw("max(datemodified) as mydate, batch_id")
-            ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                return $query->where('batch_id', $batch_id);
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
-    public function get_maxdatetested($batch_id=NULL, $complete=true)
-    {
-        $samples = Sample::selectRaw("max(datetested) as mydate, batch_id")
-            ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                return $query->where('batch_id', $batch_id);
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
     public function get_rows($batch_list=NULL)
     {
         $my = new Misc;
 
-        $batches = Batch::select('batches.*', 'view_facilitys.email', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+        $batches = Batch::select('batches.*', 'facilitys.email', 'facilitys.name')
+            ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('batches.id', $batch_list);
             })
             ->where('batch_complete', 2)
             ->get();
-        $get_subtotals = $this->get_subtotals();
-        $rejected = $this->get_rejected();
-        $date_modified = $this->get_maxdatemodified();
-        $date_tested = $this->get_maxdatetested();
+        $get_subtotals = $my->get_subtotals();
+        $rejected = $my->get_rejected();
+        $date_modified = $my->get_maxdatemodified();
+        $date_tested = $my->get_maxdatetested();
         $currentdate=date('d-m-Y');
 
         $table_rows = "";
@@ -273,6 +186,12 @@ class BatchController extends Controller
 
     public function display_batches($page=NULL, $date_start=NULL, $date_end=NULL)
     {
+        $user = auth()->user();
+        $test = false;
+        if($user->user_type_id == 5) $test=true;
+
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+
         $my = new Misc;
         $b = Batch::selectRaw('count(id) as mycount')
             ->when($date_start, function($query) use ($date_start, $date_end){
@@ -282,6 +201,9 @@ class BatchController extends Controller
                     ->whereDate('batches.datereceived', '<=', $date_end);
                 }
                 return $query->whereDate('batches.datereceived', $date_start);
+            })
+            ->when($test, function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->get()
             ->first();
@@ -297,8 +219,8 @@ class BatchController extends Controller
 
         $offset = ($page-1) * $page_limit;
 
-        $batches = Batch::select('batches.*', 'view_facilitys.name')
-            ->join('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+        $batches = Batch::select('batches.*', 'facilitys.name')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
                 {
@@ -306,6 +228,9 @@ class BatchController extends Controller
                     ->whereDate('batches.datereceived', '<=', $date_end);
                 }
                 return $query->whereDate('batches.datereceived', $date_start);
+            })
+            ->when($test, function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->limit($page_limit)
             ->offset($offset)
@@ -316,19 +241,19 @@ class BatchController extends Controller
         }
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $get_subtotals = $this->get_subtotals($batch_ids, false);
-        $rejected = $this->get_rejected($batch_ids, false);
+        $subtotals = $my->get_subtotals($batch_ids, false);
+        $rejected = $my->get_rejected($batch_ids, false);
         $currentdate=date('d-m-Y');
 
         $table_rows = "";
 
         foreach ($batches as $key => $batch) {
 
-            $neg = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 1));
-            $pos = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 2));
-            $failed = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 3));
-            $redraw = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 5));
-            $noresult = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 0));
+            $neg = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 1));
+            $pos = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 2));
+            $failed = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 3));
+            $redraw = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 5));
+            $noresult = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 0));
 
             $rej = $this->checknull($rejected->where('batch_id', $batch->id));
             $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
@@ -365,12 +290,108 @@ class BatchController extends Controller
         return view('tables.batches', ['rows' => $table_rows, 'links' => $links]);
     }
 
+    public function approve_site_entry()
+    {
+        $batches = Batch::select('batches.*', 'facilitys.name')
+            ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->whereNull('received_by')
+            ->where('site_entry', 2)
+            ->get();
+
+        $my = new Misc;
+        $batch_ids = $batches->pluck(['id'])->toArray();
+        $subtotals = $my->get_subtotals($batch_ids, false);
+        $rejected = $my->get_rejected($batch_ids, false);
+
+        $table_rows = "";
+
+        foreach ($batches as $key => $batch) {
+
+            $noresult = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 0));
+
+            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $total = $noresult + $rej;
+
+            $result = $noresult = $datereceived = '';
+
+            $table_rows .= "<tr> 
+            <td>{$batch->id}</td>
+            <td>{$batch->name}</td>
+            <td>{$batch->datereceived}</td>
+            <td>" . $batch->created_at->toDateString() . "</td>
+            <td></td>
+            <td></td>
+            <td>{$total}</td>
+            <td>{$rej}</td>
+            <td>{$result}</td>
+            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
+            </tr>";
+        }
+        return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+    }
+
+    public function site_entry_approval(Batch $batch)
+    {
+        $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+
+        if($sample){
+            session(['site_entry_approval' => true]);
+            $sample->load(['patient.mother', 'batch']);
+            $data = Lookup::samples_form();
+            $data['sample'] = $sample;
+            return view('forms.samples', $data);
+        }
+        else{
+            $batch->received_by = auth()->user()->id;
+            $batch->save();
+            return redirect('batch/site_approval');
+        }
+    }
+
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Batch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function individual(Batch $batch)
+    {
+        $samples = $batch->sample;
+        $samples->load(['patient.mother']);
+        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $data = Lookup::get_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        return view('exports.samples', $data);
+    }
+
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Batch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function summary(Batch $batch)
+    {
+        $samples = $batch->sample;
+        $samples->load(['patient.mother']);
+        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $data = Lookup::get_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        // $pdf = DOMPDF::loadView('exports.samples_summary', $data);
+        // return $pdf->download('summary.pdf');
+
+        return view('exports.samples_summary_three', $data);
+    }
+
     public function checknull($var)
     {
         if($var->isEmpty()){
             return 0;
         }else{
-            // return $var->sum('totals');
             return $var->first()->totals;
         }
     }

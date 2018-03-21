@@ -56,7 +56,7 @@ class UsersTableSeeder extends Seeder
 		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
 	    	]);
 
-	    	if($key==100) break;
+	    	// if($key==100) break;
 
     		// $data[$i] = [
 		    //     'user_type_id' => 5,

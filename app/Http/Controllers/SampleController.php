@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Sample;
 use App\Patient;
 use App\Mother;
-use App\Facility;
 use App\Batch;
+use App\Facility;
 use App\Lookup;
 use DB;
 use Carbon\Carbon;
@@ -31,8 +31,7 @@ class SampleController extends Controller
      */
     public function create()
     {
-        $lookup = new Lookup;
-        $data = $lookup->samples_form();
+        $data = Lookup::samples_form();
         return view('forms.samples', $data);
     }
 
@@ -44,7 +43,6 @@ class SampleController extends Controller
      */
     public function store(Request $request)
     {
-
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "cancel"){
@@ -204,8 +202,7 @@ class SampleController extends Controller
     public function edit(Sample $sample)
     {
         $sample->load(['patient.mother', 'batch']);
-        $lookup = new Lookup;
-        $data = $lookup->samples_form();
+        $data = Lookup::samples_form();
         $data['sample'] = $sample;
         return view('forms.samples', $data);
     }
@@ -263,8 +260,14 @@ class SampleController extends Controller
         $sample->age = $patient_age;
         $sample->patient_id = $patient->id;
         $sample->save();
-        return redirect('batch/' . $batch->id);
 
+        $site_entry_approval = session()->pull('site_entry_approval');
+
+        if($site_entry_approval){
+            return redirect('batch/site_approval/' . $batch->id);
+        }
+
+        return redirect('batch/' . $batch->id);
     }
 
     /**
@@ -307,14 +310,24 @@ class SampleController extends Controller
     {
         $sample->repeatt = 0;
         $sample->result = 5;
+        $sample->approvedby = auth()->user()->id;
+        $sample->dateapproved = date('Y-m-d');
         $sample->save();
+        $my = new \App\Misc;
+        $my->check_batch($sample->batch_id);
         return back();
     }
 
     public function release_redraws(Request $request)
     {
-        $samples = $request->input('samples');
-        DB::table('samples')->whereIn('id', $samples)->update(['repeatt' => 0, 'result' => 5]);
+        $samples_input = $request->input('samples');
+        // DB::table('samples')->whereIn('id', $samples_input)->update(['repeatt' => 0, 'result' => 5, 'approvedby' => auth()->user()->id, 'dateapproved' => date('Y-m-d')]);
+
+        $samples = Sample::whereIn('id', $samples_input)->get();
+
+        foreach ($samples as $key => $sample) {
+            $this->release_redraw($sample);
+        }
         return back();
     }
 

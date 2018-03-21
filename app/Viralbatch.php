@@ -14,10 +14,10 @@ class Viralbatch extends Model
 
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
-    public function setDatedispatchedfromfacilityAttribute($value)
-    {
-        $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
-    }
+    // public function setDatedispatchedfromfacilityAttribute($value)
+    // {
+    //     $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
+    // }
 
 	public function sample()
     {
@@ -27,6 +27,11 @@ class Viralbatch extends Model
     public function facility()
     {
         return $this->belongsTo('App\Facility');
+    }
+
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab');
     }
 
     public function receiver()

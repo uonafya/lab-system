@@ -9,9 +9,30 @@ use DB;
 class Lookup extends Model
 {
 
-    public function get_lookups()
+    public static function get_machines()
     {
-        $this->cacher();
+        self::cacher();
+        return Cache::get('machines');
+    }
+
+    public function get_facilities()
+    {
+        self::cacher();
+        return Cache::get('facilities');
+    }
+
+    public static function worksheet_lookups()
+    {
+        self::cacher();
+        return [
+            'machines' => Cache::get('machines'),
+            'worksheet_statuses' => Cache::get('worksheet_statuses'),
+        ];
+    }
+
+    public static function get_lookups()
+    {
+        self::cacher();
         return [
             'rejected_reasons' => Cache::get('rejected_reasons'),
             'genders' => Cache::get('genders'),
@@ -21,12 +42,13 @@ class Lookup extends Model
             'entry_points' => Cache::get('entry_points'),
             'results' => Cache::get('results'),
             'received_statuses' => Cache::get('received_statuses'),
+            'pcrtypes' => Cache::get('pcr_types'),
         ];
     }
 
-	public function samples_form()
+	public static function samples_form()
 	{
-        $this->cacher();
+        self::cacher();
         return [
             // 'facilities' => DB::table('facilitys')->select('id', 'name')->get(),
             'facilities' => Cache::get('facilities'),
@@ -51,10 +73,12 @@ class Lookup extends Model
         ];
 	}
 
-    public function get_viral_lookups()
+    public static function get_viral_lookups()
     {
-        $this->cacher();
+        self::cacher();
         return [
+            'viral_rejected_reasons' => Cache::get('viral_rejected_reasons'),
+            'vl_result_guidelines' => Cache::get('vl_result_guidelines'),
             'genders' => Cache::get('genders'),
             'sample_types' => Cache::get('sample_types'),
             'received_statuses' => Cache::get('received_statuses'),
@@ -63,9 +87,9 @@ class Lookup extends Model
         ];        
     }
 
-    public function viralsample_form()
+    public static function viralsample_form()
     {
-        $this->cacher();
+        self::cacher();
         return [
             'facilities' => Cache::get('facilities'),
             'amrs_locations' => Cache::get('amrs_locations'),
@@ -90,7 +114,7 @@ class Lookup extends Model
         ];
     }
 
-	public function cacher()
+	public static function cacher()
 	{
         if(Cache::has('worksheet_statuses')){}
 
@@ -113,11 +137,12 @@ class Lookup extends Model
 
             // Viralload Lookup Data
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
-            $pmtct_types = DB::table('viralpmtcttype')->where('id', '<', 3)->get();
+            $pmtct_types = DB::table('viralpmtcttype')->get();
             $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
             $justifications = DB::table('viraljustifications')->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
             $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
+            $vl_result_guidelines = DB::table('vlresultsguidelines')->get();
 
             // Worksheet Lookup Data
             $machines = DB::table('machines')->get();
@@ -144,13 +169,14 @@ class Lookup extends Model
             Cache::put('justifications', $justifications, 60);
             Cache::put('sample_types', $sample_types, 60);
             Cache::put('regimen_lines', $regimen_lines, 60);
+            Cache::put('vl_result_guidelines', $vl_result_guidelines, 60);
 
             Cache::put('machines', $machines, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
         }		
 	}
 
-    public function clear_cache()
+    public static function clear_cache()
     {
         Cache::forget('facilities');
         Cache::forget('amrs_locations');
@@ -170,13 +196,14 @@ class Lookup extends Model
         Cache::forget('justifications');
         Cache::forget('sample_types');
         Cache::forget('regimen_lines');
+        Cache::forget('vl_result_guidelines');
         Cache::forget('machines');
         Cache::forget('worksheet_statuses');
     }
 
-    public function refresh_cache()
+    public static function refresh_cache()
     {
-        $this->clear_cache();
-        $this->cacher();
+        self::clear_cache();
+        self::cacher();
     }
 }

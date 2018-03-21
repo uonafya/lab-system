@@ -6,6 +6,7 @@ use App\Viralworksheet;
 use App\Viralsample;
 use App\User;
 use App\MiscViral;
+use App\Lookup;
 use DB;
 use Excel;
 use Illuminate\Http\Request;
@@ -17,15 +18,8 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=0, $date_start=NULL, $date_end=NULL)
     {
-        $state = session()->pull('viral_worksheet_state', null);
-        // $worksheets = Viralworksheet::with(['creator', 'sample'])
-        // ->when($state, function ($query) use ($state){
-        //     return $query->where('status_id', $state);
-        // })
-        // ->get();
-
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
@@ -33,15 +27,26 @@ class ViralworksheetController extends Controller
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
+            ->when($date_start, function($query) use ($date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate('viralworksheets.created_at', '>=', $date_start)
+                    ->whereDate('viralworksheets.created_at', '<=', $date_end);
+                }
+                return $query->whereDate('viralworksheets.created_at', $date_start);
+            })
             ->groupBy('viralworksheets.id')
             ->get();
 
-        $statuses = collect($this->wstatus());
-        $machines = collect($this->wmachine());
+        // return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
+        
+        // $statuses = collect($this->wstatus());
+        // $machines = collect($this->wmachine());
 
-        // dd($statuses);
-
-        return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
+        $data = Lookup::worksheet_lookups();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('viralworksheet/index/' . $state . '/');
+        return view('tables.viralworksheets', $data);
     }
 
     /**
@@ -49,12 +54,20 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($machine_type=2)
     {
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, view_facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $machines = Lookup::get_machines();
+        $machine = $machines->where('id', $machine_type)->first();
+
+        if($machine == NULL || $machine->vl_limit == NULL)
+        {
+            return back();
+        }
+
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
@@ -64,16 +77,16 @@ class ViralworksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(93)
+            ->limit($machine->vl_limit)
             ->get();
 
         $count = $samples->count();
 
-        if($count == 93){
-            return view('forms.viralworksheets', ['create' => true, 'machine_type' => 2, 'samples' => $samples]);
+        if($count == $machine->vl_limit){
+            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
         }
 
-        return view('forms.viralworksheets', ['create' => false, 'machine_type' => 2, 'count' => $count]);
+        return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count]);
     }
 
     /**
@@ -90,10 +103,13 @@ class ViralworksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, view_facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $machines = Lookup::get_machines();
+        $machine = $machines->where('id', $worksheet->machine_type)->first();
+
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
@@ -104,11 +120,14 @@ class ViralworksheetController extends Controller
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
             ->limit(93)
+            ->limit($machine->vl_limit)
             ->get();
 
-        // if($samples->count() != 22 || $samples->count() != 94){
-        //     return back();
-        // }
+
+        if($samples->count() != $machine->vl_limit){
+            $worksheet->delete();
+            return back();
+        }
 
         $sample_ids = $samples->pluck('id');
 
@@ -179,11 +198,11 @@ class ViralworksheetController extends Controller
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
-        if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+        if($worksheet->machine_type == 2){
+            return view('worksheets.abbot-table', $data);
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.other-table', $data);
         }
     }
 
@@ -221,8 +240,10 @@ class ViralworksheetController extends Controller
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $today = $dateoftest = date("Y-m-d");
-        $positive_control;
-        $negative_control;
+        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = NULL;
+
+        $path = $request->upload->store('results/vl');
+        $my = new MiscViral;
 
         if($worksheet->machine_type == 2)
         {
@@ -232,12 +253,7 @@ class ViralworksheetController extends Controller
                 $reader->toArray();
             })->get();
 
-            $check = array();
-
-            // dd($data);
-
             $bool = false;
-            $positive_control = $negative_control = "Passed";
 
             foreach ($data as $key => $value) {
                 if($value[5] == "RESULT"){
@@ -251,139 +267,62 @@ class ViralworksheetController extends Controller
                     $interpretation = $value[6];
                     $error = $value[10];
 
-                    if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-                    {
-                        $res= "< LDL copies/ml";
-                        $interpret="Target Not Detected";
-                        $units="";                        
-                    }
+                    $result_array = $my->sample_result($result, $error);
 
-                    else if($result == 'Collect New Sample')
-                    {
-                        $res= "Collect New Sample";
-                        $interpret="Collect New Sample";
-                        $units="";                         
-                    }
-
-                    else if($result == 'Failed' || $result == '')
-                    {
-                        $res= "Failed";
-                        $interpret = $error;
-                        $units="";                         
-                    }
-
-                    else{
-                        $res = preg_replace("/[^<0-9]/", "", $result);
-                        $interpret = $result;
-                        $units="cp/mL";
-                    }
-
-                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpret, 'result' => $res, 'units' => $units];
+                    $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                     $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     DB::table('viralsamples')->where($search)->update($data_array);
 
-                    $check[] = $search;
-
                     if($sample_id == "HIV_NEG"){
-                        $nc = $res;
-                        $nc_int = $interpret;
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
                     }
                     else if($sample_id == "HIV_HIPOS"){
-                        $hpc = $res;
-                        $hpc_int = $interpret;
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
                     }
                     else if($sample_id == "HIV_LOPOS"){
-                        $lpc = $res;
-                        $lpc_int = $interpret;
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
                     }
-
                 }
-
                 if($bool && $value[5] == "RESULT") break;
             }
-
         }
         else
         {
             $handle = fopen($file, "r");
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $interpretation = $data[8];
                 $dateoftest=date("Y-m-d", strtotime($data[3]));
 
-                $flag = $data[10];
+                $sample_id = $value[4];
+                $result = $value[8];
+                $error = $value[10];
 
-                if($flag != NULL){
-                    $interpretation = $flag;
+                $result_array = $my->sample_result($result, $error);
+
+                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                DB::table('viralsamples')->where($search)->update($data_array);
+
+                $sample_type = $value[5];
+
+                if($sample_type == "NC"){
+                    $nc = $result_array['result'];
+                    $nc_int = $result_array['interpretation']; 
                 }
-
-                if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
-                {
-                    $result = 1;
-                } 
-                else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
-                {
-                    $result = 2;
+                else if($sample_type == "HPC"){
+                    $hpc = $result_array['result'];
+                    $hpc_int = $result_array['interpretation'];
                 }
-                else
-                {
-                    $result = 3;
-                }
-
-                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $interpretation, 'result' => $result];
-
-                $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
-                DB::table('samples')->where($search)->update($data_array);
-
-                if($data[5] == "NC"){
-                    // $worksheet->neg_control_interpretation = $interpretation;
-                    $negative_control = $result;
-                }
-                if($data[5] == "LPC" || $data[5] == "PC"){
-                    $positive_control = $result;
+                else if($sample_type == "LPC"){
+                    $lpc = $result_array['result'];
+                    $lpc_int = $result_array['interpretation'];
                 }
 
             }
             fclose($handle);
-
-            switch ($negative_control) {
-                case 'Target Not Detected':
-                    $neg_result = 1;
-                    break;
-                case 'Valid':
-                    $neg_result = 6;
-                    break;
-                case 'Invalid':
-                    $neg_result = 7;
-                    break;
-                case '5':
-                    $neg_result = 5;
-                    break;                
-                default:
-                    $neg_result = 3;
-                    break;
-            }
-
-            if($positive_control == 1 || $positive_control == "1" || $positive_control == ">1" || $positive_control == "> 1 " || $positive_control == "> 1" || $positive_control == "1.00E+00" || $positive_control == ">1.00E+00" || $positive_control == "> 1.00E+00" || $positive_control == "> 1.00E+00 ")
-            {
-                $pos_result = 2;
-            }
-            else if($positive_control == "5")
-            {
-                $pos_result = 5;
-            }
-            else if($positive_control == "Valid")
-            {
-                $pos_result = 6;
-            }
-            else if($positive_control == "Invalid")
-            {
-                $pos_result = 7;
-            }
-            else
-            {
-                $pos_result = 3;
-            }
 
         }
 
@@ -401,10 +340,7 @@ class ViralworksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
-        $my = new MiscViral;
         $my->requeue($worksheet->id);
-
-        // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
         return redirect('viralworksheet/approve/' . $worksheet->id);
     }

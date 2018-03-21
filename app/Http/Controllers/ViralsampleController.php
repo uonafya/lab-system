@@ -6,6 +6,7 @@ use App\Viralsample;
 use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
+use App\Lookup;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,39 +30,8 @@ class ViralsampleController extends Controller
      */
     public function create()
     {
-        $facilities = Facility::select('id', 'name')->get();
-        $amrs_locations = DB::table('amrslocations')->get();
-        $rejectedreasons = DB::table('viralrejectedreasons')->get();
-        $genders = DB::table('gender')->get();
-        $pmtct_types = DB::table('viralpmtcttype')->where('id', '<', 3)->get();
-        $receivedstatuses = DB::table('receivedstatus')->get();
-        $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
-        $justifications = DB::table('viraljustifications')->get();
-        $viralsampletypes = DB::table('viralsampletype')->where('flag', 1)->get();
-        $regimenlines = DB::table('viralregimenline')->where('flag', 1)->get();
-
-        return view('forms.viralsamples', [
-            'facilities' => $facilities,
-            'amrs_locations' => $amrs_locations,
-            'rejectedreasons' => $rejectedreasons,
-            'genders' => $genders,
-            'receivedstatuses' => $receivedstatuses,
-            'pmtct_types' => $pmtct_types,
-            'prophylaxis' => $prophylaxis,
-            'justifications' => $justifications,
-            'sampletypes' => $viralsampletypes,
-            'regimenlines' => $regimenlines,
-
-            'batch_no' => session('viral_batch_no', 0),
-            'batch_dispatch' => session('viral_batch_dispatch', 0),
-            'batch_dispatched' => session('viral_batch_dispatched', 0),
-            'batch_received' => session('viral_batch_received', 0),
-
-            'facility_id' => session('viral_facility_id', 0),
-            'facility_name' => session('viral_facility_name', 0),
-
-            'message' => session()->pull('viral_message'),
-        ]);
+        $data = Lookup::viralsample_form();
+        return view('forms.viralsamples', $data);
     }
 
     /**
@@ -233,40 +203,10 @@ class ViralsampleController extends Controller
      */
     public function edit(Viralsample $viralsample)
     {
-        $facilities = Facility::select('id', 'name')->get();
-        $amrs_locations = DB::table('amrslocations')->get();
-        $rejectedreasons = DB::table('viralrejectedreasons')->get();
-        $genders = DB::table('gender')->get();
-        $pmtct_types = DB::table('viralpmtcttype')->where('id', '<', 3)->get();
-        $receivedstatuses = DB::table('receivedstatus')->get();
-        $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
-        $justifications = DB::table('viraljustifications')->get();
-        $viralsampletypes = DB::table('viralsampletype')->where('flag', 1)->get();
-        $regimenlines = DB::table('viralregimenline')->where('flag', 1)->get();
-
-        return view('forms.viralsamples', [
-            'viralsample' => $viralsample,
-            'facilities' => $facilities,
-            'amrs_locations' => $amrs_locations,
-            'rejectedreasons' => $rejectedreasons,
-            'genders' => $genders,
-            'receivedstatuses' => $receivedstatuses,
-            'pmtct_types' => $pmtct_types,
-            'prophylaxis' => $prophylaxis,
-            'justifications' => $justifications,
-            'sampletypes' => $viralsampletypes,
-            'regimenlines' => $regimenlines,
-
-            'batch_no' => session('viral_batch_no', 0),
-            'batch_dispatch' => session('viral_batch_dispatch', 0),
-            'batch_dispatched' => session('viral_batch_dispatched', 0),
-            'batch_received' => session('viral_batch_received', 0),
-
-            'facility_id' => session('viral_facility_id', 0),
-            'facility_name' => session('viral_facility_name', 0),
-
-            'message' => session()->pull('viral_message'),
-        ]);
+        $viralsample->load(['patient', 'batch']);
+        $data = Lookup::viralsample_form();
+        $data['viralsample'] = $viralsample;
+        return view('forms.viralsamples', $data);
     }
 
     /**
@@ -306,6 +246,14 @@ class ViralsampleController extends Controller
 
         $viralsample->patient_id = $viralpatient->id;
         $viralsample->save();
+
+        $site_entry_approval = session()->pull('site_entry_approval');
+
+        if($site_entry_approval){
+            return redirect('viralbatch/site_approval/' . $batch->id);
+        }
+
+        return redirect('viralbatch/' . $batch->id);
     }
 
     /**
@@ -346,14 +294,25 @@ class ViralsampleController extends Controller
     {
         $viralsample->repeatt = 0;
         $viralsample->result = "Collect New Sample";
+        $viralsample->approvedby = auth()->user()->id;
+        $viralsample->dateapproved = date('Y-m-d');
         $viralsample->save();
+        $my = new \App\MiscViral;
+        $my->check_batch($sample->batch_id);
         return back();
     }
 
     public function release_redraws(Request $request)
     {
         $viralsamples = $request->input('samples');
-        DB::table('viralsamples')->whereIn('id', $viralsamples)->update(['repeatt' => 0, 'result' => "Collect New Sample"]);
+        // DB::table('viralsamples')->whereIn('id', $viralsamples)->update(['repeatt' => 0, 'result' => "Collect New Sample"]);
+
+        $viralsamples = Viralsample::whereIn('id', $viralsamples)->get();
+
+        foreach ($viralsamples as $key => $viralsample) {
+            $this->release_redraw($viralsample);
+        }
+
         return back();
     }
 

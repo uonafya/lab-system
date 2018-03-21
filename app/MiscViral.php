@@ -193,14 +193,122 @@ class MiscViral extends Model
 
         return $samples;
     }
+
+    public function sample_result($result, $error)
+    {
+        if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
+        {
+            $res= "< LDL copies/ml";
+            $interpretation="Target Not Detected";
+            $units="";                        
+        }
+
+        else if($result == 'Collect New Sample')
+        {
+            $res= "Collect New Sample";
+            $interpretation="Collect New Sample";
+            $units="";                         
+        }
+
+        else if($result == 'Failed' || $result == '')
+        {
+            $res= "Failed";
+            $interpretation = $error;
+            $units="";                         
+        }
+
+        else{
+            $res = preg_replace("/[^<0-9]/", "", $result);
+            $interpretation = $result;
+            $units="cp/mL";
+        }
+
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+    }
+
+    
+
+    public function get_rejected($batch_id=NULL, $complete=true)
+    {
+        $samples = Viralsample::selectRaw("count(viralsamples.id) as totals, batch_id")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
+
+    public function get_maxdatemodified($batch_id=NULL, $complete=true)
+    {
+        $samples = Viralsample::selectRaw("max(datemodified) as mydate, batch_id")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
+
+    public function get_maxdatetested($batch_id=NULL, $complete=true)
+    {
+        $samples = Viralsample::selectRaw("max(datetested) as mydate, batch_id")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
 	
 
-    public function batch_status($batch_id, $batch_complete){
+    public function batch_status($batch_id, $batch_complete, $approval=false){
+
+    	if($approval){
+    		$url = "<td><a href='" . url('/viralbatch/site_approval/' . $batch_id) . "'>View Samples For Approve</a></td>";
+    	}
+    	else{
+    		$url = "<td><a href='" . url('/viralbatch/' . $batch_id) . "'>View</a></td>";
+    	}
+
         if($batch_complete == 0){
-            return "<td>In Process</td><td><a href='" . url('/viralbatch/' . $batch_id) . "'>View</a>";
+            return "<td>In Process</td>" . $url;
         }
         else{
-            return "<td>Complete</td><td><a href='" . url('/viralbatch/' . $batch_id) . "'>View</a>";
+            return "<td>Complete</td>" . $url;
         }
     }
 

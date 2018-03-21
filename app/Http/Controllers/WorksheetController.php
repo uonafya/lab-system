@@ -6,6 +6,7 @@ use App\Worksheet;
 use App\Sample;
 use App\User;
 use App\Misc;
+use App\Lookup;
 use DB;
 use Excel;
 use Illuminate\Http\Request;
@@ -17,12 +18,20 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=0, $date_start=NULL, $date_end=NULL)
     {
         $state = session()->pull('worksheet_state', null);
         $worksheets = Worksheet::with(['creator'])
         ->when($state, function ($query) use ($state){
             return $query->where('status_id', $state);
+        })
+        ->when($date_start, function($query) use ($date_start, $date_end){
+            if($date_end)
+            {
+                return $query->whereDate('worksheets.created_at', '>=', $date_start)
+                ->whereDate('worksheets.created_at', '<=', $date_end);
+            }
+            return $query->whereDate('worksheets.created_at', $date_start);
         })
         ->get();
 
@@ -58,7 +67,7 @@ class WorksheetController extends Controller
 
         }
 
-        return view('tables.worksheets', ['rows' => $table_rows]);
+        return view('tables.worksheets', ['rows' => $table_rows, 'myurl' => url('worksheet/index/' . $state . '/')]);
     }
 
     /**
@@ -66,12 +75,20 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($machine_type=2)
     {
-        $samples = Sample::selectRaw("samples.*, patients.patient, view_facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $machines = Lookup::get_machines();
+        $machine = $machines->where('id', $machine_type)->first();
+
+        if($machine == NULL || $machine->eid_limit == NULL)
+        {
+            return back();
+        }
+
+        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->where('inworksheet', 0)
             ->where('input_complete', true)
@@ -81,45 +98,18 @@ class WorksheetController extends Controller
             ->orderBy('high_priority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
-            ->limit(22)
+            ->limit($machine->eid_limit)
             ->get();
 
         // dd($samples);
 
         $count = $samples->count();
 
-        if($count == 22){
-            return view('forms.worksheets', ['create' => true, 'machine_type' => 1, 'samples' => $samples]);
+        if($count == $machine->eid_limit){
+            return view('forms.worksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
         }
 
-        return view('forms.worksheets', ['create' => false, 'machine_type' => 1, 'count' => $count]);
-    }
-
-    public function abbot()
-    {
-        $samples = Sample::selectRaw("samples.*, patients.patient, view_facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-            ->join('batches', 'samples.batch_id', '=', 'batches.id')
-            ->join('patients', 'samples.patient_id', '=', 'patients.id')
-            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'batches.facility_id')
-            ->whereYear('datereceived', '>', 2014)
-            ->where('inworksheet', 0)
-            ->where('input_complete', true)
-            ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw('((result IS NULL ) OR (result =0 ))')
-            ->orderBy('isnull', 'asc')
-            ->orderBy('high_priority', 'asc')
-            ->orderBy('datereceived', 'asc')
-            ->orderBy('samples.id', 'asc')
-            ->limit(94)
-            ->get();
-
-        $count = $samples->count();
-
-        if($count == 94){
-            return view('forms.worksheets', ['create' => true, 'machine_type' => 2, 'samples' => $samples]);
-        }
-
-        return view('forms.worksheets', ['create' => false, 'machine_type' => 2, 'count' => $count]);
+        return view('forms.worksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count]);
     }
 
     /**
@@ -136,6 +126,9 @@ class WorksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
+        $machines = Lookup::get_machines();
+        $machine = $machines->where('id', $worksheet->machine_type)->first();
+
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
@@ -147,17 +140,11 @@ class WorksheetController extends Controller
             ->orderBy('high_priority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
-            ->when($worksheet, function($query) use ($worksheet){
-                if($worksheet->machine_type == 1){
-                    return $query->limit(22);
-                }
-                else{
-                    return $query->limit(94);
-                }
-            })
+            ->limit($machine->eid_limit)
             ->get();
 
-        if($samples->count() != 22 && $samples->count() != 94){
+        if($samples->count() != $machine->eid_limit){
+            $worksheet->delete();
             return back();
         }
 
@@ -449,10 +436,10 @@ class WorksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
+        $path = $request->upload->store('results/eid');
+
         $my = new Misc;
         $my->requeue($worksheet->id);
-
-        // $path = $request->upload->storeAs('eid_results', 'dash.csv');
 
         return redirect('worksheet/approve/' . $worksheet->id);
     }
@@ -587,7 +574,10 @@ class WorksheetController extends Controller
     {
         $samples = Sample::selectRaw("count(*) as totals, worksheet_id, result")
             ->whereNotNull('worksheet_id')
-            ->when($worksheet_id, function($query) use ($worksheet_id){
+            ->when($worksheet_id, function($query) use ($worksheet_id){                
+                if (is_array($worksheet_id)) {
+                    return $query->whereIn('worksheet_id', $worksheet_id);
+                }
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->where('inworksheet', 1)

@@ -316,13 +316,15 @@
                         <center>Sample Information</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">No of Spots</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" required name="spots" number="number" min=1 max=5 type="text" value="{{ $sample->spots or '' }}">
+                        
+                        @if(auth()->user()->user_type_id != 5)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">No of Spots</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" required name="spots" number="number" min=1 max=5 type="text" value="{{ $sample->spots or '' }}">
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Collection</label>
@@ -351,18 +353,20 @@
 
                         <div></div>
 
-                        @if($batch_no == 0)  
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received</label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control" value="{{ $sample->batch->datereceived or '' }}" name="datereceived">
-                                    </div>
-                                </div>                            
-                            </div> 
-                        @else
-                            <input type="hidden" value="{{ $batch_received }}" name="datereceived" id="datereceived">
+                        @if(auth()->user()->user_type_id != 5)
+                            @if($batch_no == 0)  
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Date Received</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input type="text" id="datereceived" required class="form-control" value="{{ $sample->batch->datereceived or '' }}" name="datereceived">
+                                        </div>
+                                    </div>                            
+                                </div>
+                            @else
+                                <input type="hidden" value="{{ $batch_received }}" name="datereceived" id="datereceived">
+                            @endif 
                         @endif
 
                         <div class="form-group">
@@ -388,48 +392,51 @@
 
                         <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> 
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Received Status</label>
-                            <div class="col-sm-8">
-                                    <select class="form-control" required name="receivedstatus" id="receivedstatus">
+                        @if(auth()->user()->user_type_id != 5)
 
-                                    <option value=""> Select One </option>
-                                    @foreach ($receivedstatuses as $receivedstatus)
-                                        <option value="{{ $receivedstatus->id }}"
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Received Status</label>
+                                <div class="col-sm-8">
+                                        <select class="form-control" required name="receivedstatus" id="receivedstatus">
 
-                                        @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
-                                            selected
-                                        @endif
+                                        <option value=""> Select One </option>
+                                        @foreach ($receivedstatuses as $receivedstatus)
+                                            <option value="{{ $receivedstatus->id }}"
 
-                                        > {{ $receivedstatus->name }}
-                                        </option>
-                                    @endforeach
+                                            @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
+                                                selected
+                                            @endif
 
-                                </select>
+                                            > {{ $receivedstatus->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
 
-                        <div class="form-group" id="rejection" >
-                            <label class="col-sm-4 control-label">Rejected Reason</label>
-                            <div class="col-sm-8">
-                                    <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+                            <div class="form-group" id="rejection" >
+                                <label class="col-sm-4 control-label">Rejected Reason</label>
+                                <div class="col-sm-8">
+                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                    <option value=""> Select One </option>
-                                    @foreach ($rejectedreasons as $rejectedreason)
-                                        <option value="{{ $rejectedreason->id }}"
+                                        <option value=""> Select One </option>
+                                        @foreach ($rejectedreasons as $rejectedreason)
+                                            <option value="{{ $rejectedreason->id }}"
 
-                                        @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
-                                            selected
-                                        @endif
+                                            @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
+                                                selected
+                                            @endif
 
-                                        > {{ $rejectedreason->name }}
-                                        </option>
-                                    @endforeach
+                                            > {{ $rejectedreason->name }}
+                                            </option>
+                                        @endforeach
 
-                                </select>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                     </div>
                 </div>
@@ -459,9 +466,11 @@
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
                             <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
                         </div>
-                        <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
-                        </div>
+                        @if(auth()->user()->user_type_id != 5)
+                            <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
+                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
@@ -515,8 +524,6 @@
                 }                
             }
         @endslot
-
-
 
         $(".date").datepicker({
             startView: 0,
