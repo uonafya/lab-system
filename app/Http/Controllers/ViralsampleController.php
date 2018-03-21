@@ -244,6 +244,8 @@ class ViralsampleController extends Controller
 
         $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
 
+        $new_patient = $request->input('new_patient');
+
         if($new_patient == 0){            
             $viralpatient = Viralpatient::find($viralsample->patient_id);
         }
