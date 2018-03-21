@@ -108,8 +108,9 @@ width:1180px;
 						}
 					@endphp
 
+
 					<td > 
-						{{ $rr }} 
+						{!! $rr !!} 
 						<span class='style7'>Sample: {{ $sample->patient->patient or '' }}  {{$parent}}</span>
 						<br /> 
 
