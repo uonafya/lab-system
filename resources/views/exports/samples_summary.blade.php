@@ -1,3 +1,22 @@
+<?php
+$conf  = config('pdf');
+$mpdf = new \Mpdf\Mpdf($conf);
+ob_start();
+
+// echo '<div>Generate your content</div>';
+
+// $html = ob_get_contents();
+// ob_end_clean();
+
+// // send the captured HTML from the output buffer to the mPDF class for processing
+// $mpdf->WriteHTML($html);
+// $mpdf->Output();
+
+// die();
+
+
+
+?>
 <html>
 <head>
 </head>
@@ -211,3 +230,14 @@
 
 </body>
 </html>
+
+<?php
+
+// $html = ob_get_contents();
+// ob_end_clean();
+
+// // send the captured HTML from the output buffer to the mPDF class for processing
+// $mpdf->WriteHTML($html);
+// $mpdf->Output();
+
+?>

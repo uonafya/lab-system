@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Sample;
 use App\Patient;
 use App\Mother;
+use App\Batch;
 use App\Facility;
 use App\Lookup;
 use DB;
@@ -30,8 +31,7 @@ class SampleController extends Controller
      */
     public function create()
     {
-        $lookup = new Lookup;
-        $data = $lookup->samples_form();
+        $data = Lookup::samples_form();
         return view('forms.samples', $data);
     }
 
@@ -202,8 +202,7 @@ class SampleController extends Controller
     public function edit(Sample $sample)
     {
         $sample->load(['patient.mother', 'batch']);
-        $lookup = new Lookup;
-        $data = $lookup->samples_form();
+        $data = Lookup::samples_form();
         $data['sample'] = $sample;
         return view('forms.samples', $data);
     }
@@ -221,7 +220,7 @@ class SampleController extends Controller
         $sample->fill($data);
         // $sample->save();
 
-        $batch = \App\Batch::find($sample->batch_id);
+        $batch = Batch::find($sample->batch_id);
         $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
         $batch->save();
 
@@ -261,8 +260,14 @@ class SampleController extends Controller
         $sample->age = $patient_age;
         $sample->patient_id = $patient->id;
         $sample->save();
-        return redirect('batch/' . $batch->id);
 
+        $site_entry_approval = session()->pull('site_entry_approval');
+
+        if($site_entry_approval){
+            return redirect('batch/site_approval/' . $batch->id);
+        }
+
+        return redirect('batch/' . $batch->id);
     }
 
     /**

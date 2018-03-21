@@ -57,8 +57,7 @@ class ViralbatchController extends Controller
         $viralsamples = $viralbatch->sample;
         $viralsamples->load(['patient']);
         $viralbatch->load(['facility', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_viral_lookups();
+        $data = Lookup::get_viral_lookups();
         $data['batch'] = $viralbatch;
         $data['samples'] = $viralsamples;
         // dd($data);
@@ -356,9 +355,25 @@ class ViralbatchController extends Controller
             <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
             </tr>";
         }
-
         return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+    }
 
+    public function site_entry_approval(Viralbatch $batch)
+    {
+        $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+
+        if($sample){
+            session(['site_entry_approval' => true]);
+            $viralsample->load(['patient', 'batch']);
+            $data = Lookup::viralsample_form();
+            $data['viralsample'] = $viralsample;
+            return view('forms.viralsamples', $data);
+        }
+        else{
+            $batch->received_by = auth()->user()->id;
+            $batch->save();
+            return redirect('viralbatch/site_approval');
+        }
     }
 
     /**
@@ -372,8 +387,7 @@ class ViralbatchController extends Controller
         $samples = $batch->sample;
         $samples->load(['patient']);
         $batch->load(['facility', 'lab', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_viral_lookups();
+        $data = Lookup::get_viral_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
@@ -391,8 +405,7 @@ class ViralbatchController extends Controller
         $samples = $batch->sample;
         $samples->load(['patient']);
         $batch->load(['facility', 'lab', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_viral_lookups();
+        $data = Lookup::get_viral_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 

@@ -43,8 +43,7 @@ class ViralworksheetController extends Controller
         // $statuses = collect($this->wstatus());
         // $machines = collect($this->wmachine());
 
-        $lookup = new Lookup;
-        $data = $lookup->worksheet_lookups();
+        $data = Lookup::worksheet_lookups();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('viralworksheet/index/' . $state . '/');
         return view('tables.viralworksheets', $data);
@@ -57,8 +56,7 @@ class ViralworksheetController extends Controller
      */
     public function create($machine_type=2)
     {
-        $lookup = new Lookup;
-        $machines = $lookup->get_machines();
+        $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
         if($machine == NULL || $machine->vl_limit == NULL)
@@ -105,8 +103,7 @@ class ViralworksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $lookup = new Lookup;
-        $machines = $lookup->get_machines();
+        $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
         $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")

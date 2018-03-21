@@ -59,8 +59,7 @@ class BatchController extends Controller
         $samples = $batch->sample;
         $samples->load(['patient.mother']);
         $batch->load(['facility', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_lookups();
+        $data = Lookup::get_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
@@ -328,9 +327,25 @@ class BatchController extends Controller
             <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
             </tr>";
         }
-
         return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+    }
 
+    public function site_entry_approval(Batch $batch)
+    {
+        $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+
+        if($sample){
+            session(['site_entry_approval' => true]);
+            $sample->load(['patient.mother', 'batch']);
+            $data = Lookup::samples_form();
+            $data['sample'] = $sample;
+            return view('forms.samples', $data);
+        }
+        else{
+            $batch->received_by = auth()->user()->id;
+            $batch->save();
+            return redirect('batch/site_approval');
+        }
     }
 
     /**
@@ -344,8 +359,7 @@ class BatchController extends Controller
         $samples = $batch->sample;
         $samples->load(['patient.mother']);
         $batch->load(['facility', 'lab', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_lookups();
+        $data = Lookup::get_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
@@ -363,15 +377,14 @@ class BatchController extends Controller
         $samples = $batch->sample;
         $samples->load(['patient.mother']);
         $batch->load(['facility', 'lab', 'receiver', 'creator']);
-        $lookup = new Lookup;
-        $data = $lookup->get_lookups();
+        $data = Lookup::get_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
         // $pdf = DOMPDF::loadView('exports.samples_summary', $data);
         // return $pdf->download('summary.pdf');
 
-        return view('exports.samples_summary', $data);
+        return view('exports.samples_summary_three', $data);
     }
 
     public function checknull($var)

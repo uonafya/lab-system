@@ -77,8 +77,7 @@ class WorksheetController extends Controller
      */
     public function create($machine_type=2)
     {
-        $lookup = new Lookup;
-        $machines = $lookup->get_machines();
+        $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
         if($machine == NULL || $machine->eid_limit == NULL)
@@ -127,8 +126,7 @@ class WorksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $lookup = new Lookup;
-        $machines = $lookup->get_machines();
+        $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")

@@ -34,7 +34,7 @@
                 <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('batch') }}">View</a></li>
-                    <li><a href=" {{ url('batch/approve') }}">Approve Site Entry</a></li>
+                    <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry</a></li>
                     <li><a href=" {{ url('batch/dispatch') }}">Dispatch</a></li>
                 </ul>
             </li>
@@ -60,7 +60,7 @@
                 <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href=" {{ url('viralbatch') }}">View</a></li>
-                    <li><a href=" {{ url('viralbatch/approve') }}">Approve Site Entry</a></li>
+                    <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
                     <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
                 </ul>
             </li>

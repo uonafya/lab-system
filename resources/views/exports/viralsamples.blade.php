@@ -37,7 +37,6 @@
 	     P.breakhere {page-break-before: always}
 
 	}
-
 	</STYLE> 
 <body onLoad="JavaScript:window.print();">
 
@@ -162,7 +161,45 @@
 				}
 
 				$patient = $sample->patient;
-				$patient_samples = $patient->sample;
+				$patient_samples = $patient->sample->where('id', '!=', $sample->id)
+													->where('patient_id', $sample->patient_id)
+													->where('repeatt', 0)
+													->where('approved', 1);
+
+				$s_type = $sample_types->where('id', $sample->sampletype)->first();
+
+				$test_no = $patient_samples->count();
+				$test_no++;
+
+				if(($sample->result > 1000 && $s_type->typecode == 2)
+					 || ($sample->result > 5000 && $s_type->typecode == 1))
+				{
+					$outcome_code = "b";
+				}
+
+				else if(($sample->result < 1000 && $s_type->typecode == 2)
+					 || ($sample->result < 5000 && $s_type->typecode == 1))
+				{
+					$outcome_code = "a";
+				}
+				else{
+					$outcome_code = "a";
+				}
+
+				$vlmessage='';
+				if($sample->receivedstatus == 2){
+					$vlmessage='';
+				}
+				else if($sample->receivedstatus != 2 && $sample->result == "Collect New Sample"){
+					$vlmessage='Failed Test';
+				}
+				else{
+					$guideline = $vl_result_guidelines->where('test', $test_no)->where('triagecode', $outcome_code)->where('sampletype', $s_type->typecode)->first();
+
+					if($guideline){
+						$vlmessage = $guideline->indication;
+					}
+				}
 
 			?>
 	
@@ -186,15 +223,34 @@
 				</td>
 			</tr>
 
+
 			<tr>
 				<td colspan="2">
 				  <span class="style1"><strong>Comments:</strong></span>
 				</td>
-				<td colspan="7" class="comment" >
-					<span class="style5 ">{{ $sample->comments }} <br> {{ $sample->labcomment }} </span>
+				<td colspan="5" class="comment" >
+					<span class="style5 ">{{ $vlmessage }} <br> {{ $sample->labcomment }} </span>
 				</td>
 			</tr>
 
+			@foreach($patient_samples as $patient_sample)
+
+				<tr class="evenrow">
+					<td colspan="1"> <span class="style1">Previous VL Results</span></td>
+					<td colspan="7" class="comment style5" >
+						<strong><small>Viral Load {{ $patient_sample->result . ' ' . $patient_sample->units }} &nbsp; Date Tested {{ $patient_sample->datetested }} </small></strong> 
+					</td>
+				</tr>
+			@endforeach
+
+			@if($patient_samples->count() == 0)
+				<tr>
+					<td colspan="2">
+						<span class="style1"><strong>Previous VL Results</strong></span>
+					</td>
+					<td colspan="7" class="comment" ><span class="style5 "> N/A </span></td>
+				</tr>
+			@endif
 			
 			<tr >
 				<td colspan="12" class="style4 style1 comment">
@@ -206,6 +262,9 @@
 					<strong>Date Reviewed:  {{ $sample->dateapproved }}</strong>
 				</td>
 			</tr>
+
+
+
 
 		</table>
 

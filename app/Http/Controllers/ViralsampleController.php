@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Viralsample;
 use App\Viralpatient;
+use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
 use DB;
@@ -29,8 +30,7 @@ class ViralsampleController extends Controller
      */
     public function create()
     {
-        $lookup = new Lookup;
-        $data = $lookup->viralsample_form();
+        $data = Lookup::viralsample_form();
         return view('forms.viralsamples', $data);
     }
 
@@ -203,9 +203,8 @@ class ViralsampleController extends Controller
      */
     public function edit(Viralsample $viralsample)
     {
-        $viralsample->load(['patient']);
-        $lookup = new Lookup;
-        $data = $lookup->viralsample_form();
+        $viralsample->load(['patient', 'batch']);
+        $data = Lookup::viralsample_form();
         $data['viralsample'] = $viralsample;
         return view('forms.viralsamples', $data);
     }
@@ -228,7 +227,7 @@ class ViralsampleController extends Controller
 
         $viralsample->age = $years;
 
-        $batch = \App\Viralbatch::find($viralsample->batch_id);
+        $batch = Viralbatch::find($viralsample->batch_id);
         $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
         $batch->save();
 
@@ -247,6 +246,14 @@ class ViralsampleController extends Controller
 
         $viralsample->patient_id = $viralpatient->id;
         $viralsample->save();
+
+        $site_entry_approval = session()->pull('site_entry_approval');
+
+        if($site_entry_approval){
+            return redirect('viralbatch/site_approval/' . $batch->id);
+        }
+
+        return redirect('viralbatch/' . $batch->id);
     }
 
     /**

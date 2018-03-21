@@ -55,7 +55,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('batch/dispatch/', 'BatchController@batch_dispatch');
 	Route::post('batch/complete_dispatch/', 'BatchController@confirm_dispatch');
-	Route::get('batch/approve/', 'BatchController@approve_site_entry');
+	Route::get('batch/site_approval/', 'BatchController@approve_site_entry');
+	Route::get('batch/site_approval/{batch}', 'BatchController@site_entry_approval');
 	Route::get('batch/index/{page?}/{date_start?}/{date_end?}', 'BatchController@display_batches');
 	Route::get('batch/summary/{batch}', 'BatchController@summary');
 	Route::get('batch/individual/{batch}', 'BatchController@individual');
@@ -63,7 +64,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
 	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
-	Route::get('viralbatch/approve/', 'ViralbatchController@approve_site_entry');
+	Route::get('viralbatch/site_approval/', 'ViralbatchController@approve_site_entry');
+	Route::get('batch/site_approval/{batch}', 'ViralbatchController@site_entry_approval');
 	Route::get('viralbatch/index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@display_batches');
 	Route::get('viralbatch/summary/{batch}', 'ViralbatchController@summary');
 	Route::get('viralbatch/individual/{batch}', 'ViralbatchController@individual');
