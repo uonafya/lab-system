@@ -144,7 +144,7 @@
                                         @endforeach
                                     </td>
                                     <td>
-                                        <a href="{{ url('/sample/' . $sample->id) }} ">View</a> |
+                                        <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">View</a> |
                                         <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                         {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete']) }}
