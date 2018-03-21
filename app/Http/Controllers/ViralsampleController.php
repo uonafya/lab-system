@@ -151,7 +151,7 @@ class ViralsampleController extends Controller
         }
 
         else{
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date']);
             $viralpatient = new Viralpatient;
             $viralpatient->fill($data);
             $viralpatient->save();
@@ -251,7 +251,7 @@ class ViralsampleController extends Controller
         }
 
         else{
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date']);
             $viralpatient = new Viralpatient;
         }
         $viralpatient->fill($data);
