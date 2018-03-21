@@ -101,7 +101,6 @@ width:1180px;
 									</table> 
 								</div>
 								";
-						}
 					@endphp
 
 					<td > 
