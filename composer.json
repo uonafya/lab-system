@@ -21,7 +21,8 @@
         "predis/predis": "^1.1",
         "niklasravnsborg/laravel-pdf": "^2.0",
         "barryvdh/laravel-dompdf": "^0.8.2",
-        "mpdf/mpdf": "^7.0"
+        "mpdf/mpdf": "^7.0",
+        "laurentbrieu/tcpdf": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

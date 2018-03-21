@@ -118,7 +118,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 
 		Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('index_two');
-		Route::get('create_abbot', 'ViralworksheetController@abbot')->name('create_abbot');
+		// Route::get('create_abbot', 'ViralworksheetController@abbot')->name('create_abbot');
+		Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
 		Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 		Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
 		Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
