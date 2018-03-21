@@ -321,7 +321,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::select('viralbatches.*', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereNull('received_by')
-            ->where('site_entry', 2)
+            ->where('site_entry', 1)
             ->get();
 
         $my = new MiscViral;

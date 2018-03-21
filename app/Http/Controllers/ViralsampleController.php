@@ -71,11 +71,11 @@ class ViralsampleController extends Controller
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->datereceived = $request->input('datereceived');
                 $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 1;
+                $batch->site_entry = 0;
             }
 
             if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 2;
+                $batch->site_entry = 1;
             }
 
             $batch->save();
@@ -99,14 +99,14 @@ class ViralsampleController extends Controller
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->datereceived = $request->input('datereceived');
                 $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 1;
+                $batch->site_entry = 0;
             }
 
             if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 2;
+                $batch->site_entry = 1;
             }
 
-            
+
 
             if($ddispatched == null){
                 session(['viral_batch_dispatch' => 0]);

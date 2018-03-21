@@ -78,11 +78,11 @@ class SampleController extends Controller
 
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 1;
+                $batch->site_entry = 0;
             }
 
             if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 2;
+                $batch->site_entry = 1;
             }
 
             $batch->save();

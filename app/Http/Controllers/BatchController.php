@@ -295,7 +295,7 @@ class BatchController extends Controller
         $batches = Batch::select('batches.*', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereNull('received_by')
-            ->where('site_entry', 2)
+            ->where('site_entry', 1)
             ->get();
 
         $my = new Misc;
@@ -328,6 +328,7 @@ class BatchController extends Controller
             </tr>";
         }
         return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+
     }
 
     public function site_entry_approval(Batch $batch)
