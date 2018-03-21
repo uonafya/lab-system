@@ -278,7 +278,9 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        $sample->delete();
+        if($sample->run != 1 && $sample->inworksheet == 0){
+            $sample->delete();
+        }        
         return back();
     }
 

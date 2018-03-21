@@ -264,7 +264,9 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        $viralsample->delete();
+        if($viralsample->run != 1 && $viralsample->inworksheet == 0){
+            $viralsample->delete();
+        }        
         return back();
     }
 

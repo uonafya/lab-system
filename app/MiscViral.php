@@ -68,7 +68,7 @@ class MiscViral extends Model
 
 	public function check_original($sample_id)
 	{
-		$lab = session()->auth()->id;
+		$lab = auth()->user()->lab_id;
 
 		$sample = Viralsample::select('samples.*')
 		->join('batches', 'samples.batch_id', '=', 'batches.id')
