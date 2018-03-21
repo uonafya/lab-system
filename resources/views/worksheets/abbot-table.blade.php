@@ -133,7 +133,13 @@ width:1180px;
 					</td>
 
 
-				@foreach
+					@php $count++; @endphp
+
+					@if($count % 7 == 0)
+						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
+					@endif
+
+				@endforeach
 
 				@foreach($samples->where('parentid', 0) as $sample)
 
@@ -143,7 +149,7 @@ width:1180px;
 					@endphp
 
 					<td > 
-						{{ $rr }} 
+						{!! $rr !!} 
 						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
