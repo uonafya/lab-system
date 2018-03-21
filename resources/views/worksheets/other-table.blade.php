@@ -83,6 +83,8 @@ width:1180px;
 				<td><strong>Run By	</strong>    </td>
 				<td>_____________________________	</td>
 			</tr>
+		</table>
+		<table>
 
 			<tr>
 				@php $count = 0; @endphp
