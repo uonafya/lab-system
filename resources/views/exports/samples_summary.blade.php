@@ -1,34 +1,27 @@
-<?php
-$conf  = config('pdf');
-$mpdf = new \Mpdf\Mpdf($conf);
-ob_start();
-
-// echo '<div>Generate your content</div>';
-
-// $html = ob_get_contents();
-// ob_end_clean();
-
-// // send the captured HTML from the output buffer to the mPDF class for processing
-// $mpdf->WriteHTML($html);
-// $mpdf->Output();
-
-// die();
 
 
-
-?>
+<!DOCTYPE html>
 <html>
 <head>
+
+	<style type="text/css">
+		table {
+			border-collapse: collapse;
+		}
+
+		table, th, td {
+			border: 1px solid black;
+			border-style: solid;
+		}
+
+	</style>
 </head>
 <body>
-	<htmlpageheader name="page-header"></htmlpageheader>
 
 	<table border="0" id='table1' align="center">
 		<tr>
 			<td colspan="9" align="center">
-				<span class="style6 style1">
-					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
-				</span>
+
 				<span class="style1"><br>
 				  <span class="style7">MINISTRY OF HEALTH <br />
 				  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
@@ -60,7 +53,7 @@ ob_start();
 
 	<table>
 		<tr>
-			<td colspan='3'>Date Samples Were Dispatched</td>				
+			<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->datedispatched }}</td>				
 		</tr>
 		<tr>
 			<td>Facility Name: {{ $batch->facility->name }} </td>
@@ -69,21 +62,23 @@ ob_start();
 		</tr>
 		<tr>
 			<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress }}</td>
+		</tr>
+		<tr>
 			<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email }}</td>
 		</tr>
 	</table>
 
 	<br />
 
-	<table>
+	<table style="width: 100%;">
 		<tr>
-			<td colspan="17">SAMPLE LOG</td>
+			<td colspan="17" style="text-align: center;"><b>SAMPLE LOG</b></td>
 		</tr>
 		<tr>
-			<td colspan="5">Patient Information</td>
-			<td colspan="4">Samples Information</td>
-			<td colspan="4">Mother Information</td>
-			<td colspan="4">Lab Information</td>
+			<td colspan="5"><b> Patient Information</b></td>
+			<td colspan="4"><b>Samples Information</b></td>
+			<td colspan="4"><b>Mother Information</b></td>
+			<td colspan="4"><b>Lab Information</b></td>
 		</tr>
 		<tr>
 			<td>No</td>
@@ -223,21 +218,7 @@ ob_start();
 
 
 
-	<htmlpagefooter name="page-footer">
-		Your Footer Content
-	</htmlpagefooter>
-
 
 </body>
 </html>
 
-<?php
-
-// $html = ob_get_contents();
-// ob_end_clean();
-
-// // send the captured HTML from the output buffer to the mPDF class for processing
-// $mpdf->WriteHTML($html);
-// $mpdf->Output();
-
-?>

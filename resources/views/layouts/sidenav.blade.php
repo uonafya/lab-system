@@ -93,6 +93,10 @@
             </li>
 
         @endif
+
+            <li>
+                <a href="{{ url('/search') }} "> <span class="nav-label">Search</span></a>
+            </li>
         {{--
         @if (auth()->user()->user_type_id == 1)
             <li>

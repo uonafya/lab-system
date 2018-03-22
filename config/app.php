@@ -171,8 +171,8 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
         // niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
-        // Barryvdh\DomPDF\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -244,8 +244,8 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
+        'DOMPDF' => Barryvdh\DomPDF\Facade::class,
         // 'PDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
-        // 'DOMPDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];

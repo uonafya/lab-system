@@ -1,7 +1,6 @@
 <!-- Jquery Validate -->
 <script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
-<script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
 
 {{ $js_scripts or '' }}
 
@@ -18,7 +17,6 @@
                 showMethod: 'slideDown',
                 timeOut: 4000
             };
-            // toastr.success("Please fill out the form correctly.");
             toastr.success("{{ session()->pull('toast_message', 'Please fill out the form correctly.') }}");
         });
 

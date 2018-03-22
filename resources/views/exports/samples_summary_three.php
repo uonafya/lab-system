@@ -3,23 +3,12 @@
 <?php
 
 $str="
+<!DOCTYPE html>
 <html>
 <head></head>
 <body>
 
 	<table border='0' id='table1' align='center'>
-		<tr>
-			<td colspan='9' align='center'>
-				<span class='style6 style1'>
-					<strong><img src='" .  asset('img/naslogo.jpg')  . "' alt='NASCOP' align='absmiddle'></strong> 
-				</span>
-				<span class='style1'><br>
-				  <span class='style7'>MINISTRY OF HEALTH <br />
-				  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-				  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
-				</span>
-			</td>
-		</tr>
 		<tr>
 			<td colspan='5' class='comment style1 style4'>
 				<strong> Batch No.: " .  $batch->id  . " &nbsp;&nbsp; " .  $batch->facility->name  . " </strong> 
@@ -194,7 +183,8 @@ $str="
 </html>";
 
 
-$mpdf = new \Mpdf\Mpdf();
+$conf  = config('pdf');
+$mpdf = new \Mpdf\Mpdf($conf);
 
 $mpdf->Bookmark('Start of the document');
 $mpdf->WriteHTML($str);

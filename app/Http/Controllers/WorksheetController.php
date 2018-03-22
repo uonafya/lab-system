@@ -33,6 +33,7 @@ class WorksheetController extends Controller
             }
             return $query->whereDate('worksheets.created_at', $date_start);
         })
+        ->orderBy('worksheets.created_at', 'desc')
         ->get();
 
         $samples = $this->get_worksheets();
@@ -447,7 +448,7 @@ class WorksheetController extends Controller
 
     public function approve_results(Worksheet $worksheet)
     {
-        $worksheet->load(['reviewer', 'creator', 'runner']);
+        $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
         $results = DB::table('results')->get();
         $actions = DB::table('actions')->get();
@@ -508,8 +509,8 @@ class WorksheetController extends Controller
         $worksheet->datereviewed = $today;
         $worksheet->reviewedby = $approver;
         $worksheet->save();
-        return redirect('/worksheet');
 
+        return redirect('/batch/dispatch');
     }
 
     public function mtype($machine)
@@ -587,6 +588,13 @@ class WorksheetController extends Controller
             ->get();
 
         return $samples;
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $worksheets = Worksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        return $worksheets;
     }
 
     public function checknull($var)

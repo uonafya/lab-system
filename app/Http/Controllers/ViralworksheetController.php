@@ -23,7 +23,6 @@ class ViralworksheetController extends Controller
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
-            // ->leftJoin('worksheetstatus', 'worksheetstatus.id', '=', 'viralworksheets.status_id') , worksheetstatus.state
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
@@ -35,6 +34,7 @@ class ViralworksheetController extends Controller
                 }
                 return $query->whereDate('viralworksheets.created_at', $date_start);
             })
+            ->orderBy('viralworksheets.created_at', 'desc')
             ->groupBy('viralworksheets.id')
             ->get();
 
@@ -348,7 +348,7 @@ class ViralworksheetController extends Controller
 
     public function approve_results(Viralworksheet $worksheet)
     {
-        $worksheet->load(['reviewer', 'creator', 'runner']);
+        $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
         $results = DB::table('results')->get();
         $actions = DB::table('actions')->get();
@@ -419,8 +419,7 @@ class ViralworksheetController extends Controller
         $worksheet->datereviewed = $today;
         $worksheet->reviewedby = $approver;
         $worksheet->save();
-        return redirect('/viralworksheet');
-
+        return redirect('/viralbatch/dispatch');
     }
 
 
@@ -477,6 +476,13 @@ class ViralworksheetController extends Controller
             ->get();
 
         return $samples;
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $worksheets = Viralworksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        return $worksheets;
     }
 
     public function checknull($var)
