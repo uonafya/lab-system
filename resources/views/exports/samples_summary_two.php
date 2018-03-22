@@ -153,7 +153,7 @@ die();
 				<td>
 					<?php echo $feedings->where('id', $sample->feeding)->first()->feeding; ?>
                 </td>
-                <td><?php echo $sample->patient->mother->entry_point ; ?> </td>
+                <td><?php echo $sample->patient->entry_point ; ?> </td>
 				<td><?php echo $sample->datetested ; ?> </td>
 				<td><?php echo $sample->datedispatched ; ?> </td>
 				<td>

@@ -73,6 +73,21 @@ class Lookup extends Model
         ];
 	}
 
+    public static function samples_arrays()
+    {
+        return [
+            'batch' => ['datereceived', 'datedispatchedfromfacility', 'high_priority', 'facility_id'],
+
+            'mother' => ['hiv_status', 'facility_id', 'ccc_no'],
+
+            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'entry_point'],
+
+            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'provider_identifier', 'amrs_location'],
+
+            'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'high_priority'],
+        ];
+    }
+
     public static function get_viral_lookups()
     {
         self::cacher();
@@ -114,16 +129,29 @@ class Lookup extends Model
         ];
     }
 
+    public static function viralsamples_arrays()
+    {
+        return [
+            'batch' => ['datereceived', 'datedispatchedfromfacility', 'high_priority', 'facility_id'],
+
+            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
+
+            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location'],
+
+            'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority'],
+        ];
+    }
+
 	public static function cacher()
 	{
         if(Cache::has('worksheet_statuses')){}
 
         else{
             // Common Lookup Data
-            $facilities = DB::table('facilitys')->select('id', 'name')->get();
+            $facilities = DB::table('facilitys')->select('id', 'name', 'facilitycode')->get();
             $amrs_locations = DB::table('amrslocations')->get();
-            $genders = DB::table('gender')->get();
-            $received_statuses = DB::table('receivedstatus')->get();
+            $genders = DB::table('gender')->where('id', '<', 3)->get();
+            $received_statuses = DB::table('receivedstatus')->where('id', '<', 3)->get();
 
             // Eid Lookup Data
             $rejected_reasons = DB::table('rejectedreasons')->get();

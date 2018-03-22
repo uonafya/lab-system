@@ -48,7 +48,7 @@
                                           selected
                                       @endif
 
-                                      > {{ $facility->name }}
+                                      > {{ $facility->facilitycode . ' - ' . $facility->name }}
                                       </option>
                                   @endforeach
 
@@ -308,7 +308,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatched or '' }}" name="datedispatchedfromfacility">
+                                        <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility or '' }}" name="datedispatchedfromfacility">
                                     </div>
                                 </div>                            
                             </div> 
@@ -516,10 +516,16 @@
             
         });
 
-        function check_new_patient(patient_id, facility){
+        function check_new_patient(patient, facility_id){
             $.ajax({
-               type: "GET",
-               url: "{{ url('/viralsample/new_patient') }}/"+patient_id+"/"+facility ,
+               type: "POST",
+               data: {
+                _token : "{{ csrf_token() }}",
+                patient : patient,
+                facility_id : facility_id
+               },
+               url: "{{ url('/viralsample/new_patient') }}",
+
                success: function(data){
 
                     console.log(data);

@@ -60,7 +60,7 @@
                                           selected
                                       @endif
 
-                                      > {{ $facility->name }}
+                                      > {{  $facility->facilitycode . ' - ' . $facility->name }}
                                       </option>
                                   @endforeach
 
@@ -122,7 +122,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) Patient Names</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $sample->patient_name or '' }}">
+                                <input class="form-control ampath-only" name="patient_name" id="patient_name" type="text" value="{{ $sample->patient->patient_name or '' }}">
                             </div>
                         </div>
 
@@ -266,7 +266,7 @@
                                 @foreach ($entry_points as $entry_point)
                                     <option value="{{ $entry_point->id }}"
 
-                                    @if (isset($sample) && $sample->patient->mother->entry_point == $entry_point->id)
+                                    @if (isset($sample) && $sample->patient->entry_point == $entry_point->id)
                                         selected
                                     @endif
 
@@ -343,7 +343,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datedispatched" class="form-control" value="{{ $sample->batch->datedispatched or '' }}" name="datedispatchedfromfacility">
+                                        <input type="text" id="datedispatched" class="form-control" value="{{ $sample->batch->datedispatchedfromfacility or '' }}" name="datedispatchedfromfacility">
                                     </div>
                                 </div>                            
                             </div> 
@@ -564,10 +564,15 @@
             
         });
 
-        function check_new_patient(patient_id, facility){
+        function check_new_patient(patient, facility_id){
             $.ajax({
-               type: "GET",
-               url: "{{ url('/sample/new_patient') }}/"+patient_id+"/"+facility ,
+               type: "POST",
+               data: {
+                patient : patient,
+                facility_id : facility_id
+               },
+               url: "{{ url('/sample/new_patient') }}",
+
 
                success: function(data){
 
@@ -586,9 +591,10 @@
                         $("#dob").val(patient.dob);
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
+                        $("#patient_name").val(patient.patient_name).change();
                         $("#sex").val(patient.sex).change();
+                        $("#entry_point").val(patient.entry_point).change();
                         $("#hiv_status").val(mother.hiv_status).change();
-                        $("#entry_point").val(mother.entry_point).change();
                         $("#ccc_no").val(mother.ccc_no).change();
 
                         $('#pcrtype option[value=2]').attr('selected','selected').change();

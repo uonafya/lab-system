@@ -150,7 +150,7 @@ ob_start();
                         @endif
                     @endforeach		
                 </td>
-                <td>{{ $sample->patient->mother->entry_point }} </td>
+                <td>{{ $sample->patient->entry_point }} </td>
 				<td>{{ $sample->datetested }} </td>
 				<td>{{ $sample->datedispatched }} </td>
 				<td>

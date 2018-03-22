@@ -142,7 +142,7 @@
 				<td colspan="1" class="comment">
 					<span class="style5">
                         @foreach($entry_points as $entry_point)
-                            @if($sample->patient->mother->entry_point == $entry_point->id)
+                            @if($sample->patient->entry_point == $entry_point->id)
                                 {{ $entry_point->name }}
                             @endif
                         @endforeach						
