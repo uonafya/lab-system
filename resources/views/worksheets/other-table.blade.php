@@ -83,29 +83,55 @@ width:1180px;
 				<td><strong>Run By	</strong>    </td>
 				<td>_____________________________	</td>
 			</tr>
+		</table>
+		<table>
 
 			<tr>
 				@php $count = 0; @endphp
 
-				@foreach($samples as $sample)
+
+				@foreach($samples->where('parentid', '!=', 0) as $sample)
+
+					@php
+						$parent = "- {$sample->parentid}";
+						$rr = "
+								<div align='right'> 
+									<table>
+										<tr>
+											<td style='background-color:#FAF156'><small>R </small></td>
+										</tr>
+									</table> 
+								</div>
+								";
+					@endphp
+
+					<td > 
+						{!! $rr !!} 
+						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
+
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+						<br /> 
+						{{ $sample->id or '' }}
+
+					</td>
+
+
+					@php $count++; @endphp
+
+					@if($count % 7 == 0)
+						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
+					@endif
+
+				@endforeach
+
+
+				@foreach($samples->where('parentid', 0) as $sample)
 					
 
 					@php
-						if($sample->parentid == 0){
-							$parent = "";
-							$rr = "";
-						}else{
-							$parent = "- {$sample->parentid}";
-							$rr = "
-									<div align='right'> 
-										<table>
-											<tr>
-												<td style='background-color:#FAF156'><small>R </small></td>
-											</tr>
-										</table> 
-									</div>
-									";
-						}
+						$parent = "";
+						$rr = "";
 					@endphp
 
 					<td > 

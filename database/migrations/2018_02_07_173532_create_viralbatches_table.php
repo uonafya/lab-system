@@ -19,7 +19,7 @@ class CreateViralbatchesTable extends Migration
             $table->boolean('input_complete')->default(false);
             $table->boolean('batch_full')->default(false);
             $table->boolean('batch_complete')->default(false);
-            $table->tinyInteger('site_entry')->unsigned()->nullable();
+            $table->tinyInteger('site_entry')->unsigned()->default(0);
 
             $table->boolean('sent_email')->default(false);
 

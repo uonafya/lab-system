@@ -121,7 +121,7 @@ $str="
 				<td>
 					" .  $feedings->where('id', $sample->feeding)->first()->feeding . "
                 </td>
-                <td>" .  $sample->patient->mother->entry_point  . " </td>
+                <td>" .  $sample->patient->entry_point  . " </td>
 				<td>" .  $sample->datetested  . " </td>
 				<td>" .  $sample->datedispatched  . " </td>
 				<td>

@@ -129,7 +129,7 @@
                                     </td>
                                     <td> {{ $sample->result }} </td>
                                     <td>
-                                        <a href="{{ url('/viralsample/' . $sample->id) }} ">View</a> |
+                                        <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
                                         <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                         {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete']) }}

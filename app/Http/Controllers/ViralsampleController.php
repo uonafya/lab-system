@@ -42,7 +42,7 @@ class ViralsampleController extends Controller
      */
     public function store(Request $request)
     {
-
+        $viralsamples_arrays = Lookup::viralsamples_arrays();
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "cancel"){
@@ -64,18 +64,18 @@ class ViralsampleController extends Controller
             $facility_id = $request->input('facility_id');
 
             $batch = new Viralbatch;
+            $data = $request->only($viralsamples_arrays['batch']);
+            $batch->fill($data);
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
-            $batch->facility_id = $facility_id;
-            $batch->datereceived = $request->input('datereceived');
 
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 1;
+                $batch->site_entry = 0;
             }
 
             if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 2;
+                $batch->site_entry = 1;
             }
 
             $batch->save();
@@ -92,10 +92,19 @@ class ViralsampleController extends Controller
             session(['viral_facility_name' => $facility->name, 'viral_facility_id' => $facility_id, 'viral_batch_total' => 0, 'viral_batch_received' => $request->input('datereceived')]);
 
             $batch = new Viralbatch;
+            $data = $request->only($viralsamples_arrays['batch']);
+            $batch->fill($data);
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
-            $batch->facility_id = $facility_id;
-            $batch->datereceived = $request->input('datereceived');
+
+            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+                $batch->received_by = auth()->user()->id;
+                $batch->site_entry = 0;
+            }
+
+            if(auth()->user()->user_type_id == 5){
+                $batch->site_entry = 1;
+            }
 
             if($ddispatched == null){
                 session(['viral_batch_dispatch' => 0]);
@@ -126,7 +135,7 @@ class ViralsampleController extends Controller
                 return redirect()->route('viralsample.create');
             }
 
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
+            $data = $request->only($viralsamples_arrays['sample']);
             $viralsample = new Viralsample;
             $viralsample->fill($data);
             $viralsample->batch_id = $batch_no;
@@ -135,12 +144,14 @@ class ViralsampleController extends Controller
             $dob = Carbon::parse( $request->input('dob') );
             $years = $dc->diffInYears($dob, true);
 
+            if($years == 0) $years =  ($dc->diffInMonths($dob)/12);
+
             $viralsample->age = $years;
             $viralsample->save();
         }
 
         else{
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $data = $request->only($viralsamples_arrays['patient']);
             $viralpatient = new Viralpatient;
             $viralpatient->fill($data);
             $viralpatient->save();
@@ -149,7 +160,7 @@ class ViralsampleController extends Controller
             $dob = Carbon::parse( $request->input('dob') );
             $viralpatient_age = $dc->diffInYears($dob, true);
 
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
+            $data = $request->only($viralsamples_arrays['sample']);
             $viralsample = new Viralsample;
             $viralsample->fill($data);
             $viralsample->patient_id = $viralpatient->id;
@@ -218,7 +229,8 @@ class ViralsampleController extends Controller
      */
     public function update(Request $request, Viralsample $viralsample)
     {
-        $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority']);
+        $viralsamples_arrays = Lookup::viralsamples_arrays();
+        $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
 
         $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
@@ -228,17 +240,20 @@ class ViralsampleController extends Controller
         $viralsample->age = $years;
 
         $batch = Viralbatch::find($viralsample->batch_id);
-        $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
+        $data = $request->only($viralsamples_arrays['batch']);
+        $batch->fill($data);
         $batch->save();
 
         $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+
+        $new_patient = $request->input('new_patient');
 
         if($new_patient == 0){            
             $viralpatient = Viralpatient::find($viralsample->patient_id);
         }
 
         else{
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $data = $request->only($viralsamples_arrays['patient']);
             $viralpatient = new Viralpatient;
         }
         $viralpatient->fill($data);
@@ -264,13 +279,18 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        $viralsample->delete();
+        if($viralsample->run != 1 && $viralsample->inworksheet == 0){
+            $viralsample->delete();
+        }        
         return back();
     }
 
-    public function new_patient($viralpatient, $facility_id)
+    public function new_patient(Request $request)
     {
-        $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $viralpatient])->first();
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+
+        $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
         $data;
         if($viralpatient){
             $data[0] = 0;

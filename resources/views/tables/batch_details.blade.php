@@ -131,7 +131,7 @@
                                     </td>
                                     <td>
                                         @foreach($entry_points as $entry_point)
-                                            @if($sample->patient->mother->entry_point == $entry_point->id)
+                                            @if($sample->patient->entry_point == $entry_point->id)
                                                 {{ $entry_point->name }}
                                             @endif
                                         @endforeach
@@ -144,7 +144,7 @@
                                         @endforeach
                                     </td>
                                     <td>
-                                        <a href="{{ url('/sample/' . $sample->id) }} ">View</a> |
+                                        <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">View</a> |
                                         <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                         {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete']) }}

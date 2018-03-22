@@ -67,6 +67,7 @@ $factory->define(App\Patient::class, function (Faker $faker) {
         // 'mother_id' => rand(1, 100),
         'mother_id' => 1,
         'facility_id' => rand(1, 1000),
+        'entry_point' => rand(1, 5),
         'dob' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
         'sex' => rand(1, 2),
     ];
@@ -76,7 +77,6 @@ $factory->define(App\Mother::class, function (Faker $faker) {
     return [
         'ccc_no' => $faker->bothify('#####-?????'),
         'facility_id' => rand(1, 1000),
-        'entry_point' => rand(1, 5),
         'hiv_status' => rand(1, 2),
     ];
 });

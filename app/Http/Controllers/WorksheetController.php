@@ -20,7 +20,7 @@ class WorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL)
     {
-        $state = session()->pull('worksheet_state', null);
+        // $state = session()->pull('worksheet_state', null);
         $worksheets = Worksheet::with(['creator'])
         ->when($state, function ($query) use ($state){
             return $query->where('status_id', $state);
@@ -309,6 +309,7 @@ class WorksheetController extends Controller
                             $interpretation = $error;
                             break;
                     }
+                    
 
                     $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
                     $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
@@ -317,10 +318,10 @@ class WorksheetController extends Controller
                     $check[] = $search;
 
                     if($sample_id == "HIV_NEG"){
-                        $negative_control = $result;
+                        $negative_control = $value[5];
                     }
                     else if($sample_id == "HIV_HIPOS"){
-                        $positive_control = $result;
+                        $positive_control = $value[5];
                     }
 
                 }

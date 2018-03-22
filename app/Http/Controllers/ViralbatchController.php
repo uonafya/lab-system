@@ -321,7 +321,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::select('viralbatches.*', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereNull('received_by')
-            ->where('site_entry', 2)
+            ->where('site_entry', 1)
             ->get();
 
         $my = new MiscViral;
@@ -360,9 +360,9 @@ class ViralbatchController extends Controller
 
     public function site_entry_approval(Viralbatch $batch)
     {
-        $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+        $viralsample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
 
-        if($sample){
+        if($viralsample){
             session(['site_entry_approval' => true]);
             $viralsample->load(['patient', 'batch']);
             $data = Lookup::viralsample_form();

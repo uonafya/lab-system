@@ -43,6 +43,7 @@ class SampleController extends Controller
      */
     public function store(Request $request)
     {
+        $samples_arrays = Lookup::samples_arrays();
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "cancel"){
@@ -63,26 +64,25 @@ class SampleController extends Controller
             session(['facility_name' => $facility->name, 'facility_id' => $facility_id, 'batch_total' => 0, 'batch_received' => $request->input('datereceived')]);
 
             $batch = new Batch;
+            $data = $request->only($samples_arrays['batch']);
+            $batch->fill($data);
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
-            $batch->facility_id = $facility_id;
-            $batch->datereceived = $request->input('datereceived');
 
             if($ddispatched == null){
                 session(['batch_dispatch' => 0]);
             }
             else{
                 session(['batch_dispatch' => 1, 'batch_dispatched' => $ddispatched]);
-                $batch->datedispatchedfromfacility = $ddispatched;
             }
 
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 1;
+                $batch->site_entry = 0;
             }
 
             if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 2;
+                $batch->site_entry = 1;
             }
 
             $batch->save();
@@ -99,15 +99,19 @@ class SampleController extends Controller
         $new_patient = $request->input('new_patient');
 
         if($new_patient == 0){
-
-            $repeat_test = Sample::where(['patient_id' => $request->input('patient_id'),
-            'batch_id' => $batch_no])->first();
+            $patient_id = $request->input('patient_id');
+            $repeat_test = Sample::where(['patient_id' => $patient_id, 'batch_id' => $batch_no])->first();
 
             if($repeat_test){
                 return redirect()->route('sample.create');
             }
 
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+            $patient = Patient::find($patient_id);
+            $data = $request->only($samples_arrays['patient']);
+            $patient->fill($data);
+            $patient->save();
+
+            $data = $request->only($samples_arrays['sample']);
             $sample = new Sample;
             $sample->fill($data);
             $sample->batch_id = $batch_no;
@@ -123,12 +127,12 @@ class SampleController extends Controller
 
         else{
 
-            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
             $mother->fill($data);
             $mother->save();
 
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            $data = $request->only($samples_arrays['patient']);
             $patient = new Patient;
             $patient->fill($data);
             $patient->mother_id = $mother->id;
@@ -147,7 +151,9 @@ class SampleController extends Controller
 
             $patient_age = $months + ($weeks / 4);
 
-            $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+            if($patient_age == 0)$patient_age = 0.1;
+
+            $data = $request->only($samples_arrays['sample']);
             $sample = new Sample;
             $sample->fill($data);
             $sample->patient_id = $patient->id;
@@ -164,9 +170,6 @@ class SampleController extends Controller
             $this->clear_session();
             DB::table('batches')->where('id', $batch_no)->update(['input_complete' => 1]);
         }
-        else if($submit_type == "add"){
-
-        }
 
         $batch_total = session('batch_total', 0) + 1;
 
@@ -177,7 +180,6 @@ class SampleController extends Controller
             $this->clear_session();
             DB::table('batches')->where('id', $batch_no)->update(['input_complete' => 1, 'batch_full' => 1]);
         }
-
 
         return redirect()->route('sample.create');
     }
@@ -216,36 +218,38 @@ class SampleController extends Controller
      */
     public function update(Request $request, Sample $sample)
     {
-        $data = $request->except(['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no']);
+        $samples_arrays = Lookup::samples_arrays();
+        $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
         // $sample->save();
 
         $batch = Batch::find($sample->batch_id);
-        $batch->fill($request->only(['datereceived', 'datedispatchedfromfacility', 'facility_id']));
+        $data = $request->only($samples_arrays['batch']);
+        $batch->fill($data);
         $batch->save();
 
         $new_patient = $request->input('new_patient');
 
-        if($new_patient == 0)
-        {
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+        if($new_patient == 0){
+        
+            $data = $request->only($samples_arrays['patient']);
             $patient = Patient::find($sample->patient_id);
             $patient->fill($data);
             $patient->save();
 
-            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
             $mother->fill($data);
             $mother->save();
         }
         else
         {
-            $data = $request->only(['hiv_status', 'entry_point', 'facility_id', 'ccc_no']);
+            $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
             $mother->fill($data);
             $mother->save();
-
-            $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+            
+            $data = $request->only($samples_arrays['patient']);
             $patient = new Patient;
             $patient->fill($data);
             $patient->mother_id = $mother->id;
@@ -257,6 +261,7 @@ class SampleController extends Controller
         $months = $dc->diffInMonths($dob);
         $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
         $patient_age = $months + ($weeks / 4);
+        if($patient_age == 0)$patient_age = 0.1;
         $sample->age = $patient_age;
         $sample->patient_id = $patient->id;
         $sample->save();
@@ -278,12 +283,17 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        $sample->delete();
+        if($sample->run != 1 && $sample->inworksheet == 0){
+            $sample->delete();
+        }        
         return back();
     }
 
-    public function new_patient($patient, $facility_id)
+    public function new_patient(Request $request)
     {
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+
         $patient = Patient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
         $data;
         if($patient){

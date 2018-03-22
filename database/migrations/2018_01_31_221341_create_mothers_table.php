@@ -18,7 +18,6 @@ class CreateMothersTable extends Migration
             $table->string('ccc_no')->nullable()->index();
             $table->integer('fcode')->unsigned()->nullable();
             $table->integer('facility_id')->unsigned()->index();
-            $table->integer('entry_point')->unsigned()->index();
             $table->integer('hiv_status')->unsigned();
             $table->boolean('synched')->default(false);
             $table->date('datesynched')->nullable();

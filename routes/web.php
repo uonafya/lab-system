@@ -53,22 +53,27 @@ Route::get('/home', 'HomeController@index');
 
 Route::middleware(['web', 'auth'])->group(function(){
 
-	Route::get('batch/dispatch/', 'BatchController@batch_dispatch');
-	Route::post('batch/complete_dispatch/', 'BatchController@confirm_dispatch');
-	Route::get('batch/site_approval/', 'BatchController@approve_site_entry');
-	Route::get('batch/site_approval/{batch}', 'BatchController@site_entry_approval');
-	Route::get('batch/index/{page?}/{date_start?}/{date_end?}', 'BatchController@display_batches');
-	Route::get('batch/summary/{batch}', 'BatchController@summary');
-	Route::get('batch/individual/{batch}', 'BatchController@individual');
+	Route::prefix('batch')->name('batch.')->group(function () {
+		Route::get('dispatch/', 'BatchController@batch_dispatch');
+		Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
+		Route::get('site_approval/', 'BatchController@approve_site_entry');
+		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
+		Route::get('index/{page?}/{date_start?}/{date_end?}', 'BatchController@display_batches');
+		Route::get('summary/{batch}', 'BatchController@summary');
+		Route::get('individual/{batch}', 'BatchController@individual');
+	});
 	Route::resource('batch', 'BatchController');
 
-	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
-	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
-	Route::get('viralbatch/site_approval/', 'ViralbatchController@approve_site_entry');
-	Route::get('batch/site_approval/{batch}', 'ViralbatchController@site_entry_approval');
-	Route::get('viralbatch/index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@display_batches');
-	Route::get('viralbatch/summary/{batch}', 'ViralbatchController@summary');
-	Route::get('viralbatch/individual/{batch}', 'ViralbatchController@individual');
+
+	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
+		Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
+		Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
+		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
+		Route::get('index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@display_batches');
+		Route::get('summary/{batch}', 'ViralbatchController@summary');
+		Route::get('individual/{batch}', 'ViralbatchController@individual');
+	});
 	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::get('/checkboxes', function () {
@@ -85,14 +90,13 @@ Route::middleware(['web', 'auth'])->group(function(){
 	// });
 	Route::get('/home', 'HomeController@index');
 
-	Route::get('sample/new_patient/{patient}/{facility_id}', 'SampleController@new_patient');
+	Route::post('sample/new_patient', 'SampleController@new_patient');
 	Route::get('sample/release/{sample}', 'SampleController@release_redraw');
 	Route::resource('sample', 'SampleController');
 
-	Route::get('viralsample/new_patient/{patient}/{facility_id}', 'ViralsampleController@new_patient');
+	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
+	Route::get('viralsample/release/{viralsample}', 'ViralsampleController@release_redraw');
 	Route::resource('viralsample', 'ViralsampleController');
-	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
-	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
 
 	Route::prefix('worksheet')->name('worksheet.')->group(function () {
 
@@ -108,11 +112,11 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::resource('worksheet', 'WorksheetController');
 
-	Route::get('viralsample/new_patient/{patient}/{facility_id}', 'ViralsampleController@new_patient');
-	Route::resource('viralsample', 'ViralsampleController');
+	// Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
+	// Route::resource('viralsample', 'ViralsampleController');
 
-	Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
-	Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+	// Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
+	// Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
 
 
 	Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
