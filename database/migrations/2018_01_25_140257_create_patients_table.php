@@ -21,7 +21,6 @@ class CreatePatientsTable extends Migration
             $table->integer('entry_point')->unsigned()->index();
             $table->integer('facility_id')->unsigned()->index();
             $table->string('caregiver_phone')->nullable();
-            $table->string('gender')->nullable();
             $table->tinyInteger('sex')->unsigned()->index();
             $table->date('dob')->index();
             $table->date('dateinitiatedontreatment')->nullable();
