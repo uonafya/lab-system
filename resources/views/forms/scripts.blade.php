@@ -12,10 +12,10 @@
         
         setTimeout(function(){
             toastr.options = {
-                closeButton: true,
-                progressBar: true,
+                closeButton: false,
+                progressBar: false,
                 showMethod: 'slideDown',
-                timeOut: 4000
+                timeOut: 3000
             };
             toastr.success("{{ session()->pull('toast_message', 'Please fill out the form correctly.') }}");
         });

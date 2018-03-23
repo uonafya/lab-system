@@ -1,3 +1,8 @@
+<style type="text/css">
+    body.light-skin #side-menu li a {
+        font-weight: 380;
+    }
+</style>
 <aside id="menu">
     <div id="navigation">
         <ul class="nav" id="side-menu">
