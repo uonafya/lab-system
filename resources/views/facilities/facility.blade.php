@@ -152,9 +152,9 @@
 
             <div class="row">
             <div class="col-lg-12" 
-                @if (!$edit)
+                @empty ($edit)
                     style="display: none;"
-                @endif
+                @endempty
                  id="g4s">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
@@ -211,14 +211,14 @@
             <div class="form-group">
                 <div class="col-sm-8 col-sm-offset-5">
                     <button class="btn btn-success" type="submit" id="update" 
-                        @if (!$edit)
+                        @empty ($edit)
                             style="display: none;"
-                        @endif
+                        @endempty
                         >Update</button>
                     <button class="btn btn-success" 
-                        @if ($edit)
+                        @empty ($edit)
                             style="display: none;"
-                        @endif
+                        @endempty
                          id="edit">Edit</button>
                     <a href="{{ route('facility.index') }}" class="btn btn-primary">Go Back</a>
                 </div>
