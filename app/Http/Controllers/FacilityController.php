@@ -226,7 +226,7 @@ class FacilityController extends Controller
     public function show($id)
     {
         // $facility = Facility::find($id);
-        $facility = self::getFacility($id);
+        $facility = $this->getFacility($id);
         // dd($facility[0]);
         return view('facilities.facility', ['facility' => $facility[0], 'disabled' => 'disabled']);
     }
@@ -239,7 +239,7 @@ class FacilityController extends Controller
      */
     public function edit($id)
     {
-        $facility = self::getFacility($id);
+        $facility = $this->getFacility($id);
         // dd($facility[0]);
         return view('facilities.facility', ['facility' => $facility[0], 'disabled' => ''])
                         ->with('edit', true);
@@ -330,5 +330,14 @@ class FacilityController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $facilities = Facility::select('*')
+            ->whereRaw("(name like '" . $search . "%' OR  facilitycode like '" . $search . "%')")
+            ->paginate(10);
+        return $facilities;
     }
 }

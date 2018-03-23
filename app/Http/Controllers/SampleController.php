@@ -316,6 +316,25 @@ class SampleController extends Controller
         return $data;
     }
 
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Batch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function individual(Sample $sample)
+    {
+        $batch = $sample->batch;
+        $sample->load(['patient.mother']);
+        $samples[0] = $sample;
+        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $data = Lookup::get_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        return view('exports.samples', $data);
+    }
+
     public function release_redraw(Sample $sample)
     {
         $sample->repeatt = 0;

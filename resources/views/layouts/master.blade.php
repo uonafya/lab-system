@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/metisMenu/dist/metisMenu.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/animate.css/animate.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
 
     <!-- App styles -->
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css') }}" />
@@ -191,6 +192,8 @@
 <script src="{{ asset('vendor/sparkline/index.js') }}"></script>
 <script src="{{ asset('js/homer.js') }}"></script>
 <script src="{{ asset('js/charts.js') }}"></script>
+
+<script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
 
 <script type="text/javascript">
     

@@ -2,7 +2,8 @@
 
 return [
 	'mode'                  => 'utf-8',
-	'format'                => 'A4',
+	'format'                => 'Legal',
+	'orientation'			=> 'L',
 	'author'                => '',
 	'subject'               => '',
 	'keywords'              => '',

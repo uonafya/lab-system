@@ -24,6 +24,16 @@ class Worksheet extends Model
     	return $this->belongsTo('App\User', 'runby');
     }
 
+    public function sorter()
+    {
+        return $this->belongsTo('App\User', 'sortedby');
+    }
+
+    public function bulker()
+    {
+        return $this->belongsTo('App\User', 'bulkedby');
+    }
+
     public function creator()
     {
     	return $this->belongsTo('App\User', 'createdby');

@@ -281,7 +281,7 @@ class Misc extends Model
         }
     }
 
-    public function page_links($page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
+    public function page_links($base, $page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
     {
         $str = "";
         $datestring = "";
@@ -296,15 +296,15 @@ class Misc extends Model
         $previous = $page-1;
 
         if($page != 1){
-            $str .= "<a href='" . url('batch/index/1' . $datestring) . "'>First Page</a> |";
-            $str .= "<a href='" . url('batch/index/' . $previous . $datestring) . "'>Prev</a> |";
+            $str .= "<a href='" . url($base . '/1' . $datestring) . "'>First Page</a> |";
+            $str .= "<a href='" . url($base . '/' . $previous . $datestring) . "'>Prev</a> |";
         }
 
-        $str .= "<a href='" . url('batch/index/' . $page . $datestring) . "'>{$page}</a> |";
+        $str .= "<a href='" . url($base . '/' . $page . $datestring) . "'>{$page}</a> |";
 
         if($page < $last_page ){
-            $str .= "<a href='" . url('batch/index/' . $next . $datestring) . "'>Next</a> | ";
-            $str .= "<a href='" . url('batch/index/' . $last_page . $datestring) . "'>Last Page</a>";
+            $str .= "<a href='" . url($base . '/' . $next . $datestring) . "'>Next</a> | ";
+            $str .= "<a href='" . url($base . '/' . $last_page . $datestring) . "'>Last Page</a>";
         }
         return $str;
     }

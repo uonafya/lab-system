@@ -310,6 +310,25 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Batch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function individual(Viralsample $sample)
+    {
+        $batch = $sample->batch;
+        $sample->load(['patient']);
+        $samples[0] = $sample;
+        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $data = Lookup::get_viral_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        return view('exports.viralsamples', $data);
+    }
+
     public function release_redraw(Viralsample $viralsample)
     {
         $viralsample->repeatt = 0;
