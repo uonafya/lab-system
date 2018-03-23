@@ -20,8 +20,9 @@ class ViralbatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($page=NULL, $date_start=NULL, $date_end=NULL)
+    public function index($batch_complete=4, $page=NULL, $date_start=NULL, $date_end=NULL)
     {
+        $myurl = url('viralbatch/index/' . $batch_complete . '/' . $page . '/');
         $user = auth()->user();
         $my = new MiscViral;
         $facility_user = false;
@@ -40,6 +41,9 @@ class ViralbatchController extends Controller
             })
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
+            })
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
             ->get()
             ->first();
@@ -68,13 +72,16 @@ class ViralbatchController extends Controller
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
+            })
             ->orderBy('created_at', 'desc')
             ->limit($page_limit)
             ->offset($offset)
             ->get();
 
         if($batches->isEmpty()){
-            return view('tables.batches', ['rows' => null, 'links' => null]);
+            return view('tables.batches', ['rows' => null, 'links' => null, 'myurl' => $myurl, 'pre' => 'viral']);
         }
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -130,7 +137,7 @@ class ViralbatchController extends Controller
 
         $links = $my->page_links($page, $last_page, $date_start, $date_end);
 
-        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => url('viralbatch/index/' . $page . '/')]);
+        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => 'viral']);
     }
 
     /**

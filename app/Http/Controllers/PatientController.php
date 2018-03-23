@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Patient;
+use App\Lookup;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -46,7 +47,13 @@ class PatientController extends Controller
      */
     public function show(Patient $patient)
     {
-        //
+        $samples = $patient->sample;
+        $samples->load(['batch']);
+        $data = Lookup::get_lookups();
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
+
+        return view('tables.patient_samples', $data);
     }
 
     /**
@@ -92,12 +99,12 @@ class PatientController extends Controller
         $string = "(facility_id='{$user->facility_id}')";
 
         $search = $request->input('search');
-        $samples = Patient::select('id', 'patient')
+        $patients = Patient::select('id', 'patient')
             ->whereRaw("patient like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
             ->paginate(10);
-        return $samples;
+        return $patients;
     }
 }

@@ -92,12 +92,12 @@ class ViralpatientController extends Controller
         $string = "(facility_id='{$user->facility_id}')";
 
         $search = $request->input('search');
-        $samples = Viralpatient::select('id', 'patient')
+        $patients = Viralpatient::select('id', 'patient')
             ->whereRaw("patient like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
             ->paginate(10);
-        return $samples;
+        return $patients;
     }
 }

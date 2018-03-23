@@ -49,6 +49,7 @@ Route::get('error', function(){
 Route::get('facility/served', 'FacilityController@served');
 Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+Route::post('facility/search/', 'FacilityController@search')->name('facility.search');
 Route::resource('facility', 'FacilityController');
 
 // Route::get('/home', function () {
@@ -61,7 +62,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('search', function () {	return view('forms.search'); });
 
 	Route::prefix('batch')->name('batch.')->group(function () {
-		Route::get('index/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
+		Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
 		Route::get('dispatch/', 'BatchController@batch_dispatch');
 		Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
@@ -75,7 +76,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
-		Route::get('index/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
+		Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
 		Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
 		Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
 		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
@@ -87,7 +88,6 @@ Route::middleware(['web', 'auth'])->group(function(){
 	});
 	Route::resource('viralbatch', 'ViralbatchController');
 
-	Route::resource('facility', 'FacilityController');
 	Route::get('/home', 'HomeController@index');
 
 
@@ -100,6 +100,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::post('sample/new_patient', 'SampleController@new_patient');
 	Route::get('sample/release/{sample}', 'SampleController@release_redraw');
+	Route::get('sample/print/{sample}', 'SampleController@individual');
 	Route::resource('sample', 'SampleController');
 
 	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
@@ -151,8 +152,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('test', 'FacilityController@test');
 
 	Route::get('refresh_cache', function () {
-		$lookup = new \App\Lookup;
-		$lookup->refresh_cache();
+		$lookup = \App\Lookup::refresh_cache();
 		return back();
 	});
 

@@ -65,7 +65,7 @@ class Common extends Model
         }
     }
 
-    public function page_links($base, $page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
+    public static function page_links($base, $page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
     {
         $str = "";
         $datestring = "";

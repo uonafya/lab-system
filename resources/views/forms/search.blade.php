@@ -30,6 +30,25 @@
 
 
 <div class="content">
+
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+            <div class="hpanel">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Facilities</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="facility_search">
+
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <br />
+
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
             <div class="hpanel">

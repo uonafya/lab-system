@@ -331,4 +331,13 @@ class FacilityController extends Controller
     {
         //
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $facilities = Facility::select('*')
+            ->whereRaw("(name like '" . $search . "%' OR  facilitycode like '" . $search . "%')")
+            ->paginate(10);
+        return $facilities;
+    }
 }

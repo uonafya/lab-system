@@ -37,6 +37,26 @@
 <div class="content">
 
     <div class="row">
+        <div class="col-md-12">
+            Click To View: 
+            <a href="{{ url( $pre . 'batch/index') }}">
+                All Batches
+            </a> |
+            <a href="{{ url( $pre . 'batch/index/0') }}">
+                In-Process Batches
+            </a> |
+            <a href="{{ url( $pre . 'batch/index/2') }}">
+                Awaiting Dispatch
+            </a> |
+            <a href="{{ url( $pre . 'batch/index/1') }}">
+                Dispatched Batches
+            </a>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="row">
         <div class="col-md-4"> 
             <div class="form-group">
                 <label class="col-sm-2 control-label">Select Date</label>
@@ -91,35 +111,37 @@
                     Standard table
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover table-responsive" >
-                        <thead>
-                            <tr class="colhead">
-                                <th rowspan="2">Batch No</th>
-                                <th rowspan="2">Facility</th>
-                                <th colspan="2">Date</th>
-                                <th rowspan="1">TAT</th>
-                                <th rowspan="2">Entered By</th>
-                                <th colspan="4"># of samples</th>
-                                <th rowspan="2">Status</th>
-                                <th rowspan="2">Task</th>
-                            </tr>
-                            <tr>
-                                <th>Received</th>
-                                <th>Entered</th>
-                                <th>(Dys)</th>
-                                <th>Received</th>
-                                <th>Rejected</th>
-                                <th>Results</th>
-                                <th>No Result</th>              
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" >
+                            <thead>
+                                <tr class="colhead">
+                                    <th rowspan="2">Batch No</th>
+                                    <th rowspan="2">Facility</th>
+                                    <th colspan="2">Date</th>
+                                    <th rowspan="1">TAT</th>
+                                    <th rowspan="2">Entered By</th>
+                                    <th colspan="4"># of samples</th>
+                                    <th rowspan="2">Status</th>
+                                    <th rowspan="2">Task</th>
+                                </tr>
+                                <tr>
+                                    <th>Received</th>
+                                    <th>Entered</th>
+                                    <th>(Dys)</th>
+                                    <th>Received</th>
+                                    <th>Rejected</th>
+                                    <th>Results</th>
+                                    <th>No Result</th>              
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                            @php
-                                echo $rows;
-                            @endphp 
-                        </tbody>
-                    </table>
+                                @php
+                                    echo $rows;
+                                @endphp 
+                            </tbody>
+                        </table>
+                    </div>
 
                     {!!  $links !!}
                 </div>
@@ -142,7 +164,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            localStorage.setItem("base_url", "{{ $myurl }}/");
+            localStorage.setItem("base_url", "{{ $myurl or '' }}/");
 
             $(".date").datepicker({
                 startView: 0,

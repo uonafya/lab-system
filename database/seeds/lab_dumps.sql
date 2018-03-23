@@ -830,6 +830,8 @@ SELECT facilitys.id,facilitys.facilitycode,facilitys.longitude,facilitys.latitud
 districts.name as subcounty,facilitys.name,facilitys.partner,partners.name as partnerdesc,
 facilitys.smsprinter,facilitys.flag,facilitys.lab,districts.county,countys.name as countydesc ,
 districts.province 
-from facilitys,districts,countys,partners 
-where facilitys.district=districts.id and districts.county=countys.id 
-and facilitys.partner=partners.id and facilitys.Flag=1;
+FROM facilitys 
+LEFT JOIN districts ON facilitys.district=districts.id
+LEFT JOIN countys ON districts.county=countys.id
+LEFT JOIN partners ON facilitys.partner=partners.id
+WHERE facilitys.Flag=1;
