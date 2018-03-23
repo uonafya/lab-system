@@ -824,12 +824,14 @@ UNLOCK TABLES;
 
 CREATE OR REPLACE
 VIEW view_facilitys AS
-SELECT fac.id,fac.facilitycode, fac.name, fac.longitude,fac.latitude,fac.email, fac.district,
-dis.name as subcounty,fac.partner,partners.name as partnerdesc,
-fac.smsprinter,fac.flag,fac.lab,dis.county,countys.name as countydesc ,
-dis.province 
+SELECT  
+
+fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, countys.name as county, 
+labs.name as lab, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, fac.email, fac.contactperson, fac.ContactEmail, fac.contacttelephone, fac.contacttelephone2, fac.smsprinterphoneno, fac.G4Sbranchname, fac.G4Slocation, fac.G4Sphone1, fac.G4Sphone2, fac.G4Sphone3, fac.G4Sfax
+
 FROM facilitys fac
 LEFT JOIN districts dis ON fac.district=dis.id
 LEFT JOIN countys ON dis.county=countys.id
 LEFT JOIN partners ON fac.partner=partners.id
+LEFT JOIN labs ON fac.lab=labs.id
 WHERE fac.Flag=1;

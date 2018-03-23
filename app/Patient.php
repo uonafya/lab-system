@@ -23,4 +23,9 @@ class Patient extends Model
     {
     	return $this->belongsTo('App\Mother');
     }
+
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
 }

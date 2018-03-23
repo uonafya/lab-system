@@ -48,6 +48,7 @@ class PatientController extends Controller
     public function show(Patient $patient)
     {
         $samples = $patient->sample;
+        $patient->load(['facility']);
         $samples->load(['batch']);
         $data = Lookup::get_lookups();
         $data['samples'] = $samples;

@@ -208,13 +208,15 @@ class FacilityController extends Controller
 
     public function getFacility($id)
     {
-        return DB::table('facilitys')->select('facilitys.id','facilitys.facilitycode', 'facilitys.name as facility', 'districts.name as subcounty', 'countys.name as county', 'labs.name as lab','facilitys.physicaladdress', 'facilitys.PostalAddress','facilitys.telephone', 'facilitys.telephone2', 'facilitys.fax','facilitys.email', 'facilitys.contactperson', 'facilitys.ContactEmail', 'facilitys.contacttelephone', 'facilitys.contacttelephone2','facilitys.smsprinterphoneno', 'facilitys.G4Sbranchname', 'facilitys.G4Slocation', 'facilitys.G4Sphone1', 'facilitys.G4Sphone2', 'facilitys.G4Sphone3', 'facilitys.G4Sfax')
-                        ->join('labs' ,'labs.id', '=', 'facilitys.lab')
-                        ->join('districts', 'districts.id', '=', 'facilitys.district')
-                        ->join('view_facilitys', 'view_facilitys.id', '=', 'facilitys.id')
-                        ->join('countys', 'countys.id', '=', 'view_facilitys.county')
-                        ->where('facilitys.id', '=', $id)
-                        ->get();
+        // return DB::table('facilitys')->select('facilitys.id','facilitys.facilitycode', 'facilitys.name as facility', 'districts.name as subcounty', 'countys.name as county', 'labs.name as lab','facilitys.physicaladdress', 'facilitys.PostalAddress','facilitys.telephone', 'facilitys.telephone2', 'facilitys.fax','facilitys.email', 'facilitys.contactperson', 'facilitys.ContactEmail', 'facilitys.contacttelephone', 'facilitys.contacttelephone2','facilitys.smsprinterphoneno', 'facilitys.G4Sbranchname', 'facilitys.G4Slocation', 'facilitys.G4Sphone1', 'facilitys.G4Sphone2', 'facilitys.G4Sphone3', 'facilitys.G4Sfax')
+        //                 ->join('labs' ,'labs.id', '=', 'facilitys.lab')
+        //                 ->join('districts', 'districts.id', '=', 'facilitys.district')
+        //                 ->join('view_facilitys', 'view_facilitys.id', '=', 'facilitys.id')
+        //                 ->join('countys', 'countys.id', '=', 'view_facilitys.county')
+        //                 ->where('facilitys.id', '=', $id)
+        //                 ->get();
+
+        return DB::table('view_facilitys')->select('*', 'name as facility')->get();              
     }
 
     /**
@@ -226,8 +228,9 @@ class FacilityController extends Controller
     public function show($id)
     {
         // $facility = Facility::find($id);
+        // dd($facility);
         $facility = $this->getFacility($id);
-        // dd($facility[0]);
+        // dd($facility);
         return view('facilities.facility', ['facility' => $facility[0], 'disabled' => 'disabled']);
     }
 

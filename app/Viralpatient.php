@@ -18,4 +18,9 @@ class Viralpatient extends Model
     {
     	return $this->hasMany('App\Viralsample', 'patient_id');
     }
+
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
 }
