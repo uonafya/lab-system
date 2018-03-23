@@ -40,6 +40,19 @@
 <!-- Main Wrapper -->
 <div id="wrapper">
 
+    <div class="small-header">
+        <div class="hpanel">
+            <div class="panel-body">
+                <h6 class="font-light pull-right">
+                    Welcome, {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
+                </h6>
+                <h2 class="font-light m-b-xs">
+                    ADD SAMPLE
+                </h2>
+            </div>
+        </div>
+    </div>
+
     @yield('content')
 
     <!-- Right sidebar -->
@@ -186,6 +199,20 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+        $.get("{{ url('sysswitch/EID')}}", function(data){
+            $("#sysSwitch").html("Switch to "+JSON.parse(data));
+            $("#sysSwitch").val('Viralload');
+        });
+        $("#sysSwitch").click(function(){
+            sys = $(this).val();
+            $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
+                data = JSON.parse(data);
+                $("#sysSwitch").html("Switch to "+data);
+                $("#sysSwitch").val(data);
+                location.reload("<?= url('home'); ?>");
+            });
         });
     });
 </script>
