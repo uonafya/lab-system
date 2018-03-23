@@ -18,7 +18,9 @@
             <li>
                 <a href="#"> <span class="nav-label">Dashboard</span> </a>
             </li>
-            @if (session()->pull('sys_name') == 'EID' || session()->pull('sys_name') == null)
+            <li><a href="#">Data : - {{ session('testingSystem', 'Failed') }}</a></li>
+            @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
+                
                 <!-- <li>
                     <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -51,7 +53,7 @@
                 <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches</a></li>
                 <li><a href=" {{ url('batch/dispatch') }}">Batch Dispatch</a></li>
             @endif
-            @if (session()->pull('sys_name') == 'Viralload')
+            @if (session('testingSystem') == 'Viralload')
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">

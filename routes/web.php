@@ -158,12 +158,11 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('sysswitch/{sys}', function($sys) {
 		if($sys == 'EID'){
-			session(['sys_name' => 'Viralload']);
+			$new = session(['testingSystem' => 'EID']);
 		}else if ($sys == 'Viralload'){
-			session(['sys_name' => 'EID']);
+			$new = session(['testingSystem' => 'Viralload']);
 		}
-
-		echo json_encode(session()->pull('sys_name'));
+		echo json_encode(session('testingSystem'));
 	});
 
 });

@@ -204,17 +204,17 @@
             }
         });
 
-        $.get("{{ url('sysswitch/EID')}}", function(data){
-            $("#sysSwitch").html("Switch to "+JSON.parse(data));
-            $("#sysSwitch").val('Viralload');
-        });
+        current = "<?= @session('testingSystem')?>";
+        if(current != ''){
+            if(current == 'Viralload'){test = 'EID'}else {test = 'Viralload'}
+            $("#sysSwitch").html("Switch to "+test);
+            $("#sysSwitch").val(test);
+        }
+        
         $("#sysSwitch").click(function(){
             sys = $(this).val();
             $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
-                data = JSON.parse(data);
-                $("#sysSwitch").html("Switch to "+data);
-                $("#sysSwitch").val(data);
-                location.reload("<?= url('home'); ?>");
+                location.replace("<?= url('home'); ?>");
             });
         });
     });

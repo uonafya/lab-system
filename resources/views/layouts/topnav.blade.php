@@ -12,7 +12,9 @@
             <span class="text-primary">EID - VL</span>
         </div>
         <div class="navbar-form-custom">
-            <button class="btn btn-success" id="sysSwitch" value="" style="margin-top:.5em;"></button>
+            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
+                Switch to Viralload
+            </button>
         </div>
         <!-- <div>
             <button>Switch to {{ session()->pull('sys_name') }}</button>
