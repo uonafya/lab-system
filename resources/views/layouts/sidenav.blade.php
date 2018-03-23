@@ -18,7 +18,6 @@
             <li>
                 <a href="#"> <span class="nav-label">Dashboard</span> </a>
             </li>
-            <li><a href="#">Data : - {{ session('testingSystem', 'Failed') }}</a></li>
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
