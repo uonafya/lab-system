@@ -826,12 +826,12 @@ UNLOCK TABLES;
 
 CREATE OR REPLACE
 VIEW view_facilitys AS
-SELECT facilitys.id,facilitys.facilitycode,facilitys.longitude,facilitys.latitude,facilitys.email, facilitys.district,
-districts.name as subcounty,facilitys.name,facilitys.partner,partners.name as partnerdesc,
-facilitys.smsprinter,facilitys.flag,facilitys.lab,districts.county,countys.name as countydesc ,
-districts.province 
-FROM facilitys 
-LEFT JOIN districts ON facilitys.district=districts.id
-LEFT JOIN countys ON districts.county=countys.id
-LEFT JOIN partners ON facilitys.partner=partners.id
-WHERE facilitys.Flag=1;
+SELECT fac.id,fac.facilitycode, fac.name, fac.longitude,fac.latitude,fac.email, fac.district,
+dis.name as subcounty,fac.partner,partners.name as partnerdesc,
+fac.smsprinter,fac.flag,fac.lab,dis.county,countys.name as countydesc ,
+dis.province 
+FROM facilitys fac
+LEFT JOIN districts dis ON fac.district=dis.id
+LEFT JOIN countys ON dis.county=countys.id
+LEFT JOIN partners ON fac.partner=partners.id
+WHERE fac.Flag=1;
