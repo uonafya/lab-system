@@ -31,7 +31,7 @@ class ViralsampleController extends Controller
     public function create()
     {
         $data = Lookup::viralsample_form();
-        return view('forms.viralsamples', $data);
+        return view('forms.viralsamples', $data)->with('pageTitle', 'Add Samples');
     }
 
     /**
@@ -217,7 +217,7 @@ class ViralsampleController extends Controller
         $viralsample->load(['patient', 'batch']);
         $data = Lookup::viralsample_form();
         $data['viralsample'] = $viralsample;
-        return view('forms.viralsamples', $data);
+        return view('forms.viralsamples', $data)->with('pageTitle', 'Edit Sample');
     }
 
     /**
@@ -326,7 +326,7 @@ class ViralsampleController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('exports.viralsamples', $data);
+        return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Samples');
     }
 
     public function release_redraw(Viralsample $viralsample)

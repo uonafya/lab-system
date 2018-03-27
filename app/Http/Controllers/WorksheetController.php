@@ -68,7 +68,7 @@ class WorksheetController extends Controller
 
         }
 
-        return view('tables.worksheets', ['rows' => $table_rows, 'myurl' => url('worksheet/index/' . $state . '/')]);
+        return view('tables.worksheets', ['rows' => $table_rows, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
     }
 
     /**
@@ -107,10 +107,10 @@ class WorksheetController extends Controller
         $count = $samples->count();
 
         if($count == $machine->eid_limit){
-            return view('forms.worksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
+            return view('forms.worksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine])->with('pageTitle', 'Create Worksheet');
         }
 
-        return view('forms.worksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count]);
+        return view('forms.worksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Create Worksheet');
     }
 
     /**
@@ -170,10 +170,10 @@ class WorksheetController extends Controller
         $data = ['worksheet' => $worksheet, 'samples' => $samples];
 
         if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
         }
     }
 
@@ -223,10 +223,10 @@ class WorksheetController extends Controller
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
         if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
         }
     }
 
@@ -245,7 +245,7 @@ class WorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', '<', 5)->get();
-        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users]);
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
 
@@ -443,7 +443,7 @@ class WorksheetController extends Controller
         $my = new Misc;
         $my->requeue($worksheet->id);
 
-        return redirect('worksheet/approve/' . $worksheet->id);
+        return redirect('worksheet/approve/' . $worksheet->id)->with('pageTitle', 'Save Results');
     }
 
     public function approve_results(Worksheet $worksheet)
@@ -466,7 +466,7 @@ class WorksheetController extends Controller
 
         $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
+        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet])->with('pageTitle', 'Worksheet Approval');
     }
 
     public function approve(Request $request, Worksheet $worksheet)

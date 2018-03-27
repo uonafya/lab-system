@@ -46,7 +46,7 @@ class ViralworksheetController extends Controller
         $data = Lookup::worksheet_lookups();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('viralworksheet/index/' . $state . '/');
-        return view('tables.viralworksheets', $data);
+        return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
     /**
@@ -86,7 +86,7 @@ class ViralworksheetController extends Controller
             return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
         }
 
-        return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count]);
+        return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Add Worksheet');
     }
 
     /**
@@ -150,10 +150,10 @@ class ViralworksheetController extends Controller
         $data = ['worksheet' => $worksheet, 'samples' => $samples];
 
         if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
     }
 
@@ -199,10 +199,10 @@ class ViralworksheetController extends Controller
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
         if($worksheet->machine_type == 2){
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
         }
         else{
-            return view('worksheets.other-table', $data);
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Print Other Worksheet');
         }
     }
 
@@ -221,7 +221,7 @@ class ViralworksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', '<', 5)->get();
-        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload']);
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Wroksheet Upload');
     }
 
 
@@ -365,7 +365,7 @@ class ViralworksheetController extends Controller
         $subtotals = ['detected' => $detected, 'undetected' => $undetected, 'failed' => $failed, 'noresult' => $noresult, 'total' => $total];
 
 
-        return view('tables.confirm_viral_results', ['results' => $results, 'actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
+        return view('tables.confirm_viral_results', ['results' => $results, 'actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet])->with('pageTitle', 'Approve Results');
     }
 
     public function approve(Request $request, Viralworksheet $worksheet)

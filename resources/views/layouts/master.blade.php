@@ -38,6 +38,11 @@
             font-size: 13px;
             color: black;
         }
+        .btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            
+        }
     </style>
 
 </head>
@@ -57,15 +62,26 @@
                     Welcome, {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
                 </h6>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <h2 class="font-light m-b-xs">
-                            ADD SAMPLE
+                            {{ $pageTitle }}
                         </h2>
                     </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
+                    <div class="col-md-6">
+                        <div class="col-md-8" style="padding-top: 8px;">
+                            <center>
+                                <p style="margin-top:6px;font-size: 14px;display: inline;">
+                                    &lt;&lt;&nbsp;&nbsp;
+                                    <div id="systxt" style="display: inline;"><strong>Ealry Infant Diagnosis</strong></div> <strong>TESTING SYSTEM</strong>
+                                    &nbsp;&nbsp;&gt;&gt;
+                                </p>
+                            </center>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
                             Switch to Viralload
                         </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,9 +121,10 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'Viralload'){test = 'EID'}else {test = 'Viralload'}
+            if(current == 'Viralload'){test = 'EID';text = '<strong>VIRAL LOAD</strong>';}else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
             $("#sysSwitch").val(test);
+            $("#systxt").html(text);
         }
         
         $("#sysSwitch").click(function(){

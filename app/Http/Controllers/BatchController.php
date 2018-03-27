@@ -134,7 +134,7 @@ class BatchController extends Controller
 
         $links = $my->page_links($base, $page, $last_page, $date_start, $date_end);
 
-        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => '']);
+        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => ''])->with('pageTitle', 'Batches');
     }
 
     /**
@@ -173,7 +173,7 @@ class BatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('tables.batch_details', $data);
+        return view('tables.batch_details', $data)->with('pageTitle', 'Batches');
     }
 
     /**
@@ -293,7 +293,7 @@ class BatchController extends Controller
         }
 
 
-        return view('tables.dispatch', ['rows' => $table_rows, 'pending' => $batches->count()]);
+        return view('tables.dispatch', ['rows' => $table_rows, 'pending' => $batches->count()])->with('pageTitle', 'Batches Awaiting Dispatch');
 
     }
 
@@ -334,7 +334,7 @@ class BatchController extends Controller
             <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
             </tr>";
         }
-        return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+        return view('tables.batches', ['rows' => $table_rows, 'links' => ''])->with('pageTitle', 'Site Entry Approval');
 
     }
 
@@ -371,7 +371,7 @@ class BatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('exports.samples', $data);
+        return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     /**

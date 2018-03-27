@@ -137,7 +137,7 @@ class ViralbatchController extends Controller
 
         $links = $my->page_links($page, $last_page, $date_start, $date_end);
 
-        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => 'viral']);
+        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => 'viral'])->with('pageTitle', 'Batches');
     }
 
     /**
@@ -177,7 +177,7 @@ class ViralbatchController extends Controller
         $data['samples'] = $viralsamples;
         // dd($data);
 
-        return view('tables.viralbatch_details', $data);
+        return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }
 
     /**
@@ -317,7 +317,7 @@ class ViralbatchController extends Controller
         }
 
 
-        return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()]);
+        return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
 
     }
 
@@ -360,7 +360,7 @@ class ViralbatchController extends Controller
             <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
             </tr>";
         }
-        return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+        return view('tables.batches', ['rows' => $table_rows, 'links' => ''])->with('pageTitle', 'Site Entry Approval');
     }
 
     public function site_entry_approval(Viralbatch $batch)
@@ -396,7 +396,7 @@ class ViralbatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('exports.viralsamples', $data);
+        return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
     }
 
     /**
@@ -417,7 +417,7 @@ class ViralbatchController extends Controller
         // $pdf = DOMPDF::loadView('exports.samples_summary', $data);
         // return $pdf->download('summary.pdf');
 
-        return view('exports.samples_summary', $data);
+        return view('exports.samples_summary', $data)->with('pageTitle', 'Batch Summary');
     }
 
     public function search(Request $request)

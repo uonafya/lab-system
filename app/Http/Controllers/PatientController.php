@@ -54,7 +54,7 @@ class PatientController extends Controller
         $data['samples'] = $samples;
         $data['patient'] = $patient;
 
-        return view('tables.patient_samples', $data);
+        return view('tables.patient_samples', $data)->with('pageTitle', 'Patients');
     }
 
     /**
