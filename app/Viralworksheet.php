@@ -2,17 +2,75 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Viralworksheet extends Model
+class Viralworksheet extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-
-    protected $guarded = [];
     // protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
+    
+
+    public function getDayCutAttribute()
+    {
+        return $this->date_modifier($this->datecut);
+    }
+
+    public function getDayReviewedAttribute()
+    {
+        return $this->date_modifier($this->datereviewed);
+    }
+
+    public function getDayUploadedAttribute()
+    {
+        return $this->date_modifier($this->dateuploaded);
+    }
+
+    public function getDayCancelledAttribute()
+    {
+        return $this->date_modifier($this->datecancelled);
+    }
+
+    public function getDayRunAttribute()
+    {
+        return $this->date_modifier($this->daterun);
+    }
+
+    public function getDayApprovedAttribute()
+    {
+        return $this->date_modifier($this->dateapproved);
+    }
+
+    public function getKitExpiryDayAttribute()
+    {
+        return $this->date_modifier($this->kitexpirydate);
+    }
+
+    public function getSamplePrepExpiryDayAttribute()
+    {
+        return $this->date_modifier($this->sampleprepexpirydate);
+    }
+
+    public function getBulklysisExpiryDayAttribute()
+    {
+        return $this->date_modifier($this->bulklysisexpirydate);
+    }
+
+    public function getControlExpiryDayAttribute()
+    {
+        return $this->date_modifier($this->controlexpirydate);
+    }
+
+    public function getCalibratorExpiryDayAttribute()
+    {
+        return $this->date_modifier($this->calibratorexpirydate);
+    }
+
+    public function getAmplificationExpiryDayAttribute()
+    {
+        return $this->date_modifier($this->amplificationexpirydate);
+    }
+
+
+    
 
     public function sample()
     {
@@ -42,15 +100,5 @@ class Viralworksheet extends Model
     public function approver()
     {
         return $this->belongsTo('App\User', 'approvedby');
-    }
-
-
-    public function getDateuploadedAttribute($value)
-    {
-        if($value){
-            $date = \DateTime::createFromFormat('Y-m-d', $value);
-            return $date->format('Y-m-d');            
-        }
-        return $value;
     }
 }

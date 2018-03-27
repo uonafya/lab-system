@@ -2,22 +2,31 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Viralbatch extends Model
+class Viralbatch extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-    protected $guarded = [];
-
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
-    // public function setDatedispatchedfromfacilityAttribute($value)
-    // {
-    //     $this->attributes['datedispatchedfromfacility'] = $value ? $value : null;
-    // }
+    public function getDayReceivedAttribute()
+    {
+        return $this->date_modifier($this->datereceived);
+    }
+    
+    public function getDayDispatchedAttribute()
+    {
+        return $this->date_modifier($this->datedispatched);
+    }
+    
+    public function getDayModifiedAttribute()
+    {
+        return $this->date_modifier($this->datemodified);
+    }
+    
+    public function getDayApprovedAttribute()
+    {
+        return $this->date_modifier($this->dateapproved);
+    }
 
 	public function sample()
     {

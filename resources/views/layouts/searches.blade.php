@@ -90,7 +90,7 @@
 		set_change_listener(div_name, url);	
 	}
 
-	function set_select_facility(div_name, url, minimum_length, placeholder) {
+	function set_select_facility(div_name, url, minimum_length, placeholder, create_listener=true) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({
@@ -124,7 +124,10 @@
 				}
 			}
 		});
-		set_change_listener(div_name, url);	
+
+		if(create_listener){
+			set_change_listener(div_name, url);
+		}			
 	}
 
 	function set_change_listener(div_name, url)

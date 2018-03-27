@@ -2,17 +2,32 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Sample extends Model
+class Sample extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-    
-    protected $guarded = [];
     // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
+
+    public function getDayCollectedAttribute()
+    {
+        return $this->date_modifier($this->datecollected);
+    }
+
+    public function getDayTestedAttribute()
+    {
+        return $this->date_modifier($this->datetested);
+    }
+
+    public function getDayModifiedAttribute()
+    {
+        return $this->date_modifier($this->datemodified);
+    }
+
+    public function getDayApprovedAttribute()
+    {
+        return $this->date_modifier($this->dateapproved);
+    }
+
 
     public function patient()
     {

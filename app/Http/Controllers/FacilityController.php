@@ -339,7 +339,7 @@ class FacilityController extends Controller
     {
         $search = $request->input('search');
         $facilities = Facility::select('*')
-            ->whereRaw("(name like '" . $search . "%' OR  facilitycode like '" . $search . "%')")
+            ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->paginate(10);
         return $facilities;
     }

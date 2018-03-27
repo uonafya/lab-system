@@ -39,19 +39,9 @@
                               <label class="col-sm-4 control-label">Facility</label>
                               <div class="col-sm-8">
                                 <select class="form-control" required name="facility_id" id="facility_id">
-
-                                  <option value=""> Select One </option>
-                                  @foreach ($facilities as $facility)
-                                      <option value="{{ $facility->id }}"
-
-                                      @if (isset($viralsample) && $viralsample->patient->facility_id == $facility->id)
-                                          selected
-                                      @endif
-
-                                      > {{ $facility->facilitycode . ' - ' . $facility->name }}
-                                      </option>
-                                  @endforeach
-
+                                    @isset($viralsample)
+                                        <option value="{{ $sample->patient->facility->id }}">{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
+                                    @endisset
                                 </select>
                               </div>
                           </div>
@@ -474,6 +464,8 @@
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
+
+        set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
 

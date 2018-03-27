@@ -2,17 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Viralpatient extends Model
+class Viralpatient extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-
-    protected $guarded = [];
     // protected $dates = ['datesynched', 'dob'];
+
+    public function getDateBirthAttribute()
+    {
+        return $this->date_modifier($this->dob);
+    }
 
     public function sample()
     {

@@ -193,6 +193,8 @@
     });
 </script>
 
+@include('layouts.searches')
+
 @yield('scripts')
 
 

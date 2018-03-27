@@ -51,7 +51,7 @@ class Lookup extends Model
         self::cacher();
         return [
             // 'facilities' => DB::table('facilitys')->select('id', 'name')->get(),
-            'facilities' => Cache::get('facilities'),
+            // 'facilities' => Cache::get('facilities'),
             'amrs_locations' => Cache::get('amrs_locations'),
             'rejectedreasons' => Cache::get('rejected_reasons'),
             'genders' => Cache::get('genders'),
@@ -106,7 +106,7 @@ class Lookup extends Model
     {
         self::cacher();
         return [
-            'facilities' => Cache::get('facilities'),
+            // 'facilities' => Cache::get('facilities'),
             'amrs_locations' => Cache::get('amrs_locations'),
             'genders' => Cache::get('genders'),
             'rejectedreasons' => Cache::get('viral_rejected_reasons'),
