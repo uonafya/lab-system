@@ -30,7 +30,7 @@ class DashboardComposer
      */
     public function compose(View $view)
     {
-    	$view->with('widgets',$this->DashboardData);
+        $view->with('widgets',$this->DashboardData);
 
     }
 

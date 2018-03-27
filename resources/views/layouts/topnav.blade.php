@@ -11,6 +11,14 @@
         <div class="small-logo">
             <span class="text-primary">EID - VL</span>
         </div>
+        <div class="navbar-form-custom">
+            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
+                Switch to Viralload
+            </button>
+        </div>
+        <!-- <div>
+            <button>Switch to {{ session()->pull('sys_name') }}</button>
+        </div> -->
         <div class="mobile-menu">
             <button type="button" class="navbar-toggle mobile-menu-toggle" data-toggle="collapse" data-target="#mobile-collapse">
                 <i class="fa fa-chevron-down"></i>

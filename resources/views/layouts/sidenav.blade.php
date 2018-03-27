@@ -1,6 +1,14 @@
+<style type="text/css">
+    body.light-skin #side-menu li a {
+        font-weight: 380;
+    }
+</style>
 <aside id="menu">
     <div id="navigation">
         <ul class="nav" id="side-menu">
+            <li class="active">
+                <a href="#"><span class="nav-label">MENU</span><span class="fa arrow"></span> </a>
+                <ul class="nav nav-second-level">
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li class="active">
                 <a href="{{ url('home') }}"> <span class="nav-label">Tasks</span> 
@@ -15,56 +23,78 @@
             <li>
                 <a href="#"> <span class="nav-label">Dashboard</span> </a>
             </li>
-            <li>
-                <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="{{ url('sample/create') }}">Add</a></li>
-                    <li><a href="{{ url('batch') }}">View</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
-                    <li><a href="{{ url('worksheet/create/1') }}">Create Taqman(24)</a></li>
-                    <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href=" {{ url('batch') }}">View</a></li>
-                    <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry</a></li>
-                    <li><a href=" {{ url('batch/dispatch') }}">Dispatch</a></li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="{{ url('viralsample/create') }}">Add</a></li>
-                    <li><a href="{{ url('viralbatch') }}">View</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
-                    <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
-                    <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
-                    <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
-                    <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href=" {{ url('viralbatch') }}">View</a></li>
-                    <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
-                    <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
-                </ul>
-            </li>
-            <li>
+            @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
+                
+                <!-- <li>
+                    <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="{{ url('sample/create') }}">Add</a></li>
+                        <li><a href="{{ url('batch') }}">View</a></li>
+                    </ul>
+                </li> -->
+                <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
+                <li><a href="{{ url('batch') }}">View Samples</a></li>
+                <!-- <li>
+                    <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
+                        <li><a href="{{ url('worksheet/create/1') }}">Create Taqman(24)</a></li>
+                        <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                    </ul>
+                </li> -->
+                <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
+                <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
+                <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                <!-- <li>
+                    <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href=" {{ url('batch') }}">View</a></li>
+                        <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry</a></li>
+                        <li><a href=" {{ url('batch/dispatch') }}">Dispatch</a></li>
+                    </ul>
+                </li> -->
+                <li><a href=" {{ url('batch') }}">View Batches</a></li>
+                <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches</a></li>
+                <li><a href=" {{ url('batch/dispatch') }}">Batch Dispatch</a></li>
+            @endif
+            @if (session('testingSystem') == 'Viralload')
+                <!-- <li>
+                    <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="{{ url('viralsample/create') }}">Add</a></li>
+                        <li><a href="{{ url('viralbatch') }}">View</a></li>
+                    </ul>
+                </li> -->
+                <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
+                <li><a href="{{ url('viralbatch') }}">View Samples</a></li>
+                <!-- <li>
+                    <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
+                        <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
+                        <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                        <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                        <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
+                    </ul>
+                </li> -->
+                <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
+                <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
+                <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
+                <!-- <li>
+                    <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href=" {{ url('viralbatch') }}">View</a></li>
+                        <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
+                        <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
+                    </ul>
+                </li> -->
+                <li><a href=" {{ url('viralbatch') }}">View Batches</a></li>
+                <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
+                <li><a href=" {{ url('viralbatch/dispatch') }}">Batch Dispatch</a></li>
+            @endif
+            <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
                     <li>
@@ -73,6 +103,11 @@
                         </a>
                     </li>
                 </ul>
+            </li> -->
+            <li>
+                <a href="{{ url('batch/dispatch') }}">Dispatch Results
+                    <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                </a>
             </li>
         @endif
         @if (auth()->user()->user_type_id == 5)
@@ -91,6 +126,7 @@
                     <li><a href="{{ url('viralbatch') }}">View</a></li>
                 </ul>
             </li>
+
 
         @endif
 
@@ -176,6 +212,17 @@
             </li>
         @endif
         --}}
+        </ul>
+        </li>
+        <li>
+            <a href="#"><span class="nav-label">SEARCH</span><span class="fa arrow"></span> </a>
+            <ul class="nav nav-second-level">
+                <li><a href="#"><select class="select2" id="sampleSearch"></select></a></li>
+                <li><a href="#"><select class="select2"></select></a></li>
+                <li><a href="#"><select class="select2"></select></a></li>
+                <li><a href="#"><select class="select2"></select></a></li>
+            </ul>
+        </li>
         </ul>
     </div>
 </aside>

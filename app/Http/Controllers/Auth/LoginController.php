@@ -33,6 +33,7 @@ class LoginController extends Controller
      *
      * @var string
      */
+    // protected $redirectTo = '/sample/create';
     protected $redirectTo = '/home';
 
     /**
@@ -97,3 +98,4 @@ class LoginController extends Controller
         return redirect('/login/facility');
     }
 }
+

@@ -8,7 +8,7 @@
 }
 
 .toast-message a, .toast-message label {
-    color: #fff
+    color: black;
 }
 
 .toast-message a:hover {

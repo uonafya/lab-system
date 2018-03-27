@@ -24,4 +24,5 @@ class Controller extends BaseController
         $column .= '</tr>';
         return $column;
     }
+
 }

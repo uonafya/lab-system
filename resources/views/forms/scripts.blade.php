@@ -9,13 +9,13 @@
     	$(".form-control").attr('autocomplete', 'off');
 
         $("select").select2();
-
+        
         setTimeout(function(){
             toastr.options = {
-                closeButton: true,
-                progressBar: true,
+                closeButton: false,
+                progressBar: false,
                 showMethod: 'slideDown',
-                timeOut: 4000
+                timeOut: 3000
             };
             toastr.success("{{ session()->pull('toast_message', 'Please fill out the form correctly.') }}");
         });
@@ -64,6 +64,46 @@
             {{ $val_rules or '' }}
         });
 
+        $("#sampleSearch").select2({
+                placeholder: "Search Sample",
+                width: '120px',
+                ajax: {
+                    url: "{{ url('/sample/new_patient') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                      q: params.term, // search term
+                      page: params.page
+                  };
+              },
+              processResults: function (data, params) {
+                console.log(params);
+                params.page = params.page || 1;
+                return {
+                    results: data.items,
+                    pagination: {
+                        more: (params.page * 30) < data.total_count
+                    }
+                };
+              },
+              cache: false
+            },
+            // escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 1,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        function formatRepo (repo) {
+            if (repo.loading) return repo.text;
+            return repo.desc;
+        }
+
+        function formatRepoSelection (repo) {
+            return repo.desc || repo.text;
+        }
+        
         {{ $slot }}
 
     });

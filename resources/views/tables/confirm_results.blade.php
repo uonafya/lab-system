@@ -5,35 +5,6 @@
 
 @section('content')
 
-<div class="normalheader ">
-    <div class="hpanel">
-        <div class="panel-body">
-            <a class="small-header-action" href="#">
-                <div class="clip-header">
-                    <i class="fa fa-arrow-up"></i>
-                </div>
-            </a>
-
-            <div id="hbreadcrumb" class="pull-right m-t-lg">
-                <ol class="hbreadcrumb breadcrumb">
-                    <li>
-                        <a href="index-2.html">Dashboard</a></li>
-                    <li>
-                        <span>Tables</span>
-                    </li>
-                    <li class="active">
-                        <span>DataTables</span>
-                    </li>
-                </ol>
-            </div>
-            <h2 class="font-light m-b-xs">
-                DataTables
-            </h2>
-            <small>Advanced interaction controls to any HTML table</small>
-        </div>
-    </div>
-</div>
- 
 <div class="content">
 
     <div class="row">
