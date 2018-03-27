@@ -6,23 +6,20 @@
 <aside id="menu">
     <div id="navigation">
         <ul class="nav" id="side-menu">
-            <li class="active">
+            <!-- <li class="active">
                 <a href="#"><span class="nav-label">MENU</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
+                <ul class="nav nav-second-level"> -->
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
-            <li class="active">
+           <!--  <li class="active">
                 <a href="{{ url('home') }}"> <span class="nav-label">Tasks</span> 
                     <span class="label label-success pull-right">
                     {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
                     </span>
                 </a>
-            </li>
+            </li> -->
         @endif
         
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
-            <li>
-                <a href="#"> <span class="nav-label">Dashboard</span> </a>
-            </li>
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -33,7 +30,6 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
-                <li><a href="{{ url('batch') }}">View Samples</a></li>
                 <!-- <li>
                     <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -42,7 +38,6 @@
                         <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <!-- <li>
@@ -53,9 +48,12 @@
                         <li><a href=" {{ url('batch/dispatch') }}">Dispatch</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('batch') }}">View Batches</a></li>
+                <!-- <li><a href=" {{ url('batch') }}">View Batches</a></li> -->
                 <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches</a></li>
-                <li><a href=" {{ url('batch/dispatch') }}">Batch Dispatch</a></li>
+                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results
+                    <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                    </a>
+                </li>
             @endif
             @if (session('testingSystem') == 'Viralload')
                 <!-- <li>
@@ -104,11 +102,11 @@
                     </li>
                 </ul>
             </li> -->
-            <li>
+            <!-- <li>
                 <a href="{{ url('batch/dispatch') }}">Dispatch Results
                     <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
                 </a>
-            </li>
+            </li> -->
         @endif
         @if (auth()->user()->user_type_id == 5)
             <li>
@@ -212,7 +210,7 @@
             </li>
         @endif
         --}}
-        </ul>
+        <!-- </ul>
         </li>
         <li>
             <a href="#"><span class="nav-label">SEARCH</span><span class="fa arrow"></span> </a>
@@ -222,7 +220,11 @@
                 <li><a href="#"><select class="select2"></select></a></li>
                 <li><a href="#"><select class="select2"></select></a></li>
             </ul>
-        </li>
+        </li> -->
+            <li><a href="#"><select class="select2" id="sampleSearch"></select></a></li>
+            <li><a href="#"><select class="select2"></select></a></li>
+            <li><a href="#"><select class="select2"></select></a></li>
+            <li><a href="#"><select class="select2"></select></a></li>
         </ul>
     </div>
 </aside>

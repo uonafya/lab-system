@@ -33,6 +33,11 @@
         #toast-container > div {
             color: black;
         }
+        .navbar-nav>li>a {
+            padding: 15px 15px;
+            font-size: 13px;
+            color: black;
+        }
     </style>
 
 </head>
@@ -45,16 +50,24 @@
 
 <!-- Main Wrapper -->
 <div id="wrapper">
-
     <div class="small-header">
         <div class="hpanel">
             <div class="panel-body">
                 <h6 class="font-light pull-right">
                     Welcome, {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
                 </h6>
-                <h2 class="font-light m-b-xs">
-                    ADD SAMPLE
-                </h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h2 class="font-light m-b-xs">
+                            ADD SAMPLE
+                        </h2>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
+                            Switch to Viralload
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
