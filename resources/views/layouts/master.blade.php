@@ -41,7 +41,6 @@
         .btn {
             padding: 4px 8px;
             font-size: 12px;
-            
         }
     </style>
 
@@ -71,9 +70,7 @@
                         <div class="col-md-8" style="padding-top: 8px;">
                             <center>
                                 <p style="margin-top:6px;font-size: 14px;display: inline;">
-                                    &lt;&lt;&nbsp;&nbsp;
-                                    <div id="systxt" style="display: inline;"><strong>Ealry Infant Diagnosis</strong></div> <strong>TESTING SYSTEM</strong>
-                                    &nbsp;&nbsp;&gt;&gt;
+                                    <div id="systxt" style="display: inline;"><strong>EARLY INFANT DIAGNOSIS</strong></div> <strong>TESTING SYSTEM</strong>
                                 </p>
                             </center>
                         </div>

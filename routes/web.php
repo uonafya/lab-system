@@ -32,6 +32,7 @@ Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
 Auth::routes();
 
+Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 Route::get('datatables', function () {
 	return view('datatables');
 });

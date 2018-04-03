@@ -20,16 +20,34 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
+                    <li class="">
+                        <a href="{{ url('batch') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Requisitions</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('worksheet') }}">Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Facilities</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('batch/dispatch') }}">Dispatched Results</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Kits</a>
+                    </li>
                     <li>
                         <a class="" href="{{ url('/logout') }}"
                         onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">Logout</a>
-                    </li>
-                    <li>
-                        
-                    </li>
-                    <li>
-                        <a class="" href="profile.html">Profile</a>
                     </li>
                 </ul>
             </div>
@@ -63,7 +81,7 @@
                     <a href="#">Reports</a>
                 </li>
                 <li class="">
-                    <a href="#">Dashboard</a>
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
                 </li>
                 <li class="">
                     <a href="#">Kits</a>
