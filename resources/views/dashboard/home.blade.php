@@ -143,23 +143,23 @@
 		                	<tbody>
 		                		<tr>
 		                			<td>Collection at Facility - Receipt at Lab</td>
-		                			<td>8 days</td>
+		                			<td>{{ $lab_tat_stats->tat1 }} days</td>
 		                		</tr>
 		                		<tr>
 		                			<td>Receipt at Lab - Processing</td>
-		                			<td>9 days</td>
+		                			<td>{{ $lab_tat_stats->tat2 }} days</td>
 		                		</tr>
 		                		<tr>
 		                			<td>Processing - Dispatch</td>
-		                			<td>5 days</td>
+		                			<td>{{ $lab_tat_stats->tat3 }} days</td>
 		                		</tr>
 		                		<tr>
 		                			<td>Receipt at Lab - Dispatch</td>
-		                			<td>13 days</td>
+		                			<td>{{ $lab_tat_stats->tat5 }} days</td>
 		                		</tr>
 		                		<tr>
 		                			<td><strong>Collection at Facility - Dispatch</strong></td>
-		                			<td><strong>21 days</strong></td>
+		                			<td><strong>{{ $lab_tat_stats->tat4 }} days</strong></td>
 		                		</tr>
 		                	</tbody>
 		                </table>
