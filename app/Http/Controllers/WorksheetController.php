@@ -447,7 +447,7 @@ class WorksheetController extends Controller
     }
 
     public function approve_results(Worksheet $worksheet)
-    {
+    {        
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
         $results = DB::table('results')->get();
@@ -466,16 +466,17 @@ class WorksheetController extends Controller
 
         $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
+        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval]);
     }
 
     public function approve(Request $request, Worksheet $worksheet)
     {
+        $double_approval = Lookup::$double_approval;
         $samples = $request->input('samples');
         $batches = $request->input('batches');
         $results = $request->input('results');
         $actions = $request->input('actions');
-        // dd($batches);
+
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
@@ -483,12 +484,22 @@ class WorksheetController extends Controller
         $my = new Misc;
 
         foreach ($samples as $key => $value) {
-            $data = [
-                'approvedby' => $approver,
-                'dateapproved' => $today,
-                'result' => $results[$key],
-                'repeatt' => $actions[$key],
-            ];
+
+            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->reviewedby != $approver){
+                $data = [
+                    'approvedby2' => $approver,
+                    'dateapproved2' => $today,
+                ];
+            }
+            else{
+                $data = [
+                    'approvedby' => $approver,
+                    'dateapproved' => $today,
+                ];
+            }
+
+            $data['result'] = $results[$key];
+            $data['repeatt'] = $actions[$key];
 
             DB::table('samples')->where('id', $samples[$key])->update($data);
 
@@ -497,20 +508,48 @@ class WorksheetController extends Controller
             }
         }
 
-        $batch = collect($batches);
-        $b = $batch->unique();
-        $unique = $b->values()->all();
+        if(in_array(env('APP_LAB'), $double_approval)){
+            if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
+                $batch = collect($batches);
+                $b = $batch->unique();
+                $unique = $b->values()->all();
 
-        foreach ($unique as $value) {
-            $my->check_batch($value);
+                foreach ($unique as $value) {
+                    $my->check_batch($value);
+                }
+
+                $worksheet->status_id = 3;
+                $worksheet->datereviewed2 = $today;
+                $worksheet->reviewedby2 = $approver;
+                $worksheet->save();
+
+                return redirect('/batch/dispatch');                 
+            }
+            else{
+                $worksheet->datereviewed = $today;
+                $worksheet->reviewedby = $approver;
+                $worksheet->save();
+
+                return redirect('/worksheet');
+            }
         }
 
-        $worksheet->status_id = 3;
-        $worksheet->datereviewed = $today;
-        $worksheet->reviewedby = $approver;
-        $worksheet->save();
+        else{
+            $batch = collect($batches);
+            $b = $batch->unique();
+            $unique = $b->values()->all();
 
-        return redirect('/batch/dispatch');
+            foreach ($unique as $value) {
+                $my->check_batch($value);
+            }
+
+            $worksheet->status_id = 3;
+            $worksheet->datereviewed = $today;
+            $worksheet->reviewedby = $approver;
+            $worksheet->save();
+
+            return redirect('/batch/dispatch');            
+        }
     }
 
     public function mtype($machine)

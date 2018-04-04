@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('reset_password/{token}', ['as' => 'password.reset', function($token)
-{
-    // implement your reset password route here!
-}]);
+// Route::get('reset_password/{token}', ['as' => 'password.reset', function($token)
+// {
+//     // implement your reset password route here!
+// }]);
 
 // Route::get('/', function () {
     // return view('auth.login');
@@ -101,10 +101,13 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::post('sample/new_patient', 'SampleController@new_patient');
 	Route::get('sample/release/{sample}', 'SampleController@release_redraw');
 	Route::get('sample/print/{sample}', 'SampleController@individual');
+	Route::get('sample/runs/{sample}', 'SampleController@runs');
 	Route::resource('sample', 'SampleController');
 
 	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
 	Route::get('viralsample/release/{viralsample}', 'ViralsampleController@release_redraw');
+	Route::get('viralsample/print/{sample}', 'ViralsampleController@individual');
+	Route::get('viralsample/runs/{sample}', 'ViralsampleController@runs');
 	Route::resource('viralsample', 'ViralsampleController');
 
 

@@ -43,21 +43,21 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Worksheet No</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->id or '' }}" disabled>
+                                <input class="form-control" required type="text" value="{{ $worksheet->id ?? '' }}" disabled>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Created</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->created_at or '' }}" disabled>
+                                <input class="form-control" required type="text" value="{{ $worksheet->created_at ?? '' }}" disabled>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Created By</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->creator->full_name or '' }}" disabled>
+                                <input class="form-control" required type="text" value="{{ $worksheet->creator->full_name ?? '' }}" disabled>
                             </div>
                         </div>
 

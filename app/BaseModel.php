@@ -19,4 +19,11 @@ class BaseModel extends Model
 
     	return $value;
     }
+
+    public function my_date_format($value)
+    {
+        if($this->$value) return date('d-M-Y', strtotime($this->$value));
+
+        return '';
+    }
 }

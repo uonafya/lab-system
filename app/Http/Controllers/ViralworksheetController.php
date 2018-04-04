@@ -350,7 +350,6 @@ class ViralworksheetController extends Controller
     {
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
-        $results = DB::table('results')->get();
         $actions = DB::table('actions')->get();
         $dilutions = DB::table('viraldilutionfactors')->get();
         $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
@@ -365,11 +364,12 @@ class ViralworksheetController extends Controller
         $subtotals = ['detected' => $detected, 'undetected' => $undetected, 'failed' => $failed, 'noresult' => $noresult, 'total' => $total];
 
 
-        return view('tables.confirm_viral_results', ['results' => $results, 'actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet]);
+        return view('tables.confirm_viral_results', ['actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval]);
     }
 
     public function approve(Request $request, Viralworksheet $worksheet)
     {
+        $double_approval = Lookup::$double_approval;
         $samples = $request->input('samples');
         $batches = $request->input('batches');
         $redraws = $request->input('redraws');
@@ -384,12 +384,22 @@ class ViralworksheetController extends Controller
         $my = new MiscViral;
 
         foreach ($samples as $key => $value) {
-            $data = [
-                'approvedby' => $approver,
-                'dateapproved' => $today,
-                'repeatt' => $actions[$key],
-                'dilutionfactor' => $dilutions[$key],
-            ];
+
+            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2){
+                $data = [
+                    'approvedby2' => $approver,
+                    'dateapproved2' => $today,
+                ];
+            }
+            else{
+                $data = [
+                    'approvedby' => $approver,
+                    'dateapproved' => $today,
+                ];
+            }
+
+            $data['repeatt'] = $actions[$key];
+            $data['dilutionfactor'] = $dilutions[$key];
 
             if(is_int($results[$key])){
                 $data['result'] = $results[$key] * $dilutions[$key];
@@ -407,19 +417,48 @@ class ViralworksheetController extends Controller
             }
         }
 
-        $batch = collect($batches);
-        $b = $batch->unique();
-        $unique = $b->values()->all();
+        if(in_array(env('APP_LAB'), $double_approval)){
+            if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
+                $batch = collect($batches);
+                $b = $batch->unique();
+                $unique = $b->values()->all();
 
-        foreach ($unique as $value) {
-            $my->check_batch($value);
+                foreach ($unique as $value) {
+                    $my->check_batch($value);
+                }
+
+                $worksheet->status_id = 3;
+                $worksheet->datereviewed2 = $today;
+                $worksheet->reviewedby2 = $approver;
+                $worksheet->save();
+
+                return redirect('/viralbatch/dispatch');                 
+            }
+            else{
+                $worksheet->datereviewed = $today;
+                $worksheet->reviewedby = $approver;
+                $worksheet->save();
+
+                return redirect('/viralworksheet');
+            }
         }
 
-        $worksheet->status_id = 3;
-        $worksheet->datereviewed = $today;
-        $worksheet->reviewedby = $approver;
-        $worksheet->save();
-        return redirect('/viralbatch/dispatch');
+        else{
+            $batch = collect($batches);
+            $b = $batch->unique();
+            $unique = $b->values()->all();
+
+            foreach ($unique as $value) {
+                $my->check_batch($value);
+            }
+
+            $worksheet->status_id = 3;
+            $worksheet->datereviewed = $today;
+            $worksheet->reviewedby = $approver;
+            $worksheet->save();
+
+            return redirect('/viralbatch/dispatch');            
+        }
     }
 
 

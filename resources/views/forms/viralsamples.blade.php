@@ -75,21 +75,21 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient / Sample ID</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required name="patient" type="text" value="{{ $viralsample->patient->patient or '' }}" id="patient">
+                                <input class="form-control" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $viralsample->provider_identifier or '' }}">
+                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $viralsample->provider_identifier ?? '' }}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) Patient Names</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $viralsample->patient_name or '' }}">
+                                <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
                             </div>
                         </div>
 
@@ -142,7 +142,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control lockable" value="{{ $viralsample->patient->dob or '' }}" name="dob">
+                                    <input type="text" id="dob" required class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
                                 </div>
                             </div>                            
                         </div>
@@ -152,10 +152,10 @@
                         <!-- <div class="form-group">
                             <label class="col-sm-4 control-label">Age</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months or '' }}">
+                                <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months ?? '' }}">
                             </div>
                             <div class="col-sm-8 col-sm-offset-4 input-sm" style="margin-top: 1em;">
-                                <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks or '' }}">
+                                <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks ?? '' }}">
                             </div>
                         </div> -->
 
@@ -164,14 +164,14 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" required class="form-control lockable" value="{{ $viralsample->patient->initiation_date or '' }}" name="initiation_date">
+                                    <input type="text" id="initiation_date" required class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Caregiver Phone No</label>
-                            <div class="col-sm-8"><input class="form-control" name="caregiver_phone" type="text" value="{{ $viralsample->patient->caregiver_phone or '' }}"></div>
+                            <div class="col-sm-8"><input class="form-control" name="caregiver_phone" type="text" value="{{ $viralsample->patient->caregiver_phone ?? '' }}"></div>
                         </div>
 
                     </div>
@@ -188,6 +188,13 @@
                         <center>Sample Information</center>
                     </div>
                     <div class="panel-body">
+
+                        <div class="form-group alupe-div">
+                            <label class="col-sm-4 control-label">VL Test Request Number</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" required name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $sample->vl_test_request_no ?? '' }}">
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Type of Sample</label>
@@ -230,7 +237,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen</label>
+                            <label class="col-sm-4 control-label">1st ?? 2nd Line Regimen</label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="regimenline" id="regimenline">
                                     <option value=""> Select One </option>
@@ -275,7 +282,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datecollected" required class="form-control" value="{{ $viralsample->datecollected or '' }}" name="datecollected">
+                                    <input type="text" id="datecollected" required class="form-control" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
                                 </div>
                             </div>                            
                         </div> 
@@ -287,7 +294,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility or '' }}" name="datedispatchedfromfacility">
+                                        <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
                                     </div>
                                 </div>                            
                             </div> 
@@ -304,7 +311,7 @@
                                     <div class="col-sm-8">
                                         <div class="input-group date">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived or '' }}" name="datereceived">
+                                            <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived ?? '' }}" name="datereceived">
                                         </div>
                                     </div>                            
                                 </div> 
@@ -493,6 +500,10 @@
                     $("#rejectedreason").attr("disabled", "disabled");
                 }
             });
+
+            @if(env('APP_LAB', 3) != 2)
+                $(".alupe-div").hide();
+            @endif  
 
             
         });

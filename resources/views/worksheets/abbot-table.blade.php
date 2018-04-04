@@ -104,7 +104,6 @@ width:1180px;
 				@php $count = 0; @endphp
 
 
-
 				@foreach($samples->where('parentid', '!=', 0) as $sample)
 
 					@php
@@ -134,7 +133,7 @@ width:1180px;
 
 					@php $count++; @endphp
 
-					@if($count % 7 == 0)
+					@if($count % 8 == 0)
 						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
 					@endif
 

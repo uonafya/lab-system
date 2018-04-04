@@ -57,17 +57,17 @@
 
         <div class="form-group">
             <label>Patient / Sample ID</label>
-            <input class="form-control" required name="patient_id" type="text" value="{{ $sample->patient_id or '' }}">
+            <input class="form-control" required name="patient_id" type="text" value="{{ $sample->patient_id ?? '' }}">
         </div>
 
         <div class="form-group">
             <label>(*for Ampath Sites only) AMRS Provider Identifier</label>
-            <input class="form-control ampath-only" required name="amrs_provider_id" type="text" value="{{ $sample->amrs_provider_id or '' }}">
+            <input class="form-control ampath-only" required name="amrs_provider_id" type="text" value="{{ $sample->amrs_provider_id ?? '' }}">
         </div>
 
         <div class="form-group">
             <label>(*for Ampath Sites only) Patient Names</label>
-            <input class="form-control ampath-only" required name="patient_name" type="text" value="{{ $sample->patient_name or '' }}">
+            <input class="form-control ampath-only" required name="patient_name" type="text" value="{{ $sample->patient_name ?? '' }}">
         </div>
 
         <div class="form-group">
@@ -91,8 +91,8 @@
 
         <div class="form-group">
             <label>Age</label>
-            <input class="form-control" required name="sample_months" type="text" value="{{ $sample->sample_months or '' }}">
-            <input class="form-control" required name="sample_weeks" type="text" value="{{ $sample->sample_weeks or '' }}">
+            <input class="form-control" required name="sample_months" type="text" value="{{ $sample->sample_months ?? '' }}">
+            <input class="form-control" required name="sample_weeks" type="text" value="{{ $sample->sample_weeks ?? '' }}">
         </div>
 
         <div class="form-group">

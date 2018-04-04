@@ -136,7 +136,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            localStorage.setItem("base_url", "{{ $myurl or '' }}/");
+            localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
 
             $(".date").datepicker({
                 startView: 0,

@@ -3,7 +3,7 @@
 namespace App\Api\V1\Controllers;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Tymon\JWTAuth\JWTAuth;
+// use Tymon\JWTAuth\JWTAuth;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\LoginRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -19,7 +19,7 @@ class LoginController extends Controller
      * @param JWTAuth $JWTAuth
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(LoginRequest $request, JWTAuth $JWTAuth)
+    public function login(LoginRequest $request)
     {
         $credentials = $request->only(['email', 'password']);
 

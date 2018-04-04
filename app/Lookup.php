@@ -9,17 +9,22 @@ use DB;
 class Lookup extends Model
 {
 
+    public static $double_approval = [2, 4, 5];
+    public static $amrs = [3, 5];
+
     public static function get_machines()
     {
         self::cacher();
         return Cache::get('machines');
     }
 
-    public function get_facilities()
+    public static function get_facilities()
     {
         self::cacher();
         return Cache::get('facilities');
     }
+
+
 
     public static function worksheet_lookups()
     {
@@ -70,6 +75,7 @@ class Lookup extends Model
 
             'facility_id' => session('facility_id', 0),
             'facility_name' => session('facility_name', 0),
+            'amrs' => self::$amrs,
         ];
 	}
 
@@ -82,7 +88,7 @@ class Lookup extends Model
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'entry_point'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'provider_identifier', 'amrs_location'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'provider_identifier', 'amrs_location', 'sample_type'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'high_priority'],
         ];
@@ -126,6 +132,7 @@ class Lookup extends Model
             'facility_name' => session('viral_facility_name', 0),
 
             'message' => session()->pull('viral_message'),
+            'amrs' => self::$amrs,
         ];
     }
 
@@ -136,7 +143,7 @@ class Lookup extends Model
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority'],
         ];

@@ -316,6 +316,13 @@ class SampleController extends Controller
         return $data;
     }
 
+    public function runs(Sample $sample)
+    {
+        $samples = $sample->child;
+        $sample->load(['patient']);
+        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+    }
+
     /**
      * Print the specified resource.
      *
@@ -340,7 +347,9 @@ class SampleController extends Controller
         $sample->repeatt = 0;
         $sample->result = 5;
         $sample->approvedby = auth()->user()->id;
+        $sample->approved2by = auth()->user()->id;
         $sample->dateapproved = date('Y-m-d');
+        $sample->dateapproved2 = date('Y-m-d');
         $sample->save();
         $my = new \App\Misc;
         $my->check_batch($sample->batch_id);

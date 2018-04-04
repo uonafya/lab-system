@@ -18,7 +18,9 @@ class CreateViralsamplesTable extends Migration
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('batch_id')->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
-            $table->string('provider_identifier')->nullable();
+            $table->string('provider_identifier', 50)->nullable();
+            $table->string('order_no', 30)->nullable();
+            $table->tinyInteger('vl_test_request_no')->nullable();
             $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();            
 
             // This will be used instead
@@ -41,9 +43,9 @@ class CreateViralsamplesTable extends Migration
             $table->string('reason_for_repeat')->nullable();
             $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
 
-            $table->string('result')->nullable()->index();
-            $table->string('units')->nullable();
-            $table->string('interpretation')->nullable();
+            $table->string('result', 50)->nullable()->index();
+            $table->string('units', 30)->nullable();
+            $table->string('interpretation', 50)->nullable();
 
             $table->integer('worksheet_id')->unsigned()->nullable();
             $table->boolean('inworksheet')->default(false);

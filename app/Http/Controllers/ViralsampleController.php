@@ -310,6 +310,13 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+    public function runs(Viralsample $sample)
+    {
+        $samples = $sample->child;
+        $sample->load(['patient']);
+        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+    }
+
     /**
      * Print the specified resource.
      *
@@ -334,7 +341,9 @@ class ViralsampleController extends Controller
         $viralsample->repeatt = 0;
         $viralsample->result = "Collect New Sample";
         $viralsample->approvedby = auth()->user()->id;
+        $viralsample->approved2by = auth()->user()->id;
         $viralsample->dateapproved = date('Y-m-d');
+        $viralsample->dateapproved2 = date('Y-m-d');
         $viralsample->save();
         $my = new \App\MiscViral;
         $my->check_batch($sample->batch_id);

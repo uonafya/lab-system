@@ -6,7 +6,7 @@ use App\BaseModel;
 
 class Worksheet extends BaseModel
 {
-    // protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
+    // protected $dates = ['datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
     
 
     public function getDayCutAttribute()
@@ -17,6 +17,11 @@ class Worksheet extends BaseModel
     public function getDayReviewedAttribute()
     {
         return $this->date_modifier($this->datereviewed);
+    }
+
+    public function getDayReviewed2Attribute()
+    {
+        return $this->date_modifier($this->datereviewed2);
     }
 
     public function getDayUploadedAttribute()
@@ -32,11 +37,6 @@ class Worksheet extends BaseModel
     public function getDayRunAttribute()
     {
         return $this->date_modifier($this->daterun);
-    }
-
-    public function getDayApprovedAttribute()
-    {
-        return $this->date_modifier($this->dateapproved);
     }
 
     public function getKitExpiryDayAttribute()
@@ -106,9 +106,10 @@ class Worksheet extends BaseModel
         return $this->belongsTo('App\User', 'reviewedby');
     }
 
-    public function approver()
+    public function reviewer2()
     {
-        return $this->belongsTo('App\User', 'approvedby');
+        return $this->belongsTo('App\User', 'reviewedby2');
     }
+
 
 }

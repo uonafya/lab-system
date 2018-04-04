@@ -77,7 +77,7 @@ class BatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('created_at', 'desc')
+            ->orderBy('datereceived', 'desc')
             ->limit($page_limit)
             ->offset($offset)
             ->get();

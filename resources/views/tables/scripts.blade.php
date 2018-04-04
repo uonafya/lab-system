@@ -12,7 +12,7 @@
 <script src="{{ asset('vendor/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
 <script src="{{ asset('vendor/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
 
-{{ $js_scripts or '' }}
+{{ $js_scripts ?? '' }}
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -38,7 +38,7 @@
             {
                 element.before(error);
             }
-            {{ $val_rules or '' }}
+            {{ $val_rules ?? '' }}
         });
 
         {{ $slot }}
