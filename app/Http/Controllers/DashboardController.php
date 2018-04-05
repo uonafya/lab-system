@@ -13,11 +13,59 @@ class DashboardController extends Controller
 
     public function index()
     {
-   		
+   		$monthly_test = (object) $this->lab_monthly_tests();
     	$lab_stats = (object) $this->lab_statistics();
+
     	$lab_tat_stats = (object) $this->lab_tat_statistics();
     	// dd($lab_tat_stats);
-    	return view('dashboard.home', compact('lab_stats'), compact('lab_tat_stats'))->with('pageTitle', 'Lab Dashboard');
+    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats'))->with('pageTitle', 'Lab Dashboard');
+    }
+
+    public function lab_monthly_tests()
+    {
+        $result = ['tests','positives','negatives','rejected'];
+        foreach ($result as $key => $value) {
+            $data[$value] = DB::table('samples')
+                                ->select(DB::RAW("MONTH(`datetested`) as `month`,MONTHNAME(`datetested`) as `monthname`,count(*) as $value"))
+                                ->when($value, function($query) use ($value){
+                                    if($value == 'tests'){
+                                        return $query->whereRaw('result between 1 and 7');
+                                    } else if($value == 'positives'){
+                                        return $query->where('result', 2);
+                                    } else if($value == 'negatives'){
+                                        return $query->where('result', 1);
+                                    }  else if($value == 'rejected'){
+                                        return $query->where('receivedstatus', 2);
+                                    }                
+                                })
+                                ->where('repeatt', '=', 0)
+                                ->where('parentid', '=', 0)
+                                ->groupBy('month', 'monthname')->get();
+        }
+        $chartData = self::__mergeMonthlyTests($data);
+        $data = [];
+        $data['testtrends'][0]['name'] = 'Rejected';
+        $data['testtrends'][1]['name'] = 'Positives';
+        $data['testtrends'][2]['name'] = 'Negatives';
+        $data['testtrends'][3]['name'] = 'Tests';
+
+        $data['testtrends'][0]['type'] = $data['testtrends'][1]['type'] = $data['testtrends'][2]['type'] = 'column';
+        $data['testtrends'][3]['type'] = 'spline';
+
+        $data['testtrends'][0]['tooltip'] = $data['testtrends'][1]['tooltip'] = $data['testtrends'][2]['tooltip'] = $data['testtrends'][3]['tooltip'] = ['valueSuffix' => ''];
+        
+        $data['categories'][0] = 'No Data';
+        $data['testtrends'][0]['data'][0] = $data['testtrends'][1]['data'][0] = $data['testtrends'][2]['data'][0] = $data['testtrends'][3]['data'][0] = 0;
+        foreach ($chartData as $key => $value) {
+            $data['categories'][$key] = $value['monthname'];
+            $data['testtrends'][0]['data'][$key] = (int) $value['rejected'];
+            $data['testtrends'][1]['data'][$key] = (int) $value['positives'];
+            $data['testtrends'][2]['data'][$key] = (int) $value['negatives'];
+            $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
+        }
+
+        return $data;
+        
     }
 
     public function lab_statistics()
@@ -52,6 +100,36 @@ class DashboardController extends Controller
             'tat4' => self::__getTAT(4),
             'tat5' => self::__getTAT(5)
         ];
+    }
+
+    public static function __mergeMonthlyTests($data = null)
+    {
+        if ($data == null)
+            return null;
+
+        $data = (object) $data;
+        $newData = [];
+        // Looping through tests and adding positives, negatives, and rejected
+        foreach ($data->tests as $key => $value) {
+            $newData[] = [
+                            'month' => $value->month, 'monthname' => $value->monthname,
+                            'tests' => $value->tests, 'positives' => 0,
+                            'negatives' => 0, 'rejected' => 0
+                        ];
+            foreach ($data->positives as $key2 => $value2) {
+                if ($value->month == $value2->month)
+                    $newData[$key]['positives'] =  (isset($value2->positives)) ? $value2->positives : 0 ;
+            }
+            foreach ($data->negatives as $key2 => $value2) {
+                if ($value->month == $value2->month)
+                    $newData[$key]['negatives'] =  (isset($value2->negatives)) ? $value2->negatives : 0 ;
+            }
+            foreach ($data->rejected as $key2 => $value2) {
+                if ($value->month == $value2->month)
+                    $newData[$key]['rejected'] =  (isset($value2->rejected)) ? $value2->rejected : 0 ;
+            }
+        }
+        return $newData;
     }
 
     public static function __getsampleResultByType($type = null)

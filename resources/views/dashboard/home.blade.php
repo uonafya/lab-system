@@ -192,24 +192,26 @@
                 text: ''
             },
             xAxis: [{
-                	categories: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                	categories: @php
+                                    echo json_encode($chart->categories)
+                                @endphp
             	}],
             yAxis: [{ // Primary yAxis
-               //  labels: {
-               //      formatter: function() {
-               //          return this.value +'%';
-               //      },
-               //      style: {
-               //          color: '#89A54E'
-               //      }
-               //  },
-               //  title: {
-               //      text: 'Percentage',
-               //      style: {
-               //          color: '#89A54E'
-               //      }
-               //  },
-               // opposite: true
+      //           labels: {
+      //               formatter: function() {
+      //                   return this.value +'%';
+      //               },
+      //               style: {
+      //                   color: '#89A54E'
+      //               }
+      //           },
+      //           title: {
+      //               text: 'Percentage',
+      //               style: {
+      //                   color: '#89A54E'
+      //               }
+      //           },
+      //          opposite: true
     		// }, { // Secondary yAxis
                 // gridLineWidth: 0,
                 title: {
@@ -242,36 +244,39 @@
                 floating: true,
                 backgroundColor: '#FFFFFF'
             },colors: [
-                        '#F2784B',
-                        // '#257766',
                         '#1BA39C',
+                        '#F2784B',
+                        '#257766',
                         '#257766'
                     ],
-            series: [{
-            		"name":"Not Suppressed",
-            		"type":"column",
-            		// "yAxis":1,
-            		"tooltip":{"valueSuffix":" "},
-            		"data":[17997,11953,8610,10797,7329,7721,5230,8737,4491,6496,3465,3261]
-            	},{
-            		"name":"Suppressed",
-            		"type":"column",
-            		// "yAxis":1,
-            		"tooltip":{"valueSuffix":" "},
-            		"data":[65540,49993,48984,44841,41172,37745,37228,34052,31418,27906,26946,23973]
-            	},{
-            		"name":"Something",
-            		"type":"column",
-            		// "yAxis":1,
-            		"tooltip":{"valueSuffix":" "},
-            		"data":[65540,49993,48984,44841,41172,37745,37228,34052,31418,27906,26946,23973]
-            	}]
+            series: @php
+                        echo json_encode($chart->testtrends)
+                    @endphp
+             //    [{
+            	// 	"name":"Not Suppressed",
+            	// 	"type":"column",
+            	// 	// "yAxis":1,
+            	// 	"tooltip":{"valueSuffix":" "},
+            	// 	"data":[17997,11953,8610,10797,7329,7721,5230,8737,4491,6496,3465,3261]
+            	// },{
+            	// 	"name":"Suppressed",
+            	// 	"type":"column",
+            	// 	// "yAxis":1,
+            	// 	"tooltip":{"valueSuffix":" "},
+            	// 	"data":[65540,49993,48984,44841,41172,37745,37228,34052,31418,27906,26946,23973]
+            	// },{
+            	// 	"name":"Something",
+            	// 	"type":"column",
+            	// 	// "yAxis":1,
+            	// 	"tooltip":{"valueSuffix":" "},
+            	// 	"data":[65540,49993,48984,44841,41172,37745,37228,34052,31418,27906,26946,23973]
             	// },{
             	// 	"name":"Suppression",
             	// 	"type":"spline",
             	// 	"tooltip":{"valueSuffix":" %"},
-            	// 	"data":[78.5,80.7,85.1,80.6,84.9,83,87.7,79.6,87.5,81.1,88.6,88]
-            	// },{
+            	// 	"data":[7850,80.7,85000,80.6,84.9,83000,87.7,79.6,87500,81.1,88.6,88]
+            	// }]
+                // },{
             	// 	"name":"90% Target",
             	// 	"type":"spline",
             	// 	"tooltip":{"valueSuffix":" %"},
@@ -353,7 +358,7 @@ $(function () {
         },
         yAxis: {
             min: 0,
-            max: 11,
+            max: {{ $lab_tat_stats->tat4 }},
             tickLength: 3,
             tickWidth: 1,
             tickColor: '#C0C0C0',
@@ -370,15 +375,15 @@ $(function () {
             },
             plotBands: [{
                 from: 0,
-                to: 4,
+                to: {{ $lab_tat_stats->tat1 }},
                 color: 'rgba(255,0,0,0.5)'
             }, {
-                from: 4,
-                to: 8,
+                from: {{ $lab_tat_stats->tat1 }},
+                to: {{ $lab_tat_stats->tat2+$lab_tat_stats->tat1 }},
                 color: 'rgba(255,255,0,0.5)'
             }, {
-                from: 8,
-                to: 11,
+                from: {{ $lab_tat_stats->tat2+$lab_tat_stats->tat1 }},
+                to: {{ $lab_tat_stats->tat3+$lab_tat_stats->tat2+$lab_tat_stats->tat1 }},
                 color: 'rgba(0,255,0,0.5)'
             }]
         },
@@ -408,7 +413,7 @@ $(function () {
     function (chart) {
         Highcharts.each(chart.series, function (serie) {
             var point = serie.points[0];
-            point.update(11);
+            point.update({{ $lab_tat_stats->tat4 }});
         });
 
     });
