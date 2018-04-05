@@ -6,11 +6,61 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use DB;
 
+use Carbon\Carbon;
+
 class Lookup extends Model
 {
 
     public static $double_approval = [2, 4, 5];
     public static $amrs = [3, 5];
+
+    public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
+
+
+
+    public static function my_date_format($value)
+    {
+        if($value) return date('d-M-Y', strtotime($value));
+        return '';
+    }
+
+    public static function get_gender($value)
+    {
+        $value = trim($value);
+        if($value == 'M' || $value == 'm'){
+            return 1;
+        }
+        else if($value == 'F' || $value == 'f'){
+            return 2;
+        }
+        else if($value == 'No Data' || $value == 'No data'){
+            return 3;
+        }
+        else if (is_int($value)){
+            return $value;
+        }
+        else{
+            return 3;
+        }
+    }
+
+    public static function get_api()
+    {
+        self::cacher();
+        return [
+            'genders' => Cache::get('genders'),
+            'amrs_locations' => Cache::get('amrs_locations'),
+            'results' => Cache::get('results'),
+            'received_statuses' => Cache::get('received_statuses'),
+        ];
+    }
+
+    public static function facility_mfl($mfl)
+    {
+        self::cacher(); 
+        $fac = Cache::get('facilities');       
+        return $fac->where('facilitycode', $mfl)->first();
+    }
 
     public static function get_machines()
     {
@@ -79,6 +129,24 @@ class Lookup extends Model
         ];
 	}
 
+    public static function calculate_age($date_collected, $dob)
+    {
+        // $patient_age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
+        // $dt = Carbon::today();
+        // $dt->subMonths($request->input('sample_months'));
+        // $dt->subWeeks($request->input('sample_weeks'));
+        // $patient->dob = $dt->toDateString();
+
+        // $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
+        $dob = Carbon::parse( $dob );
+        $dc = Carbon::parse( $date_collected );
+        $months = $dc->diffInMonths($dob);
+        $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
+        $total = $months + ($weeks / 4);
+        if($total == 0) $total = 0.1;
+        return $total;
+    }
+
     public static function samples_arrays()
     {
         return [
@@ -134,6 +202,16 @@ class Lookup extends Model
             'message' => session()->pull('viral_message'),
             'amrs' => self::$amrs,
         ];
+    }
+
+    public static function calculate_viralage($date_collected, $dob)
+    {
+        $dob = Carbon::parse( $dob );
+        $dc = Carbon::parse( $date_collected );
+        $years = $dc->diffInYears($dob, true);
+
+        if($years == 0) $years = ($dc->diffInMonths($dob)/12);
+        return $years;
     }
 
     public static function viralsamples_arrays()

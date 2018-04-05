@@ -439,11 +439,6 @@ class ViralbatchController extends Controller
 
     public function checknull($var)
     {
-        if($var->isEmpty()){
-            return 0;
-        }else{
-            // return $var->sum('totals');
-            return $var->first()->totals;
-        }
+        return $var->first()->totals ?? 0;
     }
 }

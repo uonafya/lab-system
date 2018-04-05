@@ -42,7 +42,7 @@ class WorksheetController extends Controller
 
         foreach ($worksheets as $key => $worksheet) {
             $new_key = $key+1;
-            $table_rows .= "<tr> <td>{$new_key}</td> <td>" . $worksheet->created_at->toFormattedDateString() . "</td><td> " . $worksheet->creator->full_name . "</td><td>" . $this->mtype($worksheet->machine_type) . "</td><td>";
+            $table_rows .= "<tr> <td>{$new_key}</td> <td>" . $worksheet->my_date_format('created_at') . "</td><td> " . $worksheet->creator->full_name . "</td><td>" . $this->mtype($worksheet->machine_type) . "</td><td>";
             $status = $worksheet->status_id;
             $table_rows .= $this->wstatus($status) . "</td><td>";
 
@@ -64,7 +64,7 @@ class WorksheetController extends Controller
                 }
             }
 
-            $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->daterun . "</td><td>" . $worksheet->dateuploaded . "</td><td>" . $worksheet->datereviewed . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
+            $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->my_date_format('daterun') . "</td><td>" . $worksheet->my_date_format('dateuploaded') . "</td><td>" . $worksheet->my_date_format('datereviewed') . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
 
         }
 
@@ -638,12 +638,7 @@ class WorksheetController extends Controller
 
     public function checknull($var)
     {
-        if($var->isEmpty()){
-            return 0;
-        }else{
-            // return $var->sum('totals');
-            return $var->first()->totals;
-        }
+        return $var->first()->totals ?? 0;
     }
 
 }
