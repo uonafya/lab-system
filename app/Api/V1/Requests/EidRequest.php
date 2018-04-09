@@ -8,7 +8,9 @@ class EidRequest extends FormRequest
 {
     public function rules()
     {
-        return [];
+        return [
+        	'datecollected' => 'date_format:Y-m-d'
+        ];
     }
 
     public function authorize()

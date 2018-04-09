@@ -8,11 +8,6 @@ class Patient extends BaseModel
 {
     // protected $dates = ['datesynched', 'dob'];
 
-    public function getDateBirthAttribute()
-    {
-        return $this->date_modifier($this->dob);
-    }
-
     public function sample()
     {
     	return $this->hasMany('App\Sample');
@@ -26,5 +21,10 @@ class Patient extends BaseModel
     public function facility()
     {
         return $this->belongsTo('App\Facility');
+    }
+
+    public function scopeExisting($query, $facility_id, $hei_number)
+    {
+        return $query->where(['facility_id' => $facility_id, 'patient' => $hei_number]);
     }
 }

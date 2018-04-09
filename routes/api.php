@@ -46,6 +46,9 @@ $api->version('v1', function (Router $api) {
             return \App\Facility::paginate(10);
         });
 
+        $api->post('eid', 'EidController@complete_result');        
+
+
         $api->post('function', 'FunctionController@api');
     });
 

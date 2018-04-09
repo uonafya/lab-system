@@ -59,7 +59,7 @@ class Lookup extends Model
     {
         self::cacher(); 
         $fac = Cache::get('facilities');       
-        return $fac->where('facilitycode', $mfl)->first();
+        return $fac->where('facilitycode', $mfl)->first()->id;
     }
 
     public static function get_machines()
@@ -159,6 +159,8 @@ class Lookup extends Model
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'provider_identifier', 'amrs_location', 'sample_type'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'high_priority'],
+
+            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'mother_prophylaxis', 'feeding', 'regimen', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
         ];
     }
 
@@ -214,6 +216,28 @@ class Lookup extends Model
         return $years;
     }
 
+
+    public static function viral_regimen($value)
+    {
+        self::cacher();       
+        $my_array = Cache::get('prophylaxis');       
+        return $my_array->where('category', $val)->first()->id ?? 16;
+    }    
+
+    public static function justification($value)
+    {
+        self::cacher();       
+        $my_array = Cache::get('justifications');       
+        return $my_array->where('rank', $val)->first()->id ?? 8;
+    }    
+
+    public static function sample_type($value)
+    {
+        self::cacher();       
+        $my_array = Cache::get('sample_types');       
+        return $my_array->where('alias', $val)->first()->id;
+    }
+
     public static function viralsamples_arrays()
     {
         return [
@@ -224,6 +248,8 @@ class Lookup extends Model
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority'],
+
+            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
         ];
     }
 

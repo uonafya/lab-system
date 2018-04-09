@@ -8,25 +8,7 @@ class Viralbatch extends BaseModel
 {
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
-    public function getDayReceivedAttribute()
-    {
-        return $this->date_modifier($this->datereceived);
-    }
-    
-    public function getDayDispatchedAttribute()
-    {
-        return $this->date_modifier($this->datedispatched);
-    }
-    
-    public function getDayModifiedAttribute()
-    {
-        return $this->date_modifier($this->datemodified);
-    }
-    
-    public function getDayApprovedAttribute()
-    {
-        return $this->date_modifier($this->dateapproved);
-    }
+    protected $withCount = ['sample'];
 
 	public function sample()
     {
@@ -51,5 +33,11 @@ class Viralbatch extends BaseModel
     public function creator()
     {
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+
+    public function scopeExisting($query, $facility, $datereceived, $lab)
+    {
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab]);
     }
 }

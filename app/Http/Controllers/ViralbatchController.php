@@ -20,47 +20,21 @@ class ViralbatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($batch_complete=4, $page=NULL, $date_start=NULL, $date_end=NULL)
+
+    public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
-        $myurl = url('viralbatch/index/' . $batch_complete . '/' . $page . '/');
+        $myurl = url('viralbatch/index/' . $batch_complete);
         $user = auth()->user();
-        $my = new MiscViral;
         $facility_user = false;
-
         if($user->user_type_id == 5) $facility_user=true;
+
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
-        
-        $b = Viralbatch::selectRaw('count(id) as mycount')
-            ->when($date_start, function($query) use ($date_start, $date_end){
-                if($date_end)
-                {
-                    return $query->whereDate('viralbatches.datereceived', '>=', $date_start)
-                    ->whereDate('viralbatches.datereceived', '<=', $date_end);
-                }
-                return $query->whereDate('viralbatches.datereceived', $date_start);
-            })
-            ->when($facility_user, function($query) use ($string){
-                return $query->whereRaw($string);
-            })
-            ->when(true, function($query) use ($batch_complete){
-                if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
-            })
-            ->get()
-            ->first();
 
-        $page_limit = env('PAGE_LIMIT', 10);
+        $my = new MiscViral;
 
-        if($page == NULL || $page == 'null'){
-            $page=1;
-        }
-
-        $last_page = ceil($b->mycount / $page_limit);
-        $last_page = (int) $last_page;
-
-        $offset = ($page-1) * $page_limit;
-
-        $batches = Viralbatch::select('viralbatches.*', 'facilitys.name')
+        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
                 {
@@ -76,16 +50,9 @@ class ViralbatchController extends Controller
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
             ->orderBy('datereceived', 'desc')
-            ->limit($page_limit)
-            ->offset($offset)
-            ->get();
-
-        if($batches->isEmpty()){
-            return view('tables.batches', ['rows' => null, 'links' => null, 'myurl' => $myurl, 'pre' => 'viral']);
-        }
+            ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-
         $noresult_a = $my->get_totals(0, $batch_ids, false);
         $redraw_a = $my->get_totals(5, $batch_ids, false);
         $failed_a = $my->get_totals(3, $batch_ids, false);
@@ -95,17 +62,15 @@ class ViralbatchController extends Controller
         $rejected = $my->get_rejected($batch_ids, false);
         $currentdate=date('d-m-Y');
 
-        $table_rows = "";
+        $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected, $currentdate, $my){
 
-        foreach ($batches as $key => $batch) {
+            $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
 
-            $undetected = $this->checknull($undetected_a->where('batch_id', $batch->id));
-            $detected = $this->checknull($detected_a->where('batch_id', $batch->id));
-            $failed = $this->checknull($failed_a->where('batch_id', $batch->id));
-            $redraw = $this->checknull($redraw_a->where('batch_id', $batch->id));
-            $noresult = $this->checknull($noresult_a->where('batch_id', $batch->id));
-
-            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
 
             $result = $detected + $undetected + $redraw + $failed;
@@ -121,23 +86,20 @@ class ViralbatchController extends Controller
 
             $delays = $my->working_days($datereceived, $max);
 
-            $table_rows .= "<tr> 
-            <td>{$batch->id}</td>
-            <td>{$batch->name}</td>
-            <td>{$batch->datereceived}</td>
-            <td>" . $batch->created_at->toDateString() . "</td>
-            <td>{$delays}</td>
-            <td></td>
-            <td>{$total}</td>
-            <td>{$rej}</td>
-            <td>{$result}</td>
-            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete) . "
-            </tr>";
-        }
+            $batch->delays = $delays;
+            $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = $result;
+            $batch->noresult = $noresult;
+            $batch->status = $batch->batch_complete;
+            $batch->approval = false;
+            return $batch;
+        });
 
-        $links = $my->page_links($page, $last_page, $date_start, $date_end);
-
-        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => 'viral']);
+        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => 'viral']);
     }
 
     /**
@@ -323,11 +285,12 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Viralbatch::select('viralbatches.*', 'facilitys.name')
-            ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'creator.name as creator'])
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('facilitys as creator', 'creator.id', '=', 'viralbatches.user_id')
             ->whereNull('received_by')
             ->where('site_entry', 1)
-            ->get();
+            ->paginate();
 
         $my = new MiscViral;
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -336,31 +299,26 @@ class ViralbatchController extends Controller
 
         $rejected = $my->get_rejected($batch_ids, false);
 
-        $table_rows = "";
+        $batches->transform(function($batch, $key) use ($noresult_a, $rejected){
 
-        foreach ($batches as $key => $batch) {
-
-            $noresult = $this->checknull($noresult_a->where('batch_id', $batch->id));
-
-            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $noresult + $rej;
 
-            $result = $noresult = $datereceived = '';
+            $batch->delays = '';
+            $batch->creator = $batch->creator;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = '';
+            $batch->noresult = $noresult;
+            $batch->status = $batch->batch_complete;
+            $batch->approval = true;
+            return $batch;
+        });
 
-            $table_rows .= "<tr> 
-            <td>{$batch->id}</td>
-            <td>{$batch->name}</td>
-            <td>{$batch->datereceived}</td>
-            <td>" . $batch->created_at->toDateString() . "</td>
-            <td></td>
-            <td></td>
-            <td>{$total}</td>
-            <td>{$rej}</td>
-            <td>{$result}</td>
-            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
-            </tr>";
-        }
-        return view('tables.batches', ['rows' => $table_rows, 'links' => '']);
+        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
     }
 
     public function site_entry_approval(Viralbatch $batch)

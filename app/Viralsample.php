@@ -8,26 +8,6 @@ class Viralsample extends BaseModel
 {
     // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
-    public function getDayCollectedAttribute()
-    {
-        return $this->date_modifier($this->datecollected);
-    }
-
-    public function getDayTestedAttribute()
-    {
-        return $this->date_modifier($this->datetested);
-    }
-
-    public function getDayModifiedAttribute()
-    {
-        return $this->date_modifier($this->datemodified);
-    }
-
-    public function getDayApprovedAttribute()
-    {
-        return $this->date_modifier($this->dateapproved);
-    }
-
 
     public function patient()
     {
