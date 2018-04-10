@@ -34,6 +34,13 @@ class SampleController extends Controller
         return view('forms.samples', $data);
     }
 
+    public function create_poc()
+    {
+        $data = Lookup::samples_form();
+        $data['poc'] = true;
+        return view('forms.samples', $data);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -77,11 +84,6 @@ class SampleController extends Controller
 
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->received_by = auth()->user()->id;
-                $batch->site_entry = 0;
-            }
-
-            if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 1;
             }
 
             $batch->save();
@@ -93,7 +95,6 @@ class SampleController extends Controller
             DB::table('batches')->where('id', $batch_no)->update(['datedispatchedfromfacility' => $ddispatched]);
             session(['batch_dispatch' => 1]);
         }
-
 
         $new_patient = $request->input('new_patient');
 
@@ -169,7 +170,8 @@ class SampleController extends Controller
             DB::table('batches')->where('id', $batch_no)->update(['input_complete' => 1, 'batch_full' => 1]);
         }
 
-        return redirect()->route('sample.create');
+        // return redirect()->route('sample.create');
+        return back();
     }
 
     /**

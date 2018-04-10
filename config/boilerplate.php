@@ -80,6 +80,7 @@ return [
         'feeding' => 'required|integer',
         'regimen' => 'required|integer|max:20',
         'mother_prophylaxis' => 'required|integer|max:20',
+        'pcrtype' => 'required|integer|max:7',        
     ],
 
     'vl' => [

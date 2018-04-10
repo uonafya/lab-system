@@ -26,6 +26,18 @@
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+
+            @if(isset($poc))
+                <input type="hidden" value=2 name="site_entry">
+            @else
+                @if(auth()->user()->user_type_id == 5)
+                    <input type="hidden" value=1 name="site_entry">
+                @else
+                    <input type="hidden" value=0 name="site_entry">
+                @endif
+
+            @endif
+
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
@@ -34,6 +46,8 @@
             <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
+
+
 
                         @if($facility_id == 0)    
                           <div class="form-group">

@@ -104,6 +104,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('sample/release/{sample}', 'SampleController@release_redraw');
 	Route::get('sample/print/{sample}', 'SampleController@individual');
 	Route::get('sample/runs/{sample}', 'SampleController@runs');
+	Route::get('sample/create_poc', 'SampleController@create_poc');
 	Route::resource('sample', 'SampleController');
 
 	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
