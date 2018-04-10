@@ -70,7 +70,11 @@
 		                			 [ {{ round(@(($lab_stats->rejectedSamples/$lab_stats->receivedSamples)*100),1) }}% ]</td>
 		                		</tr>
 		                		<tr>
-		                			<td>No. of Tested Samples ( + or - or Redraws )</td>
+		                			<td>No. of Tested Samples 
+                                        @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
+                                            ( + or - or Redraws )
+                                        @endif
+                                    </td>
 		                			<td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
 		                		</tr>
 		                		<tr>

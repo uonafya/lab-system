@@ -13,9 +13,9 @@ class DashboardController extends Controller
 
     public function index()
     {
+        // dd(session('testingSystem));
    		$monthly_test = (object) $this->lab_monthly_tests();
     	$lab_stats = (object) $this->lab_statistics();
-
     	$lab_tat_stats = (object) $this->lab_tat_statistics();
     	// dd($lab_tat_stats);
     	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats'))->with('pageTitle', 'Lab Dashboard');
