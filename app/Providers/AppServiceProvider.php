@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Batch;
+use App\Viralbatch;
+
+use App\Observers\BatchObserver;
+use App\Observers\ViralbatchObserver;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,7 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Batch::observe(BatchObserver::class);
+        Viralbatch::observe(ViralbatchObserver::class);
     }
 
     /**

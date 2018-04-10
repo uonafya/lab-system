@@ -3,6 +3,7 @@
 namespace App;
 
 use App\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 
 class Batch extends BaseModel
 {
@@ -10,6 +11,15 @@ class Batch extends BaseModel
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
     protected $withCount = ['sample'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('siteentry', function(Builder $builder){
+            $builder->where('site_entry', '!=', 2);
+        });
+    }
 
 	public function sample()
     {

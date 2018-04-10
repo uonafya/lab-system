@@ -11,6 +11,11 @@ class BaseModel extends Model
     protected $revisionCleanup = true; 
     protected $historyLimit = 500; 
     protected $guarded = [];
+
+    protected static function boot()
+    {
+        parent::boot();
+    }
     
 
     protected function date_modifier($value)
