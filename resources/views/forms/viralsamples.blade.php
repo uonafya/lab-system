@@ -29,7 +29,7 @@
                               <div class="col-sm-8">
                                 <select class="form-control" required name="facility_id" id="facility_id">
                                     @isset($viralsample)
-                                        <option value="{{ $sample->patient->facility->id }}">{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
+                                        <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endisset
                                 </select>
                               </div>
