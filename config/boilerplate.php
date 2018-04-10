@@ -51,34 +51,46 @@ return [
         ]
     ],
 
+    'sample_base' => [
+        'dob' => 'required|date_format:Y-m-d',
+        'datecollected' => 'required|date_format:Y-m-d',
+        'patient_identifier' => 'required',
+        'mflCode' => 'required|integer|digits:5', 
+        'sex' => 'required|integer|max:3', 
+    ],
+
     'complete_result' => [
-        'dob' => 'date_format:Y-m-d',
-        'datecollected' => 'date_format:Y-m-d',
-        'datereceived' => 'date_format:Y-m-d',
-        'datetested' => 'date_format:Y-m-d',
-        'datedispatched' => 'date_format:Y-m-d',
+        
+        'datereceived' => 'required|date_format:Y-m-d',
+        'datetested' => 'date_format:Y-m-d|required_if:receivedstatus,==,1',
+        'datedispatched' => 'date_format:Y-m-d|required_if:receivedstatus,==,1',
 
-        'editted' => 'filled',
+        'editted' => 'filled|integer',
         'lab' => 'required|integer',
-        'mflCode' => 'required|integer',
         'result' => 'required',
-        'sex' => 'filled',
-        'gender' => 'filled',
+        'receivedstatus' => 'required|integer|max:5',
+        'rejectedreason' => 'required_if:receivedstatus,==,2',
+        // 'gender' => 'filled',
     ], 
 
-    'incomplete_result' => [
-        'dob' => 'date_format:Y-m-d',
-        'datecollected' => 'date_format:Y-m-d',
-        'datereceived' => 'date_format:Y-m-d',
-        'datetested' => 'date_format:Y-m-d',
-        'datedispatched' => 'date_format:Y-m-d',
+    'eid' => [
+        'hiv_status' => 'integer',
+        'entry_point' => 'integer',
+        'spots' => 'integer',
+        'feeding' => 'required|integer',
+        'regimen' => 'required|integer|max:20',
+        'mother_prophylaxis' => 'required|integer|max:20',
+    ],
 
-        'editted' => 'filled',
-        'lab' => 'required|integer',
-        'mflCode' => 'required|integer',
-        'result' => 'required',
-        'sex' => 'filled',
-        'gender' => 'filled',
-    ], 
+    'vl' => [
+        'initiation_date' => 'date_format:Y-m-d',
+        'prophylaxis' => 'required|integer|max:25',
+        'regimenline' => 'required|integer|max:10',
+        'sampletype' => 'required|integer|max:10',
+        'justification' => 'required|integer|max:15',
+        'pmtct' => 'integer|max:3|required_if:sex,==,2',
+    ],
+
+
 
 ];
