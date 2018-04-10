@@ -2,7 +2,7 @@
 <script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 
-{{ $js_scripts or '' }}
+{{ $js_scripts ?? '' }}
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -61,7 +61,7 @@
             {
                 element.before(error);
             }
-            {{ $val_rules or '' }}
+            {{ $val_rules ?? '' }}
         });
 
         $("#sampleSearch").select2({

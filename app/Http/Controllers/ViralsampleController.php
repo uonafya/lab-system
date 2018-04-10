@@ -8,7 +8,7 @@ use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
 use DB;
-use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 
 class ViralsampleController extends Controller
@@ -139,14 +139,7 @@ class ViralsampleController extends Controller
             $viralsample = new Viralsample;
             $viralsample->fill($data);
             $viralsample->batch_id = $batch_no;
-
-            $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $dob = Carbon::parse( $request->input('dob') );
-            $years = $dc->diffInYears($dob, true);
-
-            if($years == 0) $years =  ($dc->diffInMonths($dob)/12);
-
-            $viralsample->age = $years;
+            $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
             $viralsample->save();
         }
 
@@ -156,15 +149,11 @@ class ViralsampleController extends Controller
             $viralpatient->fill($data);
             $viralpatient->save();
 
-            $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $dob = Carbon::parse( $request->input('dob') );
-            $viralpatient_age = $dc->diffInYears($dob, true);
-
             $data = $request->only($viralsamples_arrays['sample']);
             $viralsample = new Viralsample;
             $viralsample->fill($data);
             $viralsample->patient_id = $viralpatient->id;
-            $viralsample->age = $viralpatient_age;
+            $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
             $viralsample->batch_id = $batch_no;
             $viralsample->save();
 
@@ -233,11 +222,7 @@ class ViralsampleController extends Controller
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
 
-        $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-        $dob = Carbon::parse( $request->input('dob') );
-        $years = $dc->diffInYears($dob, true);
-
-        $viralsample->age = $years;
+        $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
 
         $batch = Viralbatch::find($viralsample->batch_id);
         $data = $request->only($viralsamples_arrays['batch']);
@@ -310,6 +295,13 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+    public function runs(Viralsample $sample)
+    {
+        $samples = $sample->child;
+        $sample->load(['patient']);
+        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+    }
+
     /**
      * Print the specified resource.
      *
@@ -334,7 +326,9 @@ class ViralsampleController extends Controller
         $viralsample->repeatt = 0;
         $viralsample->result = "Collect New Sample";
         $viralsample->approvedby = auth()->user()->id;
+        $viralsample->approved2by = auth()->user()->id;
         $viralsample->dateapproved = date('Y-m-d');
+        $viralsample->dateapproved2 = date('Y-m-d');
         $viralsample->save();
         $my = new \App\MiscViral;
         $my->check_batch($sample->batch_id);

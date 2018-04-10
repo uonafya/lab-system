@@ -24,18 +24,6 @@
                             <label class="control-label" for="email" style="color: black;margin-bottom: 8px;">Facility:</label>
                                 <select class="form-control" required name="facility_id" id="facility_id">
 
-                                  <option value=""> Select One </option>
-                                  @foreach ($facilities as $facility)
-                                      <option value="{{ $facility->id }}"
-
-                                      @if (isset($sample) && $sample->patient->facility_id == $facility->id)
-                                          selected
-                                      @endif
-
-                                      > {{ $facility->name }}
-                                      </option>
-                                  @endforeach
-
                                 </select>
                             @if ($errors->has('email'))
                                 <span class="help-block">
@@ -66,11 +54,21 @@
 
 @section('scripts')
 
+@include('layouts.searches')
+
+
 <script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
 
-        $("#facility_id").select2();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+
 
         @php
             if (isset($login_error)) {

@@ -19,8 +19,7 @@ $factory->define(App\User::class, function (Faker $faker) {
 
     return [
         'user_type_id' => rand(1, 5),
-        // 'lab_id' => rand(1, 5),
-        'lab_id' => 3,
+        'lab_id' => env('APP_LAB'),
         'surname' => $faker->lastName,
         'oname' => $faker->firstName,
         'email' => $faker->unique()->safeEmail,
@@ -37,7 +36,7 @@ $factory->define(App\Batch::class, function (Faker $faker) {
         'batch_full' => 1,
         'input_complete' => 1,
         // 'lab_id' => rand(1, 7),
-        'lab_id' => 3,
+        'lab_id' => env('APP_LAB'),
         'facility_id' => rand(1, 1000),
         // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
         'datereceived' => $faker->numerify('2017-0#-1#'),
@@ -89,7 +88,7 @@ $factory->define(App\Viralbatch::class, function (Faker $faker) {
         'batch_full' => 1,
         'input_complete' => 1,
         // 'lab_id' => rand(1, 7),
-        'lab_id' => 3,
+        'lab_id' => env('APP_LAB'),
         'facility_id' => rand(1, 1000),
         // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
         'datereceived' => $faker->numerify('2017-0#-1#'),

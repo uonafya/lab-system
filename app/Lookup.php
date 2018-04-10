@@ -6,8 +6,61 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use DB;
 
+use Carbon\Carbon;
+
 class Lookup extends Model
 {
+
+    public static $double_approval = [2, 4, 5];
+    public static $amrs = [3, 5];
+
+    public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
+
+
+
+    public static function my_date_format($value)
+    {
+        if($value) return date('d-M-Y', strtotime($value));
+        return '';
+    }
+
+    public static function get_gender($value)
+    {
+        $value = trim($value);
+        if($value == 'M' || $value == 'm'){
+            return 1;
+        }
+        else if($value == 'F' || $value == 'f'){
+            return 2;
+        }
+        else if($value == 'No Data' || $value == 'No data'){
+            return 3;
+        }
+        else if (is_int($value)){
+            return $value;
+        }
+        else{
+            return 3;
+        }
+    }
+
+    public static function get_api()
+    {
+        self::cacher();
+        return [
+            'genders' => Cache::get('genders'),
+            'amrs_locations' => Cache::get('amrs_locations'),
+            'results' => Cache::get('results'),
+            'received_statuses' => Cache::get('received_statuses'),
+        ];
+    }
+
+    public static function facility_mfl($mfl)
+    {
+        self::cacher(); 
+        $fac = Cache::get('facilities');       
+        return $fac->where('facilitycode', $mfl)->first()->id;
+    }
 
     public static function get_machines()
     {
@@ -15,11 +68,13 @@ class Lookup extends Model
         return Cache::get('machines');
     }
 
-    public function get_facilities()
+    public static function get_facilities()
     {
         self::cacher();
         return Cache::get('facilities');
     }
+
+
 
     public static function worksheet_lookups()
     {
@@ -51,7 +106,7 @@ class Lookup extends Model
         self::cacher();
         return [
             // 'facilities' => DB::table('facilitys')->select('id', 'name')->get(),
-            'facilities' => Cache::get('facilities'),
+            // 'facilities' => Cache::get('facilities'),
             'amrs_locations' => Cache::get('amrs_locations'),
             'rejectedreasons' => Cache::get('rejected_reasons'),
             'genders' => Cache::get('genders'),
@@ -70,8 +125,27 @@ class Lookup extends Model
 
             'facility_id' => session('facility_id', 0),
             'facility_name' => session('facility_name', 0),
+            'amrs' => self::$amrs,
         ];
 	}
+
+    public static function calculate_age($date_collected, $dob)
+    {
+        // $patient_age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
+        // $dt = Carbon::today();
+        // $dt->subMonths($request->input('sample_months'));
+        // $dt->subWeeks($request->input('sample_weeks'));
+        // $patient->dob = $dt->toDateString();
+
+        // $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
+        $dob = Carbon::parse( $dob );
+        $dc = Carbon::parse( $date_collected );
+        $months = $dc->diffInMonths($dob);
+        $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
+        $total = $months + ($weeks / 4);
+        if($total == 0) $total = 0.1;
+        return $total;
+    }
 
     public static function samples_arrays()
     {
@@ -82,9 +156,11 @@ class Lookup extends Model
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'entry_point'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'provider_identifier', 'amrs_location'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'provider_identifier', 'amrs_location', 'sample_type'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'high_priority'],
+
+            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'mother_prophylaxis', 'feeding', 'regimen', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
         ];
     }
 
@@ -106,7 +182,7 @@ class Lookup extends Model
     {
         self::cacher();
         return [
-            'facilities' => Cache::get('facilities'),
+            // 'facilities' => Cache::get('facilities'),
             'amrs_locations' => Cache::get('amrs_locations'),
             'genders' => Cache::get('genders'),
             'rejectedreasons' => Cache::get('viral_rejected_reasons'),
@@ -126,7 +202,40 @@ class Lookup extends Model
             'facility_name' => session('viral_facility_name', 0),
 
             'message' => session()->pull('viral_message'),
+            'amrs' => self::$amrs,
         ];
+    }
+
+    public static function calculate_viralage($date_collected, $dob)
+    {
+        $dob = Carbon::parse( $dob );
+        $dc = Carbon::parse( $date_collected );
+        $years = $dc->diffInYears($dob, true);
+
+        if($years == 0) $years = ($dc->diffInMonths($dob)/12);
+        return $years;
+    }
+
+
+    public static function viral_regimen($value)
+    {
+        self::cacher();       
+        $my_array = Cache::get('prophylaxis');       
+        return $my_array->where('category', $val)->first()->id ?? 16;
+    }    
+
+    public static function justification($value)
+    {
+        self::cacher();       
+        $my_array = Cache::get('justifications');       
+        return $my_array->where('rank', $val)->first()->id ?? 8;
+    }    
+
+    public static function sample_type($value)
+    {
+        self::cacher();       
+        $my_array = Cache::get('sample_types');       
+        return $my_array->where('alias', $val)->first()->id;
     }
 
     public static function viralsamples_arrays()
@@ -136,9 +245,11 @@ class Lookup extends Model
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority'],
+
+            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
         ];
     }
 

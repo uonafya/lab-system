@@ -42,7 +42,7 @@ class WorksheetController extends Controller
 
         foreach ($worksheets as $key => $worksheet) {
             $new_key = $key+1;
-            $table_rows .= "<tr> <td>{$new_key}</td> <td>" . $worksheet->created_at->toFormattedDateString() . "</td><td> " . $worksheet->creator->full_name . "</td><td>" . $this->mtype($worksheet->machine_type) . "</td><td>";
+            $table_rows .= "<tr> <td>{$new_key}</td> <td>" . $worksheet->my_date_format('created_at') . "</td><td> " . $worksheet->creator->full_name . "</td><td>" . $this->mtype($worksheet->machine_type) . "</td><td>";
             $status = $worksheet->status_id;
             $table_rows .= $this->wstatus($status) . "</td><td>";
 
@@ -64,7 +64,7 @@ class WorksheetController extends Controller
                 }
             }
 
-            $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->daterun . "</td><td>" . $worksheet->dateuploaded . "</td><td>" . $worksheet->datereviewed . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
+            $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->my_date_format('daterun') . "</td><td>" . $worksheet->my_date_format('dateuploaded') . "</td><td>" . $worksheet->my_date_format('datereviewed') . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
 
         }
 
@@ -447,7 +447,7 @@ class WorksheetController extends Controller
     }
 
     public function approve_results(Worksheet $worksheet)
-    {
+    {        
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
         $results = DB::table('results')->get();
@@ -466,16 +466,17 @@ class WorksheetController extends Controller
 
         $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet])->with('pageTitle', 'Worksheet Approval');
+        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval]);
     }
 
     public function approve(Request $request, Worksheet $worksheet)
     {
+        $double_approval = Lookup::$double_approval;
         $samples = $request->input('samples');
         $batches = $request->input('batches');
         $results = $request->input('results');
         $actions = $request->input('actions');
-        // dd($batches);
+
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
@@ -483,12 +484,22 @@ class WorksheetController extends Controller
         $my = new Misc;
 
         foreach ($samples as $key => $value) {
-            $data = [
-                'approvedby' => $approver,
-                'dateapproved' => $today,
-                'result' => $results[$key],
-                'repeatt' => $actions[$key],
-            ];
+
+            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->reviewedby != $approver){
+                $data = [
+                    'approvedby2' => $approver,
+                    'dateapproved2' => $today,
+                ];
+            }
+            else{
+                $data = [
+                    'approvedby' => $approver,
+                    'dateapproved' => $today,
+                ];
+            }
+
+            $data['result'] = $results[$key];
+            $data['repeatt'] = $actions[$key];
 
             DB::table('samples')->where('id', $samples[$key])->update($data);
 
@@ -497,20 +508,48 @@ class WorksheetController extends Controller
             }
         }
 
-        $batch = collect($batches);
-        $b = $batch->unique();
-        $unique = $b->values()->all();
+        if(in_array(env('APP_LAB'), $double_approval)){
+            if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
+                $batch = collect($batches);
+                $b = $batch->unique();
+                $unique = $b->values()->all();
 
-        foreach ($unique as $value) {
-            $my->check_batch($value);
+                foreach ($unique as $value) {
+                    $my->check_batch($value);
+                }
+
+                $worksheet->status_id = 3;
+                $worksheet->datereviewed2 = $today;
+                $worksheet->reviewedby2 = $approver;
+                $worksheet->save();
+
+                return redirect('/batch/dispatch');                 
+            }
+            else{
+                $worksheet->datereviewed = $today;
+                $worksheet->reviewedby = $approver;
+                $worksheet->save();
+
+                return redirect('/worksheet');
+            }
         }
 
-        $worksheet->status_id = 3;
-        $worksheet->datereviewed = $today;
-        $worksheet->reviewedby = $approver;
-        $worksheet->save();
+        else{
+            $batch = collect($batches);
+            $b = $batch->unique();
+            $unique = $b->values()->all();
 
-        return redirect('/batch/dispatch');
+            foreach ($unique as $value) {
+                $my->check_batch($value);
+            }
+
+            $worksheet->status_id = 3;
+            $worksheet->datereviewed = $today;
+            $worksheet->reviewedby = $approver;
+            $worksheet->save();
+
+            return redirect('/batch/dispatch');            
+        }
     }
 
     public function mtype($machine)
@@ -599,12 +638,7 @@ class WorksheetController extends Controller
 
     public function checknull($var)
     {
-        if($var->isEmpty()){
-            return 0;
-        }else{
-            // return $var->sum('totals');
-            return $var->first()->totals;
-        }
+        return $var->first()->totals ?? 0;
     }
 
 }

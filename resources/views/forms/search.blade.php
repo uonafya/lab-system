@@ -148,6 +148,6 @@
 
 @section('scripts')
 
-    @include('layouts.searches')
+    
 
 @endsection

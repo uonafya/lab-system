@@ -72,16 +72,27 @@ class Misc extends Model
 		return $sample;
 	}
 
-	public function check_batch($batch)
-	{		
-		$total = Sample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
-		$tests = Sample::where('batch_id', $batch)
-		->whereRaw("( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL) )")
+	public function check_batch($batch_id, $issample=FALSE)
+	{
+		$double_approval = \App\Lookup::$double_approval; 
+		if(in_array(env('APP_LAB'), $double_approval)){
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+		}
+		else{
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL) )";
+		}
+		if($issample){
+			$sample = Sample::find($batch_id);
+			$batch_id = $sample->batch_id;
+		}
+		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
+		$tests = Sample::where('batch_id', $batch_id)
+		->whereRaw($where_query)
 		->get()
 		->count();
 
 		if($total == $tests){
-			DB::table('batches')->where('id', $batch)->update(['batch_complete' => 2]);
+			DB::table('batches')->where('id', $batch_id)->update(['batch_complete' => 2]);
 		}
 	}
 

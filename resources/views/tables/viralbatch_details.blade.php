@@ -18,8 +18,8 @@
                 </div>
                 <div class="panel-body">
                     <div>
-                        <b>Facility: {{ $batch->facility->name or '' }} </b> <br />
-                        <b>Date Received: {{ $batch->datereceived or '' }} </b> <br />
+                        <b>Facility: {{ $batch->facility->name ?? '' }} </b> <br />
+                        <b>Date Received: {{ $batch->datereceived ?? '' }} </b> <br />
                         <b>Date Entered: {{ $batch->created_at->toDateString() }} </b> <br />
                         @if($batch->high_priority)
                             <b>High Priority Batch </b> <br />

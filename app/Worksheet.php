@@ -2,17 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Worksheet extends Model
+class Worksheet extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
+    // protected $dates = ['datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
 
-    protected $guarded = [];
-    // protected $dates = ['datecut', 'datereviewed', 'dateuploaded', 'datecancelled', 'daterun', 'dateapproved', 'dateapproved2', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
 
     public function sample()
     {
@@ -49,19 +44,10 @@ class Worksheet extends Model
         return $this->belongsTo('App\User', 'reviewedby');
     }
 
-    public function approver()
+    public function reviewer2()
     {
-        return $this->belongsTo('App\User', 'approvedby');
+        return $this->belongsTo('App\User', 'reviewedby2');
     }
 
-
-    public function getDateuploadedAttribute($value)
-    {
-        if($value){
-            $date = \DateTime::createFromFormat('Y-m-d', $value);
-            return $date->format('Y-m-d');            
-        }
-        return $value;
-    }
 
 }

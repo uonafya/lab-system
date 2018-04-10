@@ -2,16 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Sample extends Model
+class Sample extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-    
-    protected $guarded = [];
     // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
     public function patient()

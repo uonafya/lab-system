@@ -31,33 +31,33 @@ class CreateViralWorksheetsTable extends Migration
             $table->integer('alliquotedby')->unsigned()->nullable();
             $table->integer('bulkedby')->unsigned()->nullable();
             $table->integer('reviewedby')->unsigned()->nullable();
-            $table->integer('reviewed2by')->unsigned()->nullable();
+            $table->integer('reviewedby2')->unsigned()->nullable();
             $table->integer('createdby')->unsigned()->nullable();
             $table->integer('cancelledby')->unsigned()->nullable();
 
-            $table->string('hiqcap_no')->nullable();
-            $table->string('spekkit_no')->nullable();
-            $table->string('rack_no')->nullable();
-            $table->string('lot_no')->nullable();
-            $table->string('sample_prep_lot_no')->nullable();
-            $table->string('bulklysis_lot_no')->nullable();
-            $table->string('control_lot_no')->nullable();
-            $table->string('calibrator_lot_no')->nullable();
-            $table->string('amplification_kit_lot_no')->nullable();
+            $table->string('hiqcap_no', 40)->nullable();
+            $table->string('spekkit_no', 40)->nullable();
+            $table->string('rack_no', 40)->nullable();
+            $table->string('lot_no', 40)->nullable();
+            $table->string('sample_prep_lot_no', 40)->nullable();
+            $table->string('bulklysis_lot_no', 40)->nullable();
+            $table->string('control_lot_no', 40)->nullable();
+            $table->string('calibrator_lot_no', 40)->nullable();
+            $table->string('amplification_kit_lot_no', 40)->nullable();
 
-            $table->string('neg_control_result')->nullable();
-            $table->string('highpos_control_result')->nullable();
-            $table->string('lowpos_control_result')->nullable();
+            $table->string('neg_control_result', 40)->nullable();
+            $table->string('highpos_control_result', 40)->nullable();
+            $table->string('lowpos_control_result', 40)->nullable();
 
-            $table->string('neg_control_interpretation')->nullable();
-            $table->string('highpos_control_interpretation')->nullable();
-            $table->string('lowpos_control_interpretation')->nullable();
+            $table->string('neg_control_interpretation', 50)->nullable();
+            $table->string('highpos_control_interpretation', 50)->nullable();
+            $table->string('lowpos_control_interpretation', 50)->nullable();
 
-            $table->string('neg_units')->nullable();
-            $table->string('hpc_units')->nullable();
-            $table->string('lpc_units')->nullable();
+            $table->string('neg_units', 20)->nullable();
+            $table->string('hpc_units', 20)->nullable();
+            $table->string('lpc_units', 20)->nullable();
 
-            $table->string('cdcworksheetno')->nullable();
+            $table->string('cdcworksheetno', 40)->nullable();
 
             $table->date('kitexpirydate')->nullable();
             $table->date('sampleprepexpirydate')->nullable();
@@ -68,11 +68,10 @@ class CreateViralWorksheetsTable extends Migration
 
             $table->date('datecut')->nullable();
             $table->date('datereviewed')->nullable();
+            $table->date('datereviewed2')->nullable();
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
             $table->date('daterun')->nullable();
-            $table->date('dateapproved')->nullable();
-            $table->date('dateapproved2')->nullable();
 
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();

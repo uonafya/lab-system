@@ -49,6 +49,36 @@ return [
             'email' => 'required|email',
             'password' => 'required|confirmed'
         ]
-    ]
+    ],
+
+    'complete_result' => [
+        'dob' => 'date_format:Y-m-d',
+        'datecollected' => 'date_format:Y-m-d',
+        'datereceived' => 'date_format:Y-m-d',
+        'datetested' => 'date_format:Y-m-d',
+        'datedispatched' => 'date_format:Y-m-d',
+
+        'editted' => 'filled',
+        'lab' => 'required|integer',
+        'mflCode' => 'required|integer',
+        'result' => 'required',
+        'sex' => 'filled',
+        'gender' => 'filled',
+    ], 
+
+    'incomplete_result' => [
+        'dob' => 'date_format:Y-m-d',
+        'datecollected' => 'date_format:Y-m-d',
+        'datereceived' => 'date_format:Y-m-d',
+        'datetested' => 'date_format:Y-m-d',
+        'datedispatched' => 'date_format:Y-m-d',
+
+        'editted' => 'filled',
+        'lab' => 'required|integer',
+        'mflCode' => 'required|integer',
+        'result' => 'required',
+        'sex' => 'filled',
+        'gender' => 'filled',
+    ], 
 
 ];

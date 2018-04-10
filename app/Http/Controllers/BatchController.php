@@ -22,9 +22,10 @@ class BatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($batch_complete=4, $page=NULL, $date_start=NULL, $date_end=NULL)
+
+    public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
-        $myurl = url('batch/index/' . $batch_complete . '/' . $page . '/');
+        $myurl = url('batch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
         if($user->user_type_id == 5) $facility_user=true;
@@ -32,37 +33,10 @@ class BatchController extends Controller
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $my = new Misc;
-        $b = Batch::selectRaw('count(id) as mycount')
-            ->when($date_start, function($query) use ($date_start, $date_end){
-                if($date_end)
-                {
-                    return $query->whereDate('batches.datereceived', '>=', $date_start)
-                    ->whereDate('batches.datereceived', '<=', $date_end);
-                }
-                return $query->whereDate('batches.datereceived', $date_start);
-            })
-            ->when($facility_user, function($query) use ($string){
-                return $query->whereRaw($string);
-            })
-            ->when(true, function($query) use ($batch_complete){
-                if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
-            })
-            ->get()
-            ->first();
 
-        $page_limit = env('PAGE_LIMIT', 10);
-
-        if($page == NULL || $page == 'null'){
-            $page=1;
-        }
-
-        $last_page = ceil($b->mycount / $page_limit);
-        $last_page = (int) $last_page;
-
-        $offset = ($page-1) * $page_limit;
-
-        $batches = Batch::select('batches.*', 'facilitys.name')
+        $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
                 {
@@ -77,31 +51,23 @@ class BatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('created_at', 'desc')
-            ->limit($page_limit)
-            ->offset($offset)
-            ->get();
-
-        if($batches->isEmpty()){
-            return view('tables.batches', ['rows' => null, 'links' => null, 'myurl' => $myurl, 'pre' => '']);
-        }
+            ->orderBy('datereceived', 'desc')
+            ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
         $subtotals = $my->get_subtotals($batch_ids, false);
         $rejected = $my->get_rejected($batch_ids, false);
         $currentdate=date('d-m-Y');
 
-        $table_rows = "";
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $currentdate, $my){
 
-        foreach ($batches as $key => $batch) {
+            $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+            $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+            $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+            $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+            $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
 
-            $neg = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 1));
-            $pos = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 2));
-            $failed = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 3));
-            $redraw = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 5));
-            $noresult = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 0));
-
-            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
 
             $result = $pos + $neg + $redraw + $failed;
@@ -117,24 +83,20 @@ class BatchController extends Controller
 
             $delays = $my->working_days($datereceived, $max);
 
-            $table_rows .= "<tr> 
-            <td>{$batch->id}</td>
-            <td>{$batch->name}</td>
-            <td>{$batch->datereceived}</td>
-            <td>" . $batch->created_at->toDateString() . "</td>
-            <td>{$delays}</td>
-            <td></td>
-            <td>{$total}</td>
-            <td>{$rej}</td>
-            <td>{$result}</td>
-            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete) . "
-            </tr>";
-        }
-        $base = '/batch/index/' . $batch_complete;
+            $batch->delays = $delays;
+            $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = $result;
+            $batch->noresult = $noresult;
+            $batch->status = $batch->batch_complete;
+            $batch->approval = false;
+            return $batch;
+        });
 
-        $links = $my->page_links($base, $page, $last_page, $date_start, $date_end);
-
-        return view('tables.batches', ['rows' => $table_rows, 'links' => $links, 'myurl' => $myurl, 'pre' => ''])->with('pageTitle', 'Batches');
+        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => '']);
     }
 
     /**
@@ -299,43 +261,39 @@ class BatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Batch::select('batches.*', 'facilitys.name')
-            ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+        $batches = Batch::select(['batches.*', 'facilitys.name', 'creator.name as creator'])
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
             ->whereNull('received_by')
             ->where('site_entry', 1)
-            ->get();
+            ->paginate();
 
         $my = new Misc;
+
         $batch_ids = $batches->pluck(['id'])->toArray();
         $subtotals = $my->get_subtotals($batch_ids, false);
         $rejected = $my->get_rejected($batch_ids, false);
 
-        $table_rows = "";
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
-        foreach ($batches as $key => $batch) {
-
-            $noresult = $this->checknull($subtotals->where('batch_id', $batch->id)->where('result', 0));
-
-            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+            $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $noresult + $rej;
 
-            $result = $noresult = $datereceived = '';
+            $batch->delays = '';
+            $batch->creator = $batch->creator;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = '';
+            $batch->noresult = $noresult;
+            $batch->status = $batch->batch_complete;
+            $batch->approval = true;
+            return $batch;
+        });
 
-            $table_rows .= "<tr> 
-            <td>{$batch->id}</td>
-            <td>{$batch->name}</td>
-            <td>{$batch->datereceived}</td>
-            <td>" . $batch->created_at->toDateString() . "</td>
-            <td></td>
-            <td></td>
-            <td>{$total}</td>
-            <td>{$rej}</td>
-            <td>{$result}</td>
-            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
-            </tr>";
-        }
-        return view('tables.batches', ['rows' => $table_rows, 'links' => ''])->with('pageTitle', 'Site Entry Approval');
-
+        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '']);
     }
 
     public function site_entry_approval(Batch $batch)
@@ -412,11 +370,7 @@ class BatchController extends Controller
 
     public function checknull($var)
     {
-        if($var->isEmpty()){
-            return 0;
-        }else{
-            return $var->first()->totals;
-        }
+        return $var->first()->totals ?? 0;
     }
 
 

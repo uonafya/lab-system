@@ -2,21 +2,21 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Mother extends Model
+class Mother extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-    
-    protected $guarded = [];
     // protected $dates = ['datesynched'];
 
 
     public function patient()
     {
     	return $this->hasMany('App\Patient');
+    }
+
+
+    public function scopeExisting($query, $facility, $ccc)
+    {
+        return $query->where(['facility_id' => $facility, 'ccc_no' => $ccc]);
     }
 }

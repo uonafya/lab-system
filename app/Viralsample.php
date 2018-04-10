@@ -2,11 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Viralsample extends Model
+class Viralsample extends BaseModel
 {
-    protected $guarded = [];
     // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
 

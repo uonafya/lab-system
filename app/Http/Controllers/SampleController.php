@@ -9,7 +9,6 @@ use App\Batch;
 use App\Facility;
 use App\Lookup;
 use DB;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
@@ -115,13 +114,8 @@ class SampleController extends Controller
             $sample = new Sample;
             $sample->fill($data);
             $sample->batch_id = $batch_no;
-            // $sample->age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
 
-            $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $dob = Carbon::parse( $request->input('dob') );
-            $months = $dc->diffInMonths($dob);
-            $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
-            $sample->age = $months + ($weeks / 4);
+            $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
             $sample->save();
         }
 
@@ -138,12 +132,6 @@ class SampleController extends Controller
             $patient->mother_id = $mother->id;
             $patient->save();
 
-            // $patient_age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
-            // $dt = Carbon::today();
-            // $dt->subMonths($request->input('sample_months'));
-            // $dt->subWeeks($request->input('sample_weeks'));
-            // $patient->dob = $dt->toDateString();
-
             $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
             $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
             $months = $dc->diffInMonths($dob);
@@ -157,7 +145,7 @@ class SampleController extends Controller
             $sample = new Sample;
             $sample->fill($data);
             $sample->patient_id = $patient->id;
-            $sample->age = $patient_age;
+            $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
             $sample->batch_id = $batch_no;
             $sample->save();
 
@@ -255,14 +243,8 @@ class SampleController extends Controller
             $patient->mother_id = $mother->id;
             $patient->save();
         }
-
-        $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-        $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
-        $months = $dc->diffInMonths($dob);
-        $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
-        $patient_age = $months + ($weeks / 4);
-        if($patient_age == 0)$patient_age = 0.1;
-        $sample->age = $patient_age;
+        
+        $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->patient_id = $patient->id;
         $sample->save();
 
@@ -316,6 +298,13 @@ class SampleController extends Controller
         return $data;
     }
 
+    public function runs(Sample $sample)
+    {
+        $samples = $sample->child;
+        $sample->load(['patient']);
+        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+    }
+
     /**
      * Print the specified resource.
      *
@@ -340,7 +329,9 @@ class SampleController extends Controller
         $sample->repeatt = 0;
         $sample->result = 5;
         $sample->approvedby = auth()->user()->id;
+        $sample->approved2by = auth()->user()->id;
         $sample->dateapproved = date('Y-m-d');
+        $sample->dateapproved2 = date('Y-m-d');
         $sample->save();
         $my = new \App\Misc;
         $my->check_batch($sample->batch_id);

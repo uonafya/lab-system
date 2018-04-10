@@ -2,16 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Patient extends Model
+class Patient extends BaseModel
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-
-    protected $guarded = [];
     // protected $dates = ['datesynched', 'dob'];
 
     public function sample()
@@ -27,5 +21,10 @@ class Patient extends Model
     public function facility()
     {
         return $this->belongsTo('App\Facility');
+    }
+
+    public function scopeExisting($query, $facility_id, $hei_number)
+    {
+        return $query->where(['facility_id' => $facility_id, 'patient' => $hei_number]);
     }
 }
