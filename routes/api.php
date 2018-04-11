@@ -47,7 +47,10 @@ $api->version('v1', function (Router $api) {
         });
 
         $api->post('eid', 'EidController@eid');        
-        $api->post('eid_complete', 'EidController@complete_result');        
+        $api->post('eid_complete', 'EidController@complete_result');  
+
+        $api->post('vl', 'VlController@vl');        
+        $api->post('vl_complete', 'VlController@complete_result');        
 
 
         $api->post('function', 'FunctionController@api');

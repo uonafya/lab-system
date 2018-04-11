@@ -21,6 +21,21 @@ class Batch extends BaseModel
         });
     }
 
+    public function tat()
+    {
+        if(!$this->datereceived) return '';
+
+        $max;
+        if($this->batch_complete == 1){
+            $max = $this->datedispatched;
+        }
+        else{
+            $max = date('Y-m-d');
+        }
+        return \App\Misc::working_days($this->datereceived, $max);
+    }
+
+
 	public function sample()
     {
         return $this->hasMany('App\Sample');

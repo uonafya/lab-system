@@ -40,9 +40,33 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($batches as $batch)
+                                    <tr>
+                                        <td>
+                                            <div align='center'>
+                                                <input name='batches[]' type='checkbox' id='batches[]' value='{{ $batch->id }}' />
+                                            </div>
+                                        </td>
+                                        <td> {{ $batch->id }} </td>
+                                        <td> {{ $batch->name }} </td>
+                                        <td> {{ $batch->email }} </td>
+                                        <td> {{ $batch->my_date_format('datereceived') }} </td>
+                                        <td> {{ $batch->total }} </td>
+                                        <td> {{ $batch->rejected }} </td>
+                                        <td> {{ $batch->my_date_format('date_tested') }} </td>
+                                        <td> {{ $batch->my_date_format('date_modified') }} </td>
+                                        <td> {{ $batch->positives }} </td>
+                                        <td> {{ $batch->negatives }} </td>
+                                        <td> {{ $batch->redraw }} </td>
+                                        <td> {{ $batch->failed }} </td>
+                                        <td> {{ $batch->tat() }} </td>
+                                    </tr>
+                                @endforeach
+
+
 
                                 @php
-                                    echo $rows;
+                                    // echo $rows;
                                 @endphp 
                             </tbody>
                         </table>

@@ -132,7 +132,7 @@ class Misc extends Model
 		return $sample;
 	}
 
-	public function working_days($startDate,$endDate){
+	public static function working_days($startDate,$endDate){
 
 	    //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24
 	    //We add one to inlude both dates in the interval.
