@@ -40,8 +40,34 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($batches as $batch)
+                                    <tr>
+                                        <td>
+                                            <div align='center'>
+                                                <input name='batches[]' type='checkbox' id='batches[]' value='{{ $batch->id }}' />
+                                            </div>
+                                        </td>
+                                        <td> {{ $batch->id }} </td>
+                                        <td> {{ $batch->name }} </td>
+                                        <td> {{ $batch->email }} </td>
+                                        <td> {{ $batch->my_date_format('datereceived') }} </td>
+                                        <td> {{ $batch->my_date_format('created_at') }} </td>
+                                        <td> {{ $batch->tat() }} </td>
+                                        <td> {{ $batch->total }} </td>
+                                        <td> {{ $batch->rejected }} </td>
+                                        <td> {{ $batch->result }} </td>
+                                        <td> {{ $batch->failed }} </td>
+                                        <td> {{ $batch->redraw }} </td>
+                                        <td> {{ $batch->status }} </td>
+                                        <td>
+                                            <a href="{{ url('/viralbatch/'' . $batch->id) }}">View</a> </td>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+
                                 @php
-                                    echo $rows;
+                                    // echo $rows;
                                 @endphp 
                             </tbody>
                         </table>

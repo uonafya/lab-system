@@ -45,17 +45,13 @@ class ViralsampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $submit_type = $request->input('submit_type');
 
+        $batch = session('viral_batch');
+
         if($submit_type == "cancel"){
-            $batch_no = session()->pull('viral_batch_no');
+            $batch->premature();
             $this->clear_session();
-            DB::table('viralbatches')->where('id', $batch_no)->update(['input_complete' => 1]);
             return redirect()->route('viralsample.create');
         }
-
-        $batch_no = session('viral_batch_no', 0);
-        $batch_dispatch = session('viral_batch_dispatch', 0);
-
-        $ddispatched = $request->input('datedispatchedfromfacility');
 
         $high_priority = $request->input('high_priority');
 
@@ -81,15 +77,15 @@ class ViralsampleController extends Controller
             $batch->save();
             $message = 'The high priority sample has been saved in batch no ' . $batch->id . '.';
 
-            session(['viral_message' => $message]);
+            session(['toast_message' => $message]);
             return redirect()->route('viralsample.create');
         }
 
 
-        if($batch_no == 0){
+        if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
-            session(['viral_facility_name' => $facility->name, 'viral_facility_id' => $facility_id, 'viral_batch_total' => 0, 'viral_batch_received' => $request->input('datereceived')]);
+            session(['viral_facility_name' => $facility->name]);
 
             $batch = new Viralbatch;
             $data = $request->only($viralsamples_arrays['batch']);
@@ -106,22 +102,8 @@ class ViralsampleController extends Controller
                 $batch->site_entry = 1;
             }
 
-            if($ddispatched == null){
-                session(['viral_batch_dispatch' => 0]);
-            }
-            else{
-                session(['viral_batch_dispatch' => 1, 'viral_batch_dispatched' => $ddispatched]);
-                $batch->datedispatchedfromfacility = $ddispatched;
-            }
-
             $batch->save();
-            $batch_no = $batch->id;
-            session(['viral_batch_no' => $batch_no]);
-        }
-
-        if($ddispatched && $batch_dispatch == 0){
-            DB::table('viralbatches')->where('id', $batch_no)->update(['datedispatchedfromfacility' => $ddispatched]);
-            session(['viral_batch_dispatch' => 1]);
+            session(['viral_batch' => $batch]);
         }
 
         $new_patient = $request->input('new_patient');
@@ -129,16 +111,17 @@ class ViralsampleController extends Controller
         if($new_patient == 0){
 
             $repeat_test = Viralsample::where(['patient_id' => $request->input('patient_id'),
-            'batch_id' => $batch_no])->first();
+            'batch_id' => $batch->id])->first();
 
             if($repeat_test){
+                session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
                 return redirect()->route('viralsample.create');
             }
 
             $data = $request->only($viralsamples_arrays['sample']);
             $viralsample = new Viralsample;
             $viralsample->fill($data);
-            $viralsample->batch_id = $batch_no;
+            $viralsample->batch_id = $batch->id;
             $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
             $viralsample->save();
         }
@@ -154,7 +137,7 @@ class ViralsampleController extends Controller
             $viralsample->fill($data);
             $viralsample->patient_id = $viralpatient->id;
             $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
-            $viralsample->batch_id = $batch_no;
+            $viralsample->batch_id = $batch->id;
             $viralsample->save();
 
         }
@@ -162,24 +145,16 @@ class ViralsampleController extends Controller
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "release"){
-            $batch_no = session()->pull('viral_batch_no');
             $this->clear_session();
-            DB::table('viralbatches')->where('id', $batch_no)->update(['input_complete' => 1]);
-        }
-        else if($submit_type == "add"){
-
+            $batch->premature();
         }
 
-        $batch_total = session('viral_batch_total', 0) + 1;
+        $batch->refresh();
 
-        session(['viral_batch_total' => $batch_total]);
-
-        if($batch_total == 10){
-            $batch_no = session()->pull('batch_no', $batch_no);
+        if($batch->sample_count == 10){
             $this->clear_session();
-            DB::table('viralbatches')->where('id', $batch_no)->update(['input_complete' => 1, 'batch_full' => 1]);
+            $batch->full_batch();
         }
-
 
         return redirect()->route('viralsample.create');
     }
@@ -350,12 +325,15 @@ class ViralsampleController extends Controller
     }
 
     private function clear_session(){
-        session()->forget('viral_batch_no');
-        session()->forget('viral_batch_total');
-        session()->forget('viral_batch_dispatch');
-        session()->forget('viral_batch_dispatched');
-        session()->forget('viral_batch_received');
-        session()->forget('viral_facility_id');
+        session()->forget('viral_batch');
         session()->forget('viral_facility_name');
+
+        // session()->forget('viral_batch_no');
+        // session()->forget('viral_batch_total');
+        // session()->forget('viral_batch_dispatch');
+        // session()->forget('viral_batch_dispatched');
+        // session()->forget('viral_batch_received');
+        // session()->forget('viral_facility_id');
+        // session()->forget('viral_facility_name');
     }
 }

@@ -70,8 +70,6 @@ class EidController extends Controller
         } 
         else{
             $patient = new Patient;
-            $patient->patient = $hei_number;
-            $patient->facility_id = $facility;
             $mom = new Mother;
         }
 
@@ -82,6 +80,8 @@ class EidController extends Controller
         
         $patient->fill($request->only($fields['patient']));
         $patient->mother_id = $mom->id;
+        $patient->patient = $hei_number;
+        $patient->facility_id = $facility;
         $patient->save();
 
         $sample = new Sample;
@@ -105,6 +105,7 @@ class EidController extends Controller
         $specimenclientcode = $request->input('patient_identifier');
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
+        $datedispatched = $request->input('datedispatched');
         // $gender = $request->input('gender');
         $dob = $request->input('dob');
         
@@ -148,8 +149,6 @@ class EidController extends Controller
         } 
         else{
             $patient = new Patient;
-            $patient->patient = $specimenclientcode;
-            $patient->facility_id = $facility;
             $mom = new Mother;
         }
 
@@ -159,7 +158,9 @@ class EidController extends Controller
         $mom->save();
 
         $patient->fill($request->only($fields['patient']));
-        $patient->mother_id = $mom->id;      
+        $patient->mother_id = $mom->id;
+        $patient->patient = $specimenclientcode;
+        $patient->facility_id = $facility;      
         // $patient->sex = $sex;
         $patient->save();
 

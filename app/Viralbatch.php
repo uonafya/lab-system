@@ -10,6 +10,41 @@ class Viralbatch extends BaseModel
 
     protected $withCount = ['sample'];
 
+    public function tat()
+    {
+        if(!$this->datereceived) return '';
+
+        $max;
+        if($this->batch_complete == 1){
+            $max = $this->datedispatched;
+        }
+        else{
+            $max = date('Y-m-d');
+        }
+        return \App\Misc::working_days($this->datereceived, $max);
+    }
+
+    public function full_batch()
+    {
+        $this->input_complete = 1;
+        $this->batch_full = 1;
+        $this->save();
+    }
+
+    public function premature()
+    {
+        $this->input_complete = 1;
+        $this->save();
+    }
+
+    public function outdated()
+    {
+        $now = \Carbon\Carbon::now();
+
+        if($now->diffInMonths($this->created_at) > 6) return true;
+        return false;
+    }
+
 	public function sample()
     {
         return $this->hasMany('App\Viralsample', 'batch_id');
@@ -39,5 +74,10 @@ class Viralbatch extends BaseModel
     public function scopeExisting($query, $facility, $datereceived, $lab)
     {
         return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab]);
+    }
+
+    public function scopeEditing($query)
+    {
+        return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0]);
     }
 }

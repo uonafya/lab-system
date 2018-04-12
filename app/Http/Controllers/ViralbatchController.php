@@ -60,9 +60,8 @@ class ViralbatchController extends Controller
         $undetected_a = $my->get_totals(1, $batch_ids, false);
 
         $rejected = $my->get_rejected($batch_ids, false);
-        $currentdate=date('d-m-Y');
 
-        $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected, $currentdate, $my){
+        $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected){
 
             $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
             $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
@@ -75,19 +74,7 @@ class ViralbatchController extends Controller
 
             $result = $detected + $undetected + $redraw + $failed;
 
-            $datereceived=date("d-M-Y",strtotime($batch->datereceived));
 
-            if($batch->batch_complete == 0){
-                $max = $currentdate;
-            }
-            else{
-                $max=date("d-M-Y",strtotime($batch->datedispatched));
-            }
-
-            $delays = $my->working_days($datereceived, $max);
-
-
-            $batch->delays = $delays;
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
@@ -100,7 +87,7 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => 'viral']);
+        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => 'viral', 'batch_complete' => $batch_complete]);
     }
 
     /**
@@ -226,6 +213,49 @@ class ViralbatchController extends Controller
         $date_tested = $my->get_maxdatetested();
         $currentdate=date('d-m-Y');
 
+        $batches->transform(function($batch, $key) use ($noresult_a, $redraw_a, $failed_a, $detected_a, $undetected_a, $rejected, $date_modified, $date_tested){
+
+            $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $results = $undetected + $detected;
+            $total = $noresult + $failed + $redraw + $results + $rej;
+
+            $dm = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $dt = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+            switch ($batch->batch_complete) {
+                case 0:
+                    $status = "In process";
+                    break;
+                case 1:
+                    $status = "Dispatched";
+                    break;
+                case 2:
+                    $status = "Awaiting Dispatch";
+                    break;
+                default:
+                    break;
+            }
+
+            $batch->total = $total;
+            $batch->redraw = $redraw;
+            $batch->noresult = $noresult;
+            $batch->result = $result;
+            $batch->failed = $failed;
+            $batch->rejected = $rej;
+            $batch->date_modified = $dm;
+            $batch->date_tested = $dt;
+            $batch->status = $status;
+            return $batch;
+        });
+
+        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count()]);
+
         $table_rows = "";
 
         foreach ($batches as $key => $batch) {
@@ -245,7 +275,7 @@ class ViralbatchController extends Controller
 
             $maxdate=date("d-M-Y",strtotime($dm));
 
-            $delays = $my->working_days($maxdate, $currentdate);
+            $delays = MiscViral::working_days($maxdate, $currentdate);
 
             switch ($batch->batch_complete) {
                 case 0:
@@ -305,25 +335,6 @@ class ViralbatchController extends Controller
             $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
             $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $noresult + $rej;
-
-<<<<<<< HEAD
-            $result = $noresult = $datereceived = '';
-
-            $table_rows .= "<tr> 
-            <td>{$batch->id}</td>
-            <td>{$batch->name}</td>
-            <td>{$batch->datereceived}</td>
-            <td>" . $batch->created_at->toDateString() . "</td>
-            <td></td>
-            <td></td>
-            <td>{$total}</td>
-            <td>{$rej}</td>
-            <td>{$result}</td>
-            <td>{$noresult}</td>" . $my->batch_status($batch->id, $batch->batch_complete, true) . "
-            </tr>";
-        }
-        return view('tables.batches', ['rows' => $table_rows, 'links' => ''])->with('pageTitle', 'Site Entry Approval');
-=======
             $batch->delays = '';
             $batch->creator = $batch->creator;
             $batch->datecreated = $batch->my_date_format('created_at');
@@ -338,7 +349,6 @@ class ViralbatchController extends Controller
         });
 
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
->>>>>>> 29dd826dccc4fac5dbf5d1ef81e40522959ec66d
     }
 
     public function site_entry_approval(Viralbatch $batch)
@@ -385,17 +395,21 @@ class ViralbatchController extends Controller
      */
     public function summary(Viralbatch $batch)
     {
-        $samples = $batch->sample;
-        $samples->load(['patient']);
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_viral_lookups();
-        $data['batch'] = $batch;
-        $data['samples'] = $samples;
+        $data['batches'] = [$batch];
+        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('summary.pdf');
+    }
 
-        // $pdf = DOMPDF::loadView('exports.samples_summary', $data);
-        // return $pdf->download('summary.pdf');
-
-        return view('exports.samples_summary', $data)->with('pageTitle', 'Batch Summary');
+    public function batches_summary(Request $request)
+    {
+        $batch_ids = $request->input('batch_ids');
+        $batches = Viralbatch::whereIn('id', $batch_ids)->with(['sample.patient', 'facility', 'lab', 'receiver', 'creator'])->get();
+        $data = Lookup::get_viral_lookups();
+        $data['batches'] = $batches;
+        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('summary.pdf');
     }
 
     public function search(Request $request)

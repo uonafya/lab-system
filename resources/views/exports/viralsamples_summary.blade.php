@@ -77,28 +77,26 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan="17" style="text-align: center;"><b>SAMPLE LOG</b></td>
+				<td colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
 			</tr>
 			<tr>
 				<td colspan="5"><b> Patient Information</b></td>
 				<td colspan="4"><b>Samples Information</b></td>
-				<td colspan="4"><b>Mother Information</b></td>
+				<td colspan="2"><b>History Information</b></td>
 				<td colspan="4"><b>Lab Information</b></td>
 			</tr>
 			<tr>
 				<td>No</td>
-				<td>Patient ID</td>
+				<td>Patient CCC No</td>
 				<td>Sex</td>
-				<td>Age (mths)</td>
-				<td>Prophylaxis</td>
+				<td>Age (yrs)</td>
+				<td>ART Initiation Date</td>
 				<td>Date Collected</td>
 				<td>Date Received</td>
 				<td>Status</td>
-				<td>Test Type</td>
-				<td>HIV Status</td>
-				<td>PMTCT</td>
-				<td>Feeding</td>
-				<td>Entry Point</td>
+				<td>Sample Type</td>
+				<td>Current Regimen</td>
+				<td>Justification</td>
 				<td>Date Tested</td>
 				<td>Date Dispatched</td>
 				<td>Test Result</td>
@@ -123,7 +121,7 @@
 	                    @endforeach
 					</td>
 					<td>{{ $sample->age }} </td>
-					<td>{{ $sample->regimen }} </td>
+					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 					<td>{{ $sample->my_date_format('datecollected') }} </td>
 					<td>{{ $batch->my_date_format('datereceived') }} </td>
 					<td>
@@ -133,32 +131,18 @@
 	                        @endif
 	                    @endforeach
 					</td>
-					<td>{{ $sample->pcrtype }} </td>
+					<td>{{ $sample->sampletype }} </td>
 					<td>
-	                    @foreach($results as $result)
-	                        @if($sample->patient->mother->hiv_status == $result->id)
-	                            {{ $result->name }}
+	                    @foreach($prophylaxis as $proph)
+	                        @if($sample->prophylaxis == $proph->id)
+	                            {{ $proph->name }}
 	                        @endif
 	                    @endforeach
-					</td>
-					<td>{{ $sample->mother_prophylaxis }} </td>
-					<td>
-	                    @foreach($feedings as $feeding)
-	                        @if($sample->feeding == $feeding->id)
-	                            {{ $feeding->feeding }}
-	                        @endif
-	                    @endforeach		
 	                </td>
-	                <td>{{ $sample->patient->entry_point }} </td>
+					<td>{{ $sample->justification }} </td>
 					<td>{{ $sample->my_date_format('datetested') }} </td>
 					<td>{{ $batch->my_date_format('datedispatched') }} </td>
-					<td>
-	                    @foreach($results as $result)
-	                        @if($sample->result == $result->id)
-	                            {{ $result->name }}
-	                        @endif
-	                    @endforeach
-					</td>
+					<td>{{ $sample->result }} </td>
 					<td>{{ $sample->tat($batch->datedispatched) }} </td>
 				</tr>
 			@endforeach		
@@ -169,17 +153,19 @@
 		@isset($rejection)
 			<table>
 				<tr>
-					<td colspan="10">REJECTED SAMPLE(s)</td>
+					<td colspan="12">REJECTED SAMPLE(s)</td>
 				</tr>
 				<tr>
 					<td>No</td>
-					<td>Patient ID</td>
+					<td>Patient CCC no</td>
 					<td>Sex</td>
-					<td>Age (mths)</td>
-					<td>Prophylaxis</td>
+					<td>Age (yrs)</td>
+					<td>ART Initiation Date</td>
 					<td>Date Collected</td>
 					<td>Date Received</td>
-					<td>Status</td>
+					<td>Sample Type</td>
+					<td>Current Regimen</td>
+					<td>Justification</td>
 					<td>Rejected Reason</td>
 					<td>Date Dispatched</td>			
 				</tr>
@@ -197,16 +183,20 @@
 		                    @endforeach
 						</td>
 						<td>{{ $sample->age }} </td>
-						<td>{{ $sample->regimen }} </td>
+						<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 						<td>{{ $sample->my_date_format('datecollected') }} </td>
 						<td>{{ $batch->my_date_format('datereceived') }} </td>
+
+						<td>{{ $sample->sampletype }} </td>
 						<td>
-		                    @foreach($received_statuses as $received_status)
-		                        @if($sample->receivedstatus == $received_status->id)
-		                            {{ $received_status->name }}
+		                    @foreach($prophylaxis as $proph)
+		                        @if($sample->prophylaxis == $proph->id)
+		                            {{ $proph->name }}
 		                        @endif
 		                    @endforeach
-						</td>
+		                </td>
+						<td>{{ $sample->justification }} </td>
+
 						<td>
 		                    @foreach($rejected_reasons as $rejected_reason)
 		                        @if($sample->rejectedreason == $rejected_reason->id)
@@ -234,14 +224,10 @@
 
 		<table>
 			<tr>
-				<td><b>Test Type </b> </td>
-				<td>1-1st test, &nbsp; 2-Repeat for Rejection, &nbsp; 3-Confirmatory PCR at 9mths </td>
-			</tr>
-			<tr>
-				<td><b>Entry Point </b> </td>
+				<td><b>Codes for Sample Type </b> </td>
 				<td>
-					@foreach($entry_points as $entry_point)
-						{{ $entry_point->id . '-' . $entry_point->name }}
+					@foreach($sampletypes as $sampletype)
+						{{ $sampletype->id . '-' . $sampletype->name }}
 
 						@if($loop->last)
 							@break
@@ -251,36 +237,10 @@
 				</td>
 			</tr>
 			<tr>
-				<td><b>Infant Prophylaxis </b> </td>
+				<td><b>Codes for Justification </b> </td>
 				<td>
-					@foreach($iprophylaxis as $iproph)
-						{{ $iproph->id . '-' . $iproph->name }}
-
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>				
-			</tr>
-			<tr>
-				<td><b>Infant Feeding </b> </td>
-				<td>
-					@foreach($feedings as $feeding)
-						{{ $feeding->feeding . ' : ' . $feeding->feeding_description }}
-
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>				
-			</tr>
-			<tr>
-				<td><b>PMTCT Intervention </b> </td>
-				<td>
-					@foreach($interventions as $intervention)
-						{{ $intervention->id . '-' . $intervention->name }}
+					@foreach($justifications as $justification)
+						{{ $justification->id . '-' . $justification->name }}
 
 						@if($loop->last)
 							@break

@@ -88,73 +88,92 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" >
-                            <thead>
-                                <tr class="colhead">
-                                    <th rowspan="2">Batch No</th>
-                                    <th rowspan="2">Facility</th>
-                                    <th colspan="2">Date</th>
-                                    <th rowspan="1">TAT</th>
-                                    <th rowspan="2">Entered By</th>
-                                    <th colspan="4"># of samples</th>
-                                    <th rowspan="2">Status</th>
-                                    <th rowspan="2">Task</th>
-                                </tr>
-                                <tr>
-                                    <th>Received</th>
-                                    <th>Entered</th>
-                                    <th>(Dys)</th>
-                                    <th>Received</th>
-                                    <th>Rejected</th>
-                                    <th>Results</th>
-                                    <th>No Result</th>              
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <form  method="post" action="{{ url($pre . 'batch/summaries/') }}  " >
+                            {{ csrf_field() }}
+                            <table class="table table-striped table-bordered table-hover" >
+                                <thead>
+                                    <tr class="colhead">
+                                        <th rowspan="2">Batch No</th>
 
-                                @foreach($batches as $batch)
-                                    <tr>
-                                        <td> {{ $batch->id }} </td>
-                                        <td> {{ $batch->name }} </td>
-                                        <td> {{ $batch->datereceived }} </td>
-                                        <td> {{ $batch->datecreated }} </td>
-                                        <td> {{ $batch->delays }} </td>
-                                        <td> {{ $batch->creator }} </td>
-                                        <td> {{ $batch->total }} </td>
-                                        <td> {{ $batch->rejected }} </td>
-                                        <td> {{ $batch->result }} </td>
-                                        <td> {{ $batch->noresult }} </td>
-                                        <td> 
-                                            @if($batch->batch_complete)
-                                                Complete
-                                            @else
-                                                In-Process
-                                            @endif
-                                        </td>
-                                        <td> 
-                                            @if($batch->approval)
-                                                <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval</a>
-                                            @else
-                                                <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
+                                        @if(isset($batch_complete) && $batch_complete == 1)
+                                            <th rowspan="2">Print Multiple</th>
+                                        @endif
 
-                                                @if($batch->batch_complete == 1)
-                                                    | <a href="{{ url($pre . 'batch/summary/' . $batch->id) }}"><i class='fa fa-print'></i> Summary</a> 
-                                                    | <a href="{{ url($pre . 'batch/individual/' . $batch->id) }}"><i class='fa fa-print'></i> Individual </a> 
-                                                    | <a href="{{ url($pre . 'batch/email/' . $batch->id) }}"><i class='fa fa-print'></i> Email </a>
-                                                @endif
-
-                                            @endif
-                                        </td>
+                                        <th rowspan="2">Facility</th>
+                                        <th colspan="2">Date</th>
+                                        <th rowspan="1">TAT</th>
+                                        <th rowspan="2">Entered By</th>
+                                        <th colspan="4"># of samples</th>
+                                        <th rowspan="2">Status</th>
+                                        <th rowspan="2">Task</th>
                                     </tr>
+                                    <tr>
+                                        <th>Received</th>
+                                        <th>Entered</th>
+                                        <th>(Dys)</th>
+                                        <th>Received</th>
+                                        <th>Rejected</th>
+                                        <th>Results</th>
+                                        <th>No Result</th>              
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach($batches as $batch)
+                                        <tr>
+                                            <td> {{ $batch->id }} </td>
+
+                                            @if(isset($batch_complete) && $batch_complete == 1)
+                                                <td> <div align="center"><input name="batch_ids[]" type="checkbox"  value="{{ $batch->id }}"  /></div> </td>
+                                            @endif
+
+                                            <td> {{ $batch->name }} </td>
+                                            <td> {{ $batch->datereceived }} </td>
+                                            <td> {{ $batch->datecreated }} </td>
+                                            <td> {{ $batch->tat() }} </td>
+                                            <td> {{ $batch->creator }} </td>
+                                            <td> {{ $batch->total }} </td>
+                                            <td> {{ $batch->rejected }} </td>
+                                            <td> {{ $batch->result }} </td>
+                                            <td> {{ $batch->noresult }} </td>
+                                            <td> 
+                                                @if($batch->batch_complete)
+                                                    Complete
+                                                @else
+                                                    In-Process
+                                                @endif
+                                            </td>
+                                            <td> 
+                                                @if($batch->approval)
+                                                    <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval</a>
+                                                @else
+                                                    <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
+
+                                                    @if($batch->batch_complete == 1)
+                                                        | <a href="{{ url($pre . 'batch/summary/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Summary</a> 
+                                                        | <a href="{{ url($pre . 'batch/individual/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Individual </a> 
+                                                        | <a href="{{ url($pre . 'batch/email/' . $batch->id) }}"><i class='fa fa-print'></i> Email </a>
+                                                    @endif
+
+                                                @endif
+                                            </td>
+                                        </tr>
 
 
-                                @endforeach
+                                    @endforeach
 
-                                @php
-                                    // echo $rows;
-                                @endphp 
-                            </tbody>
-                        </table>
+                                    @if(isset($batch_complete) && $batch_complete == 1)
+                                        <tr>
+                                            <td colspan="13"> 
+                                                <center>
+                                                    <input type="submit" name="Print" value="Print the Selected Batches" class="button"  />
+                                                </center>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </form>
                     </div>
 
                     {{-- {!!  $links !!} --}}
