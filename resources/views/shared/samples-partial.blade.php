@@ -25,7 +25,7 @@
                 <td> <a href="{{ url('sample/release/' . $sample->id) }}"> Release</a> </td>
                 <td> <a href="{{ url('sample/' . $sample->id . '/edit') }}"> Edit</a> </td>
                 <td> 
-                    {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete']) }}
+                    {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?');"]) }}
                         <button type="submit" class="btn btn-xs btn-primary">Delete</button>
                     {{ Form::close() }} 
                 </td>

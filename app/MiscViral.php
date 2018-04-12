@@ -57,11 +57,12 @@ class MiscViral extends Model
 	{		
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Collect New Sample' AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Collect New Sample' AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL) )";
         }
+
 
 		$total = Viralsample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
 		$tests = Viralsample::where('batch_id', $batch)
