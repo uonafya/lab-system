@@ -11,8 +11,6 @@ use App\User;
 use App\Batch;
 use App\Viralbatch;
 
-use DB;
-
 class LoginController extends Controller
 {
     /*
@@ -34,7 +32,12 @@ class LoginController extends Controller
      * @var string
      */
     // protected $redirectTo = '/sample/create';
-    protected $redirectTo = '/home';
+    // protected $redirectTo = '/home';
+
+    protected function redirectTo()
+    {
+        return $this->set_session();
+    }
 
     /**
      * Create a new controller instance.
@@ -48,8 +51,7 @@ class LoginController extends Controller
 
     public function fac_login()
     {
-        $facilities = DB::table('facilitys')->select('id', 'name')->get();
-        return view('auth.fac-login', ['facilities' => $facilities, 'login_error' => session()->pull('login_error')]);
+        return view('auth.fac-login', ['login_error' => session()->pull('login_error')]);
     }
 
 
@@ -61,12 +63,13 @@ class LoginController extends Controller
         $batch = Batch::find($batch_no);
 
         if($batch){
+            if($batch->outdated()) return $this->failed_facility_login(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
                 
                 if($user){
                     Auth::login($user);
-                    return redirect('/sample/create');                    
+                    return redirect($this->set_session(true));                    
                 }
             }
         }
@@ -74,12 +77,13 @@ class LoginController extends Controller
         $batch = Viralbatch::find($batch_no);
 
         if($batch){
+            if($batch->outdated()) return $this->failed_facility_login(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
 
                 if($user){
                     Auth::login($user);
-                    return redirect('/viralsample/create');                    
+                    return redirect($this->set_session(true));                    
                 }
 
                 // if(Auth::attempt(['email' => $user->email, 'password' => 'password'])){
@@ -89,13 +93,41 @@ class LoginController extends Controller
             }
         }
         return $this->failed_facility_login(); 
-
     }
 
     public function failed_facility_login()
     {
         session(['login_error' => 'There was no batch for that facility']);
         return redirect('/login/facility');
+    }
+
+    private function set_session($facility = false)
+    {
+        $batch = Batch::editing()->get()->first();
+        if($batch){
+            if($batch->sample_count > 9){
+                $batch->full_batch();
+            }
+            else{
+                $fac = \App\Facility::find($batch->id);
+                session(['batch' => $batch, 'facility_name' => $fac->name]);
+                return '/sample/create';
+            }
+        }
+
+        $viralbatch = Viralbatch::editing()->get()->first();
+        if($viralbatch){
+            if($viralbatch->sample_count > 9){
+                $viralbatch->full_batch();
+            }
+            else{
+                $fac = \App\Facility::find($viralbatch->id);
+                session(['viral_batch' => $viralbatch, 'viral_facility_name' => $fac->name]);
+                return '/viralsample/create';
+            }
+        }
+        if($facility) return '/sample/create';
+        return '/home';        
     }
 }
 

@@ -28,6 +28,7 @@ class VlController extends Controller
         $code = $request->input('mflCode');
         $ccc_number = $request->input('patient_identifier');
         $datecollected = $request->input('datecollected');
+        $datereceived = $request->input('datereceived');
         $dob = $request->input('dob');
 
         $facility = Lookup::facility_mfl($code);
@@ -41,7 +42,7 @@ class VlController extends Controller
             return json_encode("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
         }
 
-        $batch = Viralbatch::existing($facility, $dateReceived, $lab)->get()->first();
+        $batch = Viralbatch::existing($facility, $datereceived, $lab)->get()->first();
 
         if($batch && $batch->sample_count < 10){
 
@@ -53,7 +54,7 @@ class VlController extends Controller
         $batch->lab_id = 5;
         $batch->user_id = 66;
         $batch->facility_id = $facility;
-        $batch->datereceived = $dateReceived;
+        $batch->datereceived = $datereceived;
         $batch->site_entry = 0;
         $batch->save();
 
@@ -61,11 +62,11 @@ class VlController extends Controller
 
         if(!$patient){
             $patient = new Viralpatient;
-            $patient->patient = $ccc_number;
-            $patient->facility_id = $facility;
         } 
 
         $patient->fill($request->only($fields['patient']));
+        $patient->patient = $ccc_number;
+        $patient->facility_id = $facility;
         $patient->save();
 
         $sample = new Viralsample;
@@ -88,12 +89,16 @@ class VlController extends Controller
         $specimenlabelID = $request->input('specimenlabelID');
         $specimenclientcode = $request->input('patient_identifier');
         $datecollected = $request->input('datecollected');
-        // $gender = $request->input('gender');
+        $datereceived = $request->input('datereceived');
+        $datedispatched = $request->input('datedispatched');
         $dob = $request->input('dob');
+        // $sex = Lookup::get_gender($gender);
+        
+        $justification = $request->input('justification');
+        $prophylaxis = $request->input('prophylaxis');
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
-        // $sex = Lookup::get_gender($gender);
 
         $sample_exists = ViralsampleView::sample($facility, $specimenclientcode, $datecollected)->first();
         $fields = Lookup::viralsamples_arrays();
@@ -126,12 +131,11 @@ class VlController extends Controller
 
         if(!$patient){
             $patient = new Viralpatient;
-            $patient->patient = $specimenclientcode;
-            $patient->facility_id = $facility;
         } 
 
-        $patient->fill($request->only($fields['patient']));        
-        $patient->sex = $sex;
+        $patient->fill($request->only($fields['patient'])); 
+        $patient->patient = $specimenclientcode;
+        $patient->facility_id = $facility;
         $patient->save();
 
         if($editted){

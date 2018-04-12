@@ -52,57 +52,45 @@ class SampleController extends Controller
         $samples_arrays = Lookup::samples_arrays();
         $submit_type = $request->input('submit_type');
 
+        $batch = session('batch');
+
         if($submit_type == "cancel"){
-            $batch_no = session()->pull('batch_no');
+            $batch->premature();
             $this->clear_session();
-            DB::table('batches')->where('id', $batch_no)->update(['input_complete' => 1]);
             return redirect()->route('sample.create');
-        }
+        }        
 
-        $batch_no = session('batch_no', 0);
-        $batch_dispatch = session('batch_dispatch', 0);
-
-        $ddispatched = $request->input('datedispatchedfromfacility');
-
-        if($batch_no == 0){
+        if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
-            session(['facility_name' => $facility->name, 'facility_id' => $facility_id, 'batch_total' => 0, 'batch_received' => $request->input('datereceived')]);
+            session(['facility_name' => $facility->name]);
 
             $batch = new Batch;
-            $data = $request->only($samples_arrays['batch']);
-            $batch->fill($data);
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
 
-            if($ddispatched == null){
-                session(['batch_dispatch' => 0]);
-            }
-            else{
-                session(['batch_dispatch' => 1, 'batch_dispatched' => $ddispatched]);
-            }
-
             if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
                 $batch->received_by = auth()->user()->id;
+                $batch->site_entry = 0;
+            }
+            else{
+                $batch->site_entry = 1;
             }
 
+            $data = $request->only($samples_arrays['batch']);
+            $batch->fill($data);
             $batch->save();
-            $batch_no = $batch->id;
-            session(['batch_no' => $batch_no]);
-        }
-
-        if($ddispatched && $batch_dispatch == 0){
-            DB::table('batches')->where('id', $batch_no)->update(['datedispatchedfromfacility' => $ddispatched]);
-            session(['batch_dispatch' => 1]);
+            session(['batch' => $batch]);
         }
 
         $new_patient = $request->input('new_patient');
 
         if($new_patient == 0){
             $patient_id = $request->input('patient_id');
-            $repeat_test = Sample::where(['patient_id' => $patient_id, 'batch_id' => $batch_no])->first();
+            $repeat_test = Sample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
 
             if($repeat_test){
+                session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
                 return redirect()->route('sample.create');
             }
 
@@ -114,7 +102,7 @@ class SampleController extends Controller
             $data = $request->only($samples_arrays['sample']);
             $sample = new Sample;
             $sample->fill($data);
-            $sample->batch_id = $batch_no;
+            $sample->batch_id = $batch->id;
 
             $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
             $sample->save();
@@ -133,21 +121,12 @@ class SampleController extends Controller
             $patient->mother_id = $mother->id;
             $patient->save();
 
-            $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
-            $dob = Carbon::createFromFormat('Y-m-d', $request->input('dob'));
-            $months = $dc->diffInMonths($dob);
-            $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
-
-            $patient_age = $months + ($weeks / 4);
-
-            if($patient_age == 0)$patient_age = 0.1;
-
             $data = $request->only($samples_arrays['sample']);
             $sample = new Sample;
             $sample->fill($data);
             $sample->patient_id = $patient->id;
             $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
-            $sample->batch_id = $batch_no;
+            $sample->batch_id = $batch->id;
             $sample->save();
 
         }
@@ -155,19 +134,15 @@ class SampleController extends Controller
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "release"){
-            $batch_no = session()->pull('batch_no');
             $this->clear_session();
-            DB::table('batches')->where('id', $batch_no)->update(['input_complete' => 1]);
+            $batch->premature();
         }
 
-        $batch_total = session('batch_total', 0) + 1;
+        $batch->refresh();
 
-        session(['batch_total' => $batch_total]);
-
-        if($batch_total == 10){
-            $batch_no = session()->pull('batch_no', $batch_no);
+        if($batch->sample_count == 10){
             $this->clear_session();
-            DB::table('batches')->where('id', $batch_no)->update(['input_complete' => 1, 'batch_full' => 1]);
+            $batch->full_batch();
         }
 
         // return redirect()->route('sample.create');
@@ -354,12 +329,12 @@ class SampleController extends Controller
     }
 
     private function clear_session(){
-        session()->forget('batch_no');
-        session()->forget('batch_total');
-        session()->forget('batch_dispatch');
-        session()->forget('batch_dispatched');
-        session()->forget('batch_received');
-        session()->forget('facility_id');
+        session()->forget('batch');
         session()->forget('facility_name');
+        // session()->forget('batch_total');
+        // session()->forget('batch_dispatch');
+        // session()->forget('batch_dispatched');
+        // session()->forget('batch_received');
+        // session()->forget('facility_id');
     }
 }

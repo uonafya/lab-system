@@ -23,7 +23,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if($facility_id == 0)    
+                        @if(!$batch)    
                           <div class="form-group">
                               <label class="col-sm-4 control-label">Facility</label>
                               <div class="col-sm-8">
@@ -35,8 +35,8 @@
                               </div>
                           </div>
                         @else
-                            <p>Facility - {{ $facility_name }}  Batch {{ $batch_no }} </p>
-                            <input type="hidden" name="facility_id" id="facility_id" value="{{$facility_id}}">
+                            <p>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </p>
+                            <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
 
                       <div class="form-group">
@@ -287,37 +287,29 @@
                             </div>                            
                         </div> 
 
-                        @if($batch_dispatch == 0)
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
-                                    </div>
-                                </div>                            
-                            </div> 
-                        @else
-                            <input type="hidden" value="{{ $batch_dispatched }}" id="datedispatched">
-                        @endif
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
+                                </div>
+                            </div>                            
+                        </div> 
 
                         <div></div>
 
                         @if(auth()->user()->user_type_id != 5)
-                            @if($batch_no == 0)  
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Date Received</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group date">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived ?? '' }}" name="datereceived">
-                                        </div>
-                                    </div>                            
-                                </div> 
-                            @else
-                                <input type="hidden" value="{{ $batch_received }}" id="datereceived">
-                            @endif
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date Received</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                    </div>
+                                </div>                            
+                            </div> 
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Received Status</label>
@@ -409,7 +401,10 @@
                         <div class="col-sm-8 col-sm-offset-2">
                             <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
                             <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
-                            <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
+                                
+                            @empty($batch)
+                                <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
+                            @endempty
                         </div>
                     @endif
                 </div>

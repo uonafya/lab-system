@@ -118,12 +118,7 @@ class Lookup extends Model
             'pcrtypes' => Cache::get('pcr_types'),
             'receivedstatuses' => Cache::get('received_statuses'),
 
-            'batch_no' => session('batch_no', 0),
-            'batch_dispatch' => session('batch_dispatch', 0),
-            'batch_dispatched' => session('batch_dispatched', 0),
-            'batch_received' => session('batch_received', 0),
-
-            'facility_id' => session('facility_id', 0),
+            'batch' => session('batch'),
             'facility_name' => session('facility_name', 0),
             'amrs' => self::$amrs,
         ];
@@ -193,15 +188,8 @@ class Lookup extends Model
             'sampletypes' => Cache::get('sample_types'),
             'regimenlines' => Cache::get('regimen_lines'),
 
-            'batch_no' => session('viral_batch_no', 0),
-            'batch_dispatch' => session('viral_batch_dispatch', 0),
-            'batch_dispatched' => session('viral_batch_dispatched', 0),
-            'batch_received' => session('viral_batch_received', 0),
-
-            'facility_id' => session('viral_facility_id', 0),
+            'batch' => session('viral_batch'),
             'facility_name' => session('viral_facility_name', 0),
-
-            'message' => session()->pull('viral_message'),
             'amrs' => self::$amrs,
         ];
     }
