@@ -83,7 +83,7 @@ class ViralworksheetController extends Controller
         $count = $samples->count();
 
         if($count == $machine->vl_limit){
-            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
+            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine])->with('pageTitle', 'Add Worksheet');
         }
 
         return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Add Worksheet');
@@ -363,7 +363,7 @@ class ViralworksheetController extends Controller
 
         $subtotals = ['detected' => $detected, 'undetected' => $undetected, 'failed' => $failed, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_viral_results', ['actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval]);
+        return view('tables.confirm_viral_results', ['actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval])->with('pageTitle', 'Approve Results');
     }
 
     public function approve(Request $request, Viralworksheet $worksheet)

@@ -23,9 +23,40 @@ class DashboardController extends Controller
 
     public function lab_monthly_tests()
     {
-        $result = ['tests','positives','negatives','rejected'];
+        $currentTestingSystem = session('testingSystem');
+        // dd(session('testingSystem'));
+        $result = ($currentTestingSystem == 'Viralload') ? 
+                            ['received','tests','rejected','non_suppression'] : 
+                            ['tests','positives','negatives','rejected'];
+        
+        
         foreach ($result as $key => $value) {
-            $data[$value] = DB::table('samples')
+            ($value == 'received') ? $table = "`viralbatches`.`datereceived`" : $table = "`viralsamples`.`datetested`";
+            
+            $data[$value] = ($currentTestingSystem == 'Viralload') ? 
+                            DB::table('viralsamples')
+                                ->select(DB::RAW("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value"))
+                                ->when($value, function($query) use ($value){
+                                    if ($value == 'received') {
+                                        return $query->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id');
+                                    }
+                                })
+                                ->when($value, function($query) use ($value){
+                                    if($value == 'received'){
+                                        return $query->where('receivedstatus', 1);
+                                    } else if($value == 'tests'){
+                                        return $query->where('result', '<>', NULL);
+                                    } else if($value == 'rejected'){
+                                        return $query->where('receivedstatus', 2);
+                                    }  else if($value == 'non_suppression'){
+                                        return $query->where('result', '< LDL copies/ml');
+                                    }                
+                                })
+                                ->where('repeatt', '=', 0)
+                                ->whereRaw("YEAR(".$table.") = ".Date('Y'))
+                                ->groupBy('month', 'monthname')->get() 
+                            :
+                            DB::table('samples')
                                 ->select(DB::RAW("MONTH(`datetested`) as `month`,MONTHNAME(`datetested`) as `monthname`,count(*) as $value"))
                                 ->when($value, function($query) use ($value){
                                     if($value == 'tests'){
@@ -40,16 +71,29 @@ class DashboardController extends Controller
                                 })
                                 ->where('repeatt', '=', 0)
                                 ->where('parentid', '=', 0)
+                                ->whereRaw('YEAR(datetested) = '.Date('Y'))
                                 ->groupBy('month', 'monthname')->get();
         }
+        
         $chartData = self::__mergeMonthlyTests($data);
         $data = [];
-        $data['testtrends'][0]['name'] = 'Rejected';
-        $data['testtrends'][1]['name'] = 'Positives';
-        $data['testtrends'][2]['name'] = 'Negatives';
-        $data['testtrends'][3]['name'] = 'Tests';
 
-        $data['testtrends'][0]['type'] = $data['testtrends'][1]['type'] = $data['testtrends'][2]['type'] = 'column';
+        if ($currentTestingSystem == 'Viralload') {
+            $data['testtrends'][0]['name'] = 'Received';
+            $data['testtrends'][1]['name'] = 'Tests';
+            $data['testtrends'][2]['name'] = 'Rejected';
+            $data['testtrends'][3]['name'] = 'Non-Suppressed';
+            
+            $data['testtrends'][0]['type'] = $data['testtrends'][1]['type'] = $data['testtrends'][2]['type'] = 'spline';
+        } else {
+            $data['testtrends'][0]['name'] = 'Rejected';
+            $data['testtrends'][1]['name'] = 'Positives';
+            $data['testtrends'][2]['name'] = 'Negatives';
+            $data['testtrends'][3]['name'] = 'Tests';
+            
+            $data['testtrends'][0]['type'] = $data['testtrends'][1]['type'] = $data['testtrends'][2]['type'] = 'column';
+        }
+
         $data['testtrends'][3]['type'] = 'spline';
 
         $data['testtrends'][0]['tooltip'] = $data['testtrends'][1]['tooltip'] = $data['testtrends'][2]['tooltip'] = $data['testtrends'][3]['tooltip'] = ['valueSuffix' => ''];
@@ -58,10 +102,17 @@ class DashboardController extends Controller
         $data['testtrends'][0]['data'][0] = $data['testtrends'][1]['data'][0] = $data['testtrends'][2]['data'][0] = $data['testtrends'][3]['data'][0] = 0;
         foreach ($chartData as $key => $value) {
             $data['categories'][$key] = $value['monthname'];
-            $data['testtrends'][0]['data'][$key] = (int) $value['rejected'];
-            $data['testtrends'][1]['data'][$key] = (int) $value['positives'];
-            $data['testtrends'][2]['data'][$key] = (int) $value['negatives'];
-            $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
+            if ($currentTestingSystem == 'Viralload') {
+                $data['testtrends'][0]['data'][$key] = (int) $value['received'];
+                $data['testtrends'][1]['data'][$key] = (int) $value['tests'];
+                $data['testtrends'][2]['data'][$key] = (int) $value['rejected'];
+                $data['testtrends'][3]['data'][$key] = (int) $value['non_suppression'];
+            } else {
+                $data['testtrends'][0]['data'][$key] = (int) $value['rejected'];
+                $data['testtrends'][1]['data'][$key] = (int) $value['positives'];
+                $data['testtrends'][2]['data'][$key] = (int) $value['negatives'];
+                $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
+            }
         }
 
         return $data;
@@ -109,26 +160,47 @@ class DashboardController extends Controller
 
         $data = (object) $data;
         $newData = [];
+        
         // Looping through tests and adding positives, negatives, and rejected
         foreach ($data->tests as $key => $value) {
-            $newData[] = [
-                            'month' => $value->month, 'monthname' => $value->monthname,
-                            'tests' => $value->tests, 'positives' => 0,
-                            'negatives' => 0, 'rejected' => 0
-                        ];
-            foreach ($data->positives as $key2 => $value2) {
-                if ($value->month == $value2->month)
-                    $newData[$key]['positives'] =  (isset($value2->positives)) ? $value2->positives : 0 ;
-            }
-            foreach ($data->negatives as $key2 => $value2) {
-                if ($value->month == $value2->month)
-                    $newData[$key]['negatives'] =  (isset($value2->negatives)) ? $value2->negatives : 0 ;
-            }
-            foreach ($data->rejected as $key2 => $value2) {
-                if ($value->month == $value2->month)
-                    $newData[$key]['rejected'] =  (isset($value2->rejected)) ? $value2->rejected : 0 ;
+            $newData[] = [ 'month' => $value->month,'monthname' => $value->monthname,'tests' => $value->tests ];
+            if (session('testingSystem') == 'Viralload'){
+                $newData[$key] += [ 'received' => 0, 'rejected' => 0, 'non_suppression' => 0 ];
+
+                foreach ($data->received as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['received'] =  (isset($value2->received)) ? $value2->received : 0 ;
+                }
+
+                foreach ($data->rejected as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['rejected'] =  (isset($value2->rejected)) ? $value2->rejected : 0 ;
+                }
+
+                foreach ($data->non_suppression as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['non_suppression'] =  (isset($value2->non_suppression)) ? $value2->non_suppression : 0 ;
+                }
+            } else {
+                $newData[$key] += [ 'positives' => 0, 'negatives' => 0, 'rejected' => 0 ];
+
+                foreach ($data->positives as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['positives'] =  (isset($value2->positives)) ? $value2->positives : 0 ;
+                }
+
+                foreach ($data->negatives as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['negatives'] =  (isset($value2->negatives)) ? $value2->negatives : 0 ;
+                }
+
+                foreach ($data->rejected as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['rejected'] =  (isset($value2->rejected)) ? $value2->rejected : 0 ;
+                }
             }
         }
+        
         return $newData;
     }
 

@@ -60,6 +60,44 @@
 		            	<div class="table-responsive" style="padding-left: 15px;padding-top: 2px;padding-bottom: 2px;padding-right: 15px;">
                 		<table cellpadding="1" cellspacing="1" class="table table-condensed">
 		                	<tbody>
+                            @if(session('testingSystem') == 'Viralload')
+                                <tr>
+                                    <td>Received samples in {{ Date('Y') }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Rejected Samples</td>
+                                    <td>{{ $lab_stats->rejectedSamples }}
+                                     [ {{ round(@(($lab_stats->rejectedSamples/$lab_stats->receivedSamples)*100),1) }}% ]</td>
+                                </tr>
+                                <tr>
+                                    <td>Tested Samples</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Redraws ( After testing )</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;Tests with Valid results ( > 1000 or < 1000 cp/ml)</td>
+                                    <td>{{ number_format($lab_stats->redraws) }}
+                                     [ {{ round(@(($lab_stats->redraws/($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws))*100),1) }}% ]</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non Suppression ( > 1000 cp/ml )</td>
+                                    <td>{{ number_format($lab_stats->redraws) }}
+                                     [ {{ round(@(($lab_stats->redraws/($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws))*100),1) }}% ]</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suppression ( < 1000 cp/ml )</td>
+                                    <td>{{ number_format($lab_stats->redraws) }}
+                                     [ {{ round(@(($lab_stats->redraws/($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws))*100),1) }}% ]</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Tests Done ( Including Redraws )</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                </tr>
+                            @else
 		                		<tr>
 		                			<td>No. of received samples in {{ Date('Y') }}</td>
 		                			<td>{{ number_format($lab_stats->receivedSamples) }}</td>
@@ -70,11 +108,7 @@
 		                			 [ {{ round(@(($lab_stats->rejectedSamples/$lab_stats->receivedSamples)*100),1) }}% ]</td>
 		                		</tr>
 		                		<tr>
-		                			<td>No. of Tested Samples 
-                                        @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
-                                            ( + or - or Redraws )
-                                        @endif
-                                    </td>
+		                			<td>No. of Tested Samples ( + or - or Redraws )</td>
 		                			<td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
 		                		</tr>
 		                		<tr>
@@ -106,11 +140,65 @@
 		                			<td><strong>No of SMS Printers Served by Lab</strong></td>
 		                			<td><strong>{{ $lab_stats->smsPrinters}}</strong></td>
 		                		</tr>
+                            @endif
 		                	</tbody>
 		                </table>
 		            </div>
 		        </div>
             </div>
+            @if(session('testingSystem') == 'Viralload')
+                <div class="hpanel">
+                    <div class="panel-heading">
+                        <center>Tests Done</center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div class="table-responsive" style="padding-left: 15px;padding-top: 2px;padding-bottom: 2px;padding-right: 15px;">
+                        <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Sample Types</th>
+                                    <th># Received</th>
+                                    <th># Tests</th>
+                                    <th># Rejected</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1. Frozen Plasma</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>2. Venous Blood (EDTA)</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>3. DBS Venous</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>4. DBS Capillary (Infants)</td>
+                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>* Not Specified</td>
+                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->testedSamples) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
         <div class="row">
             <div class="col-lg-8">

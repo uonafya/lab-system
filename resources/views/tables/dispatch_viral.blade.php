@@ -60,7 +60,7 @@
                                         <td> {{ $batch->redraw }} </td>
                                         <td> {{ $batch->status }} </td>
                                         <td>
-                                            <a href="{{ url('/viralbatch/'' . $batch->id) }}">View</a> </td>
+                                            <a href="{{ url('/viralbatch/' . $batch->id) }}">View</a> </td>
                                         </td>
                                     </tr>
                                 @endforeach

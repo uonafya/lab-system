@@ -245,7 +245,7 @@ class ViralbatchController extends Controller
             $batch->total = $total;
             $batch->redraw = $redraw;
             $batch->noresult = $noresult;
-            $batch->result = $result;
+            $batch->result = $results;
             $batch->failed = $failed;
             $batch->rejected = $rej;
             $batch->date_modified = $dm;
@@ -254,7 +254,7 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
-        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count()]);
+        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
 
         $table_rows = "";
 
