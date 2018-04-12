@@ -25,6 +25,7 @@ class BatchController extends Controller
 
     public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
+
         $myurl = url('batch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
@@ -96,7 +97,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => '']);
+        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => ''])->with('pageTitle', 'Samples by Batch');
     }
 
     /**
@@ -225,6 +226,8 @@ class BatchController extends Controller
             $failed = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 3));
             $redraw = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 5));
             $noresult = $this->checknull($get_subtotals->where('batch_id', $batch->id)->where('result', 0));
+
+            // dd($neg);
 
             $rej = $this->checknull($rejected->where('batch_id', $batch->id));
             $total = $neg + $pos + $failed + $redraw + $noresult + $rej;

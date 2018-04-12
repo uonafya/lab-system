@@ -13,12 +13,12 @@ class CreateUserTypesTable extends Migration
      */
     public function up()
     {
-        // Schema::create('user_types', function (Blueprint $table) {
-        //     $table->increments('id');
-        //     $table->string('user_type');
-        //     $table->softDeletes();
-        //     $table->timestamps();
-        // });
+        Schema::create('user_types', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('user_type');
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -28,6 +28,6 @@ class CreateUserTypesTable extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('user_types');
+        Schema::dropIfExists('user_types');
     }
 }

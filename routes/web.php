@@ -128,6 +128,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 		Route::post('search/', 'WorksheetController@search')->name('search');
 	});
+	Route::get('worksheetserverside/', 'WorksheetController@getworksheetserverside')->name('worksheetserverside');
 
 	Route::resource('worksheet', 'WorksheetController');
 
