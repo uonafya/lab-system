@@ -101,8 +101,8 @@ class WorksheetController extends Controller
         //     $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->my_date_format('daterun') . "</td><td>" . $worksheet->my_date_format('dateuploaded') . "</td><td>" . $worksheet->my_date_format('datereviewed') . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
 
         // }
-        // return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
-        return view('tables.worksheetsdtsvr', ['myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
+        return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
+        // return view('tables.worksheetsdtsvr', ['myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
     }
 
     public function getworksheetserverside(Request $request)
