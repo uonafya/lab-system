@@ -137,7 +137,7 @@ class SampleController extends Controller
             $this->clear_session();
             $batch->premature();
         }
-        
+
         $sample_count = session('batch_total') + 1;
         session(['batch_total' => $sample_count]);
 
@@ -243,7 +243,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->run != 1 && $sample->inworksheet == 0){
+        if($sample->inworksheet == 0 && $sample->result == NULL){
             $sample->delete();
         }        
         return back();

@@ -240,7 +240,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->run != 1 && $viralsample->inworksheet == 0){
+        if($viralsample->inworksheet == 0 && $viralsample->result == NULL){
             $viralsample->delete();
         }        
         return back();
