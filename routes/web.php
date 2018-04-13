@@ -41,7 +41,6 @@ Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
 Auth::routes();
 
-Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 Route::get('datatables', function () {
 	return view('datatables');
 });
@@ -50,17 +49,11 @@ Route::get('/checkboxes', function () {
 	return view('checkbox');
 });
 
-Route::resource('district', 'DistrictController');
+
 
 Route::get('error', function(){
 	return view('errors.error', ['code' => '500', 'title' => 'Internal server error', 'description' => 'Sorry, there was an internal server error that occured. Please try again later']);
 });
-
-Route::get('facility/served', 'FacilityController@served');
-Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
-Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
-Route::post('facility/search/', 'FacilityController@search')->name('facility.search');
-Route::resource('facility', 'FacilityController');
 
 // Route::get('/home', function () {
 // 	return view('home');
@@ -69,7 +62,7 @@ Route::get('/home', 'HomeController@index');
 
 Route::middleware(['web', 'auth'])->group(function(){
 
-	Route::get('search', function () {	return view('forms.search'); });
+	Route::get('search', function () {	return view('forms.search')->with('pageTitle', 'Search'); });
 
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
@@ -86,6 +79,15 @@ Route::middleware(['web', 'auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+	
+	Route::resource('district', 'DistrictController');
+
+	Route::get('facility/served', 'FacilityController@served');
+	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
+	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+	Route::post('facility/search/', 'FacilityController@search')->name('facility.search');
+	Route::resource('facility', 'FacilityController');
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');

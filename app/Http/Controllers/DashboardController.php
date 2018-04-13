@@ -121,25 +121,31 @@ class DashboardController extends Controller
 
     public function lab_statistics()
     {
-    	return [
-    		'testedSamples' => 	self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count(),
-	   		'rejectedSamples'=> 	self::__joinedToBatches()->where('samples.receivedstatus', '=', '2')
-									->where('samples.repeatt', '=', '0')
-									->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))->count(),
-			'failedSamples' => 	self::__getsampleResultByType(3),
-			'inconclusive' 	=>	self::__getsampleResultByType(5),
-			'redraws'		=>  self::__getsampleResultByType(3) + self::__getsampleResultByType(5),
-			'positives' 	=> 	self::__getsampleResultByType(2),
-			'negatives' 	=>	self::__getsampleResultByType(1),
-			'receivedSamples'=>	self::__joinedToBatches()->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
-														->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))")
-														->count(),
-			'smsPrinters' 	=>	Facility::where('smsprinter', '=', 1)
-									->where('smsprinterphoneno', '<>', 0)
-									->where('lab', '=', Auth()->user()->lab_id)->count()
-			];
+        $data = [];
 
-		
+        if (session('testingSystem') == 'Viralload') {
+            $data = [];
+        } else {
+            $data = [
+                    'testedSamples' =>  self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count(),
+                    'rejectedSamples'=>     self::__joinedToBatches()->where('samples.receivedstatus', '=', '2')
+                                            ->where('samples.repeatt', '=', '0')
+                                            ->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))->count(),
+                    'failedSamples' =>  self::__getsampleResultByType(3),
+                    'inconclusive'  =>  self::__getsampleResultByType(5),
+                    'redraws'       =>  self::__getsampleResultByType(3) + self::__getsampleResultByType(5),
+                    'positives'     =>  self::__getsampleResultByType(2),
+                    'negatives'     =>  self::__getsampleResultByType(1),
+                    'receivedSamples'=> self::__joinedToBatches()->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
+                                                                ->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))")
+                                                                ->count(),
+                    'smsPrinters'   =>  Facility::where('smsprinter', '=', 1)
+                                            ->where('smsprinterphoneno', '<>', 0)
+                                            ->where('lab', '=', Auth()->user()->lab_id)->count()
+                ];
+        }
+        
+    	return $data;
     }
 
     public function lab_tat_statistics()
