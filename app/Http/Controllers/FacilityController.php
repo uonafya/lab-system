@@ -118,7 +118,7 @@ class FacilityController extends Controller
             $table .= '</tr>';
         }
         
-        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->->with('pageTitle', 'With SMS Printers');
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'With SMS Printers');
     }
 
     public function withoutemails()
