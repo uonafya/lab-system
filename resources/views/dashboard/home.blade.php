@@ -72,30 +72,27 @@
                                 </tr>
                                 <tr>
                                     <td>Tested Samples</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                    <td>{{ $lab_stats->testedSamples }}</td>
                                 </tr>
                                 <tr>
                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Redraws ( After testing )</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
+                                    <td>{{ $lab_stats->redraws }}</td>
                                 </tr>
                                 <tr>
                                     <td>&nbsp;&nbsp;&nbsp;Tests with Valid results ( > 1000 or < 1000 cp/ml)</td>
-                                    <td>{{ number_format($lab_stats->redraws) }}
-                                     [ {{ round(@(($lab_stats->redraws/($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws))*100),1) }}% ]</td>
+                                    <td>{{ $lab_stats->nonsuppressed+$lab_stats->suppressed }}</td>
                                 </tr>
                                 <tr>
                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non Suppression ( > 1000 cp/ml )</td>
-                                    <td>{{ number_format($lab_stats->redraws) }}
-                                     [ {{ round(@(($lab_stats->redraws/($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws))*100),1) }}% ]</td>
+                                    <td>{{ $lab_stats->nonsuppressed }}</td>
                                 </tr>
                                 <tr>
                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suppression ( < 1000 cp/ml )</td>
-                                    <td>{{ number_format($lab_stats->redraws) }}
-                                     [ {{ round(@(($lab_stats->redraws/($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws))*100),1) }}% ]</td>
+                                    <td>{{ $lab_stats->suppressed }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Total Tests Done ( Including Redraws )</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                    <td>Total Tests Done ( Including Repeats )</td>
+                                    <td>{{ $lab_stats->totaltestsinlab }}</td>
                                 </tr>
                             @else
 		                		<tr>
@@ -171,26 +168,26 @@
                                 </tr>
                                 <tr>
                                     <td>2. Venous Blood (EDTA)</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives + $lab_stats->redraws) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
                                 </tr>
                                 <tr>
                                     <td>3. DBS Venous</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
-                                    <td>{{ number_format($lab_stats->positives + $lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
                                 </tr>
                                 <tr>
                                     <td>4. DBS Capillary (Infants)</td>
-                                    <td>{{ number_format($lab_stats->negatives) }}</td>
-                                    <td>{{ number_format($lab_stats->negatives) }}</td>
-                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
                                 </tr>
                                 <tr>
                                     <td>* Not Specified</td>
-                                    <td>{{ number_format($lab_stats->negatives) }}</td>
-                                    <td>{{ number_format($lab_stats->negatives) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
                                     <td>{{ number_format($lab_stats->testedSamples) }}</td>
                                 </tr>
                             </tbody>

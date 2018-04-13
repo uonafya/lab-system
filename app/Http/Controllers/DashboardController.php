@@ -123,34 +123,58 @@ class DashboardController extends Controller
     public function lab_statistics()
     {
         $data = [];
+        $current = session('testingSystem');
 
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
                                             ->where('smsprinterphoneno', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
+        $rejection = self::__joinedToBatches()
+                            ->when($current, function($query) use ($current){
+                                if ($current == 'Viralload') {
+                                    return $query->where('viralsamples.receivedstatus', '=', '2')
+                                            ->where('viralsamples.repeatt', '=', '0')
+                                            ->whereRaw("YEAR(viralbatches.datereceived) = ".Date('Y'));
+                                } else {
+                                    return $query->where('samples.receivedstatus', '=', '2')
+                                            ->where('samples.repeatt', '=', '0')
+                                            ->whereRaw("YEAR(batches.datereceived) = ".Date('Y'));
+                                }
+                            })->count();
+        $received = self::__joinedToBatches()
+                            ->when($current, function ($query) use ($current) {
+                                if ($current == 'Viralload') {
+                                    return $query->whereRaw("((viralsamples.parentid=0)||(viralsamples.parentid IS NULL))")
+                                                ->whereRaw("YEAR(viralbatches.datereceived) = ".Date('Y'));
+                                } else {
+                                    return $query->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
+                                                ->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
+                                }
+                            })->count();
 
+        $redraws = (session('testingSystem') == 'Viralload') ? 
+                        self::__getsampleResultByType(1) : 
+                        self::__getsampleResultByType(3) + self::__getsampleResultByType(5);
+
+        
         if (session('testingSystem') == 'Viralload') {
             $data = [
                     'testedSamples' => $tests,
-                    'rejectedSamples' => null,
-                    'receivedSamples'=> null,
+                    'rejectedSamples' => $rejection,
+                    'receivedSamples'=> $received,
                     'smsPrinters'   =>  $smsPrinters,
-                    'redraws' => null,
-                    'nonsuppressed' => null,
-                    'suppressed' => null,
-                    'totaltestsinlab' => null
+                    'redraws' => $redraws,
+                    'nonsuppressed' => self::__getsampleResultByType(3),
+                    'suppressed' => self::__getsampleResultByType(2),
+                    'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".Date('Y'))->count()
                 ];
         } else {
             $data = [
                     'testedSamples' =>  $tests,
-                    'rejectedSamples'=>     self::__joinedToBatches()->where('samples.receivedstatus', '=', '2')
-                                            ->where('samples.repeatt', '=', '0')
-                                            ->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))->count(),
-                    'receivedSamples'=> self::__joinedToBatches()->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
-                                                                ->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))")
-                                                                ->count(),
+                    'rejectedSamples'=> $rejection,
+                    'receivedSamples'=> $received,
                     'smsPrinters'   =>  $smsPrinters,
-                    'redraws'       =>  self::__getsampleResultByType(3) + self::__getsampleResultByType(5),
+                    'redraws'       =>  $redraws,
                     'failedSamples' =>  self::__getsampleResultByType(3),
                     'inconclusive'  =>  self::__getsampleResultByType(5),
                     'positives'     =>  self::__getsampleResultByType(2),
@@ -225,21 +249,82 @@ class DashboardController extends Controller
 
     public static function __getsampleResultByType($type = null)
     {
-    	if ($type == null || !is_int($type))
-    		return 0;
-
-    	return 	self::__getSamples()
-						->where('result', '=', $type)
-						->where('repeatt', '=', '0')
-						->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
-    	
+        if ($type == null || !is_int($type))
+            return 0;
+        
+        if (session('testingSystem') == 'Viralload') {//First check the system presently in
+            $result = [];
+            if ($type==1) { //Redraws
+                $result = ['Collect New Sample','Failed','Invalid'];
+            } else if ($type==2) {//Suppressed
+                $result = ['BETWEEN 1 AND  1000','< LDL copies/ml','Target Not Detected','<550','<150','<160','<75','<274','<400',' <400','< 400','<188','<839','<40','<20','<218'];
+            } else if ($type==3) {//Non-suppressed
+                $result = ['>10000000','BETWEEN 1000 AND  5000','> 1000'];
+                // $result = ['> 1000'];
+            }
+            
+            $model = self::__getSamples()
+                        ->when($result, function($query) use ($result) {
+                            $max = count($result);
+                            $max -= 1;
+                            foreach ($result as $key => $value) {
+                                if ($key == 0){
+                                    if (strpos($value, 'BETWEEN') !== false || strpos($value, '>') !== false || strpos($value, '<') !== false){
+                                            if (strpos($value, 'LDL') !== false || strpos($value, '>10000000') !== false) {
+                                                $query->whereRaw("(viralsamples.result  = '". $value."'");
+                                            } else {
+                                                $query->whereRaw("(viralsamples.result ".$value);
+                                            }
+                                        } else {
+                                            $query->whereRaw("(viralsamples.result  = '". $value."'");
+                                        }
+                                } else {
+                                    if (strpos($value, 'BETWEEN') !== false || strpos($value, '>') !== false || strpos($value, '<') !== false)
+                                    {
+                                        if (strpos($value, 'LDL') !== false || strpos($value, '>10000000') !== false) {
+                                            $query->orwhereRaw("viralsamples.result  = '". $value."'");
+                                        } else {
+                                            $query->orwhereRaw("viralsamples.result ".$value);
+                                        }
+                                    } else {
+                                        $query->orwhereRaw("viralsamples.result = '". $value."'");
+                                    }
+                                }
+                                if ($key == $max) {
+                                    if (strpos($value, 'BETWEEN') !== false || strpos($value, '>') !== false || strpos($value, '<') !== false)
+                                    {
+                                        if (strpos($value, 'LDL') !== false || strpos($value, '>10000000') !== false) {
+                                            $query->orwhereRaw("viralsamples.result  = '". $value."')");
+                                        } else {
+                                            $query->orwhereRaw("viralsamples.result ".$value.")");
+                                        }
+                                    } else {
+                                        $query->orwhereRaw("viralsamples.result = '".$value."')");
+                                    }
+                                } else {
+                                    
+                                }
+                            }
+                        });
+            
+        } else {
+            $model = self::__getSamples()
+                        ->where('result', '=', $type);
+        }
+        
+    	return 	$model->where('repeatt', '=', '0')
+                        ->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
     }
 
     public static function __joinedToBatches()
     {
-    	return DB::table('samples')
-		   			->join('batches', 'batches.id', '=', 'samples.batch_id')
-		   			->where('samples.flag', '=', 1);
+        (session('testingSystem') == 'Viralload') ?
+            $model = DB::table('viralsamples')
+                        ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id') :
+            $model = DB::table('samples')
+                        ->join('batches', 'batches.id', '=', 'samples.batch_id')
+                        ->where('samples.flag', '=', 1);
+    	return $model;
     }
 
 
@@ -248,6 +333,15 @@ class DashboardController extends Controller
         (session('testingSystem') == 'Viralload') ?
             $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0) :
             $model = Sample::with('batch')->where('flag', '=', 1);
+
+        return $model;
+    }
+
+    public static function __getTotalSamples()
+    {
+        (session('testingSystem') == 'Viralload') ?
+            $model = Viralsample::where('result', '<>', '') :
+            $model = Sample::with('batch');
 
         return $model;
     }
