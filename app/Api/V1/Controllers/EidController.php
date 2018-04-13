@@ -47,7 +47,7 @@ class EidController extends Controller
             return json_encode("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
         }
 
-        $batch = Batch::existing($facility, $datereceived, $lab)->get()->first();
+        $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
 
