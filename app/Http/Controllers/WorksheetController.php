@@ -101,8 +101,249 @@ class WorksheetController extends Controller
         //     $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->my_date_format('daterun') . "</td><td>" . $worksheet->my_date_format('dateuploaded') . "</td><td>" . $worksheet->my_date_format('datereviewed') . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
 
         // }
+        return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
+        // return view('tables.worksheetsdtsvr', ['myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
+    }
 
-        // return view('tables.worksheets', ['rows' => $table_rows, 'myurl' => url('worksheet/index/' . $state . '/')]);
+    public function getworksheetserverside(Request $request)
+    {
+        $primaryKey = 'id';
+        // Array of database columns which should be read and sent back to DataTables.
+        // The `db` parameter represents the column name in the database, while the `dt`
+        // parameter represents the DataTables column identifier. In this case simple
+        // indexes
+        $columns = array(
+            array('db' => 'created_at', 'dt' => 0 ),
+            array( 'db' => 'full_name',  'dt' => 1 ),
+            array( 'db' => 'machine_type',   'dt' => 2 ),
+            array( 'db' => 'status_id',     'dt' => 3 ),
+            array( 'db' => 'pos',     'dt' => 4 ),
+            array( 'db' => 'neg',     'dt' => 5 ),
+            array( 'db' => 'failed',     'dt' => 6 ),
+            array( 'db' => 'redraw',     'dt' => 7 ),
+            array( 'db' => 'noresult',     'dt' => 8 ),
+            array( 'db' => 'total',     'dt' => 9 ),
+            array( 'db' => 'daterun', 'dt' => 10 ),
+            array( 'db' => 'dateuploaded', 'dt' => 11 ),
+            array( 'db' => 'datereviewed', 'dt' => 12 )
+
+        );
+
+        self::simple($_GET, $primaryKey, $columns);
+    }
+
+    static function simple ($request, $primaryKey, $columns) {
+        $bindings = array();
+        $worksheet_id = NULL;
+        // Build the SQL query string from the request
+        // $query = self::query();
+        $where = self::filter( $request, $columns, $bindings );
+        // $order = self::order( $request, $columns );
+        // $limit = self::limit( $query, $request)->toSql();
+        print_r($where);die();
+
+        // $samples = Sample::selectRaw("count(*) as totals, worksheet_id, result")
+        //     ->whereNotNull('worksheet_id')
+        //     ->when($worksheet_id, function($query) use ($worksheet_id){                
+        //         if (is_array($worksheet_id)) {
+        //             return $query->whereIn('worksheet_id', $worksheet_id);
+        //         }
+        //         return $query->where('worksheet_id', $worksheet_id);
+        //     })
+        //     ->where('inworksheet', 1)
+        //     ->where('receivedstatus', '!=', 2)
+        //     ->groupBy('worksheet_id', 'result')
+        //     ->toSql();
+
+        // print_r($samples);die();
+    }
+
+    static function query($state=0, $date_start=NULL, $date_end=NULL)
+    {
+        $worksheets = Worksheet::with(['creator'])
+        ->when($state, function ($query) use ($state){
+            return $query->where('status_id', $state);
+        })
+        ->when($date_start, function($query) use ($date_start, $date_end){
+            if($date_end)
+            {
+                return $query->whereDate('worksheets.created_at', '>=', $date_start)
+                ->whereDate('worksheets.created_at', '<=', $date_end);
+            }
+            return $query->whereDate('worksheets.created_at', $date_start);
+        });
+        // ->orderBy('worksheets.created_at', 'desc')
+        // ->get();
+        return $worksheets;
+    }
+
+
+    /**
+     * Searching / Filtering
+     *
+     * Construct the WHERE clause for server-side processing SQL query.
+     *
+     * NOTE this does not match the built-in DataTables filtering which does it
+     * word by word on any field. It's possible to do here performance on large
+     * databases would be very poor
+     *
+     *  @param  array $request Data sent to server by DataTables
+     *  @param  array $columns Column information array
+     *  @param  array $bindings Array of values for PDO bindings, used in the
+     *    sql_exec() function
+     *  @return string SQL where clause
+     */
+    
+    static function filter ( $request, $columns, &$bindings )
+    {
+        $globalSearch = array();
+        $columnSearch = array();
+        $dtColumns = self::pluck( $columns, 'dt' );
+
+        if ( isset($request['search']) && $request['search']['value'] != '' ) {
+            $str = $request['search']['value'];
+
+            for ( $i=0, $ien=count($request['columns']) ; $i<$ien ; $i++ ) {
+                $requestColumn = $request['columns'][$i];
+                $columnIdx = array_search( $requestColumn['data'], $dtColumns );
+                $column = $columns[ $columnIdx ];
+                if ( $requestColumn['searchable'] == 'true' ) {
+                    $binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
+                    print_r($binding);die();
+                    $globalSearch[] = "`".$column['db']."` LIKE ".$binding;
+                }
+            }
+        } 
+
+        // Individual column filtering
+        // Mostly the first time it loads with no data in the search input
+        if ( isset( $request['columns'] ) ) {
+            for ( $i=0, $ien=count($request['columns']) ; $i<$ien ; $i++ ) {
+                $requestColumn = $request['columns'][$i];// Gets the column attributes sent by Datatables through the request
+                $columnIdx = array_search( $requestColumn['data'], $dtColumns );// Gets the column dt key value from the defined columns
+                $column = $columns[ $columnIdx ]; // Gets the column data defined in our code
+
+                $str = $requestColumn['search']['value'];// Gets the search value incase it is set mostly not set
+
+                if ( $requestColumn['searchable'] == 'true' && $str != '' ) {
+                    $binding = self::bind( $bindings, '%'.$str.'%', PDO::PARAM_STR );
+                    $columnSearch[] = "`".$column['db']."` LIKE ".$binding;
+                } 
+            }
+        }
+
+        // Combine the filters into a single string
+        $where = '';
+
+        if ( count( $globalSearch ) ) {
+            $where = '('.implode(' OR ', $globalSearch).')';
+        }
+
+        if ( count( $columnSearch ) ) {
+            $where = $where === '' ?
+                implode(' AND ', $columnSearch) :
+                $where .' AND '. implode(' AND ', $columnSearch);
+        }
+
+        if ( $where !== '' ) {
+            $where = 'WHERE '.$where;
+        }
+
+        return $where;
+    }
+
+    static function limit ( $query, $request )
+    {
+        $limit = '';
+
+        if ( isset($request['start']) && $request['length'] != -1 ) {
+            $limit = $query->offset($request['start'])->limit($request['length']);
+        }
+
+        return $limit;
+    }
+
+    /**
+     * Ordering
+     *
+     * Construct the ORDER BY clause for server-side processing SQL query
+     *
+     *  @param  array $request Data sent to server by DataTables
+     *  @param  array $columns Column information array
+     *  @return string SQL order by clause
+     */
+    static function order ( $request, $columns )
+    {
+        $order = '';
+
+        if ( isset($request['order']) && count($request['order']) ) {
+            $orderBy = array();
+            $dtColumns = self::pluck( $columns, 'dt' );
+
+            for ( $i=0, $ien=count($request['order']) ; $i<$ien ; $i++ ) {
+                // Convert the column index into the column data property
+                $columnIdx = intval($request['order'][$i]['column']);
+                $requestColumn = $request['columns'][$columnIdx];
+
+                $columnIdx = array_search( $requestColumn['data'], $dtColumns );
+                $column = $columns[ $columnIdx ];
+
+                if ( $requestColumn['orderable'] == 'true' ) {
+                    $dir = $request['order'][$i]['dir'] === 'asc' ?
+                        'ASC' :
+                        'DESC';
+
+                    $orderBy[] = '`'.$column['db'].'` '.$dir;
+                }
+            }
+
+            $order = 'ORDER BY '.implode(', ', $orderBy);
+        }
+
+        return $order;
+    }
+
+    /**
+     * Create a PDO binding key which can be used for escaping variables safely
+     * when executing a query with sql_exec()
+     *
+     * @param  array &$a    Array of bindings
+     * @param  *      $val  Value to bind
+     * @param  int    $type PDO field type
+     * @return string       Bound key to be used in the SQL where this parameter
+     *   would be used.
+     */
+    static function bind ( &$a, $val, $type )
+    {
+        $key = ':binding_'.count( $a );
+
+        $a[] = array(
+            'key' => $key,
+            'val' => $val,
+            'type' => $type
+        );
+
+        return $key;
+    }
+
+
+    /**
+     * Pull a particular property from each assoc. array in a numeric array, 
+     * returning and array of the property values from each item.
+     *
+     *  @param  array  $a    Array to get data from
+     *  @param  string $prop Property to read
+     *  @return array        Array of property values
+     */
+    static function pluck ( $a, $prop )
+    {
+        $out = array();
+
+        for ( $i=0, $len=count($a) ; $i<$len ; $i++ ) {
+            $out[] = $a[$i][$prop];
+        }
+
+        return $out;
     }
 
     /**
@@ -141,10 +382,10 @@ class WorksheetController extends Controller
         $count = $samples->count();
 
         if($count == $machine->eid_limit){
-            return view('forms.worksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine]);
+            return view('forms.worksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine])->with('pageTitle', 'Create Worksheet');
         }
 
-        return view('forms.worksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count]);
+        return view('forms.worksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Create Worksheet');
     }
 
     /**
@@ -204,10 +445,10 @@ class WorksheetController extends Controller
         $data = ['worksheet' => $worksheet, 'samples' => $samples];
 
         if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
         }
     }
 
@@ -257,10 +498,10 @@ class WorksheetController extends Controller
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
         if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data);
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
         }
         else{
-            return view('worksheets.abbot-table', $data);
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
         }
     }
 
@@ -279,7 +520,7 @@ class WorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', '<', 5)->get();
-        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users]);
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
 
@@ -477,7 +718,7 @@ class WorksheetController extends Controller
         $my = new Misc;
         $my->requeue($worksheet->id);
 
-        return redirect('worksheet/approve/' . $worksheet->id);
+        return redirect('worksheet/approve/' . $worksheet->id)->with('pageTitle', 'Save Results');
     }
 
     public function approve_results(Worksheet $worksheet)
@@ -500,7 +741,7 @@ class WorksheetController extends Controller
 
         $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval]);
+        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval])->with('pageTitle', 'Approve Results');
     }
 
     public function approve(Request $request, Worksheet $worksheet)

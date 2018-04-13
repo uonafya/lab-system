@@ -25,6 +25,7 @@ class BatchController extends Controller
 
     public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
+
         $myurl = url('batch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
@@ -83,7 +84,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => '', 'batch_complete' => $batch_complete]);
+        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
 
     /**
@@ -122,7 +123,7 @@ class BatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('tables.batch_details', $data);
+        return view('tables.batch_details', $data)->with('pageTitle', 'Batches');
     }
 
     /**
@@ -301,7 +302,7 @@ class BatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('exports.samples', $data);
+        return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     /**

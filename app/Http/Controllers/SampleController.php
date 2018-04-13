@@ -31,7 +31,7 @@ class SampleController extends Controller
     public function create()
     {
         $data = Lookup::samples_form();
-        return view('forms.samples', $data);
+        return view('forms.samples', $data)->with('pageTitle', 'Add Sample');
     }
 
     public function create_poc()
@@ -171,7 +171,7 @@ class SampleController extends Controller
         $sample->load(['patient.mother', 'batch']);
         $data = Lookup::samples_form();
         $data['sample'] = $sample;
-        return view('forms.samples', $data);
+        return view('forms.samples', $data)->with('pageTitle', 'Samples');
     }
 
     /**
@@ -298,7 +298,7 @@ class SampleController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('exports.samples', $data);
+        return view('exports.samples', $data)->with('pageTitle', 'Individual Sample');
     }
 
     public function release_redraw(Sample $sample)

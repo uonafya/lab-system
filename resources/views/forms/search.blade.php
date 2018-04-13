@@ -17,18 +17,6 @@
 @endsection
 
 @section('content')
-
-    <div class="small-header">
-        <div class="hpanel">
-            <div class="panel-body">
-                <h2 class="font-light m-b-xs">
-                    ADD SAMPLE
-                </h2>
-            </div>
-        </div>
-    </div>
-
-
 <div class="content">
 
     <div class="row">

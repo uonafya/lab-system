@@ -11,11 +11,6 @@
         <div class="small-logo">
             <span class="text-primary">EID - VL</span>
         </div>
-        <div class="navbar-form-custom">
-            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
-                Switch to Viralload
-            </button>
-        </div>
         <!-- <div>
             <button>Switch to {{ session()->pull('sys_name') }}</button>
         </div> -->
@@ -25,137 +20,78 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a class="" href="login.html">Login</a>
+                    <li class="">
+                        <a href="{{ url('batch') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Requisitions</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('worksheet') }}">Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Facilities</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('batch/dispatch') }}">Dispatched Results</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="">
+                        <a href="#">Kits</a>
                     </li>
                     <li>
-                        
-                    </li>
-                    <li>
-                        <a class="" href="profile.html">Profile</a>
+                        <a class="" href="{{ url('/logout') }}"
+                        onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();">Logout</a>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                        <i class="pe-7s-speaker"></i>
+                <li class="">
+                    <a class="label-menu-corner" href="{{ url('home') }}">
+                    <i class="pe-7s-home" style="font-size: 25px;"></i>
+                        <span class="label label-danger">
+                            {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
+                        </span>
                     </a>
-                    <ul class="dropdown-menu hdropdown notification animated flipInX">
-                        <li>
-                            <a>
-                                <span class="label label-success">NEW</span> It is a long established.
-                            </a>
-                        </li>
-                        <li>
-                            <a>
-                                <span class="label label-warning">WAR</span> There are many variations.
-                            </a>
-                        </li>
-                        <li>
-                            <a>
-                                <span class="label label-danger">ERR</span> Contrary to popular belief.
-                            </a>
-                        </li>
-                        <li class="summary"><a href="#">See all notifications</a></li>
-                    </ul>
                 </li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                        <i class="pe-7s-keypad"></i>
-                    </a>
-
-                    <div class="dropdown-menu hdropdown bigmenu animated flipInX">
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <a href="projects.html">
-                                        <i class="pe pe-7s-portfolio text-info"></i>
-                                        <h5>Projects</h5>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="mailbox.html">
-                                        <i class="pe pe-7s-mail text-warning"></i>
-                                        <h5>Email</h5>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="contacts.html">
-                                        <i class="pe pe-7s-users text-success"></i>
-                                        <h5>Contacts</h5>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="forum.html">
-                                        <i class="pe pe-7s-comment text-info"></i>
-                                        <h5>Forum</h5>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="analytics.html">
-                                        <i class="pe pe-7s-graph1 text-danger"></i>
-                                        <h5>Analytics</h5>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="file_manager.html">
-                                        <i class="pe pe-7s-box1 text-success"></i>
-                                        <h5>Files</h5>
-                                    </a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <li class="">
+                    <a href="{{ url('batch') }}">Samples</a>
                 </li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
-                        <i class="pe-7s-mail"></i>
-                        <span class="label label-success">4</span>
-                    </a>
-                    <ul class="dropdown-menu hdropdown animated flipInX">
-                        <div class="title">
-                            You have 4 new messages
-                        </div>
-                        <li>
-                            <a>
-                                It is a long established.
-                            </a>
-                        </li>
-                        <li>
-                            <a>
-                                There are many variations.
-                            </a>
-                        </li>
-                        <li>
-                            <a>
-                                Lorem Ipsum is simply dummy.
-                            </a>
-                        </li>
-                        <li>
-                            <a>
-                                Contrary to popular belief.
-                            </a>
-                        </li>
-                        <li class="summary"><a href="#">See All Messages</a></li>
-                    </ul>
+                <li class="">
+                    <a href="#">Requisitions</a>
                 </li>
-                <li>
-                    <a href="#" id="sidebar" class="right-sidebar-toggle">
-                        <i class="pe-7s-upload pe-7s-news-paper"></i>
-                    </a>
+                <li class="">
+                    <a href="{{ url('worksheet') }}">Worksheets</a>
+                </li>
+                <li class="">
+                    <a href="#">Facilities</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('batch/dispatch') }}">Dispatched Results</a>
+                </li>
+                <li class="">
+                    <a href="#">Reports</a>
+                </li>
+                <li class="">
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                </li>
+                <li class="">
+                    <a href="#">Kits</a>
                 </li>
                 <li class="dropdown">
                         
                     <a href="{{ url('/logout') }}"
                         onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();"
+                         style="font-size: 25px;"
                     >
                         <i class="pe-7s-upload pe-rotate-90"></i>
                         <!-- <i class="fa fa-sign-out"></i> Log out -->

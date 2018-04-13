@@ -74,6 +74,7 @@ class ViralbatchController extends Controller
 
             $result = $detected + $undetected + $redraw + $failed;
 
+
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
@@ -126,7 +127,7 @@ class ViralbatchController extends Controller
         $data['samples'] = $viralsamples;
         // dd($data);
 
-        return view('tables.viralbatch_details', $data);
+        return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }
 
     /**
@@ -253,7 +254,7 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
-        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count()]);
+        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
 
         $table_rows = "";
 
@@ -309,7 +310,7 @@ class ViralbatchController extends Controller
         }
 
 
-        return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()]);
+        return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
 
     }
 
@@ -334,7 +335,6 @@ class ViralbatchController extends Controller
             $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
             $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $noresult + $rej;
-
             $batch->delays = '';
             $batch->creator = $batch->creator;
             $batch->datecreated = $batch->my_date_format('created_at');
@@ -384,7 +384,7 @@ class ViralbatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        return view('exports.viralsamples', $data);
+        return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
     }
 
     /**

@@ -32,7 +32,7 @@ class DistrictController extends Controller
             $table .= '<td>'.$value->comment.'</td>';
             $table .= '</tr>';
         }
-        return view('tables.display', ['row' => $table, 'columns' => $columns]);
+        return view('tables.display', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Districts');
     }
 
     /**

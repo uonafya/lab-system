@@ -44,7 +44,7 @@ class FacilityController extends Controller
         }
         $columns = parent::_columnBuilder(['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email','Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task']);
         
-        return view('tables.facilities', ['row' => $table, 'columns' => $columns]);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities');
     }
 
     public function served()
@@ -79,7 +79,7 @@ class FacilityController extends Controller
         $columns = parent::_columnBuilder(['#','MFL Code', 'Facility Name', 'County', 'Sub-county', 'Mobile', 'Email Address', 
                     'Contact Person', 'CP Telephone', 'CP Email', 'Supporting Partner']);
         
-        return view('tables.facilities', ['row' => $table, 'columns' => $columns]);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities Served');
     }
 
     public function smsprinters()
@@ -118,7 +118,7 @@ class FacilityController extends Controller
             $table .= '</tr>';
         }
         
-        return view('tables.facilities', ['row' => $table, 'columns' => $columns]);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->->with('pageTitle', 'With SMS Printers');
     }
 
     public function withoutemails()
@@ -151,7 +151,7 @@ class FacilityController extends Controller
             $table .= '<td><input type="text" class="form-control m-b input-sm" size="20" name="ContactEmail[]" value="'.$value->ContactEmail.'"></td>';
             $table .= '</tr>';
         }
-        return view('tables.editable', ['row' => $table, 'columns' => $columns, 'function' => 'update']);
+        return view('tables.editable', ['row' => $table, 'columns' => $columns, 'function' => 'update'])->with('pageTitle', 'Without Emails');
     }
 
     public function withoutG4S()
@@ -182,7 +182,7 @@ class FacilityController extends Controller
             $table .= '<td><input type="text" class="form-control m-b input-sm" size="20" name="G4Slocation[]" value="'.$value->G4Slocation.'"></td>';
             $table .= '</tr>';
         }
-        return view('tables.editable', ['row' => $table, 'columns' => $columns, 'function' => 'update']);
+        return view('tables.editable', ['row' => $table, 'columns' => $columns, 'function' => 'update'])->with('pageTitle', 'Without G4S');
     }
 
     /**
@@ -231,7 +231,7 @@ class FacilityController extends Controller
         // dd($facility);
         $facility = $this->getFacility($id);
         // dd($facility);
-        return view('facilities.facility', ['facility' => $facility[0], 'disabled' => 'disabled']);
+        return view('facilities.facility', ['facility' => $facility[0], 'disabled' => 'disabled'])->with('pageTitle', 'Facilities');
     }
 
     /**
@@ -245,7 +245,8 @@ class FacilityController extends Controller
         $facility = $this->getFacility($id);
         // dd($facility[0]);
         return view('facilities.facility', ['facility' => $facility[0], 'disabled' => ''])
-                        ->with('edit', true);
+                        ->with('edit', true)
+                        ->with('pageTitle', 'Facilities');
     }
 
     /**
