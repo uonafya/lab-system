@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use App\Sample;
+use App\Viralsample;
 use App\Facility;
 
 class DashboardController extends Controller
@@ -123,25 +124,37 @@ class DashboardController extends Controller
     {
         $data = [];
 
+        $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
+        $smsPrinters = Facility::where('smsprinter', '=', 1)
+                                            ->where('smsprinterphoneno', '<>', 0)
+                                            ->where('lab', '=', Auth()->user()->lab_id)->count();
+
         if (session('testingSystem') == 'Viralload') {
-            $data = [];
+            $data = [
+                    'testedSamples' => $tests,
+                    'rejectedSamples' => null,
+                    'receivedSamples'=> null,
+                    'smsPrinters'   =>  $smsPrinters,
+                    'redraws' => null,
+                    'nonsuppressed' => null,
+                    'suppressed' => null,
+                    'totaltestsinlab' => null
+                ];
         } else {
             $data = [
-                    'testedSamples' =>  self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count(),
+                    'testedSamples' =>  $tests,
                     'rejectedSamples'=>     self::__joinedToBatches()->where('samples.receivedstatus', '=', '2')
                                             ->where('samples.repeatt', '=', '0')
                                             ->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))->count(),
-                    'failedSamples' =>  self::__getsampleResultByType(3),
-                    'inconclusive'  =>  self::__getsampleResultByType(5),
-                    'redraws'       =>  self::__getsampleResultByType(3) + self::__getsampleResultByType(5),
-                    'positives'     =>  self::__getsampleResultByType(2),
-                    'negatives'     =>  self::__getsampleResultByType(1),
                     'receivedSamples'=> self::__joinedToBatches()->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
                                                                 ->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))")
                                                                 ->count(),
-                    'smsPrinters'   =>  Facility::where('smsprinter', '=', 1)
-                                            ->where('smsprinterphoneno', '<>', 0)
-                                            ->where('lab', '=', Auth()->user()->lab_id)->count()
+                    'smsPrinters'   =>  $smsPrinters,
+                    'redraws'       =>  self::__getsampleResultByType(3) + self::__getsampleResultByType(5),
+                    'failedSamples' =>  self::__getsampleResultByType(3),
+                    'inconclusive'  =>  self::__getsampleResultByType(5),
+                    'positives'     =>  self::__getsampleResultByType(2),
+                    'negatives'     =>  self::__getsampleResultByType(1)
                 ];
         }
         
@@ -232,7 +245,11 @@ class DashboardController extends Controller
 
     public static function __getSamples()
     {
-    	return Sample::with('batch')->where('flag', '=', 1);
+        (session('testingSystem') == 'Viralload') ?
+            $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0) :
+            $model = Sample::with('batch')->where('flag', '=', 1);
+
+        return $model;
     }
 
     public static function __getTAT($tat = null)
