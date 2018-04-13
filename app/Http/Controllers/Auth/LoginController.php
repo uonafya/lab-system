@@ -103,7 +103,7 @@ class LoginController extends Controller
 
     private function set_session($facility = false)
     {
-        $batch = Batch::editing()->get()->first();
+        $batch = Batch::editing()->withCount(['sample'])->get()->first();
         if($batch){
             if($batch->sample_count > 9){
                 $batch->full_batch();

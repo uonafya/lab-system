@@ -10,7 +10,7 @@ class Batch extends BaseModel
 
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
-    protected $withCount = ['sample'];
+    // protected $withCount = ['sample'];
 
     protected static function boot()
     {

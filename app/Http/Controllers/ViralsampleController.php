@@ -85,7 +85,7 @@ class ViralsampleController extends Controller
         if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
-            session(['viral_facility_name' => $facility->name]);
+            session(['viral_facility_name' => $facility->name, 'viral_batch_total' => 0]);
 
             $batch = new Viralbatch;
             $data = $request->only($viralsamples_arrays['batch']);
@@ -149,9 +149,10 @@ class ViralsampleController extends Controller
             $batch->premature();
         }
 
-        $batch->refresh();
+        $sample_count = session('viral_batch_total') + 1;
+        session(['viral_batch_total' => $sample_count]);
 
-        if($batch->sample_count == 10){
+        if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
         }
@@ -301,7 +302,7 @@ class ViralsampleController extends Controller
         $viralsample->repeatt = 0;
         $viralsample->result = "Collect New Sample";
         $viralsample->approvedby = auth()->user()->id;
-        $viralsample->approved2by = auth()->user()->id;
+        $viralsample->approvedby2 = auth()->user()->id;
         $viralsample->dateapproved = date('Y-m-d');
         $viralsample->dateapproved2 = date('Y-m-d');
         $viralsample->save();
@@ -327,9 +328,9 @@ class ViralsampleController extends Controller
     private function clear_session(){
         session()->forget('viral_batch');
         session()->forget('viral_facility_name');
+        session()->forget('viral_batch_total');
 
         // session()->forget('viral_batch_no');
-        // session()->forget('viral_batch_total');
         // session()->forget('viral_batch_dispatch');
         // session()->forget('viral_batch_dispatched');
         // session()->forget('viral_batch_received');

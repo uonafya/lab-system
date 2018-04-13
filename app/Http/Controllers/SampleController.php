@@ -63,7 +63,7 @@ class SampleController extends Controller
         if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
-            session(['facility_name' => $facility->name]);
+            session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
             $batch = new Batch;
             $batch->user_id = auth()->user()->id;
@@ -137,10 +137,11 @@ class SampleController extends Controller
             $this->clear_session();
             $batch->premature();
         }
+        
+        $sample_count = session('batch_total') + 1;
+        session(['batch_total' => $sample_count]);
 
-        $batch->refresh();
-
-        if($batch->sample_count == 10){
+        if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
         }
@@ -306,9 +307,10 @@ class SampleController extends Controller
         $sample->repeatt = 0;
         $sample->result = 5;
         $sample->approvedby = auth()->user()->id;
-        $sample->approved2by = auth()->user()->id;
+        $sample->approvedby2 = auth()->user()->id;
         $sample->dateapproved = date('Y-m-d');
         $sample->dateapproved2 = date('Y-m-d');
+
         $sample->save();
         $my = new \App\Misc;
         $my->check_batch($sample->batch_id);
@@ -331,7 +333,7 @@ class SampleController extends Controller
     private function clear_session(){
         session()->forget('batch');
         session()->forget('facility_name');
-        // session()->forget('batch_total');
+        session()->forget('batch_total');
         // session()->forget('batch_dispatch');
         // session()->forget('batch_dispatched');
         // session()->forget('batch_received');

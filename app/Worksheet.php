@@ -8,7 +8,7 @@ class Worksheet extends BaseModel
 {
     // protected $dates = ['datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun', 'kitexpirydate',  'sampleprepexpirydate',  'bulklysisexpirydate',  'controlexpirydate',  'calibratorexpirydate',  'amplificationexpirydate', ];
 
-    protected $withCount = ['sample'];
+    // protected $withCount = ['sample'];
 
     public function sample()
     {
