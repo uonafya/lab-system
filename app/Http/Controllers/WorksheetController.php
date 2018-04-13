@@ -70,7 +70,7 @@ class WorksheetController extends Controller
             return $worksheet;
         });
 
-        // return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')]);
+        return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')]);
 
         // $table_rows = "";
 
