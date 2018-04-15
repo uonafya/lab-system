@@ -11,7 +11,10 @@
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-heading">
-                    Worksheet Summary
+                    Worksheet Summary 
+                    <br />
+                    <a href="{{ url('/worksheet/cancel_upload/' . $worksheet->id) }} "> Cancel Upload</a>
+                    
                     <div class="panel-tools">
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
@@ -145,7 +148,7 @@
                                             <select name="results[]" class="{{ $class }}">
                                                 @foreach($results as $result)
                                                     <option value="{{$result->id}}"
-                                                        @if($sample->result == $result->id)
+                                                        @if(($sample->result == $result->id) || (!$sample->result && $result->id == 5))
                                                             selected
                                                         @endif
                                                         > {{ $result->name }} </option>

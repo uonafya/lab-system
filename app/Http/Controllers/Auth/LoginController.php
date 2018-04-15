@@ -115,7 +115,7 @@ class LoginController extends Controller
             }
         }
 
-        $viralbatch = Viralbatch::editing()->get()->first();
+        $viralbatch = Viralbatch::editing()->withCount(['sample'])->get()->first();
         if($viralbatch){
             if($viralbatch->sample_count > 9){
                 $viralbatch->full_batch();

@@ -217,6 +217,16 @@ class ViralworksheetController extends Controller
         return redirect("/viralworksheet");
     }
 
+    public function cancel_upload(Viralworksheet $worksheet)
+    {
+        DB::table("viralsamples")->where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = null;
+        $worksheet->save();
+
+        return redirect("/viralworksheet/upload/" . $worksheet->id);
+    }
+
     public function upload(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);

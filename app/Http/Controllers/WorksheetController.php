@@ -507,13 +507,23 @@ class WorksheetController extends Controller
 
     public function cancel(Worksheet $worksheet)
     {
-        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => 0, 'inworksheet' => 0, 'result' => 0]);
+        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => 0, 'inworksheet' => 0, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
 
         return redirect("/worksheet");
+    }
+
+    public function cancel_upload(Worksheet $worksheet)
+    {
+        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = null;
+        $worksheet->save();
+
+        return redirect("/worksheet/upload/" . $worksheet->id);
     }
 
     public function upload(Worksheet $worksheet)
