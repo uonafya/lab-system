@@ -3,14 +3,21 @@
 
 		set_select("batch_search", "{{ url('/batch/search') }}", 1, "Search for batch");
 		set_select("viralbatch_search", "{{ url('/viralbatch/search') }}", 1, "Search for batch");
+		set_select("sidebar_batch_search", "{{ url('/batch/search') }}", 1, "Search for batch");
+		set_select("sidebar_viralbatch_search", "{{ url('/viralbatch/search') }}", 1, "Search for batch");
 
 		set_select_patient("patient_search", "{{ url('/patient/search') }}", 2, "Search for patient");
 		set_select_patient("viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for patient");
+		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for patient");
+		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for patient");
 
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet");
 		set_select("viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet");
+		set_select("sidebar_worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet");
+		set_select("sidebar_viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet");
 
 		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility");
+		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility");
 
 		// {{ url('') }}
 

@@ -18,62 +18,10 @@
 		    <div class="col-lg-6">
 		        <div class="hpanel">
 		            <div class="alert alert-success">
-		                <center><i class="fa fa-bolt"></i> FACILITY INFO UPDATES</center>
+		                <center><i class="fa fa-bolt"></i> DAILY SAMPLES PROGRESS</center>
 		            </div>
 		            <div class="panel-body no-padding">
-		            	<div class="alert alert-warning" style="padding-top: 4px;padding-bottom: 4px;">
-			                <p>
-			                    Please ensure that the Facilities Contact(s) List is UP-TO-DATE.<br />
-			                    <center><a href="{{ route('facility.index') }}">Click here to Confirm.</a></center>
-			                </p>
-			            </div>
-		                <div class="table-responsive" style="padding-left: 15px;padding-top: 2px;padding-bottom: 2px;padding-right: 15px;">
-                		<table cellpadding="1" cellspacing="1" class="table table-condensed">
-		                	<thead>
-		                		<tr>
-		                			<th>&nbsp;</th>
-			                		<th>No.</th>
-			                		<th>Task</th>
-			                	</tr>
-		                	</thead>
-		                	<tbody>
-		                		<tr>
-		                			<td>Served by {{ $tasks['labname'][0]->name }}</td>
-		                			<td>{{ $tasks['facilityServed'] }}</td>
-		                			<td><a href="{{ url('facility/served') }}">View</a></td>
-		                		</tr>
-		                		<tr>
-		                			<td>With SMS Printers</td>
-		                			<td>{{ $tasks['facilitieswithSmsPrinters'] }}</td>
-		                			<td><a href="{{ url('facility/smsprinters') }}">View</a></td>
-		                		</tr>
-		                		<tr>
-		                			<td>* Without emails</td>
-		                			<td>{{ $tasks['facilitiesWithoutEmails'] }}</td>
-		                			<td><a href="{{ url('facility/withoutemails') }}">Update</a></td>
-		                		</tr>
-		                		<tr>
-		                			<td>* Without G4S Details</td>
-		                			<td>{{ $tasks['facilitiesWithoutG4s'] }}</td>
-		                			<td><a href="{{ url('facility/withoutG4S') }}">Update</a></td>
-		                		</tr>
-		                	</tbody>
-		                </table>
-		            	</div>
-		                <div class="alert alert-default">
-			                Please ensure that the Facilities Contact(s) List is UP-TO-DATE to facilitate:
-			            </div>
-		                <ul class="list-group" style="padding-left: 24px;">
-		                    <li class="list-group-item">
-		                        Samples awaiting testing
-		                    </li>
-		                    <li class="list-group-item ">
-		                        Site entry batches awaiting approval for testing.
-		                    </li>
-		                </ul>
-		                <div class="alert alert-warning">
-			                <center><a href="#">* Click to Send Email to Facilities & Stakeholders</a></center>
-			            </div>
+		            	<div id="dailyprogress"></div>
 		            </div>
 		        </div>
 		    </div>
@@ -115,3 +63,52 @@
     </div>
 </div>
 @endsection()
+
+@section('scripts')
+<script src="{{ asset('vendor/highcharts/highcharts.js' )}}"></script>
+<script src="{{ asset('vendor/highcharts/modules/data.js' )}}"></script>
+<script src="{{ asset('vendor/highcharts/modules/series-label.js' )}}"></script>
+<script src="{{ asset('vendor/highcharts/modules/exporting.js' )}}"></script>
+
+<script type="text/javascript">
+	Highcharts.chart('dailyprogress', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: ''
+    },
+    xAxis: {
+        categories: @php
+                        echo json_encode($chart['categories'])
+                    @endphp,
+        crosshair: true
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'No. of Samples'
+        }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: [
+    		@php
+                echo json_encode($chart['series'])
+            @endphp
+            ]
+});
+</script>
+@endsection

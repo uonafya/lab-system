@@ -1,3 +1,8 @@
+<style type="text/css">
+    .navbar.navbar-static-top a, .nav.navbar-nav li a {
+        color: black;
+    }
+</style>
 <div id="header">
     <div class="">
     </div>

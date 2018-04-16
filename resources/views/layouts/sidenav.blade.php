@@ -2,6 +2,9 @@
     body.light-skin #side-menu li a {
         font-weight: 380;
     }
+    body.light-skin #side-menu li a {
+        color: black;
+    }
 </style>
 <aside id="menu">
     <div id="navigation">
@@ -222,14 +225,14 @@
             </ul>
         </li> -->
         @if(session('testingSystem') == 'Viralload')
-            <li><a href="#"><select class="form-control" id="viralbatch_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="viralpatient_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="viralworksheet_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
         @else
-            <li><a href="#"><select class="form-control" id="facility_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="batch_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="patient_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="worksheet_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
         @endif
         </ul>
     </div>

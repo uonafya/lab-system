@@ -63,7 +63,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <h2 class="font-light m-b-xs">
-                            {{ $pageTitle }}
+                            {{ $pageTitle ?? '' }}
                         </h2>
                     </div>
                     <div class="col-md-6">
