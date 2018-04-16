@@ -85,7 +85,7 @@ class Batch extends BaseModel
 
     public function scopeExisting($query, $facility, $datereceived, $lab)
     {
-        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab]);
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab, 'batch_full' => 0]);
     }
 
     public function scopeEditing($query)

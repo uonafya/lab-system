@@ -8,7 +8,7 @@ class Viralbatch extends BaseModel
 {
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
-    protected $withCount = ['sample'];
+    // protected $withCount = ['sample'];
 
     public function tat()
     {
@@ -73,7 +73,7 @@ class Viralbatch extends BaseModel
 
     public function scopeExisting($query, $facility, $datereceived, $lab)
     {
-        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab]);
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab, 'batch_full' => 0]);
     }
 
     public function scopeEditing($query)

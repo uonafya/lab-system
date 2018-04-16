@@ -9,6 +9,7 @@ use App\Api\V1\Requests\EidCompleteRequest;
 use App\Lookup;
 use App\SampleView;
 use App\Batch;
+use App\Patient;
 use App\Sample;
 use App\Mother;
 
@@ -50,7 +51,12 @@ class EidController extends Controller
         $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
-
+            unset($batch->sample_count);
+        }
+        else if($batch && $batch->sample_count > 9){
+            unset($batch->sample_count);
+            $batch->full_batch();
+            $batch = new Batch;
         }
         else{
             $batch = new Batch;
@@ -59,7 +65,7 @@ class EidController extends Controller
         $batch->lab_id = $lab;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        $batch->user_id = 66;
+        $batch->user_id = 0;
         $batch->site_entry = 0;
         $batch->save();
 
@@ -124,17 +130,22 @@ class EidController extends Controller
         }
 
         if(!$editted){
-            $batch = Batch::existing($facility, $datereceived, $lab)->get()->first();
+            $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
 
             if($batch && $batch->sample_count < 10){
-
+                unset($batch->sample_count);
+            }
+            else if($batch && $batch->sample_count > 9){
+                unset($batch->sample_count);
+                $batch->full_batch();
+                $batch = new Batch;
             }
             else{
                 $batch = new Batch;
             }
 
             $batch->lab_id = $lab;
-            $batch->user_id = 66;
+            $batch->user_id = 0;
             $batch->facility_id = $facility;
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;

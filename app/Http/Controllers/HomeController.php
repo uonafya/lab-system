@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Synch;
 
 class HomeController extends Controller
 {
@@ -13,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -24,5 +25,12 @@ class HomeController extends Controller
     public function index()
     {
         return view('home')->with('pageTitle', 'Home');
+    }
+
+    public function test()
+    {
+        // dd(Synch::synch_eid_patients());
+        // echo Synch::synch_eid_patients();
+        echo Synch::synch_eid_batches();
     }
 }

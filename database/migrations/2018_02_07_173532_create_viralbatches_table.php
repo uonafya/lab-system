@@ -15,6 +15,7 @@ class CreateViralbatchesTable extends Migration
     {
         Schema::create('viralbatches', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('national_batch_id')->unsigned()->nullable();
             $table->boolean('high_priority')->default(false);
             $table->boolean('input_complete')->default(false);
             $table->boolean('batch_full')->default(false);
@@ -36,7 +37,7 @@ class CreateViralbatchesTable extends Migration
             $table->date('datedispatched')->nullable()->index();
             $table->date('dateindividualresultprinted')->nullable();
 
-            $table->boolean('synched')->default(false);
+            $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();

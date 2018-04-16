@@ -15,6 +15,7 @@ class CreatePatientsTable extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('national_patient_id')->unsigned()->nullable();
             $table->string('patient', 50);
             $table->string('patient_name', 50)->nullable();
             $table->integer('mother_id')->unsigned();
@@ -24,7 +25,7 @@ class CreatePatientsTable extends Migration
             $table->tinyInteger('sex')->unsigned()->index();
             $table->date('dob')->index();
             $table->date('dateinitiatedontreatment')->nullable();
-            $table->boolean('synched')->default(false);
+            $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
 
             // $table->date('created_at')->nullable();

@@ -15,6 +15,7 @@ class CreateViralpatientsTable extends Migration
     {
         Schema::create('viralpatients', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('national_patient_id')->unsigned()->nullable();
             $table->string('patient', 50);
             $table->string('patient_name', 50)->nullable();
             $table->integer('facility_id')->unsigned()->index();
@@ -23,7 +24,7 @@ class CreateViralpatientsTable extends Migration
             $table->tinyInteger('sex')->unsigned()->index();
             $table->date('dob')->index();
             $table->date('initiation_date')->nullable();
-            $table->boolean('synched')->default(false);
+            $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();

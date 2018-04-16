@@ -15,6 +15,7 @@ class CreateSamplesTable extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('national_sample_id')->unsigned()->nullable();
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('batch_id')->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
@@ -29,12 +30,12 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('mother_prophylaxis')->unsigned()->index();
             $table->tinyInteger('feeding')->unsigned()->index();
             $table->tinyInteger('spots')->unsigned()->nullable();
-            $table->string('comments')->nullable();
-            $table->string('labcomment')->nullable();
+            $table->string('comments', 100)->nullable();
+            $table->string('labcomment', 100)->nullable();
             $table->integer('parentid')->unsigned()->default(0);
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
-            $table->string('interpretation', 100)->nullable();
+            $table->string('interpretation', 50)->nullable();
             $table->tinyInteger('result')->unsigned()->nullable()->index();
 
             $table->integer('worksheet_id')->unsigned()->nullable();
@@ -60,7 +61,7 @@ class CreateSamplesTable extends Migration
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 
-            $table->boolean('synched')->default(false);
+            $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();

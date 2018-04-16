@@ -59,6 +59,7 @@ Route::get('error', function(){
 // 	return view('home');
 // });
 Route::get('/home', 'HomeController@index');
+Route::get('/synch', 'HomeController@test');
 
 Route::middleware(['web', 'auth'])->group(function(){
 

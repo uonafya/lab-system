@@ -72,6 +72,9 @@ class CreateViralWorksheetsTable extends Migration
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
             $table->date('daterun')->nullable();
+            
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
 
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();

@@ -15,6 +15,7 @@ class CreateViralsamplesTable extends Migration
     {
         Schema::create('viralsamples', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('national_sample_id')->unsigned()->nullable();
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('batch_id')->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
@@ -26,7 +27,7 @@ class CreateViralsamplesTable extends Migration
             // This will be used instead
             $table->double('age', 5, 2)->unsigned()->nullable()->index();
             $table->tinyInteger('justification')->unsigned()->nullable()->index();
-            $table->string('other_justification')->nullable();
+            $table->string('other_justification', 50)->nullable();
             $table->tinyInteger('sampletype')->unsigned()->nullable()->index();
             $table->tinyInteger('prophylaxis')->unsigned()->index();
             $table->tinyInteger('regimenline')->unsigned()->index();
@@ -35,10 +36,10 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('dilutionfactor')->unsigned()->nullable();
             $table->tinyInteger('dilutiontype')->unsigned()->nullable();
 
-            $table->string('comments')->nullable();
-            $table->string('labcomment')->nullable();
+            $table->string('comments', 50)->nullable();
+            $table->string('labcomment', 100)->nullable();
             $table->integer('parentid')->unsigned()->default(0);
-            $table->tinyInteger('spots')->unsigned()->nullable();
+            // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->string('reason_for_repeat')->nullable();
             $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
@@ -64,7 +65,7 @@ class CreateViralsamplesTable extends Migration
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 
-            $table->boolean('synched')->default(false);
+            $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();
