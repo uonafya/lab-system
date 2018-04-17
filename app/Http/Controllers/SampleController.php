@@ -243,7 +243,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->inworksheet == 0 && $sample->result == NULL){
+        if($sample->worksheet_id == NULL && $sample->result == NULL){
             $sample->delete();
         }        
         return back();
@@ -312,8 +312,7 @@ class SampleController extends Controller
         $sample->dateapproved2 = date('Y-m-d');
 
         $sample->save();
-        $my = new \App\Misc;
-        $my->check_batch($sample->batch_id);
+        Misc::check_batch($sample->batch_id);
         return back();
     }
 

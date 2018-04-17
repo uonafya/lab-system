@@ -20,7 +20,7 @@ class WorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL)
     {
-        // $state = session()->pull('worksheet_state', null);
+        // $state = session()->pull('worksheet_state', null); 
         $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
         ->when($state, function ($query) use ($state){
             return $query->where('status_id', $state);
@@ -366,7 +366,7 @@ class WorksheetController extends Controller
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
-            ->where('inworksheet', 0)
+            ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
@@ -408,7 +408,7 @@ class WorksheetController extends Controller
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
-            ->where('inworksheet', 0)
+            ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result = 0 ))')
@@ -426,7 +426,7 @@ class WorksheetController extends Controller
 
         $sample_ids = $samples->pluck('id');
 
-        DB::table('samples')->whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id, 'inworksheet' => true]);
+        Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         return redirect()->route('worksheet.print', ['worksheet' => $worksheet->id]);
     }
@@ -507,7 +507,7 @@ class WorksheetController extends Controller
 
     public function cancel(Worksheet $worksheet)
     {
-        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => 0, 'inworksheet' => 0, 'result' => null]);
+        Sample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
@@ -518,7 +518,7 @@ class WorksheetController extends Controller
 
     public function cancel_upload(Worksheet $worksheet)
     {
-        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        Sample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = null;
         $worksheet->save();
@@ -599,7 +599,7 @@ class WorksheetController extends Controller
 
                     $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
                     $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    DB::table('samples')->where($search)->update($data_array);
+                    Sample::where($search)->update($data_array);
 
                     $check[] = $search;
 
@@ -659,7 +659,7 @@ class WorksheetController extends Controller
                 $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $interpretation, 'result' => $result];
 
                 $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
-                DB::table('samples')->where($search)->update($data_array);
+                Sample::where($search)->update($data_array);
 
                 if($data[5] == "NC"){
                     // $worksheet->neg_control_interpretation = $interpretation;
@@ -713,7 +713,7 @@ class WorksheetController extends Controller
 
         }
 
-        DB::table('samples')->where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
+        Sample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
 
         $worksheet->neg_control_interpretation = $negative_control;
         $worksheet->neg_control_result = $neg_result;
@@ -725,8 +725,7 @@ class WorksheetController extends Controller
 
         $path = $request->upload->store('results/eid');
 
-        $my = new Misc;
-        $my->requeue($worksheet->id);
+        Misc::requeue($worksheet->id);
 
         return redirect('worksheet/approve/' . $worksheet->id)->with('pageTitle', 'Save Results');
     }
@@ -766,7 +765,6 @@ class WorksheetController extends Controller
         $approver = auth()->user()->id;
 
         $batch = array();
-        $my = new Misc;
 
         foreach ($samples as $key => $value) {
 
@@ -786,10 +784,10 @@ class WorksheetController extends Controller
             $data['result'] = $results[$key];
             $data['repeatt'] = $actions[$key];
 
-            DB::table('samples')->where('id', $samples[$key])->update($data);
+            Sample::where('id', $samples[$key])->update($data);
 
             if($actions[$key] == 1){
-                $my->save_repeat($samples[$key]);
+                Misc::save_repeat($samples[$key]);
             }
         }
 
@@ -800,7 +798,7 @@ class WorksheetController extends Controller
                 $unique = $b->values()->all();
 
                 foreach ($unique as $value) {
-                    $my->check_batch($value);
+                    Misc::check_batch($value);
                 }
 
                 $worksheet->status_id = 3;
@@ -825,7 +823,7 @@ class WorksheetController extends Controller
             $unique = $b->values()->all();
 
             foreach ($unique as $value) {
-                $my->check_batch($value);
+                Misc::check_batch($value);
             }
 
             $worksheet->status_id = 3;

@@ -14,7 +14,7 @@ class CreateWorksheetsTable extends Migration
     public function up()
     {
         Schema::create('worksheets', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->tinyInteger('machine_type')->unsigned();
             $table->tinyInteger('lab_id')->unsigned();
 

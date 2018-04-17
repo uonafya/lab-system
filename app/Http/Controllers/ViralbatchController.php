@@ -30,8 +30,6 @@ class ViralbatchController extends Controller
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
-        $my = new MiscViral;
-
         $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
@@ -53,13 +51,13 @@ class ViralbatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $noresult_a = $my->get_totals(0, $batch_ids, false);
-        $redraw_a = $my->get_totals(5, $batch_ids, false);
-        $failed_a = $my->get_totals(3, $batch_ids, false);
-        $detected_a = $my->get_totals(2, $batch_ids, false);
-        $undetected_a = $my->get_totals(1, $batch_ids, false);
+        $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
+        $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
+        $failed_a = MiscViral::get_totals(3, $batch_ids, false);
+        $detected_a = MiscViral::get_totals(2, $batch_ids, false);
+        $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
 
-        $rejected = $my->get_rejected($batch_ids, false);
+        $rejected = MiscViral::get_rejected($batch_ids, false);
 
         $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected){
 
@@ -193,8 +191,6 @@ class ViralbatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
-        $my = new MiscViral;
-
         $batches = Viralbatch::select('viralbatches.*', 'facilitys.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
@@ -202,15 +198,15 @@ class ViralbatchController extends Controller
             })
             ->where('batch_complete', 2)->get();
 
-        $noresult_a = $my->get_totals(0);
-        $redraw_a = $my->get_totals(5);
-        $failed_a = $my->get_totals(3);
-        $detected_a = $my->get_totals(2);
-        $undetected_a = $my->get_totals(1);
+        $noresult_a = MiscViral::get_totals(0);
+        $redraw_a = MiscViral::get_totals(5);
+        $failed_a = MiscViral::get_totals(3);
+        $detected_a = MiscViral::get_totals(2);
+        $undetected_a = MiscViral::get_totals(1);
 
-        $rejected = $my->get_rejected();
-        $date_modified = $my->get_maxdatemodified();
-        $date_tested = $my->get_maxdatetested();
+        $rejected = MiscViral::get_rejected();
+        $date_modified = MiscViral::get_maxdatemodified();
+        $date_tested = MiscViral::get_maxdatetested();
         $currentdate=date('d-m-Y');
 
         $batches->transform(function($batch, $key) use ($noresult_a, $redraw_a, $failed_a, $detected_a, $undetected_a, $rejected, $date_modified, $date_tested){
@@ -322,13 +318,12 @@ class ViralbatchController extends Controller
             ->whereNull('received_by')
             ->where('site_entry', 1)
             ->paginate();
-
-        $my = new MiscViral;
+            
         $batch_ids = $batches->pluck(['id'])->toArray();
 
-        $noresult_a = $my->get_totals(0, $batch_ids, false);
+        $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
 
-        $rejected = $my->get_rejected($batch_ids, false);
+        $rejected = MiscViral::get_rejected($batch_ids, false);
 
         $batches->transform(function($batch, $key) use ($noresult_a, $rejected){
 

@@ -240,7 +240,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->inworksheet == 0 && $viralsample->result == NULL){
+        if($viralsample->worksheet_id == NULL && $viralsample->result == NULL){
             $viralsample->delete();
         }        
         return back();
@@ -306,8 +306,7 @@ class ViralsampleController extends Controller
         $viralsample->dateapproved = date('Y-m-d');
         $viralsample->dateapproved2 = date('Y-m-d');
         $viralsample->save();
-        $my = new \App\MiscViral;
-        $my->check_batch($sample->batch_id);
+        MiscViral::check_batch($sample->batch_id);
         return back();
     }
 

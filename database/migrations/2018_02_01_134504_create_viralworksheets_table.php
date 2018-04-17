@@ -14,7 +14,7 @@ class CreateViralWorksheetsTable extends Migration
     public function up()
     {
         Schema::create('viralworksheets', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->tinyInteger('machine_type')->unsigned();
             $table->tinyInteger('lab_id')->unsigned();
 

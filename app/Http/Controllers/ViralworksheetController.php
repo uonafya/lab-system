@@ -69,7 +69,7 @@ class ViralworksheetController extends Controller
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
-            ->where('inworksheet', 0)
+            ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
@@ -111,7 +111,7 @@ class ViralworksheetController extends Controller
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
-            ->where('inworksheet', 0)
+            ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
@@ -131,7 +131,7 @@ class ViralworksheetController extends Controller
 
         $sample_ids = $samples->pluck('id');
 
-        DB::table('viralsamples')->whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id, 'inworksheet' => true]);
+        Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
     }
@@ -208,7 +208,7 @@ class ViralworksheetController extends Controller
 
     public function cancel(Viralworksheet $worksheet)
     {
-        DB::table("viralsamples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => 0, 'inworksheet' => 0, 'result' => 0]);
+        Viralsample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
@@ -219,7 +219,7 @@ class ViralworksheetController extends Controller
 
     public function cancel_upload(Viralworksheet $worksheet)
     {
-        DB::table("viralsamples")->where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        Viralsample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = null;
         $worksheet->save();
@@ -277,11 +277,11 @@ class ViralworksheetController extends Controller
                     $interpretation = $value[6];
                     $error = $value[10];
 
-                    $result_array = $my->sample_result($result, $error);
+                    $result_array = MiscViral::sample_result($result, $error);
 
                     $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                     $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    DB::table('viralsamples')->where($search)->update($data_array);
+                    Viralsample::where($search)->update($data_array);
 
                     if($sample_id == "HIV_NEG"){
                         $nc = $result_array['result'];
@@ -310,11 +310,11 @@ class ViralworksheetController extends Controller
                 $result = $value[8];
                 $error = $value[10];
 
-                $result_array = $my->sample_result($result, $error);
+                $result_array = MiscViral::sample_result($result, $error);
 
                 $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                 $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                DB::table('viralsamples')->where($search)->update($data_array);
+                Viralsample::where($search)->update($data_array);
 
                 $sample_type = $value[5];
 
@@ -336,7 +336,7 @@ class ViralworksheetController extends Controller
 
         }
 
-        DB::table('viralsamples')->where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
+        Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
 
         $worksheet->neg_control_interpretation = $nc_int;
         $worksheet->neg_control_result = $nc;
@@ -350,7 +350,7 @@ class ViralworksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
-        $my->requeue($worksheet->id);
+        MiscViral::requeue($worksheet->id);
 
         return redirect('viralworksheet/approve/' . $worksheet->id);
     }
@@ -390,7 +390,6 @@ class ViralworksheetController extends Controller
         $approver = auth()->user()->id;
 
         $batch = array();
-        $my = new MiscViral;
 
         foreach ($samples as $key => $value) {
 
@@ -419,10 +418,10 @@ class ViralworksheetController extends Controller
 
             if(isset($redraws[$key])) $data['result'] = "Collect New Sample";
 
-            DB::table('viralsamples')->where('id', $samples[$key])->update($data);
+            Viralsample::where('id', $samples[$key])->update($data);
 
             if($actions[$key] == 1){
-                $my->save_repeat($samples[$key]);
+                MiscViral::save_repeat($samples[$key]);
             }
         }
 
@@ -433,7 +432,7 @@ class ViralworksheetController extends Controller
                 $unique = $b->values()->all();
 
                 foreach ($unique as $value) {
-                    $my->check_batch($value);
+                    MiscViral::check_batch($value);
                 }
 
                 $worksheet->status_id = 3;
@@ -458,7 +457,7 @@ class ViralworksheetController extends Controller
             $unique = $b->values()->all();
 
             foreach ($unique as $value) {
-                $my->check_batch($value);
+                MiscViral::check_batch($value);
             }
 
             $worksheet->status_id = 3;

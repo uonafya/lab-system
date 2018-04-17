@@ -31,8 +31,6 @@ class BatchController extends Controller
         $facility_user = false;
         if($user->user_type_id == 5) $facility_user=true;
 
-        $my = new Misc;
-
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
@@ -56,8 +54,8 @@ class BatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $subtotals = $my->get_subtotals($batch_ids, false);
-        $rejected = $my->get_rejected($batch_ids, false);
+        $subtotals = Misc::get_subtotals($batch_ids, false);
+        $rejected = Misc::get_rejected($batch_ids, false);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
@@ -189,8 +187,6 @@ class BatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
-        $my = new Misc;
-
         $batches = Batch::select('batches.*', 'facilitys.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
@@ -199,10 +195,10 @@ class BatchController extends Controller
             ->where('batch_complete', 2)
             ->get();
 
-        $subtotals = $my->get_subtotals();
-        $rejected = $my->get_rejected();
-        $date_modified = $my->get_maxdatemodified();
-        $date_tested = $my->get_maxdatetested();
+        $subtotals = Misc::get_subtotals();
+        $rejected = Misc::get_rejected();
+        $date_modified = Misc::get_maxdatemodified();
+        $date_tested = Misc::get_maxdatetested();
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
             $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
@@ -241,11 +237,9 @@ class BatchController extends Controller
             ->where('site_entry', 1)
             ->paginate();
 
-        $my = new Misc;
-
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $subtotals = $my->get_subtotals($batch_ids, false);
-        $rejected = $my->get_rejected($batch_ids, false);
+        $subtotals = Misc::get_subtotals($batch_ids, false);
+        $rejected = Misc::get_rejected($batch_ids, false);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 

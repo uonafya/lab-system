@@ -14,11 +14,11 @@ class CreatePatientsTable extends Migration
     public function up()
     {
         Schema::create('patients', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('national_patient_id')->unsigned()->nullable();
+            $table->bigIncrements('id');
+            $table->bigInteger('national_patient_id')->unsigned()->nullable();
             $table->string('patient', 50);
             $table->string('patient_name', 50)->nullable();
-            $table->integer('mother_id')->unsigned();
+            $table->bigInteger('mother_id')->unsigned()->index();
             $table->integer('entry_point')->unsigned()->index();
             $table->integer('facility_id')->unsigned()->index();
             $table->string('caregiver_phone', 15)->nullable();
@@ -31,7 +31,7 @@ class CreatePatientsTable extends Migration
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();
             $table->timestamps();
-
+            
             // $table->foreign('mother_id')->references('id')->on('mothers');
             // $table->foreign('facility_id')->references('id')->on('facilitys');
         });

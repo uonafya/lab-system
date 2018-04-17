@@ -86,4 +86,68 @@ class Synch
 		}
 	}
 
+
+
+	public static function synch_vl_patients()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		while (true) {
+			$patients = Viralpatient::where('synched', 0)->limit(30)->get();
+			if($patients->isEmpty()) break;
+
+			$response = $client->request('post', 'synch/viralpatients', [
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'form_params' => [
+					'patients' => $patients->toJson(),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->patients as $key => $value) {
+				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
+				Viralpatient::where('id', $value->original_id)->update($update_data);
+			}
+		}
+	}
+
+	public static function synch_vl_batches()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		while (true) {
+			$batches = Viralbatch::with(['sample.patient:id,national_patient_id'])->where('synched', 0)->limit(10)->get();
+			if($batches->isEmpty()) break;
+
+			$response = $client->request('post', 'synch/viralbatches', [
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'form_params' => [
+					'batches' => $batches->toJson(),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->batches as $key => $value) {
+				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
+				Viralbatch::where('id', $value->original_id)->update($update_data);
+			}
+
+			foreach ($body->samples as $key => $value) {
+				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
+				Viralsample::where('id', $value->original_id)->update($update_data);
+			}
+		}
+	}
+
+
 }
