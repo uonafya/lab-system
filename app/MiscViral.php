@@ -34,20 +34,28 @@ class MiscViral extends Common
 
 	public static function save_repeat($sample_id)
 	{
-		$sample = new Viralsample;
-		$sample->fill( Viralsample::find($sample_id)->toArray() );
+        $original = Viralsample::find($sample_id);
+        if($original->run == 4){
+            return false;
+        }
 
-		if($sample->run == 4){
-			return false;
-		}
+		$sample = new Viralsample;        
+        // $sample->fill( Viralsample::find($sample_id)->toArray() );
+        $fields = \App\Lookup::viralsamples_arrays();
+        $sample->fill($original->only($fields['sample']));
+        $sample->run++;        
 
-		if($sample->parentid == 0){
-			$sample->parentid = $sample->id;
-		}
-		$sample->run = $sample->run + 1;
-		$sample->id = $sample->worksheet_id = $sample->result = $sample->interpretation = $sample->approvedby = $sample->approvedby2 = $sample->datemodified = $sample->dateapproved = $sample->dateapproved2 = $sample->created_at = $sample->updated_at = null;
-		$sample->repeatt = $sample->synched = 0;
-		$sample->created_at = date('Y-m-d');
+        if($original->parentid == 0){
+            $sample->parentid = $original->id;
+        }
+        else{
+            $sample->parentid = $original->parentid;
+        }
+        
+		// $sample->run = $sample->run + 1;
+		// $sample->id = $sample->worksheet_id = $sample->result = $sample->interpretation = $sample->approvedby = $sample->approvedby2 = $sample->datemodified = $sample->dateapproved = $sample->dateapproved2 = $sample->created_at = $sample->updated_at = null;
+		// $sample->repeatt = $sample->synched = 0;
+		// $sample->created_at = date('Y-m-d');
 
 		$sample->save();
 		return $sample;

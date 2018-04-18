@@ -53,20 +53,27 @@ class Misc extends Common
 
 	public static function save_repeat($sample_id)
 	{
-		$sample = new Sample;
-		$sample->fill( Sample::find($sample_id)->toArray() );
-
-		if($sample->run == 4){
+		$original = Sample::find($sample_id);
+		if($original->run == 4){
 			return false;
 		}
 
-		if($sample->parentid == 0){
-			$sample->parentid = $sample->id;
+		$sample = new Sample;
+		// $sample->fill( Sample::find($sample_id)->toArray() );
+		$fields = \App\Lookup::samples_arrays();
+		$sample->fill($original->only($fields['sample']));
+		$sample->run++;
+
+		if($original->parentid == 0){
+			$sample->parentid = $original->id;
 		}
-		$sample->run = $sample->run + 1;
-		$sample->id = $sample->worksheet_id = $sample->result = $sample->interpretation = $sample->approvedby = $sample->approvedby2 = $sample->datemodified = $sample->dateapproved = $sample->dateapproved2 = $sample->created_at = $sample->updated_at = null;
-		$sample->repeatt = $sample->synched = 0;
-		$sample->created_at = date('Y-m-d');
+		else{
+			$sample->parentid = $original->parentid;
+		}
+
+		// $sample->id = $sample->worksheet_id = $sample->result = $sample->interpretation = $sample->approvedby = $sample->approvedby2 = $sample->datemodified = $sample->dateapproved = $sample->dateapproved2 = $sample->created_at = $sample->updated_at = null;
+		// $sample->repeatt = $sample->synched = 0;
+		// $sample->created_at = date('Y-m-d');
 
 		$sample->save();
 		return $sample;
