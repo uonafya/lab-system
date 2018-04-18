@@ -53,9 +53,9 @@ class ViralsampleController extends Controller
             return redirect()->route('viralsample.create');
         }
 
-        $high_priority = $request->input('high_priority');
+        $highpriority = $request->input('highpriority');
 
-        if($high_priority == 1)
+        if($highpriority == 1)
         {
             $facility_id = $request->input('facility_id');
 

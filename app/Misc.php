@@ -65,7 +65,7 @@ class Misc extends Common
 		}
 		$sample->run = $sample->run + 1;
 		$sample->id = $sample->worksheet_id = $sample->result = $sample->interpretation = $sample->approvedby = $sample->approvedby2 = $sample->datemodified = $sample->dateapproved = $sample->dateapproved2 = $sample->created_at = $sample->updated_at = null;
-		$sample->repeatt = $sample->inworksheet = $sample->synched = 0;
+		$sample->repeatt = $sample->synched = 0;
 		$sample->created_at = date('Y-m-d');
 
 		$sample->save();

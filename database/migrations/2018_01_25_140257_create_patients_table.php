@@ -19,11 +19,11 @@ class CreatePatientsTable extends Migration
             $table->string('patient', 50);
             $table->string('patient_name', 50)->nullable();
             $table->bigInteger('mother_id')->unsigned()->index();
-            $table->integer('entry_point')->unsigned()->index();
+            $table->integer('entry_point')->unsigned()->nullable()->index();
             $table->integer('facility_id')->unsigned()->index();
             $table->string('caregiver_phone', 15)->nullable();
             $table->tinyInteger('sex')->unsigned()->index();
-            $table->date('dob')->index();
+            $table->date('dob')->nullable()->index();
             $table->date('dateinitiatedontreatment')->nullable();
             $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();

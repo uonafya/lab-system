@@ -64,7 +64,7 @@ class ViralworksheetController extends Controller
             return back();
         }
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
@@ -74,7 +74,7 @@ class ViralworksheetController extends Controller
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('high_priority', 'asc')
+            ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
             ->limit($machine->vl_limit)
@@ -106,7 +106,7 @@ class ViralworksheetController extends Controller
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
@@ -116,7 +116,7 @@ class ViralworksheetController extends Controller
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('high_priority', 'asc')
+            ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('viralsamples.id', 'asc')
             ->limit(93)
@@ -503,7 +503,7 @@ class ViralworksheetController extends Controller
             ->when($worksheet_id, function($query) use ($worksheet_id){
                 return $query->where('worksheet_id', $worksheet_id);
             })
-            ->where('inworksheet', 1)
+            ->whereNotNull('worksheet_id')
             ->where('receivedstatus', '!=', 2)
             ->when(true, function($query) use ($result){
                 if ($result == 0) {

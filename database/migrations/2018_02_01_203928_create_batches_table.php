@@ -16,7 +16,7 @@ class CreateBatchesTable extends Migration
         Schema::create('batches', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('national_batch_id')->unsigned()->nullable();
-            $table->boolean('high_priority')->default(false);
+            $table->boolean('highpriority')->default(false);
             $table->boolean('input_complete')->default(false);
             $table->boolean('batch_full')->default(false); 
 
@@ -29,7 +29,7 @@ class CreateBatchesTable extends Migration
             $table->boolean('sent_email')->default(false);
 
             $table->integer('printedby')->unsigned()->nullable();
-            $table->integer('user_id')->unsigned()->index();
+            $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('received_by')->unsigned()->nullable();
 
             $table->tinyInteger('lab_id')->unsigned()->index();

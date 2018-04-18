@@ -24,11 +24,11 @@ class CreateSamplesTable extends Migration
             $table->string('sample_type', 30)->nullable(); 
 
             $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();
-            $table->double('age', 6, 4)->unsigned()->nullable()->index();
+            $table->double('age', 7, 4)->unsigned()->nullable()->index();
             $table->tinyInteger('pcrtype')->unsigned()->nullable()->index();
             $table->tinyInteger('regimen')->unsigned()->nullable()->index();
-            $table->tinyInteger('mother_prophylaxis')->unsigned()->index();
-            $table->tinyInteger('feeding')->unsigned()->index();
+            $table->tinyInteger('mother_prophylaxis')->unsigned()->nullable()->index();
+            $table->tinyInteger('feeding')->unsigned()->nullable()->index();
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->string('comments', 100)->nullable();
             $table->string('labcomment', 100)->nullable();
@@ -39,18 +39,18 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('result')->unsigned()->nullable()->index();
 
             $table->bigInteger('worksheet_id')->unsigned()->nullable();
-            $table->boolean('inworksheet')->default(false);
+            // $table->boolean('inworksheet')->default(false);
 
-            $table->tinyInteger('hei_validation')->unsigned()->nullable()->index();
+            $table->tinyInteger('hei_validation')->unsigned()->default(0)->index();
             $table->string('enrollment_ccc_no', 50)->nullable();
-            $table->tinyInteger('enrollment_status')->unsigned()->nullable()->index();
+            $table->tinyInteger('enrollment_status')->unsigned()->default(0)->index();
             $table->tinyInteger('referredfromsite')->unsigned()->nullable();
             $table->string('otherreason', 70)->nullable(); 
 
             $table->tinyInteger('flag')->unsigned()->default(1);
             $table->tinyInteger('run')->unsigned()->default(1);
             $table->tinyInteger('repeatt')->unsigned()->default(0);
-            $table->tinyInteger('eqa')->unsigned()->default(0);
+            // $table->tinyInteger('eqa')->unsigned()->default(0);
 
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();

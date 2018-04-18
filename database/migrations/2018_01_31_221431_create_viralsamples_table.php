@@ -30,8 +30,8 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('justification')->unsigned()->nullable()->index();
             $table->string('other_justification', 50)->nullable();
             $table->tinyInteger('sampletype')->unsigned()->nullable()->index();
-            $table->tinyInteger('prophylaxis')->unsigned()->index();
-            $table->tinyInteger('regimenline')->unsigned()->index();
+            $table->tinyInteger('prophylaxis')->unsigned()->nullable()->index();
+            $table->tinyInteger('regimenline')->unsigned()->nullable()->index();
             $table->tinyInteger('pmtct')->unsigned()->index()->default(3);
 
             $table->tinyInteger('dilutionfactor')->unsigned()->nullable();
@@ -50,7 +50,7 @@ class CreateViralsamplesTable extends Migration
             $table->string('interpretation', 50)->nullable();
 
             $table->bigInteger('worksheet_id')->unsigned()->nullable();
-            $table->boolean('inworksheet')->default(false);
+            // $table->boolean('inworksheet')->default(false);
 
             $table->tinyInteger('flag')->unsigned()->default(1);
             $table->tinyInteger('run')->unsigned()->default(1);

@@ -2,13 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use DB;
 
 use Carbon\Carbon;
 
-class Lookup extends Model
+class Lookup
 {
 
     public static $double_approval = [2, 4, 5];
@@ -145,7 +144,7 @@ class Lookup extends Model
     public static function samples_arrays()
     {
         return [
-            'batch' => ['datereceived', 'datedispatchedfromfacility', 'high_priority', 'facility_id', 'site_entry'],
+            'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'site_entry'],
 
             'mother' => ['hiv_status', 'facility_id', 'ccc_no'],
 
@@ -153,7 +152,7 @@ class Lookup extends Model
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
 
-            'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'high_priority'],
+            'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
             'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'mother_prophylaxis', 'feeding', 'pcrtype', 'regimen', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
         ];
@@ -229,13 +228,13 @@ class Lookup extends Model
     public static function viralsamples_arrays()
     {
         return [
-            'batch' => ['datereceived', 'datedispatchedfromfacility', 'high_priority', 'facility_id', 'site_entry'],
+            'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'site_entry'],
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no'],
 
-            'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'high_priority'],
+            'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 
             'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
         ];

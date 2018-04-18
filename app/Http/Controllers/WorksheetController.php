@@ -361,7 +361,7 @@ class WorksheetController extends Controller
             return back();
         }
 
-        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
@@ -371,7 +371,7 @@ class WorksheetController extends Controller
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('high_priority', 'desc')
+            ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
             ->limit($machine->eid_limit)
@@ -405,7 +405,7 @@ class WorksheetController extends Controller
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
-        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.high_priority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
             ->whereNull('worksheet_id')
@@ -413,7 +413,7 @@ class WorksheetController extends Controller
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result = 0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('high_priority', 'asc')
+            ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('samples.id', 'asc')
             ->limit($machine->eid_limit)
@@ -483,7 +483,7 @@ class WorksheetController extends Controller
      */
     public function destroy(Worksheet $worksheet)
     {
-        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => 0, 'inworksheet' => 0, 'result' => 0]);
+        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
         // $worksheet->status_id = 4;
         // $worksheet->save();
 
@@ -904,7 +904,7 @@ class WorksheetController extends Controller
                 }
                 return $query->where('worksheet_id', $worksheet_id);
             })
-            ->where('inworksheet', 1)
+            ->whereNotNull('worksheet_id')
             ->where('receivedstatus', '!=', 2)
             ->groupBy('worksheet_id', 'result')
             ->get();
