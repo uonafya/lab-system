@@ -52,10 +52,10 @@ class CreateViralsamplesTable extends Migration
             $table->bigInteger('worksheet_id')->unsigned()->nullable();
             // $table->boolean('inworksheet')->default(false);
 
-            $table->tinyInteger('flag')->unsigned()->default(1);
-            $table->tinyInteger('run')->unsigned()->default(1);
-            $table->tinyInteger('repeatt')->unsigned()->default(0);
-            $table->tinyInteger('eqa')->unsigned()->default(0);
+            $table->tinyInteger('flag')->unsigned()->default(1)->nullable();
+            $table->tinyInteger('run')->unsigned()->default(1)->nullable();
+            $table->tinyInteger('repeatt')->unsigned()->default(0)->nullable();
+            // $table->tinyInteger('eqa')->unsigned()->default(0)->nullable();
 
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();
@@ -66,12 +66,12 @@ class CreateViralsamplesTable extends Migration
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 
-            $table->tinyInteger('tat1')->unsigned()->default(0);
-            $table->tinyInteger('tat2')->unsigned()->default(0);
-            $table->tinyInteger('tat3')->unsigned()->default(0);
-            $table->tinyInteger('tat4')->unsigned()->default(0);
+            $table->tinyInteger('tat1')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('tat2')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('tat3')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('tat4')->unsigned()->default(0)->nullable();
 
-            $table->tinyInteger('synched')->default(0);
+            $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();
