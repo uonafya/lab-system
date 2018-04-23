@@ -10,7 +10,7 @@ use DB;
 class BatchObserver
 {
     /**
-     * Listen to the Batch created event.
+     * Listen to the Batch updating event.
      *
      * @param  \App\Batch  $batch
      * @return void
