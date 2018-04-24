@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facility;
 use App\Viralbatch;
 use App\Viralsample;
 use App\MiscViral;
@@ -171,10 +172,13 @@ class ViralbatchController extends Controller
     public function confirm_dispatch(Request $request)
     {
         $batches = $request->input('batches');
+        $final_dispatch = $request->input('final_dispatch');
+
+        if(!$final_dispatch) return $this->get_rows($batches);
 
         foreach ($batches as $key => $value) {
             $batch = Viralbatch::find($value);
-            $facility = DB::table('facilitys')->where('id', $batch->facility_id)->get()->first();
+            $facility = Facility::find($batch->facility_id);
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new VlDispatch($batch, $facility));
@@ -184,7 +188,7 @@ class ViralbatchController extends Controller
             // }            
         }
 
-        DB::table('viralbatches')->whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
+        Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
         
         return redirect('/viralbatch');
     }
@@ -250,63 +254,63 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
-        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
+        return view('tables.dispatch_viral', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list])->with('pageTitle', 'Batch Dispatch');
 
-        $table_rows = "";
+        // $table_rows = "";
 
-        foreach ($batches as $key => $batch) {
+        // foreach ($batches as $key => $batch) {
 
-            $noresult = $this->checknull($noresult_a->where('batch_id', $batch->id));
-            $redraw = $this->checknull($redraw_a->where('batch_id', $batch->id));
-            $failed = $this->checknull($failed_a->where('batch_id', $batch->id));
-            $detected = $this->checknull($detected_a->where('batch_id', $batch->id));
-            $undetected = $this->checknull($undetected_a->where('batch_id', $batch->id));
-            $rej = $this->checknull($rejected->where('batch_id', $batch->id));
+        //     $noresult = $this->checknull($noresult_a->where('batch_id', $batch->id));
+        //     $redraw = $this->checknull($redraw_a->where('batch_id', $batch->id));
+        //     $failed = $this->checknull($failed_a->where('batch_id', $batch->id));
+        //     $detected = $this->checknull($detected_a->where('batch_id', $batch->id));
+        //     $undetected = $this->checknull($undetected_a->where('batch_id', $batch->id));
+        //     $rej = $this->checknull($rejected->where('batch_id', $batch->id));
 
-            $results = $undetected + $detected;
-            $total = $noresult + $failed + $redraw + $results + $rej;
+        //     $results = $undetected + $detected;
+        //     $total = $noresult + $failed + $redraw + $results + $rej;
 
-            $dm = $date_modified->where('batch_id', $batch->id)->first()->mydate;
-            $dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
+        //     $dm = $date_modified->where('batch_id', $batch->id)->first()->mydate;
+        //     $dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
 
-            $maxdate=date("d-M-Y",strtotime($dm));
+        //     $maxdate=date("d-M-Y",strtotime($dm));
 
-            $delays = MiscViral::working_days($maxdate, $currentdate);
+        //     $delays = MiscViral::working_days($maxdate, $currentdate);
 
-            switch ($batch->batch_complete) {
-                case 0:
-                    $status = "In process";
-                    break;
-                case 1:
-                    $status = "Dispatched";
-                    break;
-                case 2:
-                    $status = "Awaiting Dispatch";
-                    break;
-                default:
-                    break;
-            }
+        //     switch ($batch->batch_complete) {
+        //         case 0:
+        //             $status = "In process";
+        //             break;
+        //         case 1:
+        //             $status = "Dispatched";
+        //             break;
+        //         case 2:
+        //             $status = "Awaiting Dispatch";
+        //             break;
+        //         default:
+        //             break;
+        //     }
 
-            $table_rows .= "<tr> 
-            <td><div align='center'><input name='batches[]' type='checkbox' id='batches[]' value='{$batch->id}' /> </div></td>
-            <td>{$batch->id}</td>
-            <td>{$batch->name}</td>
-            <td>{$batch->email}</td>
-            <td>{$batch->datereceived}</td>
-            <td>{$batch->created_at}</td>
-            <td>{$delays}</td>
-            <td>{$total}</td>
-            <td>{$rej}</td>
-            <td>{$results}</td>
-            <td>{$failed}</td>
-            <td>{$redraw}</td>
-            <td>{$status}</td>
-            <td><a href='" . url("/viralbatch/" . $batch->id) . "'>View</a> </td>
-            </tr>";
-        }
+        //     $table_rows .= "<tr> 
+        //     <td><div align='center'><input name='batches[]' type='checkbox' id='batches[]' value='{$batch->id}' /> </div></td>
+        //     <td>{$batch->id}</td>
+        //     <td>{$batch->name}</td>
+        //     <td>{$batch->email}</td>
+        //     <td>{$batch->datereceived}</td>
+        //     <td>{$batch->created_at}</td>
+        //     <td>{$delays}</td>
+        //     <td>{$total}</td>
+        //     <td>{$rej}</td>
+        //     <td>{$results}</td>
+        //     <td>{$failed}</td>
+        //     <td>{$redraw}</td>
+        //     <td>{$status}</td>
+        //     <td><a href='" . url("/viralbatch/" . $batch->id) . "'>View</a> </td>
+        //     </tr>";
+        // }
 
 
-        return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
+        // return view('tables.dispatch_viral', ['rows' => $table_rows, 'pending' => $batches->count()])->with('pageTitle', 'Batch Dispatch');
 
     }
 

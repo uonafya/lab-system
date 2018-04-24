@@ -192,6 +192,7 @@ class SampleController extends Controller
         $batch = Batch::find($sample->batch_id);
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
+        if($batch->synched == 1 && $batch->isDirty()) $batch->synched = 2;
         $batch->save();
 
         $new_patient = $request->input('new_patient');
@@ -201,11 +202,13 @@ class SampleController extends Controller
             $data = $request->only($samples_arrays['patient']);
             $patient = Patient::find($sample->patient_id);
             $patient->fill($data);
+            if($patient->synched == 1 && $patient->isDirty()) $patient->synched = 2;
             $patient->save();
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
             $mother->fill($data);
+            if($mother->synched == 1 && $mother->isDirty()) $mother->synched = 2;
             $mother->save();
         }
         else
@@ -224,6 +227,7 @@ class SampleController extends Controller
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->patient_id = $patient->id;
+        if($sample->synched == 1 && $sample->isDirty()) $sample->synched = 2;
         $sample->save();
 
         $site_entry_approval = session()->pull('site_entry_approval');
@@ -278,9 +282,9 @@ class SampleController extends Controller
 
     public function runs(Sample $sample)
     {
-        $samples = $sample->child;
-        $sample->load(['patient']);
-        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
+        $patient = $sample->patient;
+        return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]); 
     }
 
     /**

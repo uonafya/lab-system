@@ -39,7 +39,7 @@ class CreateViralsamplesTable extends Migration
 
             $table->string('comments', 30)->nullable();
             $table->string('labcomment', 100)->nullable();
-            $table->bigInteger('parentid')->unsigned()->default(0);
+            $table->bigInteger('parentid')->unsigned()->default(0)->index();
             // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->string('reason_for_repeat', 50)->nullable();
@@ -49,7 +49,7 @@ class CreateViralsamplesTable extends Migration
             $table->string('units', 30)->nullable();
             $table->string('interpretation', 50)->nullable();
 
-            $table->bigInteger('worksheet_id')->unsigned()->nullable();
+            $table->bigInteger('worksheet_id')->unsigned()->nullable()->index();
             // $table->boolean('inworksheet')->default(false);
 
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();

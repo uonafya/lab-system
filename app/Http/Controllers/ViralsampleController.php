@@ -197,12 +197,14 @@ class ViralsampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
+        if($viralsample->synched == 1 && $viralsample->isDirty()) $viralsample->synched = 2;
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
 
         $batch = Viralbatch::find($viralsample->batch_id);
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
+        if($batch->synched == 1 && $batch->isDirty()) $batch->synched = 2;
         $batch->save();
 
         $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
@@ -218,6 +220,7 @@ class ViralsampleController extends Controller
             $viralpatient = new Viralpatient;
         }
         $viralpatient->fill($data);
+        if($viralpatient->synched == 1 && $viralpatient->isDirty()) $viralpatient->synched = 2;
         $viralpatient->save();
 
         $viralsample->patient_id = $viralpatient->id;
@@ -273,9 +276,10 @@ class ViralsampleController extends Controller
 
     public function runs(Viralsample $sample)
     {
-        $samples = $sample->child;
-        $sample->load(['patient']);
-        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+        // $samples = $sample->child;
+        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
+        $patient = $sample->patient;
+        return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]);
     }
 
     /**

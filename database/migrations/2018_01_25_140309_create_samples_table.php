@@ -32,13 +32,13 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->string('comments', 100)->nullable();
             $table->string('labcomment', 100)->nullable();
-            $table->bigInteger('parentid')->unsigned()->default(0)->nullable();
+            $table->bigInteger('parentid')->unsigned()->default(0)->nullable()->index();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
             $table->string('interpretation', 50)->nullable();
             $table->tinyInteger('result')->unsigned()->nullable()->index();
 
-            $table->bigInteger('worksheet_id')->unsigned()->nullable();
+            $table->bigInteger('worksheet_id')->unsigned()->nullable()->index();
             // $table->boolean('inworksheet')->default(false);
 
             $table->tinyInteger('hei_validation')->unsigned()->default(0)->nullable()->index();

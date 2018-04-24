@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Facility;
 use App\Batch;
 use App\Sample;
 use App\Misc;
 use App\Common;
 use App\Lookup;
 
-use DB;
 use DOMPDF;
 
 use App\Mail\EidDispatch;
@@ -163,14 +163,17 @@ class BatchController extends Controller
         return $this->get_rows();
     }
 
+
     public function confirm_dispatch(Request $request)
     {
         $batches = $request->input('batches');
+        $final_dispatch = $request->input('final_dispatch');
 
+        if(!$final_dispatch) return $this->get_rows($batches);
 
         foreach ($batches as $key => $value) {
             $batch = Batch::find($value);
-            $facility = DB::table('facilitys')->where('id', $batch->facility_id)->get()->first();
+            $facility = Facility::find($batch->facility_id);
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
@@ -180,7 +183,7 @@ class BatchController extends Controller
             // }            
         }
 
-        DB::table('batches')->whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
+        Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
         return redirect('/batch');
     }
@@ -225,7 +228,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count()]);
+        return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
 
     public function approve_site_entry()
