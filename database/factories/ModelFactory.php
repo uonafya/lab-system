@@ -38,9 +38,10 @@ $factory->define(App\Batch::class, function (Faker $faker) {
         // 'lab_id' => rand(1, 7),
         'lab_id' => env('APP_LAB'),
         'facility_id' => rand(1, 1000),
-        // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
-        'datereceived' => $faker->numerify('2017-0#-1#'),
+        'datereceived' => $faker->dateTimeThisYear($max = 'now'),
+        // 'datereceived' => $faker->numerify('2017-0#-1#'),
         // 'datereceived' => $faker->regexify('2017\-+0[1-9]+\-[1-2]+[0-9]'),
+        // 'datereceived' => $faker->regexify("^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$"),
     ];
 });
 
@@ -55,8 +56,8 @@ $factory->define(App\Sample::class, function (Faker $faker) {
         'mother_prophylaxis' => $faker->randomElement([5, 6, 7, 18, 17, 19, 20, 21, 22, 23, 24]),
         'feeding' => rand(1, 5),
         'spots' => rand(1, 5),
-        'datecollected' => $faker->numerify('2017-0#-1#'),
-        // 'datecollected' => $faker->dateTimeThisYear($max = 'now'),
+        // 'datecollected' => $faker->numerify('2017-0#-1#'),
+        'datecollected' => $faker->dateTimeThisYear($max = 'now'),
     ];
 });
 
@@ -90,8 +91,8 @@ $factory->define(App\Viralbatch::class, function (Faker $faker) {
         // 'lab_id' => rand(1, 7),
         'lab_id' => env('APP_LAB'),
         'facility_id' => rand(1, 1000),
-        // 'datereceived' => $faker->dateTimeThisYear($max = 'now'),
-        'datereceived' => $faker->numerify('2017-0#-1#'),
+        'datereceived' => $faker->dateTimeThisYear($max = 'now'),
+        // 'datereceived' => $faker->numerify('2017-0#-1#'),
         // 'datereceived' => $faker->regexify('2017\-+0[1-9]+\-[1-2]+[0-9]'),
     ];
 });
@@ -107,9 +108,9 @@ $factory->define(App\Viralsample::class, function (Faker $faker) {
         'prophylaxis' => rand(1, 20),
         'regimenline' => rand(1, 3),
         'pmtct' => rand(1, 3),
-        'spots' => rand(1, 5),
-        'datecollected' => $faker->numerify('2017-0#-1#'),
-        // 'datecollected' => $faker->dateTimeThisYear($max = 'now'),
+        // 'spots' => rand(1, 5),
+        // 'datecollected' => $faker->numerify('2017-0#-1#'),
+        'datecollected' => $faker->dateTimeThisYear($max = 'now'),
     ];
 });
 

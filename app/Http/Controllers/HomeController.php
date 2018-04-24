@@ -6,6 +6,7 @@ use DB;
 use Illuminate\Http\Request;
 use App\Sample;
 use App\Viralsample;
+use App\Synch;
 
 class HomeController extends Controller
 {
@@ -16,7 +17,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -103,5 +104,12 @@ class HomeController extends Controller
             ->whereRaw("(name like '%" . $search . "%')")
             ->paginate(10);
         return $district;
+    }
+
+    public function test()
+    {
+        // dd(Synch::synch_eid_patients());
+        // echo Synch::synch_eid_patients();
+        echo Synch::synch_eid_batches();
     }
 }

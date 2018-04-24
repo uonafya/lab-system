@@ -8,7 +8,7 @@ CREATE OR REPLACE VIEW samples_view AS
               LEFT JOIN facilitys f ON f.id=b.facility_id
               JOIN patients p ON p.id=s.patient_id
 
-          );
+          ); 
 
 CREATE OR REPLACE VIEW viralsamples_view AS
           (

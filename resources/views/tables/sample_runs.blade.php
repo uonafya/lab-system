@@ -65,9 +65,9 @@
                                 @foreach($samples as $key => $samp)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $sample->patient->patient }} </td>
+                                        <td> {{ $patient->patient }} </td>
                                         <td> {{ $samp->id }} </td>
-                                        <td> {{ $samp->id }} </td>
+                                        <td> {{ $samp->parentid }} </td>
                                         <td> {{ $samp->run }} </td>
                                         <td> {{ $samp->datecollected }} </td>
                                         <td> {{ $samp->datetested }} </td>

@@ -63,7 +63,7 @@ class SampleController extends Controller
         if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
-            session(['facility_name' => $facility->name]);
+            session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
             $batch = new Batch;
             $batch->user_id = auth()->user()->id;
@@ -138,9 +138,10 @@ class SampleController extends Controller
             $batch->premature();
         }
 
-        $batch->refresh();
+        $sample_count = session('batch_total') + 1;
+        session(['batch_total' => $sample_count]);
 
-        if($batch->sample_count == 10){
+        if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
         }
@@ -191,6 +192,7 @@ class SampleController extends Controller
         $batch = Batch::find($sample->batch_id);
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
+        if($batch->synched == 1 && $batch->isDirty()) $batch->synched = 2;
         $batch->save();
 
         $new_patient = $request->input('new_patient');
@@ -200,11 +202,13 @@ class SampleController extends Controller
             $data = $request->only($samples_arrays['patient']);
             $patient = Patient::find($sample->patient_id);
             $patient->fill($data);
+            if($patient->synched == 1 && $patient->isDirty()) $patient->synched = 2;
             $patient->save();
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
             $mother->fill($data);
+            if($mother->synched == 1 && $mother->isDirty()) $mother->synched = 2;
             $mother->save();
         }
         else
@@ -223,6 +227,7 @@ class SampleController extends Controller
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->patient_id = $patient->id;
+        if($sample->synched == 1 && $sample->isDirty()) $sample->synched = 2;
         $sample->save();
 
         $site_entry_approval = session()->pull('site_entry_approval');
@@ -242,7 +247,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->run != 1 && $sample->inworksheet == 0){
+        if($sample->worksheet_id == NULL && $sample->result == NULL){
             $sample->delete();
         }        
         return back();
@@ -277,9 +282,9 @@ class SampleController extends Controller
 
     public function runs(Sample $sample)
     {
-        $samples = $sample->child;
-        $sample->load(['patient']);
-        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
+        $patient = $sample->patient;
+        return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]); 
     }
 
     /**
@@ -306,12 +311,12 @@ class SampleController extends Controller
         $sample->repeatt = 0;
         $sample->result = 5;
         $sample->approvedby = auth()->user()->id;
-        $sample->approved2by = auth()->user()->id;
+        $sample->approvedby2 = auth()->user()->id;
         $sample->dateapproved = date('Y-m-d');
         $sample->dateapproved2 = date('Y-m-d');
+
         $sample->save();
-        $my = new \App\Misc;
-        $my->check_batch($sample->batch_id);
+        Misc::check_batch($sample->batch_id);
         return back();
     }
 
@@ -338,7 +343,7 @@ class SampleController extends Controller
     private function clear_session(){
         session()->forget('batch');
         session()->forget('facility_name');
-        // session()->forget('batch_total');
+        session()->forget('batch_total');
         // session()->forget('batch_dispatch');
         // session()->forget('batch_dispatched');
         // session()->forget('batch_received');

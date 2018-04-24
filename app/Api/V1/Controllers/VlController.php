@@ -9,6 +9,7 @@ use App\Api\V1\Requests\VlCompleteRequest;
 use App\Lookup;
 use App\ViralsampleView;
 use App\Viralbatch;
+use App\Viralpatient;
 use App\Viralsample;
 
 class VlController extends Controller
@@ -42,17 +43,24 @@ class VlController extends Controller
             return json_encode("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
         }
 
-        $batch = Viralbatch::existing($facility, $datereceived, $lab)->get()->first();
+        $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
-
+            unset($batch->sample_count);
+        }
+        else if($batch && $batch->sample_count > 9){
+            unset($batch->sample_count);
+            $batch->full_batch();
+            $batch = new Batch;
         }
         else{
             $batch = new Batch;
         }
 
+        
+
         $batch->lab_id = 5;
-        $batch->user_id = 66;
+        $batch->user_id = 0;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         $batch->site_entry = 0;
@@ -109,21 +117,27 @@ class VlController extends Controller
         }
 
         if(!$editted){
-            $batch = Viralbatch::existing($facility, $datereceived, $lab)->get()->first();
+            $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
 
             if($batch && $batch->sample_count < 10){
-
+                unset($batch->sample_count);
+            }
+            else if($batch && $batch->sample_count > 9){
+                unset($batch->sample_count);
+                $batch->full_batch();
+                $batch = new Batch;
             }
             else{
                 $batch = new Batch;
             }
 
             $batch->lab_id = $lab;
-            $batch->user_id = 66;
+            $batch->user_id = 0;
             $batch->facility_id = $facility;
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->synched = 5;
             $batch->save();            
         }
 

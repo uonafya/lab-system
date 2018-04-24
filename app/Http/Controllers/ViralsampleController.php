@@ -53,9 +53,9 @@ class ViralsampleController extends Controller
             return redirect()->route('viralsample.create');
         }
 
-        $high_priority = $request->input('high_priority');
+        $highpriority = $request->input('highpriority');
 
-        if($high_priority == 1)
+        if($highpriority == 1)
         {
             $facility_id = $request->input('facility_id');
 
@@ -85,7 +85,7 @@ class ViralsampleController extends Controller
         if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
-            session(['viral_facility_name' => $facility->name]);
+            session(['viral_facility_name' => $facility->name, 'viral_batch_total' => 0]);
 
             $batch = new Viralbatch;
             $data = $request->only($viralsamples_arrays['batch']);
@@ -149,9 +149,10 @@ class ViralsampleController extends Controller
             $batch->premature();
         }
 
-        $batch->refresh();
+        $sample_count = session('viral_batch_total') + 1;
+        session(['viral_batch_total' => $sample_count]);
 
-        if($batch->sample_count == 10){
+        if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
         }
@@ -196,12 +197,14 @@ class ViralsampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
+        if($viralsample->synched == 1 && $viralsample->isDirty()) $viralsample->synched = 2;
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
 
         $batch = Viralbatch::find($viralsample->batch_id);
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
+        if($batch->synched == 1 && $batch->isDirty()) $batch->synched = 2;
         $batch->save();
 
         $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
@@ -217,6 +220,7 @@ class ViralsampleController extends Controller
             $viralpatient = new Viralpatient;
         }
         $viralpatient->fill($data);
+        if($viralpatient->synched == 1 && $viralpatient->isDirty()) $viralpatient->synched = 2;
         $viralpatient->save();
 
         $viralsample->patient_id = $viralpatient->id;
@@ -239,7 +243,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->run != 1 && $viralsample->inworksheet == 0){
+        if($viralsample->worksheet_id == NULL && $viralsample->result == NULL){
             $viralsample->delete();
         }        
         return back();
@@ -272,9 +276,10 @@ class ViralsampleController extends Controller
 
     public function runs(Viralsample $sample)
     {
-        $samples = $sample->child;
-        $sample->load(['patient']);
-        return view('tables.sample_runs', ['sample' => $sample, 'samples' => $samples]);
+        // $samples = $sample->child;
+        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
+        $patient = $sample->patient;
+        return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]);
     }
 
     /**
@@ -301,12 +306,11 @@ class ViralsampleController extends Controller
         $viralsample->repeatt = 0;
         $viralsample->result = "Collect New Sample";
         $viralsample->approvedby = auth()->user()->id;
-        $viralsample->approved2by = auth()->user()->id;
+        $viralsample->approvedby2 = auth()->user()->id;
         $viralsample->dateapproved = date('Y-m-d');
         $viralsample->dateapproved2 = date('Y-m-d');
         $viralsample->save();
-        $my = new \App\MiscViral;
-        $my->check_batch($sample->batch_id);
+        MiscViral::check_batch($sample->batch_id);
         return back();
     }
 
@@ -334,9 +338,9 @@ class ViralsampleController extends Controller
     private function clear_session(){
         session()->forget('viral_batch');
         session()->forget('viral_facility_name');
+        session()->forget('viral_batch_total');
 
         // session()->forget('viral_batch_no');
-        // session()->forget('viral_batch_total');
         // session()->forget('viral_batch_dispatch');
         // session()->forget('viral_batch_dispatched');
         // session()->forget('viral_batch_received');

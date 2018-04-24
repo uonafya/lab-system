@@ -61,7 +61,7 @@ class DashboardComposer
                     ->select('samples.id','patients.patient','samples.parentid','batches.datereceived', DB::raw('IF(samples.patient_id > 0 OR samples.parentid IS NULL, 0, 1) AS isnull'))
                     ->leftJoin('batches', 'batches.id', '=', 'samples.batch_id')
                     ->leftJoin('patients', 'patients.id', '=', 'samples.patient_id')
-                    ->where('samples.inworksheet', '=', 0)
+                    ->whereNull('samples.worksheet_id')
                     ->where(DB::raw('YEAR(batches.datereceived)'), '>', '2014')
                     ->where('samples.receivedstatus', '<>', '0')
                     ->where('samples.receivedstatus', '<>', '2')
@@ -101,7 +101,7 @@ class DashboardComposer
                     ->select('samples.id','patient_id','batches.datereceived','spots', 'datecollected','receivedstatus','batches.facility_id','samples.worksheet_id', DB::raw('IF(samples.patient_id > 0 OR samples.parentid IS NULL, 0, 1) AS isnull'))
                     ->join('batches', 'batches.id', '=', 'samples.batch_id')
                     ->join('patients', 'patients.id', '=', 'samples.patient_id')
-                    ->where('samples.inworksheet', '=', 0)
+                    ->whereNull('samples.worksheet_id')
                     ->where('samples.receivedstatus', '<>', '0')
                     ->where('samples.receivedstatus', '<>', '2')
                     ->where(function ($query) {

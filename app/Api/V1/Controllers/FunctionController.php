@@ -78,8 +78,6 @@ class FunctionController extends Controller
         });
 
         return $result;
-
-
  
      }
 

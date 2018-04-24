@@ -14,9 +14,10 @@ class CreateViralsamplesTable extends Migration
     public function up()
     {
         Schema::create('viralsamples', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('patient_id')->unsigned()->index();
-            $table->integer('batch_id')->unsigned()->index();
+            $table->bigIncrements('id'); 
+            $table->bigInteger('national_sample_id')->unsigned()->nullable();
+            $table->bigInteger('patient_id')->unsigned()->index();
+            $table->bigInteger('batch_id')->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
             $table->string('order_no', 30)->nullable();
@@ -24,36 +25,37 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();            
 
             // This will be used instead
-            $table->tinyInteger('age')->unsigned()->nullable()->index();
+            $table->double('age', 5, 2)->unsigned()->nullable()->index();
+            $table->tinyInteger('age_category')->unsigned()->default(0)->index();
             $table->tinyInteger('justification')->unsigned()->nullable()->index();
-            $table->string('other_justification')->nullable();
+            $table->string('other_justification', 50)->nullable();
             $table->tinyInteger('sampletype')->unsigned()->nullable()->index();
-            $table->tinyInteger('prophylaxis')->unsigned()->index();
-            $table->tinyInteger('regimenline')->unsigned()->index();
+            $table->tinyInteger('prophylaxis')->unsigned()->nullable()->index();
+            $table->tinyInteger('regimenline')->unsigned()->nullable()->index();
             $table->tinyInteger('pmtct')->unsigned()->index()->default(3);
 
             $table->tinyInteger('dilutionfactor')->unsigned()->nullable();
             $table->tinyInteger('dilutiontype')->unsigned()->nullable();
 
-            $table->string('comments')->nullable();
-            $table->string('labcomment')->nullable();
-            $table->integer('parentid')->unsigned()->default(0);
-            $table->tinyInteger('spots')->unsigned()->nullable();
+            $table->string('comments', 30)->nullable();
+            $table->string('labcomment', 100)->nullable();
+            $table->bigInteger('parentid')->unsigned()->default(0)->index();
+            // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
-            $table->string('reason_for_repeat')->nullable();
+            $table->string('reason_for_repeat', 50)->nullable();
             $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
 
             $table->string('result', 50)->nullable()->index();
             $table->string('units', 30)->nullable();
             $table->string('interpretation', 50)->nullable();
 
-            $table->integer('worksheet_id')->unsigned()->nullable();
-            $table->boolean('inworksheet')->default(false);
+            $table->bigInteger('worksheet_id')->unsigned()->nullable()->index();
+            // $table->boolean('inworksheet')->default(false);
 
-            $table->tinyInteger('flag')->unsigned()->nullable();
-            $table->tinyInteger('run')->unsigned()->default(1);
-            $table->tinyInteger('repeatt')->unsigned()->nullable();
-            $table->tinyInteger('eqa')->unsigned()->nullable();
+            $table->tinyInteger('flag')->unsigned()->default(1)->nullable();
+            $table->tinyInteger('run')->unsigned()->default(1)->nullable();
+            $table->tinyInteger('repeatt')->unsigned()->default(0)->nullable();
+            // $table->tinyInteger('eqa')->unsigned()->default(0)->nullable();
 
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();
@@ -64,7 +66,12 @@ class CreateViralsamplesTable extends Migration
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 
-            $table->boolean('synched')->default(false);
+            $table->tinyInteger('tat1')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('tat2')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('tat3')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('tat4')->unsigned()->default(0)->nullable();
+
+            $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();
             // $table->date('created_at')->nullable();
             // $table->date('updated_at')->nullable();

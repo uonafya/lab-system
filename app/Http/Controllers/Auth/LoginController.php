@@ -103,7 +103,7 @@ class LoginController extends Controller
 
     private function set_session($facility = false)
     {
-        $batch = Batch::editing()->get()->first();
+        $batch = Batch::editing()->withCount(['sample'])->get()->first();
         if($batch){
             if($batch->sample_count > 9){
                 $batch->full_batch();
@@ -115,7 +115,7 @@ class LoginController extends Controller
             }
         }
 
-        $viralbatch = Viralbatch::editing()->get()->first();
+        $viralbatch = Viralbatch::editing()->withCount(['sample'])->get()->first();
         if($viralbatch){
             if($viralbatch->sample_count > 9){
                 $viralbatch->full_batch();

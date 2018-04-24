@@ -17,8 +17,18 @@
                     Batches Awaiting Dispatch
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('viralbatch/complete_dispatch') }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to dispatch the selected batches?');" >
+                    <form  method="post" action="{{ url('viralbatch/complete_dispatch') }}  " name="worksheetform"  
+
+                        @if($batch_list)
+                            onSubmit="return confirm('Are you sure you want to dispatch the selected batches?');"
+                        @endif
+
+                    >
                         {{ csrf_field() }}
+
+                        @if($batch_list)
+                            <input type="hidden" name="final_dispatch" value=1>
+                        @endif
 
                         <table class="table table-striped table-bordered table-hover data-table" >
                             <thead>

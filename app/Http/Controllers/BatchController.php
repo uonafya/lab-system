@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Facility;
 use App\Batch;
 use App\Sample;
 use App\Misc;
 use App\Common;
 use App\Lookup;
 
-use DB;
 use DOMPDF;
 
 use App\Mail\EidDispatch;
@@ -30,8 +30,6 @@ class BatchController extends Controller
         $user = auth()->user();
         $facility_user = false;
         if($user->user_type_id == 5) $facility_user=true;
-
-        $my = new Misc;
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
@@ -56,8 +54,8 @@ class BatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $subtotals = $my->get_subtotals($batch_ids, false);
-        $rejected = $my->get_rejected($batch_ids, false);
+        $subtotals = Misc::get_subtotals($batch_ids, false);
+        $rejected = Misc::get_rejected($batch_ids, false);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
@@ -165,14 +163,17 @@ class BatchController extends Controller
         return $this->get_rows();
     }
 
+
     public function confirm_dispatch(Request $request)
     {
         $batches = $request->input('batches');
+        $final_dispatch = $request->input('final_dispatch');
 
+        if(!$final_dispatch) return $this->get_rows($batches);
 
         foreach ($batches as $key => $value) {
             $batch = Batch::find($value);
-            $facility = DB::table('facilitys')->where('id', $batch->facility_id)->get()->first();
+            $facility = Facility::find($batch->facility_id);
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
@@ -182,15 +183,13 @@ class BatchController extends Controller
             // }            
         }
 
-        DB::table('batches')->whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
+        Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
         return redirect('/batch');
     }
 
     public function get_rows($batch_list=NULL)
     {
-        $my = new Misc;
-
         $batches = Batch::select('batches.*', 'facilitys.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
@@ -199,10 +198,10 @@ class BatchController extends Controller
             ->where('batch_complete', 2)
             ->get();
 
-        $subtotals = $my->get_subtotals();
-        $rejected = $my->get_rejected();
-        $date_modified = $my->get_maxdatemodified();
-        $date_tested = $my->get_maxdatetested();
+        $subtotals = Misc::get_subtotals();
+        $rejected = Misc::get_rejected();
+        $date_modified = Misc::get_maxdatemodified();
+        $date_tested = Misc::get_maxdatetested();
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
             $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
@@ -229,7 +228,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count()]);
+        return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
 
     public function approve_site_entry()
@@ -241,11 +240,9 @@ class BatchController extends Controller
             ->where('site_entry', 1)
             ->paginate();
 
-        $my = new Misc;
-
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $subtotals = $my->get_subtotals($batch_ids, false);
-        $rejected = $my->get_rejected($batch_ids, false);
+        $subtotals = Misc::get_subtotals($batch_ids, false);
+        $rejected = Misc::get_rejected($batch_ids, false);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
