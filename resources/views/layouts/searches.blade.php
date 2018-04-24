@@ -19,6 +19,14 @@
 		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility");
 		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility");
 
+		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by Lab ID");
+		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by Lab ID");
+
+		set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
+		set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false)
+		set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
+		set_select_facility("report_province_search", "{{ url('province/search') }}", 1, "Search for Province", false)
+
 		// {{ url('') }}
 
 	});

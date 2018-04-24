@@ -86,4 +86,22 @@ class HomeController extends Controller
             return DB::table('samples')->join('batches', 'batches.id', '=', 'samples.batch_id')->whereRaw('DATE(batches.datedispatched) = CURDATE()')->count();
         }
     }
+
+    public function countysearch(Request $request)
+    {
+        $search = $request->input('search');
+        $district = DB::table('countys')->select('id', 'name', 'letter as facilitycode')
+            ->whereRaw("(name like '%" . $search . "%')")
+            ->paginate(10);
+        return $district;
+    }
+
+    public function provincesearch(Request $request)
+    {
+        $search = $request->input('search');
+        $district = DB::table('provinces')->select('id', 'name', 'id as facilitycode')
+            ->whereRaw("(name like '%" . $search . "%')")
+            ->paginate(10);
+        return $district;
+    }
 }

@@ -26,29 +26,52 @@
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
                     <li class="">
-                        <a href="{{ url('batch') }}">Samples</a>
+                        <a href="
+                            @if(session('testingSystem') == 'Viralload')
+                                {{ url('viralbatch') }}
+                            @else
+                                {{ url('batch') }}
+                            @endif">Samples</a>
                     </li>
+                    
+                    @if(session('testingSystem') != 'Viralload')
                     <li class="">
                         <a href="#">Requisitions</a>
                     </li>
+                    @endif
+                    
                     <li class="">
-                        <a href="{{ url('worksheet') }}">Worksheets</a>
+                        <a href="
+                            @if(session('testingSystem') == 'Viralload')
+                                {{ url('viralworksheet') }}
+                            @else
+                                {{ url('worksheet') }}
+                            @endif">Worksheets</a>
                     </li>
                     <li class="">
-                        <a href="#">Facilities</a>
+                        <a href="
+                            @if(session('testingSystem') == 'Viralload')
+                                {{ url('viralbatch/dispatch') }}
+                            @else
+                                {{ url('batch/dispatch') }}
+                            @endif">Dispatched Results</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('batch/dispatch') }}">Dispatched Results</a>
+                        <a href="{{ url('facility') }}">Facilities</a>
                     </li>
                     <li class="">
-                        <a href="#">Reports</a>
+                        <a href="{{ route('reports') }}">Reports</a>
                     </li>
                     <li class="">
                         <a href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
+                    
+                    @if(session('testingSystem') != 'Viralload')
                     <li class="">
                         <a href="#">Kits</a>
                     </li>
+                    @endif
+                
                     <li>
                         <a class="" href="{{ url('/logout') }}"
                         onclick="event.preventDefault();
@@ -63,34 +86,61 @@
                     <a class="label-menu-corner" href="{{ url('home') }}">
                     <i class="pe-7s-home" style="font-size: 25px;"></i>
                         <span class="label label-danger">
+                        @if(session('testingSystem') == 'Viralload')
+
+                        @else
                             {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
+                        @endif
                         </span>
                     </a>
                 </li>
                 <li class="">
-                    <a href="{{ url('batch') }}">Samples</a>
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralbatch') }}
+                        @else
+                            {{ url('batch') }}
+                        @endif">Samples</a>
                 </li>
+                
+                @if(session('testingSystem') != 'Viralload')
                 <li class="">
                     <a href="#">Requisitions</a>
                 </li>
+                @endif
+                
                 <li class="">
-                    <a href="{{ url('worksheet') }}">Worksheets</a>
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralworksheet') }}
+                        @else
+                            {{ url('worksheet') }}
+                        @endif">Worksheets</a>
                 </li>
                 <li class="">
-                    <a href="#">Facilities</a>
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralbatch/dispatch') }}
+                        @else
+                            {{ url('batch/dispatch') }}
+                        @endif">Dispatched Results</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('batch/dispatch') }}">Dispatched Results</a>
+                    <a href="{{ url('facility') }}">Facilities</a>
                 </li>
                 <li class="">
-                    <a href="#">Reports</a>
+                    <a href="{{ route('reports') }}">Reports</a>
                 </li>
                 <li class="">
                     <a href="{{ route('dashboard') }}">Dashboard</a>
                 </li>
+                
+                @if(session('testingSystem') != 'Viralload')
                 <li class="">
                     <a href="#">Kits</a>
                 </li>
+                @endif
+                
                 <li class="dropdown">
                         
                     <a href="{{ url('/logout') }}"
