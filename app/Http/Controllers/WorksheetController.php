@@ -784,7 +784,10 @@ class WorksheetController extends Controller
             $data['result'] = $results[$key];
             $data['repeatt'] = $actions[$key];
 
-            if($data['result'] == 5) $data['labcomment'] = "Failed Run";
+            if($data['result'] == 5){
+                $data['labcomment'] = "Failed Run";
+                $data['repeatt'] = 0;
+            } 
 
             Sample::where('id', $samples[$key])->update($data);
 
