@@ -389,8 +389,6 @@ class ViralworksheetController extends Controller
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
-        dd($redraws);
-
         $batch = array();
 
         foreach ($samples as $key => $value) {
@@ -423,6 +421,7 @@ class ViralworksheetController extends Controller
                 $data['result'] = "Collect New Sample";
                 $data['labcomment'] = "Failed Test";
                 $data['repeatt'] = 0;
+                dd("Success");
             }
 
 
