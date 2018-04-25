@@ -143,7 +143,7 @@
                                     <tr>
                                         <td> 
                                             {{ $sample->patient->patient }}  
-                                            <input type="hidden" name="samples[]" value="{{ $sample->id }} " class="{{ $class }}">
+                                            <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
                                             <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
                                             <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
                                         </td>
