@@ -382,6 +382,7 @@ class ViralworksheetController extends Controller
         $samples = $request->input('samples');
         $batches = $request->input('batches');
         $redraws = $request->input('redraws');
+        $redraws = array_flatten($redraws);
         $results = $request->input('results');
         $actions = $request->input('actions');
         $dilutions = $request->input('dilutionfactors');
@@ -427,7 +428,7 @@ class ViralworksheetController extends Controller
 
             // Viralsample::where('id', $samples[$key])->update($data);
 
-            if($actions[$key] == 1){
+            if($data['repeatt'] == 1){
                 MiscViral::save_repeat($samples[$key]);
             }
         }
