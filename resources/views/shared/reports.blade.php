@@ -1,5 +1,9 @@
 @extends('layouts.master')
 
+@component('/forms/css')
+    <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
+@endcomponent
+
 @section('css_scripts')
 
 @endsection
@@ -29,18 +33,39 @@
                             <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                 <tbody>
                                     <tr>
+                                        {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_dateSelect_form']) }}
                                         <td>Select Date:</td>
                                         <td>
-                                            <input type="" name="">
-                                            <button class="btn btn-default">Download Report</button>
+                                            <div class="input-group date">
+                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                <input type="text" id="specificDate" required class="form-control lockable" name="specificDate">
+                                            </div>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-default" id="specificDateBtn">Download Report</button>
+                                        </td>
+                                        {{ Form::close() }}
                                     </tr>
                                     <tr>
+                                        {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'id' => 'reports_dateRange_form']) }}
                                         <td>Select Date Range From: </td>
-                                        <td><input type="" name=""></td>
+                                        <td>
+                                            <div class="input-group date">
+                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                <input type="text" id="fromDate" required class="form-control lockable" name="fromDate">
+                                            </div>
+                                        </td>
                                         <td><center>To:</center></td>
-                                        <td><input type="" name=""></td>
-                                        <td>Download Report</td>
+                                        <td>
+                                            <div class="input-group date">
+                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                <input type="text" id="toDate" required class="form-control lockable" name="toDate">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-default" id="dateRangeBtn">Download Report</button>
+                                        </td>
+                                        {{ Form::close() }}
                                     </tr>
                                 </tbody>
                             </table>
@@ -56,7 +81,7 @@
                         <div class="alert alert-warning">
                             <center>Please select Overall <strong>or Province or County or District or Facility & Period To generate the report based on your criteria.</strong></center>
                         </div>
-                        {{ Form::open(['url'=>'/report', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
+                        {{ Form::open(['url'=>'/reports', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
                         <div class="form-group">
                             <div class="row">
                                 <label class="col-sm-3 control-label">
@@ -133,5 +158,25 @@
 @endsection
 
 @section('scripts')
+    @component('/forms/scripts')
+        @slot('js_scripts')
+            <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
+        @endslot
 
+        $(".date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
+        set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false)
+        set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
+        set_select_facility("report_province_search", "{{ url('province/search') }}", 1, "Search for Province", false)
+
+    @endcomponent
 @endsection

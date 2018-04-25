@@ -1,6 +1,6 @@
 CREATE OR REPLACE VIEW samples_view AS
           (
-            SELECT s.*, b.high_priority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, f.facilitycode, 
+            SELECT s.*, b.high_priority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, f.facilitycode, b.facility_id, 
             p.patient, p.sex, p.dob, p.mother_id, p.entry_point
             
             FROM samples s
@@ -12,7 +12,7 @@ CREATE OR REPLACE VIEW samples_view AS
 
 CREATE OR REPLACE VIEW viralsamples_view AS
           (
-            SELECT s.*, b.high_priority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, f.facilitycode, 
+            SELECT s.*, b.high_priority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, f.facilitycode, b.facility_id, 
             p.patient, p.sex, p.dob
             
             FROM viralsamples s

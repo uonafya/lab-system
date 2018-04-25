@@ -115,6 +115,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('/home', 'HomeController@index');
 
 	Route::get('reports', 'ReportController@index')->name('reports');
+	Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');
 	Route::post('reports', 'ReportController@generate')->name('reports');
 
 	Route::post('patient/search/', 'PatientController@search');
