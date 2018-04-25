@@ -253,7 +253,7 @@
 @section('scripts') 
 
     @component('/tables/scripts')
-        $(".editable.dilutionfactor").val(3).change();
+        $(".editable.dilutionfactor").val(1).change();
         $('.noneditable').attr("disabled", "disabled");     
     @endcomponent
 
