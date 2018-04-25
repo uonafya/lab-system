@@ -16,17 +16,9 @@ class MiscViral extends Common
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {
-			if($sample->parentid == 0){
-				if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
-					$sample->repeatt = 1;
-					$sample->save();
-				}
-			}
-			else{
-				if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
-					$sample->repeatt = 1;
-					$sample->save();
-				}				
+			if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
+				$sample->repeatt = 1;
+				$sample->save();
 			}
 		}
 		return true;
