@@ -208,7 +208,7 @@
 
                                 @endforeach
 
-                                @if($worksheet->status != 3)
+                                @if($worksheet->status_id != 3)
 
                                     @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
                                      (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )

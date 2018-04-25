@@ -178,7 +178,6 @@
                                             <a href="{{ url('sample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
                                         </td>
                                     </tr>
-
                                 @endforeach
 
                                 @if($worksheet->status_id != 3)
