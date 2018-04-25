@@ -53,7 +53,7 @@ class MiscViral extends Common
 		return $sample;
 	}
 
-	public static function check_batch($batch)
+	public static function check_batch($batch_id)
 	{		
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
@@ -64,15 +64,15 @@ class MiscViral extends Common
         }
 
 
-		$total = Viralsample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
-		$tests = Viralsample::where('batch_id', $batch)
+		$total = Viralsample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
+		$tests = Viralsample::where('batch_id', $batch_id)
 		->whereRaw($where_query)
 		->get()
 		->count();
 
-		if($total == $tests){
-            // DB::table('viralbatches')->where('id', $batch)->update(['batch_complete' => 2]);
-			\App\Viralbatch::where('id', $batch)->update(['batch_complete' => 2]);
+		if($total == $tests){ 
+            // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
+			\App\Viralbatch::where('id', $batch_id)->update(['batch_complete' => 2]);
             self::save_tat($batch_id, \App\SampleView::class, \App\Sample::class);
 		}
 	}
