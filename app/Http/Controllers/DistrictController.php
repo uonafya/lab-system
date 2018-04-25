@@ -100,4 +100,15 @@ class DistrictController extends Controller
     {
         //
     }
+
+
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $district = DB::table('districts')->select('id', 'name', 'SubCountyMFLCode as facilitycode')
+            ->whereRaw("(name like '%" . $search . "%')")
+            ->paginate(10);
+        return $district;
+    }
 }

@@ -58,10 +58,13 @@ Route::get('error', function(){
 // Route::get('/home', function () {
 // 	return view('home');
 // });
+
 Route::get('/home', 'HomeController@index');
 Route::get('/synch', 'HomeController@test');
 
 Route::middleware(['web', 'auth'])->group(function(){
+
+	Route::get('/home', 'HomeController@index');
 
 	Route::get('search', function () {	return view('forms.search')->with('pageTitle', 'Search'); });
 
@@ -80,7 +83,11 @@ Route::middleware(['web', 'auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
+	Route::post('province/search/', 'HomeController@provincesearch')->name('province.search');
+
 	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+	Route::post('district/search/', 'DistrictController@search')->name('district.search');
 	
 	Route::resource('district', 'DistrictController');
 
@@ -107,6 +114,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('/home', 'HomeController@index');
 
+	Route::get('reports', 'ReportController@index')->name('reports');
+	Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');
+	Route::post('reports', 'ReportController@generate')->name('reports');
 
 	Route::post('patient/search/', 'PatientController@search');
 	Route::resource('patient', 'PatientController');
@@ -120,12 +130,14 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('sample/print/{sample}', 'SampleController@individual');
 	Route::get('sample/runs/{sample}', 'SampleController@runs');
 	Route::get('sample/create_poc', 'SampleController@create_poc');
+	Route::post('sample/search', 'SampleController@search');
 	Route::resource('sample', 'SampleController');
 
 	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
 	Route::get('viralsample/release/{viralsample}', 'ViralsampleController@release_redraw');
 	Route::get('viralsample/print/{sample}', 'ViralsampleController@individual');
 	Route::get('viralsample/runs/{sample}', 'ViralsampleController@runs');
+	Route::post('viralsample/search', 'ViralsampleController@search');
 	Route::resource('viralsample', 'ViralsampleController');
 
 

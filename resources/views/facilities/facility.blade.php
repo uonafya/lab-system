@@ -59,7 +59,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Postal Address</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" name="PostalAddress" type="text" value="{{ $facility->PostalAddress }}" id="PostalAddress" {{ $disabled }}>
+                                <input class="form-control editable" name="PostalAddress" type="text" value="{{ $facility->PostalAddress ?? '' }}" id="PostalAddress" {{ $disabled }}>
                             </div>
                         </div>
                         <div class="form-group">

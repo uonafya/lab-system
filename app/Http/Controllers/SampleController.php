@@ -333,6 +333,13 @@ class SampleController extends Controller
         return back();
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $samples = Viralsample::whereRaw("id like '" . $search . "%'")->paginate(10);
+        return $samples;
+    }
+
     private function clear_session(){
         session()->forget('batch');
         session()->forget('facility_name');
