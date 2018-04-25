@@ -416,11 +416,13 @@ class ViralworksheetController extends Controller
                 $data['result'] = $results[$key];
             }
 
-            if(isset($redraws[$value])) {
+            // if(isset($redraws[$value])) {
+            if(in_array($value, $redraws)) {
                 $data['result'] = "Collect New Sample";
                 $data['labcomment'] = "Failed Test";
                 $data['repeatt'] = 0;
             }
+
 
             Viralsample::where('id', $samples[$key])->update($data);
 
