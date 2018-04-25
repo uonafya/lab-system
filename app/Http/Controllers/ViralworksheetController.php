@@ -416,7 +416,7 @@ class ViralworksheetController extends Controller
                 $data['result'] = $results[$key];
             }
 
-            if(isset($redraws[$key])) {
+            if(isset($redraws[$value])) {
                 $data['result'] = "Collect New Sample";
                 $data['labcomment'] = "Failed Test";
                 $data['repeatt'] = 0;

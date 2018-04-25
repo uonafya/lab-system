@@ -168,7 +168,7 @@
                                             @if($sample->approvedby)
                                                 {{ $sample->result }}
                                             @else
-                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $key }}"> Collect New Sample </label></div>
+                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
                                             @endif
                                         </td>
 
