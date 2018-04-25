@@ -60,4 +60,14 @@ class Sample extends BaseModel
         return $this->belongsTo('App\User', 'approvedby');
     }
 
+    public function scopeRuns($query, $sample)
+    {
+        if($sample->parentid == 0){
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}");
+        }
+        else{
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}");
+        }
+    }
+
 }

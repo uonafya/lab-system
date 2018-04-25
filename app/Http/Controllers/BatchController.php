@@ -29,6 +29,8 @@ class BatchController extends Controller
         $myurl = url('batch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
+        $date_column = "batches.datereceived";
+        if($batch->batch_complete == 1) $date_column = "batches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
@@ -36,13 +38,13 @@ class BatchController extends Controller
         $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-            ->when($date_start, function($query) use ($date_start, $date_end){
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
-                    return $query->whereDate('batches.datereceived', '>=', $date_start)
-                    ->whereDate('batches.datereceived', '<=', $date_end);
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
                 }
-                return $query->whereDate('batches.datereceived', $date_start);
+                return $query->whereDate($date_column, $date_start);
             })
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);

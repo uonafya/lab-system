@@ -170,7 +170,7 @@ class MiscViral extends Common
         if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
         {
             $res= "< LDL copies/ml";
-            $interpretation="Target Not Detected";
+            $interpretation= $result;
             $units="";                        
         }
 

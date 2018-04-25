@@ -275,7 +275,7 @@ class ViralsampleController extends Controller
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;
-        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
+        $samples = Viralsample::runs($sample)->orderBy('run', 'asc')->get();
         $patient = $sample->patient;
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]);
     }

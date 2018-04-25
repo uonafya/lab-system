@@ -214,7 +214,7 @@
                                      (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )
 
                                         <tr bgcolor="#999999">
-                                            <td  colspan="10" bgcolor="#00526C" >
+                                            <td  colspan="12" bgcolor="#00526C" >
                                                 <center>
                                                     <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  />
                                                 </center>
@@ -224,7 +224,7 @@
                                     @else
 
                                         <tr>
-                                            <td  colspan="10">
+                                            <td  colspan="12">
                                                 <center>
                                                     You are not permitted to complete the approval. Another user should be the one to complete the approval process.
                                                 </center>
@@ -253,7 +253,7 @@
 @section('scripts') 
 
     @component('/tables/scripts')
-        $(".editable .dilutionfactor").val(3).change();
+        $(".editable.dilutionfactor").val(3).change();
         $('.noneditable').attr("disabled", "disabled");     
     @endcomponent
 

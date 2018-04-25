@@ -282,8 +282,9 @@ class SampleController extends Controller
 
     public function runs(Sample $sample)
     {
-        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
-        $patient = $sample->patient;
+        $samples = Sample::runs($sample)->orderBy('run', 'asc')->get();
+
+        $patient = $sample->patient; 
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]); 
     }
 
