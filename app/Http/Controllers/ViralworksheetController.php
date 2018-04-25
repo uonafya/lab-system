@@ -421,11 +421,11 @@ class ViralworksheetController extends Controller
                 $data['result'] = "Collect New Sample";
                 $data['labcomment'] = "Failed Test";
                 $data['repeatt'] = 0;
-                dd("Success");
+                dd($data);
             }
 
 
-            Viralsample::where('id', $samples[$key])->update($data);
+            // Viralsample::where('id', $samples[$key])->update($data);
 
             if($actions[$key] == 1){
                 MiscViral::save_repeat($samples[$key]);
