@@ -18,39 +18,27 @@ class ReportController extends Controller
 
     public function dateselect(Request $request)
     {
-    	// Execute the query used to retrieve the data. In this example
-	    // we're joining hypothetical users and payments tables, retrieving
-	    // the payments table's primary key, the user's first and last name, 
-	    // the user's e-mail address, the amount paid, and the payment
-	    // timestamp.
-	    $data = self::__getDateData($request)->get();
+    	$dateString = '';
+	    $data = self::__getDateData($request, $dateString)->get();
     	
-    	// Initialize the array which will be passed into the Excel
-	    // generator.
-	    $dataArray = []; 
+    	$dataArray = []; 
 
-	    // Define the Excel spreadsheet headers
 	    $dataArray[] = (session('testingSystem') == 'Viralload') ?
 	    	['Lab ID', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab',	'County', 'Sub County',	'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age',	'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat',	'Current Regimen', 'ART Initiation Date', 'Justification',	'Date of Receiving', 'Date of Testing',	'Date of Dispatch',	'Viral Load'] :
 	    	['Lab ID', 'Sample Code', 'Batch No', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',	'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat',	'HIV Status of Mother',	'PMTCT Intervention', 'Breast Feeding', 'Entry Point',	'Date of Receiving', 'Date of Testing',	'Date of Dispatch',	'Test Result'];
 
-	    // Convert each member of the returned collection into an array,
-	    // and append it to the payments array.
 	    foreach ($data as $report) {
 	        $dataArray[] = $report->toArray();
 	    }
 	    
-	    $report = (session('testingSystem') == 'Viralload') ? 'TESTOUTCOME REPORT FOR VL' : 'TESTOUTCOME REPORT FOR EID';
-	    // Generate and return the spreadsheet
-	    Excel::create($report, function($excel) use ($dataArray) {
-	    	$newreport = (session('testingSystem') == 'Viralload') ? 'TESTOUTCOME REPORT FOR VL' : 'TESTOUTCOME REPORT FOR EID';
-	        // Set the spreadsheet title, creator, and description
-	        $excel->setTitle($newreport);
+	    $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
+	    
+	    Excel::create($report, function($excel) use ($dataArray, $report) {
+	    	$excel->setTitle($report);
 	        $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-	        $excel->setDescription('Report');
+	        $excel->setDescription('TEST OUTCOME REPORT FOR '.$report);
 
-	        // Build the spreadsheet, passing in the payments array
-	        $excel->sheet($newreport, function($sheet) use ($dataArray) {
+	        $excel->sheet($report, function($sheet) use ($dataArray) {
 	            $sheet->fromArray($dataArray, null, 'A1', false, false);
 	        });
 
@@ -64,7 +52,7 @@ class ReportController extends Controller
     	dd($request);
     }
 
-    public static function __getDateData($request)
+    public static function __getDateData($request, &$dateString)
     {
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
@@ -94,10 +82,13 @@ class ReportController extends Controller
     				->leftJoin('mothers', 'mothers.id', '=', 'samples_view.mother_id')
     				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
     	}
+
     	
     	if (isset($request->specificDate)) {
+    		$dateString = date('d-M-Y', strtotime($request->specificDate));
     		$model = $model->where("$table.datereceived", '=', $request->specificDate);
     	}else {
+    		$dateString = date('d-M-Y', strtotime($request->fromDate))." & ".date('d-M-Y', strtotime($request->toDate));
     		$model = $model->whereRaw("$table.datereceived BETWEEN '".$request->fromDate."' AND '".$request->toDate."'");
     	}
 
