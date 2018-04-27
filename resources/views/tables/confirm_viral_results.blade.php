@@ -10,13 +10,14 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
-                <div class="panel-heading">
+                <div class="panel-heading" style="margin-bottom: 0.5em;">
                     Worksheet Summary
                     <br />
-                    <a href="{{ url('/viralworksheet/cancel_upload/' . $worksheet->id) }} "> Cancel Upload</a>
+                    
                     <div class="panel-tools">
-                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
+                        <a href="{{ url('/viralworksheet/cancel_upload/' . $worksheet->id) }} ">
+                            <button class="btn btn-danger">Cancel Upload</button>
+                        </a>
                     </div>
                     
                 </div>
