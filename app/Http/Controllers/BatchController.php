@@ -25,10 +25,11 @@ class BatchController extends Controller
 
     public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
-
         $myurl = url('batch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
+        $date_column = "batches.datereceived";
+        if($batch_complete == 1) $date_column = "batches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
@@ -36,13 +37,13 @@ class BatchController extends Controller
         $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-            ->when($date_start, function($query) use ($date_start, $date_end){
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
-                    return $query->whereDate('batches.datereceived', '>=', $date_start)
-                    ->whereDate('batches.datereceived', '<=', $date_end);
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
                 }
-                return $query->whereDate('batches.datereceived', $date_start);
+                return $query->whereDate($date_column, $date_start);
             })
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
@@ -50,7 +51,7 @@ class BatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('datereceived', 'desc')
+            ->orderBy($date_column, 'desc')
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -73,6 +74,7 @@ class BatchController extends Controller
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->datedispatched = $batch->my_date_format('datedispatched');
             $batch->total = $total;
             $batch->rejected = $rej;
             $batch->result = $result;

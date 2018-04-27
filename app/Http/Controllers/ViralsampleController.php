@@ -197,33 +197,31 @@ class ViralsampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
-        if($viralsample->synched == 1 && $viralsample->isDirty()) $viralsample->synched = 2;
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
 
         $batch = Viralbatch::find($viralsample->batch_id);
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
-        if($batch->synched == 1 && $batch->isDirty()) $batch->synched = 2;
+        $batch->pre_update();
         $batch->save();
 
-        $data = $request->only(['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob']);
+        $data = $request->only($viralsamples_arrays['patient']);
 
         $new_patient = $request->input('new_patient');
 
         if($new_patient == 0){            
             $viralpatient = Viralpatient::find($viralsample->patient_id);
         }
-
         else{
-            $data = $request->only($viralsamples_arrays['patient']);
             $viralpatient = new Viralpatient;
         }
         $viralpatient->fill($data);
-        if($viralpatient->synched == 1 && $viralpatient->isDirty()) $viralpatient->synched = 2;
+        $viralpatient->pre_update();
         $viralpatient->save();
 
         $viralsample->patient_id = $viralpatient->id;
+        $viralsample->pre_update();
         $viralsample->save();
 
         $site_entry_approval = session()->pull('site_entry_approval');
@@ -277,7 +275,7 @@ class ViralsampleController extends Controller
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;
-        $samples = Sample::whereRaw("parentid = {$sample->id} or parentid = {$sample->parentid} or id = {$sample->id} or id = {$sample->parentid}")->orderBy('run', 'asc')->get();
+        $samples = Viralsample::runs($sample)->orderBy('run', 'asc')->get();
         $patient = $sample->patient;
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]);
     }

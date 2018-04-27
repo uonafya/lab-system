@@ -221,7 +221,7 @@ class ViralworksheetController extends Controller
     {
         Viralsample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = null;
+        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
         $worksheet->save();
 
         return redirect("/viralworksheet/upload/" . $worksheet->id);
@@ -416,14 +416,17 @@ class ViralworksheetController extends Controller
                 $data['result'] = $results[$key];
             }
 
-            if(isset($redraws[$key])) {
+            // if(isset($redraws[$value])) {
+            if(in_array($samples[$key], $redraws)) {
                 $data['result'] = "Collect New Sample";
-                $data['labcomment'] = "Failed Run";
+                $data['labcomment'] = "Failed Test";
+                $data['repeatt'] = 0;
+                // dd($data);
             }
 
             Viralsample::where('id', $samples[$key])->update($data);
 
-            if($actions[$key] == 1){
+            if($data['repeatt'] == 1){
                 MiscViral::save_repeat($samples[$key]);
             }
         }

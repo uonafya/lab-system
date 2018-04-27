@@ -27,6 +27,8 @@ class ViralbatchController extends Controller
         $myurl = url('viralbatch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
+        $date_column = "viralbatches.datereceived";
+        if($batch_complete == 1) $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
@@ -34,13 +36,13 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
-            ->when($date_start, function($query) use ($date_start, $date_end){
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
-                    return $query->whereDate('viralbatches.datereceived', '>=', $date_start)
-                    ->whereDate('viralbatches.datereceived', '<=', $date_end);
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
                 }
-                return $query->whereDate('viralbatches.datereceived', $date_start);
+                return $query->whereDate($date_column, $date_start);
             })
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
@@ -48,7 +50,7 @@ class ViralbatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('datereceived', 'desc')
+            ->orderBy($date_column, 'desc')
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -77,6 +79,7 @@ class ViralbatchController extends Controller
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->datedispatched = $batch->my_date_format('datedispatched');
             $batch->total = $total;
             $batch->rejected = $rej;
             $batch->result = $result;

@@ -520,7 +520,7 @@ class WorksheetController extends Controller
     {
         Sample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = null;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
         $worksheet->save();
 
         return redirect("/worksheet/upload/" . $worksheet->id);
@@ -784,7 +784,10 @@ class WorksheetController extends Controller
             $data['result'] = $results[$key];
             $data['repeatt'] = $actions[$key];
 
-            if($data['result'] == 5) $data['labcomment'] = "Failed Run";
+            if($data['result'] == 5){
+                $data['labcomment'] = "Failed Run";
+                $data['repeatt'] = 0;
+            } 
 
             Sample::where('id', $samples[$key])->update($data);
 

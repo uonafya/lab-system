@@ -65,7 +65,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Physical Address</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" name="physicaladdress" type="text" value="{{ $facility->physicaladdress }}" id="physicaladdress" {{ $disabled }}>
+                                <input class="form-control editable" name="physicaladdress" type="text" value="{{ $facility->physicaladdress ?? '' }}" id="physicaladdress" {{ $disabled }}>
                             </div>
                         </div>
                         <div class="row">
@@ -73,13 +73,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Telephone 1</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="telephone" type="text" value="{{ $facility->telephone }}" id="telephone" {{ $disabled }}>
+                                        <input class="form-control editable" name="telephone" type="text" value="{{ $facility->telephone ?? '' }}" id="telephone" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Fax</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="fax" type="text" value="{{ $facility->fax }}" id="fax" {{ $disabled }}>
+                                        <input class="form-control editable" name="fax" type="text" value="{{ $facility->fax ?? '' }}" id="fax" {{ $disabled }}>
                                     </div>
                                 </div>
                             </div>
@@ -87,13 +87,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Telephone 2</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="telephone2" type="text" value="{{ $facility->telephone2 }}" id="telephone2" {{ $disabled }}>
+                                        <input class="form-control editable" name="telephone2" type="text" value="{{ $facility->telephone2 ?? '' }}" id="telephone2" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Email</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="email" type="email" value="{{ $facility->email }}" id="email" {{ $disabled }}>
+                                        <input class="form-control editable" name="email" type="email" value="{{ $facility->email ?? '' }}" id="email" {{ $disabled }}>
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">SMS Printer No.</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" name="smsprinterphoneno" type="text" value="{{ $facility->smsprinterphoneno }}" id="smsprinterphoneno" {{ $disabled }}>
+                                <input class="form-control editable" name="smsprinterphoneno" type="text" value="{{ $facility->smsprinterphoneno ?? '' }}" id="smsprinterphoneno" {{ $disabled }}>
                             </div>
                         </div>
                     </div>
@@ -121,13 +121,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Full Name(s)</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="contactperson" type="text" value="{{ $facility->contactperson }}" id="contactperson" {{ $disabled }}>
+                                        <input class="form-control editable" name="contactperson" type="text" value="{{ $facility->contactperson ?? '' }}" id="contactperson" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Contact Tel. No. 1</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="contacttelephone" type="text" value="{{ $facility->contacttelephone }}" id="contacttelephone" {{ $disabled }}>
+                                        <input class="form-control editable" name="contacttelephone" type="text" value="{{ $facility->contacttelephone ?? '' }}" id="contacttelephone" {{ $disabled }}>
                                     </div>
                                 </div>
                             </div>
@@ -135,13 +135,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Contact Email Address</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="ContactEmail" type="text" value="{{ $facility->ContactEmail }}" id="ContactEmail" {{ $disabled }}>
+                                        <input class="form-control editable" name="ContactEmail" type="text" value="{{ $facility->ContactEmail ?? '' }}" id="ContactEmail" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Contact Tel No. 2</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="contacttelephone2" type="text" value="{{ $facility->contacttelephone2 }}" id="contacttelephone2" {{ $disabled }}>
+                                        <input class="form-control editable" name="contacttelephone2" type="text" value="{{ $facility->contacttelephone2 ?? '' }}" id="contacttelephone2" {{ $disabled }}>
                                     </div>
                                 </div>
                             </div>
@@ -166,19 +166,19 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">G4S Branch Name</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="G4Sbranchname" type="text" value="{{ $facility->G4Sbranchname }}" id="G4Sbranchname" {{ $disabled }}>
+                                        <input class="form-control editable" name="G4Sbranchname" type="text" value="{{ $facility->G4Sbranchname ?? '' }}" id="G4Sbranchname" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">G4S Phone No. 1</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="G4Sphone1" type="text" value="{{ $facility->G4Sphone1 }}" id="G4Sphone1" {{ $disabled }}>
+                                        <input class="form-control editable" name="G4Sphone1" type="text" value="{{ $facility->G4Sphone1 ?? '' }}" id="G4Sphone1" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">G4S Phone No. 3</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="G4Sphone3" type="text" value="{{ $facility->G4Sphone3 }}" id="G4Sphone3" {{ $disabled }}>
+                                        <input class="form-control editable" name="G4Sphone3" type="text" value="{{ $facility->G4Sphone3 ?? '' }}" id="G4Sphone3" {{ $disabled }}>
                                     </div>
                                 </div>
                             </div>
@@ -186,19 +186,19 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">G4S Location</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="G4Slocation" type="text" value="{{ $facility->G4Slocation }}" id="G4Slocation" {{ $disabled }}>
+                                        <input class="form-control editable" name="G4Slocation" type="text" value="{{ $facility->G4Slocation ?? '' }}" id="G4Slocation" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">G4S Phone No. 2</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="G4Sphone2" type="text" value="{{ $facility->G4Sphone2 }}" id="G4Sphone2" {{ $disabled }}>
+                                        <input class="form-control editable" name="G4Sphone2" type="text" value="{{ $facility->G4Sphone2 ?? '' }}" id="G4Sphone2" {{ $disabled }}>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">G4S Fax</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control editable" name="G4Sfax" type="text" value="{{ $facility->G4Sfax }}" id="G4Sfax" {{ $disabled }}>
+                                        <input class="form-control editable" name="G4Sfax" type="text" value="{{ $facility->G4Sfax ?? '' }}" id="G4Sfax" {{ $disabled }}>
                                     </div>
                                 </div>
                             </div>

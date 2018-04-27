@@ -16,17 +16,9 @@ class MiscViral extends Common
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {
-			if($sample->parentid == 0){
-				if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
-					$sample->repeatt = 1;
-					$sample->save();
-				}
-			}
-			else{
-				if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
-					$sample->repeatt = 1;
-					$sample->save();
-				}				
+			if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
+				$sample->repeatt = 1;
+				$sample->save();
 			}
 		}
 		return true;
@@ -61,7 +53,7 @@ class MiscViral extends Common
 		return $sample;
 	}
 
-	public static function check_batch($batch)
+	public static function check_batch($batch_id)
 	{		
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
@@ -72,15 +64,15 @@ class MiscViral extends Common
         }
 
 
-		$total = Viralsample::where('batch_id', $batch)->where('parentid', 0)->get()->count();
-		$tests = Viralsample::where('batch_id', $batch)
+		$total = Viralsample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
+		$tests = Viralsample::where('batch_id', $batch_id)
 		->whereRaw($where_query)
 		->get()
 		->count();
 
-		if($total == $tests){
-            // DB::table('viralbatches')->where('id', $batch)->update(['batch_complete' => 2]);
-			\App\Viralbatch::where('id', $batch)->update(['batch_complete' => 2]);
+		if($total == $tests){ 
+            // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
+			\App\Viralbatch::where('id', $batch_id)->update(['batch_complete' => 2]);
             self::save_tat($batch_id, \App\SampleView::class, \App\Sample::class);
 		}
 	}
@@ -170,7 +162,7 @@ class MiscViral extends Common
         if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
         {
             $res= "< LDL copies/ml";
-            $interpretation="Target Not Detected";
+            $interpretation= $result;
             $units="";                        
         }
 

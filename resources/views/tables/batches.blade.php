@@ -101,20 +101,30 @@
 
                                         <th rowspan="2">Facility</th>
                                         <th colspan="2">Date</th>
-                                        <th rowspan="1">TAT</th>
                                         <th rowspan="2">Entered By</th>
                                         <th colspan="4"># of samples</th>
+
+                                        @if(isset($batch_complete) && $batch_complete == 1)
+                                            <th rowspan="1">Date</th>
+                                        @endif
+
+                                        <th rowspan="1">TAT</th>
                                         <th rowspan="2">Status</th>
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
                                         <th>Received</th>
                                         <th>Entered</th>
-                                        <th>(Dys)</th>
                                         <th>Received</th>
                                         <th>Rejected</th>
                                         <th>Results</th>
-                                        <th>No Result</th>              
+                                        <th>No Result</th>
+
+                                        @if(isset($batch_complete) && $batch_complete == 1)
+                                            <th>Dispatched</th>
+                                        @endif
+
+                                        <th>(Dys)</th>            
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -128,14 +138,20 @@
                                             @endif
 
                                             <td> {{ $batch->name }} </td>
-                                            <td> {{ $batch->datereceived }} </td>
+                                            <td> {{ $batch->datereceived }} </td> 
                                             <td> {{ $batch->datecreated }} </td>
-                                            <td> {{ $batch->tat() }} </td>
                                             <td> {{ $batch->creator }} </td>
                                             <td> {{ $batch->total }} </td>
                                             <td> {{ $batch->rejected }} </td>
                                             <td> {{ $batch->result }} </td>
                                             <td> {{ $batch->noresult }} </td>
+
+                                            @if(isset($batch_complete) && $batch_complete == 1)
+                                                <td> {{ $batch->datedispatched }} </td>
+                                            @endif
+                                            
+
+                                            <td> {{ $batch->tat() }} </td>
                                             <td> 
                                                 @if($batch->batch_complete)
                                                     Complete

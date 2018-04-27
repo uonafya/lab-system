@@ -143,7 +143,7 @@
                                     <tr>
                                         <td> 
                                             {{ $sample->patient->patient }}  
-                                            <input type="hidden" name="samples[]" value="{{ $sample->id }} " class="{{ $class }}">
+                                            <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
                                             <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
                                             <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
                                         </td>
@@ -155,7 +155,7 @@
                                         <td> 
                                             <select class="dilutionfactor {{ $class }}" name="dilutionfactors[]">
                                                 @foreach($dilutions as $dilution)
-                                                    <option value="{{$dilution->dilutionfactor  }}"
+                                                    <option value="{{$dilution->dilutionfactor }}"
                                                         @if($sample->dilutionfactor == $dilution->dilutionfactor    )
                                                             selected
                                                         @endif
@@ -168,7 +168,7 @@
                                             @if($sample->approvedby)
                                                 {{ $sample->result }}
                                             @else
-                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $key }}"> Collect New Sample </label></div>
+                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
                                             @endif
                                         </td>
 
@@ -208,13 +208,13 @@
 
                                 @endforeach
 
-                                @if($worksheet->status != 3)
+                                @if($worksheet->status_id != 3)
 
                                     @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
                                      (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )
 
                                         <tr bgcolor="#999999">
-                                            <td  colspan="10" bgcolor="#00526C" >
+                                            <td  colspan="12" bgcolor="#00526C" >
                                                 <center>
                                                     <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  />
                                                 </center>
@@ -224,7 +224,7 @@
                                     @else
 
                                         <tr>
-                                            <td  colspan="10">
+                                            <td  colspan="12">
                                                 <center>
                                                     You are not permitted to complete the approval. Another user should be the one to complete the approval process.
                                                 </center>
@@ -253,7 +253,7 @@
 @section('scripts') 
 
     @component('/tables/scripts')
-        $(".editable .dilutionfactor").val(3).change();
+        $(".editable.dilutionfactor").val(1).change();
         $('.noneditable').attr("disabled", "disabled");     
     @endcomponent
 
