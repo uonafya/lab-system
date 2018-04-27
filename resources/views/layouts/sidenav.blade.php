@@ -67,7 +67,6 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
-                <li><a href="{{ url('viralbatch') }}">View Samples</a></li>
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -78,7 +77,6 @@
                         <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
                 <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
                 <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
@@ -91,7 +89,6 @@
                         <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('viralbatch') }}">View Batches</a></li>
                 <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
                 <li><a href=" {{ url('viralbatch/dispatch') }}">Batch Dispatch</a></li>
             @endif
