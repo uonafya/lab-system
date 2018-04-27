@@ -12,8 +12,7 @@
             <div class="hpanel">
                 <div class="panel-heading" style="margin-bottom: 0.5em;">
                     Worksheet Summary
-                    <br />
-                    
+                                        
                     <div class="panel-tools">
                         <a href="{{ url('/viralworksheet/cancel_upload/' . $worksheet->id) }} ">
                             <button class="btn btn-danger">Cancel Upload</button>
