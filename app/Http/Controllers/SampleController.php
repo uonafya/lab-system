@@ -91,6 +91,7 @@ class SampleController extends Controller
 
             if($repeat_test){
                 session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+                session(['toast_error' => 1]);
                 return redirect()->route('sample.create');
             }
 
@@ -145,6 +146,8 @@ class SampleController extends Controller
             $this->clear_session();
             $batch->full_batch();
         }
+
+        session(['toast_message' => 'The sample has been created.']);
 
         // return redirect()->route('sample.create');
         return back();
@@ -249,7 +252,12 @@ class SampleController extends Controller
     {
         if($sample->worksheet_id == NULL && $sample->result == NULL){
             $sample->delete();
-        }        
+            session(['toast_message' => 'The sample has been deleted.']);
+        }  
+        else{
+            session(['toast_message' => 'The sample has not been deleted.']);
+            session(['toast_error' => 1]);
+        }      
         return back();
     }
 
@@ -317,7 +325,8 @@ class SampleController extends Controller
         $sample->dateapproved2 = date('Y-m-d');
 
         $sample->save();
-        Misc::check_batch($sample->batch_id);
+        \App\Misc::check_batch($sample->batch_id);
+        session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
 

@@ -208,22 +208,35 @@ class ViralworksheetController extends Controller
 
     public function cancel(Viralworksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
         Viralsample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
 
+        session(['toast_message' => 'The worksheet has been cancelled.']);
         return redirect("/viralworksheet");
     }
 
     public function cancel_upload(Viralworksheet $worksheet)
     {
+        if($worksheet->status_id != 2){
+            session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
         Viralsample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
         $worksheet->save();
 
+        session(['toast_message' => 'The upload has been cancelled.']);
         return redirect("/viralworksheet/upload/" . $worksheet->id);
     }
 
