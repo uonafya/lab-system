@@ -25,12 +25,21 @@ class BatchController extends Controller
 
     public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
-        $myurl = url('batch/index/' . $batch_complete);
         $user = auth()->user();
         $facility_user = false;
         $date_column = "batches.datereceived";
         if($batch_complete == 1) $date_column = "batches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
+
+        $facility_id = session()->pull('facility_search');
+        if($facility_id){ 
+            $myurl = url("batch/facility/{$facility_id}/{$batch_complete}"); 
+            $myurl2 = url("batch/facility/{$facility_id}"); 
+        }
+        else{ 
+            $myurl = url('batch/index/' . $batch_complete); 
+            $myurl2 = ""; 
+        }
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
@@ -47,6 +56,9 @@ class BatchController extends Controller
             })
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('batches.facility_id', $facility_id);
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
@@ -84,7 +96,13 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
+        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
+    }
+
+    public function facility_batches($facility_id, $batch_complete=4, $date_start=NULL, $date_end=NULL)
+    {
+        session(['facility_search' => $facility_id]);
+        return $this->index($batch_complete, $date_start, $date_end);
     }
 
     /**

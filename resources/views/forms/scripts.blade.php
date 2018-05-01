@@ -7,7 +7,7 @@
     $(document).ready(function(){
     	$(".form-control").attr('autocomplete', 'off');
 
-        $("select").select2();
+        $("form :select").select2(); 
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }

@@ -13,16 +13,17 @@
         <div class="row">
             <div class="col-md-12">
                 Click To View: 
-                <a href="{{ url($pre . 'batch/index') }}">
+                {{--<a href="{{ url($pre . 'batch/index') }}">--}}
+                <a href="{{ $myurl }}">
                     All Batches
                 </a> |
-                <a href="{{ url($pre . 'batch/index/0') }}">
+                <a href="{{ $myurl2 }}/0">
                     In-Process Batches
                 </a> |
-                <a href="{{ url($pre . 'batch/index/2') }}">
+                <a href="{{ $myurl2 }}/2">
                     Awaiting Dispatch
                 </a> |
-                <a href="{{ url($pre . 'batch/index/1') }}">
+                <a href="{{ $myurl2 }}/1">
                     Dispatched Batches
                 </a>
             </div>
