@@ -14,9 +14,9 @@
                 <ul class="nav nav-second-level"> -->
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
            <!--  <li class="active">
-                <a href="{{ url('home') }}"> <span class="nav-label">Tasks</span> 
+                <a href="{{!! url('home') !!}}"> <span class="nav-label">Tasks</span> 
                     <span class="label label-success pull-right">
-                    {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
+                    $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch
                     </span>
                 </a>
             </li> -->
