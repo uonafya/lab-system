@@ -7,6 +7,8 @@ use App\Batch;
 use App\Viralbatch;
 use App\Facility;
 use App\ViralsampleView;
+use App\Worksheet;
+use App\Viralworksheet;
 /**
 * 
 */
@@ -23,6 +25,7 @@ class DashboardComposer
 		$this->DashboardData['batchesForDispatch'] = self::batchCompleteAwaitingDispatch();
 		$this->DashboardData['samplesForRepeat'] = self::samplesAwaitingRepeat();
 		$this->DashboardData['rejectedForDispatch'] = self::rejectedSamplesAwaitingDispatch();
+        $this->DashboardData['resultsForUpdate'] = self::resultsAwaitingpdate();
 	}
 
 	/**
@@ -194,6 +197,17 @@ class DashboardComposer
         }
         
         return $model;
+    }
+
+    public function resultsAwaitingpdate()
+    {
+        if (session('testingSystem') == 'Viralload') {
+            $model = Viralworksheet::with(['creator']);
+        } else {
+            $model = Worksheet::with(['creator']);
+        }
+
+        return $model->where('status_id', '=', '1')->count();
     }
 }
 

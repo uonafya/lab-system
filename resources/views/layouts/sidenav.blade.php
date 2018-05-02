@@ -55,8 +55,10 @@
                     </ul>
                 </li> -->
                 <!-- <li><a href=" {{ url('batch') }}">View Batches</a></li> -->
-                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results
-                    <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                    </a>
+                </li>
+                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
                     </a>
                 </li>
             @endif
@@ -94,7 +96,13 @@
                         <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('viralbatch/dispatch') }}">Batch Dispatch</a></li>
+                <li><a href=" {{ url('viralworksheet/index/1') }}">Update Results
+                    <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
+                </li>
             @endif
             <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
@@ -131,10 +139,9 @@
 
 
         @endif
-
-            <li>
-                <a href="{{ url('/search') }} "> <span class="nav-label">Search</span></a>
-            </li>
+            <!-- <li>
+                <a href="#"> <span class="nav-label">Search</span></a>
+            </li> -->
         {{--
         @if (auth()->user()->user_type_id == 1)
             <li>
