@@ -27,4 +27,17 @@ class Patient extends BaseModel
     {
         return $query->where(['facility_id' => $facility_id, 'patient' => $hei_number]);
     }
+
+
+    /**
+     * Get the patient's gender
+     *
+     * @return string
+     */
+    public function getGenderAttribute()
+    {
+        if($this->sex == 1){ return "Male"; }
+        else if($this->sex == 2){ return "Female"; }
+        else{ return "No Gender"; }
+    }
 }

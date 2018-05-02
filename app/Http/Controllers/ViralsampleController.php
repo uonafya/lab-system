@@ -7,7 +7,6 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
-use DB;
 
 use Illuminate\Http\Request;
 
@@ -21,6 +20,12 @@ class ViralsampleController extends Controller
     public function index()
     {
         //
+    }
+
+    public function edarp_samples()
+    {
+        $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get();
+        return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
     }
 
     /**
@@ -331,6 +336,27 @@ class ViralsampleController extends Controller
             $this->release_redraw($viralsample);
         }
 
+        return back();
+    }
+
+    public function approve_edarp(Request $request)
+    {
+        $viralsamples = $request->input('samples');
+        $submit_type = $request->input('submit_type');
+        $user = auth()->user();
+
+        $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
+
+        if($submit_type == "release"){
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 1, 'approvedby' => $user->id]);
+        }
+        else{
+            Viralsample::whereIn('id', $viralsamples)->delete();
+        }
+
+        foreach ($batches as $key => $value) {
+            \App\MiscViral::check_batch($value->batch_id);
+        } 
         return back();
     }
 

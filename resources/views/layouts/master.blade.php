@@ -143,6 +143,10 @@
             return confirm('Are you sure?');
         });
 
+        $(".confirmSubmit").on('submit', function(){
+            return confirm('Are you sure you would like to submit?');
+        });
+
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
             if(current == 'Viralload'){test = 'EID';text = '<strong>VIRAL LOAD</strong>';}else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}

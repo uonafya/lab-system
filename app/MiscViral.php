@@ -53,8 +53,12 @@ class MiscViral extends Common
 		return $sample;
 	}
 
-	public static function check_batch($batch_id)
+	public static function check_batch($batch_id, $issample=FALSE)
 	{		
+        if($issample){
+            $sample = Viralsample::find($batch_id);
+            $batch_id = $sample->batch_id;
+        }
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
             $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";

@@ -34,7 +34,7 @@
                         <table class="table table-striped table-bordered table-hover data-table" >
                             <thead>
                                 <tr>
-                                    <th> Check </th>
+                                    <th id="check_all">Check All</th>
                                     <th> Batch No </th>
                                     <th> Facility </th>
                                     <th> Email Address </th>
@@ -55,7 +55,7 @@
                                     <tr>
                                         <td>
                                             <div align='center'>
-                                                <input name='batches[]' type='checkbox' id='batches[]' value='{{ $batch->id }}' />
+                                                <input name='batches[]' type='checkbox' class='checks' value='{{ $batch->id }}' />
                                             </div>
                                         </td>
                                         <td> {{ $batch->id }} </td>
@@ -96,6 +96,18 @@
 @section('scripts') 
 
     @component('/tables/scripts')
+
+        $("#check_all").on('click', function(){
+            var str = $(this).html();
+            if(str == "Check All"){
+                $(this).html("Uncheck All");
+                $(".checks").attr('checked', 'checked');
+            }
+            else{
+                $(this).html("Check All");
+                $(".checks").removeAttr('checked');            
+            }
+        });
 
     @endcomponent
 
