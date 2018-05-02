@@ -53,7 +53,7 @@
 		                        <a href="#">Site Entry Batches Awaiting Approval for Testing</a>
 		                    </li>
 		                    <li class="list-group-item">
-		                        <span class="badge badge-warning">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span>
+		                        <span class="badge badge-warning">{{ $widgets['batchesNotReceived'] }}</span>
 		                        <a href="#">Batches Marked as Not Received at Lab</a>
 		                    </li>
 		                    <li class="list-group-item">

@@ -87,7 +87,7 @@
                     <i class="pe-7s-home" style="font-size: 25px;"></i>
                         <span class="label label-danger">
                         @if(session('testingSystem') == 'Viralload')
-
+                            {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
                         @else
                             {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
                         @endif
