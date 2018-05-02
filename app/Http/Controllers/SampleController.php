@@ -8,7 +8,7 @@ use App\Mother;
 use App\Batch;
 use App\Facility;
 use App\Lookup;
-use DB;
+
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
@@ -91,6 +91,7 @@ class SampleController extends Controller
 
             if($repeat_test){
                 session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+                session(['toast_error' => 1]);
                 return redirect()->route('sample.create');
             }
 
@@ -145,6 +146,8 @@ class SampleController extends Controller
             $this->clear_session();
             $batch->full_batch();
         }
+
+        session(['toast_message' => 'The sample has been created.']);
 
         // return redirect()->route('sample.create');
         return back();
@@ -249,7 +252,12 @@ class SampleController extends Controller
     {
         if($sample->worksheet_id == NULL && $sample->result == NULL){
             $sample->delete();
-        }        
+            session(['toast_message' => 'The sample has been deleted.']);
+        }  
+        else{
+            session(['toast_message' => 'The sample has not been deleted.']);
+            session(['toast_error' => 1]);
+        }      
         return back();
     }
 
@@ -317,7 +325,8 @@ class SampleController extends Controller
         $sample->dateapproved2 = date('Y-m-d');
 
         $sample->save();
-        Misc::check_batch($sample->batch_id);
+        \App\Misc::check_batch($sample->batch_id);
+        session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
 
@@ -331,6 +340,27 @@ class SampleController extends Controller
         foreach ($samples as $key => $sample) {
             $this->release_redraw($sample);
         }
+        return back();
+    }
+
+    public function approve_edarp(Request $request)
+    {
+        $samples = $request->input('samples');
+        $submit_type = $request->input('submit_type');
+        $user = auth()->user();
+
+        $batches = Sample::selectRaw("distinct batch_id")->whereIn('id', $samples)->get();
+
+        if($submit_type == "release"){
+            Sample::whereIn('id', $samples)->update(['synched' => 1, 'approvedby' => $user->id]);
+        }
+        else{
+            Sample::whereIn('id', $samples)->delete();
+        }
+
+        foreach ($batches as $key => $value) {
+            \App\Misc::check_batch($value->batch_id);
+        } 
         return back();
     }
 

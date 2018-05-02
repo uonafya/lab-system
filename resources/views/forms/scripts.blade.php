@@ -1,6 +1,5 @@
 <!-- Jquery Validate -->
 <script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
-<script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 
 {{ $js_scripts ?? '' }}
 
@@ -8,17 +7,7 @@
     $(document).ready(function(){
     	$(".form-control").attr('autocomplete', 'off');
 
-        $("select").select2();
-        
-        setTimeout(function(){
-            toastr.options = {
-                closeButton: false,
-                progressBar: false,
-                showMethod: 'slideDown',
-                timeOut: 3000
-            };
-            toastr.success("{{ session()->pull('toast_message', 'Please fill out the form correctly.') }}");
-        });
+        $("form :select").select2(); 
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }

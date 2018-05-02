@@ -233,6 +233,7 @@
             </ul>
         </li> -->
         @if(session('testingSystem') == 'Viralload')
+            <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>

@@ -7,7 +7,6 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
-use DB;
 
 use Illuminate\Http\Request;
 
@@ -21,6 +20,12 @@ class ViralsampleController extends Controller
     public function index()
     {
         //
+    }
+
+    public function edarp_samples()
+    {
+        $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get();
+        return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
     }
 
     /**
@@ -115,6 +120,7 @@ class ViralsampleController extends Controller
 
             if($repeat_test){
                 session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+                session(['toast_error' => 1]);
                 return redirect()->route('viralsample.create');
             }
 
@@ -157,6 +163,7 @@ class ViralsampleController extends Controller
             $batch->full_batch();
         }
 
+        session(['toast_message' => 'The sample has been created.']);
         return redirect()->route('viralsample.create');
     }
 
@@ -243,7 +250,12 @@ class ViralsampleController extends Controller
     {
         if($viralsample->worksheet_id == NULL && $viralsample->result == NULL){
             $viralsample->delete();
-        }        
+            session(['toast_message' => 'The sample has been deleted.']);
+        }  
+        else{
+            session(['toast_message' => 'The sample has not been deleted.']);
+            session(['toast_error' => 1]);
+        }      
         return back();
     }
 
@@ -308,7 +320,8 @@ class ViralsampleController extends Controller
         $viralsample->dateapproved = date('Y-m-d');
         $viralsample->dateapproved2 = date('Y-m-d');
         $viralsample->save();
-        MiscViral::check_batch($sample->batch_id);
+        \App\MiscViral::check_batch($sample->batch_id);
+        session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
 
@@ -323,6 +336,27 @@ class ViralsampleController extends Controller
             $this->release_redraw($viralsample);
         }
 
+        return back();
+    }
+
+    public function approve_edarp(Request $request)
+    {
+        $viralsamples = $request->input('samples');
+        $submit_type = $request->input('submit_type');
+        $user = auth()->user();
+
+        $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
+
+        if($submit_type == "release"){
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 1, 'approvedby' => $user->id]);
+        }
+        else{
+            Viralsample::whereIn('id', $viralsamples)->delete();
+        }
+
+        foreach ($batches as $key => $value) {
+            \App\MiscViral::check_batch($value->batch_id);
+        } 
         return back();
     }
 

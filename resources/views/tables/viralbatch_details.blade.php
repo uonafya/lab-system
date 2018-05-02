@@ -19,8 +19,8 @@
                 <div class="panel-body">
                     <div>
                         <b>Facility: {{ $batch->facility->name ?? '' }} </b> <br />
-                        <b>Date Received: {{ $batch->datereceived ?? '' }} </b> <br />
-                        <b>Date Entered: {{ $batch->created_at->toDateString() }} </b> <br />
+                        <b>Date Received: {{ $batch->my_date_format('datereceived') ?? '' }} </b> <br />
+                        <b>Date Entered: {{ $batch->my_date_format('created_at') }} </b> <br />
                         @if($batch->high_priority)
                             <b>High Priority Batch </b> <br />
                         @endif

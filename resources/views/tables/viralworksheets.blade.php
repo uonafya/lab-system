@@ -122,7 +122,7 @@
                                     <td> {{ $worksheet->datereviewed }} </td>
                                     <td> 
                                         @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
-                                </td>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

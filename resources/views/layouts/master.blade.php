@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/animate.css/animate.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/toastr/toastr.min.css') }}" type="text/css">
 
     <!-- App styles -->
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css') }}" />
@@ -106,6 +107,7 @@
 <script src="{{ asset('js/homer.js') }}"></script>
 
 <script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
+<script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 
 <script type="text/javascript">
     
@@ -114,6 +116,35 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+        @php
+            $toast_message = session()->pull('toast_message');
+            $toast_error = session()->pull('toast_error');
+        @endphp
+        
+        @if($toast_message)
+            setTimeout(function(){
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    showMethod: 'slideDown',
+                    timeOut: 7000
+                };
+                @if($toast_error)
+                    toastr.error("{{ $toast_message }}");
+                @else
+                    toastr.success("{{ $toast_message }}");
+                @endif
+            });
+        @endif
+
+        $(".confirmAction").on('click', function(){
+            return confirm('Are you sure?');
+        });
+
+        $(".confirmSubmit").on('submit', function(){
+            return confirm('Are you sure you would like to submit?');
         });
 
         current = "<?= @session('testingSystem')?>";
@@ -131,6 +162,21 @@
             });
         });
     });
+
+    function set_warning(message)
+    {
+        setTimeout(function(){
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                showMethod: 'slideDown',
+                timeOut: 4000,
+                preventDuplicates: true
+            };
+            toastr.error(message);
+        });
+    }
+
 </script>
 
 @include('layouts.searches')

@@ -507,22 +507,34 @@ class WorksheetController extends Controller
 
     public function cancel(Worksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
         Sample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
 
+        session(['toast_message' => 'The worksheet has been cancelled.']);
         return redirect("/worksheet");
     }
 
     public function cancel_upload(Worksheet $worksheet)
     {
+        if($worksheet->status_id != 2){
+            session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
         Sample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
         $worksheet->save();
 
+        session(['toast_message' => 'The upload has been cancelled.']);
         return redirect("/worksheet/upload/" . $worksheet->id);
     }
 
@@ -876,7 +888,7 @@ class WorksheetController extends Controller
         {
             $d = "<a href='" . url('worksheet/' . $worksheet_id) . "' title='Click to view Samples in this Worksheet' target='_blank'>Details</a> | "
                 . "<a href='" . url('worksheet/print/' . $worksheet_id) . "' title='Click to Print this Worksheet' target='_blank'>Print</a> | "
-                . "<a href='" . url('worksheet/cancel/' . $worksheet_id) . "' title='Click to Cancel this Worksheet' onClick=\"return confirm('Are you sure you want to Cancel Worksheet {$worksheet_id}\" >Cancel</a> | "
+                . "<a href='" . url('worksheet/cancel/' . $worksheet_id) . "' title='Click to Cancel this Worksheet' onClick=\"return confirm('Are you sure you want to Cancel Worksheet {$worksheet_id}?'); \" >Cancel</a> | "
                 . "<a href='" . url('worksheet/upload/' . $worksheet_id) . "' title='Click to Upload Results File for this Worksheet'>Update Results</a>";
         }
         else if($status == 2)

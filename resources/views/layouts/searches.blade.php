@@ -16,8 +16,9 @@
 		set_select("sidebar_worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet");
 		set_select("sidebar_viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet");
 
-		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility");
-		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility");
+		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility", "{{ url('/batch/facility') }}");
+		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility", "{{ url('/batch/facility') }}");
+		set_select_facility("sidebar_viralfacility_search", "{{ url('/facility/search') }}", 3, "Search for facility", "{{ url('/viralbatch/facility') }}");
 
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by Lab ID");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by Lab ID");
@@ -100,7 +101,7 @@
 		set_change_listener(div_name, url);	
 	}
 
-	function set_select_facility(div_name, url, minimum_length, placeholder, create_listener=true) {
+	function set_select_facility(div_name, url, minimum_length, placeholder, send_url) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({
@@ -135,17 +136,17 @@
 			}
 		});
 
-		if(create_listener){
-			set_change_listener(div_name, url);
-		}			
+		set_change_listener(div_name, send_url, false);
 	}
 
-	function set_change_listener(div_name, url)
+	function set_change_listener(div_name, url, not_facility=true)
 	{
-		url = url.substring(0, url.length -6);
+		if(not_facility){
+			url = url.substring(0, url.length-7);	
+		} 
 		$(div_name).change(function(){
 			var val = $(this).val();
-			window.location.href = url + val;
+			window.location.href = url + '/' + val;
 		});	
 	}
 
