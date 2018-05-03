@@ -2,7 +2,7 @@
 
 namespace App;
 
-use \App\ViewModel;
+use App\ViewModel;
 
 class SampleCompleteView extends ViewModel
 {	
