@@ -51,9 +51,9 @@
                     <li class="">
                         <a href="
                             @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralbatch/dispatch') }}
+                                {{ url('viralworksheet/index/3') }}
                             @else
-                                {{ url('batch/dispatch') }}
+                                {{ url('worksheet/index/3') }}
                             @endif">Dispatched Results</a>
                     </li>
                     <li class="">
@@ -87,7 +87,7 @@
                     <i class="pe-7s-home" style="font-size: 25px;"></i>
                         <span class="label label-danger">
                         @if(session('testingSystem') == 'Viralload')
-
+                            {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
                         @else
                             {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
                         @endif
@@ -120,9 +120,9 @@
                 <li class="">
                     <a href="
                         @if(session('testingSystem') == 'Viralload')
-                            {{ url('viralbatch/dispatch') }}
+                            {{ url('viralworksheet/index/3') }}
                         @else
-                            {{ url('batch/dispatch') }}
+                            {{ url('worksheet/index/3') }}
                         @endif">Dispatched Results</a>
                 </li>
                 <li class="">

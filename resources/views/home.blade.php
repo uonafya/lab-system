@@ -34,8 +34,43 @@
 		                <center><i class="fa fa-bolt"></i> <strong>PENDING TASKS</strong></center>
 		            </div>
 		            <div class="panel-body no-padding">
-		                <ul class="list-group">
+		            	<ul class="list-group">
+		                @if(session('testingSystem') == 'Viralload')
+		                	<li class="list-group-item">
+		                        <span class="badge badge-danger">{{ $widgets['pendingSamples']['plasma'] }}</span>
+		                        <a href="#">Frozen Plasma Samples Awaiting Testing</a>
+		                    </li>
 		                    <li class="list-group-item">
+		                        <span class="badge badge-danger">{{ $widgets['pendingSamples']['EDTA'] }}</span>
+		                        <a href="#">Venous Blood (EDTA) Samples Awaiting Testing</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                        <span class="badge badge-danger">{{ $widgets['pendingSamples']['DBS'] }}</span>
+		                        <a href="#">DBS Samples Awaiting Testing</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                        <span class="badge badge-warning">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span>
+		                        <a href="#">Site Entry Batches Awaiting Approval for Testing</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                        <span class="badge badge-warning">{{ $widgets['batchesNotReceived'] }}</span>
+		                        <a href="#">Batches Marked as Not Received at Lab</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                        <span class="badge badge-success">{{ $widgets['batchesForDispatch'] }}</span>
+		                        <a href="#">Complete Batches Awaiting Dispatch</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                        <span class="badge badge-danger">{{ $widgets['samplesForRepeat'] }}</span>
+		                        <a href="#">Invalid/Failed Samples from Previous Runs to be Rerun</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                        <span class="badge badge-info">{{ $widgets['rejectedForDispatch'] }}</span>
+		                        <a href="#">Rejected Samples Awaiting Dispatch</a>
+		                    </li>
+
+		            	@else
+	            		    <li class="list-group-item">
 		                        <span class="badge badge-danger">{{ $widgets['pendingSamples'] }}</span>
 		                        <a href="#">Samples awaiting testing</a>
 		                    </li>
@@ -55,7 +90,8 @@
 		                        <span class="badge badge-warning">{{ $widgets['rejectedForDispatch'][0]->rejectfordispatch }}</span>
 		                        <a href="#">Rejected samples awaiting dispatch.</a>
 		                    </li>
-		                </ul>
+		            	@endif
+		            	</ul>
 		            </div>
 		        </div>
 		    </div>

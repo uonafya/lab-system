@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Sample;
+use App\SampleView;
 use App\Patient;
 use App\Mother;
 use App\Batch;
@@ -159,9 +160,20 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Sample $sample)
+    public function show(SampleView $sample)
     {
-        //
+        // $samples = $batch->sample;
+        // $samples->load(['patient.mother']);
+        // $batch->load(['facility', 'receiver', 'creator']);
+        // $data = Lookup::get_lookups();
+        // $data['batch'] = $batch;
+        // $data['samples'] = $samples;
+
+        
+        // $data = Lookup::get_lookups();
+        // dd(Batch::);
+        $data['samples'] = $sample;
+        return view('tables.batch_details', $data)->with('pageTitle', 'Sample Summary');
     }
 
     /**
@@ -367,7 +379,7 @@ class SampleController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $samples = Viralsample::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $samples = Sample::whereRaw("id like '" . $search . "%'")->paginate(10);
         return $samples;
     }
 

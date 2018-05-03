@@ -14,9 +14,9 @@
                 <ul class="nav nav-second-level"> -->
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
            <!--  <li class="active">
-                <a href="{{ url('home') }}"> <span class="nav-label">Tasks</span> 
+                <a href="{{!! url('home') !!}}"> <span class="nav-label">Tasks</span> 
                     <span class="label label-success pull-right">
-                    {{ $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
+                    $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch
                     </span>
                 </a>
             </li> -->
@@ -33,6 +33,9 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
+                <li>
+                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span></a>
+                </li>
                 <!-- <li>
                     <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -52,9 +55,10 @@
                     </ul>
                 </li> -->
                 <!-- <li><a href=" {{ url('batch') }}">View Batches</a></li> -->
-                <li><a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches</a></li>
-                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results
-                    <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                    </a>
+                </li>
+                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
                     </a>
                 </li>
             @endif
@@ -67,7 +71,9 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
-                <li><a href="{{ url('viralbatch') }}">View Samples</a></li>
+                <li>
+                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span></a>
+                </li>
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -78,7 +84,6 @@
                         <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
                 <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
                 <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
@@ -91,9 +96,13 @@
                         <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
                     </ul>
                 </li> -->
-                <li><a href=" {{ url('viralbatch') }}">View Batches</a></li>
-                <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
-                <li><a href=" {{ url('viralbatch/dispatch') }}">Batch Dispatch</a></li>
+                <li><a href=" {{ url('viralworksheet/index/1') }}">Update Results
+                    <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
+                </li>
             @endif
             <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
@@ -130,10 +139,9 @@
 
 
         @endif
-
-            <li>
-                <a href="{{ url('/search') }} "> <span class="nav-label">Search</span></a>
-            </li>
+            <!-- <li>
+                <a href="#"> <span class="nav-label">Search</span></a>
+            </li> -->
         {{--
         @if (auth()->user()->user_type_id == 1)
             <li>
