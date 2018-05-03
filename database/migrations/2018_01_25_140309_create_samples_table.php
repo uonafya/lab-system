@@ -15,20 +15,22 @@ class CreateSamplesTable extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('national_sample_id')->unsigned()->nullable();
+            $table->bigInteger('national_sample_id')->unsigned()->nullable()->index();
             $table->bigInteger('patient_id')->unsigned()->index();
             $table->bigInteger('batch_id')->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
             $table->string('order_no', 30)->nullable();
             $table->string('sample_type', 30)->nullable(); 
+            $table->string('mother_last_result', 50)->nullable();
+            $table->tinyInteger('mother_last_rcategory')->unsigned()->nullable();
 
-            $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();
-            $table->double('age', 7, 4)->unsigned()->nullable()->index();
-            $table->tinyInteger('pcrtype')->unsigned()->nullable()->index();
-            $table->tinyInteger('regimen')->unsigned()->nullable()->index();
-            $table->tinyInteger('mother_prophylaxis')->unsigned()->nullable()->index();
-            $table->tinyInteger('feeding')->unsigned()->nullable()->index();
+            $table->tinyInteger('receivedstatus')->unsigned()->nullable();
+            $table->double('age', 7, 4)->unsigned()->nullable();
+            $table->tinyInteger('pcrtype')->unsigned()->nullable();
+            $table->tinyInteger('regimen')->unsigned()->nullable();
+            $table->tinyInteger('mother_prophylaxis')->unsigned()->nullable();
+            $table->tinyInteger('feeding')->unsigned()->nullable();
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->string('comments', 100)->nullable();
             $table->string('labcomment', 100)->nullable();
@@ -36,14 +38,14 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();
             $table->string('interpretation', 50)->nullable();
-            $table->tinyInteger('result')->unsigned()->nullable()->index();
+            $table->tinyInteger('result')->unsigned()->nullable();
 
             $table->bigInteger('worksheet_id')->unsigned()->nullable()->index();
             // $table->boolean('inworksheet')->default(false);
 
-            $table->tinyInteger('hei_validation')->unsigned()->default(0)->nullable()->index();
+            $table->tinyInteger('hei_validation')->unsigned()->default(0)->nullable();
             $table->string('enrollment_ccc_no', 50)->nullable();
-            $table->tinyInteger('enrollment_status')->unsigned()->default(0)->nullable()->index();
+            $table->tinyInteger('enrollment_status')->unsigned()->default(0)->nullable();
             $table->tinyInteger('referredfromsite')->unsigned()->nullable();
             $table->string('otherreason', 70)->nullable(); 
 
@@ -55,9 +57,9 @@ class CreateSamplesTable extends Migration
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();
 
-            $table->date('datecollected')->nullable()->index();
-            $table->date('datetested')->nullable()->index();
-            $table->date('datemodified')->nullable()->index();
+            $table->date('datecollected')->nullable();
+            $table->date('datetested')->nullable();
+            $table->date('datemodified')->nullable();
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
 

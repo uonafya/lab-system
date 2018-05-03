@@ -15,24 +15,24 @@ class CreateViralsamplesTable extends Migration
     {
         Schema::create('viralsamples', function (Blueprint $table) {
             $table->bigIncrements('id'); 
-            $table->bigInteger('national_sample_id')->unsigned()->nullable();
+            $table->bigInteger('national_sample_id')->unsigned()->nullable()->index();
             $table->bigInteger('patient_id')->unsigned()->index();
             $table->bigInteger('batch_id')->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
             $table->string('order_no', 30)->nullable();
             $table->tinyInteger('vl_test_request_no')->nullable();
-            $table->tinyInteger('receivedstatus')->unsigned()->nullable()->index();            
+            $table->tinyInteger('receivedstatus')->unsigned()->nullable();            
 
             // This will be used instead
-            $table->double('age', 5, 2)->unsigned()->nullable()->index();
-            $table->tinyInteger('age_category')->unsigned()->default(0)->index();
-            $table->tinyInteger('justification')->unsigned()->nullable()->index();
+            $table->double('age', 5, 2)->unsigned()->nullable();
+            $table->tinyInteger('age_category')->unsigned()->default(0);
+            $table->tinyInteger('justification')->unsigned()->nullable();
             $table->string('other_justification', 50)->nullable();
-            $table->tinyInteger('sampletype')->unsigned()->nullable()->index();
-            $table->tinyInteger('prophylaxis')->unsigned()->nullable()->index();
-            $table->tinyInteger('regimenline')->unsigned()->nullable()->index();
-            $table->tinyInteger('pmtct')->unsigned()->index()->default(3);
+            $table->tinyInteger('sampletype')->unsigned()->nullable();
+            $table->tinyInteger('prophylaxis')->unsigned()->nullable();
+            $table->tinyInteger('regimenline')->unsigned()->nullable();
+            $table->tinyInteger('pmtct')->unsigned()->default(3);
 
             $table->tinyInteger('dilutionfactor')->unsigned()->nullable();
             $table->tinyInteger('dilutiontype')->unsigned()->nullable();
@@ -43,9 +43,9 @@ class CreateViralsamplesTable extends Migration
             // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->string('reason_for_repeat', 50)->nullable();
-            $table->tinyInteger('rcategory')->unsigned()->nullable()->index();
+            $table->tinyInteger('rcategory')->unsigned()->nullable();
 
-            $table->string('result', 50)->nullable()->index();
+            $table->string('result', 50)->nullable();
             $table->string('units', 30)->nullable();
             $table->string('interpretation', 50)->nullable();
 
@@ -60,8 +60,8 @@ class CreateViralsamplesTable extends Migration
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();
 
-            $table->date('datecollected')->nullable()->index();
-            $table->date('datetested')->nullable()->index();
+            $table->date('datecollected')->nullable();
+            $table->date('datetested')->nullable();
             $table->date('datemodified')->nullable();
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();

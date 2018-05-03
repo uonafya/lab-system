@@ -88,7 +88,7 @@
                     <table class="table table-striped table-bordered table-hover data-table" >
                         <thead>
                             <tr class="colhead">
-                                <th rowspan="2">#</th>
+                                <th rowspan="2">W No</th>
                                 <th rowspan="2">Date Created</th>
                                 <th rowspan="2">Created By</th>
                                 <th rowspan="2">Type</th>
@@ -112,7 +112,7 @@
                         <tbody>
                             @foreach($worksheets as $key => $worksheet)
                                 <tr>
-                                    <td>{{ $key+1 }} </td>
+                                    <td>{{ $worksheet->id }} </td>
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
                                     <td> {{ $worksheet->creator->full_name }} </td>
                                     <td> {!! $worksheet->machine !!} </td>

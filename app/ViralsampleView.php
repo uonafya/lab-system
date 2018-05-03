@@ -2,15 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use \App\ViewModel;
 
-class ViralsampleView extends Model
+class ViralsampleView extends ViewModel
 {
 	protected $table = 'viralsamples_view';
-
-
-    public function scopeSample($query, $facility, $patient, $datecollected)
-    {
-        return $query->where(['facility_id' => $facility, 'patient' => $patient, 'datecollected' => $datecollected]);
-    }
 }

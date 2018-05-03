@@ -365,7 +365,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PCR Type</label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="pcrtype" id="pcrtype" disabled>
+                                <select class="form-control" required name="pcrtype" id="pcrtype">
 
                                     <option value=""> Select One </option>
                                     @foreach ($pcrtypes as $pcrtype)
@@ -375,7 +375,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $pcrtype->alias }}
+                                        > {{ $pcrtype->name }}
                                         </option>
                                     @endforeach
 
@@ -383,7 +383,7 @@
                             </div>
                         </div>
 
-                        <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> 
+                        {{-- <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> --}}
 
                         @if(auth()->user()->user_type_id != 5)
 
