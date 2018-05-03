@@ -144,12 +144,12 @@ class ViralworksheetController extends Controller
      */
     public function show(Viralworksheet $Viralworksheet)
     {
-        $worksheet->load(['creator']);
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+        $Viralworksheet->load(['creator']);
+        $samples = Viralsample::where('worksheet_id', $Viralworksheet->id)->with(['patient'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples];
+        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples];
 
-        if($worksheet->machine_type == 1){
+        if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
         }
         else{
