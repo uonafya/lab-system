@@ -88,7 +88,7 @@
                     <table class="table table-striped table-bordered table-hover data-table" >
                         <thead>
                             <tr>
-                                    <th> # </th>
+                                    <th> W No </th>
                                     <th> Date Created </th>
                                     <th> Created By </th>
                                     <th> Type </th>
@@ -104,7 +104,7 @@
 
                             @foreach($worksheets as $key => $worksheet)
                                 <tr>
-                                    <td> {{ $key+1 }} </td>
+                                    <td>{{ $worksheet->id }} </td>
                                     <td> {{ $worksheet->created_at }} </td>
                                     <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
 

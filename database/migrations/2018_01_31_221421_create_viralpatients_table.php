@@ -15,20 +15,20 @@ class CreateViralpatientsTable extends Migration
     {
         Schema::create('viralpatients', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('national_patient_id')->unsigned()->nullable();
-            $table->string('patient', 50)->index();
+            $table->bigInteger('national_patient_id')->unsigned()->nullable()->index();
+            $table->string('patient', 50);
             $table->string('patient_name', 50)->nullable();
-            $table->integer('facility_id')->unsigned()->index();
+            $table->integer('facility_id')->unsigned();
             // $table->string('fullnames', 50)->nullable();
             $table->string('caregiver_phone', 15)->nullable();
-            $table->tinyInteger('sex')->unsigned()->index();
-            $table->date('dob')->nullable()->index();
+            $table->tinyInteger('sex')->unsigned();
+            $table->date('dob')->nullable();
             $table->date('initiation_date')->nullable();
             $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
-            // $table->date('created_at')->nullable();
-            // $table->date('updated_at')->nullable();
             $table->timestamps();
+
+            $table->index(['facility_id', 'patient'], 'vl_patient_unq_index');
         });
     }
 

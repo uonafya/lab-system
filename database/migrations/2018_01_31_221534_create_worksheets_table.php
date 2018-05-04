@@ -15,6 +15,7 @@ class CreateWorksheetsTable extends Migration
     {
         Schema::create('worksheets', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('national_worksheet_id')->unsigned()->nullable()->index();
             $table->tinyInteger('machine_type')->unsigned();
             $table->tinyInteger('lab_id')->unsigned();
 
@@ -22,7 +23,7 @@ class CreateWorksheetsTable extends Migration
             // 2 is tested, results uploaded awaiting approval
             // 3 is results uploaded and approved
             // 4 is cancelled
-            $table->tinyInteger('status_id')->unsigned()->default(1);
+            $table->tinyInteger('status_id')->unsigned()->default(1)->index();
 
             $table->integer('runby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();

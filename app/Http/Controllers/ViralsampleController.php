@@ -352,10 +352,12 @@ class ViralsampleController extends Controller
         $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
 
         if($submit_type == "release"){
-            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 1, 'approvedby' => $user->id]);
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id]);
+            session(['toast_message' => 'The samples have been sent to NASCOP.']);
         }
         else{
             Viralsample::whereIn('id', $viralsamples)->delete();
+            session(['toast_message' => 'The samples have been sent to deleted.']);
         }
 
         foreach ($batches as $key => $value) {

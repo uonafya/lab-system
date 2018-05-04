@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `results` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`),
@@ -29,9 +29,9 @@ DROP TABLE IF EXISTS `actions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `actions` (
-  `id` int(10) NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `active` int(10) DEFAULT '1',
+  `active` TINYINT UNSIGNED DEFAULT '1',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -78,7 +78,7 @@ DROP TABLE IF EXISTS `feedings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `feedings` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `feeding` varchar(100) NOT NULL,
   `feeding_description` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
@@ -104,7 +104,7 @@ DROP TABLE IF EXISTS `prophylaxis_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `prophylaxis_types` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `prophylaxis_type` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
@@ -128,7 +128,7 @@ DROP TABLE IF EXISTS `facilitytype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `facilitytype` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
@@ -236,10 +236,10 @@ DROP TABLE IF EXISTS `worksheetstatus`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `worksheetstatus` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `state` varchar(100) DEFAULT NULL,
   `output` varchar(150) DEFAULT NULL,
-  `active` int(10) DEFAULT '1',
+  `active` TINYINT UNSIGNED DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -265,7 +265,7 @@ DROP TABLE IF EXISTS `viralrejectedreasons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viralrejectedreasons` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
@@ -289,8 +289,8 @@ DROP TABLE IF EXISTS `entry_points`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `entry_points` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -301,7 +301,14 @@ CREATE TABLE `entry_points` (
 
 LOCK TABLES `entry_points` WRITE;
 /*!40000 ALTER TABLE `entry_points` DISABLE KEYS */;
-INSERT INTO `entry_points` VALUES (1,'OPD'),(2,'Paediatric  Ward'),(3,'MCH/PMTCT'),(4,'CCC/PSC'),(5,'Materrnity'),(6,'Other'),(7,'No Data');
+INSERT INTO `entry_points` VALUES 
+(1,'IPD'),
+(2,'OPD'),
+(3,'Maternity'),
+(4,'CCC'),
+(5,'MCH/PMTCT'),
+(6,'Other'),
+(7,'No Data');
 /*!40000 ALTER TABLE `entry_points` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -313,11 +320,11 @@ DROP TABLE IF EXISTS `prophylaxis`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `prophylaxis` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  `ptype` int(14) NOT NULL,
-  `flag` int(14) NOT NULL DEFAULT '1',
-  `rank` int(14) DEFAULT '0',
+  `ptype` TINYINT UNSIGNED NOT NULL,
+  `flag` TINYINT UNSIGNED NOT NULL DEFAULT '1',
+  `rank` TINYINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
@@ -347,7 +354,7 @@ CREATE TABLE `districts` (
   `SubCountyMFLCode` varchar(50) DEFAULT NULL,
   `SubCountyCoordinates` varchar(3070) DEFAULT NULL,
   `county` int(32) NOT NULL,
-  `province` int(14) NOT NULL,
+  `province` TINYINT UNSIGNED NOT NULL,
   `comment` varchar(32) DEFAULT NULL,
   `flag` int(32) DEFAULT '1',
   PRIMARY KEY (`id`)
@@ -372,7 +379,7 @@ DROP TABLE IF EXISTS `viralregimenline`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viralregimenline` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `flag` int(100) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
@@ -397,7 +404,7 @@ DROP TABLE IF EXISTS `receivedstatus`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `receivedstatus` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`,`Name`)
@@ -520,7 +527,7 @@ DROP TABLE IF EXISTS `rejectedreasons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rejectedreasons` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
@@ -544,13 +551,13 @@ DROP TABLE IF EXISTS `viralprophylaxis`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viralprophylaxis` (
-  `id` int(50) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `displaylabel` varchar(50) NOT NULL,
   `name` varchar(200) NOT NULL,
   `description` varchar(100) NOT NULL,
-  `line` int(100) NOT NULL,
-  `ptype` int(14) NOT NULL DEFAULT '2',
-  `category` int(14) NOT NULL DEFAULT '3',
+  `line` TINYINT UNSIGNED NOT NULL,
+  `ptype` TINYINT UNSIGNED NOT NULL DEFAULT '2',
+  `category` TINYINT UNSIGNED NOT NULL DEFAULT '3',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -573,10 +580,10 @@ DROP TABLE IF EXISTS `viralsampletype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viralsampletype` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `typecode` int(100) DEFAULT NULL,
-  `flag` int(10) DEFAULT '1',
+  `flag` TINYINT UNSIGNED DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -650,7 +657,7 @@ DROP TABLE IF EXISTS `labs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `labs` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` int(14) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `email` varchar(32) DEFAULT NULL,
   `labname` varchar(50) DEFAULT NULL,
@@ -706,7 +713,7 @@ DROP TABLE IF EXISTS `pcrtype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pcrtype` (
-  `id` int(14) NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `alias` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -719,7 +726,13 @@ CREATE TABLE `pcrtype` (
 
 LOCK TABLES `pcrtype` WRITE;
 /*!40000 ALTER TABLE `pcrtype` DISABLE KEYS */;
-INSERT INTO `pcrtype` VALUES (1,'1 &nbsp;Initial PCR','Initial PCR'),(2,'2 &nbsp;Repeat PCR','Repeat PCR'),(3,'3 &nbsp;Confirmatory PCR','Confirmatory PCR'),(4,'4 &nbsp;Discrepant PCR(tie breaker)','Discrepant PCR(tie breaker)');
+INSERT INTO `pcrtype` VALUES 
+(1,'1 &nbsp;Initial PCR (6 week or first contact)','Initial PCR'),
+(2,'2 &nbsp;2nd PCR (6 months)','Second PCR'),
+(3,'3 &nbsp;3rd PCR (12 months)','Third PCR'),
+(4,'4 &nbsp;Confirmatory PCR and Baseline VL','Confirmatory PCR'),
+(5,'5 &nbsp;Discrepant PCR(tie breaker)','Discrepant PCR(tie breaker)'),
+(6,'6 &nbsp;Sample Redraw','Sample Redraw');
 /*!40000 ALTER TABLE `pcrtype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -731,7 +744,7 @@ DROP TABLE IF EXISTS `gender`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gender` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `gender` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `gender_description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
@@ -753,7 +766,7 @@ DROP TABLE IF EXISTS `viraljustifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viraljustifications` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `displaylabel` varchar(100) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
   `flag` int(50) DEFAULT '1',
@@ -776,10 +789,10 @@ DROP TABLE IF EXISTS `viraldilutionfactors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `viraldilutionfactors` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `dilutiontype` varchar(100) DEFAULT NULL,
   `dilutionfactor` int(10) DEFAULT NULL,
-  `flag` int(10) DEFAULT '1',
+  `flag` TINYINT UNSIGNED DEFAULT '1',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -802,9 +815,9 @@ DROP TABLE IF EXISTS `vlresultsguidelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `vlresultsguidelines` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `sampletype` int(10) NOT NULL COMMENT '1 - dbs 2-plasma/edta',
-  `test` int(10) DEFAULT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `sampletype` TINYINT UNSIGNED NOT NULL COMMENT '1 - dbs 2-plasma/edta',
+  `test` TINYINT UNSIGNED DEFAULT NULL,
   `triagecode` varchar(10) DEFAULT NULL,
   `triage` varchar(10) DEFAULT NULL,
   `indication` varchar(1000) DEFAULT NULL,

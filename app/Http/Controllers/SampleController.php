@@ -362,7 +362,7 @@ class SampleController extends Controller
         $batches = Sample::selectRaw("distinct batch_id")->whereIn('id', $samples)->get();
 
         if($submit_type == "release"){
-            Sample::whereIn('id', $samples)->update(['synched' => 1, 'approvedby' => $user->id]);
+            Sample::whereIn('id', $samples)->update(['synched' => 0, 'approvedby' => $user->id]);
         }
         else{
             Sample::whereIn('id', $samples)->delete();

@@ -8,6 +8,8 @@ use App\Api\V1\Requests\BlankRequest;
 use DB;
 
 use App\Lookup;
+use App\Sample;
+use App\Viralsample;
 
 class FunctionController extends Controller
 {
@@ -38,20 +40,25 @@ class FunctionController extends Controller
          $orders = $request->input('order_numbers');
          $test = $request->input('test');
          $location = $request->input('location');
+
+         $batch_array = ['b.national_batch_id', 'b.datereceived', 'b.datedispatched', 'f.facilitycode', 'p.national_patient_id', 'patient_name'];
+
  
          if($test == 1){
              $table_name = 'samples AS s';
              $batch_name = 'batches AS b';
              $patient_name = 'patients AS p';
+             $select_array = array_merge(['s.*'], $batch_array);
          } 
          if($test == 2){
              $table_name = 'viralsamples AS s';
              $batch_name = 'viralbatches AS b';
              $patient_name = 'viralpatients AS p';
+             $select_array = array_merge(['s.*'], $batch_array);
          } 
  
         $result = DB::table($table_name)
-             ->select('s.*')
+             ->select($select_array)
              ->join($batch_name, 'b.id', '=', 's.batch_id')
              ->join($patient_name, 's.patient_id', '=', 'p.id')
              ->join('facilitys AS f', 'f.id', '=', 'b.facility_id')
@@ -73,8 +80,33 @@ class FunctionController extends Controller
              ->paginate(10);
 
 
-        $result->transform(function ($item, $key){
-            return ['patient age' => $item->age];
+        $result->transform(function ($sample, $key) use ($test){
+            // return ['patient age' => $item->age];
+
+            if($sample->receivedstatus == 2){
+                $sample->sample_status = "Rejected";
+            }
+            else{
+                if($test == 1){
+                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                        $sample->sample_status = "Complete";
+                    }
+                    else{
+                        $sample->sample_status = "Incomplete";
+                    }
+                }
+                if($test == 2){
+                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                        $sample->sample_status = "Complete";
+                    }
+                    else{
+                        $sample->sample_status = "Incomplete";
+                    }
+                }
+            }
+
+            return $sample;
+
         });
 
         return $result;
