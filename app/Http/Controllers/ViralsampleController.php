@@ -115,14 +115,19 @@ class ViralsampleController extends Controller
 
         if($new_patient == 0){
 
-            $repeat_test = Viralsample::where(['patient_id' => $request->input('patient_id'),
-            'batch_id' => $batch->id])->first();
+            $patient_id = $request->input('patient_id');
+            $repeat_test = Viralsample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
 
             if($repeat_test){
                 session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
                 session(['toast_error' => 1]);
                 return redirect()->route('viralsample.create');
             }
+
+            $patient = Viralpatient::find($patient_id);
+            $data = $request->only($viralsamples_arrays['patient']);
+            $patient->fill($data);
+            $patient->save();
 
             $data = $request->only($viralsamples_arrays['sample']);
             $viralsample = new Viralsample;
@@ -270,13 +275,13 @@ class ViralsampleController extends Controller
             $data[0] = 0;
             $data[1] = $viralpatient->toArray();
 
-            $viralsample = Viralsample::select('id')->where(['patient_id' => $viralpatient->id])->where('result', '>', 1000)->first();
+            $viralsample = Viralsample::select('id')->where(['patient_id' => $viralpatient->id])->where('result', '>', 1000)->where('repeatt', 0)->first();
             if($viralsample){
                 $data[2] = ['previous_nonsuppressed' => 1];
             }
             else{
                 $data[2] = ['previous_nonsuppressed' => 0];
-            }
+            } 
         }
         else{
             $data[0] = 1;

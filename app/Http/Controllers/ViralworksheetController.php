@@ -265,7 +265,7 @@ class ViralworksheetController extends Controller
         $today = $dateoftest = date("Y-m-d");
         $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = NULL;
 
-        $path = $request->upload->store('results/vl');
+        $path = $request->upload->store('public/results/vl');
         $my = new MiscViral;
 
         if($worksheet->machine_type == 2)

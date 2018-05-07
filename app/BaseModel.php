@@ -34,6 +34,7 @@ class BaseModel extends Model
 
     public function pre_update()
     {
-        if($this->synched == 1 && $this->isDirty()) $this->synched = 1;
+        if($this->synched == 1 && $this->isDirty()) $this->synched = 2;
+        $this->save();
     }
 }

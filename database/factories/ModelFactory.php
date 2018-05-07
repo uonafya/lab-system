@@ -56,7 +56,6 @@ $factory->define(App\Sample::class, function (Faker $faker) {
         'mother_prophylaxis' => $faker->randomElement([5, 6, 7, 18, 17, 19, 20, 21, 22, 23, 24]),
         'feeding' => rand(1, 5),
         'spots' => rand(1, 5),
-        // 'datecollected' => $faker->numerify('2017-0#-1#'),
         'datecollected' => $faker->dateTimeThisYear($max = 'now'),
     ];
 });
@@ -78,6 +77,7 @@ $factory->define(App\Mother::class, function (Faker $faker) {
         'ccc_no' => $faker->bothify('#####-?????'),
         'facility_id' => rand(1, 1000),
         'hiv_status' => rand(1, 2),
+        'dob' => $faker->dateTimeBetween($startDate = '-35 years', $endDate = '-18 years'),        
     ];
 });
 
@@ -102,14 +102,13 @@ $factory->define(App\Viralsample::class, function (Faker $faker) {
         'patient_id' => rand(1, 100),
         'batch_id' => rand(1, 20),
         'receivedstatus' => 1,
-        'age' => rand(6, 11),
+        'age' => rand(1, 60),
+        // 'age_category' => rand(6, 11),
         'justification' => rand(1, 7),
         'sampletype' => rand(1, 4),
         'prophylaxis' => rand(1, 20),
-        'regimenline' => rand(1, 3),
+        'regimenline' => rand(1, 2),
         'pmtct' => rand(1, 3),
-        // 'spots' => rand(1, 5),
-        // 'datecollected' => $faker->numerify('2017-0#-1#'),
         'datecollected' => $faker->dateTimeThisYear($max = 'now'),
     ];
 });
