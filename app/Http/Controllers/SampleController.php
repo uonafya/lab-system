@@ -362,15 +362,31 @@ class SampleController extends Controller
 
     public function release_redraw(Sample $sample)
     {
-        $sample->repeatt = 0;
-        $sample->result = 5;
-        $sample->approvedby = auth()->user()->id;
-        $sample->approvedby2 = auth()->user()->id;
-        $sample->dateapproved = date('Y-m-d');
-        $sample->dateapproved2 = date('Y-m-d');
+        if($sample->run == 1){
+            session(['toast_message' => 'The sample cannot be released as a redraw.']);
+            session(['toast_error' => 1]);
+            return back();
+        } 
+        else if($sample->run == 2){
+            // $prev_sample = Sample::find($sample->parentid);
+            $prev_sample = $sample->parent;
+        }
+        else{
+            $run = $sample->run - 1;
+            $prev_sample = Sample::where(['parentid' => $sample->parentid, 'run' => $run])->get()->first();
+        }
+        
+        $sample->delete();
 
-        $sample->save();
-        \App\Misc::check_batch($sample->batch_id);
+        $prev_sample->repeatt = 0;
+        $prev_sample->result = 5;
+        $prev_sample->approvedby = auth()->user()->id;
+        $prev_sample->approvedby2 = auth()->user()->id;
+        $prev_sample->dateapproved = date('Y-m-d');
+        $prev_sample->dateapproved2 = date('Y-m-d');
+
+        $prev_sample->save();
+        \App\Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }

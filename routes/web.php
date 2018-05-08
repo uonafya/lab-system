@@ -136,7 +136,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::resource('sample', 'SampleController');
 
 	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
-	Route::get('viralsample/release/{viralsample}', 'ViralsampleController@release_redraw');
+	Route::get('viralsample/release/{sample}', 'ViralsampleController@release_redraw');
 	Route::get('viralsample/print/{sample}', 'ViralsampleController@individual');
 	Route::get('viralsample/runs/{sample}', 'ViralsampleController@runs');
 	Route::post('viralsample/search', 'ViralsampleController@search');

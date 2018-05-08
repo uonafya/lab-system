@@ -101,9 +101,15 @@ class Common
 	}
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
-	public static function save_tat($batch_id, $view_model, $sample_model)
+	// $sample_model will be \App\Sample::class || \App\Viralsample::class
+	public static function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
-		$samples = $view_model::where(['batch_id' => $batch_id, 'repeatt' => 0])->get();
+		// if($sample_model == "App\\Sample") echo "Success";
+		$samples = $view_model::where(['batch_complete' => 1, 'repeatt' => 0, 'synched' => 0])
+		->when($batch_id, function($query) use ($batch_id){
+			return $query->where(['batch_id' => $batch_id]);
+		})
+		->get();
 
 		foreach ($samples as $key => $sample) {
 			$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
@@ -111,9 +117,14 @@ class Common
 			$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
 			// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
 			$tat4 = $tat1 + $tat2 + $tat3;
-			$sample_model::where('id', $sample->id)->update([
-				'tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4
-			]);
+			$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
+
+			if($sample_model == "App\\Viralsample"){
+				
+			}
+
+
+			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
 
