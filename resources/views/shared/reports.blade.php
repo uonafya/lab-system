@@ -127,11 +127,105 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Select Period</label>
                             <div class="col-sm-10">
-                                <label> <input type="radio" name="period" value="weekly" class="i-checks"> Weekly / Date Range </label>
+                                <label> <input type="radio" name="period" value="weekly" class="i-checks"> Date Range </label>
                                 <label> <input type="radio" name="period" value="monthly" class="i-checks"> Monthly </label>
                                 <label> <input type="radio" name="period" value="quarterly" class="i-checks"> Quarterly </label>
-                                <label> <input type="radio" name="period" value="biannually" class="i-checks"> Bi-Annually </label>
                                 <label> <input type="radio" name="period" value="annually" class="i-checks"> Annually </label>
+                            </div>
+                            <div class="row" id="periodSelection" style="display: none;">
+                                <div class="col-md-12" id="rangeSelection">
+                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                        <tbody>
+                                            <tr>
+                                                <td>Select Date Range From: </td>
+                                                <td>
+                                                    <div class="input-group date">
+                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                        <input type="text" id="fromDateCat" class="form-control lockable" name="fromDate">
+                                                    </div>
+                                                </td>
+                                                <td><center>To:</center></td>
+                                                <td>
+                                                    <div class="input-group date">
+                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                        <input type="text" id="toDateCat" class="form-control lockable" name="toDate">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-12" id="monthSelection">
+                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                        <tbody>
+                                            <tr>
+                                                <td>Select Year and Month </td>
+                                                <td>
+                                                    <select class="form-control" id="year" name="year">
+                                                        @for ($i = 6; $i >= 0; $i--)
+                                                            @php
+                                                                $year=Date('Y')-$i
+                                                            @endphp
+                                                        <option value="{{ $year }}">{{ $year }}</option>
+                                                        @endfor
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" id="month" name="month">
+                                                        @for ($i = 1; $i <= 12; $i++)
+                                                            <option value="{{ $i }}">{{ date("F", mktime(null, null, null, $i)) }}</option>
+                                                        @endfor
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>    
+                                </div>
+                                <div class="col-md-12" id="quarterSelection">
+                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                        <tbody>
+                                            <tr>
+                                                <td>Select Year and Quarter </td>
+                                                <td>
+                                                    <select class="form-control" id="year" name="year">
+                                                        @for ($i = 6; $i >= 0; $i--)
+                                                            @php
+                                                                $year=Date('Y')-$i
+                                                            @endphp
+                                                        <option value="{{ $year }}">{{ $year }}</option>
+                                                        @endfor
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" id="quarter" name="quarter">
+                                                        @for ($i = 1; $i <= 4; $i++)
+                                                            <option value="{{ $i }}">Q{{ $i }}</option>
+                                                        @endfor
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>    
+                                </div>
+                                <div class="col-md-12" id="yearSelection">
+                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                        <tbody>
+                                            <tr>
+                                                <td>Select Year </td>
+                                                <td>
+                                                    <select class="form-control" id="year" name="year">
+                                                        @for ($i = 6; $i >= 0; $i--)
+                                                            @php
+                                                                $year=Date('Y')-$i
+                                                            @endphp
+                                                        <option value="{{ $year }}">{{ $year }}</option>
+                                                        @endfor
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>    
+                                </div>
                             </div>
                         </div> 
                         <div class="form-group">
@@ -163,7 +257,7 @@
             <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
         @endslot
 
-        $(".date").datepicker({
+        $(".datelog").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -171,6 +265,16 @@
             autoclose: true,
             endDate: new Date(),
             format: "yyyy-mm-dd"
+        });
+
+        $(".dateperiod").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            dateFormat: 'MM yy'
         });
 
         set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
@@ -182,29 +286,28 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#generate_report").click(function(e){
-                e.preventDefault();
-                var selValue = $('input[name=category]:checked').val(); 
+                var selValue = $('input[name=category]:checked').val();
                 if (selValue == 'province') {
-                    prov = $("#report_province_search").val();
-                    if(prov == '' || prov == null || prov == undefined) {
-                        set_warning("No Province Selected</br /></br />Please Select a Province from the dropdown");
-                    }
+                    category = $("#report_province_search").val();
+                    cat = 'Province';
                 } else if (selValue == 'county') {
-                    county = $("#report_county_search").val();
-                    if(county == '' || county == null || county == undefined) {
-                        set_warning("No County Selected</br /></br />Please Select a County from the dropdown");
-                    }
+                    category = $("#report_county_search").val();
+                    cat = 'County';
                 } else if (selValue == 'subcounty') {
-                    dist = $("#report_district_search").val();
-                    if(dist == '' || dist == null || dist == undefined) {
-                        set_warning("No Sub-County Selected</br /></br />Please Select a Sub-County from the dropdown");
-                    }
+                    category = $("#report_district_search").val();
+                    cat = 'Sub-County';
                 } else if (selValue == 'facility') {
-                    fac = $("#report_facility_search").val();
-                    if(fac == '' || fac == null || fac == undefined) {
-                        set_warning("No Facility Selected</br /></br />Please Select a Facility from the dropdown");
-                    }
+                    category = $("#report_facility_search").val();
+                    cat = 'Facility';
                 }
+
+                if(category == '' || category == null || category == undefined) {
+                    e.preventDefault();
+                    set_warning("No "+cat+" Selected</br /></br />Please Select a "+cat+" from the dropdown");
+                }
+
+                var perValue = $('input[name=period]:checked').val();
+                alert(perValue);
             });
         });
     </script>
