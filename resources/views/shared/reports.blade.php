@@ -85,7 +85,7 @@
                         <div class="form-group">
                             <div class="row">
                                 <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" class="i-checks" required>Overall
+                                    <input type="radio" name="category" class="i-checks" value="overall">Overall
                                 </label>
                                 <div class="col-sm-9">
                                     << For all samples tested in Lab >>
@@ -93,7 +93,7 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" class="i-checks">Select Province
+                                    <input type="radio" name="category" value="province" class="i-checks">Select Province
                                 </label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="report_province_search" name="province"></select>
@@ -101,7 +101,7 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" class="i-checks">Select County
+                                    <input type="radio" name="category" value="county" class="i-checks">Select County
                                 </label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="report_county_search" name="county"></select>
@@ -109,7 +109,7 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" class="i-checks">Select Sub County
+                                    <input type="radio" name="category" value="subcounty" class="i-checks">Select Sub County
                                 </label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="report_district_search" name="district"></select>
@@ -117,7 +117,7 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" class="i-checks">Select Facility
+                                    <input type="radio" name="category" value="facility" class="i-checks">Select Facility
                                 </label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="report_facility_search" name="facility"></select>
@@ -127,7 +127,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Select Period</label>
                             <div class="col-sm-10">
-                                <label> <input type="radio" name="period" value="weekly" class="i-checks" checked> Weekly / Date Range </label>
+                                <label> <input type="radio" name="period" value="weekly" class="i-checks"> Weekly / Date Range </label>
                                 <label> <input type="radio" name="period" value="monthly" class="i-checks"> Monthly </label>
                                 <label> <input type="radio" name="period" value="quarterly" class="i-checks"> Quarterly </label>
                                 <label> <input type="radio" name="period" value="biannually" class="i-checks"> Bi-Annually </label>
@@ -137,14 +137,14 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
-                                <label> <input type="radio" name="period" value="tested" class="i-checks" checked> Tested Samples </label>
-                                <label> <input type="radio" name="period" value="rejected" class="i-checks" checked> Rejected Samples </label>
+                                <label> <input type="radio" name="period" value="tested" class="i-checks"> Tested Samples </label>
+                                <label> <input type="radio" name="period" value="rejected" class="i-checks"> Rejected Samples </label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <center>
-                                <button type="submit" class="btn btn-default">Generate Report</button>
+                                <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
                                 <button class="btn btn-default">Reset Options</button>
                             </center>
                         </div>                  
@@ -179,4 +179,13 @@
         set_select_facility("report_province_search", "{{ url('province/search') }}", 1, "Search for Province", false)
 
     @endcomponent
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#generate_report").click(function(e){
+                e.preventDefault();
+                var selValue = $('input[name=category]:checked').val(); 
+                alert(selValue);
+            });
+        });
+    </script>
 @endsection
