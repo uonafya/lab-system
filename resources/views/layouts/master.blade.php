@@ -132,7 +132,7 @@
                     timeOut: 7000
                 };
                 @if($toast_error)
-                    toastr.error("{{ $toast_message }}");
+                    toastr.warning("{{ $toast_message }}", "Warning!");
                 @else
                     toastr.success("{{ $toast_message }}");
                 @endif
@@ -170,10 +170,10 @@
                 closeButton: true,
                 progressBar: true,
                 showMethod: 'slideDown',
-                timeOut: 4000,
+                timeOut: 6000,
                 preventDuplicates: true
             };
-            toastr.error(message);
+            toastr.warning(message, "Warning!"); 
         });
     }
 

@@ -40,4 +40,14 @@ class Patient extends BaseModel
         else if($this->sex == 2){ return "Female"; }
         else{ return "No Gender"; }
     }
+
+    /**
+     * Get the patient's age in months
+     *
+     * @return integer
+     */
+    public function getAgeAttribute()
+    {
+        return \App\Lookup::calculate_age(date('Y-m-d'), $this->dob);
+    }
 }

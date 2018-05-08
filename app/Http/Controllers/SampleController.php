@@ -99,7 +99,13 @@ class SampleController extends Controller
             $patient = Patient::find($patient_id);
             $data = $request->only($samples_arrays['patient']);
             $patient->fill($data);
-            $patient->save();
+            $patient->pre_update();
+
+            $data = $request->only($samples_arrays['mother']);
+            $mother = Mother::find($patient->mother_id);
+            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->fill($data);
+            $mother->pre_update();
 
             $data = $request->only($samples_arrays['sample']);
             $sample = new Sample;
@@ -114,6 +120,7 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
+            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
             $mother->save();
 
@@ -206,7 +213,6 @@ class SampleController extends Controller
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
         $batch->pre_update();
-        $batch->save();
 
         $new_patient = $request->input('new_patient');
 
@@ -216,18 +222,18 @@ class SampleController extends Controller
             $patient = Patient::find($sample->patient_id);
             $patient->fill($data);
             $patient->pre_update();
-            $patient->save();
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
+            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
             $mother->pre_update();
-            $mother->save();
         }
         else
         {
             $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
+            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
             $mother->save();
             
@@ -241,7 +247,6 @@ class SampleController extends Controller
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->patient_id = $patient->id;
         $sample->pre_update();
-        $sample->save();
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
@@ -276,21 +281,49 @@ class SampleController extends Controller
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
 
+        // Add check for in process sample
+
         $patient = Patient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
         $data;
         if($patient){
             $mother = $patient->mother;
+            $mother->calc_age();
             $data[0] = 0;
             $data[1] = $patient->toArray();
             $data[2] = $mother->toArray();
 
-            $sample = Sample::select('id')->where(['patient_id' => $patient->id, 'result' => 2])->first();
-            if($sample){
-                $data[3] = ['previous_positive' => 1];
+            $prev_samples = Sample::where(['patient_id' => $patient->id, 'repeatt' => 0])->orderBy('datetested', 'asc')->get();
+            $previous_positive = 0;
+            $recommended_pcr = 1;
+            $message = null;
+            $error_message = null;
+            $age = $patient->age;
+
+            if($prev_samples->count() > 0){
+                $pos_sample = $prev_samples->where('result', 2)->first();
+                if($pos_sample){
+                    $previous_positive = 1;
+                    $recommended_pcr = 4;
+
+                    $bool = false;
+                    foreach ($prev_samples as $key => $sample) {
+                        if($sample->result == 2) $bool = true;
+                        if($bool && $sample->result == 1) $recommended_pcr = 5;
+                    }
+                }
+                else{
+                    if($age < 12){
+                        $recommended_pcr = 2;
+                    }
+                    else{
+                        $recommended_pcr = 3;
+                    }
+                }                
             }
-            else{
-                $data[3] = ['previous_positive' => 0];
-            }
+
+            if($age > 24) $error_message = "The patient is over age.";
+
+            $data[3] = ['previous_positive' => $previous_positive, 'recommended_pcr' => $recommended_pcr, 'message' => $message, 'error_message' => $error_message];
         }
         else{
             $data[0] = 1;

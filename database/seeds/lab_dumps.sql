@@ -731,8 +731,7 @@ INSERT INTO `pcrtype` VALUES
 (2,'2 &nbsp;2nd PCR (6 months)','Second PCR'),
 (3,'3 &nbsp;3rd PCR (12 months)','Third PCR'),
 (4,'4 &nbsp;Confirmatory PCR and Baseline VL','Confirmatory PCR'),
-(5,'5 &nbsp;Discrepant PCR(tie breaker)','Discrepant PCR(tie breaker)'),
-(6,'6 &nbsp;Sample Redraw','Sample Redraw');
+(5,'5 &nbsp;Discrepant PCR(tie breaker)','Discrepant PCR(tie breaker)');
 /*!40000 ALTER TABLE `pcrtype` ENABLE KEYS */;
 UNLOCK TABLES;
 

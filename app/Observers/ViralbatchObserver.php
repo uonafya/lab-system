@@ -23,7 +23,9 @@ class ViralbatchObserver
             $samples = ViralsampleView::where('batch_id', $viralbatch->id)->get();
             $patient_ids = $samples->pluck(['patient_id'])->toArray();
 
-            DB::table('viralpatients')->whereIn('id', $patient_ids)->update(['facility_id' => $batch->facility_id]);
+            $time = date("Y-m-d H:i:s");
+
+            DB::table('viralpatients')->whereIn('id', $patient_ids)->update(['facility_id' => $batch->facility_id, 'updated_at' => $time]);
         }
     }
 }

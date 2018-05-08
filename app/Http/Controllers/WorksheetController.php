@@ -735,7 +735,7 @@ class WorksheetController extends Controller
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
 
-        $path = $request->upload->store('results/eid');
+        $path = $request->upload->store('public/results/eid'); 
 
         Misc::requeue($worksheet->id);
 

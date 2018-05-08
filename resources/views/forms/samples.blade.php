@@ -79,6 +79,24 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group ampath-div">
+                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
+                            <div class="col-sm-8">
+                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group alupe-div">
+                            <label class="col-sm-4 control-label">Sample Type</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" required name="sample_type">
+                                    <option value=""> Select One </option>
+                                    <option value="GAP Sample"> GAP Sample </option>
+                                    <option value="Study Sample"> Study Sample </option>
+                                </select>
+                            </div>
+                        </div>
                         
 
                     </div>
@@ -95,37 +113,62 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
+                        <div class="form-group ampath-div">
+                            <label class="col-sm-4 control-label">Infant Name</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="patient_name" id="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient / Sample ID</label>
+                            <label class="col-sm-4 control-label">HEI ID Number</label>
                             <div class="col-sm-8">
                                 <input class="form-control" required name="patient" type="text" value="{{ $sample->patient->patient ?? '' }}" id="patient">
                             </div>
                         </div>
 
-                        <div class="form-group alupe-div">
-                            <label class="col-sm-4 control-label">Sample Type</label>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">PCR Type</label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="sample_type">
+                                <select class="form-control" required name="pcrtype" id="pcrtype">
+
                                     <option value=""> Select One </option>
-                                    <option value="GAP Sample"> GAP Sample </option>
-                                    <option value="Study Sample"> Study Sample </option>
+                                    @foreach ($pcrtypes as $pcrtype)
+                                        <option value="{{ $pcrtype->id }}"
+
+                                        @if (isset($sample) && $sample->pcrtype == $pcrtype->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $pcrtype->name }}
+                                        </option>
+                                    @endforeach
+
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Redraw</label>
 
-                        <div class="form-group ampath-div">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
-                            <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}">
+                            <div class="col-sm-10">
+                                <label> <input type="checkbox" class="i-checks"> Check if PCR is 6 </label>
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) Patient Names</label>
+                        <!-- <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date of Birth</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="patient_name" id="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
-                            </div>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="dob" required class="form-control lockable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
+                                </div>
+                            </div>                            
                         </div>
+
+
+
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Sex</label>
@@ -146,59 +189,105 @@
                             </div>
                         </div>
 
-                        <div class="hr-line-dashed"></div>
-
-                        @isset($sample)
-
-                            @php
-
-                                $months = (int) $sample->age;
-                                $weeks = $sample->age - (int) $sample->age;
-
-                            @endphp
-
-                        @endisset
-
-                        <!-- <div class="form-group">
-                            <label class="col-sm-4 control-label">Age</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months ?? '' }}">
-                            </div>
-                            <div class="col-sm-8 col-sm-offset-4 input-sm" style="margin-top: 1em;">
-                                <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks ?? '' }}">
-                            </div>
-                        </div> -->
-
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth</label>
+                            <label class="col-sm-4 control-label">Entry Point</label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control lockable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
-                                </div>
-                            </div>                            
-                        </div>
+                                <select class="form-control lockable" required name="entry_point" id="entry_point">
 
-                        <div class="hr-line-dashed"></div>
+                                    <option value=""> Select One </option>
+                                    @foreach ($entry_points as $entry_point)
+                                        <option value="{{ $entry_point->id }}"
+
+                                        @if (isset($sample) && $sample->patient->entry_point == $entry_point->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $entry_point->name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Infant Prophylaxis</label>
-                            <div class="col-sm-8"><select class="form-control" required name="regimen">
+                            <div class="col-sm-8">
+                                <select class="form-control" required name="regimen">
 
-                                <option value=""> Select One </option>
-                                @foreach ($iprophylaxis as $ip)
-                                    <option value="{{ $ip->id }}"
+                                    <option value=""> Select One </option>
+                                    @foreach ($iprophylaxis as $ip)
+                                        <option value="{{ $ip->id }}"
 
-                                    @if (isset($sample) && $sample->regimen == $ip->id)
-                                        selected
-                                    @endif
+                                        @if (isset($sample) && $sample->regimen == $ip->id)
+                                            selected
+                                        @endif
 
-                                    > {{ $ip->name }}
-                                    </option>
-                                @endforeach
+                                        > {{ $ip->name }}
+                                        </option>
+                                    @endforeach
 
-                            </select></div>
+                                </select>
+                            </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Infant Feeding Code</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" required name="feeding">
+
+                                    <option value=""> Select One </option>
+                                    @foreach ($feedings as $feeding)
+                                        <option value="{{ $feeding->id }}"
+
+                                        @if (isset($sample) && $sample->feeding == $feeding->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $feeding->feeding_description }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CCC No</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" required name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="patient">
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="hr-line-dashed"></div>
+
+                        {{--
+                            <!-- @isset($sample)
+
+                                @php
+
+                                    $months = (int) $sample->age;
+                                    $weeks = $sample->age - (int) $sample->age;
+
+                                @endphp
+
+                            @endisset
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Age</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months ?? '' }}">
+                                </div>
+                                <div class="col-sm-8 col-sm-offset-4 input-sm" style="margin-top: 1em;">
+                                    <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks ?? '' }}">
+                                </div>
+                            </div>  -->
+                        --}} 
+
+                        <!-- <div class="hr-line-dashed"></div> -->
 
 
                     </div>
@@ -216,12 +305,19 @@
                     <div class="panel-body" style="padding-bottom: 6px;">
 
                         <div class="form-group">
+                            <label class="col-sm-4 control-label">Mother's Age</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="mother_age" name="mother_age" type="text" value="{{ $sample->mother_age ?? '' }}" number="number" min=10 max=70>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
                             <div class="col-sm-8"><input class="form-control" id="ccc_no" name="ccc_no" type="text" value="{{ $sample->patient->mother->ccc_no ?? '' }}"></div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">PMTCT Intervention</label>
+                            <label class="col-sm-4 control-label">PMTCT Regimen </label>
                             <div class="col-sm-8"><select class="form-control" required name="mother_prophylaxis">
 
                                 <option value=""> Select One </option>
@@ -239,45 +335,7 @@
                             </select></div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Feeding Types</label>
-                            <div class="col-sm-8"><select class="form-control" required name="feeding">
-
-                                <option value=""> Select One </option>
-                                @foreach ($feedings as $feeding)
-                                    <option value="{{ $feeding->id }}"
-
-                                    @if (isset($sample) && $sample->feeding == $feeding->id)
-                                        selected
-                                    @endif
-
-                                    > {{ $feeding->feeding_description }}
-                                    </option>
-                                @endforeach
-
-                            </select></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Entry Point</label>
-                            <div class="col-sm-8"><select class="form-control lockable" required name="entry_point" id="entry_point">
-
-                                <option value=""> Select One </option>
-                                @foreach ($entry_points as $entry_point)
-                                    <option value="{{ $entry_point->id }}"
-
-                                    @if (isset($sample) && $sample->patient->entry_point == $entry_point->id)
-                                        selected
-                                    @endif
-
-                                    > {{ $entry_point->name }}
-                                    </option>
-                                @endforeach
-
-                            </select></div>
-                        </div>
-
-                        <div class="form-group">
+                        {{--<!-- <div class="form-group">
                             <label class="col-sm-4 control-label">HIV Status</label>
                             <div class="col-sm-8">
                                     <select class="form-control lockable" required name="hiv_status" id="hiv_status">
@@ -301,7 +359,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Caregiver Phone No</label>
                             <div class="col-sm-8"><input class="form-control" name="caregiver_phone" type="text" value="{{ $sample->patient->caregiver_phone ?? '' }}"></div>
-                        </div>
+                        </div> -->--}}
 
                     </div>
                 </div>
@@ -361,29 +419,6 @@
                                 </div>                            
                             </div>
                         @endif
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">PCR Type</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" required name="pcrtype" id="pcrtype">
-
-                                    <option value=""> Select One </option>
-                                    @foreach ($pcrtypes as $pcrtype)
-                                        <option value="{{ $pcrtype->id }}"
-
-                                        @if (isset($sample) && $sample->pcrtype == $pcrtype->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $pcrtype->name }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div>
-
-                        {{-- <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> --}}
 
                         @if(auth()->user()->user_type_id != 5)
 
@@ -598,19 +633,20 @@
                         $("#dob").val(patient.dob);
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
-                        $("#patient_name").val(patient.patient_name).change();
+                        $("#patient_name").val(patient.patient_name);
                         $("#sex").val(patient.sex).change();
                         $("#entry_point").val(patient.entry_point).change();
-                        $("#hiv_status").val(mother.hiv_status).change();
+                        $("#mother_age").val(mother.age);
+                        // $("#hiv_status").val(mother.hiv_status).change();
                         $("#ccc_no").val(mother.ccc_no).change();
 
-                        $('#pcrtype option[value=2]').attr('selected','selected').change();
-                        $("#hidden_pcr").val(2);
+                        $('#pcrtype option[value=' + prev.recommended_pcr + ']').attr('selected','selected').change();
+                        // $("#hidden_pcr").val(2);
 
-                        if(prev.previous_positive == 1){
-                            $('#pcrtype option[value=3]').attr('selected','selected').change();
-                            $("#hidden_pcr").val(3);
-                        }
+                        // if(prev.previous_positive == 1){
+                        //     $('#pcrtype option[value=4]').attr('selected','selected').change();
+                        //     // $("#hidden_pcr").val(3); 
+                        // }
                         $('<input>').attr({
                             type: 'hidden',
                             name: 'patient_id',
@@ -619,12 +655,12 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'dob',
-                            value: patient.dob,
-                            class: 'patient_details'
-                        }).appendTo("#samples_form");
+                        // $('<input>').attr({
+                        //     type: 'hidden',
+                        //     name: 'dob',
+                        //     value: patient.dob,
+                        //     class: 'patient_details'
+                        // }).appendTo("#samples_form");
 
 
                         $(".lockable").attr("disabled", "disabled");
@@ -634,7 +670,7 @@
                         $(".lockable").removeAttr("disabled");
                         $(".lockable").val('').change();
                         $('#pcrtype option[value=1]').attr('selected','selected').change();
-                        $("#hidden_pcr").val(1);
+                        // $("#hidden_pcr").val(1);
 
                         $('.patient_details').remove();
                     }

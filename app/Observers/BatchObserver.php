@@ -24,8 +24,10 @@ class BatchObserver
             $patient_ids = $samples->pluck(['patient_id'])->toArray();
             $mother_ids = $samples->pluck(['mother_id'])->toArray();
 
-            DB::table('patients')->whereIn('id', $patient_ids)->update(['facility_id' => $batch->facility_id]);
-            DB::table('mothers')->whereIn('id', $mother_ids)->update(['facility_id' => $batch->facility_id]);
+            $time = date("Y-m-d H:i:s");
+
+            DB::table('patients')->whereIn('id', $patient_ids)->update(['facility_id' => $batch->facility_id, 'updated_at' => $time]);
+            DB::table('mothers')->whereIn('id', $mother_ids)->update(['facility_id' => $batch->facility_id, 'updated_at' => $time]);
         }
     }
 }

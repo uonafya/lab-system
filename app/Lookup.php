@@ -141,16 +141,23 @@ class Lookup
         return $total;
     }
 
+    public static function calculate_mother_dob($date_collected, $age)
+    {
+        $dc = Carbon::parse( $date_collected );
+        $dc->subYears($age);
+        return $dc->toDateString();
+    }
+
     public static function samples_arrays()
     {
         return [
             'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'site_entry'],
 
-            'mother' => ['hiv_status', 'facility_id', 'ccc_no'],
+            'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'mother_dob'],
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'entry_point'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'feeding', 'regimen', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', ],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
