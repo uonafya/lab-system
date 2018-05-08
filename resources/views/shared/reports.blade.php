@@ -184,7 +184,27 @@
             $("#generate_report").click(function(e){
                 e.preventDefault();
                 var selValue = $('input[name=category]:checked').val(); 
-                alert(selValue);
+                if (selValue == 'province') {
+                    prov = $("#report_province_search").val();
+                    if(prov == '' || prov == null || prov == undefined) {
+                        set_warning("No Province Selected</br /></br />Please Select a Province from the dropdown");
+                    }
+                } else if (selValue == 'county') {
+                    county = $("#report_county_search").val();
+                    if(county == '' || county == null || county == undefined) {
+                        set_warning("No County Selected</br /></br />Please Select a County from the dropdown");
+                    }
+                } else if (selValue == 'subcounty') {
+                    dist = $("#report_district_search").val();
+                    if(dist == '' || dist == null || dist == undefined) {
+                        set_warning("No Sub-County Selected</br /></br />Please Select a Sub-County from the dropdown");
+                    }
+                } else if (selValue == 'facility') {
+                    fac = $("#report_facility_search").val();
+                    if(fac == '' || fac == null || fac == undefined) {
+                        set_warning("No Facility Selected</br /></br />Please Select a Facility from the dropdown");
+                    }
+                }
             });
         });
     </script>
