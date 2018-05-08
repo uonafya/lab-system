@@ -7,6 +7,7 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
+use App\ViralsampleView;
 
 use Illuminate\Http\Request;
 
@@ -178,9 +179,12 @@ class ViralsampleController extends Controller
      * @param  \App\Viralsample  $viralsample
      * @return \Illuminate\Http\Response
      */
-    public function show(Viralsample $viralsample)
+    public function show(ViralsampleView $viralsample)
     {
-        //
+        $data = Lookup::get_viral_lookups();
+        $data['samples'] = $viralsample;
+        
+        return view('tables.viralsample_search', $data)->with('pageTitle', 'Batches');
     }
 
     /**

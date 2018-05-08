@@ -169,18 +169,16 @@ class SampleController extends Controller
      */
     public function show(SampleView $sample)
     {
-        // $samples = $batch->sample;
         // $samples->load(['patient.mother']);
         // $batch->load(['facility', 'receiver', 'creator']);
         // $data = Lookup::get_lookups();
         // $data['batch'] = $batch;
         // $data['samples'] = $samples;
 
-        
-        // $data = Lookup::get_lookups();
-        // dd(Batch::);
+        $data = Lookup::get_lookups();
+        // dd($sample);
         $data['samples'] = $sample;
-        return view('tables.batch_details', $data)->with('pageTitle', 'Sample Summary');
+        return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
     /**
