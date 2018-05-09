@@ -78,9 +78,10 @@ return [
         'entry_point' => 'integer',
         'spots' => 'integer',
         'feeding' => 'required|integer',
-        'regimen' => 'required|integer|max:20',
-        'mother_prophylaxis' => 'required|integer|max:20',
-        'pcrtype' => 'required|integer|max:7',        
+        'regimen' => 'required|integer|max:30',
+        'mother_prophylaxis' => 'required|integer|max:30',
+        'pcrtype' => 'required|integer|max:7', 
+        'redraw' => 'integer|max:1',       
     ],
 
     'vl' => [

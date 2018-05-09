@@ -325,7 +325,7 @@ class MiscViral extends Common
     public function set_rcategory($result, $repeatt)
     {
         if(is_numeric($result)){
-            if($result > 0 $result < 1001){
+            if($result > 0 && $result < 1001){
                 return ['rcategory' => 2];
             }
             else if($result > 1000 && $result < 5001){
