@@ -93,14 +93,6 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" value="province" class="i-checks">Select Province
-                                </label>
-                                <div class="col-sm-9">
-                                    <select class="form-control" id="report_province_search" name="province"></select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-3 control-label">
                                     <input type="radio" name="category" value="county" class="i-checks">Select County
                                 </label>
                                 <div class="col-sm-9">
@@ -127,10 +119,17 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Select Period</label>
                             <div class="col-sm-10">
-                                <label> <input type="radio" name="period" value="weekly" class="i-checks"> Date Range </label>
-                                <label> <input type="radio" name="period" value="monthly" class="i-checks"> Monthly </label>
-                                <label> <input type="radio" name="period" value="quarterly" class="i-checks"> Quarterly </label>
-                                <label> <input type="radio" name="period" value="annually" class="i-checks"> Annually </label>
+                                <!-- <select class="form-control" id="period">
+                                    <option selected="true" disabled="true">Select Time Frame</option>
+                                    <option value="weekly">Date Range</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                    <option value="annually">Annually</option>
+                                </select> -->
+                                <label> <input type="radio" name="period" value="range"> Date Range </label>
+                                <label> <input type="radio" name="period" value="monthly"> Monthly </label>
+                                <label> <input type="radio" name="period" value="quarterly"> Quarterly </label>
+                                <label> <input type="radio" name="period" value="annually"> Annually </label>
                             </div>
                             <div class="row" id="periodSelection" style="display: none;">
                                 <div class="col-md-12" id="rangeSelection">
@@ -162,6 +161,7 @@
                                                 <td>Select Year and Month </td>
                                                 <td>
                                                     <select class="form-control" id="year" name="year">
+                                                        <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 6; $i >= 0; $i--)
                                                             @php
                                                                 $year=Date('Y')-$i
@@ -172,6 +172,7 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control" id="month" name="month">
+                                                        <option selected="true" disabled="true">Select a Month</option>
                                                         @for ($i = 1; $i <= 12; $i++)
                                                             <option value="{{ $i }}">{{ date("F", mktime(null, null, null, $i)) }}</option>
                                                         @endfor
@@ -188,6 +189,7 @@
                                                 <td>Select Year and Quarter </td>
                                                 <td>
                                                     <select class="form-control" id="year" name="year">
+                                                        <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 6; $i >= 0; $i--)
                                                             @php
                                                                 $year=Date('Y')-$i
@@ -198,8 +200,9 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control" id="quarter" name="quarter">
+                                                        <option selected="true" disabled="true">Select a Quarter</option>
                                                         @for ($i = 1; $i <= 4; $i++)
-                                                            <option value="{{ $i }}">Q{{ $i }}</option>
+                                                            <option value="Q{{ $i }}">Q{{ $i }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
@@ -214,6 +217,7 @@
                                                 <td>Select Year </td>
                                                 <td>
                                                     <select class="form-control" id="year" name="year">
+                                                        <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 6; $i >= 0; $i--)
                                                             @php
                                                                 $year=Date('Y')-$i
@@ -231,8 +235,8 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
-                                <label> <input type="radio" name="period" value="tested" class="i-checks"> Tested Samples </label>
-                                <label> <input type="radio" name="period" value="rejected" class="i-checks"> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="tested" class="i-checks"> Tested Samples </label>
+                                <label> <input type="radio" name="types" value="rejected" class="i-checks"> Rejected Samples </label>
                             </div>
                         </div>
 
@@ -257,7 +261,7 @@
             <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
         @endslot
 
-        $(".datelog").datepicker({
+        $(".date").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -267,7 +271,7 @@
             format: "yyyy-mm-dd"
         });
 
-        $(".dateperiod").datepicker({
+        $(".date").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -280,17 +284,32 @@
         set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
         set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false)
         set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
-        set_select_facility("report_province_search", "{{ url('province/search') }}", 1, "Search for Province", false)
 
     @endcomponent
     <script type="text/javascript">
         $(document).ready(function(){
+            // $('.period').click(function(){
+            $('input[name="period"]').change(function(){
+                period = $(this).val();
+                $('#periodSelection').show();
+                $('#rangeSelection').hide();
+                $('#monthSelection').hide();
+                $('#quarterSelection').hide();
+                $('#yearSelection').hide();
+                if (period == 'range') {
+                    $('#rangeSelection').show();
+                } else if (period == 'monthly') {
+                    $('#monthSelection').show();
+                } else if (period == 'quarterly') {
+                    $('#quarterSelection').show();
+                } else if (period == 'annually') {
+                    $('#yearSelection').show();
+                }
+            });
+
             $("#generate_report").click(function(e){
                 var selValue = $('input[name=category]:checked').val();
-                if (selValue == 'province') {
-                    category = $("#report_province_search").val();
-                    cat = 'Province';
-                } else if (selValue == 'county') {
+                if (selValue == 'county') {
                     category = $("#report_county_search").val();
                     cat = 'County';
                 } else if (selValue == 'subcounty') {
@@ -306,8 +325,9 @@
                     set_warning("No "+cat+" Selected</br /></br />Please Select a "+cat+" from the dropdown");
                 }
 
-                var perValue = $('input[name=period]:checked').val();
-                alert(perValue);
+                // var perValue = $('input[name=period]:checked').val();
+                // alert(perValue);
+                // var $radios = $('input[name="period"]');
             });
         });
     </script>

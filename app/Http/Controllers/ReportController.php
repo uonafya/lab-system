@@ -19,37 +19,21 @@ class ReportController extends Controller
     public function dateselect(Request $request)
     {
     	$dateString = '';
+
 	    $data = self::__getDateData($request, $dateString)->get();
-    	
-    	$dataArray = []; 
-
-	    $dataArray[] = (session('testingSystem') == 'Viralload') ?
-	    	['Lab ID', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab',	'County', 'Sub County',	'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age',	'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat',	'Current Regimen', 'ART Initiation Date', 'Justification',	'Date of Receiving', 'Date of Testing',	'Date of Dispatch',	'Viral Load'] :
-	    	['Lab ID', 'Sample Code', 'Batch No', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',	'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat',	'HIV Status of Mother',	'PMTCT Intervention', 'Breast Feeding', 'Entry Point',	'Date of Receiving', 'Date of Testing',	'Date of Dispatch',	'Test Result'];
-
-	    foreach ($data as $report) {
-	        $dataArray[] = $report->toArray();
-	    }
-	    
-	    $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
-	    
-	    Excel::create($report, function($excel) use ($dataArray, $report) {
-	    	$excel->setTitle($report);
-	        $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-	        $excel->setDescription('TEST OUTCOME REPORT FOR '.$report);
-
-	        $excel->sheet($report, function($sheet) use ($dataArray) {
-	            $sheet->fromArray($dataArray, null, 'A1', false, false);
-	        });
-
-	    })->download('xlsx');
+    	$this->__getExcel($data, $dateString);
     	
     	return back();
     }
 
     public function generate(Request $request)
     {
-    	dd($request);
+        $dateString = '';
+        
+        $data = self::__getDateData($request,$dateString)->get();
+        $this->__getExcel($data, $dateString);
+        
+        return back();
     }
 
     public static function __getDateData($request, &$dateString)
@@ -83,15 +67,87 @@ class ReportController extends Controller
     				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
     	}
 
-    	
+        if ($request->category == 'county') {
+            $model = $model->where('view_facilitys.county', '=', $request->county);
+        } else if ($request->category == 'subcounty') {
+            $model = $model->where('view_facilitys.county', '=', $request->district);
+        } else if ($request->category == 'facility') {
+            $model = $model->where('view_facilitys.county', '=', $request->facility);
+        }
+
     	if (isset($request->specificDate)) {
     		$dateString = date('d-M-Y', strtotime($request->specificDate));
     		$model = $model->where("$table.datereceived", '=', $request->specificDate);
     	}else {
-    		$dateString = date('d-M-Y', strtotime($request->fromDate))." & ".date('d-M-Y', strtotime($request->toDate));
-    		$model = $model->whereRaw("$table.datereceived BETWEEN '".$request->fromDate."' AND '".$request->toDate."'");
+            if (!isset($request->period) || $request->period == 'range') {
+                $dateString = date('d-M-Y', strtotime($request->fromDate))." & ".date('d-M-Y', strtotime($request->toDate));
+                if ($request->period) { $column = 'datetested'; } 
+                else { $column = 'datereceived'; }
+                $model = $model->whereRaw("$table.$column BETWEEN '".$request->fromDate."' AND '".$request->toDate."'");
+            } else if ($request->period == 'monthly') {
+                $dateString = date("F", mktime(null, null, null, $request->month)).' - '.$request->year;
+                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->year."' AND MONTH($table.datetested) = '".$request->month."'");
+            } else if ($request->period == 'quarterly') {
+                if ($request->quarter == 'Q1') {
+                    $startQuarter = 1;
+                    $endQuarter = 3;
+                } else if ($request->quarter == 'Q2') {
+                    $startQuarter = 4;
+                    $endQuarter = 6;
+                } else if ($request->quarter == 'Q3') {
+                    $startQuarter = 7;
+                    $endQuarter = 9;
+                } else if ($request->quarter == 'Q4') {
+                    $startQuarter = 10;
+                    $endQuarter = 12;
+                } else {
+                    $startQuarter = 0;
+                    $endQuarter = 0;
+                }
+                $dateString = $request->quarter.' - '.$request->year;
+                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->year."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
+            } else if ($request->period == 'annually') {
+                $dateString = $request->year;
+                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->year."'");
+            }
     	}
 
+        if ($request->types == 'tested') {
+            $model = $model->where("$table.receivedstatus", "<>", '2');
+        } else {
+            $model = $model->where("$table.receivedstatus", "=", '2');
+        }
+
     	return $model;
+    }
+
+    public static function __getExcel($data, $dateString)
+    {
+        $dataArray = []; 
+
+        $dataArray[] = (session('testingSystem') == 'Viralload') ?
+            ['Lab ID', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date of Receiving', 'Date of Testing', 'Date of Dispatch', 'Viral Load'] :
+            ['Lab ID', 'Sample Code', 'Batch No', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date of Receiving', 'Date of Testing', 'Date of Dispatch', 'Test Result'];
+        
+        if($data->isNotEmpty()) {
+            foreach ($data as $report) {
+                $dataArray[] = $report->toArray();
+            }
+            
+            $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
+            
+            Excel::create($report, function($excel) use ($dataArray, $report) {
+                $excel->setTitle($report);
+                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+                $excel->setDescription('TEST OUTCOME REPORT FOR '.$report);
+
+                $excel->sheet($report, function($sheet) use ($dataArray) {
+                    $sheet->fromArray($dataArray, null, 'A1', false, false);
+                });
+
+            })->download('xlsx');
+        } else {
+            session(['toast_message' => 'No data available for the criteria provided']);
+        }
     }
 }
