@@ -9,6 +9,42 @@ use App\ViralsampleView;
 class MiscViral extends Common
 {
 
+    protected $rcategories = [
+        '0' => [],
+        '1' => ['< LDL copies/ml', '< LDL copies', ],
+        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000'],
+        '3' => ['>1000'],
+        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
+        '5' => ['Failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', ]
+    ];
+
+    protected $compound_categories = [
+        [
+            'search_array' =>  ['Target  Not Detected', 'Target N ot Detected', 'Target Not  Detected', 'Target Not Detecetd', 'Target Not Detected', '< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml'],
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target  Not Detected']
+        ],
+        [
+            'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
+        ],
+        [
+            'search_array' =>  ['< LDL'],
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => '< LDL']
+        ],
+        [
+            'search_array' =>  ['REJECTED'],
+            'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'interpretation' => 'REJECTED']
+        ],
+        [
+            'search_array' =>  ['Aborted'],
+            'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'interpretation' => 'Aborted']
+        ],
+        [
+            'search_array' =>  ['REJECTED', 'Redraw New Sample', 'collect new samp', 'collect new saple', 'insufficient', 'Failed Collect New sample', ],
+            'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'labcomment' => 'Failed Test']
+        ],
+    ];
+
 	public static function requeue($worksheet_id)
 	{
 		$samples = Viralsample::where('worksheet_id', $worksheet_id)->get();
@@ -259,6 +295,62 @@ class MiscViral extends Common
             ->get();
 
         return $samples;
+    }
+
+
+
+    public function set_justification($justification = null)
+    {
+        if($justification == 0) return 8;
+        return $justification;
+    }
+
+    public function set_prophylaxis($prophylaxis = null)
+    {
+        if($prophylaxis == 0) return 16;
+        return $prophylaxis;
+    }
+
+    public function set_age_cat($age = null)
+    {
+        if($age > 0.00001 && $age < 2){ return 6; }
+        else if($age >= 2 && $age < 10){ return 7; }
+        else if($age >= 10 && $age < 15){ return 8; }
+        else if($age >= 15 && $age < 19){ return 9; }
+        else if($age >= 19 && $age < 24){ return 10; }
+        else if($age >= 24){ return 11; }
+        else{ return 0; }
+    }
+
+    public function set_rcategory($result, $repeatt)
+    {
+        if(is_numeric($result)){
+            if($result > 0 $result < 1001){
+                return ['rcategory' => 2];
+            }
+            else if($result > 1000 && $result < 5001){
+                return ['rcategory' => 3];
+            }
+            else if($result > 5000){
+                return ['rcategory' => 4];
+            }
+        }
+        $data = $this->get_rcategory($result);
+        if($repeatt == 0 && $data['rcategory'] == 5){
+            $data = array_merge($data, ['labcomment' => 'Failed Test']);
+        }
+    }
+
+    public function get_rcategory($result)
+    {
+        foreach ($this->compound_categories as $key => $value) {
+            if(in_array($result, $value['search_array'])) return $value['update_array'];
+        }
+
+        foreach ($this->rcategories as $key => $value) {
+            if(in_array($result, $value)) return ['rcategory' => $key];
+        }
+
     }
 
 }

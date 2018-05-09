@@ -126,19 +126,25 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::resource('viralpatient', 'ViralpatientController');
 
 
-	Route::post('sample/new_patient', 'SampleController@new_patient');
-	Route::get('sample/release/{sample}', 'SampleController@release_redraw');
-	Route::get('sample/print/{sample}', 'SampleController@individual');
-	Route::get('sample/runs/{sample}', 'SampleController@runs');
-	Route::get('sample/create_poc', 'SampleController@create_poc');
-	Route::post('sample/search', 'SampleController@search');
+	Route::prefix('sample')->name('sample.')->group(function () {
+		Route::post('new_patient', 'SampleController@new_patient');
+		Route::get('release/{sample}', 'SampleController@release_redraw');
+		Route::get('print/{sample}', 'SampleController@individual');
+		Route::get('runs/{sample}', 'SampleController@runs');
+		Route::get('create_poc', 'SampleController@create_poc');
+		Route::post('search', 'SampleController@search');		
+	});
 	Route::resource('sample', 'SampleController');
 
-	Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
-	Route::get('viralsample/release/{viralsample}', 'ViralsampleController@release_redraw');
-	Route::get('viralsample/print/{sample}', 'ViralsampleController@individual');
-	Route::get('viralsample/runs/{sample}', 'ViralsampleController@runs');
-	Route::post('viralsample/search', 'ViralsampleController@search');
+
+	Route::prefix('viralsample')->name('viralsample.')->group(function () {
+
+		Route::post('new_patient', 'ViralsampleController@new_patient');
+		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
+		Route::get('print/{sample}', 'ViralsampleController@individual');
+		Route::get('runs/{sample}', 'ViralsampleController@runs');
+		Route::post('search', 'ViralsampleController@search');		
+	});
 	Route::resource('viralsample', 'ViralsampleController');
 
 

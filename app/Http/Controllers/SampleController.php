@@ -8,6 +8,7 @@ use App\Patient;
 use App\Mother;
 use App\Batch;
 use App\Facility;
+use App\Viralpatient;
 use App\Lookup;
 
 use Illuminate\Http\Request;
@@ -103,8 +104,12 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
-            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age')); 
             $mother->fill($data);
+
+            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+            if($viralpatient) $mother->patient_id = $viralpatient->id;
+
             $mother->pre_update();
 
             $data = $request->only($samples_arrays['sample']);
@@ -119,9 +124,15 @@ class SampleController extends Controller
         else{
 
             $data = $request->only($samples_arrays['mother']);
-            $mother = new Mother;
-            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother = Mother::existing($data['facility_id'], $data['ccc_no'])->get()->first();
+            if(!$mother) $mother = new Mother;
+            
+            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
+
+            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+            if($viralpatient) $mother->patient_id = $viralpatient->id;
+
             $mother->save();
 
             $data = $request->only($samples_arrays['patient']);
@@ -225,16 +236,24 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
-            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
+
+            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+            if($viralpatient) $mother->patient_id = $viralpatient->id;
+
             $mother->pre_update();
         }
         else
         {
             $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
-            $mother->dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
+
+            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+            if($viralpatient) $mother->patient_id = $viralpatient->id;
+
             $mother->save();
             
             $data = $request->only($samples_arrays['patient']);
@@ -360,15 +379,32 @@ class SampleController extends Controller
 
     public function release_redraw(Sample $sample)
     {
-        $sample->repeatt = 0;
-        $sample->result = 5;
-        $sample->approvedby = auth()->user()->id;
-        $sample->approvedby2 = auth()->user()->id;
-        $sample->dateapproved = date('Y-m-d');
-        $sample->dateapproved2 = date('Y-m-d');
+        if($sample->run == 1){
+            session(['toast_message' => 'The sample cannot be released as a redraw.']);
+            session(['toast_error' => 1]);
+            return back();
+        } 
+        else if($sample->run == 2){
+            // $prev_sample = Sample::find($sample->parentid);
+            $prev_sample = $sample->parent;
+        }
+        else{
+            $run = $sample->run - 1;
+            $prev_sample = Sample::where(['parentid' => $sample->parentid, 'run' => $run])->get()->first();
+        }
+        
+        $sample->delete();
 
-        $sample->save();
-        \App\Misc::check_batch($sample->batch_id);
+        $prev_sample->labcomment = "Failed Test";
+        $prev_sample->repeatt = 0;
+        $prev_sample->result = 5;
+        $prev_sample->approvedby = auth()->user()->id;
+        $prev_sample->approvedby2 = auth()->user()->id;
+        $prev_sample->dateapproved = date('Y-m-d');
+        $prev_sample->dateapproved2 = date('Y-m-d');
+
+        $prev_sample->save();
+        \App\Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }

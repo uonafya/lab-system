@@ -38,7 +38,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('feeding')->unsigned()->nullable();
             $table->tinyInteger('spots')->unsigned()->nullable();
             $table->string('comments', 30)->nullable();
-            $table->string('labcomment', 100)->nullable();
+            $table->string('labcomment', 50)->nullable();
             $table->bigInteger('parentid')->unsigned()->default(0)->nullable()->index();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->tinyInteger('reason_for_repeat')->unsigned()->nullable();

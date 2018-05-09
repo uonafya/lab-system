@@ -320,16 +320,33 @@ class ViralsampleController extends Controller
         return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Samples');
     }
 
-    public function release_redraw(Viralsample $viralsample)
+    public function release_redraw(Viralsample $sample)
     {
-        $viralsample->repeatt = 0;
-        $viralsample->result = "Collect New Sample";
-        $viralsample->approvedby = auth()->user()->id;
-        $viralsample->approvedby2 = auth()->user()->id;
-        $viralsample->dateapproved = date('Y-m-d');
-        $viralsample->dateapproved2 = date('Y-m-d');
-        $viralsample->save();
-        \App\MiscViral::check_batch($sample->batch_id);
+        if($sample->run == 1){
+            session(['toast_message' => 'The sample cannot be released as a redraw.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        else if($sample->run == 2){
+            $prev_sample = $sample->parent;
+        }
+        else{
+            $run = $sample->run - 1;
+            $prev_sample = Viralsample::where(['parentid' => $sample->parentid, 'run' => $run])->get()->first();
+        }
+        
+        $sample->delete();
+
+        $prev_sample->labcomment = "Failed Test";
+        $prev_sample->repeatt = 0;
+        $prev_sample->result = 5;
+        $prev_sample->approvedby = auth()->user()->id;
+        $prev_sample->approvedby2 = auth()->user()->id;
+        $prev_sample->dateapproved = date('Y-m-d');
+        $prev_sample->dateapproved2 = date('Y-m-d');
+
+        $prev_sample->save();
+        \App\MiscViral::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
