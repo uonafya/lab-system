@@ -147,10 +147,11 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Redraw</label>
 
-                            <div class="col-sm-10">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Redraw</label>
+
+                            <div class="col-sm-8">
                                 <label> <input type="checkbox" class="i-checks"> Check if PCR is 6 </label>
                             </div>
                         </div>
@@ -333,6 +334,11 @@
                                 @endforeach
 
                             </select></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">VL result within last 6 months</label>
+                            <div class="col-sm-8"><input class="form-control" id="ccc_no" name="ccc_no" type="text" value="{{ $sample->mother_last_result ?? '' }}"></div>
                         </div>
 
                         {{--<!-- <div class="form-group">
@@ -553,7 +559,8 @@
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date of Dispatch", "Date Received"]
-                }                
+                } 
+                               
             }
         @endslot
 
