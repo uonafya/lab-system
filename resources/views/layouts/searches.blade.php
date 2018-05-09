@@ -101,7 +101,7 @@
 		set_change_listener(div_name, url);	
 	}
 
-	function set_select_facility(div_name, url, minimum_length, placeholder, send_url) {
+	function set_select_facility(div_name, url, minimum_length, placeholder, send_url=false) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({
@@ -136,7 +136,8 @@
 			}
 		});
 
-		set_change_listener(div_name, send_url, false);
+		if(send_url != false)
+			set_change_listener(div_name, send_url, false);
 	}
 
 	function set_change_listener(div_name, url, not_facility=true)

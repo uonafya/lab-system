@@ -85,7 +85,6 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::resource('batch', 'BatchController');
 
 	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
-	Route::post('province/search/', 'HomeController@provincesearch')->name('province.search');
 
 	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 	Route::post('district/search/', 'DistrictController@search')->name('district.search');

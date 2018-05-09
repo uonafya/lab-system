@@ -91,19 +91,10 @@ class HomeController extends Controller
     public function countysearch(Request $request)
     {
         $search = $request->input('search');
-        $district = DB::table('countys')->select('id', 'name', 'letter as facilitycode')
+        $county = DB::table('countys')->select('id', 'name', 'letter as facilitycode')
             ->whereRaw("(name like '%" . $search . "%')")
             ->paginate(10);
-        return $district;
-    }
-
-    public function provincesearch(Request $request)
-    {
-        $search = $request->input('search');
-        $district = DB::table('provinces')->select('id', 'name', 'id as facilitycode')
-            ->whereRaw("(name like '%" . $search . "%')")
-            ->paginate(10);
-        return $district;
+        return $county;
     }
 
     public function test()
