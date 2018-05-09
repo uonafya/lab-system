@@ -28,8 +28,10 @@
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/helper.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
 
-    <!-- @yield('css_scripts') -->
+    @yield('css_scripts')
+
     @yield('custom_css')
+    
     <style type="text/css">
         #toast-container > div {
             color: black;
