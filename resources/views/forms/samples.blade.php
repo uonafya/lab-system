@@ -256,7 +256,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="patient">
+                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="patient">
                             </div>
                         </div>
 
@@ -552,10 +552,8 @@
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
                 datecollected: {
-                    lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"]
-                },
-                datecollected: {
-                    lessThan: ["#datereceived", "Date Collected", "Date Received"]
+                    lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"],
+                    lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date of Dispatch", "Date Received"]

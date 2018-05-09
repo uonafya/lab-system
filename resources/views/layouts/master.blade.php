@@ -129,12 +129,12 @@
                     closeButton: false,
                     progressBar: false,
                     showMethod: 'slideDown',
-                    timeOut: 7000
+                    timeOut: 10000
                 };
                 @if($toast_error)
-                    toastr.warning("{{ $toast_message }}", "Warning!");
+                    toastr.error("{{ $toast_message }}", "Warning!");
                 @else
-                    toastr.success("{{ $toast_message }}");
+                    toastr.warning("{{ $toast_message }}");
                 @endif
             });
         @endif
@@ -170,10 +170,10 @@
                 closeButton: true,
                 progressBar: true,
                 showMethod: 'slideDown',
-                timeOut: 6000,
+                timeOut: 10000,
                 preventDuplicates: true
             };
-            toastr.warning(message, "Warning!"); 
+            toastr.error(message, "Warning!"); 
         });
     }
 

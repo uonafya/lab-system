@@ -60,7 +60,9 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                            @if($sample->batch->batch_complete == 1)
+                                                <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
