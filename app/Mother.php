@@ -14,6 +14,11 @@ class Mother extends BaseModel
     	return $this->hasMany('App\Patient');
     }
 
+    public function viral_patient()
+    {
+        return $this->belongsTo('App\Viralpatient', 'patient_id');
+    }
+
 
     public function scopeExisting($query, $facility, $ccc)
     {
@@ -26,8 +31,5 @@ class Mother extends BaseModel
         $this->age = \App\Lookup::calculate_viralage($today, $this->dob);
     }
 
-    public function last_vl()
-    {
-    	// $result = 
-    }
+    
 }

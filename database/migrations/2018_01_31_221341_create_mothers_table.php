@@ -16,6 +16,9 @@ class CreateMothersTable extends Migration
         Schema::create('mothers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('national_mother_id')->unsigned()->nullable()->index();
+
+            // The id on viralpatients table
+            $table->bigInteger('patient_id')->unsigned()->nullable()->index();
             $table->string('ccc_no', 25)->nullable()->index();
             $table->date('mother_dob')->nullable();
             // $table->integer('fcode')->unsigned()->nullable();

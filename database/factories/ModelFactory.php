@@ -54,6 +54,7 @@ $factory->define(App\Sample::class, function (Faker $faker) {
         'pcrtype' => rand(1, 3),
         'regimen' => $faker->randomElement([12, 13, 14, 15, 16]),
         'mother_prophylaxis' => $faker->randomElement([5, 6, 7, 18, 17, 19, 20, 21, 22, 23, 24]),
+        'mother_age' => rand(18, 35),
         'feeding' => rand(1, 5),
         'spots' => rand(1, 5),
         'datecollected' => $faker->dateTimeThisYear($max = 'now'),
@@ -77,7 +78,7 @@ $factory->define(App\Mother::class, function (Faker $faker) {
         'ccc_no' => $faker->bothify('#####-?????'),
         'facility_id' => rand(1, 1000),
         'hiv_status' => rand(1, 2),
-        'dob' => $faker->dateTimeBetween($startDate = '-35 years', $endDate = '-18 years'),        
+        'mother_dob' => $faker->dateTimeBetween($startDate = '-35 years', $endDate = '-18 years'),        
     ];
 });
 

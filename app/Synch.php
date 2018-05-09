@@ -59,8 +59,8 @@ class Synch
 	{
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
-
-		Misc::save_tat(SampleView::class, Sample::class);
+		$my = new Misc;
+		$my->save_tat(SampleView::class, Sample::class);
 
 		while (true) {
 			$batches = Batch::with(['sample.patient:id,national_patient_id'])->where('synched', 0)->limit(10)->get();
@@ -124,8 +124,8 @@ class Synch
 	{
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
-
-		MiscViral::save_tat(ViralsampleView::class, Viralsample::class);
+		$my = new MiscViral;
+		$my->save_tat(ViralsampleView::class, Viralsample::class);
 
 		while (true) {
 			$batches = Viralbatch::with(['sample.patient:id,national_patient_id'])->where('synched', 0)->limit(10)->get();

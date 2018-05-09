@@ -337,6 +337,7 @@ class ViralsampleController extends Controller
         
         $sample->delete();
 
+        $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
         $prev_sample->result = 5;
         $prev_sample->approvedby = auth()->user()->id;

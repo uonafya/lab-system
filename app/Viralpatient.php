@@ -18,6 +18,11 @@ class Viralpatient extends BaseModel
         return $this->belongsTo('App\Facility');
     }
 
+    public function mother()
+    {
+        return $this->hasMany('App\Mother', 'patient_id');
+    }
+
     public function scopeExisting($query, $facility_id, $ccc_no)
     {
         return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_no]);
@@ -37,12 +42,20 @@ class Viralpatient extends BaseModel
     }
 
     /**
-     * Get the patient's age in months
+     * Get the patient's age in years
      *
      * @return integer
      */
     public function getAgeAttribute()
     {
         return \App\Lookup::calculate_viralage(date('Y-m-d'), $this->dob);
+    }
+
+    public function last_test()
+    {
+        $sql = "SELECT * FROM viralsamples WHERE patient_id={$this->id} AND datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$this->id} AND repeatt=0 )
+        "; 
+
     }
 }

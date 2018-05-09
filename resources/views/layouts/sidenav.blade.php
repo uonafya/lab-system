@@ -125,6 +125,7 @@
                 <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href="{{ url('sample/create') }}">Add</a></li>
+                    <li><a href="{{ url('sample/create_poc') }}">Add POC</a></li>
                     <li><a href="{{ url('batch') }}">View</a></li>
                 </ul>
             </li>

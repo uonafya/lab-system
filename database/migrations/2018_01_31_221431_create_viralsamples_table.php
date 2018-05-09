@@ -38,7 +38,7 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('dilutiontype')->unsigned()->nullable();
 
             $table->string('comments', 30)->nullable();
-            $table->string('labcomment', 100)->nullable();
+            $table->string('labcomment', 50)->nullable();
             $table->bigInteger('parentid')->unsigned()->default(0)->index();
             // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();

@@ -38,6 +38,7 @@ class FunctionController extends Controller
         $date_dispatched_start = $request->input('date_dispatched_start');
         $date_dispatched_end = $request->input('date_dispatched_end');
         $patients = $request->input('patient_id');
+        $facility = $request->input('facility_code');
         $orders = $request->input('order_numbers');
         $location = $request->input('location');
 
@@ -70,6 +71,9 @@ class FunctionController extends Controller
             ->join($batch_name, 'b.id', '=', 's.batch_id')
             ->join($patient_name, 's.patient_id', '=', 'p.id')
             ->join('facilitys AS f', 'f.id', '=', 'b.facility_id')
+            ->when($facility, function($query) use($facility){
+                return $query->where('f.facilitycode', $facility);
+            })
             ->when($patients, function($query) use($patients){
                 return $query->whereIn('p.patient', $patients);
             })
@@ -112,9 +116,25 @@ class FunctionController extends Controller
                     }
                 }
             }
+            $approved = false;
+            if($sample->approvedby) $approved = true;
 
-            return $sample;
-
+            return [
+                'id' => $sample->id,
+                'order_number' => $sample->order_no,
+                'patient' => $sample->patient,
+                'provider_identifier' => $sample->provider_identifier,
+                'facility_code' => $sample->facilitycode,
+                'AMRs_location' => $sample->amrs_location,
+                'full_names' => $sample->patient_name,
+                'date_collected' => $sample->my_date_format('datecollected'),
+                'date_received' => $sample->my_date_format('datereceived'),
+                'date_tested' => $sample->my_date_format('datetested'),
+                'interpretation' => $sample->interpretation,
+                'result' => $sample->result,
+                'date_dispatched' => $sample->my_date_format('datedispatched'),
+                'sample_status' => $sample->sample_status
+            ];
         });
 
         return $result;

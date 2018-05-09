@@ -322,6 +322,7 @@ DROP TABLE IF EXISTS `prophylaxis`;
 CREATE TABLE `prophylaxis` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
+  `alias` varchar(100),
   `ptype` TINYINT UNSIGNED NOT NULL,
   `flag` TINYINT UNSIGNED NOT NULL DEFAULT '1',
   `rank` TINYINT UNSIGNED DEFAULT '0',
@@ -336,7 +337,33 @@ CREATE TABLE `prophylaxis` (
 
 LOCK TABLES `prophylaxis` WRITE;
 /*!40000 ALTER TABLE `prophylaxis` DISABLE KEYS */;
-INSERT INTO `prophylaxis` VALUES (1,'SdNVP Only',1,1,NULL),(2,'Interrupted HAART (HAART until end of BF)',1,1,NULL),(3,'AZT (From 14wks or later) + sdNVP + 3TC + AZT+3TC for 7 days',1,1,NULL),(4,'HAART',1,1,NULL),(5,'None',1,1,10),(6,'PM1X : Other Regimens',1,1,9),(8,'SdNVP Only',2,1,NULL),(9,'Sd NVP+AZT+3TC',2,1,NULL),(10,'NVP for 6 weeks (Mother on HAART or not BF)',2,1,NULL),(11,'NVP during BF',2,1,NULL),(13,'3 None',2,1,3),(14,'5 No Data',2,1,5),(7,'No Data',1,1,11),(12,'4 Others',2,1,4),(15,'1 NVP for 12 Wks',2,1,1),(16,'2 NVP+AZT',2,1,2),(18,'PM4 :AZT+3TC+EFV',1,1,2),(17,'PM3 :AZT+3TC+NVP',1,1,1),(19,'PM5 :AZT+3TC+LPV/r',1,1,3),(20,'PM6 :TDF+3TC+NVP',1,1,4),(21,'PM7 :TDF+3TC+LPV/r',1,1,5),(22,'PM9 :TDF+3TC+EFV',1,1,6),(23,'PM10:AZT+3TC+ATV/r',1,1,7),(24,'PM11:TDF+3TC+ATV/r',1,1,8);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (1, 'SdNVP Only', NULL, 1, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (2, 'Interrupted HAART (HAART until end of BF)', NULL, 1, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (3, 'AZT (From 14wks or later) + sdNVP + 3TC + AZT+3TC for 7 days', NULL, 1, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (4, 'HAART', NULL, 1, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (5, 'PM13 : None', 'PM13', 1, 1, 10);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (6, 'PM1X : Other Regimens', 'PM1X', 1, 1, 11);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (7, 'No Data', 'No Data', 1, 1, 12);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (8, 'SdNVP Only', NULL, 2, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (9, 'Sd NVP+AZT+3TC', NULL, 2, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (10, 'NVP for 6 weeks (Mother on HAART or not BF)', NULL, 2, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (11, 'NVP during BF', NULL, 2, 0, NULL);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (12, 'Others', NULL, 2, 1, 4);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (13, 'None', NULL, 2, 1, 3);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (14, 'No Data', NULL, 2, 1, 5);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (15, 'NVP for 12 Wks', NULL, 2, 1, 7);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (16, 'NVP+AZT', NULL, 2, 1, 6);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (17, 'PM3 :AZT+3TC+NVP', 'PM3', 1, 1, 1);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (18, 'PM4 :AZT+3TC+EFV', 'PM4', 1, 1, 2);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (19, 'PM5 :AZT+3TC+LPV/r', 'PM5', 1, 1, 3);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (20, 'PM6 :TDF+3TC+NVP', 'PM6', 1, 1, 4);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (21, 'PM7 :TDF+3TC+LPV/r', 'PM7', 1, 1, 5);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (22, 'PM9 :TDF+3TC+EFV', 'PM9', 1, 1, 6);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (23, 'PM10:AZT+3TC+ATV/r', 'PM10', 1, 1, 7);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (24, 'PM11:TDF+3TC+ATV/r', 'PM11', 1, 1, 8);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (25, 'PM12:TDF+3TC+DTG', 'PM12', 1, 1, 9);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (26, 'AZT for 6 weeks + NVP for 12 weeks', NULL, 2, 1, 1);
+INSERT INTO `prophylaxis` (`ID`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUES (27, 'AZT for 6 weeks + NVP for >12 weeks ', NULL, 2, 1, 2);
 /*!40000 ALTER TABLE `prophylaxis` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -833,6 +860,23 @@ LOCK TABLES `vlresultsguidelines` WRITE;
 INSERT INTO `vlresultsguidelines` VALUES (1,2,1,'a','< 1000','Confirm adherence & Routine follow up.'),(2,2,1,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(3,2,2,'a','< 1000','Confirm adherence & Routine follow up.'),(4,2,2,'b','> 1000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(6,2,3,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(5,2,3,'a','< 1000','Confirm adherence & Routine follow up.'),(7,1,1,'a','< 5000','Confirm adherence & Routine follow up.'),(8,1,1,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(9,1,2,'a','< 5000','Confirm adherence & Routine follow up.'),(10,1,2,'b','> 5000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(11,1,3,'a','< 5000','Confirm adherence & Routine follow up.'),(12,1,3,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.');
 /*!40000 ALTER TABLE `vlresultsguidelines` ENABLE KEYS */;
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `synch_levels`;
+
+CREATE TABLE `synch_levels` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `synch_level` varchar(50) NOT NULL,
+  `synch_description` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `synch_levels` (`id`, `synch_level`, `synch_description`) VALUES
+(0, 'Not Synched',  'New record that is still local'),
+(1, 'Synched',  'This record has been sent to the national db.'),
+(2, 'Updated Record', 'This record was changed after being synched and needs to be resynched.'),
+(5, 'External', 'These are records are from edarp.');
+
+
 
 CREATE OR REPLACE
 VIEW view_facilitys AS
