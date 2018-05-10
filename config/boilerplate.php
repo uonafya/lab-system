@@ -1,5 +1,7 @@
 <?php
 
+use App\Rules\BeforeOrEqual;
+
 return [
 
     // these options are related to the sign-up procedure
@@ -52,8 +54,9 @@ return [
     ],
 
     'sample_base' => [
-        'dob' => 'required|date_format:Y-m-d',
-        'datecollected' => 'required|date_format:Y-m-d',
+        // 'dob' => ['date_format:Y-m-d', 'required', new BeforeOrEqual($this->input('datecollected'), 'datecollected')],
+        'dob' => ['required', 'date_format:Y-m-d'],
+        'datecollected' => ['required', 'date_format:Y-m-d'],
         'patient_identifier' => 'required',
         'mflCode' => 'required|integer|digits:5', 
         'sex' => 'required|integer|max:3', 
@@ -61,9 +64,9 @@ return [
 
     'complete_result' => [
         
-        'datereceived' => 'required|date_format:Y-m-d',
-        'datetested' => 'date_format:Y-m-d|required_if:receivedstatus,==,1',
-        'datedispatched' => 'date_format:Y-m-d|required_if:receivedstatus,==,1',
+        'datereceived' => ['required', 'date_format:Y-m-d'],
+        'datetested' => ['date_format:Y-m-d', 'required_if:receivedstatus,==,1'],
+        'datedispatched' => ['date_format:Y-m-d', 'required_if:receivedstatus,==,1'],
 
         'editted' => 'filled|integer',
         'lab' => 'required|integer',
@@ -85,7 +88,7 @@ return [
     ],
 
     'vl' => [
-        'initiation_date' => 'date_format:Y-m-d',
+        'initiation_date' => ['date_format:Y-m-d'],
         'prophylaxis' => 'required|integer|max:25',
         'regimenline' => 'required|integer|max:10',
         'sampletype' => 'required|integer|max:10',
