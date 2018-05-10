@@ -11,7 +11,7 @@ class PatientObserver
     /**
      * Listen to the Patient updating event.
      *
-     * @param  \App\Patient  $batch
+     * @param  \App\Patient  $patient
      * @return void
      */
     public function updating(Patient $patient)

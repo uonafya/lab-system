@@ -22,4 +22,11 @@ class VlRequest extends FormRequest
     {
     	return true;        
     }
+
+    public function messages()
+    {
+        return [
+            'before_or_equal' => 'The :attribute field must be before or equal to today.'
+        ];
+    }
 }

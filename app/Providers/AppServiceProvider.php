@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Mother;
 use App\Batch;
 use App\Viralbatch;
 use App\Patient;
 use App\Viralpatient;
 
+use App\Observers\MotherObserver;
 use App\Observers\BatchObserver;
 use App\Observers\ViralbatchObserver;
 use App\Observers\PatientObserver;
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Mother::observe(MotherObserver::class);
+
         Batch::observe(BatchObserver::class);
         Viralbatch::observe(ViralbatchObserver::class);
         

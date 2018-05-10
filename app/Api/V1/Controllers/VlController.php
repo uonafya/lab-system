@@ -95,7 +95,7 @@ class VlController extends Controller
         $lab = $request->input('lab');
         $code = $request->input('mflCode');
         $specimenlabelID = $request->input('specimenlabelID');
-        $specimenclientcode = $request->input('patient_identifier');
+        $patient_identifier = $request->input('patient_identifier');
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $datedispatched = $request->input('datedispatched');
@@ -108,12 +108,12 @@ class VlController extends Controller
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
 
-        $sample_exists = ViralsampleView::sample($facility, $specimenclientcode, $datecollected)->first();
+        $sample_exists = ViralsampleView::sample($facility, $patient_identifier, $datecollected)->first();
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists && !$editted){
 
-            return json_encode("VL CCC # {$specimenclientcode} collected on {$datecollected} already exists in database.");
+            return json_encode("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){
@@ -141,14 +141,14 @@ class VlController extends Controller
             $batch->save();            
         }
 
-        $patient = Viralpatient::existing($facility, $specimenclientcode)->get()->first();
+        $patient = Viralpatient::existing($facility, $patient_identifier)->get()->first();
 
         if(!$patient){
             $patient = new Viralpatient;
         } 
 
         $patient->fill($request->only($fields['patient'])); 
-        $patient->patient = $specimenclientcode;
+        $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
         $patient->save();
 
