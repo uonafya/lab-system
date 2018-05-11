@@ -109,7 +109,7 @@ class MiscViral extends Common
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
 			\App\Viralbatch::where('id', $batch_id)->update(['batch_complete' => 2]);
-            self::save_tat($batch_id, \App\SampleView::class, \App\Sample::class);
+            self::save_tat(\App\SampleView::class, \App\Sample::class, $batch_id);
 		}
 	}
 
