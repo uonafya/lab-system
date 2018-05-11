@@ -433,10 +433,8 @@
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
                 datecollected: {
-                    lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"]
-                },
-                datecollected: {
-                    lessThan: ["#datereceived", "Date Collected", "Date Received"]
+                    lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"],
+                    lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date of Dispatch", "Date Received"]

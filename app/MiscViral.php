@@ -20,16 +20,12 @@ class MiscViral extends Common
 
     protected $compound_categories = [
         [
-            'search_array' =>  ['Target  Not Detected', 'Target N ot Detected', 'Target Not  Detected', 'Target Not Detecetd', 'Target Not Detected', '< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml'],
+            'search_array' =>  ['Target  Not Detected', 'Target N ot Detected', 'Target Not  Detected', 'Target Not Detecetd', 'Target Not Detected', '< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
             'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target  Not Detected']
         ],
         [
             'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
             'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
-        ],
-        [
-            'search_array' =>  ['< LDL'],
-            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => '< LDL']
         ],
         [
             'search_array' =>  ['REJECTED'],
@@ -325,7 +321,7 @@ class MiscViral extends Common
     public function set_rcategory($result, $repeatt)
     {
         if(is_numeric($result)){
-            if($result > 0 $result < 1001){
+            if($result > 0 && $result < 1001){
                 return ['rcategory' => 2];
             }
             else if($result > 1000 && $result < 5001){

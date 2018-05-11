@@ -141,8 +141,9 @@ class Lookup
         return $total;
     }
 
-    public static function calculate_mother_dob($date_collected, $age)
+    public static function calculate_mother_dob($date_collected, $age = null)
     {
+        if(!$age) return null;
         $dc = Carbon::parse( $date_collected );
         $dc->subYears($age);
         return $dc->toDateString();

@@ -4,6 +4,7 @@ namespace App\Api\V1\Requests;
 
 use Config;
 use Dingo\Api\Http\FormRequest;
+use App\Rules\BeforeOrEqual;
 
 class EidRequest extends FormRequest
 {
@@ -12,11 +13,20 @@ class EidRequest extends FormRequest
         $base = Config::get('boilerplate.sample_base'); 
         $eid = Config::get('boilerplate.eid'); 
 
-        return array_merge($base, $eid);
+        $val = array_merge($base, $eid);
+        $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
+        return $val;
     }
 
     public function authorize()
     {
     	return true;        
+    }
+
+    public function messages()
+    {
+        return [
+            'before_or_equal' => 'The :attribute field must be before or equal to today.'
+        ];
     }
 }

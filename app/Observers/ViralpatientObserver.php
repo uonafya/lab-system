@@ -9,9 +9,9 @@ use App\Lookup;
 class ViralpatientObserver
 {
     /**
-     * Listen to the Patient updating event.
+     * Listen to the Viralpatient updating event.
      *
-     * @param  \App\Patient  $batch
+     * @param  \App\Viralpatient  $viralpatient
      * @return void
      */
     public function updating(Viralpatient $viralpatient)

@@ -1,5 +1,7 @@
 <?php
 
+use App\Rules\BeforeOrEqual;
+
 return [
 
     // these options are related to the sign-up procedure
@@ -52,8 +54,9 @@ return [
     ],
 
     'sample_base' => [
-        'dob' => 'required|date_format:Y-m-d',
-        'datecollected' => 'required|date_format:Y-m-d',
+        // 'dob' => ['date_format:Y-m-d', 'required', new BeforeOrEqual($this->input('datecollected'), 'datecollected')],
+        'dob' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
         'patient_identifier' => 'required',
         'mflCode' => 'required|integer|digits:5', 
         'sex' => 'required|integer|max:3', 
@@ -61,13 +64,13 @@ return [
 
     'complete_result' => [
         
-        'datereceived' => 'required|date_format:Y-m-d',
-        'datetested' => 'date_format:Y-m-d|required_if:receivedstatus,==,1',
-        'datedispatched' => 'date_format:Y-m-d|required_if:receivedstatus,==,1',
+        'datereceived' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'datetested' => ['date_format:Y-m-d', 'before_or_equal:today', 'required_if:receivedstatus,==,1'],
+        'datedispatched' => ['date_format:Y-m-d', 'before_or_equal:today', 'required_if:receivedstatus,==,1'],
 
         'editted' => 'filled|integer',
         'lab' => 'required|integer',
-        'result' => 'required',
+        'result' => 'required_if:receivedstatus,==,1',
         'receivedstatus' => 'required|integer|max:5',
         'rejectedreason' => 'required_if:receivedstatus,==,2',
         // 'gender' => 'filled',
@@ -78,18 +81,20 @@ return [
         'entry_point' => 'integer',
         'spots' => 'integer',
         'feeding' => 'required|integer',
-        'regimen' => 'required|integer|max:20',
-        'mother_prophylaxis' => 'required|integer|max:20',
-        'pcrtype' => 'required|integer|max:7',        
+        'regimen' => 'required|integer|max:30',
+        'mother_prophylaxis' => 'required|integer|max:30',
+        'mother_age' => 'integer|between:10,70',
+        'pcrtype' => 'required|integer|between:1,5', 
+        'redraw' => 'integer', 
     ],
 
     'vl' => [
-        'initiation_date' => 'date_format:Y-m-d',
-        'prophylaxis' => 'required|integer|max:25',
+        'initiation_date' => ['date_format:Y-m-d' 'before_or_equal:today',],
+        'prophylaxis' => 'required|integer|max:30',
         'regimenline' => 'required|integer|max:10',
         'sampletype' => 'required|integer|max:10',
         'justification' => 'required|integer|max:15',
-        'pmtct' => 'integer|max:3|required_if:sex,==,2',
+        'pmtct' => 'integer|between:1,3|required_if:sex,==,2',
     ],
 
 

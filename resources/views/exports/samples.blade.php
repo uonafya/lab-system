@@ -179,7 +179,7 @@
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<strong>Result Reviewed By: </strong> 
 					&nbsp;&nbsp;&nbsp;&nbsp; 
-					<strong> {{ $sample->approver->full_name }}</strong> 
+					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<strong>Date Reviewed:  {{ $sample->dateapproved }}</strong>
 				</td>

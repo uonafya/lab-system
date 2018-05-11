@@ -127,12 +127,12 @@ class FunctionController extends Controller
                 'facility_code' => $sample->facilitycode,
                 'AMRs_location' => $sample->amrs_location,
                 'full_names' => $sample->patient_name,
-                'date_collected' => $sample->my_date_format('datecollected'),
-                'date_received' => $sample->my_date_format('datereceived'),
-                'date_tested' => $sample->my_date_format('datetested'),
+                'date_collected' => Lookup::my_date_format('datecollected'),
+                'date_received' => Lookup::my_date_format('datereceived'),
+                'date_tested' => Lookup::my_date_format('datetested'),
                 'interpretation' => $sample->interpretation,
                 'result' => $sample->result,
-                'date_dispatched' => $sample->my_date_format('datedispatched'),
+                'date_dispatched' => Lookup::my_date_format('datedispatched'),
                 'sample_status' => $sample->sample_status
             ];
         });

@@ -864,7 +864,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `synch_levels`;
 
 CREATE TABLE `synch_levels` (
-  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` TINYINT UNSIGNED NOT NULL,
   `synch_level` varchar(50) NOT NULL,
   `synch_description` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)

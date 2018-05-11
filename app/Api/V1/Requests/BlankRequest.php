@@ -3,6 +3,7 @@
 namespace App\Api\V1\Requests;
 
 use Dingo\Api\Http\FormRequest;
+use App\Rules\BeforeOrEqual;
 
 class BlankRequest extends FormRequest
 {
@@ -10,10 +11,10 @@ class BlankRequest extends FormRequest
     {
         return [
             'test' => 'required|integer|max:2',
-            'start_date' => 'date_format:Y-m-d',
-            'end_date' => 'date_format:Y-m-d|required_with:start_date',
-            'date_dispatched_start' => 'date_format:Y-m-d',
-            'date_dispatched_end' => 'date_format:Y-m-d|required_with:date_dispatched_start',
+            'start_date' => ['date_format:Y-m-d', 'required_with:end_date', new BeforeOrEqual($this->input('end_date'), 'end_date')],
+            'end_date' => 'date_format:Y-m-d',
+            'date_dispatched_start' => ['date_format:Y-m-d', 'required_with:date_dispatched_end', new BeforeOrEqual($this->input('date_dispatched_end'), 'date_dispatched_end')],
+            'date_dispatched_end' => 'date_format:Y-m-d',
             
         ];
     }
