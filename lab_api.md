@@ -1,7 +1,7 @@
 ## LAB API
 
 All links are **POST** requests.
-**Open the link in *POSTMAN* and then set the request to *POST* **
+*Open the link in **POSTMAN** and then set the request to **POST** *
 
 - Get data by request type [click here](http://lab.test.nascop.org/api/function)
 >Fields

@@ -89,7 +89,7 @@ return [
     ],
 
     'vl' => [
-        'initiation_date' => ['date_format:Y-m-d' 'before_or_equal:today',],
+        'initiation_date' => ['date_format:Y-m-d', 'before_or_equal:today',],
         'prophylaxis' => 'required|integer|max:30',
         'regimenline' => 'required|integer|max:10',
         'sampletype' => 'required|integer|max:10',
