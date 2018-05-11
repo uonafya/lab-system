@@ -194,9 +194,20 @@ class ViralbatchController extends Controller
     {
         $batches = $request->input('batches');
         $final_dispatch = $request->input('final_dispatch');
-
+        // if($final_dispatch){
+        //     dd("This is the final dispatch");
+        // } else {
+        //     // dd("This is not final");
+        // }
+        // if (empty($batches)){
+        //     session(['toast_message' => "No batch selected<br /><br />Please select a batch",
+        //         'toast_error' => 1]);
+        //     // return back();
+        //     dd('Empty');
+        //     // return redirect('/viralbatch/complete_dispatch');
+        // }
         if(!$final_dispatch) return $this->get_rows($batches);
-
+        
         foreach ($batches as $key => $value) {
             $batch = Viralbatch::find($value);
             $facility = Facility::find($batch->facility_id);
