@@ -188,7 +188,12 @@ class BatchController extends Controller
     {
         $batches = $request->input('batches');
         $final_dispatch = $request->input('final_dispatch');
-
+        if (empty($batches)){
+            session(['toast_message' => "No batch selected<br /><br />Please select a batch",
+                'toast_error' => 1]);
+            return redirect('/batch/dispatch');
+            // return redirect('/viralbatch/complete_dispatch');
+        }
         if(!$final_dispatch) return $this->get_rows($batches);
 
         foreach ($batches as $key => $value) {
@@ -198,8 +203,8 @@ class BatchController extends Controller
             // {
                 // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
                 // $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-                $mail_array = array('joelkith@gmail.com');
-                Mail::to($mail_array)->send(new EidDispatch($batch, $facility));
+                // $mail_array = array('joelkith@gmail.com');
+                // Mail::to($mail_array)->send(new EidDispatch($batch, $facility));
             // }            
         }
 

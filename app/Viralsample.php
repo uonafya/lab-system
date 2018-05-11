@@ -9,6 +9,11 @@ class Viralsample extends BaseModel
     // protected $dates = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateinitiatedontreatment', 'datesynched'];
 
 
+    public function tat($datedispatched)
+    {
+        return \App\Misc::working_days($this->datecollected, $datedispatched);
+    }
+
     public function patient()
     {
     	return $this->belongsTo('App\Viralpatient', 'patient_id');
