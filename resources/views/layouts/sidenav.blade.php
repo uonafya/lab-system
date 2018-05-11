@@ -5,6 +5,9 @@
     body.light-skin #side-menu li a {
         color: black;
     }
+    #menu {
+        background-color: white;
+    }
 </style>
 <aside id="menu">
     <div id="navigation">
