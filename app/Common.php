@@ -104,7 +104,7 @@ class Common
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
-	public function save_tat($view_model, $sample_model, $batch_id = NULL)
+	public static function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
 		// if($sample_model == "App\\Sample") echo "Success";
 		$samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])

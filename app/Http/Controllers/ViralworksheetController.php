@@ -399,6 +399,8 @@ class ViralworksheetController extends Controller
         $actions = $request->input('actions');
         $dilutions = $request->input('dilutionfactors');
 
+        if(!$redraws) $redraws = [];
+
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
