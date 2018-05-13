@@ -16,13 +16,13 @@
                 <a href="#"><span class="nav-label">MENU</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level"> -->
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
-           <!--  <li class="active">
+           {{--<!--  <li class="active">
                 <a href="{{!! url('home') !!}}"> <span class="nav-label">Tasks</span> 
                     <span class="label label-success pull-right">
-                    $widgets['pendingSamples']+$widgets['batchesForApproval'][0]->totalsamples+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch
+                    $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch
                     </span>
                 </a>
-            </li> -->
+            </li> -->--}}
         @endif
         
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
@@ -37,7 +37,7 @@
                 </li> -->
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <li>
-                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span></a>
+                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>
                 <!-- <li>
                     <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
@@ -75,7 +75,7 @@
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 <li>
-                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span></a>
+                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>

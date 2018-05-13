@@ -6,8 +6,8 @@ use Illuminate\View\View;
 use App\Batch;
 use App\Viralbatch;
 use App\Facility;
-use App\ViralsampleView;
 use App\SampleView;
+use App\ViralsampleView;
 use App\Worksheet;
 use App\Viralworksheet;
 /**
@@ -73,7 +73,7 @@ class DashboardComposer
                     ->where('datereceived', '>', '2016-12-31')
                     ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                     ->where('input_complete', '=', '1')
-                    ->where('flag', '=', '1');
+                    ->where('flag', '=', '1')->count(); 
             }
         } else {
             $model = SampleView::whereNull('worksheet_id')
@@ -81,14 +81,14 @@ class DashboardComposer
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
                     ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
-                    ->where('flag', '1');
+                    ->where('flag', '1')->count();
                     // ->orderBy('isnull', 'ASC')
                     // ->orderBy('batches.datereceived', 'ASC')
                     // ->orderBy('samples.parentid', 'ASC')
                     // ->orderBy('samples.id', 'ASC')
         }
         
-        return $model->count();
+        return $model;
 	}
 
 	public function siteBatchesAwaitingApproval()
@@ -101,13 +101,14 @@ class DashboardComposer
                         ->where('receivedstatus', '=', '0')
                         ->where('site_entry', '=', '1');
         } else {
-            $model = SampleView::where('lab_id', '=', Auth()->user()->lab_id)
+            $model = SampleView::selectRaw('COUNT(ID) as totalsamples')
+                    ->where('lab_id', '=', Auth()->user()->lab_id)
                     ->where('flag', '=', '1')
                     ->where('repeatt', '=', '0')
                     ->where('receivedstatus', '=', '0')
                     ->where('site_entry', '=', '1');
         }
-        return $model->get();
+        return $model->get()->first()->totalsamples ?? 0;
 	}
 
 	public function batchCompleteAwaitingDispatch()

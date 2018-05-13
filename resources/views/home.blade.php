@@ -49,7 +49,7 @@
 		                        <a href="#">DBS Samples Awaiting Testing</a>
 		                    </li>
 		                    <li class="list-group-item">
-		                        <span class="badge badge-warning">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span>
+		                        <span class="badge badge-warning">{{ $widgets['batchesForApproval'] }}</span>
 		                        <a href="#">Site Entry Batches Awaiting Approval for Testing</a>
 		                    </li>
 		                    <li class="list-group-item">
@@ -75,7 +75,7 @@
 		                        <a href="#">Samples awaiting testing</a>
 		                    </li>
 		                    <li class="list-group-item ">
-		                        <span class="badge badge-info">{{ $widgets['batchesForApproval'][0]->totalsamples }}</span>
+		                        <span class="badge badge-info">{{ $widgets['batchesForApproval'] }}</span>
 		                        <a href="#">Site entry batches awaiting approval for testing.</a>
 		                    </li>
 		                    <li class="list-group-item">

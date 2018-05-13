@@ -37,8 +37,7 @@ class BatchController extends Controller
             $myurl2 = url("batch/facility/{$facility_id}"); 
         }
         else{ 
-            $myurl = url('batch/index/' . $batch_complete); 
-            $myurl2 = ""; 
+            $myurl = $myurl2 = url('batch/index/' . $batch_complete); 
         }
 
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
@@ -202,9 +201,9 @@ class BatchController extends Controller
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
-                // $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+                $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
                 // $mail_array = array('joelkith@gmail.com');
-                // Mail::to($mail_array)->send(new EidDispatch($batch, $facility));
+                Mail::to($mail_array)->send(new EidDispatch($batch, $facility));
             // }            
         }
 
