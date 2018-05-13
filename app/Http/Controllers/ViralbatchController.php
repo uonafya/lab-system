@@ -9,6 +9,7 @@ use App\MiscViral;
 use App\Lookup;
 
 use DB;
+use DOMPDF;
 
 use App\Mail\VlDispatch;
 use Illuminate\Support\Facades\Mail;
@@ -194,18 +195,13 @@ class ViralbatchController extends Controller
     {
         $batches = $request->input('batches');
         $final_dispatch = $request->input('final_dispatch');
-        // if($final_dispatch){
-        //     dd("This is the final dispatch");
-        // } else {
-        //     // dd("This is not final");
-        // }
-        // if (empty($batches)){
-        //     session(['toast_message' => "No batch selected<br /><br />Please select a batch",
-        //         'toast_error' => 1]);
-        //     // return back();
-        //     dd('Empty');
-        //     // return redirect('/viralbatch/complete_dispatch');
-        // }
+
+        if (empty($batches)){
+            session(['toast_message' => "No batch selected<br /><br />Please select a batch",
+                'toast_error' => 1]);
+            return redirect('/viralbatch/dispatch');
+            // return redirect('/viralbatch/complete_dispatch');
+        }
         if(!$final_dispatch) return $this->get_rows($batches);
         
         foreach ($batches as $key => $value) {
@@ -215,8 +211,8 @@ class ViralbatchController extends Controller
             // {
                 // Mail::to($facility->email)->send(new VlDispatch($batch, $facility));
                 // $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-                $mail_array = array('joelkith@gmail.com');
-                Mail::to($mail_array)->send(new VlDispatch($batch, $facility));
+                // $mail_array = array('joelkith@gmail.com');
+                // Mail::to($mail_array)->send(new VlDispatch($batch, $facility));
             // }            
         }
 
@@ -429,6 +425,8 @@ class ViralbatchController extends Controller
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_viral_lookups();
         $data['batches'] = [$batch];
+        // dd($data);
+        // return view('exports.viralsamples_summary', $data)->with('pageTitle', 'Individual Batches');
         $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('summary.pdf');
     }

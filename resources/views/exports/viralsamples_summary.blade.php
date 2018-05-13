@@ -4,6 +4,10 @@
 <head>
 
 	<style type="text/css">
+		body {
+			font-weight: 1px;
+		}
+
 		table {
 			border-collapse: collapse;
 		}
@@ -11,12 +15,22 @@
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
+     		font-size: 12px;
 		}
 
 		.page-break {
 			page-break-after: always;
 		}
 
+		h5 {
+			margin-top: 6px;
+		    margin-bottom: 6px;
+		}
+
+		p {
+			margin-top: 2px;
+     		font-size: 14px;
+		}
 	</style>
 </head>
 <body>
@@ -26,20 +40,22 @@
 		<table border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
-
-					<span class="style1"><br>
-					  <span class="style7">MINISTRY OF HEALTH <br />
-					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-					  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
+					<h5>MINISTRY OF HEALTH</h5>
+					<h5>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</h5>
+					<h5>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</h5>
+					<!-- <span class="style1"><br>
+					<span class="style7">
+						
 					</span>
+					</span> -->
 				</td>
 			</tr>
 			<tr>
 				<td colspan="5" class="comment style1 style4">
-					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name ?? ''}} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>LAB: {{ $batch->lab->name }}</strong>
+					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			<tr>
@@ -58,18 +74,18 @@
 
 		<table>
 			<tr>
-				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>				
+				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>		
 			</tr>
 			<tr>
-				<td>Facility Name: {{ $batch->facility->name }} </td>
-				<td>Contact: {{ $batch->facility->contactperson }} </td>
-				<td>Tel(personal): {{ $batch->facility->contacttelephone }} </td>
+				<td>Facility Name: {{ $batch->facility->name ?? '' }} </td>
+				<td>Contact: {{ $batch->facility->contactperson ?? '' }} </td>
+				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
-				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress }}</td>
+				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress ?? '' }}</td>
 			</tr>
 			<tr>
-				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email }}</td>
+				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email ?? '' }}</td>
 			</tr>
 		</table>
 
@@ -86,23 +102,22 @@
 				<td colspan="4"><b>Lab Information</b></td>
 			</tr>
 			<tr>
-				<td>No</td>
-				<td>Patient CCC No</td>
-				<td>Sex</td>
-				<td>Age (yrs)</td>
-				<td>ART Initiation Date</td>
-				<td>Date Collected</td>
-				<td>Date Received</td>
-				<td>Status</td>
-				<td>Sample Type</td>
-				<td>Current Regimen</td>
-				<td>Justification</td>
-				<td>Date Tested</td>
-				<td>Date Dispatched</td>
-				<td>Test Result</td>
-				<td>TAT</td>
+				<th>No</th>
+				<th>Patient CCC No</th>
+				<th>Sex</th>
+				<th>Age (yrs)</th>
+				<th>ART Initiation Date</th>
+				<th>Date Collected</th>
+				<th>Date Received</th>
+				<th>Status</th>
+				<th>Sample Type</th>
+				<th>Current Regimen</th>
+				<th>Justification</th>
+				<th>Date Tested</th>
+				<th>Date Dispatched</th>
+				<th>Test Result</th>
+				<th>TAT</th>
 			</tr>
-
 			@foreach($batch->sample as $key => $sample)
 				@if($sample->receivedstatus == 2)
 					@php  
@@ -112,11 +127,11 @@
 				@endif
 				<tr>
 					<td>{{ ($key+1) }} </td>
-					<td>{{ $sample->patient->patient }} </td>
+					<td>{{ $sample->patient->patient ?? '' }} </td>
 					<td>
 	                    @foreach($genders as $gender)
 	                        @if($sample->patient->sex == $gender->id)
-	                            {{ $gender->gender }}
+	                            {{ $gender->gender ?? '' }}
 	                        @endif
 	                    @endforeach
 					</td>
@@ -127,7 +142,7 @@
 					<td>
 	                    @foreach($received_statuses as $received_status)
 	                        @if($sample->receivedstatus == $received_status->id)
-	                            {{ $received_status->name }}
+	                            {{ $received_status->name ?? '' }}
 	                        @endif
 	                    @endforeach
 					</td>
@@ -148,7 +163,7 @@
 			@endforeach		
 		</table>
 
-		Result Reviewed By: {{ $sample->approver->full_name }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}
+		<p>Result Reviewed By: {{ $sample->approver->full_name }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
 
 		@isset($rejection)
 			<table>
@@ -210,23 +225,19 @@
 			</table>
 		@endisset
 
-		<br />
-		<br />
-		<br />
-
 		<p>
-			NOTE: Always provide the facility's up-to-date email address(es) and mobile number(s) on the sample requisition form so as to get alerts on the status of your samples.
+			<strong>NOTE:</strong> Always provide the facility's up-to-date email address(es) and mobile number(s) on the sample requisition form so as to get alerts on the status of your samples.
 			<br />
 			To Access & Download your current and past results go to : http://www.nascop.org/eid/facilitylogon.php
 		</p>
 
-		<b>KEY/CODES</b>
+		<h5>KEY/CODES</h5>
 
 		<table>
 			<tr>
 				<td><b>Codes for Sample Type </b> </td>
 				<td>
-					@foreach($sampletypes as $sampletype)
+					@foreach($sample_types as $sampletype)
 						{{ $sampletype->id . '-' . $sampletype->name }}
 
 						@if($loop->last)
