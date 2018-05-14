@@ -24,7 +24,11 @@ class CreateBatchesTable extends Migration
             // 1 is dispatched
             // 2 is staging i.e. all samples are ready, batch awaiting dispatch
             $table->tinyInteger('batch_complete')->default(0);
-            $table->tinyInteger('site_entry')->unsigned()->default(0)->index();
+
+            // 0 is for lab entry
+            // 1 is for site entry
+            // 2 is for POC entry
+            $table->tinyInteger('site_entry')->unsigned()->default(0);
 
             $table->boolean('sent_email')->default(false);
 
@@ -32,7 +36,8 @@ class CreateBatchesTable extends Migration
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('received_by')->unsigned()->nullable();
 
-            $table->tinyInteger('lab_id')->unsigned()->index();
+            // In the event of a POC sample, it will be the facility where the sample was tested
+            $table->integer('lab_id')->unsigned()->index();
             $table->integer('facility_id')->unsigned()->index();
 
             $table->date('datedispatchedfromfacility')->nullable();

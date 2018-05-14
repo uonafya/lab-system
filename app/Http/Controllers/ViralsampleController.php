@@ -23,7 +23,7 @@ class ViralsampleController extends Controller
         //
     }
 
-    public function edarp_samples()
+    public function nhrl_samples()
     {
         $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get();
         return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
@@ -365,7 +365,7 @@ class ViralsampleController extends Controller
         return back();
     }
 
-    public function approve_edarp(Request $request)
+    public function approve_nhrl(Request $request)
     {
         $viralsamples = $request->input('samples');
         $submit_type = $request->input('submit_type');

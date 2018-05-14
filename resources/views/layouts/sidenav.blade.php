@@ -74,6 +74,7 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
+                <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                 <li>
                     <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>
@@ -128,8 +129,9 @@
                 <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href="{{ url('sample/create') }}">Add</a></li>
-                    <li><a href="{{ url('sample/create_poc') }}">Add POC</a></li>
                     <li><a href="{{ url('batch') }}">View</a></li>
+                    <li><a href="{{ url('sample/create_poc') }}">Add POC</a></li>
+                    <li><a href="{{ url('sample/list_poc') }}">List POC</a></li>
                 </ul>
             </li>
 

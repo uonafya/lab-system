@@ -72,6 +72,11 @@ class Batch extends BaseModel
         return $this->belongsTo('App\Lab');
     }
 
+    public function facility_lab()
+    {
+        return $this->belongsTo('App\Facility', 'lab_id');
+    }
+
     public function receiver()
     {
         return $this->belongsTo('App\User', 'received_by');

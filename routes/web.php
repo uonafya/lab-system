@@ -131,13 +131,21 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('release/{sample}', 'SampleController@release_redraw');
 		Route::get('print/{sample}', 'SampleController@individual');
 		Route::get('runs/{sample}', 'SampleController@runs');
+
 		Route::get('create_poc', 'SampleController@create_poc');
+		Route::get('list_poc', 'SampleController@list_poc');
+		Route::get('edit_poc/{sample}', 'SampleController@edit_poc');
+		Route::put('edit_poc/{sample}', 'SampleController@save_poc');
+
 		Route::post('search', 'SampleController@search');		
 	});
 	Route::resource('sample', 'SampleController');
 
 
 	Route::prefix('viralsample')->name('viralsample.')->group(function () {
+
+		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
+		Route::post('nhrl', 'ViralsampleController@approve_nhrl');
 
 		Route::post('new_patient', 'ViralsampleController@new_patient');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');

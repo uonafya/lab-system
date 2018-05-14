@@ -17,7 +17,7 @@
                     VL EDARP Samples for Approval to go to Nascop 
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('viralsample/approve') }}" name="samples"
+                    <form  method="post" action="{{ url('viralsample/nhrl') }}"
                         class="confirmSubmit">
                         {{ csrf_field() }}
 

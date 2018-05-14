@@ -10,7 +10,7 @@
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('viralbatch/complete_dispatch') }}  " name="worksheetform"  
+                    <form  method="post" action="{{ url('viralbatch/complete_dispatch') }}" name="worksheetform"  
 
                         @if($batch_list)
                             onSubmit="return confirm('Are you sure you want to dispatch the selected batches?');"

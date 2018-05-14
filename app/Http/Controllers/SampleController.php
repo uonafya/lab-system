@@ -25,6 +25,14 @@ class SampleController extends Controller
         //
     }
 
+    public function list_poc()
+    {
+        $data = Lookup::get_lookups();
+        $samples = SampleView::with(['facility'])->where(['site_entry', 1])->get();
+        $data['samples'] => $samples;
+        return view('tables.poc_samples', $data)->with('pageTitle', 'POC Samples');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -207,6 +215,23 @@ class SampleController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource (poc).
+     *
+     * @param  \App\Sample  $sample
+     * @return \Illuminate\Http\Response
+     */
+    public function edit_poc(Sample $sample)
+    {
+        $sample->load(['patient', 'batch.facility_lab']);
+        if($sample->batch->site_entry != 2) abort(409, 'This sample is not a POC sample.');
+        $data = Lookup::get_lookups();
+        $data['sample'] = $sample;
+        return view('forms.samples', $data)->with('pageTitle', 'Samples');
+    }
+
+
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -267,6 +292,8 @@ class SampleController extends Controller
         $sample->patient_id = $patient->id;
         $sample->pre_update();
 
+        session(['toast_message' => 'The sample has been updated.']);
+
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){
@@ -274,6 +301,27 @@ class SampleController extends Controller
         }
 
         return redirect('batch/' . $batch->id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Sample  $sample
+     * @return \Illuminate\Http\Response
+     */
+    public function save_poc(Request $request, Sample $sample)
+    {
+        $sample->fill($request->except(['_token', 'lab_id']));
+        $sample->pre_update();
+        \App\Misc::check_batch($sample->batch_id);
+
+        $batch = $sample->batch;
+        $batch->lab_id = $request->input('lab_id');
+        $batch->pre_update();
+        session(['toast_message' => 'The sample has been updated.']);
+
+        return redirect('sample/list_poc');        
     }
 
     /**

@@ -5,7 +5,7 @@
 
 @section('content')
 
-<div class="normalheader ">
+<!-- <div class="normalheader ">
     <div class="hpanel">
         <div class="panel-body">
             <a class="small-header-action" href="#">
@@ -31,7 +31,7 @@
             <small>Advanced interaction controls to any HTML table</small>
         </div>
     </div>
-</div>
+</div> -->
  
 <div class="content">
     <div class="row">
