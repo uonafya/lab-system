@@ -5,13 +5,17 @@
     body.light-skin #side-menu li a {
         color: black;
     }
+    hr {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
     #menu {
         background-color: white;
     }
 </style>
 <aside id="menu">
     <div id="navigation">
-        <ul class="nav" id="side-menu">
+        <ul class="nav" id="side-menu" style=" padding-top: 12px;padding-left: 8px;">
             <!-- <li class="active">
                 <a href="#"><span class="nav-label">MENU</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level"> -->
@@ -36,9 +40,11 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
+                <hr />
                 <li>
                     <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>
+                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -48,7 +54,9 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
+                <hr />
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -61,9 +69,11 @@
                 <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
                     </a>
                 </li>
+                <hr />
                 <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
                     </a>
                 </li>
+                <hr />
             @endif
             @if (session('testingSystem') == 'Viralload')
                 <!-- <li>
@@ -74,10 +84,13 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
+                <hr />
                 <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
+                <hr />
                 <li>
                     <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>
+                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -89,9 +102,13 @@
                     </ul>
                 </li> -->
                 <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
+                <hr />
                 <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                <hr />
                 <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                <hr />
                 <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
+                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -104,9 +121,11 @@
                     <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
                     </a>
                 </li>
+                <hr />
                 <li>
                     <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
                 </li>
+                <hr />
             @endif
             <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
@@ -134,7 +153,7 @@
                     <li><a href="{{ url('sample/list_poc') }}">List POC</a></li>
                 </ul>
             </li>
-
+            <hr />
             <li>
                 <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
@@ -142,7 +161,7 @@
                     <li><a href="{{ url('viralbatch') }}">View</a></li>
                 </ul>
             </li>
-
+            <hr />
 
         @endif
             <!-- <li>
@@ -161,6 +180,7 @@
                     </li>
                 </ul>
             </li>
+            <hr />
             <li>
                 <a href="#"><span class="nav-label">Requisitions</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
@@ -168,11 +188,13 @@
                     <li><a href="#">Requisition List</a></li>
                 </ul>
             </li>
+            <hr />
         @endif
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
                 <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
             </li>
+            <hr />
         @endif
         @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 4)
         	<li>
@@ -183,9 +205,11 @@
         	<li>
                 <a href="{{ route('district.index') }}"> <span class="nav-label">Districts</span></a>
             </li>
+            <hr />
             <li>
                 <a href="#"> <span class="nav-label">User Activity Log</span></a>
             </li>
+            <hr />
         @endif
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
@@ -200,24 +224,29 @@
                     <li><a href="#">View SMS Printer</a></li>
                 </ul>
             </li>
+            <hr />
         @endif
             <li>
                 <a href="https://eid.nascop.org"> <span class="nav-label">NASCOP</span><span class="label label-success pull-right">National</span></a>
             </li>
+            <hr />
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
                 <a href="#"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <span class="label label-success pull-right">Special</span></a>
             </li>
+            <hr />
         @endif
         @if (auth()->user()->user_type_id != 5)
             <li>
                 <a href="#"> <span class="nav-label">Change Password</span></a>
             </li>
+            <hr />
         @endif
         @if (auth()->user()->user_type_id != 2)
             <li>
                 <a href="#"> <span class="nav-label">User Manual</span></a>
             </li>
+            <hr />
             <li>
                 <a href="#"><span class="nav-label">Download Forms</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
@@ -225,6 +254,7 @@
                     <li><a href="#">VL Form</a></li>
                 </ul>
             </li>
+            <hr />
         @endif
         --}}
         <!-- </ul>

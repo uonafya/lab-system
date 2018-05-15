@@ -10,6 +10,7 @@
 
 		table {
 			border-collapse: collapse;
+			margin-bottom: .5em;
 		}
 
 		table, th, td {
@@ -29,7 +30,7 @@
 
 		p {
 			margin-top: 2px;
-     		font-size: 14px;
+     		font-size: 12px;
 		}
 	</style>
 </head>
@@ -42,37 +43,26 @@
 				<td colspan="9" align="center">
 					<h5>MINISTRY OF HEALTH</h5>
 					<h5>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</h5>
-					<h5>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</h5>
-					<!-- <span class="style1"><br>
-					<span class="style7">
-						
-					</span>
-					</span> -->
+					<h5>VIRAL LOAD TEST RESULTS SUMMARY</h5>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="5" class="comment style1 style4">
+				<td colspan="3" class="comment style1 style4">
 					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name ?? ''}} </strong> 
 				</td>
-				<td colspan="4" class="comment style1 style4" align="right">
+				<td colspan="3" class="comment style1 style4" align="right">
 					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="9" class="comment style1 style4">
-					<strong>NOTICE:</strong> 
-				</td>
-			</tr>
-			<tr>
-				<td colspan="9" class="comment style1 style4">
+					<strong>NOTICE:</strong>
 					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
 				</td>
 			</tr>
 		</table>
 
-		<br />
-
-		<table>
+		<table style="widht:100%;">
 			<tr>
 				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>		
 			</tr>
@@ -88,8 +78,6 @@
 				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email ?? '' }}</td>
 			</tr>
 		</table>
-
-		<br />
 
 		<table style="width: 100%;">
 			<tr>

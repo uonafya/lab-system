@@ -21,6 +21,7 @@ class DashboardComposer
 	function __construct()
 	{
 		$this->DashboardData['pendingSamples'] = self::pendingSamplesAwaitingTesting();
+        $this->DashboardData['pendingSamplesOverTen'] = self::pendingSamplesAwaitingTesting(true);
 		$this->DashboardData['batchesForApproval'] = self::siteBatchesAwaitingApproval();
         $this->DashboardData['batchesNotReceived'] = self::batchesMarkedNotReceived();
 		$this->DashboardData['batchesForDispatch'] = self::batchCompleteAwaitingDispatch();
@@ -62,30 +63,38 @@ class DashboardComposer
 		
 	}
 
-	public function pendingSamplesAwaitingTesting()
+	public function pendingSamplesAwaitingTesting($over = false)
 	{
         if (session('testingSystem') == 'Viralload') {
-            $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
-            foreach ($sampletype as $key => $value) {
-                $model[$key] = ViralsampleView::whereNotIn('receivedstatus', ['0', '2', '4'])
-                    ->whereBetween('sampletype', [$value[0], $value[1]])
-                    ->whereNull('worksheet_id')
-                    ->where('datereceived', '>', '2016-12-31')
-                    ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
-                    ->where('input_complete', '=', '1')
-                    ->where('flag', '=', '1')->count(); 
+            if ($over == true) {
+                $model = ViralsampleView::whereNull('worksheet_id')
+                                ->whereRaw("datediff(datereceived, datetested) > 10")
+                                ->count();
+            } else {
+                $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
+                foreach ($sampletype as $key => $value) {
+                    $model[$key] = ViralsampleView::whereNotIn('receivedstatus', ['0', '2', '4'])
+                        ->whereBetween('sampletype', [$value[0], $value[1]])
+                        ->whereNull('worksheet_id')
+                        ->where('datereceived', '>', '2016-12-31')
+                        ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                        ->where('input_complete', '=', '1')
+                        ->where('flag', '=', '1')->count(); 
+                }
             }
         } else {
-            $model = SampleView::whereNull('worksheet_id')
+            if ($over == true) {
+                $model = SampleView::whereNull('worksheet_id')
+                                ->whereRaw("datediff(datereceived, datetested) > 10")
+                                ->count();
+            } else {
+                $model = SampleView::whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
                     ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->count();
-                    // ->orderBy('isnull', 'ASC')
-                    // ->orderBy('batches.datereceived', 'ASC')
-                    // ->orderBy('samples.parentid', 'ASC')
-                    // ->orderBy('samples.id', 'ASC')
+            }
         }
         
         return $model;

@@ -18,7 +18,7 @@
 		    <div class="col-lg-6">
 		        <div class="hpanel">
 		            <div class="alert alert-success">
-		                <center><i class="fa fa-bolt"></i> DAILY SAMPLES PROGRESS</center>
+		                <center><i class="fa fa-bolt"></i> DAILY SAMPLES LOG: {{ @Date('M d, Y') }}</center>
 		            </div>
 		            <div class="panel-body no-padding">
 		            	<div id="dailyprogress"></div>
@@ -68,11 +68,15 @@
 		                        <span class="badge badge-info">{{ $widgets['rejectedForDispatch'] }}</span>
 		                        <a href="#">Rejected Samples Awaiting Dispatch</a>
 		                    </li>
+		                    <li class="list-group-item">
+		                    	<span class="badge badge-warning">{{ $widgets['pendingSamplesOverTen'] }}</span>
+		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
+		                    </li>
 
 		            	@else
 	            		    <li class="list-group-item">
-		                        <span class="badge badge-danger">{{ $widgets['pendingSamples'] }}</span>
-		                        <a href="#">Samples awaiting testing</a>
+	            		    	<span class="badge badge-danger">{{ $widgets['pendingSamples'] }}</span>
+			                    <a href="#">Samples awaiting testing</a>
 		                    </li>
 		                    <li class="list-group-item ">
 		                        <span class="badge badge-info">{{ $widgets['batchesForApproval'] }}</span>
@@ -89,6 +93,10 @@
 		                    <li class="list-group-item">
 		                        <span class="badge badge-warning">{{ $widgets['rejectedForDispatch'][0]->rejectfordispatch }}</span>
 		                        <a href="#">Rejected samples awaiting dispatch.</a>
+		                    </li>
+		                    <li class="list-group-item">
+		                    	<span class="badge badge-warning">{{ $widgets['pendingSamplesOverTen'] }}</span>
+		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 		            	@endif
 		            	</ul>

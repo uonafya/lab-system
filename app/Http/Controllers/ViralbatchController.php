@@ -425,7 +425,7 @@ class ViralbatchController extends Controller
         $data = Lookup::get_viral_lookups();
         $data['batches'] = [$batch];
         // dd($data);
-        // return view('exports.viralsamples_summary', $data)->with('pageTitle', 'Individual Batches');
+        return view('exports.viralsamples_summary', $data)->with('pageTitle', 'Individual Batches');
         $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('summary.pdf');
     }

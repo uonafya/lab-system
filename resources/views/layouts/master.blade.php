@@ -58,12 +58,13 @@
 <div id="wrapper">
     <div class="small-header">
         <div class="hpanel">
-            <div class="panel-body">
-                <h6 class="font-light pull-right">
-                    Welcome, {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
+            <div class="panel-body" style="padding-top:.5em;padding-bottom:.1em;">
+                <h6 class="font-light pull-right" style="margin: 0px;">
+                    <strong>Welcome, {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}</strong>
+                    <p style="margin-top: .5em;margin-bottom: 0px;">{{ @Date("l, d F Y") }}</p>
                 </h6>
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="margin-top: .7em;">
                         <h2 class="font-light m-b-xs">
                             {{ $pageTitle ?? '' }}
                         </h2>
