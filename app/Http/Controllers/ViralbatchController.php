@@ -141,11 +141,10 @@ class ViralbatchController extends Controller
     {
         $viralsamples = $viralbatch->sample;
         $viralsamples->load(['patient']);
-        $viralbatch->load(['facility', 'receiver', 'creator']);
+        $viralbatch->load(['view_facility', 'receiver', 'creator.facility']);
         $data = Lookup::get_viral_lookups();
         $data['batch'] = $viralbatch;
         $data['samples'] = $viralsamples;
-        // dd($data);
 
         return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }

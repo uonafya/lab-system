@@ -29,7 +29,7 @@ class SampleController extends Controller
     {
         $data = Lookup::get_lookups();
         $samples = SampleView::with(['facility'])->where(['site_entry', 1])->get();
-        $data['samples'] => $samples;
+        $data['samples'] = $samples;
         return view('tables.poc_samples', $data)->with('pageTitle', 'POC Samples');
     }
 
@@ -67,7 +67,8 @@ class SampleController extends Controller
         if($submit_type == "cancel"){
             $batch->premature();
             $this->clear_session();
-            return redirect()->route('sample.create');
+            session(['toast_message' => "The batch {$batch->id} has been released."]);
+            return redirect("batch/{$batch->id}");
         }        
 
         if(!$batch){
@@ -159,11 +160,14 @@ class SampleController extends Controller
 
         }
 
+        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
+
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "release"){
             $this->clear_session();
             $batch->premature();
+            return redirect("batch/{$batch->id}");
         }
 
         $sample_count = session('batch_total') + 1;
@@ -172,11 +176,10 @@ class SampleController extends Controller
         if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
+            session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
+            return redirect("batch/{$batch->id}");
         }
 
-        session(['toast_message' => 'The sample has been created.']);
-
-        // return redirect()->route('sample.create');
         return back();
     }
 
@@ -208,7 +211,7 @@ class SampleController extends Controller
      */
     public function edit(Sample $sample)
     {
-        $sample->load(['patient.mother', 'batch']);
+        $sample->load(['patient.mother', 'batch.facility']);
         $data = Lookup::samples_form();
         $data['sample'] = $sample;
         return view('forms.samples', $data)->with('pageTitle', 'Samples');
@@ -279,13 +282,13 @@ class SampleController extends Controller
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
             if($viralpatient) $mother->patient_id = $viralpatient->id;
 
-            $mother->save();
+            $mother->pre_update();
             
             $data = $request->only($samples_arrays['patient']);
             $patient = new Patient;
             $patient->fill($data);
             $patient->mother_id = $mother->id;
-            $patient->save();
+            $patient->pre_update();
         }
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
@@ -297,6 +300,7 @@ class SampleController extends Controller
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){
+            session(['toast_message' => 'The site entry sample has been approved.']);
             return redirect('batch/site_approval/' . $batch->id);
         }
 
@@ -493,8 +497,19 @@ class SampleController extends Controller
 
     public function search(Request $request)
     {
+        $user = auth()->user();
         $search = $request->input('search');
-        $samples = Sample::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+
+        $samples = Sample::select('samples.id')
+            ->whereRaw("samples.id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
+            })
+            ->paginate(10);
         return $samples;
     }
 

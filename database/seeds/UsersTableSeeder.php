@@ -54,6 +54,7 @@ class UsersTableSeeder extends Seeder
 		        'oname' => '',
 		        'facility_id' => $facility->id,
 		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		        'password' => encrypt($facility->name)
 	    	]);
 
 	    	// if($key==100) break;
@@ -64,7 +65,7 @@ class UsersTableSeeder extends Seeder
 		    //     'oname' => '',
 		    //     'facility_id' => $facility->id,
 		    //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		    //     'password' => bcrypt('password'),
+		    //     'password' => bcrypt(encrypt($facility->name)),
 	    	// ];
 
 	    	// if($i == 200){

@@ -29,7 +29,7 @@
                               <div class="col-sm-8">
                                 <select class="form-control" required name="facility_id" id="facility_id">
                                     @isset($viralsample)
-                                        <option value="{{ $viralsample->patient->facility->id }}" selected>{{ $viralsample->patient->facility->facilitycode }} {{ $viralsample->patient->facility->name }}</option>
+                                        <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
                                     @endisset
                                 </select>
                               </div>
@@ -402,9 +402,9 @@
                             <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
                             <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
                                 
-                            @empty($batch)
+                            @isset($batch)
                                 <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
-                            @endempty
+                            @endisset
                         </div>
                     @endif
                 </div>

@@ -18,9 +18,32 @@
                 </div>
                 <div class="panel-body">
                     <div>
-                        <b>Facility: {{ $batch->facility->name ?? '' }} </b> <br />
-                        <b>Date Received: {{ $batch->my_date_format('datereceived') ?? '' }} </b> <br />
-                        <b>Date Entered: {{ $batch->my_date_format('created_at') }} </b> <br />
+                        <b>Batch: {{ $batch->id  ?? '' }} </b> <br />
+                        <b>Facility: {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }} </b> <br />
+                        <b>
+                            Entry Type: 
+                            @switch($batch->site_entry)
+                                @case(0)
+                                    {{ 'Lab Entry' }}
+                                    @break
+                                @case(1)
+                                    {{ 'Site Entry' }}
+                                    @break
+                                @default
+                                    @break
+                            @endswitch
+
+                            &nbsp; Date Entered: {{ $batch->my_date_format('created_at') }} &nbsp;
+                            Entered By: 
+                            @if($batch->creator->full_name != ' ')
+                                {{ $batch->creator->full_name }}
+                            @else
+                                {{ $batch->creator->facility->name ?? '' }}
+                            @endif 
+                        </b> <br />
+                        <b>Date Received: {{ $batch->my_date_format('datereceived')  ?? '' }} &nbsp; 
+                            Received By: {{ $batch->receiver->full_name ?? '' }} </b> <br />
+
                         @if($batch->high_priority)
                             <b>High Priority Batch </b> <br />
                         @endif
@@ -44,10 +67,12 @@
                                     <th>Sex</th>
                                     <th>Age</th>
                                     <th>DOB</th>
+
                                     <th>Sample Type</th>
                                     <th>Collection Date</th>
                                     <th>Received Status</th>
                                     <th>High Priority</th>
+
                                     <th>Current Regimen</th>
                                     <th>ART Initiation Date</th>
                                     <th>Justification</th>
@@ -68,7 +93,7 @@
                                             @endforeach
                                         </td>
                                         <td> {{ $sample->age }} </td>
-                                        <td> {{ $sample->patient->dob }} </td>
+                                        <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td>
                                             @foreach($sample_types as $sample_type)
                                                 @if($sample->sampletype == $sample_type->id)

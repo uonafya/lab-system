@@ -161,6 +161,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 		Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
 		Route::get('create/{machine_type}', 'WorksheetController@create')->name('create_any');
+		Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 		Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
 		Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
 		Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
@@ -186,6 +187,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 		Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
 		Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
+		Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 		Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 		Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
 		Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');

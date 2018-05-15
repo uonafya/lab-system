@@ -75,4 +75,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return "{$this->surname} {$this->oname}";
     }
+
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
 }

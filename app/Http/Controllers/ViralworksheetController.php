@@ -18,11 +18,14 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $date_start=NULL, $date_end=NULL)
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
+            ->when($worksheet_id, function ($query) use ($worksheet_id){
+                return $query->where('viralworksheets.id', $worksheet_id);
+            })
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
@@ -126,6 +129,7 @@ class ViralworksheetController extends Controller
 
         if($samples->count() != $machine->vl_limit){
             $worksheet->delete();
+            session(['toast_message' => "The worksheet could not be created."]);
             return back();
         }
 
@@ -145,7 +149,7 @@ class ViralworksheetController extends Controller
     public function show(Viralworksheet $Viralworksheet)
     {
         $Viralworksheet->load(['creator']);
-        $samples = Viralsample::where('worksheet_id', $Viralworksheet->id)->with(['patient'])->get();
+        $samples = Viralsample::where('worksheet_id', $Viralworksheet->id)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples];
 
@@ -155,6 +159,12 @@ class ViralworksheetController extends Controller
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
+    }
+
+    public function find(Viralworksheet $worksheet)
+    {
+        session(['toast_message' => 'Found 1 worksheet.']);
+        return $this->index(0, null, null, $worksheet->id);
     }
 
     /**
@@ -194,15 +204,15 @@ class ViralworksheetController extends Controller
     public function print(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+        $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
-        if($worksheet->machine_type == 2){
-            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
+        if($worksheet->machine_type == 1){
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
         }
         else{
-            return view('worksheets.other-table', $data)->with('pageTitle', 'Print Other Worksheet');
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
         }
     }
 
@@ -364,6 +374,7 @@ class ViralworksheetController extends Controller
         $worksheet->save();
 
         MiscViral::requeue($worksheet->id);
+        session(['toast_message' => "The worksheet has been updated with the results."]);
 
         return redirect('viralworksheet/approve/' . $worksheet->id);
     }
@@ -467,6 +478,7 @@ class ViralworksheetController extends Controller
                 $worksheet->datereviewed = $today;
                 $worksheet->reviewedby = $approver;
                 $worksheet->save();
+                session(['toast_message' => "The worksheet has been approved. It is awaiting the second approval before the results can be prepared for dispatch."]);
 
                 return redirect('/viralworksheet');
             }
@@ -485,6 +497,7 @@ class ViralworksheetController extends Controller
             $worksheet->datereviewed = $today;
             $worksheet->reviewedby = $approver;
             $worksheet->save();
+            session(['toast_message' => "The worksheet has been approved."]);
 
             return redirect('/viralbatch/dispatch');            
         }
