@@ -40,7 +40,7 @@ class ViralbatchController extends Controller
             $myurl = $myurl2 = url('viralbatch/index/' . $batch_complete); 
         }
 
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
 
         $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
