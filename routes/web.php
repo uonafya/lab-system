@@ -90,6 +90,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 	Route::post('district/search/', 'DistrictController@search')->name('district.search');
 	
+	Route::get('downloads/{type}', 'HomeController@download')->name('downloads');
+
 	Route::resource('district', 'DistrictController');
 
 	Route::get('facility/served', 'FacilityController@served');

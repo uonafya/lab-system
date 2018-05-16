@@ -157,7 +157,7 @@
             </li>
             <hr />
             <li>
-                <a href="#">Add POC VL Sample</a>
+                <a href="{{ url('viralsample/create_poc') }}">Add POC VL Sample</a>
             </li>
             <hr />
             <li>
@@ -177,7 +177,7 @@
             </li>
             <hr />
             <li>
-                <a href="#">POC User Guide</a>
+                <a href="{{ url('downloads/POC') }}">POC User Guide</a>
             </li>
             <hr />
         @endif
@@ -274,6 +274,8 @@
             <hr />
         @endif
         --}}
+            <li><a href="{{ url('downloads/EID') }}">Download VL Form</a></li>
+            <li><a href="{{ url('downloads/VL') }}">Download EID Form</a></li>
         <!-- </ul>
         </li>
         <li>
