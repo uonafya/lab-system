@@ -145,24 +145,41 @@
         @endif
         @if (auth()->user()->user_type_id == 5)
             <li>
-                <a href="#"><span class="nav-label">Samples</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="{{ url('sample/create') }}">Add</a></li>
-                    <li><a href="{{ url('batch') }}">View</a></li>
-                    <li><a href="{{ url('sample/create_poc') }}">Add POC</a></li>
-                    <li><a href="{{ url('sample/list_poc') }}">List POC</a></li>
-                </ul>
+                <a href="{{ url('sample/create') }}">Add EID Sample</a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="{{ url('viralsample/create') }}">Add</a></li>
-                    <li><a href="{{ url('viralbatch') }}">View</a></li>
-                </ul>
+                <a href="{{ url('viralsample/create') }}">Add VL Sample</a>
             </li>
             <hr />
-
+            <li>
+                <a href="{{ url('sample/create_poc') }}">Add POC EID Sample</a>
+            </li>
+            <hr />
+            <li>
+                <a href="#">Add POC VL Sample</a>
+            </li>
+            <hr />
+            <li>
+                <a href="#">Create POC EID Worklist</a>
+            </li>
+            <hr />
+            <li>
+                <a href="#">Create POC VL Worklist</a>
+            </li>
+            <hr />
+            <li>
+                <a href="#">Update POC EID Results</a>
+            </li>
+            <hr />
+            <li>
+                <a href="#">Update POC VL Results</a>
+            </li>
+            <hr />
+            <li>
+                <a href="#">POC User Guide</a>
+            </li>
+            <hr />
         @endif
             <!-- <li>
                 <a href="#"> <span class="nav-label">Search</span></a>

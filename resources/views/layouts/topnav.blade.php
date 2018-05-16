@@ -2,6 +2,17 @@
     .navbar.navbar-static-top a, .nav.navbar-nav li a {
         color: black;
     }
+    @media (min-width: 768px)
+    .navbar-nav {
+        float: left;
+        margin: 0;
+        margin-right: 2em;
+    }
+    .navbar.navbar-static-top a, .nav.navbar-nav li a {
+        color: black;
+        padding-left: 10px;
+        /* padding-right: 10px; */
+    }
 </style>
 <div id="header">
     <div class="">
@@ -82,6 +93,35 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
+            @if (Auth()->user()->user_type_id == 5)
+                <li class="">
+                    <a href="{{ url('batch') }}">EID Samples</a>
+                </li>
+                <li class="">
+                    <a href="#">EID Results</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('viralbatch') }}">VL Samples</a>
+                </li>
+                <li class="">
+                    <a href="#">VL Results</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
+                </li>
+                <li class="">
+                    <a href="#">VL POC Samples</a>
+                </li>
+                <li class="">
+                    <a href="#">POC Worklists</a>
+                </li>
+                <li class="">
+                    <a href="#">EID Reports</a>
+                </li>
+                <li class="">
+                    <a href="#">VL Reports</a>
+                </li>
+            @else
                 <li class="">
                     <a class="label-menu-corner" href="{{ url('home') }}">
                     <i class="pe-7s-home" style="font-size: 25px;"></i>
@@ -140,7 +180,7 @@
                     <a href="#">Kits</a>
                 </li>
                 @endif
-                
+            @endif
                 <li class="dropdown">
                         
                     <a href="{{ url('/logout') }}"

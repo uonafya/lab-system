@@ -28,7 +28,7 @@ class SampleController extends Controller
     public function list_poc()
     {
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->where(['site_entry', 1])->get();
+        $samples = SampleView::with(['facility'])->where(['site_entry' => 1])->get();
         $data['samples'] = $samples;
         return view('tables.poc_samples', $data)->with('pageTitle', 'POC Samples');
     }
