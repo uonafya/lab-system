@@ -60,10 +60,27 @@
         <div class="hpanel">
             <div class="panel-body" style="padding-top:.5em;padding-bottom:.1em;">
                 <h6 class="font-light pull-right" style="margin: 0px;">
-                    <strong>Welcome, {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}</strong>
+                    <strong>
+                        Welcome, 
+                        @if(Auth()->user()->user_type_id == 5)
+                            {{ $user->name }}
+                        @else
+                            {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
+                        @endif
+                    </strong>
                     <p style="margin-top: .5em;margin-bottom: 0px;">{{ @Date("l, d F Y") }}</p>
                 </h6>
                 <div class="row">
+                    @if (Auth()->user()->user_type_id == 5)
+                        <div class="col-md-3" style="margin-top: .7em;margin-bottom: .7em;">
+                            <h2 class="font-light m-b-xs">
+                                {{ $pageTitle ?? '' }}
+                            </h2>
+                        </div>
+                        <div class="col-md-6">
+                            
+                        </div>
+                    @else
                     <div class="col-md-3" style="margin-top: .7em;">
                         <h2 class="font-light m-b-xs">
                             {{ $pageTitle ?? '' }}
@@ -83,6 +100,7 @@
                         </button>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

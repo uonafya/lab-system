@@ -18,6 +18,7 @@ class DashboardComposer
 	
 	public $DashboardData = [];
 	public $tasks = [];
+    public $user = [];
 	function __construct()
 	{
 		$this->DashboardData['pendingSamples'] = self::pendingSamplesAwaitingTesting();
@@ -62,6 +63,17 @@ class DashboardComposer
 	{
 		
 	}
+
+    public function users(View $view)
+    {
+        if(!empty(auth()->user()->facility_id)) {
+            foreach(Facility::where('id', auth()->user()->facility_id)->get() as $key => $value) {
+                $this->user = $value;
+            }
+        }
+        
+        $view->with('user', $this->user);
+    }
 
 	public function pendingSamplesAwaitingTesting($over = false)
 	{
