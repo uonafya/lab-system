@@ -36,6 +36,35 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
+                @if (Auth()->user()->user_type_id == 5)
+                    <li class="">
+                        <a href="{{ url('batch') }}">EID Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('batch/index/4/1') }}">EID Results</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('viralbatch') }}">VL Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('viralbatch/index/4/1') }}">VL Results</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="#">VL POC Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="#">POC Worklists</a>
+                    </li>
+                    <li class="">
+                        <a href="#">EID Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="#">VL Reports</a>
+                    </li>
+                @else
                     <li class="">
                         <a href="
                             @if(session('testingSystem') == 'Viralload')
@@ -82,7 +111,7 @@
                         <a href="#">Kits</a>
                     </li>
                     @endif
-                
+                @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
                         onclick="event.preventDefault();
@@ -98,13 +127,13 @@
                     <a href="{{ url('batch') }}">EID Samples</a>
                 </li>
                 <li class="">
-                    <a href="#">EID Results</a>
+                    <a href="{{ url('batch/index/4/1') }}">EID Results</a>
                 </li>
                 <li class="">
                     <a href="{{ url('viralbatch') }}">VL Samples</a>
                 </li>
                 <li class="">
-                    <a href="#">VL Results</a>
+                    <a href="{{ url('viralbatch/index/4/1') }}">VL Results</a>
                 </li>
                 <li class="">
                     <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
