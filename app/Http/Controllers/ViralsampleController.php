@@ -56,7 +56,8 @@ class ViralsampleController extends Controller
         if($submit_type == "cancel"){
             $batch->premature();
             $this->clear_session();
-            return redirect()->route('viralsample.create');
+            session(['toast_message' => "The batch {$batch->id} has been released."]);
+            return redirect("viralbatch/{$batch->id}");
         }
 
         $highpriority = $request->input('highpriority');
@@ -153,12 +154,14 @@ class ViralsampleController extends Controller
             $viralsample->save();
 
         }
+        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
 
         $submit_type = $request->input('submit_type');
 
         if($submit_type == "release"){
             $this->clear_session();
             $batch->premature();
+            return redirect("viralbatch/{$batch->id}");
         }
 
         $sample_count = session('viral_batch_total') + 1;
@@ -167,6 +170,8 @@ class ViralsampleController extends Controller
         if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
+            session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
+            return redirect("viralbatch/{$batch->id}");
         }
 
         session(['toast_message' => 'The sample has been created.']);
@@ -195,7 +200,7 @@ class ViralsampleController extends Controller
      */
     public function edit(Viralsample $viralsample)
     {
-        $viralsample->load(['patient', 'batch']);
+        $viralsample->load(['patient', 'batch.facility']);
         $data = Lookup::viralsample_form();
         $data['viralsample'] = $viralsample;
         return view('forms.viralsamples', $data)->with('pageTitle', 'Edit Sample');
@@ -220,7 +225,6 @@ class ViralsampleController extends Controller
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
         $batch->pre_update();
-        $batch->save();
 
         $data = $request->only($viralsamples_arrays['patient']);
 
@@ -234,15 +238,16 @@ class ViralsampleController extends Controller
         }
         $viralpatient->fill($data);
         $viralpatient->pre_update();
-        $viralpatient->save();
 
         $viralsample->patient_id = $viralpatient->id;
         $viralsample->pre_update();
-        $viralsample->save();
+
+        session(['toast_message' => 'The sample has been updated.']);
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){
+            session(['toast_message' => 'The site entry sample has been approved.']);
             return redirect('viralbatch/site_approval/' . $batch->id);
         }
 
@@ -390,8 +395,19 @@ class ViralsampleController extends Controller
 
     public function search(Request $request)
     {
+        $user = auth()->user();
         $search = $request->input('search');
-        $samples = Viralsample::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(viralbatches.facility_id='{$user->facility_id}' OR viralbatches.user_id='{$user->id}')";
+
+        $samples = Viralsample::select('viralsamples.id')
+            ->whereRaw("viralsamples.id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')->whereRaw($string);
+            })
+            ->paginate(10);
         return $samples;
     }
 

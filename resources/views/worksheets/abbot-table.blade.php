@@ -74,17 +74,11 @@ width:1180px;
 				<td> {{ $worksheet->creator->full_name }} </td>
 				<td><strong>Expiry Dates</strong>	</td>
 
-				{{-- <td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString()  }} </td>
-				<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() }} </td>
-				<td> {{ $worksheet->controlexpirydate->toFormattedDateString() }} </td>
-				<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString()  }} </td>
-				<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() }} </td> --}}
-
-				<td> {{ $worksheet->sampleprepexpirydate }} </td>
-				<td> {{ $worksheet->bulklysisexpirydate }} </td>
-				<td> {{ $worksheet->controlexpirydate }} </td>
-				<td> {{ $worksheet->calibratorexpirydate }} </td>
-				<td> {{ $worksheet->amplificationexpirydate }} </td>
+				<td> {{ $worksheet->my_date_format('sampleprepexpirydate') }} </td>
+				<td> {{ $worksheet->my_date_format('bulklysisexpirydate') }} </td>
+				<td> {{ $worksheet->my_date_format('controlexpirydate') }} </td>
+				<td> {{ $worksheet->my_date_format('calibratorexpirydate') }} </td>
+				<td> {{ $worksheet->my_date_format('amplificationexpirydate') }} </td>
 			</tr>
 			<tr class="even">
 				<td><strong>Sorted By	</strong>    </td>
@@ -95,7 +89,20 @@ width:1180px;
 				<td>_____________________________	</td>
 			</tr>
 			<tr >
-				<th colspan="8" ><small> <strong> WORKSHEET SAMPLES [2 Controls]</strong></small>		</th>
+				<th colspan="8" ><small> <strong> WORKSHEET SAMPLES
+					@php
+						$class = get_class($worksheet);
+
+						if($class == "App\Viralworksheet"){
+							echo "[3 Controls]";
+							$vl = true;
+						}
+						else{
+							echo "[2 Controls]";
+							$vl = false;						
+						}
+
+					@endphp</strong></small>		</th>
 			</tr>
 		</table>
 		<table border="0" class="data-table">
@@ -121,12 +128,13 @@ width:1180px;
 
 					<td > 
 						{!! $rr !!} 
-						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
+						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
+											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Sample ID:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br /> 
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
-						<br /> 
-						{{ $sample->id or '' }}
 
 					</td>
 
@@ -148,12 +156,13 @@ width:1180px;
 
 					<td > 
 						{!! $rr !!} 
-						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
+						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
+											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Sample ID:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br />
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
-						<br /> 
-						{{ $sample->id or '' }}
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 
 					</td>
 
@@ -166,7 +175,11 @@ width:1180px;
 					@endif
 				@endforeach
 
-				<td align=center > PC </td><td  align=center > NC </td>
+				@if($vl)
+					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+				@else
+					<td align=center > PC </td><td  align=center > NC </td>
+				@endif
 			</tr>
 				
 		</table>

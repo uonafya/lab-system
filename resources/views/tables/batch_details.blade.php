@@ -11,9 +11,35 @@
             <div class="hpanel">
                 <div class="panel-body">
                     <div>
-                        <b>Facility: {{ $batch->facility->name ?? '' }} </b> <br />
-                        <b>Date Received: {{ $batch->my_date_format('datereceived')  ?? '' }} </b> <br />
-                        <b>Date Entered: {{ $batch->my_date_format('created_at') }} </b> <br />
+                        <b>Batch: {{ $batch->id  ?? '' }} </b> <br />
+                        <b>Facility: {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }} </b> <br />
+                        <b>
+                            Entry Type: 
+                            @switch($batch->site_entry)
+                                @case(0)
+                                    {{ 'Lab Entry' }}
+                                    @break
+                                @case(1)
+                                    {{ 'Site Entry' }}
+                                    @break
+                                @case(2)
+                                    {{ 'POC Entry' }}
+                                    @break
+                                @default
+                                    @break
+                            @endswitch
+                            &nbsp;
+
+                            Date Entered: {{ $batch->my_date_format('created_at') }} &nbsp;
+                            Entered By:
+                            @if($batch->creator->full_name != ' ')
+                                {{ $batch->creator->full_name }}
+                            @else
+                                {{ $batch->creator->facility->name ?? '' }}
+                            @endif 
+                        </b> <br />
+                        <b>Date Received: {{ $batch->my_date_format('datereceived')  ?? '' }} &nbsp; 
+                            Received By: {{ $batch->receiver->full_name ?? '' }} </b> <br />
                         <br />
                         <br />                        
                     </div>
@@ -21,23 +47,28 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="14"><center> Sample Log</center></th>
+                                    <th colspan="17"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
-                                    <th colspan="5">Patient Information</th>
+                                    <th colspan="6">Patient Information</th>
                                     <th colspan="3">Sample Information</th>
-                                    <th colspan="6">Mother Information</th>
+                                    <th colspan="8">Mother Information</th>
                                 </tr>
-                                <tr>
+                                <tr> 
                                     <th>No</th>
                                     <th>Patient ID</th>
                                     <th>Sex</th>
+                                    <th>DOB</th>
                                     <th>Age (Months)</th>
                                     <th>Infant Prophylaxis</th>
+
                                     <th>Date Collected</th>
                                     <th>Status</th>
                                     <th>Spots</th>
-                                    <th>HIV Status</th>
+
+                                    <th>CCC #</th>
+                                    <th>Age</th>
+                                    <th>Last Vl</th>
                                     <th>PMTCT Intervention</th>
                                     <th>Feeding Type</th>
                                     <th>Entry Point</th>
@@ -57,6 +88,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
+                                        <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td>
                                             @foreach($iprophylaxis as $iproph)
@@ -65,7 +97,8 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td> {{ $sample->datecollected }} </td>
+
+                                        <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
@@ -74,13 +107,10 @@
                                             @endforeach
                                         </td>
                                         <td> {{ $sample->spots }} </td>
-                                        <td>
-                                            @foreach($results as $result)
-                                                @if($sample->patient->mother->hiv_status == $result->id)
-                                                    {{ $result->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+
+                                        <td> {{ $sample->patient->mother->ccc_no ?? '' }} </td>
+                                        <td> {{ $sample->mother_age }} </td>
+                                        <td> {{ $sample->mother_last_result }} </td>
                                         <td>
                                             @foreach($interventions as $intervention)
                                                 @if($sample->mother_prophylaxis == $intervention->id)

@@ -40,7 +40,7 @@ class BatchController extends Controller
             $myurl = $myurl2 = url('batch/index/' . $batch_complete); 
         }
 
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
 
         $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
@@ -135,7 +135,7 @@ class BatchController extends Controller
     {
         $samples = $batch->sample;
         $samples->load(['patient.mother']);
-        $batch->load(['facility', 'receiver', 'creator']);
+        $batch->load(['view_facility', 'receiver', 'creator.facility']);
         $data = Lookup::get_lookups();
         $data['batch'] = $batch;
         $data['samples'] = $samples;

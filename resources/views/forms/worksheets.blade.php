@@ -24,9 +24,9 @@
             </div>
 
             @if (isset($worksheet))
-                {{ Form::open(['url' => '/worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+                {{ Form::open(['url' => '/worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
-                {{ Form::open(['url'=>'/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form']) }}
+                {{ Form::open(['url'=>'/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
             @endif
 
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >

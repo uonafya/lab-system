@@ -18,10 +18,13 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $date_start=NULL, $date_end=NULL)
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         // $state = session()->pull('worksheet_state', null); 
         $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
+        ->when($worksheet_id, function ($query) use ($worksheet_id){
+            return $query->where('worksheets.id', $worksheet_id);
+        })
         ->when($state, function ($query) use ($state){
             return $query->where('status_id', $state);
         })
@@ -36,7 +39,7 @@ class WorksheetController extends Controller
         ->orderBy('worksheets.created_at', 'desc')
         ->get();
 
-        $samples = $this->get_worksheets();
+        $samples = $this->get_worksheets($worksheet_id);
         $data = Lookup::worksheet_lookups();
 
         $worksheets->transform(function($worksheet, $key) use ($samples, $data){
@@ -421,6 +424,7 @@ class WorksheetController extends Controller
 
         if($samples->count() != $machine->eid_limit){
             $worksheet->delete();
+            session(['toast_message' => "The worksheet could not be created."]);
             return back();
         }
 
@@ -440,7 +444,7 @@ class WorksheetController extends Controller
     public function show(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples];
 
@@ -450,6 +454,12 @@ class WorksheetController extends Controller
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
         }
+    }
+
+    public function find(Worksheet $worksheet)
+    {
+        session(['toast_message' => 'Found 1 worksheet.']);
+        return $this->index(0, null, null, $worksheet->id);
     }
 
     /**
@@ -493,7 +503,7 @@ class WorksheetController extends Controller
     public function print(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient'])->get();
+        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
@@ -738,6 +748,7 @@ class WorksheetController extends Controller
         $path = $request->upload->store('public/results/eid'); 
 
         Misc::requeue($worksheet->id);
+        session(['toast_message' => "The worksheet has been updated with the results."]);
 
         return redirect('worksheet/approve/' . $worksheet->id)->with('pageTitle', 'Save Results');
     }
@@ -822,6 +833,7 @@ class WorksheetController extends Controller
                 $worksheet->datereviewed2 = $today;
                 $worksheet->reviewedby2 = $approver;
                 $worksheet->save();
+                session(['toast_message' => "The worksheet has been approved."]);
 
                 return redirect('/batch/dispatch');                 
             }
@@ -829,6 +841,7 @@ class WorksheetController extends Controller
                 $worksheet->datereviewed = $today;
                 $worksheet->reviewedby = $approver;
                 $worksheet->save();
+                session(['toast_message' => "The worksheet has been approved. It is awaiting the second approval before the results can be prepared for dispatch."]);
 
                 return redirect('/worksheet');
             }
@@ -847,6 +860,7 @@ class WorksheetController extends Controller
             $worksheet->datereviewed = $today;
             $worksheet->reviewedby = $approver;
             $worksheet->save();
+            session(['toast_message' => "The worksheet has been approved."]);
 
             return redirect('/batch/dispatch');            
         }

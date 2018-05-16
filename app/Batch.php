@@ -39,13 +39,13 @@ class Batch extends BaseModel
     {
         $this->input_complete = 1;
         $this->batch_full = 1;
-        $this->save();
+        $this->pre_update();
     }
 
     public function premature()
     {
         $this->input_complete = 1;
-        $this->save();
+        $this->pre_update();
     }
 
     public function outdated()
@@ -65,6 +65,11 @@ class Batch extends BaseModel
     public function facility()
     {
         return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
     }
 
     public function lab()

@@ -40,7 +40,7 @@ class ViralbatchController extends Controller
             $myurl = $myurl2 = url('viralbatch/index/' . $batch_complete); 
         }
 
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
 
         $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
@@ -141,11 +141,10 @@ class ViralbatchController extends Controller
     {
         $viralsamples = $viralbatch->sample;
         $viralsamples->load(['patient']);
-        $viralbatch->load(['facility', 'receiver', 'creator']);
+        $viralbatch->load(['view_facility', 'receiver', 'creator.facility']);
         $data = Lookup::get_viral_lookups();
         $data['batch'] = $viralbatch;
         $data['samples'] = $viralsamples;
-        // dd($data);
 
         return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }

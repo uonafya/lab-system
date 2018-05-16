@@ -107,12 +107,12 @@ width:1180px;
 
 					<td > 
 						{!! $rr !!} 
-						<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br> 
+						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
+											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Sample ID:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br /> 
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
-						<br /> 
-						{{ $sample->id or '' }}
 
 					</td>
 
@@ -136,12 +136,12 @@ width:1180px;
 
 					<td > 
 						{{ $rr }} 
-						<span class='style7'>Sample: {{ $sample->patient->patient or '' }}  {{$parent}}</span>
-						<br /> 
+						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
+											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Sample ID:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br />
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100" />
-						<br /> 
-						{{ $sample->id or '' }}
 
 					</td>
 
@@ -154,7 +154,11 @@ width:1180px;
 					@endif
 				@endforeach
 
-				<td  align=center colspan=2> PC </td><td  align=center colspan=3> NC </td>
+				@if($vl)
+					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+				@else
+					<td align=center > PC </td><td  align=center > NC </td>
+				@endif
 			</tr>
 				
 		</table>
