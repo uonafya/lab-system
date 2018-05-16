@@ -25,7 +25,8 @@ class ViralsampleController extends Controller
 
     public function nhrl_samples()
     {
-        $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get();
+        $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get(); 
+        $data['samples'] = $samples;
         return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
     }
 
@@ -126,17 +127,10 @@ class ViralsampleController extends Controller
                 return redirect()->route('viralsample.create');
             }
 
-            $patient = Viralpatient::find($patient_id);
+            $viralpatient = Viralpatient::find($patient_id);
             $data = $request->only($viralsamples_arrays['patient']);
-            $patient->fill($data);
-            $patient->save();
-
-            $data = $request->only($viralsamples_arrays['sample']);
-            $viralsample = new Viralsample;
-            $viralsample->fill($data);
-            $viralsample->batch_id = $batch->id;
-            $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
-            $viralsample->save();
+            $viralpatient->fill($data);
+            $viralpatient->save();
         }
 
         else{
@@ -144,16 +138,16 @@ class ViralsampleController extends Controller
             $viralpatient = new Viralpatient;
             $viralpatient->fill($data);
             $viralpatient->save();
-
-            $data = $request->only($viralsamples_arrays['sample']);
-            $viralsample = new Viralsample;
-            $viralsample->fill($data);
-            $viralsample->patient_id = $viralpatient->id;
-            $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
-            $viralsample->batch_id = $batch->id;
-            $viralsample->save();
-
         }
+
+        $data = $request->only($viralsamples_arrays['sample']);
+        $viralsample = new Viralsample;
+        $viralsample->fill($data);
+        $viralsample->patient_id = $viralpatient->id;
+        $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
+        $viralsample->batch_id = $batch->id;
+        $viralsample->save();
+
         session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
 
         $submit_type = $request->input('submit_type');

@@ -152,7 +152,7 @@
                             <label class="col-sm-4 control-label">Redraw</label>
 
                             <div class="col-sm-8">
-                                <label> <input type="checkbox" class="i-checks"> Check if PCR is 6 </label>
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Check if PCR is 6 </label>
                             </div>
                         </div>
 
@@ -338,8 +338,27 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">VL result within last 6 months</label>
-                            <div class="col-sm-8"><input class="form-control" id="ccc_no" name="ccc_no" type="text" value="{{ $sample->mother_last_result ?? '' }}"></div>
-                        </div>
+
+                            <div class="col-sm-8">
+                                <label> <input type="checkbox" class="i-checks" name="last_result" value="< LDL copies/ml"
+                                    @if(isset($sample) && $sample->mother_last_rcategory == 1)
+                                        checked
+                                    @endif
+
+                                 /> &lt; ldl copies per ml </label>
+                            </div>
+                        </div> 
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">VL result within last 6 months</label>
+                            <div class="col-sm-8"><input class="form-control" id="mother_last_result" name="mother_last_result" type="text"  number="number"
+
+                                    @if(isset($sample) && is_numeric($sample->mother_last_result))
+                                        value="{{ $sample->mother_last_result ?? '' }}"
+                                    @endif
+
+                                ></div>
+                        </div> 
 
                         {{--<!-- <div class="form-group">
                             <label class="col-sm-4 control-label">HIV Status</label>

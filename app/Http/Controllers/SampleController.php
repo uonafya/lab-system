@@ -95,6 +95,8 @@ class SampleController extends Controller
         }
 
         $new_patient = $request->input('new_patient');
+        $last_result = $request->input('last_result');
+        $mother_last_result = $request->input('mother_last_result');
 
         if($new_patient == 0){
             $patient_id = $request->input('patient_id');
@@ -120,14 +122,6 @@ class SampleController extends Controller
             if($viralpatient) $mother->patient_id = $viralpatient->id;
 
             $mother->pre_update();
-
-            $data = $request->only($samples_arrays['sample']);
-            $sample = new Sample;
-            $sample->fill($data);
-            $sample->batch_id = $batch->id;
-
-            $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
-            $sample->save();
         }
 
         else{
@@ -149,16 +143,27 @@ class SampleController extends Controller
             $patient->fill($data);
             $patient->mother_id = $mother->id;
             $patient->save();
-
-            $data = $request->only($samples_arrays['sample']);
-            $sample = new Sample;
-            $sample->fill($data);
-            $sample->patient_id = $patient->id;
-            $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
-            $sample->batch_id = $batch->id;
-            $sample->save();
-
         }
+
+        $data = $request->only($samples_arrays['sample']);
+        $sample = new Sample;
+        $sample->fill($data);
+        $sample->batch_id = $batch->id;
+        $sample->patient_id = $patient->id;
+
+        if($last_result){
+            $sample->mother_last_result = $last_result;
+            $sample->mother_last_rcategory = 1;
+        }
+        else if($mother_last_result){
+            $sample->mother_last_result = $mother_last_result;
+            $my = new \App\MiscViral;
+            $res = $my->set_rcategory($mother_last_result);
+            $sample->mother_last_rcategory = $res['rcategory'];
+        }
+
+        $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
+        $sample->save();
 
         session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
 
@@ -246,7 +251,9 @@ class SampleController extends Controller
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
-        // $sample->save();
+        
+        $last_result = $request->input('last_result');
+        $mother_last_result = $request->input('mother_last_result');
 
         $batch = Batch::find($sample->batch_id);
         $data = $request->only($samples_arrays['batch']);
@@ -289,6 +296,17 @@ class SampleController extends Controller
             $patient->fill($data);
             $patient->mother_id = $mother->id;
             $patient->pre_update();
+        }
+        
+        if($last_result){
+            $sample->mother_last_result = $last_result;
+            $sample->mother_last_rcategory = 1;
+        }
+        else if($mother_last_result){
+            $sample->mother_last_result = $mother_last_result;
+            $my = new \App\MiscViral;
+            $res = $my->set_rcategory($mother_last_result);
+            $sample->mother_last_rcategory = $res['rcategory'];
         }
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
