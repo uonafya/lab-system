@@ -39,7 +39,7 @@ class EidController extends Controller
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_age($datecollected, $dob);
         // $sex = Lookup::get_gender($gender);
-        $lab = 5;
+        $lab = $request->input('lab');
 
         $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->first();
         $fields = Lookup::samples_arrays();
