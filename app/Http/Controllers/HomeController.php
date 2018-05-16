@@ -97,10 +97,26 @@ class HomeController extends Controller
         return $county;
     }
 
+    public function download($type = 'EID')
+    {
+        if ($type == 'VL') {
+            $filename = 'VL_REQUISITION_FORM.pdf';
+        } elseif ($type == 'EID') {
+            $filename = 'EID_REQUISITION_FORM.pdf';
+        } elseif($type == 'POC') {
+            $filename = 'POC_USERGUIDE.pdf';
+        }
+        $path = storage_path('app/downloads/' . $filename);
+
+        return response()->download($path);
+    }
+
     public function test()
     {
         // dd(Synch::synch_eid_patients());
         // echo Synch::synch_eid_patients();
         echo Synch::synch_eid_batches();
     }
+
+
 }
