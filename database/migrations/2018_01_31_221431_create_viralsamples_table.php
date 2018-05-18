@@ -25,7 +25,7 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('receivedstatus')->unsigned()->nullable();            
 
             // This will be used instead
-            $table->double('age', 5, 2)->unsigned()->nullable()->index();
+            $table->float('age', 5, 2)->unsigned()->nullable()->index();
             $table->tinyInteger('age_category')->unsigned()->default(0);
             $table->tinyInteger('justification')->unsigned()->nullable();
             $table->string('other_justification', 50)->nullable();

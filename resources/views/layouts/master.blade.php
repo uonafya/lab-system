@@ -164,6 +164,10 @@
         });
 
         $(".confirmSubmit").on('submit', function(){
+            var message = $(this).attr("confirm_message");
+            if(message){
+                return confirm(message);
+            }
             return confirm('Are you sure you would like to submit?');
         });
 

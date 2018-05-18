@@ -36,28 +36,28 @@
                     </div>
                     <div class="panel-body">
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->batch->facility->name ?? '' }}">
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Patient</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->patient->patient ?? '' }}">
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Date Collected</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->datecollected ?? '' }}">
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Date Received</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->batch->datereceived ?? '' }}">

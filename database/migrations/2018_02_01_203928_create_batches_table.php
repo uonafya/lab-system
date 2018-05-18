@@ -23,7 +23,7 @@ class CreateBatchesTable extends Migration
             // 0 is default i.e. new
             // 1 is dispatched
             // 2 is staging i.e. all samples are ready, batch awaiting dispatch
-            $table->tinyInteger('batch_complete')->default(0);
+            $table->tinyInteger('batch_complete')->unsigned()->default(0);
 
             // 0 is for lab entry
             // 1 is for site entry

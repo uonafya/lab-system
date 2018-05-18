@@ -29,7 +29,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('mother_last_rcategory')->unsigned()->nullable();
 
             $table->tinyInteger('receivedstatus')->unsigned()->nullable();
-            $table->double('age', 7, 4)->unsigned()->nullable();
+            $table->float('age', 7, 4)->unsigned()->nullable();
 
             $table->boolean('redraw')->default(false);
             $table->tinyInteger('pcrtype')->unsigned()->nullable();
