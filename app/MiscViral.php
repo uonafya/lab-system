@@ -318,7 +318,7 @@ class MiscViral extends Common
         else{ return 0; }
     }
 
-    public function set_rcategory($result, $repeatt)
+    public function set_rcategory($result, $repeatt=null)
     {
         if(is_numeric($result)){
             if($result > 0 && $result < 1001){
@@ -335,6 +335,7 @@ class MiscViral extends Common
         if($repeatt == 0 && $data['rcategory'] == 5){
             $data = array_merge($data, ['labcomment' => 'Failed Test']);
         }
+        return $data;
     }
 
     public function get_rcategory($result)

@@ -36,6 +36,10 @@ Route::get('/addsample', function () {
 	return view('addsample');
 });
 
+Route::get('/config', function () {
+	return phpinfo();
+});
+
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
 

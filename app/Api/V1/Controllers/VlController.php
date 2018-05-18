@@ -31,6 +31,7 @@ class VlController extends Controller
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $dob = $request->input('dob');
+        $lab = $request->input('lab');
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
@@ -59,7 +60,7 @@ class VlController extends Controller
 
         
 
-        $batch->lab_id = 5;
+        $batch->lab_id = $lab;
         $batch->user_id = 0;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
