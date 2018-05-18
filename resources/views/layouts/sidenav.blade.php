@@ -274,8 +274,8 @@
             <hr />
         @endif
         --}}
-            <li><a href="{{ url('downloads/EID') }}">Download VL Form</a></li>
-            <li><a href="{{ url('downloads/VL') }}">Download EID Form</a></li>
+            <li><a href="{{ url('downloads/VL') }}">Download VL Form</a></li>
+            <li><a href="{{ url('downloads/EID') }}">Download EID Form</a></li>
         <!-- </ul>
         </li>
         <li>
