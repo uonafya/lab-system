@@ -17,38 +17,62 @@
                     Batch Details
                 </div>
                 <div class="panel-body">
-                    <div>
-                        <b>Batch: {{ $batch->id  ?? '' }} </b> <br />
-                        <b>Facility: {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }} </b> <br />
-                        <b>
-                            Entry Type: 
-                            @switch($batch->site_entry)
-                                @case(0)
-                                    {{ 'Lab Entry' }}
-                                    @break
-                                @case(1)
-                                    {{ 'Site Entry' }}
-                                    @break
-                                @default
-                                    @break
-                            @endswitch
-
-                            &nbsp; Date Entered: {{ $batch->my_date_format('created_at') }} &nbsp;
-                            Entered By: 
-                            @if($batch->creator->full_name != ' ')
-                                {{ $batch->creator->full_name }}
-                            @else
-                                {{ $batch->creator->facility->name ?? '' }}
-                            @endif 
-                        </b> <br />
-                        <b>Date Received: {{ $batch->my_date_format('datereceived')  ?? '' }} &nbsp; 
-                            Received By: {{ $batch->receiver->full_name ?? '' }} </b> <br />
-
+                    <div class="row">
+                         <div class="col-md-4">
+                            <p><strong>Batch:</strong> {{ $batch->id  ?? '' }}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <p><strong>Facility:</strong> {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }}</p>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <p>
+                                <strong>Entry Type: </strong>
+                                @switch($batch->site_entry)
+                                    @case(0)
+                                        {{ 'Lab Entry' }}
+                                        @break
+                                    @case(1)
+                                        {{ 'Site Entry' }}
+                                        @break
+                                    @case(2)
+                                        {{ 'POC Entry' }}
+                                        @break
+                                    @default
+                                        @break
+                                @endswitch
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Date Entered:</strong> {{ $batch->my_date_format('created_at') }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Entered By:</strong> 
+                                @if($batch->creator->full_name != ' ')
+                                    {{ $batch->creator->full_name }}
+                                @else
+                                    {{ $batch->creator->facility->name ?? '' }}
+                                @endif
+                            </p>
+                        </div>
                         @if($batch->high_priority)
-                            <b>High Priority Batch </b> <br />
-                        @endif
-                        <br />
-                        <br />                        
+                            <div class="col-md-4">
+                                <p><strong>Date Received:</strong> {{ $batch->my_date_format('datereceived')  ?? '' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="alert alert-warning">High Priority Batch</span>
+                            </div>
+                        @else
+                            <div class="col-md-4">
+                                <p><strong>Date Received:</strong> {{ $batch->my_date_format('datereceived')  ?? '' }}</p>
+                            </div>
+                            <div class="col-md-8">
+                                <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
+                            </div>
+                        @endif                        
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" >

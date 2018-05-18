@@ -91,9 +91,9 @@
                     <li class="">
                         <a href="
                             @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralworksheet/index/3') }}
+                                {{ url('viralbatch/index/4/1') }}
                             @else
-                                {{ url('worksheet/index/3') }}
+                                {{ url('batch/index/4/1') }}
                             @endif">Dispatched Results</a>
                     </li>
                     <li class="">
@@ -189,9 +189,9 @@
                 <li class="">
                     <a href="
                         @if(session('testingSystem') == 'Viralload')
-                            {{ url('viralworksheet/index/3') }}
+                            {{ url('viralbatch/index/4/1') }}
                         @else
-                            {{ url('worksheet/index/3') }}
+                            {{ url('batch/index/4/1') }}
                         @endif">Dispatched Results</a>
                 </li>
                 <li class="">
