@@ -12,6 +12,10 @@
 
         @if (isset($viralsample))
             {{ Form::open(['url' => '/viralsample/' . $viralsample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+
+            <div>
+                NB: If you edit the facility name, date received or date dispatched from the facility this will be reflected on the other samples in this batch. <br />                
+            </div>
         @else
             {{ Form::open(['url'=>'/viralsample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
         @endif
