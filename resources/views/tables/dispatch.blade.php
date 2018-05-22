@@ -17,6 +17,7 @@
                     Batches Awaiting Dispatch
                 </div>
                 <div class="panel-body">
+                    
                     <form  method="post" action="{{ url('batch/complete_dispatch') }}" name="worksheetform"
 
                         @if($batch_list)

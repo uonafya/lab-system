@@ -23,15 +23,6 @@
 
 Route::redirect('/', '/login');
 
-Route::get('/new', function(){
-	// $mother = \App\Mother::find(1);
-	// $mother->load('patient.sample');
-	// return $mother->toJson();
-	$batch = \App\Batch::find(1);
-	$batch->load('sample.patient.mother');
-	return $batch->toJson();
-});
-
 Route::get('/addsample', function () {
 	return view('addsample');
 });
@@ -81,6 +72,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
 		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
+		Route::get('site_approval_group/{batch}', 'BatchController@site_entry_approval_group');
+		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
+
 		Route::get('summary/{batch}', 'BatchController@summary');
 		Route::post('summaries', 'BatchController@summaries');
 		Route::get('individual/{batch}', 'BatchController@individual');
@@ -88,6 +82,26 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::post('search/', 'BatchController@search')->name('search');
 	});
 	Route::resource('batch', 'BatchController');
+
+
+	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
+		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
+		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
+		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@facility_batches');
+		Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
+		Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
+		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
+		Route::get('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group');
+		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
+		
+		Route::get('summary/{batch}', 'ViralbatchController@summary');
+		Route::post('summaries', 'ViralbatchController@summaries');
+		Route::get('individual/{batch}', 'ViralbatchController@individual');
+
+		Route::post('search/', 'ViralbatchController@search')->name('search');
+	});
+	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
 
@@ -102,22 +116,6 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
 	Route::resource('facility', 'FacilityController');
-
-	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
-		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
-		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
-		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@facility_batches');
-		Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
-		Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
-		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
-		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
-		Route::get('summary/{batch}', 'ViralbatchController@summary');
-		Route::post('summaries', 'ViralbatchController@summaries');
-		Route::get('individual/{batch}', 'ViralbatchController@individual');
-
-		Route::post('search/', 'ViralbatchController@search')->name('search');
-	});
-	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::get('/home', 'HomeController@index');
 
@@ -202,13 +200,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	});
 	Route::get('worksheetserverside/', 'WorksheetController@getworksheetserverside')->name('worksheetserverside');
 
-	Route::resource('worksheet', 'WorksheetController');
-
-	// Route::post('viralsample/new_patient', 'ViralsampleController@new_patient');
-	// Route::resource('viralsample', 'ViralsampleController');
-
-	// Route::get('viralbatch/dispatch/', 'ViralbatchController@batch_dispatch');
-	// Route::post('viralbatch/complete_dispatch/', 'ViralbatchController@confirm_dispatch');
+	Route::resource('worksheet', 'WorksheetController', ['except' => ['edit']]);
 
 
 	Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
@@ -227,7 +219,6 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::post('search/', 'ViralworksheetController@search')->name('search');
 
 	});
-
 	Route::resource('viralworksheet', 'ViralworksheetController', ['except' => ['edit']]);
 
 	Route::get('test', 'FacilityController@test');

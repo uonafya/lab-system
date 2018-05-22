@@ -76,7 +76,7 @@ class ViralpatientController extends Controller
         $data['samples'] = $samples;
         $data['patient'] = $viralpatient;
 
-        return view('tables.patient_samples', $data)->with('pageTitle', 'Patient Samples');
+        return view('tables.viralpatient_samples', $data)->with('pageTitle', 'Patient Samples');
     }
 
     /**

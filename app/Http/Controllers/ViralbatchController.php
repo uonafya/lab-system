@@ -342,7 +342,7 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator"])
+        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'viralbatches.user_id')
@@ -364,7 +364,6 @@ class ViralbatchController extends Controller
             $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $noresult + $rej;
             $batch->delays = '';
-            $batch->creator = $batch->creator;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->total = $total;
@@ -396,6 +395,58 @@ class ViralbatchController extends Controller
             $batch->save();
             return redirect('viralbatch/site_approval');
         }
+    }
+
+
+    public function site_entry_approval_group(Viralbatch $batch)
+    {
+        $samples = Viralsample::with(['patient'])->where('batch_id', $batch->id)->whereNull('receivedstatus')->get();
+
+        if($samples->count() > 0){            
+            $data = Lookup::viralsample_form();
+            $batch->load(['creator.facility', 'view_facility']);
+            $data['batch'] = $batch;
+            $data['samples'] = $samples;
+            $data['pageTitle'] = "Approve batch";
+            return view('forms.approve_batch', $data);
+        }
+        else{
+            return redirect('batch/site_approval');
+        }
+    }
+
+    public function site_entry_approval_group_save(Request $request, Viralbatch $batch)
+    {
+        $sample_ids = $request->input('samples');
+        $rejectedreason_array = $request->input('rejectedreason');
+        $submit_type = $request->input('submit_type');
+
+        if(!$sample_ids) return back();
+
+        foreach ($sample_ids as $key => $value) {
+            $sample = Viralsample::find($value);
+            if($sample->batch_id != $batch->id) continue;
+
+            $sample->labcomment = $request->input('labcomment');
+
+            if($submit_type == "accepted"){
+                $sample->receivedstatus == 1;
+            }else if($submit_type == "rejected"){
+                $sample->receivedstatus == 3;
+                $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
+            }
+            $sample->save();
+        }
+
+        $batch->received_by = auth()->user()->id;
+        $batch->datereceived = $request->input('datereceived');
+        $batch->save();
+
+        session(['toast_message' => 'The selected samples have been ' . $submit_type]);
+
+        $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+        if($sample) return back();
+        return redirect('viralbatch/site_approval');        
     }
 
     /**

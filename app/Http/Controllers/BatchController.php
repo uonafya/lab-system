@@ -278,7 +278,6 @@ class BatchController extends Controller
             $total = $noresult + $rej;
 
             $batch->delays = '';
-            $batch->creator = $batch->creator;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->total = $total;
@@ -292,6 +291,8 @@ class BatchController extends Controller
 
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '']);
     }
+
+
 
     public function site_entry_approval(Batch $batch)
     {
@@ -310,6 +311,61 @@ class BatchController extends Controller
             $batch->save();
             return redirect('batch/site_approval');
         }
+    }
+
+
+    public function site_entry_approval_group(Batch $batch)
+    {
+        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereNull('receivedstatus')->get();
+
+        if($samples->count() > 0){            
+            $data = Lookup::samples_form();
+            $batch->load(['creator.facility', 'view_facility']);
+            $data['batch'] = $batch;
+            $data['samples'] = $samples;
+            $data['pageTitle'] = "Approve batch";
+            return view('forms.approve_batch', $data);
+        }
+        else{
+            return redirect('batch/site_approval');
+        }
+    }
+
+    public function site_entry_approval_group_save(Request $request, Batch $batch)
+    {
+        $sample_ids = $request->input('samples');
+        $rejectedreason_array = $request->input('rejectedreason');
+        $spots_array = $request->input('spots');
+        $submit_type = $request->input('submit_type');
+
+        if(!$sample_ids) return back();
+
+        foreach ($sample_ids as $key => $value) {
+            $sample = Sample::find($value);
+            if($sample->batch_id != $batch->id) continue;
+
+            $sample->spots = $spots_array[$key] ?? 5;
+            $sample->labcomment = $request->input('labcomment');
+
+
+            if($submit_type == "accepted"){
+                $sample->receivedstatus == 1;
+            }else if($submit_type == "rejected"){
+                $sample->receivedstatus == 3;
+                $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
+            }
+            $sample->save();
+        }
+
+        $batch->received_by = auth()->user()->id;
+        $batch->datereceived = $request->input('datereceived');
+        $batch->save();
+
+        session(['toast_message' => 'The selected samples have been ' . $submit_type]);
+
+        $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+        if($sample) return back();
+        return redirect('batch/site_approval');        
     }
 
     /**

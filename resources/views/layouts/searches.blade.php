@@ -10,8 +10,8 @@
 		set_select_patient("patient_search", "{{ url('/patient/search') }}", 2, "Search for patient");
 		set_select_patient("viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for patient");
 
-		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for patient");
-		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for patient");
+		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for patient", true);
+		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for patient", true);
 
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
 		set_select("viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet", true);
@@ -71,7 +71,7 @@
 		}	
 	}
 	
-	function set_select_patient(div_name, url, minimum_length, placeholder, send_url=false) {
+	function set_select_patient(div_name, url, minimum_length, placeholder, send_url=true) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({

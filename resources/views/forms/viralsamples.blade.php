@@ -382,11 +382,11 @@
                 <div class="hpanel">
                     <div class="panel-body">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
+                            <div class="col-sm-8"><textarea  class="form-control" name="comments"> {{ $viralsample->comments ?? '' }} </textarea></div>
                         </div>
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
+                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"> {{ $viralsample->labcomment ?? '' }} </textarea></div>
                             </div>
                         @endif
                     </div>

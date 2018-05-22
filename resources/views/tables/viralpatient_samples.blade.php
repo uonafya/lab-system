@@ -18,7 +18,6 @@
                                     <th>Facility</th>
                                     <th>Batch No</th>
                                     <th>Received Status</th>
-                                    <th>Spots</th>
                                     <th>Date Collected</th>
                                     <th>Date Received</th>
                                     <th>Worksheet</th>
@@ -44,7 +43,6 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td> {{ $sample->spots ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
                                         <td> {{ $sample->worksheet_id ?? '' }} </td>
@@ -52,16 +50,10 @@
                                         <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
                                         <td> {{ $sample->run ?? '' }} </td>
-                                        <td>
-                                            @foreach($results as $result)
-                                                @if($sample->result == $result->id)
-                                                    {{ $result->name ?? '' }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->result ?? '' }} </td>
                                         <td>
                                             @if($sample->batch->batch_complete == 1)
-                                                <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                                <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a>
                                             @endif
                                         </td>
                                     </tr>
