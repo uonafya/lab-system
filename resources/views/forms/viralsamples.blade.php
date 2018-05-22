@@ -164,7 +164,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" required class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                    <input type="text" id="initiation_date" class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>
@@ -393,20 +393,28 @@
                 </div>
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
-                    @if (isset($viralsample))
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">Update Sample</button>
-                        </div>
-                    @else
-                        <div class="col-sm-8 col-sm-offset-2">
-                            <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
-                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
-                                
-                            @isset($batch)
-                                <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
-                            @endisset
-                        </div>
-                    @endif
+                    <center>
+                        @if (isset($viralsample))
+                            <div class="col-sm-4 col-sm-offset-4">
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">
+                                        @if (isset($site_entry_approval))
+                                            Approve Sample
+                                        @else
+                                            Update Sample
+                                        @endif
+                                </button>
+                            </div>
+                        @else
+                            <div class="col-sm-8 col-sm-offset-2">
+                                <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
+                                    
+                                @isset($batch)
+                                    <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
+                                @endisset
+                            </div>
+                        @endif
+                    </center>
                 </div>
             </div>
         </div>
@@ -430,7 +438,8 @@
            ,
             rules: {
                 dob: {
-                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
+                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"],
+                    lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"],

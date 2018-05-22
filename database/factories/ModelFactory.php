@@ -64,8 +64,7 @@ $factory->define(App\Sample::class, function (Faker $faker) {
 $factory->define(App\Patient::class, function (Faker $faker) {
     return [
         'patient' => $faker->bothify('#####-?????'),
-        // 'mother_id' => rand(1, 100),
-        'mother_id' => 1,
+        'mother_id' => rand(1, 50),
         'facility_id' => rand(1, 1000),
         'entry_point' => rand(1, 5),
         'dob' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),

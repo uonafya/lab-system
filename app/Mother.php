@@ -27,8 +27,10 @@ class Mother extends BaseModel
 
     public function calc_age()
     {
-        $today = date("Y-m-d");
-        $this->age = \App\Lookup::calculate_viralage($today, $this->dob);
+        if($this->mother_dob){
+            $today = date("Y-m-d");
+            $this->age = \App\Lookup::calculate_viralage($today, $this->mother_dob);
+        }
     }
 
     

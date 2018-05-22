@@ -162,7 +162,7 @@
                                             </td>
                                             <td> 
                                                 @if($batch->approval)
-                                                    <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval</a>
+                                                    <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval ({{ $batch->sample_count ?? 0 }}) </a>
                                                 @else
                                                     <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
 

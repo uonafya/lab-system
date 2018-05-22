@@ -4,99 +4,50 @@
     @endcomponent
 
 @section('content')
-
-<!-- <div class="normalheader ">
-    <div class="hpanel">
-        <div class="panel-body">
-            <a class="small-header-action" href="#">
-                <div class="clip-header">
-                    <i class="fa fa-arrow-up"></i>
-                </div>
-            </a>
-
-            <div id="hbreadcrumb" class="pull-right m-t-lg">
-                <ol class="hbreadcrumb breadcrumb">
-                    <li><a href="index-2.html">Dashboard</a></li>
-                    <li>
-                        <span>Tables</span>
-                    </li>
-                    <li class="active">
-                        <span>DataTables</span>
-                    </li>
-                </ol>
-            </div>
-            <h2 class="font-light m-b-xs">
-                DataTables
-            </h2>
-            <small>Advanced interaction controls to any HTML table</small>
-        </div>
-    </div>
-</div> -->
- 
 <div class="content">
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
-                <div class="panel-heading">
-                    <div class="panel-tools">
-                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
-                    </div>
-                    Standard table
-                </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" >
+                        <table class="table table-striped table-bordered table-hover data-table" >
                             <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Patient</th>
                                     <th>Facility</th>
-                                    <th>Batch No</th>
-                                    <th>Received Status</th>
-                                    <th>Sample Type</th>
-                                    <th>Date Collected</th>
-                                    <th>Date Received</th>
-                                    <th>Worksheet</th>
-                                    <th>Date Tested</th>
-                                    <th>Date Modified</th>
-                                    <th>Date Dispatched</th>
-                                    <th>Run</th>
-                                    <th>Result</th>
-                                    <th>Task</th>
+                                    <th>Patient Name</th>
+                                    <th>Sex</th>
+                                    <th>DOB</th>
+                                    <th>Initiation Date</th>
+                                    <th># Samples</th>
+                                    <th>Edit Patient</th>
+                                    <th>Merge With Another Patient</th>
+                                    <th>Transfer to Another Facility</th>
                                 </tr>
                             </thead>
                             <tbody> 
-                                @foreach($samples as $key => $sample)
+                                @foreach($patients as $key => $patient)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $patient->patient }} </td>
-                                        <td> {{ $patient->facility->name }} </td>
-                                        <td> {{ $sample->batch_id }} </td>
+                                        <td> {{ $patient->patient ?? '' }} </td>
+                                        <td> {{ $facility->name ?? $patient->facility->name ?? '' }} </td>
+                                        <td> {{ $patient->patient_name ?? '' }} </td>
+                                        <td> {{ $patient->gender }} </td>
+                                        <td> {{ $patient->my_date_format('dob') ?? '' }} </td>
+                                        <td> {{ $patient->my_date_format('initiation_date') ?? '' }} </td>
+                                        <td> {{ $patient->sample_count ?? '' }} </td>
+
                                         <td>
-                                            @foreach($received_statuses as $received_status)
-                                                @if($sample->receivedstatus == $received_status->id)
-                                                    {{ $received_status->name }}
-                                                @endif
-                                            @endforeach
+                                            <a href="{{ url('/viralpatient/' . $patient->id . '/edit' ) }} " target='_blank'>Edit</a>
                                         </td>
-                                        <td> {{ $sample->spots }} </td>
-                                        <td> {{ $sample->datecollected }} </td>
-                                        <td> {{ $sample->batch->datereceived }} </td>
-                                        <td> {{ $sample->worksheet_id }} </td>
-                                        <td> {{ $sample->datetested }} </td>
-                                        <td> {{ $sample->datemodified }} </td>
-                                        <td> {{ $sample->batch->datedispatched }} </td>
-                                        <td> {{ $sample->run }} </td>
+
                                         <td>
-                                            @foreach($results as $result)
-                                                @if($sample->result == $result->id)
-                                                    {{ $result->name }}
-                                                @endif
-                                            @endforeach
+                                            <a href="{{ url('/viralpatient/' . $patient->id . '/merge' ) }} " target='_blank'>Merge</a>
                                         </td>
+
                                         <td>
-                                            <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                            <a href="{{ url('/viralpatient/' . $patient->id . '/transfer' ) }} " target='_blank'>Transfer</a>
                                         </td>
                                     </tr>
                                 @endforeach

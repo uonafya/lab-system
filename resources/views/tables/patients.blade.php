@@ -36,11 +36,9 @@
                                             {{ $entry_points->where('id', $patient->entry_point)->first()->name ?? '' }}
                                         </td>
                                         <td> {{ $patient->patient_name ?? '' }} </td>
-                                        <td>
-                                            {{ $genders->where('id', $patient->sex)->first()->gender_description ?? '' }}
-                                        </td>
+                                        <td> {{ $patient->gender }} </td>
                                         <td> {{ $patient->my_date_format('dob') ?? '' }} </td>
-                                        <td> {{ $patient->sample->count() ?? '' }} </td>
+                                        <td> {{ $patient->sample_count ?? '' }} </td>
 
                                         <td>
                                             <a href="{{ url('/patient/' . $patient->id . '/edit' ) }} " target='_blank'>Edit</a>

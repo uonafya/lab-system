@@ -138,8 +138,19 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::put('{patient}/transfer', 'PatientController@transfer_patient');
 	});
 	Route::resource('patient', 'PatientController');
-	
-	Route::post('viralpatient/search/', 'ViralpatientController@search');
+
+	Route::prefix('viralpatient')->name('viralpatient.')->group(function () {
+		Route::post('search/{facility_id?}/{female?}', 'ViralpatientController@search');
+		Route::get('index/{facility_id?}', 'ViralpatientController@index');	
+
+		// Merging of patients	
+		Route::get('{patient}/merge', 'ViralpatientController@merge');		
+		Route::put('{patient}/merge', 'ViralpatientController@merge_patients');	
+
+		// Transfer patient to a new facility	
+		Route::get('{patient}/transfer', 'ViralpatientController@transfer');		
+		Route::put('{patient}/transfer', 'ViralpatientController@transfer_patient');
+	});
 	Route::resource('viralpatient', 'ViralpatientController');
 
 

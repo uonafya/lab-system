@@ -168,9 +168,6 @@
                             </div>                            
                         </div>
 
-
-
-
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Sex</label>
                             <div class="col-sm-8">
@@ -256,7 +253,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="patient">
+                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="enrollment_ccc_no">
                             </div>
                         </div>
 
@@ -532,7 +529,13 @@
 
                         @if (isset($sample))
                             <div class="col-sm-4 col-sm-offset-4">
-                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">Update Sample</button>
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">
+                                    @if (isset($site_entry_approval))
+                                        Approve Sample
+                                    @else
+                                        Update Sample
+                                    @endif
+                                </button>
                             </div>
                         @else
                             <div class="col-sm-10 col-sm-offset-1">

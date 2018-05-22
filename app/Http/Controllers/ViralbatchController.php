@@ -342,11 +342,14 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'creator.name as creator'])
+        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator"])
+            ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'viralbatches.user_id')
             ->whereNull('received_by')
+            ->whereNull('receivedstatus')
             ->where('site_entry', 1)
+            ->groupBy('viralbatches.id')
             ->paginate();
             
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -385,6 +388,7 @@ class ViralbatchController extends Controller
             $viralsample->load(['patient', 'batch']);
             $data = Lookup::viralsample_form();
             $data['viralsample'] = $viralsample;
+            $data['site_entry_approval'] = true;
             return view('forms.viralsamples', $data);
         }
         else{

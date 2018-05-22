@@ -257,11 +257,14 @@ class BatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Batch::select(['batches.*', 'facilitys.name', 'creator.name as creator'])
+        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, 'users.oname")
+            ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
             ->whereNull('received_by')
+            ->whereNull('receivedstatus')
             ->where('site_entry', 1)
+            ->groupBy('batches.id')
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -299,7 +302,8 @@ class BatchController extends Controller
             $sample->load(['patient.mother', 'batch']);
             $data = Lookup::samples_form();
             $data['sample'] = $sample;
-            return view('forms.samples', $data);
+            $data['site_entry_approval'] = true;
+            return view('forms.samples', $data); 
         }
         else{
             $batch->received_by = auth()->user()->id;

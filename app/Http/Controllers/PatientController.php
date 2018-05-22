@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Patient;
+use App\Viralpatient;
 use App\Sample;
+use App\Mother;
 use App\Lookup;
 use Illuminate\Http\Request;
 
@@ -24,7 +26,7 @@ class PatientController extends Controller
         // if(!$facility_id && !$facility_user) abort(404);
 
         $patients = Patient::with(['facility'])
-        ->with(['sample' => function ($query){
+        ->withCount(['sample' => function ($query){
             $query->where('repeatt', 0);
         } ])
         ->when($facility_user, function($query) use ($user){
@@ -76,7 +78,7 @@ class PatientController extends Controller
         $data['samples'] = $samples;
         $data['patient'] = $patient;
 
-        return view('tables.patient_samples', $data)->with('pageTitle', 'Patients');
+        return view('tables.patient_samples', $data)->with('pageTitle', 'Patient Samples');
     }
 
     /**
@@ -87,7 +89,11 @@ class PatientController extends Controller
      */
     public function edit(Patient $patient)
     {
-        //
+        $patient->load(['mother', 'facility']);
+        $patient->mother->calc_age();
+        $data = Lookup::get_lookups();
+        $data['patient'] = $patient;
+        return view('forms.patients', $data)->with('pageTitle', 'Patients');
     }
 
     /**
@@ -99,7 +105,25 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient)
     {
-        //
+        $samples_arrays = Lookup::samples_arrays();
+        $data = $request->only($samples_arrays['patient']);
+        $patient->fill($data);
+        $patient->ccc_no = $request->input('enrollment_ccc_no');
+        $patient->pre_update();
+
+        $data = $request->only($samples_arrays['mother']);
+        $mother = Mother::find($patient->mother_id);
+        $mother->mother_dob = Lookup::calculate_mother_dob(date('Y-m-d'), $request->input('mother_age')); 
+        $mother->fill($data);
+
+        $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        $mother->pre_update();
+
+        session(['toast_message' => "The patient has been updated."]);
+
+        return redirect('patient/index/' . $patient->facility_id);
     }
 
     /**

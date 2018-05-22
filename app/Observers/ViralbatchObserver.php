@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Viralbatch;
+use App\Viralpatient;
 use App\ViralsampleView;
 
 use DB;
@@ -23,9 +24,12 @@ class ViralbatchObserver
             $samples = ViralsampleView::where('batch_id', $viralbatch->id)->get();
             $patient_ids = $samples->pluck(['patient_id'])->toArray();
 
-            $time = date("Y-m-d H:i:s");
+            $patients = Viralpatient::whereIn('id', $patient_ids)->get();
 
-            DB::table('viralpatients')->whereIn('id', $patient_ids)->update(['facility_id' => $batch->facility_id, 'updated_at' => $time]);
+            foreach ($patients as $key => $patient) {
+                $patient->facility_id = $viralbatch->facility_id;
+                $patient->pre_update();
+            }
         }
     }
 }
