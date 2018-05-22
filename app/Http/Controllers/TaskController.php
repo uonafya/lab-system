@@ -7,6 +7,7 @@ use App\Taqmandeliveries;
 use App\Abbotdeliveries;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
+use App\Requisition;
 
 class TaskController extends Controller
 {
@@ -15,16 +16,21 @@ class TaskController extends Controller
     public function index()
     {
     	$data = $this->getKitsEntered();
+
     	if (($data['eidtaqkits']  > 0 && $data['vltaqkits'] > 0) && ($data['eidabkits']  > 0 && $data['vlabkits'] > 0))
 		{
 
 		}else {
 			$data['submittedstatus'] = 5;
 		}
+		
 		$month = date('m')-1;
         $data['equipment'] = LabEquipmentTracker::where('year', date('Y'))->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->count();
-    	return view('tasks.home')->with('pageTitle', 'Lab Dashboard');
+        $data['requisitions'] = count($this->getRequisitions());
+
+        $data = (object) $data;
+    	return view('tasks.home' compact($data))->with('pageTitle', 'Lab Dashboard');
     }
 
     public function getKitsEntered(){
@@ -40,7 +46,12 @@ class TaskController extends Controller
 
     public function getRequisitions()
     {
-    	
+    	$currentmonth = date('m');
+    	$currentyear = date('Y');
+
+    	$model = Requisition::whereRaw("MONTH(dateapproved) <> $currentmonth")->where('status', 1)->where('flag', 1)
+    						->whereRaw("YEAR(dateapproved) = $currentyear")->whereNull('datesubmitted')->get();
+    	return $model;
     }
 
     public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
