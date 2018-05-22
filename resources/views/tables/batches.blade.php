@@ -85,7 +85,11 @@
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <a class="closebox"><i class="fa fa-times"></i></a>
                     </div>
-                    Batches table
+                    @if(isset($site_approval))
+                        Site Entry Batches Awaiting Approval [{{ $batches->count() }}]
+                    @else
+                        Batches table
+                    @endif
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">

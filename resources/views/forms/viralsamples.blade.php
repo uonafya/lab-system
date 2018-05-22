@@ -398,7 +398,7 @@
                             <div class="col-sm-4 col-sm-offset-4">
                                 <button class="btn btn-primary" type="submit" name="submit_type" value="add">
                                         @if (isset($site_entry_approval))
-                                            Approve Sample
+                                            Save & Load Next Sample in Batch for Approval
                                         @else
                                             Update Sample
                                         @endif
