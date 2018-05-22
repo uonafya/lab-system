@@ -127,6 +127,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::post('patient/search/', 'PatientController@search');
 	Route::resource('patient', 'PatientController');
+
+	Route::get('/pending', 'TaskController@index')->name('pending');
 	
 	Route::post('viralpatient/search/', 'ViralpatientController@search');
 	Route::resource('viralpatient', 'ViralpatientController');
