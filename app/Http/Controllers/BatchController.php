@@ -376,6 +376,11 @@ class BatchController extends Controller
      */
     public function individual(Batch $batch)
     {
+        if(!$batch->dateindividualresultprinted){
+            $batch->dateindividualresultprinted = date('Y-m-d');
+            $batch->pre_update();
+        }
+
         $samples = $batch->sample;
         $samples->load(['patient.mother']);
         $batch->load(['facility', 'lab', 'receiver', 'creator']);
@@ -394,6 +399,11 @@ class BatchController extends Controller
      */
     public function summary(Batch $batch)
     {
+        if(!$batch->datebatchprinted){
+            $batch->datebatchprinted = date('Y-m-d');
+            $batch->pre_update();
+        }
+
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
         $data['batches'] = [$batch];
@@ -405,6 +415,14 @@ class BatchController extends Controller
     {
         $batch_ids = $request->input('batch_ids');
         $batches = Batch::whereIn('id', $batch_ids)->with(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator'])->get();
+
+        foreach ($batches as $key => $batch) {
+            if(!$batch->datebatchprinted){
+                $batch->datebatchprinted = date('Y-m-d');
+                $batch->pre_update();
+            }
+        }
+
         $data = Lookup::get_lookups();
         $data['batches'] = $batches;
         $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');

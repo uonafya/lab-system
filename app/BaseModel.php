@@ -37,4 +37,14 @@ class BaseModel extends Model
         if($this->synched == 1 && $this->isDirty()) $this->synched = 2;
         $this->save();
     }
+
+    public function pre_delete()
+    {
+        if($this->synched == 1){
+            $this->synched = 3;
+        }else{
+            $this->delete();
+        }
+        
+    }
 }
