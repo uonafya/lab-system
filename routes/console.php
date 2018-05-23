@@ -16,3 +16,11 @@ use Illuminate\Foundation\Inspiring;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+Artisan::command('input_complete:eid', function(){
+	\App\Common::input_complete_batches(\App\Batch::class);
+})->describe();
+
+Artisan::command('input_complete:vl', function(){
+	\App\Common::input_complete_batches(\App\Viralbatch::class);
+})->describe();

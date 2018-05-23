@@ -51,11 +51,6 @@ Route::get('error', function(){
 	return view('errors.error', ['code' => '500', 'title' => 'Internal server error', 'description' => 'Sorry, there was an internal server error that occured. Please try again later']);
 });
 
-// Route::get('/home', function () {
-// 	return view('home');
-// });
-
-Route::get('/home', 'HomeController@index');
 Route::get('/synch', 'HomeController@test');
 
 Route::middleware(['web', 'auth'])->group(function(){

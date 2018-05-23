@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+
 class Common
 {
 
@@ -131,10 +133,16 @@ class Common
 				
 			}
 
-
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
+
+	public static function input_complete_batches($batch_model)
+	{
+		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+	}
+
+
 
 
 
