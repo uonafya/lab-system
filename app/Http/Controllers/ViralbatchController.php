@@ -408,7 +408,7 @@ class ViralbatchController extends Controller
             $data['batch'] = $batch;
             $data['samples'] = $samples;
             $data['pageTitle'] = "Approve batch";
-            return view('forms.approve_batch', $data);
+            return view('forms.approve_viralbatch', $data);
         }
         else{
             return redirect('batch/site_approval');
