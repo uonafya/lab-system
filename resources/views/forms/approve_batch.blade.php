@@ -111,7 +111,7 @@
                                             <td> {{ $key+1 }} </td>
                                             <td>
                                                 <div align='center'>
-                                                    <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                                    <input name='samples[]' type='checkbox' class='mychecks' value='{{ $sample->id }}' />
                                                 </div>
                                             </td>
 
@@ -235,12 +235,12 @@
         $("#check_all").on('click', function(){
             var str = $(this).html();
             if(str == "Check All"){
+                $(".mychecks").attr('checked', true);
                 $(this).html("Uncheck All");
-                $(".checks").attr('checked', true);
             }
             else{
-                $(this).html("Check All");
-                $(".checks").attr('checked', false);            
+                $(".mychecks").attr('checked', false); 
+                $(this).html("Check All");           
             }
         });
 
