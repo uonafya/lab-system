@@ -257,9 +257,8 @@ class BatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, 'users.oname")
+        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
-            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
             ->whereNull('received_by')
