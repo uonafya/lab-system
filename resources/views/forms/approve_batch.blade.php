@@ -236,7 +236,7 @@
             var str = $(this).html();
             if(str == "Check All"){
                 $(this).html("Uncheck All");
-                $(".checks").attr('checked', 'checked');
+                $(".checks").attr('checked', true);
             }
             else{
                 $(this).html("Check All");
