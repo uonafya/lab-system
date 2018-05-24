@@ -76,12 +76,12 @@
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
-                                        <th colspan="16"><center> Sample Log</center></th>
+                                        <th colspan="15"><center> Sample Log</center></th>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
                                         <th colspan="4">Patient Information</th>
-                                        <th colspan="4">Sample Information</th>
+                                        <th colspan="3">Sample Information</th>
                                         <th colspan="5">History Information</th>
                                         <th colspan="1">Rejected Reason</th>
                                     </tr>
@@ -96,7 +96,6 @@
 
                                         <th>Sample Type</th>
                                         <th>Collection Date</th>
-                                        <th>Received Status</th>
                                         <th>High Priority</th>
 
                                         <th>Current Regimen</th>
@@ -134,13 +133,6 @@
                                                 @endforeach
                                             </td>
                                             <td> {{ $sample->datecollected }} </td>
-                                            <td>
-                                                @foreach($received_statuses as $received_status)
-                                                    @if($sample->receivedstatus == $received_status->id)
-                                                        {{ $received_status->name }}
-                                                    @endif
-                                                @endforeach
-                                            </td>
                                             <td></td>
                                             <td>
                                                 @foreach($prophylaxis as $proph)

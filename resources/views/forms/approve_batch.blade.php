@@ -73,12 +73,12 @@
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
-                                        <th colspan="19"><center> Sample Log</center></th>
+                                        <th colspan="18"><center> Sample Log</center></th>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
                                         <th colspan="5">Patient Information</th>
-                                        <th colspan="3">Sample Information</th>
+                                        <th colspan="2">Sample Information</th>
                                         <th colspan="8">Mother Information</th>
                                         <th colspan="1">Rejected Reason</th>
                                     </tr>
@@ -93,7 +93,6 @@
                                         <th>Infant Prophylaxis</th>
 
                                         <th>Date Collected</th>
-                                        <th>Status</th>
                                         <th>Spots</th>
 
                                         <th>CCC #</th>
@@ -136,13 +135,6 @@
                                             </td>
 
                                             <td> {{ $sample->my_date_format('datecollected') }} </td>
-                                            <td>
-                                                @foreach($received_statuses as $received_status)
-                                                    @if($sample->receivedstatus == $received_status->id)
-                                                        {{ $received_status->name }}
-                                                    @endif
-                                                @endforeach
-                                            </td>
                                             <td> 
                                                 <input class="form-control" name="spots[]" number="number" min=1 max=5 type="text">
                                             </td>
