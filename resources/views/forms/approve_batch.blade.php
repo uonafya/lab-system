@@ -240,7 +240,7 @@
             }
             else{
                 $(this).html("Check All");
-                $(".checks").removeAttr('checked');            
+                $(".checks").attr('checked', false);            
             }
         });
 
