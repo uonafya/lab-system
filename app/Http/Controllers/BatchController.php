@@ -342,8 +342,7 @@ class BatchController extends Controller
         if(!$sample_ids) return back();
 
         foreach ($sample_ids as $key => $value) {
-            $sample = Sample::find($value);
-            dd($sample);
+            $sample = Sample::find($value
             if($sample->batch_id != $batch->id) continue;
 
             $sample->spots = $spots_array[$key] ?? 5;
@@ -356,7 +355,8 @@ class BatchController extends Controller
                 $sample->receivedstatus == 3;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
             }
-            $sample->save();
+            $sample->save(););
+            dd($sample);
         }
 
         $batch->received_by = auth()->user()->id;
