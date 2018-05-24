@@ -73,13 +73,13 @@
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
-                                        <th colspan="18"><center> Sample Log</center></th>
+                                        <th colspan="17"><center> Sample Log</center></th>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
                                         <th colspan="5">Patient Information</th>
                                         <th colspan="2">Sample Information</th>
-                                        <th colspan="8">Mother Information</th>
+                                        <th colspan="7">Mother Information</th>
                                         <th colspan="1">Rejected Reason</th>
                                     </tr>
                                     <tr> 
@@ -101,7 +101,6 @@
                                         <th>PMTCT Intervention</th>
                                         <th>Feeding Type</th>
                                         <th>Entry Point</th>
-                                        <th>Result</th>
                                         <th>Task</th>
                                         <th>*if rejected</th>
                                     </tr>
@@ -160,13 +159,6 @@
                                                 @foreach($entry_points as $entry_point)
                                                     @if($sample->patient->entry_point == $entry_point->id)
                                                         {{ $entry_point->name }}
-                                                    @endif
-                                                @endforeach
-                                            </td>
-                                            <td>
-                                                @foreach($results as $result)
-                                                    @if($sample->result == $result->id)
-                                                        {{ $result->name }}
                                                     @endif
                                                 @endforeach
                                             </td>
