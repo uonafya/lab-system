@@ -166,7 +166,7 @@
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">View</a> |
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
-                                            <td>
+                                            <td width="80">
                                                 <select class="form-control" required name="rejectedreason" id="rejectedreason">
 
                                                     <option value=""> Select One </option>
