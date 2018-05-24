@@ -67,7 +67,7 @@
                                 <div class="col-md-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control" name="datereceived" value="{{ $batch->datereceived ?? '' }} ">
+                                        <input type="text" id="datereceived" required class="form-control" name="datereceived" value="{{ $batch->datereceived ?? '' }}">
                                     </div>
                                 </div>                            
                             </div>                      
