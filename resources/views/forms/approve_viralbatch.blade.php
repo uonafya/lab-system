@@ -126,7 +126,7 @@
                                             <td> {{ $sample->age }} </td>
                                             <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                             <td>
-                                                @foreach($sample_types as $sample_type)
+                                                @foreach($sampletypes as $sample_type)
                                                     @if($sample->sampletype == $sample_type->id)
                                                         {{ $sample_type->name }}
                                                     @endif
