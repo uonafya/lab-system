@@ -346,8 +346,9 @@ class ViralbatchController extends Controller
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'viralbatches.user_id')
-            ->whereNull('received_by')
-            ->whereNull('receivedstatus')
+            ->whereRaw('(receivedstatus is null or received_by is null)')
+            // ->whereNull('received_by')
+            // ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('viralbatches.id')
             ->paginate();
