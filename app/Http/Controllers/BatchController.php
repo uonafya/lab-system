@@ -259,6 +259,7 @@ class BatchController extends Controller
     {
         $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, 'users.oname")
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
+            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
             ->whereNull('received_by')

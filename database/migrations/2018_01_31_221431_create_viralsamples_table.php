@@ -49,7 +49,7 @@ class CreateViralsamplesTable extends Migration
             $table->string('units', 20)->nullable();
             $table->string('interpretation', 100)->nullable();
 
-            $table->bigInteger('worksheet_id')->unsigned()->nullable()->index();
+            $table->integer('worksheet_id')->unsigned()->nullable()->index();
             // $table->boolean('inworksheet')->default(false);
 
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();

@@ -50,4 +50,12 @@ class Patient extends BaseModel
     {
         return \App\Lookup::calculate_age(date('Y-m-d'), $this->dob);
     }
+
+    public function last_test()
+    {
+        $sql = "SELECT * FROM viralsamples WHERE patient_id={$this->id} AND datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$this->id} AND repeatt=0 )
+        "; 
+        $this->recent = \DB::select($sql);
+    }
 }

@@ -377,9 +377,23 @@ class SampleController extends Controller
         if($patient){
             $mother = $patient->mother;
             $mother->calc_age();
+
+            $viralpatient = $mother->viral_patient;
+
+            if($viralpatient){
+                $viralpatient->last_test();
+                if($viralpatient->recent){
+                    if($viralpatient->recent->rcategory == 1) $mother->recent_test = 0;
+                    else{
+                        $mother->recent_test = $viralpatient->recent->result;
+                    }
+                }
+            }
+
             $data[0] = 0;
             $data[1] = $patient->toArray();
             $data[2] = $mother->toArray();
+
 
             $prev_samples = Sample::where(['patient_id' => $patient->id, 'repeatt' => 0])->orderBy('datetested', 'asc')->get();
             $previous_positive = 0;

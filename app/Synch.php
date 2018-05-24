@@ -115,6 +115,7 @@ class Synch
 				],
 				'form_params' => [
 					'patients' => $patients->toJson(),
+					'lab_id' => env('APP_LAB', null),
 				],
 
 			]);
@@ -148,6 +149,7 @@ class Synch
 				],
 				'form_params' => [
 					'patients' => $patients->toJson(),
+					'lab_id' => env('APP_LAB', null),
 				],
 
 			]);
@@ -190,6 +192,7 @@ class Synch
 				],
 				'form_params' => [
 					'batches' => $batches->toJson(),
+					'lab_id' => env('APP_LAB', null),
 				],
 
 			]);
@@ -231,6 +234,7 @@ class Synch
 				],
 				'form_params' => [
 					'worksheets' => $worksheets->toJson(),
+					'lab_id' => env('APP_LAB', null),
 				],
 
 			]);
@@ -265,6 +269,7 @@ class Synch
 					],
 					'form_params' => [
 						$key => $models->toJson(),
+						'lab_id' => env('APP_LAB', null),
 					],
 
 				]);
@@ -300,6 +305,7 @@ class Synch
 					],
 					'form_params' => [
 						$key => $models->toJson(),
+						'lab_id' => env('APP_LAB', null),
 					],
 
 				]);
