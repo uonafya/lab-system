@@ -431,9 +431,9 @@ class ViralbatchController extends Controller
             $sample->labcomment = $request->input('labcomment');
 
             if($submit_type == "accepted"){
-                $sample->receivedstatus == 1;
+                $sample->receivedstatus = 1;
             }else if($submit_type == "rejected"){
-                $sample->receivedstatus == 3;
+                $sample->receivedstatus = 3;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
             }
             $sample->save();
