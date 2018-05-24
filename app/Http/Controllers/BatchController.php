@@ -355,7 +355,7 @@ class BatchController extends Controller
                 $sample->receivedstatus == 3;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
             }
-            $sample->save(););
+            $sample->save();
             dd($sample);
         }
 
