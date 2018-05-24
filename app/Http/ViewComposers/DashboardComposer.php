@@ -115,18 +115,18 @@ class DashboardComposer
 	public function siteBatchesAwaitingApproval()
 	{
         if (session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::select(DB::raw('COUNT(ID) as totalsamples'))
+            $model = ViralsampleView::selectRaw('COUNT(ID) as totalsamples')
                         ->where('lab_id', '=', Auth()->user()->lab_id)
                         ->where('flag', '=', '1')
                         ->where('repeatt', '=', '0')
-                        ->where('receivedstatus', '=', '0')
+                        ->whereNull('receivedstatus')
                         ->where('site_entry', '=', '1');
         } else {
             $model = SampleView::selectRaw('COUNT(ID) as totalsamples')
                     ->where('lab_id', '=', Auth()->user()->lab_id)
                     ->where('flag', '=', '1')
                     ->where('repeatt', '=', '0')
-                    ->where('receivedstatus', '=', '0')
+                    ->whereNull('receivedstatus')
                     ->where('site_entry', '=', '1');
         }
         return $model->get()->first()->totalsamples ?? 0;
