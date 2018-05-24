@@ -342,7 +342,7 @@ class BatchController extends Controller
         if(!$sample_ids) return back();
 
         foreach ($sample_ids as $key => $value) {
-            $sample = Sample::find($value
+            $sample = Sample::find($value);
             if($sample->batch_id != $batch->id) continue;
 
             $sample->spots = $spots_array[$key] ?? 5;
