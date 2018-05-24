@@ -102,11 +102,11 @@
             var str = $(this).html();
             if(str == "Check All"){
                 $(this).html("Uncheck All");
-                $(".checks").attr('checked', 'checked');
+                $(".checks").prop('checked', true);
             }
             else{
                 $(this).html("Check All");
-                $(".checks").removeAttr('checked');            
+                $(".checks").prop('checked', false);           
             }
         });
 

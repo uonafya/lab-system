@@ -164,11 +164,7 @@
                                             </td>
                                             <td>
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">View</a> |
-                                                <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
-
-                                                {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
-                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                                {{ Form::close() }}
+                                                <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
                                             <td>
                                                 <select class="form-control" required name="rejectedreason" id="rejectedreason">

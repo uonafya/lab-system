@@ -550,14 +550,12 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
-                        $(".lockable").attr("disabled", "disabled");
+                        $(".lockable").prop("disabled", true);
                     }
                     else{
                         localStorage.setItem("new_patient", 1);
-                        $(".lockable").removeAttr("disabled");
+                        $(".lockable").prop("disabled", false);
                         $(".lockable").val('').change();
-                        $('#pcrtype option[value=1]').attr('selected','selected').change();
-                        $("#hidden_pcr").val(1);
 
                         $('.patient_details').remove();
                     }

@@ -621,10 +621,12 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    // $("#rejectedreason").prop('disabled', false);
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    // $("#rejectedreason").prop('disabled', true);
 
                 }
             }); 
@@ -674,8 +676,9 @@
                         $("#mother_age").val(mother.age);
                         // $("#hiv_status").val(mother.hiv_status).change();
                         $("#ccc_no").val(mother.ccc_no).change();
+                        $("#pcrtype").val(prev.recommended_pcr).change();
 
-                        $('#pcrtype option[value=' + prev.recommended_pcr + ']').attr('selected','selected').change();
+                        // $('#pcrtype option[value=' + prev.recommended_pcr + ']').attr('selected','selected').change();
                         // $("#hidden_pcr").val(2);
 
                         // if(prev.previous_positive == 1){

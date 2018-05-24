@@ -223,6 +223,7 @@
 
     @component('/tables/scripts')
         $('.noneditable').attr("disabled", "disabled");
+        // $('.noneditable').prop("disabled", true);
     @endcomponent
 
 @endsection
