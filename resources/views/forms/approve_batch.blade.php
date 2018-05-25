@@ -166,8 +166,8 @@
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">View</a> |
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
-                                            <td width="250">
-                                                <select class="form-control" name="rejectedreason" id="rejectedreason">
+                                            <td>
+                                                <select class="form-control" name="rejectedreason" id="rejectedreason" width="250">
 
                                                     <option value=""> Select One </option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
