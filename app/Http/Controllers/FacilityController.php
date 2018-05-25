@@ -20,7 +20,7 @@ class FacilityController extends Controller
                             ->join('view_facilitys', 'view_facilitys.ID', '=', 'facilitys.ID')
                             ->join('districts', 'districts.ID', '=', 'facilitys.district')
                             ->join('countys', 'countys.ID', '=', 'view_facilitys.county')
-                            ->join('partners', 'partners.ID', '=', 'view_facilitys.partner')
+                            ->join('partners', 'partners.ID', '=', 'facilitys.partner')
                             ->where('facilitys.flag', '=', 1)
                             ->get();
         $table = '';
