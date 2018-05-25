@@ -593,6 +593,7 @@ CREATE TABLE `labs` (
   `labname` varchar(50) DEFAULT NULL,
   `labdesc` varchar(50) DEFAULT NULL,
   `lablocation` varchar(50) DEFAULT NULL,
+  `base_url` varchar(70) DEFAULT NULL,
   `labtel1` varchar(32) DEFAULT NULL,
   `labtel2` varchar(32) DEFAULT NULL,
   `taqman` int(1) DEFAULT '1',
@@ -607,7 +608,8 @@ CREATE TABLE `labs` (
 
 LOCK TABLES `labs` WRITE;
 /*!40000 ALTER TABLE `labs` DISABLE KEYS */;
-INSERT INTO `labs` VALUES (1,'KEMRI CVR HIV-P3 Lab, Nairobi','eid-nairobi@googlegroups.com','Nairobi Lab','KEMRI CVR HIV-P3 Lab','KEMRI HQ, Mbagathi Road, Nairobi','020 2722541 Ext: 2256/2290 ','0725793260 / 0725796842',1,1),(2,'KEMRI CDC HIV/R Lab,  Kisumu','eid-kisumu-kisian@googlegroups.c','Kisumu Lab','CDC HIV/R Lab','Kisumu-Busia Road, Kisumu','057 2053017/8 ',' 0722204614',1,1),(3,'KEMRI ALUPE HIV Laboratory','eid-alupe@googlegroups.com','Busia Lab','KEMRI Alupe Lab','Busia - Malaba Rd, Busia',' (055) 22410',' 0726156679',1,1),(4,'Walter Reed/KEMRI CRC Lab, Kericho','eid-kericho@googlegroups.com','Kericho Lab','Walter Reed CRC Lab','Hospital Road, Kericho',' 052 30388/21064','0716430261',1,1),(5,'Ampath Reference Lab,  Eldoret','eid-ampath@googlegroups.com','Eldoret Lab','Ampath Lab','Moi Referral Hospital, Eldoret',NULL,NULL,1,1),(6,'Coast Provincial General Hospital Molecular Lab','eid-cpgh@googlegroups.com','Coast Lab','CPGH Molecular Lab','Coast Provincial General Hospital',' 0722207868 Ext. Lab','0720594408 / 0733657392',1,0);
+INSERT INTO `labs` (`id`, `name`, `email`, `labname`, `labdesc`, `lablocation`, `labtel1`, `labtel2`, `taqman`, `abbott`)
+ VALUES (1,'KEMRI CVR HIV-P3 Lab, Nairobi','eid-nairobi@googlegroups.com','Nairobi Lab','KEMRI CVR HIV-P3 Lab','KEMRI HQ, Mbagathi Road, Nairobi','020 2722541 Ext: 2256/2290 ','0725793260 / 0725796842',1,1),(2,'KEMRI CDC HIV/R Lab,  Kisumu','eid-kisumu-kisian@googlegroups.c','Kisumu Lab','CDC HIV/R Lab','Kisumu-Busia Road, Kisumu','057 2053017/8 ',' 0722204614',1,1),(3,'KEMRI ALUPE HIV Laboratory','eid-alupe@googlegroups.com','Busia Lab','KEMRI Alupe Lab','Busia - Malaba Rd, Busia',' (055) 22410',' 0726156679',1,1),(4,'Walter Reed/KEMRI CRC Lab, Kericho','eid-kericho@googlegroups.com','Kericho Lab','Walter Reed CRC Lab','Hospital Road, Kericho',' 052 30388/21064','0716430261',1,1),(5,'Ampath Reference Lab,  Eldoret','eid-ampath@googlegroups.com','Eldoret Lab','Ampath Lab','Moi Referral Hospital, Eldoret',NULL,NULL,1,1),(6,'Coast Provincial General Hospital Molecular Lab','eid-cpgh@googlegroups.com','Coast Lab','CPGH Molecular Lab','Coast Provincial General Hospital',' 0722207868 Ext. Lab','0720594408 / 0733657392',1,0);
 /*!40000 ALTER TABLE `labs` ENABLE KEYS */;
 UNLOCK TABLES;
 

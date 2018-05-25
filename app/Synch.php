@@ -15,6 +15,8 @@ use App\Viralbatch;
 use App\Viralpatient;
 use App\Viralworksheet;
 
+use App\Facility;
+
 
 class Synch
 {
