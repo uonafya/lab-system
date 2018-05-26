@@ -155,8 +155,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 		Route::get('create_poc', 'SampleController@create_poc');
 		Route::get('list_poc', 'SampleController@list_poc');
-		Route::get('edit_poc/{sample}', 'SampleController@edit_poc');
-		Route::put('edit_poc/{sample}', 'SampleController@save_poc');
+		Route::get('{sample}/edit_result', 'SampleController@edit_poc');
+		Route::put('{sample}/edit_result', 'SampleController@save_poc');
 
 		Route::post('search', 'SampleController@search');		
 	});
@@ -172,6 +172,12 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
 		Route::get('runs/{sample}', 'ViralsampleController@runs');
+
+		Route::get('create_poc', 'ViralsampleController@create_poc');
+		Route::get('list_poc', 'ViralsampleController@list_poc');
+		Route::get('{sample}/edit_result', 'ViralsampleController@edit_poc');
+		Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
+
 		Route::post('search', 'ViralsampleController@search');		
 	});
 	Route::resource('viralsample', 'ViralsampleController');
@@ -215,6 +221,15 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	});
 	Route::resource('viralworksheet', 'ViralworksheetController', ['except' => ['edit']]);
+
+	Route::prefix('worklist')->name('worklist.')->group(function () {
+		Route::get('index/{testtype?}', 'WorklistController@index')->name('list');
+		Route::get('create/{testtype}', 'WorklistController@create')->name('create_any');
+		Route::get('print/{worklist}', 'WorklistController@print')->name('print');
+	});
+	Route::resource('worklist', 'WorklistController', ['except' => ['edit']]);
+
+
 
 	Route::get('test', 'FacilityController@test');
 

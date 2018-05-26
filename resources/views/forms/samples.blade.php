@@ -31,10 +31,6 @@
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
 
-            @if(isset($poc))
-                <input type="hidden" value=2 name="site_entry">
-            @endif
-
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
@@ -346,7 +342,7 @@
                                         checked
                                     @endif
 
-                                 /> &lt; ldl copies per ml </label>
+                                 /> &lt; ldl copies per ml</label>
                             </div>
                         </div> 
 
@@ -400,6 +396,22 @@
                         <center>Sample Information</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
+
+                        @if(isset($poc))
+                            <input type="hidden" value=2 name="site_entry">
+
+                            <div class="form-group">
+                              <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                              <div class="col-sm-8">
+                                <select class="form-control" required name="lab_id" id="lab_id">
+                                    @isset($sample)
+                                        <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
+                                    @endisset
+                                </select>
+                              </div>
+                            </div>
+
+                        @endif
                         
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group">
@@ -603,6 +615,7 @@
         });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
 

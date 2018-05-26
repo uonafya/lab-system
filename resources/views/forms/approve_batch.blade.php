@@ -116,13 +116,7 @@
                                             </td>
 
                                             <td> {{ $sample->patient->patient }} </td>
-                                            <td>
-                                                @foreach($genders as $gender)
-                                                    @if($sample->patient->sex == $gender->id)
-                                                        {{ $gender->gender_description }}
-                                                    @endif
-                                                @endforeach
-                                            </td>
+                                            <td> {{ $sample->patient->gender }} </td>
                                             <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                             <td> {{ $sample->age }} </td>
                                             <td>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Viralsample;
+use App\ViralsampleView;
 use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
@@ -30,6 +31,15 @@ class ViralsampleController extends Controller
         return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
     }
 
+    public function list_poc()
+    {
+        $data = Lookup::get_lookups();
+        $samples = ViralsampleView::with(['facility'])->where(['site_entry' => 2])->get();
+        $data['samples'] = $samples;
+        $data['pre'] = 'viral';
+        return view('tables.poc_samples', $data)->with('pageTitle', 'EID POC Samples');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -38,7 +48,14 @@ class ViralsampleController extends Controller
     public function create()
     {
         $data = Lookup::viralsample_form();
-        return view('forms.viralsamples', $data)->with('pageTitle', 'Add Samples');
+        return view('forms.viralsamples', $data)->with('pageTitle', 'Add Sample');
+    }
+
+    public function create_poc()
+    {
+        $data = Lookup::viralsample_form();
+        $data['poc'] = true;
+        return view('forms.viralsamples', $data)->with('pageTitle', 'Add POC Sample');
     }
 
     /**
@@ -68,8 +85,6 @@ class ViralsampleController extends Controller
             $facility_id = $request->input('facility_id');
 
             $batch = new Viralbatch;
-            $data = $request->only($viralsamples_arrays['batch']);
-            $batch->fill($data);
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
 
@@ -78,9 +93,10 @@ class ViralsampleController extends Controller
                 $batch->site_entry = 0;
             }
 
-            if(auth()->user()->user_type_id == 5){
-                $batch->site_entry = 1;
-            }
+            if(auth()->user()->user_type_id == 5) $batch->site_entry = 1;
+
+            $data = $request->only($viralsamples_arrays['batch']);
+            $batch->fill($data);
 
             $batch->save();
             $message = 'The high priority sample has been saved in batch no ' . $batch->id . '.';
@@ -96,8 +112,6 @@ class ViralsampleController extends Controller
             session(['viral_facility_name' => $facility->name, 'viral_batch_total' => 0]);
 
             $batch = new Viralbatch;
-            $data = $request->only($viralsamples_arrays['batch']);
-            $batch->fill($data);
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
 
@@ -109,6 +123,9 @@ class ViralsampleController extends Controller
             if(auth()->user()->user_type_id == 5){
                 $batch->site_entry = 1;
             }
+
+            $data = $request->only($viralsamples_arrays['batch']);
+            $batch->fill($data);
 
             $batch->save();
             session(['viral_batch' => $batch]);
@@ -201,6 +218,22 @@ class ViralsampleController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource (poc).
+     *
+     * @param  \App\Sample  $sample
+     * @return \Illuminate\Http\Response
+     */
+    public function edit_poc(Viralsample $sample)
+    {
+        $sample->load(['patient', 'batch.facility_lab']);
+        // if($sample->batch->site_entry != 2) abort(409, 'This sample is not a POC sample.');
+        $data = Lookup::get_lookups();
+        $data['sample'] = $sample;
+        $data['pre'] = 'viral';
+        return view('forms.poc_result', $data)->with('pageTitle', 'Edit Result');
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -246,6 +279,37 @@ class ViralsampleController extends Controller
         }
 
         return redirect('viralbatch/' . $batch->id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Sample  $sample
+     * @return \Illuminate\Http\Response
+     */
+    public function save_poc(Request $request, Viralsample $sample)
+    {
+        $sample->fill($request->except(['_token', 'lab_id', 'result_2']));
+
+        if(!$sample->result) $sample->result = $request->input('result_2');
+
+        if(!$sample->result){
+            session(['toast_message' => 'Please set a result value.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
+        $sample->pre_update();
+        \App\MiscViral::check_batch($sample->batch_id);
+        \App\Common::check_worklist(ViralsampleView::class, $sample->worksheet_id);
+
+        $batch = $sample->batch;
+        $batch->lab_id = $request->input('lab_id');
+        $batch->pre_update();
+        session(['toast_message' => 'The sample has been updated.']);
+
+        return redirect('viralsample/list_poc');        
     }
 
     /**

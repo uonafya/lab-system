@@ -27,7 +27,10 @@ class CreateWorklistsTable extends Migration
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
             
             $table->integer('facility_id')->unsigned()->nullable();
-            $table->integer('createdby')->unsigned()->nullable();
+            // $table->integer('createdby')->unsigned()->nullable();
+
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
             $table->timestamps();
         });
     }

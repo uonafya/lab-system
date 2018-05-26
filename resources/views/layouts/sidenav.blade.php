@@ -173,11 +173,11 @@
             </li>
             <hr />
             <li>
-                <a href="#">Create POC EID Worklist</a>
+                <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
             </li>
             <hr />
             <li>
-                <a href="#">Create POC VL Worklist</a>
+                <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
             </li>
             <hr />
             <li>
@@ -185,7 +185,7 @@
             </li>
             <hr />
             <li>
-                <a href="#">Update POC VL Results</a>
+                <a href="{{ url('viralsample/list_poc') }}">Update POC VL Results</a>
             </li>
             <hr />
             <li>

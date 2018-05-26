@@ -29,4 +29,35 @@ class ViewModel extends Model
     {
         return $this->belongsTo('App\Facility');
     }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
+
+    /**
+     * Get the patient's gender
+     *
+     * @return string
+     */
+    public function getGenderAttribute()
+    {
+        if($this->sex == 1){ return "Male"; }
+        else if($this->sex == 2){ return "Female"; }
+        else{ return "No Gender"; }
+    }
+
+
+    /**
+     * Get the sample's received status name
+     *
+     * @return string
+     */
+    public function getReceivedAttribute()
+    {
+        if($this->receivedstatus == 1){ return "Accepted"; }
+        else if($this->receivedstatus == 2){ return "Rejected"; }
+        else{ return ""; }
+    }
 }

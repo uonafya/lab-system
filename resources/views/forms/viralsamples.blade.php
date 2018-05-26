@@ -193,6 +193,22 @@
                     </div>
                     <div class="panel-body">
 
+                        @if(isset($poc))
+                            <input type="hidden" value=2 name="site_entry">
+
+                            <div class="form-group">
+                              <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                              <div class="col-sm-8">
+                                <select class="form-control" required name="lab_id" id="lab_id">
+                                    @isset($sample)
+                                        <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
+                                    @endisset
+                                </select>
+                              </div>
+                            </div>
+
+                        @endif
+
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
@@ -468,6 +484,7 @@
         });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
 

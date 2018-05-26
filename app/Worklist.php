@@ -12,9 +12,14 @@ class Worklist extends Model
     	return $this->hasMany('App\Sample');
     }
 
-    public function creator()
+    public function facility()
     {
-    	return $this->belongsTo('App\User', 'createdby');
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
     }
 
 

@@ -2511,4 +2511,36 @@ INSERT INTO `synch_levels` (`id`, `synch_level`, `synch_description`) VALUES
 (3, 'Deleted Record', 'This record was deleted at one level and needs to be deleted at the national level.'),
 (5, 'External', 'These are records are from edarp.');
 
+DROP TABLE IF EXISTS `drug_resistance_reasons`;
+
+CREATE TABLE `drug_resistance_reasons` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `rank` TINYINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`, `rank`) VALUES
+(1, 'Consistent Non-Suppression',  'Two consecutive tests with viralloads above 1000.', 1),
+(2, 'Paed Non-Suppression',  'Patient aged 19 and under with a viralload above 1000.', 2),
+(3, 'PMTCT Non-Suppression',  'PMTCT patient viralload above 1000.', 3);
+
+DROP TABLE IF EXISTS `dr_primers`;
+
+CREATE TABLE `dr_primers` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `full_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_primers` (`id`, `name`, `full_name`) VALUES
+(1, 'F1', 'Forward Primer 1'),
+(2, 'F2', 'Forward Primer 2'),
+(3, 'F3', 'Forward Primer 3'),
+(4, 'R1', 'Reverse Primer 1'),
+(5, 'R2', 'Reverse Primer 2'),
+(6, 'R3', 'Reverse Primer 3');
+
 

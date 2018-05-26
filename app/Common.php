@@ -137,6 +137,21 @@ class Common
 		}
 	}
 
+	public static function check_worklist($view_model, $worklist_id=null)
+	{	
+		if(!$worklist_id) return null;
+        $samples = $view_model::where('worksheet_id', $worklist_id)
+        	->where('site_entry', 2)
+        	->whereNull('result')
+        	->get();
+
+        if($samples->isEmpty()){
+        	$worklist = \App\Worklist::find($worklist_id);
+        	$worklist->status_id = 3;
+        	$worklist->pre_update();
+        }
+	}
+
 	public static function input_complete_batches($batch_model)
 	{
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);

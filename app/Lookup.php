@@ -152,7 +152,7 @@ class Lookup
     public static function samples_arrays()
     {
         return [
-            'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'site_entry'],
+            'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'lab_id', 'site_entry'],
 
             'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'mother_dob'],
 
@@ -236,7 +236,7 @@ class Lookup
     public static function viralsamples_arrays()
     {
         return [
-            'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'site_entry'],
+            'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'lab_id', 'site_entry'],
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
