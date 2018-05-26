@@ -241,7 +241,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">1st ?? 2nd Line Regimen</label>
+                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen</label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="regimenline" id="regimenline">
                                     <option value=""> Select One </option>

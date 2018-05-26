@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Worksheet;
 use App\Sample;
+use App\SampleView;
 use App\User;
 use App\Misc;
 use App\Lookup;
@@ -66,8 +67,8 @@ class WorksheetController extends Controller
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;
             $worksheet->mylinks = $this->get_links($worksheet->id, $status);
-            $worksheet->machine = $data['machines']->where('id', $worksheet->machine_type)->first()->output;
-            $worksheet->status = $data['worksheet_statuses']->where('id', $status)->first()->output;
+            $worksheet->machine = $data['machines']->where('id', $worksheet->machine_type)->first()->output ?? '';
+            $worksheet->status = $data['worksheet_statuses']->where('id', $status)->first()->output ?? '';
 
 
             return $worksheet;
@@ -369,6 +370,7 @@ class WorksheetController extends Controller
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
+            ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
@@ -411,6 +413,7 @@ class WorksheetController extends Controller
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
+            ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
@@ -444,7 +447,8 @@ class WorksheetController extends Controller
     public function show(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient', 'batch.facility'])->get();
+        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples];
 
@@ -503,7 +507,8 @@ class WorksheetController extends Controller
     public function print(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['patient', 'batch.facility'])->get();
+        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
@@ -522,7 +527,8 @@ class WorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
-        Sample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'result' => null]);
+        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        Sample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
@@ -539,7 +545,8 @@ class WorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
-        Sample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
         $worksheet->save();
@@ -569,6 +576,7 @@ class WorksheetController extends Controller
     {
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
+        $path = $request->upload->store('results/eid'); 
         $today = $dateoftest = date("Y-m-d");
         $positive_control;
         $negative_control;
@@ -617,21 +625,20 @@ class WorksheetController extends Controller
                             $interpretation = $error;
                             break;
                     }
-                    
-
-                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
-                    $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    Sample::where($search)->update($data_array);
 
                     $check[] = $search;
 
-                    if($sample_id == "HIV_NEG"){
-                        $negative_control = $value[5];
-                    }
-                    else if($sample_id == "HIV_HIPOS"){
-                        $positive_control = $value[5];
-                    }
+                    if($sample_id == "HIV_NEG") $negative_control = $value[5];
+                    if($sample_id == "HIV_HIPOS") $positive_control = $value[5];
 
+                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
+                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                    // Sample::where($search)->update($data_array);
+                    $sample = Sample::find($sample_id);
+                    if(!$sample) continue;
+                    if($sample->worksheet_id != $worksheet->id) continue;
+                    $sample->fill($data_array);
+                    $sample->save();
                 }
 
                 if($bool && $value[5] == "RESULT") break;
@@ -639,15 +646,13 @@ class WorksheetController extends Controller
 
             if($positive_control == "Passed"){
                 $pos_result = 6;
-            }
-            else{
+            }else{
                 $pos_result = 7;
             }
 
             if($negative_control == "Passed"){
                 $neg_result = 6;
-            }
-            else{
+            }else{
                 $neg_result = 7;
             }
         }
@@ -657,39 +662,34 @@ class WorksheetController extends Controller
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
                 $interpretation = $data[8];
-                $dateoftest=date("Y-m-d", strtotime($data[3]));
 
                 $flag = $data[10];
+                if($flag != NULL) $interpretation = $flag;
 
-                if($flag != NULL){
-                    $interpretation = $flag;
-                }
+                $dateoftest=date("Y-m-d", strtotime($data[3]));
 
                 if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
                 {
                     $result = 1;
-                } 
-                else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
+                }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
                 {
                     $result = 2;
-                }
-                else
-                {
+                }else{
                     $result = 3;
                 }
 
+                if($data[5] == "NC") $negative_control = $result;
+                if($data[5] == "LPC" || $data[5] == "PC") $positive_control = $result;
+
                 $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $interpretation, 'result' => $result];
 
-                $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
-                Sample::where($search)->update($data_array);
-
-                if($data[5] == "NC"){
-                    // $worksheet->neg_control_interpretation = $interpretation;
-                    $negative_control = $result;
-                }
-                if($data[5] == "LPC" || $data[5] == "PC"){
-                    $positive_control = $result;
-                }
+                // $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
+                // Sample::where($search)->update($data_array);
+                $sample = Sample::find($data[4]);
+                if(!$sample) continue;
+                if($sample->worksheet_id != $worksheet->id) continue;
+                $sample->fill($data_array);
+                $sample->save();
 
             }
             fclose($handle);
@@ -735,7 +735,8 @@ class WorksheetController extends Controller
 
         }
 
-        Sample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
+        // $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
 
         $worksheet->neg_control_interpretation = $negative_control;
         $worksheet->neg_control_result = $neg_result;
@@ -744,8 +745,6 @@ class WorksheetController extends Controller
         $worksheet->pos_control_result = $pos_result;
         $worksheet->daterun = $dateoftest;
         $worksheet->save();
-
-        $path = $request->upload->store('public/results/eid'); 
 
         Misc::requeue($worksheet->id);
         session(['toast_message' => "The worksheet has been updated with the results."]);
@@ -927,7 +926,7 @@ class WorksheetController extends Controller
 
     public function get_worksheets($worksheet_id=NULL)
     {
-        $samples = Sample::selectRaw("count(*) as totals, worksheet_id, result")
+        $samples = SampleView::selectRaw("count(*) as totals, worksheet_id, result")
             ->whereNotNull('worksheet_id')
             ->when($worksheet_id, function($query) use ($worksheet_id){                
                 if (is_array($worksheet_id)) {
@@ -937,6 +936,7 @@ class WorksheetController extends Controller
             })
             ->whereNotNull('worksheet_id')
             ->where('receivedstatus', '!=', 2)
+            ->where('site_entry', '!=', 2)
             ->groupBy('worksheet_id', 'result')
             ->get();
 

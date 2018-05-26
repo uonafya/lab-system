@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `facilitys` (
   `district` int unsigned DEFAULT '0' COMMENT 'Facility District id',
   `wardid` int unsigned DEFAULT '0' COMMENT 'Facility Ward id',
   `name` varchar(100) DEFAULT NULL COMMENT 'Facility Name',
-  `lab` TINYINT unsigned NOT NULL DEFAULT 0,
+  `lab` int unsigned NOT NULL DEFAULT 0,
   `partner` int unsigned NOT NULL DEFAULT 0,
   `ftype` varchar(100) DEFAULT NULL,
   `DHIScode` varchar(50) NOT NULL DEFAULT '0' COMMENT 'Facility Name',
@@ -104,13 +104,15 @@ INSERT INTO `facilitys` (`id`, `facilitycode`, `district`, `wardid`, `name`, `la
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 
+UPDATE facilitys set synched=1 where synched=0;
+
 
 CREATE OR REPLACE
 VIEW view_facilitys AS
 SELECT  
 
 fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, countys.name as county, 
-labs.name as lab, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, 
+labs.name as lab, partner.name as partner, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, 
 fac.email, fac.contactperson, fac.ContactEmail, fac.contacttelephone, fac.contacttelephone2, 
 fac.sms_printer_phoneno, fac.G4Sbranchname, fac.G4Slocation, fac.G4Sphone1, fac.G4Sphone2, fac.G4Sphone3, fac.G4Sfax
 

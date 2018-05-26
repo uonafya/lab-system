@@ -156,7 +156,7 @@
                             <label class="col-sm-4 control-label">Redraw</label>
 
                             <div class="col-sm-8">
-                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Check if PCR is 6 </label>
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Check if PCR type 6 </label>
                             </div>
                         </div>
 
@@ -626,10 +626,22 @@
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    // $("#enrollment_ccc_no").attr("disabled", "disabled");
                     // $("#rejectedreason").prop('disabled', true);
 
                 }
             }); 
+
+            $("#pcrtype").change(function(){
+                var val = $(this).val();
+                if(val == 4){
+                    $("#enrollment_ccc_no").removeAttr("disabled");
+                }
+                else{
+                    $("#enrollment_ccc_no").attr("disabled", "disabled");
+                }
+            }); 
+
 
 
             @if(!in_array(env('APP_LAB'), $amrs))
