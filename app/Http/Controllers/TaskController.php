@@ -8,6 +8,11 @@ use App\Abbotdeliveries;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
 use App\Requisition;
+use App\User;
+use App\SampleView;
+use App\ViralsampleView;
+
+use DB;
 
 class TaskController extends Controller
 {
@@ -15,22 +20,265 @@ class TaskController extends Controller
 
     public function index()
     {
-    	$data = $this->getKitsEntered();
-
-    	if (($data['eidtaqkits']  > 0 && $data['vltaqkits'] > 0) && ($data['eidabkits']  > 0 && $data['vlabkits'] > 0))
+    	$data['kits'] = (object)$this->getKitsEntered();
+        // dd($data);
+    	if (($data['kits']->eidtaqkits  > 0 && $data['kits']->vltaqkits > 0) && ($data['kits']->eidabkits  > 0 && $data['kits']->vlabkits > 0))
 		{
-
+            $data['submittedkits'] = 1;
+            $data['consumption'] = (object)$this->getConsumption();
 		}else {
-			$data['submittedstatus'] = 5;
+			$data['submittedkits'] = 0;
 		}
 		
 		$month = date('m')-1;
+        $range = '';
+        $quarter = parent::_getMonthQuarter(date('m'),$range);
+        session(['range'=>$range, 'quarter'=>$quarter]);
         $data['equipment'] = LabEquipmentTracker::where('year', date('Y'))->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->count();
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
-    	return view('tasks.home' compact($data))->with('pageTitle', 'Lab Dashboard');
+        // dd($data);
+    	return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
+    }
+
+    public function addKitDeliveries(Request $request)
+    {
+        if ($request->saveTaqman) {
+            $receivedby = $request->receivedby;
+            $datereceived = $request->datereceived;
+            $vreceivedby = $request->vreceivedby;
+            $vdatereceived = $request->vdatereceived;
+            $lab = auth()->user()->lab_id;
+            $quarter = $request->quarter;
+            $status = 1;
+            $source = 3;
+            $year = date('Y');
+            $eidData = [
+                        'testtype' => 1,'lab' => $lab,
+                        'quarter' => $quarter,'year' => $year,'source' => $source,
+                        'kitlotno' => $request->kitlotno,'expirydate' => $request->expirydate,
+                        'qualkitreceived' => $request->rqualkit,'spexagentreceived' => $request->rspexagent,
+                        'ampinputreceived' => $request->rampinput,'ampflaplessreceived' => $request->rampflapless,
+                        'ampktipsreceived' => $request->rampktips,'ampwashreceived' => $request->rampwash,
+                        'ktubesreceived' => $request->rktubes,'qualkitdamaged' => $request->dqualkit,
+                        'spexagentdamaged' => $request->dspexagent,'ampinputdamaged' => $request->dampinput,
+                        'ampflaplessdamaged' => $request->dampflapless,'ampktipsdamaged' => $request->dampktips,
+                        'ampwashdamaged' => $request->dampwash,'ktubesdamaged' => $request->dktubes,
+                        'receivedby' => $receivedby,'datereceived' => $datereceived,'status' => $status,
+                        'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
+                    ];
+            $save = Taqmandeliveries::create($eidData);
+            $vlData = [
+                        'testtype' => 2,'lab' => $lab,
+                        'quarter' => $quarter,'year' => $year,'source' => $source,
+                        'kitlotno' => $request->vkitlotno,'expirydate' => $request->vexpirydate,
+                        'qualkitreceived' => $request->vrqualkit,'spexagentreceived' => $request->vrspexagent,
+                        'ampinputreceived' => $request->vrampinput,'ampflaplessreceived' => $request->vrampflapless,
+                        'ampktipsreceived' => $request->vrampktips,'ampwashreceived' => $request->vrampwash,
+                        'ktubesreceived' => $request->vrktubes,'qualkitdamaged' => $request->vdqualkit,
+                        'spexagentdamaged' => $request->vdspexagent,'ampinputdamaged' => $request->vdampinput,
+                        'ampflaplessdamaged' => $request->vdampflapless,'ampktipsdamaged' => $request->vdampktips,
+                        'ampwashdamaged' => $request->vdampwash,'ktubesdamaged' => $request->vdktubes,
+                        'receivedby' => $vreceivedby,'datereceived' => $vdatereceived,'status' => $status,
+                        'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
+                    ];
+            $save = Taqmandeliveries::create($vlData);
+
+            session(['toast_message'=>'The KIT delivery has EID/VL Taqman KITS SAVED SUCCESSFULLY.']);
+        } else if ($request->saveAbbott) {
+            // dd($request->all());
+            $receivedby = $request->areceivedby;
+            $datereceived = $request->adatereceived;
+            $vreceivedby = $request->vareceivedby;
+            $vdatereceived = $request->vadatereceived;
+            $lab = auth()->user()->lab_id;
+            $quarter = $request->quarter;
+            $status = 1;
+            $source = 3;
+            $year = date('Y');
+
+            $eidData = [
+                "testtype" => 1,"lab" => $lab,
+                "quarter" => $quarter,"year" => $year,"source" => $source,
+                "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->aqualkitexpiry,
+                "qualkitreceived" => $request->arqualkit,"qualkitdamaged" => $request->adqualkit,
+                "controllotno" => $request->acontrollotno,"controlexpiry" => $request->acontrolexpiry,
+                "controlreceived" => $request->arcontrol,"controldamaged" => $request->adcontrol,
+                "bufferlotno" => $request->abufferlotno,"bufferexpiry" => $request->abufferexpiry,
+                "bufferreceived" => $request->arbuffer,"bufferdamaged" => $request->adbuffer,
+                "preparationlotno" => $request->apreparationlotno,"preparationexpiry" => $request->apreparationexpiry,
+                "preparationreceived" => $request->arpreparation,"preparationdamaged" => $request->adpreparation,
+                "adhesivereceived" => $request->aradhesive,"adhesivedamaged" => $request->adadhesive,
+                "deepplatereceived" => $request->ardeepplate,"deepplatedamaged" => $request->addeepplate,
+                "mixtubereceived" => $request->armixtube,"mixtubedamaged" => $request->admixtube,
+                "reactionvesselsreceived" => $request->arreactionvessels,"reactionvesselsdamaged" => $request->adreactionvessels,
+                "reagentreceived" => $request->arreagent,"reagentdamaged" => $request->adreagent,
+                "reactionplatereceived" => $request->arreactionplate,"reactionplatedamaged" => $request->adreactionplate,
+                "1000disposablereceived" => $request->ar1000disposable,"1000disposabledamaged" => $request->ad1000disposable,
+                "200disposablereceived" => $request->ar200disposable,"200disposabledamaged" => $request->ad200disposable,
+                "receivedby" => $receivedby,"datereceived" => $datereceived,"status" => $status,
+                "enteredby" => auth()->user()->id,"dateentered" => date('Y-m-d')
+            ];
+            $save = Abbotdeliveries::create($eidData);
+
+            $vlData = [
+                "testtype" => 2,"lab" => $lab,
+                "quarter" => $quarter,"year" => $year,"source" => $source,
+                "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->vaqualkitexpiry,
+                "qualkitreceived" => $request->varqualkit,"qualkitdamaged" => $request->vadqualkit,
+                "controllotno" => $request->vacontrollotno,"controlexpiry" => $request->vacontrolexpiry,
+                "controlreceived" => $request->varcontrol,"controldamaged" => $request->vadcontrol,
+                "bufferlotno" => $request->vabufferlotno,"bufferexpiry" => $request->vabufferexpiry,
+                "bufferreceived" => $request->varbuffer,"bufferdamaged" => $request->vadbuffer,
+                "preparationlotno" => $request->vapreparationlotno,"preparationexpiry" => $request->vapreparationexpiry,
+                "preparationreceived" => $request->varpreparation,"preparationdamaged" => $request->vadpreparation,
+                "adhesivereceived" => $request->varadhesive,"adhesivedamaged" => $request->vadadhesive,
+                "deepplatereceived" => $request->vardeepplate,"deepplatedamaged" => $request->vaddeepplate,
+                "mixtubereceived" => $request->varmixtube,"mixtubedamaged" => $request->vadmixtube,
+                "reactionvesselsreceived" => $request->varreactionvessels,
+                "reactionvesselsdamaged" => $request->vadreactionvessels,
+                "reagentreceived" => $request->varreagent,"reagentdamaged" => $request->vadreagent,
+                "reactionplatereceived" => $request->varreactionplate,"reactionplatedamaged" => $request->vadreactionplate,
+                "1000disposablereceived" => $request->var1000disposable,"1000disposabledamaged" => $request->vad1000disposable,
+                "200disposablereceived" => $request->var200disposable,"200disposabledamaged" => $request->vad200disposable,
+                "receivedby" => $receivedby,"datereceived" => $datereceived,"status" => $status,
+                "enteredby" => auth()->user()->id,"dateentered" => date('Y-m-d')
+            ];
+
+            $save = Abbotdeliveries::create($vlData);
+            session(['toast_message'=>'The KIT delivery has EID/VL ABBOTT KITS SAVED SUCCESSFULLY.']);
+        }
+        $taqdeliveries = Taqmandeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
+        $abbottdeliveries = Abbotdeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
+
+        if ($taqdeliveries > 0 && $abbottdeliveries > 0)
+            return redirect()->route('pending');
+
+        $users = User::where('user_type_id', '<', 5)->get();
+        return view('tasks.kitsdeliveries', compact('users'))->with('pageTitle', 'Kit Deliveries');
+    }
+
+    public function consumption ($guide=null)
+    {
+
+    }
+
+    public function performancelog(Request $request)
+    {
+        if ($request->submit) {
+            $lab = Auth()->user()->lab_id;
+            $month = date('m')-1;
+            $year = date('Y');
+            $today = date('Y-m-d');
+            $user = Auth()->user()->id;
+            
+            $eidData = [
+                    'lab_id' => $lab,
+                    'month' => $month,
+                    'year' => $year,
+                    'dateemailsent' => NULL,
+                    'datesubmitted' => $today,
+                    'submittedBy' => $user,
+                    'testtype' => 1,
+                    'sampletype' => 1,
+                    'received' => $request->EIDreceived,
+                    'rejected' => $request->EIDrejected,
+                    'loggedin' => $request->EIDlogged,
+                    'notlogged' => $request->EIDnotlogged,
+                    'tested' => $request->EIDtested,
+                    'reasonforbacklog' => $request->EIDreason
+                ];
+            $save = LabPerformanceTracker::create($eidData);
+
+            $plasmaData = [
+                    'lab_id' => $lab,
+                    'month' => $month,
+                    'year' => $year,
+                    'dateemailsent' => NULL,
+                    'datesubmitted' => $today,
+                    'submittedBy' => $user,
+                    'testtype' => 2,
+                    'sampletype' => 1,
+                    'received' => $request->Plasmareceived,
+                    'rejected' => $request->Plasmarejected,
+                    'loggedin' => $request->Plasmalogged,
+                    'notlogged' => $request->Plasmanotlogged,
+                    'tested' => $request->Plasmatested,
+                    'reasonforbacklog' => $request->Plasmareason
+                ];
+            $save = LabPerformanceTracker::create($plasmaData);
+
+            $dbsData = [
+                    'lab_id' => $lab,
+                    'month' => $month,
+                    'year' => $year,
+                    'dateemailsent' => NULL,
+                    'datesubmitted' => $today,
+                    'submittedBy' => $user,
+                    'testtype' => 2,
+                    'sampletype' => 2,
+                    'received' => $request->DBSreceived,
+                    'rejected' => $request->DBSrejected,
+                    'loggedin' => $request->DBSlogged,
+                    'notlogged' => $request->DBSnotlogged,
+                    'tested' => $request->DBStested,
+                    'reasonforbacklog' => $request->DBSreason
+                ];
+            $save = LabPerformanceTracker::create($dbsData);
+            session(['toast_message'=>'Lab Activity Log Successfully Submitted.']);
+            $performance = LabPerformanceTracker::where('month', $month)->where('year', $year)->where('lab_id', $lab)->count();
+
+            if ($performance > 0)
+                return redirect()->route('pending');
+        }
+
+        $data['sampletypes'] = (object)['EID', 'Plasma', 'DBS'];
+        $data['logs'] = (object)self::__getLabperformanceLog($data['sampletypes']);
+        $data = (object) $data;
+        // dd($data);
+        $month = date('m')-1;
+        return view('tasks.performancelog', compact('data'))->with('pageTitle', 'Lab Performance Log::'.date("F", mktime(null, null, null, $month)).', '.date('Y'));
+    }
+
+    public function equipmentlog(Request $request) {
+        $month = date('m')-1;
+        if ($request->submit) {
+            $tracker = [];
+            foreach ($request->equipmentid as $key => $value) {
+                $tracker[] = [
+                        'month' => $month,
+                        'year' => date('Y'),
+                        'lab_id' => Auth()->user()->lab_id,
+                        'equipment_id' => $value,
+                        'datesubmitted' => date('Y-m-d'),
+                        'submittedBy' => Auth()->user()->id,
+                        'datebrokendown' => $request->datebrokendown[$key],
+                        'datereported' => $request->datereported[$key],
+                        'datefixed' => $request->datefixed[$key],
+                        'downtime' => $request->downtime[$key],
+                        'samplesnorun' => $request->samplesnorun[$key],
+                        'failedruns' => $request->failedruns[$key],
+                        'reagentswasted' => $request->reagentswasted[$key],
+                        'breakdownreason' => $request->breakdownreason[$key],
+                        'othercomments' => $request->otherreasons
+                    ];
+            }
+            
+            foreach ($tracker as $key => $value) {
+                $save = LabEquipmentTracker::create($value);
+            }
+            session(['toast_message'=>'Lab Equipment Log Successfully Submitted.']);
+            $equipment = LabEquipmentTracker::where('month', $month)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->count();
+
+            if ($equipment > 0)
+                return redirect()->route('pending');
+            
+        }
+        $data = DB::table('lab_equipment_mapping')->where('lab', '=', Auth()->user()->lab_id)->get();
+
+        return view('tasks.equipmentlog', compact('data'))->with('pageTitle', 'Lab Equipment Log::'.date("F", mktime(null, null, null, $month)).', '.date('Y'));
     }
 
     public function getKitsEntered(){
@@ -43,6 +291,16 @@ class TaskController extends Controller
 			'vlabkits' => self::__getifKitsEntered(2,2,$quarter,$currentyear)
 		];
 	}
+
+    public function getConsumption()
+    {
+        return [
+            'eidtaqconsumption' => 0,
+            'vltaqconsumption' => 0,
+            'eidabconsumption' => 0,
+            'vlabconsumption' => 0
+        ];
+    }
 
     public function getRequisitions()
     {
@@ -57,11 +315,60 @@ class TaskController extends Controller
     public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
 
     	if ($platform==1)
-			$model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->where('year', $currentyear)->count();
+			$model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
 		if ($platform==2)
-			$model = Abbotdeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->where('year', $currentyear)->count();
-			
-		return $model;
+			$model = Abbotdeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+
+		return $model->count();
+    }
+
+    public static function __getLabperformanceLog($data) {
+        $return = [];
+        $data = (array)$data;
+        foreach ($data as $key => $value) {
+            if ($value == 'EID') {
+                $return[$value] = (object)self::__getLogs('EID');
+            } else {
+                if ($value == 'Plasma') {
+                    $array = [1,2];
+                } else if ($value == 'DBS'){
+                    $array = [3,4];
+                }
+                $return[$value] = (object)self::__getLogs(null, $array);
+            }
+        }
+        return $return;
+    }
+
+    public static function __getLogs($type=null, $sampletypes=null)
+    {
+        $types = ['received', 'rejected', 'tested', 'logged'];
+        $year = date('Y');
+        $month = date('m')-1;
+        $result = [];
+
+        foreach ($types as $key => $value) {
+            if ($type == 'EID') {
+                $model = SampleView::where('flag', 1);
+            } else {
+                $model = ViralsampleView::where('flag', 1)->whereBetween('sampletype', $sampletypes);
+            }
+                        
+            if ($value == 'received') {
+                $column = 'datereceived';
+                $model = $model->whereRaw("((parentid=0)||(parentid IS NULL))");
+            } else if ($value == 'rejected') {
+                $column = 'datereceived';
+                $model = $model->where('receivedstatus', '=', 2)->where('repeatt', '=', 0);
+            } else if ($value == 'tested') {
+                $column = 'datetested';
+            } else if ($value == 'logged') {
+                $column = 'created_at';
+                $model = $model->whereRaw("((parentid=0)||(parentid IS NULL))");
+            }
+            $result[$value] = $model->whereRaw("YEAR($column) = $year")->whereRaw("MONTH($column) = $month")->count();
+        }
+        return $result;
     }
 }

@@ -18,7 +18,7 @@ class CreateAbbotprocurementsTable extends Migration
         Schema::create('abbotprocurements', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('month')->unsigned()->index();
-            $table->tinyInteger('year')->unsigned()->index();
+            $table->integer('year')->unsigned()->index();
             $table->tinyInteger('testtype')->unsigned()->index();
             $table->integer('received')->unsigned()->default(0)->nullable();
             $table->integer('tests')->unsigned()->default(0)->nullable();

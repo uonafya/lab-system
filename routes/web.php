@@ -128,7 +128,14 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::post('patient/search/', 'PatientController@search');
 	Route::resource('patient', 'PatientController');
 
+	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
+	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
+	Route::post('equipmentlog', 'TaskController@equipmentlog');
 	Route::get('/pending', 'TaskController@index')->name('pending');
+	Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
+	Route::post('/performancelog', 'TaskController@performancelog');
+	Route::get('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+	Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	
 	Route::post('viralpatient/search/', 'ViralpatientController@search');
 	Route::resource('viralpatient', 'ViralpatientController');

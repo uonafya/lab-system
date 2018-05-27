@@ -27,9 +27,13 @@
         <div class="small-logo">
             <span class="text-primary">EID - VL</span>
         </div>
-        <!-- <div>
-            <button>Switch to {{ session()->pull('sys_name') }}</button>
-        </div> -->
+        @if(Session('pendingTasks'))
+            <form role="search" class="navbar-form-custom">
+            <div class="form-group">
+                <h4 style="margin-top:1em;">{{ $pageTitle }}</h4>
+            </div>
+        </form>
+        @endif
         <div class="mobile-menu">
             <button type="button" class="navbar-toggle mobile-menu-toggle" data-toggle="collapse" data-target="#mobile-collapse">
                 <i class="fa fa-chevron-down"></i>

@@ -25,15 +25,23 @@ class Controller extends BaseController
         return $column;
     }
 
-    public static function _getMonthQuarter($month=1){
-        if ($month >0 && $month <4 )
+    public static function _getMonthQuarter($month=1, &$range=null){
+        if ($month >0 && $month <4 ) {
             $quota=1;
-        if ($month >3 && $month <7 )
+            $range='JAN-MAR';
+        }
+        if ($month >3 && $month <7 ) {
             $quota=2;
-        if ($month >6 && $month <10 )
+            $range='APR-JUN';
+        }
+        if ($month >6 && $month <10 ) {
             $quota=3;
-        if ($month >9 && $month <13)
+            $range='JUL-SEP';
+        }
+        if ($month >9 && $month <13) {
             $quota=4;
+            $range='OCT-DEC';
+        }
         return $quota;
     }
 

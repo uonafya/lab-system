@@ -17,10 +17,10 @@ class CreateLabPerformanceTrackersTable extends Migration
             $table->increments('id');
             $table->integer('lab_id')->unsigned()->index();
             $table->tinyInteger('month')->unsigned()->index();
-            $table->tinyInteger('year')->unsigned()->index();
+            $table->integer('year')->unsigned()->index();
             // $table->tinyInteger('submitted')->unsigned()->index();
             // $table->tinyInteger('eamilsent')->unsigned()->index();
-            $table->date('dateemailsent');
+            $table->date('dateemailsent')->nullable();
             $table->tinyInteger('testtype')->unsigned()->index();
             $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->integer('received')->unsigned()->nullable();

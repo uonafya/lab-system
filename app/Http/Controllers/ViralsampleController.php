@@ -38,6 +38,7 @@ class ViralsampleController extends Controller
     public function create()
     {
         $data = Lookup::viralsample_form();
+        
         return view('forms.viralsamples', $data)->with('pageTitle', 'Add Samples');
     }
 

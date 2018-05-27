@@ -20,7 +20,7 @@ class CreateTaqmandeliveriesTable extends Migration
             $table->tinyInteger('testtype')->unsigned()->index();
             $table->tinyInteger('lab')->unsigned()->index();
             $table->tinyInteger('quarter')->unsigned()->index();
-            $table->tinyInteger('year')->unsigned()->index();
+            $table->integer('year')->unsigned()->index();
             $table->tinyInteger('source')->unsigned()->nullable();
             $table->tinyInteger('labfrom')->unsigned()->nullable();
             $table->string('kitlotno', 12)->nullable();
