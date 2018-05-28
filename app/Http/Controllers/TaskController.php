@@ -16,8 +16,16 @@ use DB;
 
 class TaskController extends Controller
 {
-    
-
+    public $taqmanKits = [
+                            ['name'=>"Ampliprep, HIV-1 Qualitative Test kits HIVQCAP", 'alias'=>'qualkit'],
+                            ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent'],
+                            ['name'=>"Ampliprep Input S-tube", 'alias'=>'ampinput'],
+                            ['name'=>"Ampliprep SPU", 'alias'=>'ampflapless'],
+                            ['name'=>"Ampliprep K-Tips", 'alias'=>'ampktips'],
+                            ['name'=>"Ampliprep Wash Reagent", 'alias'=>'ampwash'],
+                            ['name'=>"TAQMAN K-Tubes", 'alias'=>'ktubes'],
+                            ['name'=>"CAP/CTM Consumable Bundles", 'alias'=>'consumables']
+                        ];
     public function index()
     {
     	$data['kits'] = (object)$this->getKitsEntered();
@@ -162,7 +170,12 @@ class TaskController extends Controller
 
     public function consumption ($guide=null)
     {
+        $previousMonth = date('m')-1;
+        $data['testtypes'] = ['EID', 'VL'];
+        $data['taqmanKits'] = $this->taqmanKits;
 
+        $data = (object) $data;
+        return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.date('Y'));
     }
 
     public function performancelog(Request $request)

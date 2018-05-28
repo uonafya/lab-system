@@ -28,11 +28,11 @@
             <span class="text-primary">EID - VL</span>
         </div>
         @if(Session('pendingTasks'))
-            <form role="search" class="navbar-form-custom">
-            <div class="form-group">
-                <h4 style="margin-top:1em;">{{ $pageTitle }}</h4>
-            </div>
-        </form>
+            <form role="search" class="navbar-form-custom" style="width: 400px;">
+                <div class="form-group">
+                    <h4 style="margin-top:1em;">{{ $pageTitle }}</h4>
+                </div>
+            </form>
         @endif
         <div class="mobile-menu">
             <button type="button" class="navbar-toggle mobile-menu-toggle" data-toggle="collapse" data-target="#mobile-collapse">
