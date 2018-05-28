@@ -447,7 +447,7 @@ class WorksheetController extends Controller
     public function show(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples];
@@ -507,7 +507,7 @@ class WorksheetController extends Controller
     public function print(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
@@ -527,7 +527,7 @@ class WorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
-        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
@@ -545,7 +545,7 @@ class WorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
-        $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
@@ -576,7 +576,7 @@ class WorksheetController extends Controller
     {
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
-        $path = $request->upload->store('results/eid'); 
+        $path = $request->upload->store('public/results/eid'); 
         $today = $dateoftest = date("Y-m-d");
         $positive_control;
         $negative_control;
@@ -625,8 +625,6 @@ class WorksheetController extends Controller
                             $interpretation = $error;
                             break;
                     }
-
-                    $check[] = $search;
 
                     if($sample_id == "HIV_NEG") $negative_control = $value[5];
                     if($sample_id == "HIV_HIPOS") $positive_control = $value[5];
@@ -735,7 +733,7 @@ class WorksheetController extends Controller
 
         }
 
-        // $sample_array = SampleView::select('id')where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
 
         $worksheet->neg_control_interpretation = $negative_control;
@@ -749,7 +747,7 @@ class WorksheetController extends Controller
         Misc::requeue($worksheet->id);
         session(['toast_message' => "The worksheet has been updated with the results."]);
 
-        return redirect('worksheet/approve/' . $worksheet->id)->with('pageTitle', 'Save Results');
+        return redirect('worksheet/approve/' . $worksheet->id);
     }
 
     public function approve_results(Worksheet $worksheet)
