@@ -25,9 +25,6 @@
         @if (isset($sample))
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
 
-            <div>
-                NB: If you edit the facility name, date received or date dispatched from the facility this will be reflected on the other samples in this batch. <br />                
-            </div>
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
 
@@ -40,6 +37,22 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
 
+                        <div class="alert alert-warning">
+                            <center>
+                                Please fill the form correctly. <br />
+                                Fields with an asterisk(*) are mandatory.
+                            </center>
+                        </div>
+                        <br />
+
+                        @isset($sample)
+                            <div class="alert alert-warning">
+                                <center>
+                                    NB: If you edit the facility name, date received or date dispatched from the facility this will be reflected on the other samples in this batch.
+                                </center>
+                            </div>
+                            <br />
+                        @endisset
 
                         @if(!$batch)    
                           <div class="form-group">
@@ -54,7 +67,12 @@
                               </div>
                           </div>
                         @else
-                            <p>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </p>
+
+                            <div class="alert alert-success">
+                                <center>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </center>
+                            </div>
+                            <br />
+
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
 
