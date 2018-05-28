@@ -24,7 +24,6 @@
 
         @if (isset($sample))
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
-
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
 
@@ -69,7 +68,7 @@
                         @else
 
                             <div class="alert alert-success">
-                                <center>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </center>
+                                <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
                             </div>
                             <br />
 

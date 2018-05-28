@@ -54,7 +54,7 @@
                         @else
 
                             <div class="alert alert-success">
-                                <center>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </center>
+                                <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
                             </div>
                             <br />
                             

@@ -21,6 +21,13 @@
 
                     {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
 
+                        <div class="alert alert-warning">
+                            <center>
+                                Please fill the date received before proceeding.
+                            </center>
+                        </div>
+                        <br />
+
                         <div class="row">
                             <div class="col-md-4">
                                 <p><strong>Batch:</strong> {{ $batch->id  ?? '' }}</p>
@@ -76,14 +83,14 @@
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
-                                        <th colspan="15"><center> Sample Log</center></th>
+                                        <th colspan="16"><center> Sample Log</center></th>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
                                         <th colspan="4">Patient Information</th>
                                         <th colspan="3">Sample Information</th>
                                         <th colspan="5">History Information</th>
-                                        <th colspan="1">Rejected Reason</th>
+                                        <th colspan="2">Rejected Reason</th>
                                     </tr>
                                     <tr>
                                         <th>#</th>
@@ -103,7 +110,7 @@
                                         <th>Justification</th>
                                         <th>Viral Load</th>
                                         <th>Task</th>
-                                        <th>*if rejected</th>
+                                        <th colspan="2">*if rejected</th>
                                     </tr>
                                 </thead>
                                 <tbody> 

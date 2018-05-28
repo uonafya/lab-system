@@ -19,7 +19,15 @@
                 </div>
                 <div class="panel-body">
 
+
                     {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+
+                        <div class="alert alert-warning">
+                            <center>
+                                Please fill the date received before proceeding.
+                            </center>
+                        </div>
+                        <br />
 
                         <div class="row">
                             <div class="col-md-4">
@@ -80,7 +88,7 @@
                                         <th colspan="5">Patient Information</th>
                                         <th colspan="2">Sample Information</th>
                                         <th colspan="7">Mother Information</th>
-                                        <th colspan="1">Rejected Reason</th>
+                                        <th>Rejected Reason</th>
                                     </tr>
                                     <tr> 
                                         <th>No</th>
@@ -160,8 +168,8 @@
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">View</a> |
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
-                                            <td>
-                                                <select class="form-control" name="rejectedreason" id="rejectedreason" width="250">
+                                            <td style="width: 1000px;">
+                                                <select class="form-control" name="rejectedreason" id="rejectedreason">
 
                                                     <option value=""> Select One </option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
