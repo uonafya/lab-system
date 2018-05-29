@@ -64,6 +64,20 @@ Artisan::command('synch:vl-deletes', function(){
 
 
 
+Artisan::command('copy:eid', function(){
+	\App\Copier::copy_eid();
+})->describe('Copy eid data from old database to new database.');
+
+Artisan::command('copy:vl', function(){
+	\App\Copier::copy_vl();
+})->describe('Copy vl data from old database to new database.');
+
+Artisan::command('copy:worksheet', function(){
+	\App\Copier::copy_worksheet();
+})->describe('Copy worksheet data from old database to new database.');
+
+
+
 
 Artisan::command('email:test', function(){
 	\App\Resolver::test_email();

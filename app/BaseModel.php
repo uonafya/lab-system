@@ -10,7 +10,8 @@ class BaseModel extends Model
     // protected $revisionEnabled = true;
     // protected $revisionCleanup = true; 
     // protected $historyLimit = 500; 
-    // protected $guarded = [];
+    
+    protected $guarded = [];
 
     protected static function boot()
     {

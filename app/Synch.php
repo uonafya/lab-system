@@ -48,11 +48,11 @@ class Synch
 				'update_url' => 'update/worksheets',
 				'delete_url' => 'delete/worksheets',
 			],
-			'mothers' => [
-				'class' => Mother::class,
-				'update_url' => 'update/mothers',
-				'delete_url' => 'delete/mothers',
-			],
+			// 'mothers' => [
+			// 	'class' => Mother::class,
+			// 	'update_url' => 'update/mothers',
+			// 	'delete_url' => 'delete/mothers',
+			// ],
 			'patients' => [
 				'class' => Patient::class,
 				'update_url' => 'update/patients',

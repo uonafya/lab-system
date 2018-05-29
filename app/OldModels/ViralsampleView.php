@@ -2,10 +2,9 @@
 
 namespace App\OldModels;
 
-use App\OldModels\BaseModel;
+use App\OldModels\ViewModel;
 
-class ViralsampleView extends BaseModel
+class ViralsampleView extends ViewModel
 {
 	protected $table = 'old_viralsamples_view';
-
 }

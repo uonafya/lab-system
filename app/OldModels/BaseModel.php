@@ -12,6 +12,8 @@ class BaseModel extends Model
         parent::boot();
     }
 
+    protected $guarded = [];
+
     public $timestamps = false;
 
     protected $connection = 'old';
