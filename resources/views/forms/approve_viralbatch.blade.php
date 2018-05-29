@@ -19,11 +19,12 @@
                 </div>
                 <div class="panel-body">
 
-                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
 
                         <div class="alert alert-warning">
                             <center>
-                                Please fill the date received before proceeding.
+                                Please fill the date received before proceeding. <br />
+                                For every rejected sample, please fill the rejected reason.
                             </center>
                         </div>
                         <br />
@@ -67,8 +68,6 @@
                                 </p>
                             </div>
 
-
-
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Date Received</label>
                                 <div class="col-md-8">
@@ -79,18 +78,19 @@
                                 </div>                            
                             </div>                      
                         </div>
+                        <br />
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
-                                        <th colspan="16"><center> Sample Log</center></th>
+                                        <th colspan="15"><center> Sample Log</center></th>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
                                         <th colspan="4">Patient Information</th>
                                         <th colspan="3">Sample Information</th>
                                         <th colspan="5">History Information</th>
-                                        <th colspan="2">Rejected Reason</th>
+                                        <th>Rejected_Reason</th>
                                     </tr>
                                     <tr>
                                         <th>#</th>
@@ -110,7 +110,7 @@
                                         <th>Justification</th>
                                         <th>Viral Load</th>
                                         <th>Task</th>
-                                        <th colspan="2">*if rejected</th>
+                                        <th>*if rejected</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
@@ -155,10 +155,10 @@
                                                 <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
                                                 <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
-                                            <td width="250">
+                                            <td>
                                                 <select class="form-control" name="rejectedreason" id="rejectedreason">
 
-                                                    <option value=""> Select One </option>
+                                                    <option> Select One </option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}

@@ -20,11 +20,12 @@
                 <div class="panel-body">
 
 
-                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
 
                         <div class="alert alert-warning">
                             <center>
-                                Please fill the date received before proceeding.
+                                Please fill the date received before proceeding. <br />
+                                For every rejected sample, please fill the rejected reason.
                             </center>
                         </div>
                         <br />
@@ -77,6 +78,7 @@
                                 </div>                            
                             </div>                      
                         </div>
+                        <br />
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
@@ -88,7 +90,7 @@
                                         <th colspan="5">Patient Information</th>
                                         <th colspan="2">Sample Information</th>
                                         <th colspan="7">Mother Information</th>
-                                        <th>Rejected Reason</th>
+                                        <th>Rejected_Reason</th>
                                     </tr>
                                     <tr> 
                                         <th>No</th>
@@ -171,7 +173,7 @@
                                             <td style="width: 1000px;">
                                                 <select class="form-control" name="rejectedreason" id="rejectedreason">
 
-                                                    <option value=""> Select One </option>
+                                                    <option> Select One </option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}

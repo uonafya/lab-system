@@ -7,7 +7,7 @@
     $(document).ready(function(){
     	$(".form-control").attr('autocomplete', 'off');
 
-        $("form select").select2(); 
+        $(".form-horizontal select").select2({ width: 'resolve' }); 
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }
