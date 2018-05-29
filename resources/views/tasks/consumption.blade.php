@@ -301,13 +301,17 @@
                     @foreach($data->testtypes as $types)
                         @foreach($toedit as $element)
                             $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function(){
-                                alert($(this).val());
+                               performCalculus({{ $platform.$types.$element.$kits['alias'] }}, $(this).val());
                             });
                         @endforeach
                     @endforeach
                 @endif
             @endforeach
         @endforeach
+
+        function performCalculus($platform, $ktis) {
+            alert("This is it");
+        }
         
 
     @endcomponent
