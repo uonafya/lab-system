@@ -11,7 +11,8 @@ CREATE OR REPLACE VIEW old_samples_view AS
     s.hei_validation, s.enrollmentCCCno as enrollment_ccc_no, s.enrollmentstatus as enrollment_status, s.referredfromsite,
     s.otherreason, s.flag, s.run, s.repeatt, s.eqa, s.approvedby, s.approved2by as approvedby2, 
     s.datecollected, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2,
-    s.tat1, s.tat2, s.tat3, s.tat4, s.synched, s.datesynched, s.previous_positive, 
+    #s.tat1, s.tat2, s.tat3, s.tat4, s.previous_positive, 
+    s.synched, s.datesynched,
     m.lastvl as mother_last_result, m.age as mother_age,
 
 
@@ -22,9 +23,9 @@ CREATE OR REPLACE VIEW old_samples_view AS
     s.dateindividualresultprinted,  
 
     p.originalautoid as original_patient_id, s.patient, s.fullnames as patient_name, s.caregiverphoneno as 
-    caregiver_phone, p.gender, m.entry_point,  s.dateinitiatedontreatment, p.dob
+    caregiver_phone, p.gender, m.entry_point,  s.dateinitiatedontreatment, p.dob,
 
-    m.status as hiv_status, m.cccno as ccc_no, 
+    m.status as hiv_status, m.cccno as ccc_no
 
     FROM samples s
     LEFT JOIN patients p ON p.autoID=s.patientAUTOid
@@ -40,8 +41,9 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
     s.otherjustification as other_justification, s.sampletype, s.prophylaxis, s.regimenline, p.pmtct,
     s.dilutionfactor, s.dilutiontype, s.comments, s.labcomment, s.parentid, s.rejectedreason, s.reason_for_repeat,
     s.rcategory, s.result, s.units, s.interpretation, s.worksheet as worksheet_id, s.flag, s.run, s.repeatt, s.approvedby,
-    s.approved2by as approvedby2, s.datecollected, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2, s.tat1,
-    s.tat2, s.tat3, s.tat4, s.synched, s.datesynched, s.previous_nonsuppressed,
+    s.approved2by as approvedby2, s.datecollected, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2,
+    #s.tat1, s.tat2, s.tat3, s.tat4,  s.previous_nonsuppressed,
+    s.synched, s.datesynched,
 
     s.batchno as original_batch_id, s.highpriority, s.inputcomplete as input_complete, s.batchcomplete as 
     batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, s.printedby, s.userid as user_id, 
@@ -60,8 +62,9 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
 CREATE OR REPLACE VIEW old_worksheets AS
 (
     SELECT id, type as machine_type, lab as lab_id, status as status_id,
-    runby, sortedby,  updatedby as uploaded_by, alliquotedby, bulkedby, reviewedby, review2by as reviewedby2,
+    runby, updatedby as uploaded_by, reviewedby, review2by as reviewedby2,
     createdby, cancelledby,
+    #sortedby, alliquotedby, bulkedby,
     HIQCAPNo as hiqcap_no, Spekkitno as spekkit_no, Rackno as rack_no, Lotno as lot_no, samplepreplotno as
     sample_prep_lot_no, bulklysislotno as bulklysis_lot_no, controllotno as control_lot_no, calibratorlotno as
     calibrator_lot_no, amplificationkitlotno as amplification_kit_lot_no,
@@ -71,18 +74,19 @@ CREATE OR REPLACE VIEW old_worksheets AS
     cdcworksheetno, 
     kitexpirydate, sampleprepexpirydate, bulklysisexpirydate, controlexpirydate, calibratorexpirydate,
     amplificationexpirydate,
-    datecut, datereviewed, review2date as datereviewed2, dateuploaded, datecancelled, daterun, 
-    synched, datesynched
+    datecut, datereviewed, review2date as datereviewed2, datecancelled, daterun, 
+    # dateuploaded, datesynched,
+    synched
 
     FROM worksheets
-
 );
 
 CREATE OR REPLACE VIEW old_viralworksheets AS
 (
     SELECT id, type as machine_type, lab as lab_id, status as status_id, calibration,
-    runby, sortedby,  updatedby as uploaded_by, alliquotedby, bulkedby, reviewedby, review2by as reviewedby2,
+    runby,  updatedby as uploaded_by, reviewedby, review2by as reviewedby2,
     createdby, cancelledby,
+    #sortedby, alliquotedby, bulkedby,
     HIQCAPNo as hiqcap_no, Spekkitno as spekkit_no, Rackno as rack_no, Lotno as lot_no, samplepreplotno as
     sample_prep_lot_no, bulklysislotno as bulklysis_lot_no, controllotno as control_lot_no, calibratorlotno as
     calibrator_lot_no, amplificationkitlotno as amplification_kit_lot_no,
@@ -98,9 +102,9 @@ CREATE OR REPLACE VIEW old_viralworksheets AS
     cdcworksheetno, 
     kitexpirydate, sampleprepexpirydate, bulklysisexpirydate, controlexpirydate, calibratorexpirydate,
     amplificationexpirydate,
-    datecut, datereviewed, review2date as datereviewed2, dateuploaded, datecancelled, daterun, 
-    synched, datesynched
+    datecut, datereviewed, review2date as datereviewed2, datecancelled, daterun, 
+    # dateuploaded, datesynched,
+    synched
 
     FROM viralworksheets
-
 );

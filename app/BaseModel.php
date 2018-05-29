@@ -15,6 +15,10 @@ class BaseModel extends Model
     protected static function boot()
     {
         parent::boot();
+
+        // static::addGlobalScope('siteentry', function(Builder $builder){
+        //     $builder->where('synched', '!=', 3);
+        // });
     }
     
 

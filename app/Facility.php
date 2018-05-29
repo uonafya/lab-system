@@ -8,4 +8,6 @@ class Facility extends Model
 {
     //
     protected $table = "facilitys";
+
+    public $timestamps = false;
 }

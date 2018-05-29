@@ -40,7 +40,7 @@
                 <div class="panel-heading">
                     <div class="panel-tools">
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
+                        <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
                     Sample Runs
                 </div>
