@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
-    protected $guarded = [];
+    // use \Venturecraft\Revisionable\RevisionableTrait;
+    // protected $revisionEnabled = true;
+    // protected $revisionCleanup = true; 
+    // protected $historyLimit = 500; 
+    // protected $guarded = [];
 
     protected static function boot()
     {

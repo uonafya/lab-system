@@ -2,11 +2,21 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
+
 use App\Lookup;
 
-class Resolver extends Model
+class Resolver
 {
+
+
+    public static function test_email()
+    {
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail());
+    }
+
 
     public static function my_date_format($value)
     {

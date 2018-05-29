@@ -63,3 +63,12 @@ Artisan::command('synch:vl-deletes', function(){
 
 
 
+
+
+Artisan::command('email:test', function(){
+	\App\Resolver::test_email();
+})->describe('Send test email.');
+
+
+
+
