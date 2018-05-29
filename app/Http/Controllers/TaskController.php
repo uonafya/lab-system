@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Taqmandeliveries;
+use App\Taqmanprocurement;
 use App\Abbotdeliveries;
+use App\Abbotprocurement;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
 use App\Requisition;
@@ -17,14 +19,29 @@ use DB;
 class TaskController extends Controller
 {
     public $taqmanKits = [
-                            ['name'=>"Ampliprep, HIV-1 Qualitative Test kits HIVQCAP", 'alias'=>'qualkit'],
-                            ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent'],
-                            ['name'=>"Ampliprep Input S-tube", 'alias'=>'ampinput'],
-                            ['name'=>"Ampliprep SPU", 'alias'=>'ampflapless'],
-                            ['name'=>"Ampliprep K-Tips", 'alias'=>'ampktips'],
-                            ['name'=>"Ampliprep Wash Reagent", 'alias'=>'ampwash'],
-                            ['name'=>"TAQMAN K-Tubes", 'alias'=>'ktubes'],
-                            ['name'=>"CAP/CTM Consumable Bundles", 'alias'=>'consumables']
+                            ['name'=>"Ampliprep, HIV-1 Qualitative Test kits HIVQCAP", 'alias'=>'qualkit', 'unit'=>'48 Tests'],
+                            ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent', 'unit'=>'350 Tests' ,'factor'=>0.15],
+                            ['name'=>"Ampliprep Input S-tube", 'alias'=>'ampinput', 'unit'=>'12 * 24' ,'factor'=>0.2],
+                            ['name'=>"Ampliprep SPU", 'alias'=>'ampflapless', 'unit'=>'12 * 24' ,'factor'=>0.2],
+                            ['name'=>"Ampliprep K-Tips", 'alias'=>'ampktips', 'unit'=>'5.1L' ,'factor'=>0.15],
+                            ['name'=>"Ampliprep Wash Reagent", 'alias'=>'ampwash', 'unit'=>'1.2mm, 12 * 36' ,'factor'=>0.5],
+                            ['name'=>"TAQMAN K-Tubes", 'alias'=>'ktubes', 'unit'=>'12 * 96Pcs' ,'factor'=>0.05],
+                            ['name'=>"CAP/CTM Consumable Bundles", 'alias'=>'consumables', 'unit'=>'2 * 2.5ml' ,'factor'=>0.5]
+                        ];
+    public $abbottKits = [
+                            ['name'=>"ABBOTT RealTime HIV-1 Quantitative Amplification Reagent Kit", 'alias'=>'qualkit'],
+                            ['name'=>"ABBOTT m2000rt Optical Calibration Kit", 'alias'=>'calibration','factor'=>['EID'=>0,'VL'=>0]],
+                            ['name'=>"ABBOTT RealTime HIV-1 Quantitative Control Kit", 'alias'=>'control', 'factor'=>['EID'=>(2*(2/24)),'VL'=>(3/24)]],
+                            ['name'=>"Bulk mLysisDNA Buffer (for DBS processing only)", 'alias'=>'buffer','factor'=>['EID'=>1,'VL'=>1]],
+                            ['name'=>"ABBOTT mSample Preparation System RNA", 'alias'=>'Preparation','factor'=>['EID'=>1,'VL'=>1]],
+                            ['name'=>"ABBOTT Optical Adhesive Covers", 'alias'=>'adhesive','factor'=>['EID'=>(2/100),'VL'=>(1/100)]],
+                            ['name'=>"ABBOTT 96-Deep-Well Plate", 'alias'=>'deepplate','factor'=>['EID'=>(2*(2/4)),'VL'=>(3/4)]],
+                            ['name'=>"Saarstet Master Mix Tube", 'alias'=>'mixtube','factor'=>['EID'=>(2*(1/25)),'VL'=>(1/25)]],
+                            ['name'=>"Saarstet 5ml Reaction Vessels", 'alias'=>'reactionvessels','factor'=>['EID'=>(192/500),'VL'=>(192/500)]],
+                            ['name'=>"200mL Reagent Vessels", 'alias'=>'reagentvessels','factor'=>['EID'=>(2*(5/6)),'VL'=>(6/6)]],
+                            ['name'=>"ABBOTT 96-Well Optical Reaction Plate", 'alias'=>'reactionplate','factor'=>['EID'=>(192/500),'VL'=>(1/20)]],
+                            ['name'=>"1000 uL Eppendorf (Tecan) Disposable Tips (for 1000 tests)", 'alias'=>'1000disposable','factor'=>['EID'=>(2*(421/192)),'VL'=>(841/192)]],
+                            ['name'=>"200 ML Eppendorf (Tecan) Disposable Tips", 'alias'=>'200disposable','factor'=>['EID'=>(2*(48/192)),'VL'=>(96/192)]]
                         ];
     public function index()
     {
@@ -171,10 +188,39 @@ class TaskController extends Controller
     public function consumption ($guide=null)
     {
         $previousMonth = date('m')-1;
+        $year = date('Y');
         $data['testtypes'] = ['EID', 'VL'];
         $data['taqmanKits'] = $this->taqmanKits;
+        $data['abbottKits'] = $this->abbottKits;
+        $data['EIDteststaq'] = SampleView::join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', Auth()->user()->lab_id)->whereNull('rejectedreason')->whereIn('worksheets.machine_type',[1,3])->count();
+        $data['EIDtestsabbott'] = SampleView::join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', Auth()->user()->lab_id)->whereNull('rejectedreason')->where('worksheets.machine_type',2)->count();
+
+        $data['VLteststaq'] = ViralsampleView::join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('viralsamples_view.lab_id', Auth()->user()->lab_id)->whereNull('rejectedreason')->whereIn('viralworksheets.machine_type',[1,3])->count();
+        $data['VLtestsabbott'] = ViralsampleView::join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('viralsamples_view.lab_id', Auth()->user()->lab_id)->whereNull('rejectedreason')->where('viralworksheets.machine_type',2)->count();
+        
+        foreach ($data['testtypes'] as $key => $value) {
+            $data['prevabbott'.$value] = NULL;
+            $data['prevtaqman'.$value] = NULL;
+            $data['abbottdeliveries'.$value] = NULL;
+            $data['taqmandeliveries'.$value] = NULL;
+            $type = $key+1;
+            foreach(Abbotprocurement::where('month', $previousMonth-1)->where('testtype', $type)->get() as $key1 => $value1) {
+                $data['prevabbott'.$value] = $value;
+            }
+            foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('testtype', $type)->get() as $key1 => $value1) {
+                $data['prevtaqman'.$value] = $value1;
+            }
+            foreach (Taqmandeliveries::whereRaw("YEAR(datereceived) = $year")->whereRaw("MONTH(datereceived) = $previousMonth")->where('testtype', $type)->get() as $key1 => $value1) {
+                $data['taqmandeliveries'.$value] = $value1;
+            }
+            foreach (Abbotdeliveries::whereRaw("YEAR(datereceived) = $year")->whereRaw("MONTH(datereceived) = $previousMonth")->where('testtype', $type)->get() as $key1 => $value1) {
+                $data['abbottdeliveries'.$value] = $value1;
+            }
+        }
+        
 
         $data = (object) $data;
+        // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.date('Y'));
     }
 

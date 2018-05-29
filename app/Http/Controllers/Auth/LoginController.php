@@ -117,7 +117,7 @@ class LoginController extends Controller
             $labtracker = 0;
             if ($performance > 0 &&  $equipment > 0) {
                 $labtracker=1;
-                session(['LabTracker'=>true, 'EquipTracker'=>true]);
+                // session(['LabTracker'=>true, 'EquipTracker'=>true]);
             }
 
             $abbot = \App\Lab::select('abbott')->where('id', Auth()->user()->lab_id)->get();
@@ -129,11 +129,11 @@ class LoginController extends Controller
             foreach ($testype as $key => $value) {
                 if ($abbot == 1) {//Check for both abbot and taqman
                     $abbot[] = Abbotprocurement::where('month', $month)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
-                    session(['abbotkits' => true]);
+                    // session(['abbotkits' => true]);
                 }
                                    
                 $taqman[] = Taqmanprocurement::where('month', $month)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
-                session(['taqmankits' => true]);
+                // session(['taqmankits' => true]);
                 
             }
 
@@ -156,7 +156,7 @@ class LoginController extends Controller
                 if ($taqman[0] == 0 || $taqman[1] ==0)
                     $submittedstatus = 0;
             }
-            session(['pendingTasks' => true]);            
+            // session(['pendingTasks' => true]);            
             if ($submittedstatus == 0 OR $labtracker ==0)  
                 return '/pending';
         }
