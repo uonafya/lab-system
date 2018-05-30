@@ -24,7 +24,7 @@ class FacilityObserver
     public function updated(Facility $facility)
     {
         $base = \App\Synch::$base;
-        $client = new Client(['base_uri' => self::$base]);
+        $client = new Client(['base_uri' => $base]);
         $today = date('Y-m-d');
         $url = 'facility/' . $facility->id;
 

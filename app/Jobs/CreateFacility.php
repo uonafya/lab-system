@@ -36,7 +36,7 @@ class CreateFacility implements ShouldQueue
     public function handle()
     {
         $base = \App\Synch::$base;
-        $client = new Client(['base_uri' => self::$base]);
+        $client = new Client(['base_uri' => $base]);
         $today = date('Y-m-d');
 
         $response = $client->request('post', 'facility', [
