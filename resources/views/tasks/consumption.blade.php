@@ -120,9 +120,9 @@
                                                 }
                                             @endphp
                                             
-                                            <input class="form-control" type="text" id="taqman{{ $types }}neg{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
+                                            <input class="form-control" type="text" id="taqman{{ $types }}end{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
                                             
-                                            <input type="hidden" name="taqman{{ $types }}neg{{ $kits['alias'] }}" id="taqman{{ $types }}neg{{ $kits['alias'] }}" value="{{ $endingbal }}">
+                                            <input type="hidden" name="taqman{{ $types }}end{{ $kits['alias'] }}" id="taqman{{ $types }}end{{ $kits['alias'] }}" value="{{ $endingbal }}">
                                         </td>
                                         <td>
                                             <input class="form-control input-edit-danger" type="text" name="taqman{{ $types }}request{{ $kits['alias'] }}" id="taqman{{ $types }}request{{ $kits['alias'] }}" value="">
@@ -296,21 +296,62 @@
         @endslot
 
         @foreach($plats as $platform)
-            @foreach ($data->abbottKits as $kits)
-                @if($kits['alias'] == 'qualkit')
-                    @foreach($data->testtypes as $types)
-                        @foreach($toedit as $element)
-                            $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function(){
-                               performCalculus({{ $platform.$types.$element.$kits['alias'] }}, $(this).val());
-                            });
+            @if($platform == 'abbott')
+                @foreach ($data->abbottKits as $kits)
+                    @if($kits['alias'] == 'qualkit')
+                        @foreach($data->testtypes as $types)
+                            @foreach($toedit as $element)
+                                $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function(){
+                                   performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}");
+                                });
+                            @endforeach
                         @endforeach
-                    @endforeach
-                @endif
-            @endforeach
+                    @endif
+                @endforeach
+            @else
+                @foreach ($data->taqmanKits as $kits)
+                    @if($kits['alias'] == 'qualkit')
+                        @foreach($data->testtypes as $types)
+                            @foreach($toedit as $element)
+                                $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function() {
+                                    performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}");
+                                    ending = $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val();
+                                    @if($element == 'losses')
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(ending-$(this).val());
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(ending-$(this).val());
+                                    @elseif($element == 'pos')
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(ending+$(this).val());
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(ending+$(this).val());
+                                    @elseif($element == 'neg')
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(ending-$(this).val());
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(ending-$(this).val());
+                                    @endif
+                                });
+                            @endforeach
+                        @endforeach
+                    @endif
+                @endforeach
+            @endif
         @endforeach
 
-        function performCalculus($platform, $ktis) {
-            alert("This is it");
+        function performCalculus(value,platform,testtype,element) {
+            if(platform == 'abbott') {
+                @foreach ($data->abbottKits as $kits)
+                    @if ($kits['alias'] != 'qualkit')
+                        factor = {{ $kits['factor']['VL'] }};
+                        if(testtype == 'EID')
+                            factor = {{ $kits['factor']['EID'] }};
+                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(value*factor);
+                    @endif
+                @endforeach
+            } else {
+                @foreach ($data->taqmanKits as $kits)
+                    @if ($kits['alias'] != 'qualkit')
+                        factor = {{ $kits['factor'] }};
+                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(value*factor);
+                    @endif
+                @endforeach
+            }
         }
         
 
