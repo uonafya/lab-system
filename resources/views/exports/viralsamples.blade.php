@@ -80,7 +80,7 @@
 
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong> Patient CCC No</strong></td>
-				<td colspan="2"> <span class="style5"><?php echo $patient; ?></span></td>
+				<td colspan="2"> <span class="style5"><?php echo $sample->patient->patient; ?></span></td>
 				<td colspan="2"  class="style4 style1 comment" ><strong> Sample Type </strong></td>
 				<td colspan="2" class="comment" >
 					<span class="style5" > 
