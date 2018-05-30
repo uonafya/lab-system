@@ -18,14 +18,14 @@
 @section('content')
 @php
     $prevmonth = date('m')-1;
-    $toedit = ['losses','pos','neg'];
+    $toedit = ['wasted','pos','issued'];
     $plats = ['taqman','abbott'];
 @endphp
 <div class="row">
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                {{ Form::open(['url' => '/kitsdeliveries', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                {{ Form::open(['url' => '/consumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
                 <div class="form-group">
                     <div class="form-group" style="/*display: none;" id="platformDiv">
                         <label class="col-sm-4 control-label"><center>Platform</center></label>
@@ -103,13 +103,13 @@
                                         <td>{{ $data->$taqmandeliveries->$lot ?? '-' }}</td>
                                         <td>{{ $used ?? $qualkitused }}</td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="taqman{{ $types }}losses{{ $kits['alias'] }}" id="taqman{{ $types }}losses{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit" type="text" name="taqman{{ $types }}wasted{{ $kits['alias'] }}" id="taqman{{ $types }}wasted{{ $kits['alias'] }}" value="" required>
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="taqman{{ $types }}pos{{ $kits['alias'] }}" id="taqman{{ $types }}pos{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit" type="text" name="taqman{{ $types }}pos{{ $kits['alias'] }}" id="taqman{{ $types }}pos{{ $kits['alias'] }}" value="" required>
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="taqman{{ $types }}neg{{ $kits['alias'] }}" id="taqman{{ $types }}neg{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit" type="text" name="taqman{{ $types }}issued{{ $kits['alias'] }}" id="taqman{{ $types }}issued{{ $kits['alias'] }}" value="" required>
                                         </td>
                                         <td>
                                             @php
@@ -120,12 +120,12 @@
                                                 }
                                             @endphp
                                             
-                                            <input class="form-control" type="text" id="taqman{{ $types }}end{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
+                                            <input class="form-control" type="text" id="taqman{{ $types }}ending{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
                                             
-                                            <input type="hidden" name="taqman{{ $types }}end{{ $kits['alias'] }}" id="taqman{{ $types }}end{{ $kits['alias'] }}" value="{{ $endingbal }}">
+                                            <input type="hidden" name="taqman{{ $types }}ending{{ $kits['alias'] }}" id="taqman{{ $types }}ending{{ $kits['alias'] }}" value="{{ $endingbal }}">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit-danger" type="text" name="taqman{{ $types }}request{{ $kits['alias'] }}" id="taqman{{ $types }}request{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit-danger" type="text" name="taqman{{ $types }}request{{ $kits['alias'] }}" id="taqman{{ $types }}request{{ $kits['alias'] }}" value="" required>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -136,7 +136,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-6 control-label"><center>Comments concerning Negative adjustments (e.g. where were the kits issued out/donated to and why)</center></label>
                                         <div class="col-sm-6">
-                                            <textarea class="form-control input-sm input-edit" id="{{ $types }}issuedcomment" name="{{ $types }}issuedcomment" cols="300"></textarea>
+                                            <textarea class="form-control input-sm input-edit" id="taqman{{ $types }}issuedcomment" name="taqman{{ $types }}issuedcomment" cols="300"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -144,7 +144,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-6 control-label"><center>Comments concerning Positive adjustments (e.g. where were the kits received from)</center></label>
                                         <div class="col-sm-6">
-                                            <textarea class="form-control input-sm input-edit" id="{{ $types }}receivedcomment" name="{{ $types }}receivedcomment" cols="300" disabled="true"></textarea>
+                                            <textarea class="form-control input-sm input-edit" id="taqman{{ $types }}receivedcomment" name="taqman{{ $types }}receivedcomment" cols="300"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@
                         @endforeach
                         <div class="col-sm-12">
                             <center>
-                            <button class="btn btn-success" type="submit" name="saveAbbott" value="saveTaqman">Save Taqman Kit Consumption</button>
+                            <button class="btn btn-success" type="submit" name="saveTaqman" value="saveTaqman">Save Taqman Kit Consumption</button>
                             <button class="btn btn-primary" type="submit" name="discard" value="add">Discard Changes</button>
                             </center>
                         </div>
@@ -222,13 +222,13 @@
                                         <td>{{ $data->$abbotdeliveries->$lot ?? '-' }}</td>
                                         <td>{{ $used ?? $qualkitused }}</td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="abbott{{ $types }}losses{{ $kits['alias'] }}" id="abbott{{ $types }}losses{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit" type="text" name="abbott{{ $types }}wasted{{ $kits['alias'] }}" id="abbott{{ $types }}wasted{{ $kits['alias'] }}" value="" required>
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="abbott{{ $types }}pos{{ $kits['alias'] }}" id="abbott{{ $types }}pos{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit" type="text" name="abbott{{ $types }}pos{{ $kits['alias'] }}" id="abbott{{ $types }}pos{{ $kits['alias'] }}" value="" required>
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="abbott{{ $types }}neg{{ $kits['alias'] }}" id="abbott{{ $types }}neg{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit" type="text" name="abbott{{ $types }}issued{{ $kits['alias'] }}" id="abbott{{ $types }}issued{{ $kits['alias'] }}" value="" required>
                                         </td>
                                         <td>
                                             @php
@@ -238,12 +238,12 @@
                                                     $endingbal = (@($data->$prevabbott->$prefix+$data->$abbottdeliveries->$received) - @($used));
                                                 }
                                             @endphp
-                                            <input class="form-control" type="text" id="abbott{{ $types }}end{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
+                                            <input class="form-control" type="text" id="abbott{{ $types }}ending{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
                                             
-                                            <input type="hidden" name="abbott{{ $types }}end{{ $kits['alias'] }}" id="abbott{{ $types }}end{{ $kits['alias'] }}" value="{{ $endingbal }}">
+                                            <input type="hidden" name="abbott{{ $types }}ending{{ $kits['alias'] }}" id="abbott{{ $types }}ending{{ $kits['alias'] }}" value="{{ $endingbal }}">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit-danger" type="text" name="abbott{{ $types }}request{{ $kits['alias'] }}" id="abbott{{ $types }}request{{ $kits['alias'] }}" value="">
+                                            <input class="form-control input-edit-danger" type="text" name="abbott{{ $types }}request{{ $kits['alias'] }}" id="abbott{{ $types }}request{{ $kits['alias'] }}" value="" required>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -254,7 +254,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-6 control-label"><center>Comments concerning Negative adjustments (e.g. where were the kits issued out/donated to and why)</center></label>
                                         <div class="col-sm-6">
-                                            <textarea class="form-control input-sm input-edit" id="{{ $types }}issuedcomment" name="{{ $types }}issuedcomment" cols="300"></textarea>
+                                            <textarea class="form-control input-sm input-edit" id="abbott{{ $types }}issuedcomment" name="abbott{{ $types }}issuedcomment" cols="300"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -262,7 +262,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-6 control-label"><center>Comments concerning Positive adjustments (e.g. where were the kits received from)</center></label>
                                         <div class="col-sm-6">
-                                            <textarea class="form-control input-sm input-edit" id="{{ $types }}receivedcomment" name="{{ $types }}receivedcomment" cols="300" disabled="true"></textarea>
+                                            <textarea class="form-control input-sm input-edit" id="abbott{{ $types }}receivedcomment" name="abbott{{ $types }}receivedcomment" cols="300"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -302,9 +302,9 @@
                         @foreach($data->testtypes as $types)
                             @foreach($toedit as $element)
                                 $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function(){
-                                    lossesval = parseInt($("#{{ $platform.$types }}losses{{ $kits['alias'] }}").val());
+                                    lossesval = parseInt($("#{{ $platform.$types }}wasted{{ $kits['alias'] }}").val());
                                     posval = parseInt($("#{{ $platform.$types }}pos{{ $kits['alias'] }}").val());
-                                    negval = parseInt($("#{{ $platform.$types }}neg{{ $kits['alias'] }}").val());
+                                    negval = parseInt($("#{{ $platform.$types }}issued{{ $kits['alias'] }}").val());
 
                                     if (isNaN(lossesval))
                                         lossesval = 0;
@@ -331,18 +331,18 @@
                                         
                                         endingbal = parseInt({{ $endingbal }});
                                         
-                                    @if($element == 'losses')
+                                    @if($element == 'wasted')
                                         endingbal = (endingbal+posval)-(lossesval+negval);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}disabled").val(endingbal);
                                     @elseif($element == 'pos')
                                         endingbal = (endingbal+posval-lossesval-negval);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
-                                    @elseif($element == 'neg')
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}disabled").val(endingbal);
+                                    @elseif($element == 'issued')
                                         endingbal = (endingbal+posval-lossesval-negval);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}disabled").val(endingbal);
                                     @endif
                                     performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}",endingbal);
                                 });
@@ -359,9 +359,9 @@
                         @foreach($data->testtypes as $types)
                             @foreach($toedit as $element)
                                 $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function() {
-                                    lossesval = parseInt($("#{{ $platform.$types }}losses{{ $kits['alias'] }}").val());
+                                    lossesval = parseInt($("#{{ $platform.$types }}wasted{{ $kits['alias'] }}").val());
                                     posval = parseInt($("#{{ $platform.$types }}pos{{ $kits['alias'] }}").val());
-                                    negval = parseInt($("#{{ $platform.$types }}neg{{ $kits['alias'] }}").val());
+                                    negval = parseInt($("#{{ $platform.$types }}issued{{ $kits['alias'] }}").val());
 
                                     if (isNaN(lossesval))
                                         lossesval = 0;
@@ -386,18 +386,18 @@
                                         $endingbal = (@($data->$prevtaqman->$prefix+$data->$taqmandeliveries->$received) - @($qualkitused));
                                     @endphp
                                         endingbal = parseInt({{ $endingbal }});
-                                    @if($element == 'losses')
+                                    @if($element == 'wasted')
                                         endingbal = (endingbal+posval-lossesval-negval);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}disabled").val(endingbal);
                                     @elseif($element == 'pos')
                                         endingbal = (endingbal+posval-lossesval-negval);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
-                                    @elseif($element == 'neg')
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}disabled").val(endingbal);
+                                    @elseif($element == 'issued')
                                         endingbal = (endingbal+posval-lossesval-negval);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}ending{{ $kits['alias'] }}disabled").val(endingbal);
                                     @endif
                                     performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}",endingbal);
                                 });
@@ -418,18 +418,18 @@
                         factor = {{ $kits['factor']['VL'] }};
                         if(testtype == 'EID')
                             factor = {{ $kits['factor']['EID'] }};
-                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(value*factor);
-                        $("#"+platform+testtype+"end{{ $kits['alias'] }}").val(qualkitending*factor);
-                        $("#"+platform+testtype+"end{{ $kits['alias'] }}disabled").val(qualkitending*factor);
+                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val((value*factor).toFixed(2));
+                        $("#"+platform+testtype+"ending{{ $kits['alias'] }}").val((qualkitending*factor).toFixed(2));
+                        $("#"+platform+testtype+"ending{{ $kits['alias'] }}disabled").val((qualkitending*factor).toFixed(2));
                     @endif
                 @endforeach
             } else {
                 @foreach ($data->taqmanKits as $kits)
                     @if ($kits['alias'] != 'qualkit')
                         factor = {{ $kits['factor'] }};
-                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(alue*factor);
-                        $("#"+platform+testtype+"end{{ $kits['alias'] }}").val(ualkitending*factor);
-                        $("#"+platform+testtype+"end{{ $kits['alias'] }}disabled").valqualkitending*factor);
+                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val((value*factor).toFixed(2));
+                        $("#"+platform+testtype+"ending{{ $kits['alias'] }}").val((qualkitending*factor).toFixed(2));
+                        $("#"+platform+testtype+"ending{{ $kits['alias'] }}disabled").val((qualkitending*factor).toFixed(2));
                     @endif
                 @endforeach
             }
@@ -442,14 +442,14 @@
                         factor = {{ $kits['factor']['VL'] }};
                         if(testtype == 'EID')
                             factor = {{ $kits['factor']['EID'] }};
-                        $("#"+platform+testtype+"request{{ $kits['alias'] }}").val(value*factor);
+                        $("#"+platform+testtype+"request{{ $kits['alias'] }}").val((value*factor).toFixed(2));
                     @endif
                 @endforeach
             } else {
                 @foreach ($data->taqmanKits as $kits)
                     @if ($kits['alias'] != 'qualkit')
                         factor = {{ $kits['factor'] }};
-                        $("#"+platform+testtype+"request{{ $kits['alias'] }}").val(value*factor);
+                        $("#"+platform+testtype+"request{{ $kits['alias'] }}").val((value*factor).toFixed(2));
                     @endif
                 @endforeach
             }

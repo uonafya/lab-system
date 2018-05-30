@@ -185,11 +185,47 @@ class TaskController extends Controller
         return view('tasks.kitsdeliveries', compact('users'))->with('pageTitle', 'Kit Deliveries');
     }
 
-    public function consumption ($guide=null)
+    public function consumption (Request $request, $guide=null)
     {
+        $data['testtypes'] = ['EID', 'VL'];
+        if ($request->saveTaqman || $request->saveAbbott)
+        {
+            // dd($request->all());
+            $insertData = [];
+            if ($request->platform == 1 || $request->platform == '1') {
+                $platform = 'taqman';
+                $sub = ['ending','wasted','issued','request','pos'];
+                foreach ($data['testtypes'] as $k => $v) {
+                    $testtype = 2;
+                    if ($v = 'EID') 
+                        $testtype = 1;
+                    $insertData[$v]['testtype'] = $testtype;
+                    $insertData[$v]['month'] = date('m')-1;
+                    $insertData[$v]['year'] = date('Y');
+                    $insertData[$v]['datesubmitted'] = date('Y-m-d');
+                    $insertData[$v]['submittedBy'] = Auth()->user()->id;
+                    $insertData[$v]['lab_id'] = Auth()->user()->lab_id;
+                    foreach ($sub as $key => $value) {
+                        foreach ($this->taqmanKits as $keykit => $valuekit) {
+                            $formValue = $platform.$v.$value.$valuekit['alias'];
+                            $insertData[$v][$value.$valuekit['alias']] = $request->$formValue;
+                        }
+                    }
+                    $comments = $platform.$v.'receivedcomment';
+                    $issuedcomments = $platform.$v.'issuedcomment';
+                    $insertData[$v]['comments'] = $request->$comments;
+                    $insertData[$v]['issuedcomments'] = $request->$issuedcomments;
+                }
+            } else if ($request->platform == 2 || $request->platform == '2') {
+                # code...
+            }
+        }
+
+        dd($insertData);
+
         $previousMonth = date('m')-1;
         $year = date('Y');
-        $data['testtypes'] = ['EID', 'VL'];
+        
         $data['taqmanKits'] = $this->taqmanKits;
         $data['abbottKits'] = $this->abbottKits;
         $data['EIDteststaq'] = SampleView::join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', Auth()->user()->lab_id)->whereNull('rejectedreason')->whereIn('worksheets.machine_type',[1,3])->count();

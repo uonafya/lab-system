@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTaqmanprocurementsTable extends Migration
 {
-    public $main = ['ending','wasted','issued','request','pos','neg'];
+    public $main = ['ending','wasted','issued','request','pos'];
     public $sub = ['qualkit','spexagent','ampinput','ampflapless','ampktips','ampwash','ktubes','consumables'];
     /**
      * Run the migrations.

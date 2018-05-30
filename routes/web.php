@@ -134,6 +134,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 
 	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
+	Route::post('consumption', 'TaskController@consumption');
 	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
 	Route::post('equipmentlog', 'TaskController@equipmentlog');
 	Route::get('/pending', 'TaskController@index')->name('pending');
