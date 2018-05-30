@@ -7,7 +7,7 @@ use App\OldModels\BaseModel;
 class Viralpatient extends BaseModel
 {
 	protected $table = 'viralpatients';
-	protected $key = 'autoID';
+	protected $key = 'AutoID';
 
 	public function setGenderAttribute($value)
 	{

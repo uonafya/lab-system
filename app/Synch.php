@@ -227,7 +227,7 @@ class Synch
 		}
 
 		while (true) {
-			$worksheets = $worksheet_class::where('synched', 0)->limit(30)->get();
+			$worksheets = $worksheet_class::where('synched', 0)->where('status_id', 3)->limit(30)->get();
 			if($worksheets->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
@@ -318,6 +318,37 @@ class Synch
 					$update_class::where('id', $row->original_id)->delete();
 				}
 			}			
+		}
+	}
+
+
+
+	public static function synch_facilities()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		while (true) {
+			$facilities = Facility::where('synched', 0)->limit(30)->get();
+			if($facilities->isEmpty()) break;
+
+			$response = $client->request('post', 'synch/facilities', [
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'form_params' => [
+					'facilities' => $facilities->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->patients as $key => $value) {
+				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
+				Viralpatient::where('id', $value->original_id)->update($update_data);
+			}
 		}
 	}
 

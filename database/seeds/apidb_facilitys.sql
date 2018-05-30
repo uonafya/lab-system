@@ -112,7 +112,7 @@ VIEW view_facilitys AS
 SELECT  
 
 fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, countys.name as county, 
-labs.name as lab, partner.name as partner, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, 
+labs.name as lab, partners.name as partner, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, 
 fac.email, fac.contactperson, fac.ContactEmail, fac.contacttelephone, fac.contacttelephone2, 
 fac.sms_printer_phoneno, fac.G4Sbranchname, fac.G4Slocation, fac.G4Sphone1, fac.G4Sphone2, fac.G4Sphone3, fac.G4Sfax
 

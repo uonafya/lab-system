@@ -6,7 +6,7 @@ use App\OldModels\BaseModel;
 
 class Patient extends BaseModel
 {
-	protected $key = 'autoID';
+	protected $key = 'AutoID';
 
 
     public function mother()
@@ -14,6 +14,10 @@ class Patient extends BaseModel
     	return $this->belongsTo('App\OldModels\Mother', 'mother', 'ID');
     }
 
+    public function sample()
+    {
+    	return $this->hasMany('App\OldModels\Sample', 'patientAUTOid', 'autoID');
+    }
 
 	public function setGenderAttribute($value)
 	{

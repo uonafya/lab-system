@@ -25,7 +25,7 @@ class SampleObserver
 		$sample->load(['batch', 'patient.mother']);
 
 		$old_sample = new OldSample;
-		$old_sample->id = $sample->id;
+		$old_sample->ID = $sample->id;
 		$patient = new Patient;
 		$mother = new Mother;
 
@@ -56,23 +56,30 @@ class SampleObserver
 	}
 
 	private function my_worker($sample, $mother, $patient, $old_sample)
-	{
+	{		
 
-		$mother->pmtct = $sample->pmtct;
-		$mother->age = $sample->age;
 		$mother->lastvl = $sample->mother_last_result;
 		$mother->age = $sample->mother_age;
+		$mother->feeding = $sample->feeding;
+		$mother->prophylaxis = $sample->mother_prophylaxis;
+		$mother->entry_point = $sample->patient->entry_point;
 		$mother->status = $sample->patient->mother->hiv_status;
 		$mother->cccno = $sample->patient->mother->ccc_no;
+		$mother->synched = $sample->patient->mother->synched;
+		$mother->datesynched = $sample->patient->mother->datesynched;
+		$mother->facility = $sample->batch->facility_id;
+		$mother->labtestedin = $sample->batch->lab_id;
 		$mother->save();
 
 		$patient->age = $sample->age;
 		$patient->prophylaxis = $sample->regimen;
+		$patient->ID = $sample->patient->patient;
+		$patient->fullnames = $sample->patient->patient_name;
 		$patient->gender = $sample->patient->sex;
 		$patient->dob = $sample->patient->dob;
-		$patient->entry_point = $sample->patient->mother->entry_point;
-		$patient->mother = $sample->patient->mother->id;
-		$patient->save();
+		$patient->mother = $mother->ID;
+		$patient->labtestedin = $sample->batch->lab_id;
+		$patient->save(); 
 
 
 		$old_sample->patientAUTOid = $sample->patient->id;
@@ -81,6 +88,7 @@ class SampleObserver
 		$old_sample->orderno = $sample->order_no;
 		$old_sample->sampletype = $sample->sample_type;
 		$old_sample->receivedstatus = $sample->receivedstatus;
+		$old_sample->regimen = $sample->regimen;
 		$old_sample->pcrtype = $sample->pcrtype;
 		$old_sample->spots = $sample->spots;
 		$old_sample->comments = $sample->comments;
@@ -109,6 +117,7 @@ class SampleObserver
 		$old_sample->dateapproved2 = $sample->dateapproved2;
 
 		$old_sample->batchno = $sample->batch->id;
+		$old_sample->facility = $sample->batch->facility_id;
 		$old_sample->highpriority = $sample->batch->highpriority;
 		$old_sample->inputcomplete = $sample->batch->input_complete;
 		$old_sample->batchcomplete = $sample->batch->batch_complete;
@@ -131,7 +140,9 @@ class SampleObserver
 		$old_sample->synched = $sample->synched;
 		$old_sample->datesynched = $sample->datesynched;
 
-		if($sample->worksheet_id && $sample->worksheet_id != 0) $old_sample->inworksheet = 1;
+		if($sample->worksheet_id) $old_sample->Inworksheet = 1;
+		if($sample->approvedby) $old_sample->approved = 1;
+		if($sample->approvedby2) $old_sample->approved2 = 1;
 
 		$old_sample->save();
 

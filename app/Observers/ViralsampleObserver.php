@@ -24,7 +24,7 @@ class ViralsampleObserver
 		$viralsample->load(['batch', 'patient']);
 
 		$old_sample = new OldSample;
-		$old_sample->id = $viralsample->id;
+		$old_sample->ID = $viralsample->id;
 		$patient = new Viralpatient;
 		$this->my_worker($viralsample, $patient, $old_sample);
 	}
@@ -54,10 +54,13 @@ class ViralsampleObserver
 	{
 
 		$patient->age = $viralsample->age;
+		$patient->pmtct = $viralsample->pmtct;
+		$patient->prophylaxis = $viralsample->prophylaxis;
 		$patient->gender = $viralsample->patient->sex;
 		$patient->dob = $viralsample->patient->dob;
 		$patient->initiationdate = $viralsample->patient->initiation_date;
 		$patient->entry_point = $viralsample->patient->mother->entry_point;
+		$patient->labtestedin = $viralsample->batch->lab_id;
 		$patient->save();
 
 
@@ -98,10 +101,10 @@ class ViralsampleObserver
 		$old_sample->datetested = $viralsample->datetested;
 		$old_sample->datemodified = $viralsample->datemodified;
 		$old_sample->dateapproved = $viralsample->dateapproved;
-		$old_sample->dateapproved = $viralsample->dateapproved;
 		$old_sample->dateapproved2 = $viralsample->dateapproved2;
 
 		$old_sample->batchno = $viralsample->batch->id;
+		$old_sample->facility = $viralsample->batch->facility_id;
 		$old_sample->highpriority = $viralsample->batch->highpriority;
 		$old_sample->inputcomplete = $viralsample->batch->input_complete;
 		$old_sample->batchcomplete = $viralsample->batch->batch_complete;
@@ -118,6 +121,7 @@ class ViralsampleObserver
 		$old_sample->dateindividualresultprinted = $viralsample->batch->dateindividualresultprinted;
 
 		$old_sample->patient = $viralsample->patient->patient;
+		$old_sample->ARTstartdate = $viralsample->patient->initiation_date;
 		$old_sample->fullnames = $viralsample->patient->patient_name;
 		$old_sample->caregiverphoneno = $viralsample->patient->caregiver_phone;
 		$old_sample->dateinitiatedontreatment = $viralsample->patient->dateinitiatedontreatment;
