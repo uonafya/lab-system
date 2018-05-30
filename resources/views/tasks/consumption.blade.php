@@ -85,9 +85,9 @@
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
-                                                $qualkitused = $tests / 42;
+                                                $qualkitused = round(($tests / 42), 2);
                                             } else if ($types == 'EID') {
-                                                $qualkitused = $tests / 44;
+                                                $qualkitused = round(($tests / 44), 2);
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor']);
@@ -205,9 +205,9 @@
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
-                                                $qualkitused = round($tests / 93);
+                                                $qualkitused = round(($tests / 93), 2);
                                             } else if ($types == 'EID') {
-                                                $qualkitused = round($tests / 94);
+                                                $qualkitused = round(($tests / 94), 2);
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor'][$types]);
@@ -238,9 +238,9 @@
                                                     $endingbal = (@($data->$prevabbott->$prefix+$data->$abbottdeliveries->$received) - @($used));
                                                 }
                                             @endphp
-                                            <input class="form-control" type="text" id="abbott{{ $types }}neg{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
+                                            <input class="form-control" type="text" id="abbott{{ $types }}end{{ $kits['alias'] }}disabled" value="{{ $endingbal }}" disabled="true">
                                             
-                                            <input type="hidden" name="abbott{{ $types }}neg{{ $kits['alias'] }}" id="abbott{{ $types }}neg{{ $kits['alias'] }}" value="{{ $endingbal }}">
+                                            <input type="hidden" name="abbott{{ $types }}end{{ $kits['alias'] }}" id="abbott{{ $types }}end{{ $kits['alias'] }}" value="{{ $endingbal }}">
                                         </td>
                                         <td>
                                             <input class="form-control input-edit-danger" type="text" name="abbott{{ $types }}request{{ $kits['alias'] }}" id="abbott{{ $types }}request{{ $kits['alias'] }}" value="">
@@ -302,9 +302,54 @@
                         @foreach($data->testtypes as $types)
                             @foreach($toedit as $element)
                                 $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function(){
-                                   performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}");
+                                    lossesval = parseInt($("#{{ $platform.$types }}losses{{ $kits['alias'] }}").val());
+                                    posval = parseInt($("#{{ $platform.$types }}pos{{ $kits['alias'] }}").val());
+                                    negval = parseInt($("#{{ $platform.$types }}neg{{ $kits['alias'] }}").val());
+
+                                    if (isNaN(lossesval))
+                                        lossesval = 0;
+                                    if (isNaN(posval))
+                                        posval = 0;
+                                    if (isNaN(negval))
+                                        negval = 0;
+                                    
+                                    @php
+                                        $testtype = $types.'testsabbott';
+                                        $tests = $data->$testtype;
+                                        $prefix = 'ending'.$kits['alias'];
+                                        $prevabbott = 'prevabbott'.$types;
+                                        $abbottdeliveries = 'abbottdeliveries'.$types;
+                                        $received = $kits['alias'].'received';
+                                        $qualkitused = 0;
+                                        if ($types == 'VL') {
+                                            $qualkitused = round(($tests / 93), 2);
+                                        } else if ($types == 'EID') {
+                                            $qualkitused = round(($tests / 94), 2);
+                                        }
+                                        $endingbal = (@($data->$prevabbott->$prefix+$data->$abbottdeliveries->$received) - @($qualkitused));
+                                    @endphp
+                                        
+                                        endingbal = parseInt({{ $endingbal }});
+                                        
+                                    @if($element == 'losses')
+                                        endingbal = (endingbal+posval)-(lossesval+negval);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                    @elseif($element == 'pos')
+                                        endingbal = (endingbal+posval-lossesval-negval);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                    @elseif($element == 'neg')
+                                        endingbal = (endingbal+posval-lossesval-negval);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
+                                    @endif
+                                    performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}",endingbal);
                                 });
                             @endforeach
+                            $("#{{ $platform.$types }}request{{ $kits['alias'] }}").keyup(function(){
+                                prefillrequest($(this).val(),"{{ $types }}","{{ $platform }}");
+                            });
                         @endforeach
                     @endif
                 @endforeach
@@ -314,27 +359,59 @@
                         @foreach($data->testtypes as $types)
                             @foreach($toedit as $element)
                                 $("#{{ $platform.$types.$element.$kits['alias'] }}").keyup(function() {
-                                    performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}");
-                                    ending = $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val();
+                                    lossesval = parseInt($("#{{ $platform.$types }}losses{{ $kits['alias'] }}").val());
+                                    posval = parseInt($("#{{ $platform.$types }}pos{{ $kits['alias'] }}").val());
+                                    negval = parseInt($("#{{ $platform.$types }}neg{{ $kits['alias'] }}").val());
+
+                                    if (isNaN(lossesval))
+                                        lossesval = 0;
+                                    if (isNaN(posval))
+                                        posval = 0;
+                                    if (isNaN(negval))
+                                        negval = 0;
+                                    
+                                    @php
+                                        $testtype = $types.'teststaq';
+                                        $tests = $data->$testtype;
+                                        $prefix = 'ending'.$kits['alias'];
+                                        $prevtaqman = 'prevtaqman'.$types;
+                                        $taqmandeliveries = 'taqmandeliveries'.$types;
+                                        $received = $kits['alias'].'received';
+                                        $qualkitused = 0;
+                                        if ($types == 'VL') {
+                                            $qualkitused = round(($tests / 42), 2);
+                                        } else if ($types == 'EID') {
+                                            $qualkitused = round(($tests / 44), 2);
+                                        }
+                                        $endingbal = (@($data->$prevtaqman->$prefix+$data->$taqmandeliveries->$received) - @($qualkitused));
+                                    @endphp
+                                        endingbal = parseInt({{ $endingbal }});
                                     @if($element == 'losses')
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(ending-$(this).val());
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(ending-$(this).val());
+                                        endingbal = (endingbal+posval-lossesval-negval);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
                                     @elseif($element == 'pos')
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(ending+$(this).val());
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(ending+$(this).val());
+                                        endingbal = (endingbal+posval-lossesval-negval);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
                                     @elseif($element == 'neg')
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(ending-$(this).val());
-                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(ending-$(this).val());
+                                        endingbal = (endingbal+posval-lossesval-negval);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}").val(endingbal);
+                                        $("#{{ $platform.$types }}end{{ $kits['alias'] }}disabled").val(endingbal);
                                     @endif
+                                    performCalculus($(this).val(),"{{ $platform }}","{{ $types }}","{{ $element }}",endingbal);
                                 });
                             @endforeach
+                            $("#{{ $platform.$types }}request{{ $kits['alias'] }}").keyup(function(){
+                                prefillrequest($(this).val(),"{{ $types }}","{{ $platform }}");
+                            });
                         @endforeach
                     @endif
                 @endforeach
             @endif
         @endforeach
 
-        function performCalculus(value,platform,testtype,element) {
+        function performCalculus(value,platform,testtype,element,qualkitending) {
             if(platform == 'abbott') {
                 @foreach ($data->abbottKits as $kits)
                     @if ($kits['alias'] != 'qualkit')
@@ -342,13 +419,37 @@
                         if(testtype == 'EID')
                             factor = {{ $kits['factor']['EID'] }};
                         $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(value*factor);
+                        $("#"+platform+testtype+"end{{ $kits['alias'] }}").val(qualkitending*factor);
+                        $("#"+platform+testtype+"end{{ $kits['alias'] }}disabled").val(qualkitending*factor);
                     @endif
                 @endforeach
             } else {
                 @foreach ($data->taqmanKits as $kits)
                     @if ($kits['alias'] != 'qualkit')
                         factor = {{ $kits['factor'] }};
-                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(value*factor);
+                        $("#"+platform+testtype+element+"{{ $kits['alias'] }}").val(alue*factor);
+                        $("#"+platform+testtype+"end{{ $kits['alias'] }}").val(ualkitending*factor);
+                        $("#"+platform+testtype+"end{{ $kits['alias'] }}disabled").valqualkitending*factor);
+                    @endif
+                @endforeach
+            }
+        }
+
+        function prefillrequest(value,testtype,platform) {
+            if(platform == 'abbott') {
+                @foreach ($data->abbottKits as $kits)
+                    @if ($kits['alias'] != 'qualkit')
+                        factor = {{ $kits['factor']['VL'] }};
+                        if(testtype == 'EID')
+                            factor = {{ $kits['factor']['EID'] }};
+                        $("#"+platform+testtype+"request{{ $kits['alias'] }}").val(value*factor);
+                    @endif
+                @endforeach
+            } else {
+                @foreach ($data->taqmanKits as $kits)
+                    @if ($kits['alias'] != 'qualkit')
+                        factor = {{ $kits['factor'] }};
+                        $("#"+platform+testtype+"request{{ $kits['alias'] }}").val(value*factor);
                     @endif
                 @endforeach
             }
