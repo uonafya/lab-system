@@ -29,6 +29,7 @@ INSERT INTO `age_bands` (`id`, `name`, `lower`, `upper`, `age_range_id`, `age_ra
 	(11, 'Above 36 months', 36.00010, 1200.00000, 5, 'Above 24 months', 24.00000, 1200.00000);
 /*!40000 ALTER TABLE `age_bands` ENABLE KEYS */;
 
+
 -- Dumping structure for table apidb.countys
 CREATE TABLE IF NOT EXISTS `countys` (
   `id` TINYINT UNSIGNED NOT NULL,
@@ -2493,6 +2494,32 @@ LOCK TABLES `vlresultsguidelines` WRITE;
 /*!40000 ALTER TABLE `vlresultsguidelines` DISABLE KEYS */;
 INSERT INTO `vlresultsguidelines` VALUES (1,2,1,'a','< 1000','Confirm adherence & Routine follow up.'),(2,2,1,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(3,2,2,'a','< 1000','Confirm adherence & Routine follow up.'),(4,2,2,'b','> 1000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(6,2,3,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(5,2,3,'a','< 1000','Confirm adherence & Routine follow up.'),(7,1,1,'a','< 5000','Confirm adherence & Routine follow up.'),(8,1,1,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(9,1,2,'a','< 5000','Confirm adherence & Routine follow up.'),(10,1,2,'b','> 5000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(11,1,3,'a','< 5000','Confirm adherence & Routine follow up.'),(12,1,3,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.');
 /*!40000 ALTER TABLE `vlresultsguidelines` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Table structure for table `viralregimenline`
+--
+
+DROP TABLE IF EXISTS `viralregimenline`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `viralregimenline` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `flag` int(100) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `viralregimenline`
+--
+
+LOCK TABLES `viralregimenline` WRITE;
+/*!40000 ALTER TABLE `viralregimenline` DISABLE KEYS */;
+INSERT INTO `viralregimenline` VALUES (1,'1st',1),(2,'2nd',1),(3,'Other',1),(4,'No Data',1);
+/*!40000 ALTER TABLE `viralregimenline` ENABLE KEYS */;
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `synch_levels`;
