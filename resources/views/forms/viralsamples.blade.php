@@ -23,6 +23,23 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
+                        <div class="alert alert-warning">
+                            <center>
+                                Please fill the form correctly. <br />
+                                Fields with an asterisk(*) are mandatory.
+                            </center>
+                        </div>
+                        <br />
+
+                        @isset($viralsample)
+                            <div class="alert alert-warning">
+                                <center>
+                                    NB: If you edit the facility name, date received or date dispatched from the facility this will be reflected on the other samples in this batch.
+                                </center>
+                            </div>
+                            <br />
+                        @endisset
+
                         @if(!$batch)    
                           <div class="form-group">
                               <label class="col-sm-4 control-label">Facility</label>
@@ -35,7 +52,12 @@
                               </div>
                           </div>
                         @else
-                            <p>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </p>
+
+                            <div class="alert alert-success">
+                                <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
+                            </div>
+                            <br />
+                            
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
 
@@ -164,7 +186,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" required class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                    <input type="text" id="initiation_date" class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>
@@ -188,6 +210,22 @@
                         <center>Sample Information</center>
                     </div>
                     <div class="panel-body">
+
+                        @if(isset($poc))
+                            <input type="hidden" value=2 name="site_entry">
+
+                            <div class="form-group">
+                              <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                              <div class="col-sm-8">
+                                <select class="form-control" required name="lab_id" id="lab_id">
+                                    @isset($sample)
+                                        <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
+                                    @endisset
+                                </select>
+                              </div>
+                            </div>
+
+                        @endif
 
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
@@ -237,7 +275,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">1st ?? 2nd Line Regimen</label>
+                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen</label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="regimenline" id="regimenline">
                                     <option value=""> Select One </option>
@@ -382,31 +420,39 @@
                 <div class="hpanel">
                     <div class="panel-body">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
+                            <div class="col-sm-8"><textarea  class="form-control" name="comments"> {{ $viralsample->comments ?? '' }} </textarea></div>
                         </div>
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
+                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"> {{ $viralsample->labcomment ?? '' }} </textarea></div>
                             </div>
                         @endif
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
-                    @if (isset($viralsample))
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">Update Sample</button>
-                        </div>
-                    @else
-                        <div class="col-sm-8 col-sm-offset-2">
-                            <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
-                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
-                                
-                            @isset($batch)
-                                <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
-                            @endisset
-                        </div>
-                    @endif
+                    <center>
+                        @if (isset($viralsample))
+                            <div class="col-sm-4 col-sm-offset-4">
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">
+                                        @if (isset($site_entry_approval))
+                                            Save & Load Next Sample in Batch for Approval
+                                        @else
+                                            Update Sample
+                                        @endif
+                                </button>
+                            </div>
+                        @else
+                            <div class="col-sm-8 col-sm-offset-2">
+                                <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
+                                    
+                                @isset($batch)
+                                    <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
+                                @endisset
+                            </div>
+                        @endif
+                    </center>
                 </div>
             </div>
         </div>
@@ -430,7 +476,8 @@
            ,
             rules: {
                 dob: {
-                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
+                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"],
+                    lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"],
@@ -455,6 +502,7 @@
         });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
 
@@ -537,14 +585,12 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
-                        $(".lockable").attr("disabled", "disabled");
+                        $(".lockable").prop("disabled", true);
                     }
                     else{
                         localStorage.setItem("new_patient", 1);
-                        $(".lockable").removeAttr("disabled");
+                        $(".lockable").prop("disabled", false);
                         $(".lockable").val('').change();
-                        $('#pcrtype option[value=1]').attr('selected','selected').change();
-                        $("#hidden_pcr").val(1);
 
                         $('.patient_details').remove();
                     }

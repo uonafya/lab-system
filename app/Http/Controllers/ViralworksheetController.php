@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Viralworksheet;
 use App\Viralsample;
+use App\ViralsampleView;
 use App\User;
 use App\MiscViral;
 use App\Lookup;
@@ -22,7 +23,9 @@ class ViralworksheetController extends Controller
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
+            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
+            ->where('site_entry', '!=', 2)
             ->when($worksheet_id, function ($query) use ($worksheet_id){
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
@@ -72,6 +75,7 @@ class ViralworksheetController extends Controller
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
+            ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
@@ -114,6 +118,7 @@ class ViralworksheetController extends Controller
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
+            ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
@@ -149,7 +154,8 @@ class ViralworksheetController extends Controller
     public function show(Viralworksheet $Viralworksheet)
     {
         $Viralworksheet->load(['creator']);
-        $samples = Viralsample::where('worksheet_id', $Viralworksheet->id)->with(['patient', 'batch.facility'])->get();
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples];
 
@@ -204,7 +210,8 @@ class ViralworksheetController extends Controller
     public function print(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['patient', 'batch.facility'])->get();
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
@@ -223,7 +230,8 @@ class ViralworksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
-        Viralsample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'result' => null]);
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        Viralsample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
@@ -241,7 +249,8 @@ class ViralworksheetController extends Controller
             return back();
         }
 
-        Viralsample::where('worksheet_id', $worksheet->id)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
         $worksheet->save();
@@ -272,10 +281,10 @@ class ViralworksheetController extends Controller
     {
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
+        $path = $request->upload->store('public/results/vl');
         $today = $dateoftest = date("Y-m-d");
         $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = NULL;
 
-        $path = $request->upload->store('public/results/vl');
         $my = new MiscViral;
 
         if($worksheet->machine_type == 2)
@@ -302,22 +311,27 @@ class ViralworksheetController extends Controller
 
                     $result_array = MiscViral::sample_result($result, $error);
 
-                    $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
-                    $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    Viralsample::where($search)->update($data_array);
-
                     if($sample_id == "HIV_NEG"){
                         $nc = $result_array['result'];
                         $nc_int = $result_array['interpretation']; 
-                    }
-                    else if($sample_id == "HIV_HIPOS"){
+                    }else if($sample_id == "HIV_HIPOS"){
                         $hpc = $result_array['result'];
                         $hpc_int = $result_array['interpretation'];
-                    }
-                    else if($sample_id == "HIV_LOPOS"){
+                    }else if($sample_id == "HIV_LOPOS"){
                         $lpc = $result_array['result'];
                         $lpc_int = $result_array['interpretation'];
                     }
+
+                    $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                    // Viralsample::where($search)->update($data_array);
+
+                    $sample = Viralsample::find($sample_id);
+                    if(!$sample) continue;
+                    if($sample->worksheet_id != $worksheet->id) continue;
+                    $sample->fill($data_array);
+                    $sample->save();
+
                 }
                 if($bool && $value[5] == "RESULT") break;
             }
@@ -325,19 +339,15 @@ class ViralworksheetController extends Controller
         else
         {
             $handle = fopen($file, "r");
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+            while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $dateoftest=date("Y-m-d", strtotime($data[3]));
+                $dateoftest=date("Y-m-d", strtotime($value[3]));
 
                 $sample_id = $value[4];
                 $result = $value[8];
                 $error = $value[10];
 
                 $result_array = MiscViral::sample_result($result, $error);
-
-                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
-                $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                Viralsample::where($search)->update($data_array);
 
                 $sample_type = $value[5];
 
@@ -353,6 +363,16 @@ class ViralworksheetController extends Controller
                     $lpc = $result_array['result'];
                     $lpc_int = $result_array['interpretation'];
                 }
+
+                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                // Viralsample::where($search)->update($data_array);
+
+                $sample = Viralsample::find($sample_id);
+                if(!$sample) continue;
+                if($sample->worksheet_id != $worksheet->id) continue;
+                $sample->fill($data_array);
+                $sample->save();
 
             }
             fclose($handle);
@@ -532,12 +552,13 @@ class ViralworksheetController extends Controller
 
     public function get_worksheet_results($result, $worksheet_id=NULL)
     {
-        $samples = Viralsample::selectRaw("count(*) as totals, worksheet_id")
+        $samples = ViralsampleView::selectRaw("count(*) as totals, worksheet_id")
             ->whereNotNull('worksheet_id')
             ->when($worksheet_id, function($query) use ($worksheet_id){
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->whereNotNull('worksheet_id')
+            ->where('site_entry', '!=', 2)
             ->where('receivedstatus', '!=', 2)
             ->when(true, function($query) use ($result){
                 if ($result == 0) {

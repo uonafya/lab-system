@@ -39,6 +39,8 @@
                         <li><a href="{{ url('batch') }}">View</a></li>
                     </ul>
                 </li> -->
+                <li><a href="{{ url('patient') }}">View Patients</a></li>
+                <hr />
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li>
@@ -83,6 +85,8 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
+                <li><a href="{{ url('viralpatient') }}">View Patients</a></li>
+                <hr />
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 <hr />
                 <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
@@ -145,6 +149,14 @@
         @endif
         @if (auth()->user()->user_type_id == 5)
             <li>
+                <a href="{{ url('patient') }}">EID Patient List</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('viralpatient') }}">VL Patient List</a>
+            </li>
+            <hr />
+            <li>
                 <a href="{{ url('sample/create') }}">Add EID Sample</a>
             </li>
             <hr />
@@ -161,19 +173,19 @@
             </li>
             <hr />
             <li>
-                <a href="#">Create POC EID Worklist</a>
+                <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
             </li>
             <hr />
             <li>
-                <a href="#">Create POC VL Worklist</a>
+                <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
             </li>
             <hr />
             <li>
-                <a href="#">Update POC EID Results</a>
+                <a href="{{ url('sample/list_poc') }}">Update POC EID Results</a>
             </li>
             <hr />
             <li>
-                <a href="#">Update POC VL Results</a>
+                <a href="{{ url('viralsample/list_poc') }}">Update POC VL Results</a>
             </li>
             <hr />
             <li>

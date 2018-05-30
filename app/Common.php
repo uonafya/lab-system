@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+
 class Common
 {
 
@@ -131,66 +133,32 @@ class Common
 				
 			}
 
-
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
 
+	public static function check_worklist($view_model, $worklist_id=null)
+	{	
+		if(!$worklist_id) return null;
+        $samples = $view_model::where('worksheet_id', $worklist_id)
+        	->where('site_entry', 2)
+        	->whereNull('result')
+        	->get();
 
-
-    public static function page_links($base, $page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)
-    {
-        $str = "";
-        $datestring = "";
-
-        if($date_start){
-            $datestring .= '/' . $date_start;
-            if($date_end){
-                $datestring .= '/' . $date_end;
-            }
+        if($samples->isEmpty()){
+        	$worklist = \App\Worklist::find($worklist_id);
+        	$worklist->status_id = 3;
+        	$worklist->pre_update();
         }
-        $next = $page+1;
-        $previous = $page-1;
+	}
 
-        if($page != 1){
-            $str .= "<a href='" . url($base . '/1' . $datestring) . "'>First Page</a> |";
-            $str .= "<a href='" . url($base . '/' . $previous . $datestring) . "'>Prev</a> |";
-        }
-
-        $str .= "<a href='" . url($base . '/' . $page . $datestring) . "'>{$page}</a> |";
-
-        if($page < $last_page ){
-            $str .= "<a href='" . url($base . '/' . $next . $datestring) . "'>Next</a> | ";
-            $str .= "<a href='" . url($base . '/' . $last_page . $datestring) . "'>Last Page</a>";
-        }
-        return $str;
-    }
+	public static function input_complete_batches($batch_model)
+	{
+		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+	}
 
 
 
-    public static function batch_status($batch_id, $batch_complete, $pre='', $approval=false){
 
-    	if($approval){
-    		$url = "<td><a href='" . url($pre . 'batch/site_approval/' . $batch_id) . "'>View Samples For Approve</a></td>";
-    	}
-    	else{
-    		$url = "<td><a href='" . url($pre . 'batch/' . $batch_id) . "'>View</a>";
-
-    		if($batch_complete==1){
-    			$url .= "| <a href='" . url($pre . 'batch/summary/' . $batch_id) . "'><i class='fa fa-print'></i> Summary</a> | 
-    			<a href='" . url($pre . 'batch/individual/' . $batch_id) . "'><i class='fa fa-print'></i> Individual </a> |
-    			 <a href='" . url($pre . 'batch/email/' . $batch_id) . "'><i class='fa fa-print'></i> Email </a>"; 
-    		}
-
-    		$url .= "</td>";
-    	}
-
-        if($batch_complete == 0){
-            return "<td>In Process</td>" . $url;
-        }
-        else{
-            return "<td>Complete</td>" . $url;
-        }
-    }
 
 }

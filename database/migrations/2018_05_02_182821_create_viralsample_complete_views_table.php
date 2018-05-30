@@ -16,7 +16,7 @@ class CreateViralsampleCompleteViewsTable extends Migration
         DB::statement("
         CREATE OR REPLACE VIEW viralsample_complete_view AS
         (
-          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, b.facility_id, b.batch_complete,
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, b.facility_id, b.user_id, b.batch_complete,
           p.national_patient_id, p.patient, p.sex, p.dob, g.gender_description, rs.name as receivedstatus_name, vp.name as prophylaxis_name, vj.name as justification_name, vs.name as sampletype_name
 
           FROM viralsamples s

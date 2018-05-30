@@ -27,10 +27,6 @@
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
 
-            @if(isset($poc))
-                <input type="hidden" value=2 name="site_entry">
-            @endif
-
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
@@ -40,6 +36,22 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
 
+                        <div class="alert alert-warning">
+                            <center>
+                                Please fill the form correctly. <br />
+                                Fields with an asterisk(*) are mandatory.
+                            </center>
+                        </div>
+                        <br />
+
+                        @isset($sample)
+                            <div class="alert alert-warning">
+                                <center>
+                                    NB: If you edit the facility name, date received or date dispatched from the facility this will be reflected on the other samples in this batch.
+                                </center>
+                            </div>
+                            <br />
+                        @endisset
 
                         @if(!$batch)    
                           <div class="form-group">
@@ -54,7 +66,12 @@
                               </div>
                           </div>
                         @else
-                            <p>Facility - {{ $facility_name }}  Batch {{ $batch->id }} </p>
+
+                            <div class="alert alert-success">
+                                <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
+                            </div>
+                            <br />
+
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
 
@@ -152,7 +169,7 @@
                             <label class="col-sm-4 control-label">Redraw</label>
 
                             <div class="col-sm-8">
-                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Check if PCR is 6 </label>
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Check if PCR type 6 </label>
                             </div>
                         </div>
 
@@ -167,9 +184,6 @@
                                 </div>
                             </div>                            
                         </div>
-
-
-
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Sex</label>
@@ -256,7 +270,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="patient">
+                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="enrollment_ccc_no">
                             </div>
                         </div>
 
@@ -345,7 +359,7 @@
                                         checked
                                     @endif
 
-                                 /> &lt; ldl copies per ml </label>
+                                 /> &lt; ldl copies per ml</label>
                             </div>
                         </div> 
 
@@ -399,6 +413,22 @@
                         <center>Sample Information</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
+
+                        @if(isset($poc))
+                            <input type="hidden" value=2 name="site_entry">
+
+                            <div class="form-group">
+                              <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                              <div class="col-sm-8">
+                                <select class="form-control" required name="lab_id" id="lab_id">
+                                    @isset($sample)
+                                        <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
+                                    @endisset
+                                </select>
+                              </div>
+                            </div>
+
+                        @endif
                         
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group">
@@ -517,11 +547,15 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="comments"></textarea></div>
+                            <div class="col-sm-8">
+                                <textarea  class="form-control" name="comments">{{ $sample->comments ?? '' }}</textarea>
+                            </div>
                         </div>
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment"></textarea></div>
+                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
+                                    {{ $sample->labcomment ?? '' }}
+                                </textarea></div>
                             </div>
                         @endif
                     </div>
@@ -532,7 +566,13 @@
 
                         @if (isset($sample))
                             <div class="col-sm-4 col-sm-offset-4">
-                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">Update Sample</button>
+                                <button class="btn btn-primary" type="submit" name="submit_type" value="add">
+                                    @if (isset($site_entry_approval))
+                                        Save & Load Next Sample in Batch for Approval
+                                    @else
+                                        Update Sample
+                                    @endif
+                                </button>
                             </div>
                         @else
                             <div class="col-sm-10 col-sm-offset-1">
@@ -592,6 +632,7 @@
         });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
 
@@ -610,13 +651,27 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    // $("#rejectedreason").prop('disabled', false);
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    // $("#enrollment_ccc_no").attr("disabled", "disabled");
+                    // $("#rejectedreason").prop('disabled', true);
 
                 }
             }); 
+
+            $("#pcrtype").change(function(){
+                var val = $(this).val();
+                if(val == 4){
+                    $("#enrollment_ccc_no").removeAttr("disabled");
+                }
+                else{
+                    $("#enrollment_ccc_no").attr("disabled", "disabled");
+                }
+            }); 
+
 
 
             @if(!in_array(env('APP_LAB'), $amrs))
@@ -663,8 +718,9 @@
                         $("#mother_age").val(mother.age);
                         // $("#hiv_status").val(mother.hiv_status).change();
                         $("#ccc_no").val(mother.ccc_no).change();
+                        $("#pcrtype").val(prev.recommended_pcr).change();
 
-                        $('#pcrtype option[value=' + prev.recommended_pcr + ']').attr('selected','selected').change();
+                        // $('#pcrtype option[value=' + prev.recommended_pcr + ']').attr('selected','selected').change();
                         // $("#hidden_pcr").val(2);
 
                         // if(prev.previous_positive == 1){

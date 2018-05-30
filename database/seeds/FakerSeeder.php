@@ -27,7 +27,7 @@ class FakerSeeder extends Seeder
 			});
 		});
 
-		$mothers = factory(App\Mother::class, 10)->create();
+		$mothers = factory(App\Mother::class, 50)->create();
 
 		$viralbatches = factory(App\Viralbatch::class, 30)->create()
 		->each(function ($b){

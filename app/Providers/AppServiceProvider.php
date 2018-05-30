@@ -10,11 +10,21 @@ use App\Viralbatch;
 use App\Patient;
 use App\Viralpatient;
 
+use App\Sample;
+use App\Viralsample;
+use App\Worksheet;
+use App\Viralworksheet;
+
 use App\Observers\MotherObserver;
 use App\Observers\BatchObserver;
 use App\Observers\ViralbatchObserver;
 use App\Observers\PatientObserver;
 use App\Observers\ViralpatientObserver;
+
+use App\Observers\SampleObserver;
+use App\Observers\ViralsampleObserver;
+use App\Observers\WorksheetObserver;
+use App\Observers\ViralworksheetObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +42,14 @@ class AppServiceProvider extends ServiceProvider
         
         Patient::observe(PatientObserver::class);
         Viralpatient::observe(ViralpatientObserver::class);
+
+
+        
+        // Sample::observe(SampleObserver::class);
+        // Viralsample::observe(ViralsampleObserver::class);
+        
+        // Worksheet::observe(WorksheetObserver::class);
+        // Viralworksheet::observe(ViralworksheetObserver::class);
     }
 
     /**

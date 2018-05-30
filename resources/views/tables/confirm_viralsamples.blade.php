@@ -12,7 +12,7 @@
                 <div class="panel-heading">
                     <div class="panel-tools">
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
+                        <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
                     VL EDARP Samples for Approval to go to Nascop 
                 </div>
@@ -92,11 +92,11 @@
             var str = $(this).html();
             if(str == "Check All"){
                 $(this).html("Uncheck All");
-                $(".checks").attr('checked', 'checked');
+                $(".checks").prop('checked', true);
             }
             else{
                 $(this).html("Check All");
-                $(".checks").removeAttr('checked');            
+                $(".checks").prop('checked', false);          
             }
         });
 

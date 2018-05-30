@@ -25,7 +25,7 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('receivedstatus')->unsigned()->nullable();            
 
             // This will be used instead
-            $table->double('age', 5, 2)->unsigned()->nullable()->index();
+            $table->float('age', 5, 2)->unsigned()->nullable()->index();
             $table->tinyInteger('age_category')->unsigned()->default(0);
             $table->tinyInteger('justification')->unsigned()->nullable();
             $table->string('other_justification', 50)->nullable();
@@ -49,7 +49,7 @@ class CreateViralsamplesTable extends Migration
             $table->string('units', 20)->nullable();
             $table->string('interpretation', 100)->nullable();
 
-            $table->bigInteger('worksheet_id')->unsigned()->nullable()->index();
+            $table->integer('worksheet_id')->unsigned()->nullable()->index();
             // $table->boolean('inworksheet')->default(false);
 
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();

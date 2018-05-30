@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionEnabled = true;
-    protected $revisionCleanup = true; 
-    protected $historyLimit = 500; 
+    // use \Venturecraft\Revisionable\RevisionableTrait;
+    // protected $revisionEnabled = true;
+    // protected $revisionCleanup = true; 
+    // protected $historyLimit = 500; 
+    
     protected $guarded = [];
 
     protected static function boot()
     {
         parent::boot();
+
+        // static::addGlobalScope('siteentry', function(Builder $builder){
+        //     $builder->where('synched', '!=', 3);
+        // });
     }
     
 
@@ -36,5 +41,15 @@ class BaseModel extends Model
     {
         if($this->synched == 1 && $this->isDirty()) $this->synched = 2;
         $this->save();
+    }
+
+    public function pre_delete()
+    {
+        if($this->synched == 1){
+            $this->synched = 3;
+        }else{
+            $this->delete();
+        }
+        
     }
 }

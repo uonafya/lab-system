@@ -83,9 +83,13 @@
                 <div class="panel-heading">
                     <div class="panel-tools">
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
+                        <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
-                    Batches table
+                    @if(isset($site_approval))
+                        Site Entry Batches Awaiting Approval [{{ $batches->count() }}]
+                    @else
+                        Batches table
+                    @endif
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -162,7 +166,8 @@
                                             </td>
                                             <td> 
                                                 @if($batch->approval)
-                                                    <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval</a>
+                                                    <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval ({{ $batch->sample_count ?? 0 }}) </a> |
+                                                    <a href="{{ url($pre . 'batch/site_approval_group/' . $batch->id) }}">Approve Samples Group ({{ $batch->sample_count ?? 0 }}) </a> |
                                                 @else
                                                     <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
 

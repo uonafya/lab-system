@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @component('/forms/css')
+    <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
 @endcomponent
 
 @section('content')
@@ -20,7 +21,7 @@
    <div class="content">
         <div>
 
-        {{ Form::open(['url'=>'/sample/edit_poc/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+        {{ Form::open(['url'=> $pre . 'sample/' . $sample->id . '/edit_result', 'method' => 'put', 'class'=>'form-horizontal']) }}
 
         <input type="hidden" value="{{ auth()->user()->id }}" name="approvedby">
         <input type="hidden" value="{{ auth()->user()->id }}" name="approvedby2">
@@ -36,47 +37,47 @@
                     </div>
                     <div class="panel-body">
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->batch->facility->name ?? '' }}">
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Patient</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->patient->patient ?? '' }}">
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Date Collected</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->datecollected ?? '' }}">
                             </div>
                         </div>
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Date Received</label>
                             <div class="col-sm-8">
                                 <input class="form-control" disabled type="text" value="{{ $sample->batch->datereceived ?? '' }}">
                             </div>
                         </div>   
 
-                      <div class="form-group">
-                          <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
-                          <div class="col-sm-8">
-                            <select class="form-control" required name="lab_id" id="lab_id">
-                                @if($sample->batch->facility_lab)
-                                    <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
-                                @else
-                                    <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
-                                @endif
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" required name="lab_id" id="lab_id">
+                                    @if($sample->batch->facility_lab)
+                                        <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
+                                    @else
+                                        <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                    @endif
 
-                            </select>
-                          </div>
-                      </div>
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Tested</label>
@@ -88,26 +89,51 @@
                             </div>                            
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Result</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" required name="result">
+                        @if($pre == '')
 
-                                    <option value=""> Select One </option>
-                                    @foreach ($results as $result)
-                                        <option value="{{ $result->id }}"
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Result</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" required name="result">
 
-                                        @if (isset($sample) && $sample->result == $result->id)
-                                            selected
+                                        <option value=""> Select One </option>
+                                        @foreach ($results as $result)
+                                            <option value="{{ $result->id }}"
+
+                                            @if (isset($sample) && $sample->result == $result->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $result->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                            </div>
+
+                        @else
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Result</label>
+
+                                <div class="col-sm-8">
+                                    <label> <input type="checkbox" class="i-checks" name="result" value="< LDL copies/ml"/> &lt; ldl copies per ml (Check if result is Target Not Detected. If the result is numerical, fill the field below.)</label>
+                                </div>
+                            </div> 
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Result</label>
+                                <div class="col-sm-8"><input class="form-control" name="result_2" type="text"  number="number"
+
+                                        @if(isset($sample) && is_numeric($sample->result))
+                                            value="{{ $sample->result ?? '' }}"
                                         @endif
 
-                                        > {{ $result->name }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
+                                    ></div>
                             </div>
-                        </div>
+
+                        @endif
 
                         <div class="hr-line-dashed"></div>
 
@@ -133,6 +159,9 @@
 @section('scripts')
 
     @component('/forms/scripts')
+        @slot('js_scripts')
+            <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
+        @endslot
 
         @slot('val_rules')
            ,

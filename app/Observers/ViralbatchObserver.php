@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Viralbatch;
+use App\Viralpatient;
 use App\ViralsampleView;
 
 use DB;
@@ -23,9 +24,34 @@ class ViralbatchObserver
             $samples = ViralsampleView::where('batch_id', $viralbatch->id)->get();
             $patient_ids = $samples->pluck(['patient_id'])->toArray();
 
-            $time = date("Y-m-d H:i:s");
+            $patients = Viralpatient::whereIn('id', $patient_ids)->get();
 
-            DB::table('viralpatients')->whereIn('id', $patient_ids)->update(['facility_id' => $batch->facility_id, 'updated_at' => $time]);
+            foreach ($patients as $key => $patient) {
+                $patient->facility_id = $viralbatch->facility_id;
+                $patient->pre_update();
+            }
         }
     }
+
+    // public function updated(Viralbatch $viralbatch)
+    // {
+    //     $update_array = [
+    //         'highpriority' => $viralbatch->highpriority,
+    //         'inputcomplete' => $viralbatch->input_complete,
+    //         'batchcomplete' => $viralbatch->batch_complete,
+    //         'siteentry' => $viralbatch->site_entry,
+    //         'sentemail' => $viralbatch->sent_email,
+    //         'printedby' => $viralbatch->printedby,
+    //         'userid' => $viralbatch->user_id,
+    //         'labtestedin' => $viralbatch->lab_id,
+    //         'facility' => $viralbatch->facility_id,
+    //         'datedispatchedfromfacility' => $viralbatch->datedispatchedfromfacility,
+    //         'datereceived' => $viralbatch->datereceived,
+    //         'datebatchprinted' => $viralbatch->datebatchprinted,
+    //         'datedispatched' => $viralbatch->datedispatched,
+    //         'dateindividualresultprinted' => $viralbatch->dateindividualresultprinted,
+    //     ];
+
+    //     App\OldModels\Viralsample::where('batchno', $viralbatch->id)->update($update_array);
+    // }
 }

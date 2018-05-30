@@ -85,6 +85,19 @@ width:1180px;
 			</tr>
 		</table>
 		<table>
+					@php
+						$class = get_class($worksheet);
+
+						if($class == "App\Viralworksheet"){
+							// echo "[3 Controls]";
+							$vl = true;
+						}
+						else{
+							// echo "[2 Controls]";
+							$vl = false;						
+						}
+
+					@endphp
 
 			<tr>
 				@php $count = 0; @endphp
@@ -154,7 +167,7 @@ width:1180px;
 					@endif
 				@endforeach
 
-				@if($vl)
+				@if($vl) 
 					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
 				@else
 					<td align=center > PC </td><td  align=center > NC </td>

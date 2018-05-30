@@ -28,9 +28,10 @@ class SampleController extends Controller
     public function list_poc()
     {
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->where(['site_entry' => 1])->get();
+        $samples = SampleView::with(['facility'])->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
-        return view('tables.poc_samples', $data)->with('pageTitle', 'POC Samples');
+        $data['pre'] = '';
+        return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
     }
 
     /**
@@ -48,7 +49,7 @@ class SampleController extends Controller
     {
         $data = Lookup::samples_form();
         $data['poc'] = true;
-        return view('forms.samples', $data);
+        return view('forms.samples', $data)->with('pageTitle', 'Add POC Sample');
     }
 
     /**
@@ -159,7 +160,7 @@ class SampleController extends Controller
             $sample->mother_last_result = $mother_last_result;
             $my = new \App\MiscViral;
             $res = $my->set_rcategory($mother_last_result);
-            $sample->mother_last_rcategory = $res['rcategory'];
+            $sample->mother_last_rcategory = $res['rcategory'] ?? null;
         }
 
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
@@ -234,7 +235,8 @@ class SampleController extends Controller
         if($sample->batch->site_entry != 2) abort(409, 'This sample is not a POC sample.');
         $data = Lookup::get_lookups();
         $data['sample'] = $sample;
-        return view('forms.samples', $data)->with('pageTitle', 'Samples');
+        $data['pre'] = '';
+        return view('forms.poc_result', $data)->with('pageTitle', 'Edit Result');
     }
 
 
@@ -337,6 +339,7 @@ class SampleController extends Controller
         $sample->fill($request->except(['_token', 'lab_id']));
         $sample->pre_update();
         \App\Misc::check_batch($sample->batch_id);
+        \App\Common::check_worklist(SampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
@@ -377,9 +380,23 @@ class SampleController extends Controller
         if($patient){
             $mother = $patient->mother;
             $mother->calc_age();
+
+            $viralpatient = $mother->viral_patient;
+
+            if($viralpatient){
+                $viralpatient->last_test();
+                if($viralpatient->recent){
+                    if($viralpatient->recent->rcategory == 1) $mother->recent_test = 0;
+                    else{
+                        $mother->recent_test = $viralpatient->recent->result;
+                    }
+                }
+            }
+
             $data[0] = 0;
             $data[1] = $patient->toArray();
             $data[2] = $mother->toArray();
+
 
             $prev_samples = Sample::where(['patient_id' => $patient->id, 'repeatt' => 0])->orderBy('datetested', 'asc')->get();
             $previous_positive = 0;

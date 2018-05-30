@@ -239,7 +239,7 @@
             e.preventDefault();
             $("#g4s").show();
             $("#edit").hide();
-            $(".editable").removeAttr("disabled");
+            $(".editable").prop("disabled", false);
             $("#update").show();
         });
     </script>

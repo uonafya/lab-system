@@ -45,12 +45,12 @@
                                             @endforeach
                                         </td>
                                         <td> {{ $sample->spots ?? '' }} </td>
-                                        <td> {{ $sample->datecollected ?? '' }} </td>
-                                        <td> {{ $sample->batch->datereceived ?? '' }} </td>
+                                        <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
+                                        <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
                                         <td> {{ $sample->worksheet_id ?? '' }} </td>
-                                        <td> {{ $sample->datetested ?? '' }} </td>
-                                        <td> {{ $sample->datemodified ?? '' }} </td>
-                                        <td> {{ $sample->batch->datedispatched ?? '' }} </td>
+                                        <td> {{ $sample->my_date_format('datetested') ?? '' }} </td>
+                                        <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
+                                        <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
                                         <td> {{ $sample->run ?? '' }} </td>
                                         <td>
                                             @foreach($results as $result)

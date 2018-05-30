@@ -39,7 +39,7 @@
                 <div class="panel-heading">
                     <div class="panel-tools">
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
+                        <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
                     Confirm Results
                 </div>
@@ -223,6 +223,7 @@
 
     @component('/tables/scripts')
         $('.noneditable').attr("disabled", "disabled");
+        // $('.noneditable').prop("disabled", true);
     @endcomponent
 
 @endsection

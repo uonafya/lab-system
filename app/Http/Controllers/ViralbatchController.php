@@ -342,11 +342,15 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'creator.name as creator'])
+        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
+            ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'viralbatches.user_id')
-            ->whereNull('received_by')
+            ->whereRaw('(receivedstatus is null or received_by is null)')
+            // ->whereNull('received_by')
+            // ->whereNull('receivedstatus')
             ->where('site_entry', 1)
+            ->groupBy('viralbatches.id')
             ->paginate();
             
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -361,7 +365,6 @@ class ViralbatchController extends Controller
             $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
             $total = $noresult + $rej;
             $batch->delays = '';
-            $batch->creator = $batch->creator;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->total = $total;
@@ -385,6 +388,7 @@ class ViralbatchController extends Controller
             $viralsample->load(['patient', 'batch']);
             $data = Lookup::viralsample_form();
             $data['viralsample'] = $viralsample;
+            $data['site_entry_approval'] = true;
             return view('forms.viralsamples', $data);
         }
         else{
@@ -392,6 +396,58 @@ class ViralbatchController extends Controller
             $batch->save();
             return redirect('viralbatch/site_approval');
         }
+    }
+
+
+    public function site_entry_approval_group(Viralbatch $batch)
+    {
+        $samples = Viralsample::with(['patient'])->where('batch_id', $batch->id)->whereNull('receivedstatus')->get();
+
+        if($samples->count() > 0){            
+            $data = Lookup::viralsample_form();
+            $batch->load(['creator.facility', 'view_facility']);
+            $data['batch'] = $batch;
+            $data['samples'] = $samples;
+            $data['pageTitle'] = "Approve batch";
+            return view('forms.approve_viralbatch', $data);
+        }
+        else{
+            return redirect('batch/site_approval');
+        }
+    }
+
+    public function site_entry_approval_group_save(Request $request, Viralbatch $batch)
+    {
+        $sample_ids = $request->input('samples');
+        $rejectedreason_array = $request->input('rejectedreason');
+        $submit_type = $request->input('submit_type');
+
+        if(!$sample_ids) return back();
+
+        foreach ($sample_ids as $key => $value) {
+            $sample = Viralsample::find($value);
+            if($sample->batch_id != $batch->id) continue;
+
+            $sample->labcomment = $request->input('labcomment');
+
+            if($submit_type == "accepted"){
+                $sample->receivedstatus = 1;
+            }else if($submit_type == "rejected"){
+                $sample->receivedstatus = 3;
+                $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
+            }
+            $sample->save();
+        }
+
+        $batch->received_by = auth()->user()->id;
+        $batch->datereceived = $request->input('datereceived');
+        $batch->save();
+
+        session(['toast_message' => 'The selected samples have been ' . $submit_type]);
+
+        $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+        if($sample) return back();
+        return redirect('viralbatch/site_approval');        
     }
 
     /**
@@ -402,6 +458,11 @@ class ViralbatchController extends Controller
      */
     public function individual(Viralbatch $batch)
     {
+        if(!$batch->dateindividualresultprinted){
+            $batch->dateindividualresultprinted = date('Y-m-d');
+            $batch->pre_update();
+        }
+
         $samples = $batch->sample;
         $samples->load(['patient']);
         $batch->load(['facility', 'lab', 'receiver', 'creator']);
@@ -420,6 +481,11 @@ class ViralbatchController extends Controller
      */
     public function summary(Viralbatch $batch)
     {
+        if(!$batch->datebatchprinted){
+            $batch->datebatchprinted = date('Y-m-d');
+            $batch->pre_update();
+        }
+
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_viral_lookups();
         $data['batches'] = [$batch];
@@ -433,6 +499,14 @@ class ViralbatchController extends Controller
     {
         $batch_ids = $request->input('batch_ids');
         $batches = Viralbatch::whereIn('id', $batch_ids)->with(['sample.patient', 'facility', 'lab', 'receiver', 'creator'])->get();
+
+        foreach ($batches as $key => $batch) {
+            if(!$batch->datebatchprinted){
+                $batch->datebatchprinted = date('Y-m-d');
+                $batch->pre_update();
+            }
+        }
+        
         $data = Lookup::get_viral_lookups();
         $data['batches'] = $batches;
         $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
