@@ -122,7 +122,7 @@ width:1180px;
 						{!! $rr !!} 
 						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
 											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
-											<b>Sample ID:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Sample ID:</b> {{ $sample->id }} <br />
 											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br /> 
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
@@ -151,7 +151,7 @@ width:1180px;
 						{{ $rr }} 
 						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
 											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
-											<b>Sample ID:</b> {{ $sample->batch->facility->name }} <br />
+											<b>Sample ID:</b> {{ $sample->id }} <br />
 											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br />
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100" />
