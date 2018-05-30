@@ -35,7 +35,7 @@ class Copier
         while(true)
         {
             $samples = SampleView::when($start, function($query) use ($start){
-                return $query->where('id', '>', $start)
+                return $query->where('id', '>', $start);
             })->limit(self::$limit)->offset($offset_value)->get();
             if($samples->isEmpty()) break;
 
@@ -85,7 +85,7 @@ class Copier
         while(true)
         {
             $samples = ViralsampleView::when($start, function($query) use ($start){
-                return $query->where('id', '>', $start)
+                return $query->where('id', '>', $start);
             })->limit(self::$limit)->offset($offset_value)->get();
             if($samples->isEmpty()) break;
 
@@ -140,7 +140,7 @@ class Copier
             while(true)
             {
                 $worksheets = $view::when($start, function($query) use ($start){
-                    return $query->where('id', '>', $start)
+                    return $query->where('id', '>', $start);
                 })->limit(self::$limit)->offset($offset_value)->get();
                 if($worksheets->isEmpty()) break;
 
