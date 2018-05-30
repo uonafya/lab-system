@@ -365,7 +365,7 @@
                                         checked
                                     @endif
 
-                                 /> &lt; ldl copies per ml</label>
+                                 /><b> &lt; LDL cp/ml</b> </label>
                             </div>
                         </div> 
 
