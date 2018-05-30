@@ -45,8 +45,15 @@ class TaskController extends Controller
                         ];
     public function index()
     {
+        $tasks = $this->pendingTasks();
+        // dd($tasks);
+        if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0 && $tasks['deliverystatus'] >  0) {
+            session(['pendingTasks'=> false]);
+            return redirect()->route('home');
+        }
+
     	$data['kits'] = (object)$this->getKitsEntered();
-        // dd($data);
+        
     	if (($data['kits']->eidtaqkits  > 0 && $data['kits']->vltaqkits > 0) && ($data['kits']->eidabkits  > 0 && $data['kits']->vlabkits > 0))
 		{
             $data['submittedkits'] = 1;
@@ -178,8 +185,9 @@ class TaskController extends Controller
         $taqdeliveries = Taqmandeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
         $abbottdeliveries = Abbotdeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
 
-        if ($taqdeliveries > 0 && $abbottdeliveries > 0)
+        if ($taqdeliveries > 0 && $abbottdeliveries > 0) {
             return redirect()->route('pending');
+        }
 
         $users = User::where('user_type_id', '<', 5)->get();
         return view('tasks.kitsdeliveries', compact('users'))->with('pageTitle', 'Kit Deliveries');
@@ -187,21 +195,32 @@ class TaskController extends Controller
 
     public function consumption (Request $request, $guide=null)
     {
+        if ($guide != null) {
+            $filename = 'CONSUMPTION_GUIDE.pdf';
+            $path = storage_path('app/downloads/' . $filename);
+
+            return response()->download($path);
+        }
+
         $data['testtypes'] = ['EID', 'VL'];
+        $previousMonth = date('m')-1;
+        $year = date('Y');
+
         if ($request->saveTaqman || $request->saveAbbott)
         {
-            // dd($request->all());
             $insertData = [];
+            $sub = ['ending','wasted','issued','request','pos'];
             if ($request->platform == 1 || $request->platform == '1') {
                 $platform = 'taqman';
-                $sub = ['ending','wasted','issued','request','pos'];
                 foreach ($data['testtypes'] as $k => $v) {
                     $testtype = 2;
-                    if ($v = 'EID') 
+                    if ($v == 'EID') 
                         $testtype = 1;
+                    $tests = $platform.$v.'tests';
                     $insertData[$v]['testtype'] = $testtype;
-                    $insertData[$v]['month'] = date('m')-1;
-                    $insertData[$v]['year'] = date('Y');
+                    $insertData[$v]['tests'] = $request->$tests;
+                    $insertData[$v]['month'] = $previousMonth;
+                    $insertData[$v]['year'] = $year;
                     $insertData[$v]['datesubmitted'] = date('Y-m-d');
                     $insertData[$v]['submittedBy'] = Auth()->user()->id;
                     $insertData[$v]['lab_id'] = Auth()->user()->lab_id;
@@ -216,15 +235,48 @@ class TaskController extends Controller
                     $insertData[$v]['comments'] = $request->$comments;
                     $insertData[$v]['issuedcomments'] = $request->$issuedcomments;
                 }
+                foreach ($insertData as $key => $value) {
+                    $save = Taqmanprocurement::create($value);
+                }
+                $insertData = [];
             } else if ($request->platform == 2 || $request->platform == '2') {
-                # code...
+                $platform = 'abbott';
+                foreach ($data['testtypes'] as $k => $v) {
+                    $testtype = 2;
+                    if ($v == 'EID') 
+                        $testtype = 1;
+                    $tests = $platform.$v.'tests';
+                    $insertData[$v]['testtype'] = $testtype;
+                    $insertData[$v]['tests'] = $request->$tests;
+                    $insertData[$v]['month'] = $previousMonth;
+                    $insertData[$v]['year'] = $year;
+                    $insertData[$v]['datesubmitted'] = date('Y-m-d');
+                    $insertData[$v]['submittedBy'] = Auth()->user()->id;
+                    $insertData[$v]['lab_id'] = Auth()->user()->lab_id;
+                    foreach ($sub as $key => $value) {
+                        foreach ($this->abbottKits as $keykit => $valuekit) {
+                            $formValue = $platform.$v.$value.$valuekit['alias'];
+                            $insertData[$v][$value.$valuekit['alias']] = $request->$formValue;
+                        }
+                    }
+                    $comments = $platform.$v.'receivedcomment';
+                    $issuedcomments = $platform.$v.'issuedcomment';
+                    $insertData[$v]['comments'] = $request->$comments;
+                    $insertData[$v]['issuedcomments'] = $request->$issuedcomments;
+                }
+                
+                foreach ($insertData as $key => $value) {
+                    $save = Abbotprocurement::create($value);
+                }
+                $insertData = [];
             }
         }
 
-        dd($insertData);
+        $taqproc = Taqmanprocurement::where('month', $previousMonth)->where('year', $year)->count();
+        $abbottproc = Abbotprocurement::where('month', $previousMonth)->where('year', $year)->count();
 
-        $previousMonth = date('m')-1;
-        $year = date('Y');
+        if ($taqproc > 0 && $abbottproc > 0)
+            return redirect()->route('pending');
         
         $data['taqmanKits'] = $this->taqmanKits;
         $data['abbottKits'] = $this->abbottKits;
@@ -325,8 +377,9 @@ class TaskController extends Controller
             session(['toast_message'=>'Lab Activity Log Successfully Submitted.']);
             $performance = LabPerformanceTracker::where('month', $month)->where('year', $year)->where('lab_id', $lab)->count();
 
-            if ($performance > 0)
+            if ($performance > 0) {
                 return redirect()->route('pending');
+            }
         }
 
         $data['sampletypes'] = (object)['EID', 'Plasma', 'DBS'];

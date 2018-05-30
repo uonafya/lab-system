@@ -112,7 +112,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
 	Route::resource('facility', 'FacilityController');
 
-	Route::get('/home', 'HomeController@index');
+	Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::get('reports', 'ReportController@index')->name('reports');
 	Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');

@@ -75,6 +75,8 @@
                                         $used = null;
                                     @endphp
 
+                                    <input type="hidden" name="taqman{{ $types }}tests" id="taqman{{ $types }}tests" value="{{ $tests }}">
+
                                     @foreach ($data->taqmanKits as $kits)
                                     
                                     @php
@@ -193,6 +195,8 @@
                                         $qualkitused = 0;
                                         $used = null;
                                     @endphp
+
+                                    <input type="hidden" name="abbott{{ $types }}tests" id="abbott{{ $types }}tests" value="{{ $tests }}">
 
                                     @foreach ($data->abbottKits as $kits)
                                     @php

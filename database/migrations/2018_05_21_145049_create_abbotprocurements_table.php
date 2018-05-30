@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateAbbotprocurementsTable extends Migration
 {
-    public $main = ['ending','wasted','issued','request','pos','neg'];
+    public $main = ['ending','wasted','issued','request','pos'];
     public $sub = ['qualkit','calibration','control','buffer','preparation','adhesive','deepplate','mixtube','reactionvessels','reagent','reactionplate','1000disposable','200disposable'];
     /**
      * Run the migrations.
