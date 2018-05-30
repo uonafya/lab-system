@@ -19,7 +19,7 @@ class CreatePatientsTable extends Migration
             $table->string('patient', 25);
 
             // This is when the patient is enrolled into ccc program
-            $table->string('ccc_no', 25);
+            $table->string('ccc_no', 25)->nullable();
             $table->string('patient_name', 50)->nullable();
             $table->bigInteger('mother_id')->unsigned()->index();
             $table->tinyInteger('entry_point')->unsigned()->nullable();
