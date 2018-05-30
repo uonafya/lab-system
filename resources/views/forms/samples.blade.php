@@ -365,7 +365,7 @@
                                         checked
                                     @endif
 
-                                 /><b> &lt; LDL cp/ml</b> </label>
+                                 />Tick if result is <b> &lt; LDL cp/ml</b> </label>
                             </div>
                         </div> 
 
