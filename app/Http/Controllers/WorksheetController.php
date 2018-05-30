@@ -811,7 +811,8 @@ class WorksheetController extends Controller
 
             Sample::where('id', $samples[$key])->update($data);
 
-            if($actions[$key] == 1){
+            // if($actions[$key] == 1){
+            if($data['repeatt'] == 1){
                 Misc::save_repeat($samples[$key]);
             }
         }

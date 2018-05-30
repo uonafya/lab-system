@@ -472,9 +472,7 @@ class ViralworksheetController extends Controller
 
             Viralsample::where('id', $samples[$key])->update($data);
 
-            if($data['repeatt'] == 1){
-                MiscViral::save_repeat($samples[$key]);
-            }
+            if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
         }
 
         if(in_array(env('APP_LAB'), $double_approval)){

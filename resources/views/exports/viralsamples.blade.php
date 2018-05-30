@@ -142,7 +142,7 @@
 			<?php
 
 				if($sample->receivedstatus != 2){
-					$routcome = '<u>' $sample->result . '</u> ' . $sample->units;
+					$routcome = '<u>' . $sample->result . '</u> ' . $sample->units;
 					$resultcomments="";
 					$vlresultinlog='N/A';
 
