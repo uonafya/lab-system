@@ -42,10 +42,6 @@ $api->version('v1', function (Router $api) {
             ]);
         });
 
-        $api->get('fac', function() {
-            return \App\Facility::paginate(10);
-        });
-
         $api->post('eid', 'EidController@eid');        
         $api->post('eid_complete', 'EidController@complete_result');  
 
@@ -54,6 +50,8 @@ $api->version('v1', function (Router $api) {
 
 
         $api->post('function', 'FunctionController@api');
+
+        $api->resource('facility', 'FacilityController');
     });
 
 
