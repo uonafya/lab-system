@@ -349,8 +349,8 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">VL result within last 6 months</label>
-                            <div class="col-sm-4">
-                                <input class="form-control" id="mother_last_result" name="mother_last_result" type="text"  number="number" placeholder="Input if result is a number e.g. 1200 copies per ml." 
+                            <div class="col-sm-5">
+                                <input class="form-control" id="mother_last_result" name="mother_last_result" type="text"  number="number" placeholder="Input if result is a number e.g. 1200 cp/ml." 
 
                                     @if(isset($sample) && is_numeric($sample->mother_last_result))
                                         value="{{ $sample->mother_last_result ?? '' }}"
@@ -359,7 +359,7 @@
                                 >
                             </div>
 
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <label> <input type="checkbox" class="i-checks" name="last_result" value="< LDL copies/ml"
                                     @if(isset($sample) && $sample->mother_last_rcategory == 1)
                                         checked
