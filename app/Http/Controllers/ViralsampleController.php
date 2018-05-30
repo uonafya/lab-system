@@ -8,7 +8,6 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
-use App\ViralsampleView;
 
 use Illuminate\Http\Request;
 
