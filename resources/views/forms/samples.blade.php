@@ -145,8 +145,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">PCR Type</label>
-                            <div class="col-sm-8">
+                            <label class="col-sm-3 control-label">PCR Type</label>
+                            <div class="col-sm-6">
                                 <select class="form-control" required name="pcrtype" id="pcrtype">
 
                                     <option value=""> Select One </option>
@@ -163,6 +163,11 @@
 
                                 </select>
                             </div>
+
+                            <div class="col-sm-3">
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Tick only if sample redraw </label>
+                            </div>
+
                         </div>
 
                         <div class="form-group">
