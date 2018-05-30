@@ -345,9 +345,9 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			foreach ($body->patients as $key => $value) {
-				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
-				Viralpatient::where('id', $value->original_id)->update($update_data);
+			foreach ($body->facilities as $key => $value) {
+				$update_data = ['id' => $value->id, 'synched' => 1, 'datesynched' => $today,];
+				Facility::where('id', $value->original_id)->update($update_data);
 			}
 		}
 	}
