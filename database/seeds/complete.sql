@@ -1,5 +1,5 @@
 
-
+DROP TABLE IF EXISTS `age_bands`;
 -- Dumping structure for table apidb.age_bands
 CREATE TABLE IF NOT EXISTS `age_bands` (
   `id`  TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -30,6 +30,7 @@ INSERT INTO `age_bands` (`id`, `name`, `lower`, `upper`, `age_range_id`, `age_ra
 /*!40000 ALTER TABLE `age_bands` ENABLE KEYS */;
 
 
+DROP TABLE IF EXISTS `countys`;
 -- Dumping structure for table apidb.countys
 CREATE TABLE IF NOT EXISTS `countys` (
   `id` TINYINT UNSIGNED NOT NULL,
@@ -94,6 +95,7 @@ INSERT INTO `countys` (`id`, `name`, `CountyDHISCode`, `CountyMFLCode`, `CountyC
 	(47, 'Nyamira', 'uepLTG8wGWJ', '44', '[[[[35.0541,-0.7055],[35.0925,-0.7992],[35.0452,-0.8568],[35.0199,-0.8535],[35.0117,-0.8857],[34.9447,-0.7763],[34.794,-0.6912],[34.7921,-0.6705],[34.8294,-0.6666],[34.826,-0.6444],[34.8454,-0.6576],[34.8519,-0.6394],[34.8277,-0.6178],[34.8388,-0.6011],[34.8856,-0.616],[34.8569,-0.5061],[35.0201,-0.4133],[35.0442,-0.4467],[35.0335,-0.4966],[35.0546,-0.5076],[35.0662,-0.6063],[35.0549,-0.6494],[35.0706,-0.6935],[35.0541,-0.7055]]]]', 1512, 'N');
 /*!40000 ALTER TABLE `countys` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `districts`;
 -- Dumping structure for table apidb.districts
 CREATE TABLE IF NOT EXISTS `districts` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -408,6 +410,7 @@ INSERT INTO `districts` (`id`, `name`, `SubCountyDHISCode`, `SubCountyMFLCode`, 
 	(380, 'Nyeri South (Othaya) ', '', '', NULL, 20, 1, 'dhis', 1);
 /*!40000 ALTER TABLE `districts` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `entry_points`;
 -- Dumping structure for table apidb.entry_points
 CREATE TABLE IF NOT EXISTS `entry_points` (
   `id`  TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -451,6 +454,7 @@ INSERT INTO `feedings` VALUES (1,'EBF','Exclusive Breast Feeding [ 0 - 6 Months]
 /*!40000 ALTER TABLE `feedings` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `hei_categories`;
 -- Dumping structure for table apidb.hei_categories
 CREATE TABLE IF NOT EXISTS `hei_categories` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -469,6 +473,7 @@ INSERT INTO `hei_categories` (`id`, `name`, `active`) VALUES
 	(6, 'Other', 1);
 /*!40000 ALTER TABLE `hei_categories` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `hei_validation`;
 -- Dumping structure for table apidb.hei_validation
 CREATE TABLE IF NOT EXISTS `hei_validation` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -487,6 +492,7 @@ INSERT INTO `hei_validation` (`id`, `name`, `desc`) VALUES
 	(5, 'UF', 'Unknown Facility');
 /*!40000 ALTER TABLE `hei_validation` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `labs`;
 -- Dumping structure for table apidb.labs
 CREATE TABLE IF NOT EXISTS `labs` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -518,6 +524,7 @@ INSERT INTO `labs` (`id`, `name`, `email`, `labname`, `labdesc`, `lablocation`, 
 	(10, 'EDARP, Nairobi', NULL, 'Edarp Nairobi', 'EDARP Nairobi', NULL, NULL, NULL, NULL, 1, 1);
 /*!40000 ALTER TABLE `labs` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `partners`;
 -- Dumping structure for table apidb.partners
 CREATE TABLE IF NOT EXISTS `partners` (
   `id` int(32) NOT NULL AUTO_INCREMENT,
@@ -613,6 +620,7 @@ INSERT INTO `pcrtype` VALUES
 /*!40000 ALTER TABLE `pcrtype` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `platforms`;
 -- Dumping structure for table apidb.platforms
 CREATE TABLE IF NOT EXISTS `platforms` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -628,6 +636,7 @@ INSERT INTO `platforms` (`id`, `name`) VALUES
 	(3, 'Hologic');
 /*!40000 ALTER TABLE `platforms` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `prophylaxis`;
 -- Dumping structure for table apidb.prophylaxis
 CREATE TABLE IF NOT EXISTS `prophylaxis` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -671,6 +680,7 @@ INSERT INTO `prophylaxis` (`id`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUE
 	(27, 'AZT for 6 weeks + NVP for >12 weeks ', NULL, 2, 1, 2);
 /*!40000 ALTER TABLE `prophylaxis` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `prophylaxistypes`;
 -- Dumping structure for table apidb.prophylaxistypes
 CREATE TABLE IF NOT EXISTS `prophylaxistypes` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -685,6 +695,8 @@ INSERT INTO `prophylaxistypes` (`id`, `name`) VALUES
 	(2, 'Infant Prophylaxis');
 /*!40000 ALTER TABLE `prophylaxistypes` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `provinces`;
 -- Dumping structure for table apidb.provinces
 CREATE TABLE IF NOT EXISTS `provinces` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -705,6 +717,7 @@ INSERT INTO `provinces` (`id`, `name`) VALUES
 	(9, 'Western');
 /*!40000 ALTER TABLE `provinces` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `receivedstatus`;
 -- Dumping structure for table apidb.receivedstatus
 CREATE TABLE IF NOT EXISTS `receivedstatus` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -720,6 +733,7 @@ INSERT INTO `receivedstatus` (`id`, `name`) VALUES
 	(3, 'Repeat');
 /*!40000 ALTER TABLE `receivedstatus` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `rejectedreasons`;
 -- Dumping structure for table apidb.rejectedreasons
 CREATE TABLE IF NOT EXISTS `rejectedreasons` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -750,6 +764,8 @@ INSERT INTO `rejectedreasons` (`id`, `name`, `alias`) VALUES
 	(17, 'Insufficient sample volume', NULL);
 /*!40000 ALTER TABLE `rejectedreasons` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `results`;
 -- Dumping structure for table apidb.results
 CREATE TABLE IF NOT EXISTS `results` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
@@ -768,6 +784,7 @@ INSERT INTO `results` (`id`, `name`, `alias`) VALUES
 	(5, 'Collect New Sample', '');
 /*!40000 ALTER TABLE `results` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `testtype`;
 -- Dumping structure for table apidb.testtype
 CREATE TABLE IF NOT EXISTS `testtype` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -782,6 +799,8 @@ INSERT INTO `testtype` (`id`, `name`) VALUES
 	(2, 'VL');
 /*!40000 ALTER TABLE `testtype` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `viraljustifications`;
 -- Dumping structure for table apidb.viraljustifications
 CREATE TABLE IF NOT EXISTS `viraljustifications` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -806,6 +825,9 @@ INSERT INTO `viraljustifications` (`id`, `displaylabel`, `name`, `flag`, `rank`)
 	(10, '5 &nbsp;Baseline', 'Baseline', 1, 5);
 /*!40000 ALTER TABLE `viraljustifications` ENABLE KEYS */;
 
+
+
+DROP TABLE IF EXISTS `viralpmtcttype`;
 -- Dumping structure for table apidb.viralpmtcttype
 CREATE TABLE IF NOT EXISTS `viralpmtcttype` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -822,6 +844,8 @@ INSERT INTO `viralpmtcttype` (`id`, `name`, `subID`) VALUES
 	(3, 'None of above', 2);
 /*!40000 ALTER TABLE `viralpmtcttype` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `viralprophylaxis`;
 -- Dumping structure for table apidb.viralprophylaxis
 CREATE TABLE IF NOT EXISTS `viralprophylaxis` (
   `id` int(50) NOT NULL AUTO_INCREMENT,
@@ -858,6 +882,8 @@ INSERT INTO `viralprophylaxis` (`id`, `displaylabel`, `name`, `description`, `li
 	(19, '15 &nbsp;AZT+3TC+DRV/r', 'AZT+3TC+DRV/r', '', 0, 0, 15);
 /*!40000 ALTER TABLE `viralprophylaxis` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `viralrejectedreasons`;
 -- Dumping structure for table apidb.viralrejectedreasons
 CREATE TABLE IF NOT EXISTS `viralrejectedreasons` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -892,6 +918,8 @@ INSERT INTO `viralrejectedreasons` (`id`, `name`, `alias`, `newid`, `originalid`
 	(19, 'Patient Died', 'Patient Died', NULL, 13);
 /*!40000 ALTER TABLE `viralrejectedreasons` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `viralsampletype`;
 -- Dumping structure for table apidb.viralsampletype
 CREATE TABLE IF NOT EXISTS `viralsampletype` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -912,6 +940,8 @@ INSERT INTO `viralsampletype` (`id`, `sampletype`, `name`, `alias`, `typecode`, 
 	(3, 2, 'DBS Capillary ( infants)', NULL, 1, 1);
 /*!40000 ALTER TABLE `viralsampletype` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `viralsampletypedetails`;
 -- Dumping structure for table apidb.viralsampletypedetails
 CREATE TABLE IF NOT EXISTS `viralsampletypedetails` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -928,6 +958,8 @@ INSERT INTO `viralsampletypedetails` (`id`, `name`, `flag`) VALUES
 	(3, 'EDTA', 1);
 /*!40000 ALTER TABLE `viralsampletypedetails` ENABLE KEYS */;
 
+
+DROP TABLE IF EXISTS `wards`;
 -- Dumping structure for table apidb.wards
 CREATE TABLE IF NOT EXISTS `wards` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
