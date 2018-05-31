@@ -17,7 +17,8 @@ class CreateViralsamplesTable extends Migration
             $table->bigIncrements('id'); 
             $table->bigInteger('national_sample_id')->unsigned()->nullable()->index();
             $table->bigInteger('patient_id')->unsigned()->index();
-            $table->bigInteger('batch_id')->unsigned()->index();
+            // $table->bigInteger('batch_id')->unsigned()->index();
+            $table->double('batch_id', 14, 2)->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
             $table->string('order_no', 30)->nullable();
@@ -26,20 +27,20 @@ class CreateViralsamplesTable extends Migration
 
             // This will be used instead
             $table->float('age', 5, 2)->unsigned()->nullable()->index();
-            $table->tinyInteger('age_category')->unsigned()->default(0);
+            $table->tinyInteger('age_category')->unsigned()->default(0)->nullable();
             $table->tinyInteger('justification')->unsigned()->nullable();
             $table->string('other_justification', 50)->nullable();
             $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('regimenline')->unsigned()->nullable();
-            $table->tinyInteger('pmtct')->unsigned()->default(3);
+            $table->tinyInteger('pmtct')->unsigned()->default(3)->nullable();
 
             $table->tinyInteger('dilutionfactor')->unsigned()->nullable();
             $table->tinyInteger('dilutiontype')->unsigned()->nullable();
 
             $table->string('comments', 30)->nullable();
             $table->string('labcomment', 50)->nullable();
-            $table->bigInteger('parentid')->unsigned()->default(0)->index();
+            $table->bigInteger('parentid')->unsigned()->default(0)->index()->nullable();
             // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->string('reason_for_repeat', 50)->nullable();

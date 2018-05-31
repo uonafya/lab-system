@@ -197,12 +197,16 @@
                                             @endif
                                         </td>
 
-                                        <td> <div align="center"><input name="approved[]" type="checkbox"  value="{{ $key }}" checked  class="{{ $class }}" /></div> </td>
+                                        <td> 
+                                            <div align="center">
+                                                <input name="approved[]" type="checkbox"  value="{{ $key }}" checked disabled="disabled"  class="{{ $class }}" />
+                                            </div> 
+                                        </td>
                                         <td> {{ $sample->dateapproved }} </td>
                                         <td> {{ $sample->approver->full_name ?? '' }} </td>
                                         <td> 
-                                            <a href="{{ url('sample/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
-                                            <a href="{{ url('sample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
+                                            <a href="{{ url('viralsample/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
+                                            <a href="{{ url('viralsample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
                                         </td>
                                     </tr>
 

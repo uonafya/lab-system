@@ -160,6 +160,8 @@ class Lookup
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
 
+            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid'],
+
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
             'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'mother_prophylaxis', 'feeding', 'pcrtype', 'regimen', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
@@ -241,6 +243,8 @@ class Lookup
             'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no'],
+
+            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 

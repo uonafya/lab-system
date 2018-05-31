@@ -14,23 +14,24 @@ class CreateBatchesTable extends Migration
     public function up()
     {
         Schema::create('batches', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            // $table->bigIncrements('id');
+            $table->double('id', 14, 2)->unsigned()->autoIncrement();
             $table->bigInteger('national_batch_id')->unsigned()->nullable()->index();
-            $table->boolean('highpriority')->default(false);
-            $table->boolean('input_complete')->default(false);
-            $table->boolean('batch_full')->default(false); 
+            $table->boolean('highpriority')->default(false)->nullable();
+            $table->boolean('input_complete')->default(false)->nullable();
+            $table->boolean('batch_full')->default(false)->nullable(); 
 
             // 0 is default i.e. new
             // 1 is dispatched
             // 2 is staging i.e. all samples are ready, batch awaiting dispatch
-            $table->tinyInteger('batch_complete')->unsigned()->default(0);
+            $table->tinyInteger('batch_complete')->unsigned()->default(0)->nullable();
 
             // 0 is for lab entry
             // 1 is for site entry
             // 2 is for POC entry
-            $table->tinyInteger('site_entry')->unsigned()->default(0);
+            $table->tinyInteger('site_entry')->unsigned()->default(0)->nullable();
 
-            $table->boolean('sent_email')->default(false);
+            $table->boolean('sent_email')->default(false)->nullable();
 
             $table->integer('printedby')->unsigned()->nullable();
             $table->integer('user_id')->unsigned()->nullable()->index();

@@ -23,7 +23,7 @@ use App\Viralsample;
 
 class Copier
 {
-    private static $limit = 10000;
+    private static $limit = 5000;
 
     public static function copy_eid()
     {
@@ -35,7 +35,7 @@ class Copier
         while(true)
         {
             $samples = SampleView::when($start, function($query) use ($start){
-                return $query->where('id', '>', $start)
+                return $query->where('id', '>', $start);
             })->limit(self::$limit)->offset($offset_value)->get();
             if($samples->isEmpty()) break;
 
@@ -53,6 +53,7 @@ class Copier
                     $patient->save();
                 }
 
+                $value->original_batch_id = self::set_batch_id($value->original_batch_id);
                 $batch = Batch::find($value->original_batch_id);
 
                 if(!$batch){
@@ -85,7 +86,7 @@ class Copier
         while(true)
         {
             $samples = ViralsampleView::when($start, function($query) use ($start){
-                return $query->where('id', '>', $start)
+                return $query->where('id', '>', $start);
             })->limit(self::$limit)->offset($offset_value)->get();
             if($samples->isEmpty()) break;
 
@@ -99,6 +100,7 @@ class Copier
                     $patient->save();
                 }
 
+                $value->original_batch_id = self::set_batch_id($value->original_batch_id);
                 $batch = Viralbatch::find($value->original_batch_id);
 
                 if(!$batch){
@@ -118,6 +120,12 @@ class Copier
             $offset_value += self::$limit;
             echo "Completed vl {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
+    }
+
+    private static function set_batch_id($batch_id)
+    {
+        if($batch_id == floor($batch_id)) return $batch_id;
+        return (floor($batch_id) + 0.5);
     }
 
     public static function copy_worksheet()
@@ -140,13 +148,13 @@ class Copier
             while(true)
             {
                 $worksheets = $view::when($start, function($query) use ($start){
-                    return $query->where('id', '>', $start)
+                    return $query->where('id', '>', $start);
                 })->limit(self::$limit)->offset($offset_value)->get();
                 if($worksheets->isEmpty()) break;
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $work = new $model;
-                    $work->fill($worksheet->all());
+                    $work->fill($worksheet->toArray());
                     foreach ($date_array as $date_field) {
                         $work->$date_field = self::clean_date($work->$date_field);
                     }
@@ -250,7 +258,7 @@ class Copier
 
             'patient' => ['patient', 'patient_name', 'sex', 'facility_id', 'caregiver_phone', 'dob', 'entry_point', 'dateinitiatedontreatment'],
 
-            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'sample_type', 'receivedstatus', 'age', 'redraw', 'pcrtype', 'regimen', 'mother_prophylaxis', 'feeding', 'spots', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'worksheet_id', 'hei_validation', 'enrollment_ccc_no', 'enrollment_status', 'referredfromsite', 'otherreason', 'flag', 'run', 'repeatt', 'eqa', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'previous_positive', 'synched', 'datesynched', 'mother_last_result', 'mother_age' ], 
+            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'sample_type', 'receivedstatus', 'age', 'redraw', 'pcrtype', 'regimen', 'mother_prophylaxis', 'feeding', 'spots', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'worksheet_id', 'hei_validation', 'enrollment_ccc_no', 'enrollment_status', 'referredfromsite', 'otherreason', 'flag', 'run', 'repeatt', 'eqa', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'mother_last_result', 'mother_age' ], 
         ];
     }
 
@@ -258,11 +266,11 @@ class Copier
     {
         return [
 
-            'batch' => ['original_batch_id' , 'highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted'],
+            'batch' => ['highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted'],
 
-            'patient' => ['original_patient_id', 'patient', 'sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
+            'patient' => ['patient', 'sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
 
-            'sample' => ['id', 'original_sample_id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'previous_nonsuppressed', 'synched', 'datesynched' ],
+            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched' ],
             
         ];
     }

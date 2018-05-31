@@ -261,8 +261,14 @@ class Synch
 			$update_class = $value['class'];
 			$column = self::$column_array[$key];
 
+			$sheet = false;
+			if($key == 'worksheets') $sheet = true;
+
 			while(true){
-				$models = $update_class::where('synched', 2)->limit(20)->get();
+				$models = $update_class::where('synched', 2)
+										->when($sheet, function($query){
+							                return $query->where('status_id', 3);
+							            })->limit(20)->get();
 				if($models->isEmpty()) break;
 
 				$response = $client->request('post', $value['update_url'], [
@@ -297,8 +303,14 @@ class Synch
 			$update_class = $value['class'];
 			$column = self::$column_array[$key];
 
+			$sheet = false;
+			if($key == 'worksheets') $sheet = true;
+
 			while(true){
-				$models = $update_class::where('synched', 3)->limit(20)->get();
+				$models = $update_class::where('synched', 3)
+										->when($sheet, function($query){
+							                return $query->where('status_id', 3);
+							            })->limit(20)->get();
 				if($models->isEmpty()) break;
 
 				$response = $client->request('post', $value['delete_url'], [
@@ -322,8 +334,9 @@ class Synch
 	}
 
 
-
-	public static function synch_facilities()
+	// No longer necessary
+	// Facilities will be created nationally then synched to all labs
+	/*public static function synch_facilities()
 	{
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
@@ -350,11 +363,6 @@ class Synch
 				Facility::where('id', $value->original_id)->update($update_data);
 			}
 		}
-	}
-
-
-
-
-
+	}*/
 
 }

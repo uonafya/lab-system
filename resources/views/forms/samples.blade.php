@@ -146,7 +146,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PCR Type</label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-5">
                                 <select class="form-control" required name="pcrtype" id="pcrtype">
 
                                     <option value=""> Select One </option>
@@ -163,14 +163,11 @@
 
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Redraw</label>
-
-                            <div class="col-sm-8">
-                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Check if PCR type 6 </label>
+                            <div class="col-sm-3">
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Tick only if sample redraw </label>
                             </div>
+
                         </div>
 
                         <!-- <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> -->
@@ -352,26 +349,24 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">VL result within last 6 months</label>
-
-                            <div class="col-sm-8">
-                                <label> <input type="checkbox" class="i-checks" name="last_result" value="< LDL copies/ml"
-                                    @if(isset($sample) && $sample->mother_last_rcategory == 1)
-                                        checked
-                                    @endif
-
-                                 /> &lt; ldl copies per ml</label>
-                            </div>
-                        </div> 
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">VL result within last 6 months</label>
-                            <div class="col-sm-8"><input class="form-control" id="mother_last_result" name="mother_last_result" type="text"  number="number"
+                            <div class="col-sm-5">
+                                <input class="form-control" id="mother_last_result" name="mother_last_result" type="text"  number="number" placeholder="Input if result is a number e.g. 1200 cp/ml." 
 
                                     @if(isset($sample) && is_numeric($sample->mother_last_result))
                                         value="{{ $sample->mother_last_result ?? '' }}"
                                     @endif
 
-                                ></div>
+                                >
+                            </div>
+
+                            <div class="col-sm-3">
+                                <label> <input type="checkbox" class="i-checks" name="last_result" value="< LDL copies/ml"
+                                    @if(isset($sample) && $sample->mother_last_rcategory == 1)
+                                        checked
+                                    @endif
+
+                                 />Tick if result is <b> &lt; LDL cp/ml</b> </label>
+                            </div>
                         </div> 
 
                         {{--<!-- <div class="form-group">

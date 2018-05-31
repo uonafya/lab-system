@@ -62,7 +62,7 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
 CREATE OR REPLACE VIEW old_worksheets AS
 (
     SELECT id, type as machine_type, lab as lab_id, status as status_id,
-    runby, updatedby as uploaded_by, reviewedby, review2by as reviewedby2,
+    runby, updatedby as uploadedby, reviewedby, review2by as reviewedby2,
     createdby, cancelledby,
     #sortedby, alliquotedby, bulkedby,
     HIQCAPNo as hiqcap_no, Spekkitno as spekkit_no, Rackno as rack_no, Lotno as lot_no, samplepreplotno as
@@ -84,7 +84,7 @@ CREATE OR REPLACE VIEW old_worksheets AS
 CREATE OR REPLACE VIEW old_viralworksheets AS
 (
     SELECT id, type as machine_type, lab as lab_id, status as status_id, calibration,
-    runby,  updatedby as uploaded_by, reviewedby, review2by as reviewedby2,
+    runby,  updatedby as uploadedby, reviewedby, review2by as reviewedby2,
     createdby, cancelledby,
     #sortedby, alliquotedby, bulkedby,
     HIQCAPNo as hiqcap_no, Spekkitno as spekkit_no, Rackno as rack_no, Lotno as lot_no, samplepreplotno as

@@ -16,8 +16,9 @@ class CreateSamplesTable extends Migration
         Schema::create('samples', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('national_sample_id')->unsigned()->nullable()->index();
-            $table->bigInteger('patient_id')->unsigned()->index();
-            $table->bigInteger('batch_id')->unsigned()->index();
+            $table->bigInteger('patient_id')->unsigned()->index(); 
+            // $table->bigInteger('batch_id')->unsigned()->index();
+            $table->double('batch_id', 14, 2)->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
             $table->string('order_no', 30)->nullable();
@@ -31,7 +32,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('receivedstatus')->unsigned()->nullable();
             $table->float('age', 7, 4)->unsigned()->nullable();
 
-            $table->boolean('redraw')->default(false);
+            $table->boolean('redraw')->default(false)->nullable();
             $table->tinyInteger('pcrtype')->unsigned()->nullable();
             $table->tinyInteger('regimen')->unsigned()->nullable();
             $table->tinyInteger('mother_prophylaxis')->unsigned()->nullable();
@@ -56,7 +57,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();
             $table->tinyInteger('run')->unsigned()->default(1)->nullable();
             $table->tinyInteger('repeatt')->unsigned()->default(0)->nullable();
-            // $table->tinyInteger('eqa')->unsigned()->default(0);
+            $table->tinyInteger('eqa')->unsigned()->default(0);
 
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();

@@ -169,7 +169,11 @@
                                         </td>
 
 
-                                        <td> <div align="center"><input name="approved[]" type="checkbox"  value="{{ $key }}" checked class="{{ $class }}" /></div> </td>
+                                        <td> 
+                                            <div align="center">
+                                                <input name="approved[]" type="checkbox"  value="{{ $key }}" checked disabled="disabled" class="{{ $class }}" />
+                                            </div> 
+                                        </td>
                                         <td> {{ $sample->dateapproved }} </td>
                                         <td> {{ $sample->approver->full_name ?? '' }} </td>
                                         <td> 
