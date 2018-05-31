@@ -53,6 +53,7 @@ class Copier
                     $patient->save();
                 }
 
+                $value->original_batch_id = self::set_batch_id($value->original_batch_id);
                 $batch = Batch::find($value->original_batch_id);
 
                 if(!$batch){
@@ -99,6 +100,7 @@ class Copier
                     $patient->save();
                 }
 
+                $value->original_batch_id = self::set_batch_id($value->original_batch_id);
                 $batch = Viralbatch::find($value->original_batch_id);
 
                 if(!$batch){
@@ -118,6 +120,12 @@ class Copier
             $offset_value += self::$limit;
             echo "Completed vl {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
+    }
+
+    private static function set_batch_id($batch_id)
+    {
+        if($batch_id == floor($batch_id)) return $batch_id;
+        return (floor($batch_id) + 0.5);
     }
 
     public static function copy_worksheet()
