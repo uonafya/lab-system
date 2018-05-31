@@ -18,11 +18,11 @@ Artisan::command('inspire', function () {
 })->describe('Display an inspiring quote');
 
 Artisan::command('input_complete:eid', function(){
-	$this->info(\App\Common::input_complete_batches($this->info(\App\Batch::class));
+	$this->info(\App\Common::input_complete_batches(\App\Batch::class));
 })->describe('Mark eid batches as input completed.');
 
 Artisan::command('input_complete:vl', function(){
-	$this->info(\App\Common::input_complete_batches($this->info(\App\Viralbatch::class));
+	$this->info(\App\Common::input_complete_batches(\App\Viralbatch::class));
 })->describe('Mark vl batches as input completed.');
 
 
