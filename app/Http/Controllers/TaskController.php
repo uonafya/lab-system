@@ -47,7 +47,7 @@ class TaskController extends Controller
     {
         $tasks = $this->pendingTasks();
         // dd($tasks);
-        if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0 && $tasks['deliverystatus'] >  0) {
+        if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
             session(['pendingTasks'=> false]);
             return redirect()->route('home');
         }
