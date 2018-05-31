@@ -17,13 +17,13 @@ class CreateViralbatchesTable extends Migration
             // $table->bigIncrements('id');
             $table->double('id', 14, 2)->autoIncrement();
             $table->bigInteger('national_batch_id')->unsigned()->nullable()->index();
-            $table->boolean('highpriority')->default(false);
-            $table->boolean('input_complete')->default(false);
-            $table->boolean('batch_full')->default(false);
-            $table->tinyInteger('site_entry')->unsigned()->default(0); 
+            $table->boolean('highpriority')->default(false)->nullable();
+            $table->boolean('input_complete')->default(false)->nullable();
+            $table->boolean('batch_full')->default(false)->nullable();
+            $table->tinyInteger('site_entry')->unsigned()->default(0)->nullable(); 
 
             $table->tinyInteger('batch_complete')->unsigned()->default(0)->nullable();
-            $table->boolean('sent_email')->default(false);
+            $table->boolean('sent_email')->default(false)->nullable();
 
             $table->integer('printedby')->unsigned()->nullable();
             $table->integer('user_id')->unsigned()->nullable()->index();
