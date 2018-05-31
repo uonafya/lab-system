@@ -23,7 +23,7 @@ use App\Viralsample;
 
 class Copier
 {
-    private static $limit = 10000;
+    private static $limit = 5000;
 
     public static function copy_eid()
     {
