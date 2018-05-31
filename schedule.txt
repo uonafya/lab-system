@@ -1,5 +1,5 @@
 # Being the crontab to be installed
 
-45 10 * * * php /usr/share/nginx/html/lab/artisan copy:eid >> /usr/share/nginx/html/lab/storage/app/test/eid.txt  2>&1 
-45 10 * * * php /usr/share/nginx/html/lab/artisan copy:vl >> /usr/share/nginx/html/lab/storage/app/test/vl.txt  2>&1 
-45 10 * * * php /usr/share/nginx/html/lab/artisan copy:worksheet >> /usr/share/nginx/html/lab/storage/app/test/worksheets.txt  2>&1 
+55 10 * * * php /usr/share/nginx/html/lab/artisan copy:eid >> /usr/share/nginx/html/lab/storage/app/test/eid.txt  2>&1 
+55 10 * * * php /usr/share/nginx/html/lab/artisan copy:vl >> /usr/share/nginx/html/lab/storage/app/test/vl.txt  2>&1 
+55 10 * * * php /usr/share/nginx/html/lab/artisan copy:worksheet >> /usr/share/nginx/html/lab/storage/app/test/worksheets.txt  2>&1 

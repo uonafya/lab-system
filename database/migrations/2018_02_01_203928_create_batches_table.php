@@ -15,7 +15,7 @@ class CreateBatchesTable extends Migration
     {
         Schema::create('batches', function (Blueprint $table) {
             // $table->bigIncrements('id');
-            $table->double('id', 14, 2)->autoIncrement();
+            $table->double('id', 14, 2)->unsigned()->autoIncrement();
             $table->bigInteger('national_batch_id')->unsigned()->nullable()->index();
             $table->boolean('highpriority')->default(false)->nullable();
             $table->boolean('input_complete')->default(false)->nullable();
