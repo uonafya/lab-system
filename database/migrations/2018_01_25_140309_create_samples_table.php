@@ -31,7 +31,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('receivedstatus')->unsigned()->nullable();
             $table->float('age', 7, 4)->unsigned()->nullable();
 
-            $table->boolean('redraw')->default(false);
+            $table->boolean('redraw')->default(false)->nullable();
             $table->tinyInteger('pcrtype')->unsigned()->nullable();
             $table->tinyInteger('regimen')->unsigned()->nullable();
             $table->tinyInteger('mother_prophylaxis')->unsigned()->nullable();
