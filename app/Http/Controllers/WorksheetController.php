@@ -38,9 +38,10 @@ class WorksheetController extends Controller
             return $query->whereDate('worksheets.created_at', $date_start);
         })
         ->orderBy('worksheets.created_at', 'desc')
-        ->get();
+        ->paginate();
 
-        $samples = $this->get_worksheets($worksheet_id);
+        $worksheet_ids = $worksheets->pluck(['id'])->toArray();
+        $samples = $this->get_worksheets($worksheet_ids);
         $data = Lookup::worksheet_lookups();
 
         $worksheets->transform(function($worksheet, $key) use ($samples, $data){
