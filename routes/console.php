@@ -18,47 +18,57 @@ Artisan::command('inspire', function () {
 })->describe('Display an inspiring quote');
 
 Artisan::command('input_complete:eid', function(){
-	$this->info(\App\Common::input_complete_batches(\App\Batch::class));
+	$str = \App\Common::input_complete_batches(\App\Batch::class);
+    $this->info($str);
 })->describe('Mark eid batches as input completed.');
 
 Artisan::command('input_complete:vl', function(){
-	$this->info(\App\Common::input_complete_batches(\App\Viralbatch::class));
+	$str = \App\Common::input_complete_batches(\App\Viralbatch::class);
+    $this->info($str);
 })->describe('Mark vl batches as input completed.');
 
 
 Artisan::command('synch:eid-patients', function(){
-	$this->info(\App\Synch::synch_eid_patients());
+	$str = \App\Synch::synch_eid_patients();
+    $this->info($str);
 })->describe('Synch eid patients to the national database.');
 
 Artisan::command('synch:vl-patients', function(){
-	$this->info(\App\Synch::synch_vl_patients());
+	$str = \App\Synch::synch_vl_patients();
+    $this->info($str);
 })->describe('Synch vl patients to the national database.');
 
 
 Artisan::command('synch:eid-batches', function(){
-	$this->info(\App\Synch::synch_batches('eid'));
+	$str = \App\Synch::synch_batches('eid');
+    $this->info($str);
 })->describe('Synch eid batches to the national database.');
 
 Artisan::command('synch:vl-batches', function(){
-	$this->info(\App\Synch::synch_batches('vl'));
+	$str = \App\Synch::synch_batches('vl');
+    $this->info($str);
 })->describe('Synch vl batches to the national database.');
 
 
 Artisan::command('synch:eid-worksheets', function(){
-	$this->info(\App\Synch::synch_worksheets('eid'));
+	$str = \App\Synch::synch_worksheets('eid');
+    $this->info($str);
 })->describe('Synch eid worksheets to the national database.');
 
 Artisan::command('synch:vl-worksheets', function(){
-	$this->info(\App\Synch::synch_worksheets('vl'));
+	$str = \App\Synch::synch_worksheets('vl');
+    $this->info($str);
 })->describe('Synch vl worksheets to the national database.');
 
 
 Artisan::command('synch:eid-deletes', function(){
-	$this->info(\App\Synch::synch_deletes('eid'));
+	$str = \App\Synch::synch_deletes('eid');
+    $this->info($str);
 })->describe('Synch eid deletes to the national database.');
 
 Artisan::command('synch:vl-deletes', function(){
-	$this->info(\App\Synch::synch_deletes('vl'));
+	$str = \App\Synch::synch_deletes('vl');
+    $this->info($str);
 })->describe('Synch vl deletes to the national database.');
 
 
@@ -66,23 +76,26 @@ Artisan::command('synch:vl-deletes', function(){
 
 
 Artisan::command('copy:eid', function(){
-	$this->info(\App\Copier::copy_eid());
-
+	$str = \App\Copier::copy_eid();
+    $this->info($str);
 })->describe('Copy eid data from old database to new database.');
 
 Artisan::command('copy:vl', function(){
-	$this->info(\App\Copier::copy_vl());
+	$str = \App\Copier::copy_vl();
+    $this->info($str);
 })->describe('Copy vl data from old database to new database.');
 
 Artisan::command('copy:worksheet', function(){
-	$this->info(\App\Copier::copy_worksheet());
+	$str = \App\Copier::copy_worksheet();
+    $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
 
 
 
 
 Artisan::command('email:test', function(){
-	$this->info(\App\Resolver::test_email());
+	$str = \App\Resolver::test_email();
+    $this->info($str);
 })->describe('Send test email.');
 
 
