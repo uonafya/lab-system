@@ -10,6 +10,8 @@ class Viralbatch extends BaseModel
 
     // protected $withCount = ['sample'];
 
+    protected $keyType = 'decimal';
+
     public function tat()
     {
         if(!$this->datereceived) return '';

@@ -42,7 +42,7 @@ class ViralworksheetController extends Controller
             })
             ->orderBy('viralworksheets.created_at', 'desc')
             ->groupBy('viralworksheets.id')
-            ->get();
+            ->paginate();
 
         // return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
         

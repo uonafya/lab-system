@@ -12,6 +12,8 @@ class Batch extends BaseModel
 
     // protected $withCount = ['sample'];
 
+    protected $keyType = 'decimal';
+
     protected static function boot()
     {
         parent::boot();
