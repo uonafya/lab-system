@@ -34,6 +34,7 @@ Route::get('/config', function () {
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
+
 Auth::routes();
 
 Route::get('datatables', function () {
@@ -58,7 +59,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('/home', 'HomeController@index');
 
 	Route::get('search', function () {	return view('forms.search')->with('pageTitle', 'Search'); });
-
+	
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@index');
@@ -110,6 +111,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('facility/served', 'FacilityController@served');
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+	Route::get('facility/add', 'FacilityController@create')->name('facility.add');
 	Route::resource('facility', 'FacilityController');
 
 	Route::get('/home', 'HomeController@index')->name('home');
@@ -174,6 +176,10 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::post('search', 'SampleController@search');		
 	});
 	Route::resource('sample', 'SampleController');
+
+	Route::get('user/add', 'UserController@create')->name('user.add');
+	Route::get('users', 'UserController@index')->name('users');
+	Route::resource('user', 'UserController');
 
 
 	Route::prefix('viralsample')->name('viralsample.')->group(function () {

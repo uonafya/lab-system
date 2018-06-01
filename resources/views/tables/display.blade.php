@@ -8,13 +8,6 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
-            	<div class="panel-heading">
-                    <div class="alert alert-success" style="/*padding-top: 4px;padding-bottom: 4px;">
-		                <p>
-		                    <center>DISTRICTS</center>
-		                </p>
-		            </div>
-            	</div>
                 <div class="panel-body">
             	    <table class="table table-striped table-bordered table-hover data-table" style="/*font-size: 10px;" >
                         <thead>

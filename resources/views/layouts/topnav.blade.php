@@ -68,6 +68,16 @@
                     <li class="">
                         <a href="#">VL Reports</a>
                     </li>
+                @elseif(Auth()->user()->user_type_id == 2)
+                    <li>
+                        <a href="">Home</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('users') }}">Users</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('facilities') }}">Facilities</a>
+                    </li>
                 @else
                     @if(!Session('pendingTasks'))
                         <li class="">
@@ -156,6 +166,16 @@
                 <li class="">
                     <a href="#">VL Reports</a>
                 </li>
+            @elseif(Auth()->user()->user_type_id == 2)
+                    <li>
+                        <a href="">Home</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('users') }}">Users</a>
+                    </li>
+                    <li>
+                        <a href="">Facilities</a>
+                    </li>
             @else
                 @if(!Session('pendingTasks'))
                     <li class="">

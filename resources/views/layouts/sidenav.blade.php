@@ -225,21 +225,22 @@
             </li>
             <hr />
         @endif
-        @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 4)
-        	<li>
-                <a href="{{ route('facility.index') }}"> <span class="nav-label">Facilities</span></a>
-            </li>
-        @endif
+        --}}
+        
+        <!-- Admin Side Bar -->
         @if (auth()->user()->user_type_id == 2)
-        	<li>
-                <a href="{{ route('district.index') }}"> <span class="nav-label">Districts</span></a>
+            <li>
+                <a href="{{ url('user/add') }}"><span class="nav-label">Add Users</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"> <span class="nav-label">User Activity Log</span></a>
+                <a href="{{ url('faciity/add') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
         @endif
+        <!-- Admin Side Bar -->
+
+        {{--
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
                 <a href="#"> <span class="nav-label">KITS</span></a>
