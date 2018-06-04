@@ -156,17 +156,27 @@
                                         </td>
 
                                         <td> 
-                                            <select name="actions[]" class="{{ $class }}">
-                                                <option>Choose an action</option>
+                                            @if($sample->approvedby)
                                                 @foreach($actions as $action)
-                                                    <option value="{{$action->id}}"
-                                                        @if($sample->repeatt == $action->id)
-                                                            selected
-                                                        @endif
-                                                        > {{ $action->name }} </option>
+                                                    @if($sample->repeatt == $action->id)
+                                                        {!! $action->name_colour !!}
+                                                    @endif
                                                 @endforeach
-                                            </select>
+
+                                            @else
+                                                <select name="actions[]" class="{{ $class }}">
+                                                    <option>Choose an action</option>
+                                                    @foreach($actions as $action)
+                                                        <option value="{{$action->id}}"
+                                                            @if($sample->repeatt == $action->id)
+                                                                selected
+                                                            @endif
+                                                            > {{ $action->name }} </option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
                                         </td>
+
 
 
                                         <td> 

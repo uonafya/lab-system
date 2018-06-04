@@ -185,7 +185,7 @@
                                             @if($sample->approvedby)
                                                 @foreach($actions as $action)
                                                     @if($sample->repeatt == $action->id)
-                                                        {{ $action->name }}
+                                                        {!! $action->name_colour !!}
                                                     @endif
                                                 @endforeach
 
