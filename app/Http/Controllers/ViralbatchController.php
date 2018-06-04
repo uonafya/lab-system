@@ -169,7 +169,7 @@ class ViralbatchController extends Controller
         }
         $new_batch->save();
 
-        $count = count($sample_ids)
+        $count = count($sample_ids);
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
