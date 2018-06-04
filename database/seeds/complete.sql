@@ -778,11 +778,11 @@ CREATE TABLE IF NOT EXISTS `results` (
 -- Dumping data for table apidb.results: ~5 rows (approximately)
 /*!40000 ALTER TABLE `results` DISABLE KEYS */;
 INSERT INTO `results` (`id`, `name`, `alias`, `name_colour`) VALUES
-	(1, 'Negative', 'NEG', '<strong><font color=\'#00ff00\'>Negative</font></strong>'),
-	(2, 'Positive', 'POS', '<strong><font color=\'#ff0000\'>Positive</font></strong>'),
-	(3, 'Failed', '', '<strong><font color=\'#ffff00\'>Failed</font></strong>'),
-	(4, 'Unknown', '', '<strong><font color=\'#ffff00\'>Unknown</font></strong>'),
-	(5, 'Collect New Sample', '', '<strong><font color=\'#ffff00\'>Collect New Sample</font></strong>');
+	(1, 'Negative', 'NEG', '<strong><div style=\'color: #00ff00;\'>Negative</div></strong>'),
+	(2, 'Positive', 'POS', '<strong><div style=\'color: #ff0000;\'>Positive</div></strong>'),
+	(3, 'Failed', '', '<strong><div style=\'color: #ffff00;\'>Failed</div></strong>'),
+	(4, 'Unknown', '', '<strong><div style=\'color: #ffff00;\'>Unknown</div></strong>'),
+	(5, 'Collect New Sample', '', '<strong><div style=\'color: #ffff00;\'>Collect New Sample</div></strong>');
 /*!40000 ALTER TABLE `results` ENABLE KEYS */;
 
 DROP TABLE IF EXISTS `testtype`;
@@ -2374,8 +2374,8 @@ CREATE TABLE `actions` (
 LOCK TABLES `actions` WRITE;
 /*!40000 ALTER TABLE `actions` DISABLE KEYS */;
 INSERT INTO `actions` VALUES 
-(0,'Dispatch', '<strong><font color=\'#00ff00\'>Dispatch</font></strong>', 1),
-(1,'Rerun', '<strong><font color=\'#ffff00\'>Rerun</font></strong>', 1);
+(0,'Dispatch', '<strong><div style=\'color: #00ff00;\'>Dispatch</div></strong>', 1),
+(1,'Rerun', '<strong><div style=\'color: #ffff00;\'>Rerun</div></strong>', 1);
 /*!40000 ALTER TABLE `actions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2402,7 +2402,11 @@ CREATE TABLE `machines` (
 
 LOCK TABLES `machines` WRITE;
 /*!40000 ALTER TABLE `machines` DISABLE KEYS */;
-INSERT INTO `machines` VALUES (1,'TaqMan','<strong> TaqMan </strong>',22,21),(2,'Abbott','<strong><font color=\'#0000FF\'> Abbott </font></strong>',94,93),(3,'C8800','<strong> C8800 </strong>',NULL,93),(4,'Panther','<strong><font color=\'#FF00FB\'> Panther </font></strong>',NULL,93);
+INSERT INTO `machines` VALUES 
+(1,'TaqMan','<strong> TaqMan </strong>',22,21),
+(2,'Abbott','<strong><div style=\'color: #0000FF;\'> Abbott </div></strong>',94,93),
+(3,'C8800','<strong> C8800 </strong>',NULL,93),
+(4,'Panther','<strong><div style=\'color: \'#FF00FB;\'> Panther </div></strong>',NULL,93);
 /*!40000 ALTER TABLE `machines` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2428,7 +2432,11 @@ CREATE TABLE `worksheetstatus` (
 
 LOCK TABLES `worksheetstatus` WRITE;
 /*!40000 ALTER TABLE `worksheetstatus` DISABLE KEYS */;
-INSERT INTO `worksheetstatus` VALUES (1,'In-Process','<strong><font color=\'#FFD324\'>In-Process</font></strong>',1),(2,'Tested','<strong><font color=\'#0000FF\'>Tested</font></strong>',1),(3,'Approved','<strong><font color=\'#339900\'>Approved</font></strong>',1),(4,'Cancelled','<strong><font color=\'#FF0000\'>Cancelled</font></strong>',1);
+INSERT INTO `worksheetstatus` VALUES 
+(1,'In-Process','<strong><div style=\'color: \'#FFD324;\'>In-Process</div></strong>',1),
+(2,'Tested','<strong><div style=\'color: \'#0000FF;\'>Tested</div></strong>',1),
+(3,'Approved','<strong><div style=\'color: \'#339900;\'>Approved</div></strong>',1),
+(4,'Cancelled','<strong><div style=\'color: \'#FF0000;\'>Cancelled</div></strong>',1);
 /*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
 UNLOCK TABLES;
 
