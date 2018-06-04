@@ -256,7 +256,6 @@ UNLOCK TABLES;
 
 
 
-
 --
 -- Table structure for table `viralrejectedreasons`
 --

@@ -771,17 +771,18 @@ CREATE TABLE IF NOT EXISTS `results` (
   `id` int(14) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `alias` varchar(100) NOT NULL,
+  `name_colour` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table apidb.results: ~5 rows (approximately)
 /*!40000 ALTER TABLE `results` DISABLE KEYS */;
 INSERT INTO `results` (`id`, `name`, `alias`) VALUES
-	(1, 'Negative', 'NEG'),
-	(2, 'Positive', 'POS'),
-	(3, 'Failed', ''),
-	(4, 'Unknown', ''),
-	(5, 'Collect New Sample', '');
+	(1, 'Negative', 'NEG', '<strong><font color=\'#00ff00\'>Negative</font></strong>'),
+	(2, 'Positive', 'POS', '<strong><font color=\'#ff0000\'>Positive</font></strong>'),
+	(3, 'Failed', '', '<strong><font color=\'#ffff00\'>Failed</font></strong>'),
+	(4, 'Unknown', '', '<strong><font color=\'#ffff00\'>Unknown</font></strong>'),
+	(5, 'Collect New Sample', , '<strong><font color=\'#ffff00\'>Collect New Sample</font></strong>');
 /*!40000 ALTER TABLE `results` ENABLE KEYS */;
 
 DROP TABLE IF EXISTS `testtype`;
