@@ -1,20 +1,18 @@
 <table  class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
-			<th>Negative</th>
-			<th>Positive</th>
+			<th>&lt;LDL </th>
+			<th>Detected</th>
 			<th>Failed</th>
-			<th>Redraw</th>
 			<th>No Result</th>
 			<th>Total</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td> {{ $subtotals['neg'] }} </td>
-			<td> {{ $subtotals['pos'] }} </td>
+			<td> {{ $subtotals['undetected'] }} </td>
+			<td> {{ $subtotals['detected'] }} </td>
 			<td> {{ $subtotals['failed'] }} </td>
-			<td> {{ $subtotals['redraw'] }} </td>
 			<td> {{ $subtotals['noresult'] }} </td>
 			<td> {{ $subtotals['total'] }} </td>
 		</tr>

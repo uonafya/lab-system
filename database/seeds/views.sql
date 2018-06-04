@@ -74,7 +74,7 @@ CREATE OR REPLACE VIEW old_worksheets AS
     cdcworksheetno, 
     kitexpirydate, sampleprepexpirydate, bulklysisexpirydate, controlexpirydate, calibratorexpirydate,
     amplificationexpirydate,
-    datecut, datereviewed, review2date as datereviewed2, datecancelled, daterun, 
+    datecut, datereviewed, review2date as datereviewed2, datecancelled, daterun, datecreated as created_at,
     # dateuploaded, datesynched,
     synched
 
@@ -102,7 +102,7 @@ CREATE OR REPLACE VIEW old_viralworksheets AS
     cdcworksheetno, 
     kitexpirydate, sampleprepexpirydate, bulklysisexpirydate, controlexpirydate, calibratorexpirydate,
     amplificationexpirydate,
-    datecut, datereviewed, review2date as datereviewed2, datecancelled, daterun, 
+    datecut, datereviewed, review2date as datereviewed2, datecancelled, daterun, datecreated as created_at,
     # dateuploaded, datesynched,
     synched
 

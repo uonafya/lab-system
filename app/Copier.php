@@ -135,7 +135,8 @@ class Copier
             'vl' => ['model' => Viralworksheet::class, 'view' => ViralworksheetView::class],
         ];
 
-        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun'];
+        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'created_at'];
+
 
         foreach ($work_array as $key => $value) {
             $model = $value['model'];

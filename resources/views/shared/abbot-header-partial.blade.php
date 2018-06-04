@@ -47,7 +47,7 @@
 	</tr>
 	<tr class="even">
 		<td ><strong>Date Created</strong>		</td>
-		<td > {{ $worksheet->created_at }} </td>
+		<td > {{ $worksheet->my_date_format('created_at') }} </td>
 		<td><strong>Lot No	</strong>	</td>
 		<td> {{ $worksheet->sample_prep_lot_no }} </td>
 		<td> {{ $worksheet->bulklysis_lot_no }} </td>

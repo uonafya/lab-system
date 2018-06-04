@@ -23,6 +23,13 @@
                 <div class="panel-body">
 
                     @include('shared/viral-abbot-header-partial')
+                    
+
+                    @if($worksheet->machine_type == 1)
+                        @include('shared/other-header-partial')
+                    @else
+                        @include('shared/viral-abbot-header-partial')
+                    @endif
 
                 </div>
             </div>
