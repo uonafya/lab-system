@@ -71,6 +71,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('site_approval_group/{batch}', 'BatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
 
+		Route::post('transfer/{batch}', 'BatchController@transfer_to_new_batch')->name('transfer');
+
 		Route::get('summary/{batch}', 'BatchController@summary');
 		Route::post('summaries', 'BatchController@summaries');
 		Route::get('individual/{batch}', 'BatchController@individual');
@@ -90,6 +92,8 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
 		Route::get('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
+
+		Route::post('transfer/{batch}', 'ViralbatchController@transfer_to_new_batch')->name('transfer');
 		
 		Route::get('summary/{batch}', 'ViralbatchController@summary');
 		Route::post('summaries', 'ViralbatchController@summaries');

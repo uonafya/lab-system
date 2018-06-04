@@ -149,6 +149,41 @@ class ViralbatchController extends Controller
         return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }
 
+    public function transfer_to_new_batch(Request $request, Viralbatch $batch)
+    {
+        $sample_ids = $request->input('samples');
+
+        if(!$sample_ids){
+            session(['toast_message' => "No samples have been selected."]);
+            session(['toast_error' => 1]);
+            return back();            
+        }
+
+        $new_batch = new Viralbatch;
+        $new_batch->fill($batch->except(['created_at', 'update_at', 'synched', 'batch_full']));
+        $new_batch->id += 0.5;
+        if($new_batch->id == floor($new_batch->id)){
+            session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        $new_batch->save();
+
+        $count = count($sample_ids);
+
+        foreach ($sample_ids as $key => $id) {
+            $sample = Viralsample::find($id);
+            $sample->batch_id = $new_batch->id;
+            $sample->pre_update();
+        }
+
+        MiscViral::check_batch($batch->id);
+        MiscViral::check_batch($new_batch->id);
+
+        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch{$new_batch->id}."]);
+        return redirect('viralbatch/' . $new_batch->id);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

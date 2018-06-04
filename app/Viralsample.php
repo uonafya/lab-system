@@ -71,4 +71,49 @@ class Viralsample extends BaseModel
             return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}");
         }
     }
+
+
+    
+
+    /**
+     * Get the sample's coloured result name
+     *
+     * @return string
+     */
+
+    public function getColouredResultAttribute()
+    {
+        if(is_numeric($this->result)){
+            if($this->result < 1000){
+                return "<strong><div style='color: #00ff00;'>{$this->result} </div></strong>";
+            }
+            else{
+                return "<strong><div style='color: #ff0000;'>{$this->result} </div></strong>";             
+            }
+        }
+        else if($this->result == "< LDL copies/ml"){
+            return "<strong><div style='color: #00ff00;'>&lt; LDL copies/ml</div></strong>";
+        }
+        else{
+            return "<strong><div style='color: #ffff00;'>{$this->result} </div></strong>";
+        }
+    }
+    
+    /*public function getColouredResultAttribute()
+    {
+        if(is_numeric($this->result)){
+            if($this->result < 1000){
+                return "<strong><font color='#00ff00'>{$this->result} </font></strong>";
+            }
+            else{
+                return "<strong><font color='#ff0000'>{$this->result} </font></strong>";                
+            }
+        }
+        else if($this->result == "< LDL copies/ml"){
+            return "<strong><font color='#00ff00'>&lt; LDL copies/ml </font></strong>";
+        }
+        else{
+            return "<strong><font color='#ffff00'>{$this->result} </font></strong>";
+        }
+    }*/
 }

@@ -150,7 +150,7 @@
                                                         @if(($sample->result == $result->id) || (!$sample->result && $result->id == 5))
                                                             selected
                                                         @endif
-                                                        > {{ $result->name }} </option>
+                                                        > {!! $result->name_colour !!} </option>
                                                 @endforeach
                                             </select>
                                         </td>

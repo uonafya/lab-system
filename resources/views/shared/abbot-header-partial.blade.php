@@ -60,17 +60,11 @@
 		<td> {{ $worksheet->creator->full_name }} </td>
 		<td><strong>Expiry Dates</strong>	</td>
 
-		{{--<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString()  }} </td>
-		<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() }} </td>
-		<td> {{ $worksheet->controlexpirydate->toFormattedDateString() }} </td>
-		<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString()  }} </td>
-		<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() }} </td> --}}
-
-		<td> {{ $worksheet->sampleprepexpirydate }} </td>
-		<td> {{ $worksheet->bulklysisexpirydate }} </td>
-		<td> {{ $worksheet->controlexpirydate }} </td>
-		<td> {{ $worksheet->calibratorexpirydate }} </td>
-		<td> {{ $worksheet->amplificationexpirydate }} </td>
+		<td> {{ $worksheet->my_date_format('sampleprepexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('bulklysisexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('controlexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('calibratorexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('amplificationexpirydate') }} </td>
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
