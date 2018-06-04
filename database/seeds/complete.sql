@@ -777,12 +777,12 @@ CREATE TABLE IF NOT EXISTS `results` (
 
 -- Dumping data for table apidb.results: ~5 rows (approximately)
 /*!40000 ALTER TABLE `results` DISABLE KEYS */;
-INSERT INTO `results` (`id`, `name`, `alias`) VALUES
+INSERT INTO `results` (`id`, `name`, `alias`, `name_colour`) VALUES
 	(1, 'Negative', 'NEG', '<strong><font color=\'#00ff00\'>Negative</font></strong>'),
 	(2, 'Positive', 'POS', '<strong><font color=\'#ff0000\'>Positive</font></strong>'),
 	(3, 'Failed', '', '<strong><font color=\'#ffff00\'>Failed</font></strong>'),
 	(4, 'Unknown', '', '<strong><font color=\'#ffff00\'>Unknown</font></strong>'),
-	(5, 'Collect New Sample', , '<strong><font color=\'#ffff00\'>Collect New Sample</font></strong>');
+	(5, 'Collect New Sample', '', '<strong><font color=\'#ffff00\'>Collect New Sample</font></strong>');
 /*!40000 ALTER TABLE `results` ENABLE KEYS */;
 
 DROP TABLE IF EXISTS `testtype`;
@@ -2361,6 +2361,7 @@ DROP TABLE IF EXISTS `actions`;
 CREATE TABLE `actions` (
   `id` TINYINT UNSIGNED NOT NULL,
   `name` varchar(100) DEFAULT NULL,
+  `name_colour` varchar(100) DEFAULT NULL,
   `active` TINYINT UNSIGNED DEFAULT '1',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -2372,7 +2373,9 @@ CREATE TABLE `actions` (
 
 LOCK TABLES `actions` WRITE;
 /*!40000 ALTER TABLE `actions` DISABLE KEYS */;
-INSERT INTO `actions` VALUES (0,'Dispatch',1),(1,'Rerun',1);
+INSERT INTO `actions` VALUES 
+(0,'Dispatch', '<strong><font color=\'#00ff00\'>Dispatch</font></strong>', 1),
+(1,'Rerun', '<strong><font color=\'#ffff00\'>Rerun</font></strong>', 1);
 /*!40000 ALTER TABLE `actions` ENABLE KEYS */;
 UNLOCK TABLES;
 

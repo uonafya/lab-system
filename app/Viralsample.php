@@ -80,7 +80,26 @@ class Viralsample extends BaseModel
      *
      * @return string
      */
+
     public function getColouredResultAttribute()
+    {
+        if(is_numeric($this->result)){
+            if($this->result < 1000){
+                return "<strong><div style='color: #00ff00;'>{$this->result} </div></strong>";
+            }
+            else{
+                return "<strong><div style='color: #ff0000;'>{$this->result} </div></strong>";             
+            }
+        }
+        else if($this->result == "< LDL copies/ml"){
+            return "<strong><div style='color: #00ff00;'>&lt; LDL copies/ml</div></strong>";
+        }
+        else{
+            return "<strong><div style='color: #ffff00;'>{$this->result} </div></strong>";
+        }
+    }
+    
+    /*public function getColouredResultAttribute()
     {
         if(is_numeric($this->result)){
             if($this->result < 1000){
@@ -96,5 +115,5 @@ class Viralsample extends BaseModel
         else{
             return "<strong><font color='#ffff00'>{$this->result} </font></strong>";
         }
-    }
+    }*/
 }
