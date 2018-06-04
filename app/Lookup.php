@@ -91,6 +91,7 @@ class Lookup
             'machines' => Cache::get('machines'),
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'actions' => Cache::get('actions'),
+            'dilutions' => Cache::get('dilutions'),
             'results' => Cache::get('results'),
             'double_approval' => self::$double_approval
         ];
@@ -297,6 +298,7 @@ class Lookup
             // Worksheet Lookup Data
             $machines = DB::table('machines')->get();
             $actions = DB::table('actions')->get();
+            $dilutions = DB::table('viraldilutionfactors')->get();
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
             Cache::put('facilities', $facilities, 60);
@@ -324,6 +326,7 @@ class Lookup
 
             Cache::put('machines', $machines, 60);
             Cache::put('actions', $actions, 60);
+            Cache::put('dilutions', $dilutions, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
         }		
 	}
@@ -351,6 +354,7 @@ class Lookup
         Cache::forget('vl_result_guidelines');
         Cache::forget('machines');
         Cache::forget('actions');
+        Cache::forget('dilutions');
         Cache::forget('worksheet_statuses');
     }
 
