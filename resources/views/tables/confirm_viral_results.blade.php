@@ -20,10 +20,7 @@
                     </div>
                     
                 </div>
-                <div class="panel-body">
-
-                    @include('shared/viral-abbot-header-partial')
-                    
+                <div class="panel-body">                    
 
                     @if($worksheet->machine_type == 1)
                         @include('shared/other-header-partial')
