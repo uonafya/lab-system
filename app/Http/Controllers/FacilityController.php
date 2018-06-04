@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use App\Facility;
+use App\Lookup;
 
 class FacilityController extends Controller
 {
@@ -192,7 +193,12 @@ class FacilityController extends Controller
      */
     public function create()
     {
-        //
+        $facilitytype = DB::table('facilitytype')->get();
+        $districts = DB::table('districts')->get();
+        $wards = DB::table('wards')->get();
+        $partners = DB::table('partners')->get();
+        
+        return view('forms.facility', compact('facilitytype','districts','wards','partners'))->with('pageTitle', 'Add Facility');
     }
 
     /**

@@ -32,6 +32,12 @@
     @yield('custom_css')
     
     <style type="text/css">
+        body.light-skin #menu {
+            width: 240px;
+        }
+        #wrapper {
+            margin: 0px 0px 0px 230px;
+        }
         #toast-container > div {
             color: black;
         }

@@ -174,7 +174,7 @@
                         <a href="{{ url('users') }}">Users</a>
                     </li>
                     <li>
-                        <a href="">Facilities</a>
+                        <a href="{{ url('facility') }}">Facilities</a>
                     </li>
             @else
                 @if(!Session('pendingTasks'))

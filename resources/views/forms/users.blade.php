@@ -19,7 +19,7 @@
 @section('content')
     <div class="content">
         <div>
-            {{ Form::open(['url' => '/user', 'method' => 'psot', 'class'=>'form-horizontal']) }}
+            {{ Form::open(['url' => '/user', 'method' => 'post', 'class'=>'form-horizontal']) }}
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">

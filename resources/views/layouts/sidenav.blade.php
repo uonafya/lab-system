@@ -234,7 +234,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('faciity/add') }}"><span class="nav-label">Add Facilty</span></a>
+                <a href="{{ url('facility/add') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
         @endif
@@ -287,6 +287,7 @@
             <hr />
         @endif
         --}}
+        @if(Auth()->user()->user_type_id != 2)
             <li><a href="{{ url('downloads/VL') }}">Download VL Form</a></li>
             <li><a href="{{ url('downloads/EID') }}">Download EID Form</a></li>
         <!-- </ul>
@@ -312,6 +313,7 @@
             <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+        @endif
         @endif
         </ul>
     </div>

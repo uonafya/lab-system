@@ -177,8 +177,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 	});
 	Route::resource('sample', 'SampleController');
 
-	Route::get('user/add', 'UserController@create')->name('user.add');
 	Route::get('users', 'UserController@index')->name('users');
+	Route::get('user/add', 'UserController@create')->name('user.add');
+	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 	Route::resource('user', 'UserController');
 
 
