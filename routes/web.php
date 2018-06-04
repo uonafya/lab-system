@@ -23,33 +23,31 @@
 
 Route::redirect('/', '/login');
 
-Route::get('/addsample', function () {
-	return view('addsample');
-});
+// Route::get('/addsample', function () {
+// 	return view('addsample');
+// });
 
-Route::get('/config', function () {
-	return phpinfo();
-});
+Route::get('/config', 'RandomController@config');
 
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
 Auth::routes();
 
-Route::get('datatables', function () {
-	return view('datatables');
-});
+// Route::get('datatables', function () {
+// 	return view('datatables');
+// });
 
-Route::get('/checkboxes', function () {
-	return view('checkbox');
-});
+// Route::get('/checkboxes', function () {
+// 	return view('checkbox');
+// });
 
 
 Route::post('facility/search/', 'FacilityController@search')->name('facility.search');
 
-Route::get('error', function(){
-	return view('errors.error', ['code' => '500', 'title' => 'Internal server error', 'description' => 'Sorry, there was an internal server error that occured. Please try again later']);
-});
+// Route::get('error', function(){
+// 	return view('errors.error', ['code' => '500', 'title' => 'Internal server error', 'description' => 'Sorry, there was an internal server error that occured. Please try again later']);
+// });
 
 Route::get('/synch', 'HomeController@test');
 
@@ -57,7 +55,11 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('/home', 'HomeController@index');
 
-	Route::get('search', function () {	return view('forms.search')->with('pageTitle', 'Search'); });
+	Route::get('search', 'RandomController@search');
+
+	Route::get('refresh_cache', 'RandomController@refresh_cache');
+	Route::get('sysswitch/{sys}', 'RandomController@sysswitch');
+
 
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
@@ -187,68 +189,57 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::resource('viralsample', 'ViralsampleController');
 
 
+	Route::group(['middleware' => ['utype:4']], function () {
 
-	Route::prefix('worksheet')->name('worksheet.')->group(function () {
+		Route::prefix('worksheet')->name('worksheet.')->group(function () {
 
-		Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
-		Route::get('create/{machine_type}', 'WorksheetController@create')->name('create_any');
-		Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
-		Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
-		Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
-		Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
-		Route::get('upload/{worksheet}', 'WorksheetController@upload')->name('upload');
-		Route::put('upload/{worksheet}', 'WorksheetController@save_results')->name('save_results');
-		Route::get('approve/{worksheet}', 'WorksheetController@approve_results')->name('approve_results');
-		Route::put('approve/{worksheet}', 'WorksheetController@approve')->name('approve');
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
+			Route::get('create/{machine_type}', 'WorksheetController@create')->name('create_any');
+			Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
+			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
+			Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
+			Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
+			Route::get('upload/{worksheet}', 'WorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'WorksheetController@save_results')->name('save_results');
+			Route::get('approve/{worksheet}', 'WorksheetController@approve_results')->name('approve_results');
+			Route::put('approve/{worksheet}', 'WorksheetController@approve')->name('approve');
 
-		Route::post('search/', 'WorksheetController@search')->name('search');
-	});
-	Route::get('worksheetserverside/', 'WorksheetController@getworksheetserverside')->name('worksheetserverside');
+			Route::post('search/', 'WorksheetController@search')->name('search');
+		});
+		Route::get('worksheetserverside/', 'WorksheetController@getworksheetserverside')->name('worksheetserverside');
 
-	Route::resource('worksheet', 'WorksheetController', ['except' => ['edit']]);
-
-
-	Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
-
-		Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
-		Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
-		Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
-		Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
-		Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
-		Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
-		Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
-		Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
-		Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
-		Route::put('approve/{worksheet}', 'ViralworksheetController@approve')->name('approve');
-
-		Route::post('search/', 'ViralworksheetController@search')->name('search');
-
-	});
-	Route::resource('viralworksheet', 'ViralworksheetController', ['except' => ['edit']]);
-
-	Route::prefix('worklist')->name('worklist.')->group(function () {
-		Route::get('index/{testtype?}', 'WorklistController@index')->name('list');
-		Route::get('create/{testtype}', 'WorklistController@create')->name('create_any');
-		Route::get('print/{worklist}', 'WorklistController@print')->name('print');
-	});
-	Route::resource('worklist', 'WorklistController', ['except' => ['edit']]);
+		Route::resource('worksheet', 'WorksheetController', ['except' => ['edit']]);
 
 
+		Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 
-	Route::get('test', 'FacilityController@test');
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
+			Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
+			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
+			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
+			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
+			Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
+			Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
+			Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
+			Route::put('approve/{worksheet}', 'ViralworksheetController@approve')->name('approve');
 
-	Route::get('refresh_cache', function () {
-		$lookup = \App\Lookup::refresh_cache();
-		return back();
+			Route::post('search/', 'ViralworksheetController@search')->name('search');
+
+		});
+		Route::resource('viralworksheet', 'ViralworksheetController', ['except' => ['edit']]);
 	});
 
-	Route::get('sysswitch/{sys}', function($sys) {
-		if($sys == 'EID'){
-			$new = session(['testingSystem' => 'EID']);
-		}else if ($sys == 'Viralload'){
-			$new = session(['testingSystem' => 'Viralload']);
-		}
-		echo json_encode(session('testingSystem'));
+	Route::group(['middleware' => ['only_utype:5']], function () {
+
+		Route::prefix('worklist')->name('worklist.')->group(function () {
+			Route::get('index/{testtype?}', 'WorklistController@index')->name('list');
+			Route::get('create/{testtype}', 'WorklistController@create')->name('create_any');
+			Route::get('print/{worklist}', 'WorklistController@print')->name('print');
+		});
+		Route::resource('worklist', 'WorklistController', ['except' => ['edit']]);
 	});
+
+
 
 });
