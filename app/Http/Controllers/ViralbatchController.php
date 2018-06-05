@@ -37,7 +37,8 @@ class ViralbatchController extends Controller
             $myurl2 = url("viralbatch/facility/{$facility_id}"); 
         }
         else{ 
-            $myurl = $myurl2 = url('viralbatch/index/' . $batch_complete); 
+            $myurl = url('viralbatch/index/' . $batch_complete); 
+            $myurl2 = url('viralbatch/index'); 
         }
 
         $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
