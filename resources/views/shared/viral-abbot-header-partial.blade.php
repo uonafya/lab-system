@@ -45,7 +45,7 @@
 	</tr>
 	<tr class="even">
 		<td ><strong>Date Created</strong>		</td>
-		<td > {{ $worksheet->created_at }} </td>
+		<td > {{ $worksheet->my_date_format('created_at') }} </td>
 		<td><strong>Lot No	</strong>	</td>
 		<td> {{ $worksheet->sample_prep_lot_no }} </td>
 		<td> {{ $worksheet->bulklysis_lot_no }} </td>
@@ -58,26 +58,26 @@
 		<td> {{ $worksheet->creator->full_name }} </td>
 		<td><strong>Expiry Dates</strong>	</td>
 
-		{{--<td> {{ $worksheet->sampleprepexpirydate->toFormattedDateString()  }} </td>
-		<td> {{ $worksheet->bulklysisexpirydate->toFormattedDateString() }} </td>
-		<td> {{ $worksheet->controlexpirydate->toFormattedDateString() }} </td>
-		<td> {{ $worksheet->calibratorexpirydate->toFormattedDateString()  }} </td>
-		<td> {{ $worksheet->amplificationexpirydate->toFormattedDateString() }} </td>--}}
+		<td> {{ $worksheet->my_date_format('sampleprepexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('bulklysisexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('controlexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('calibratorexpirydate') }} </td>
+		<td> {{ $worksheet->my_date_format('amplificationexpirydate') }} </td>
 
 
-		<td> {{ $worksheet->sampleprepexpirydate }} </td>
+		{{--<td> {{ $worksheet->sampleprepexpirydate }} </td>
 		<td> {{ $worksheet->bulklysisexpirydate }} </td>
 		<td> {{ $worksheet->controlexpirydate }} </td>
 		<td> {{ $worksheet->calibratorexpirydate }} </td>
-		<td> {{ $worksheet->amplificationexpirydate }} </td>
+		<td> {{ $worksheet->amplificationexpirydate }} </td>--}}
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
-		<td>______________________	</td>
+		<td> {{ $worksheet->sorter->full_name or '' }}</td>
 		<td><strong>Bulked By	</strong>    </td>
-		<td>______________________	</td>
+		<td> {{ $worksheet->bulker->full_name or '' }} </td>
 		<td><strong>Run By	</strong>    </td>
-		<td>______________________	</td>
+		<td> {{ $worksheet->runner->full_name or '' }}</td>
 		<td></td>
 		<td></td>
 	</tr>

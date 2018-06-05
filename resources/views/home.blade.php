@@ -12,7 +12,7 @@
 	}
 </style>
 <div class="p-lg">
-	<div class="content animate-panel" data-child="hpanel">
+	<div class="content animate-panel" data-child="hpanel" style="background-color: white;">
 	<!-- <div class="animate-panel"  data-child="hpanel" data-effect="fadeInDown"> -->
         <div class="row">
 		    <div class="col-lg-6">

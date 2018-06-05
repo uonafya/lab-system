@@ -403,9 +403,7 @@ class ViralworksheetController extends Controller
     public function approve_results(Viralworksheet $worksheet)
     {
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
-
-        $actions = DB::table('actions')->get();
-        $dilutions = DB::table('viraldilutionfactors')->get();
+        
         $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
 
         $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
@@ -417,7 +415,12 @@ class ViralworksheetController extends Controller
 
         $subtotals = ['detected' => $detected, 'undetected' => $undetected, 'failed' => $failed, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_viral_results', ['actions' => $actions, 'dilutions' => $dilutions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval])->with('pageTitle', 'Approve Results');
+        $data = Lookup::worksheet_approve_lookups();
+        $data['samples'] = $samples;
+        $data['subtotals'] = $subtotals;
+        $data['worksheet'] = $worksheet;
+
+        return view('tables.confirm_viral_results', $data)->with('pageTitle', 'Approve Results');
     }
 
     public function approve(Request $request, Viralworksheet $worksheet)

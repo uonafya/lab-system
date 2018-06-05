@@ -35,6 +35,11 @@ class Viralworksheet extends BaseModel
     	return $this->belongsTo('App\User', 'createdby');
     }
 
+    public function uploader()
+    {
+        return $this->belongsTo('App\User', 'uploadedby');
+    }
+
     public function canceller()
     {
         return $this->belongsTo('App\User', 'cancelledby');

@@ -143,30 +143,49 @@
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
-                                        <td> 
-                                            <select name="results[]" class="{{ $class }}">
+                                        <td>  
+                                            @if($sample->approvedby)
                                                 @foreach($results as $result)
-                                                    <option value="{{$result->id}}"
-                                                        @if(($sample->result == $result->id) || (!$sample->result && $result->id == 5))
-                                                            selected
-                                                        @endif
-                                                        > {!! $result->name_colour !!} </option>
+                                                    @if($sample->result == $result->id)
+                                                        {!! $result->name_colour !!}
+                                                    @endif
                                                 @endforeach
-                                            </select>
+
+                                            @else
+                                                <select name="results[]" class="{{ $class }}">
+                                                    @foreach($results as $result)
+                                                        <option value="{{$result->id}}"
+                                                            @if(($sample->result == $result->id) || (!$sample->result && $result->id == 5))
+                                                                selected
+                                                            @endif
+                                                            > {!! $result->name !!} </option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
                                         </td>
 
                                         <td> 
-                                            <select name="actions[]" class="{{ $class }}">
-                                                <option>Choose an action</option>
+                                            @if($sample->approvedby)
                                                 @foreach($actions as $action)
-                                                    <option value="{{$action->id}}"
-                                                        @if($sample->repeatt == $action->id)
-                                                            selected
-                                                        @endif
-                                                        > {{ $action->name }} </option>
+                                                    @if($sample->repeatt == $action->id)
+                                                        {!! $action->name_colour !!}
+                                                    @endif
                                                 @endforeach
-                                            </select>
+
+                                            @else
+                                                <select name="actions[]" class="{{ $class }}">
+                                                    <option>Choose an action</option>
+                                                    @foreach($actions as $action)
+                                                        <option value="{{$action->id}}"
+                                                            @if($sample->repeatt == $action->id)
+                                                                selected
+                                                            @endif
+                                                            > {{ $action->name }} </option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
                                         </td>
+
 
 
                                         <td> 
