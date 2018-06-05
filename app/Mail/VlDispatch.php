@@ -6,7 +6,6 @@ use App\Viralbatch;
 use App\Lookup;
 
 use DOMPDF;
-use Illuminate\Support\Facades\Log;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -40,9 +39,6 @@ class VlDispatch extends Mailable implements ShouldQueue
         $this->individual_path = storage_path('app/batches/vl/individual-' . $batch->id . '.pdf');
         $this->summary_path = storage_path('app/batches/vl/summary-' . $batch->id . '.pdf');
 
-        // $this->individual_path = public_path('batches/vl/individual-' . $batch->id . '.pdf');
-        // $this->summary_path = public_path('batches/vl/summary-' . $batch->id . '.pdf');
-
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);
 
@@ -74,9 +70,6 @@ class VlDispatch extends Mailable implements ShouldQueue
 
         $this->attach($this->individual_path);
         $this->attach($this->summary_path);
-
-        Log::warning('The individual batch path is '. $this->individual_path);
-        Log::warning('The summary batch path is '. $this->summary_path);
 
         return $this->view('emails.eid_dispatch');
     }
