@@ -41,8 +41,8 @@ class EidDispatch extends Mailable implements ShouldQueue
         $this->individual_path = storage_path('app/batches/eid/individual-' . $batch->id . '.pdf');
         $this->summary_path = storage_path('app/batches/eid/summary-' . $batch->id . '.pdf');
 
-        if(file_exists($individual_path)) unlink($this->individual_path);
-        if(file_exists($summary_path)) unlink($this->summary_path);
+        if(file_exists($this->individual_path)) unlink($this->individual_path);
+        if(file_exists($this->summary_path)) unlink($this->summary_path);
 
         $data = Lookup::get_lookups();
         $data = array_merge($data, ['batch' => $batch, 'samples' => $sample]);
