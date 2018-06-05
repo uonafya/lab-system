@@ -27,7 +27,7 @@ class EidDispatch extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Batch $batch, $facility)
+    public function __construct(Batch $batch)
     {
 
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);

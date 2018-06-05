@@ -242,10 +242,10 @@ class ViralbatchController extends Controller
             $facility = Facility::find($batch->facility_id);
             // if($facility->email != null || $facility->email != '')
             // {
-                // Mail::to($facility->email)->send(new VlDispatch($batch, $facility));
+                // Mail::to($facility->email)->send(new VlDispatch($batch));
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
                 // $mail_array = array('joelkith@gmail.com');
-                Mail::to($mail_array)->send(new VlDispatch($batch, $facility));
+                Mail::to($mail_array)->send(new VlDispatch($batch));
             // }            
         }
 
@@ -546,6 +546,21 @@ class ViralbatchController extends Controller
         $data['batches'] = $batches;
         $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('summary.pdf');
+    }
+
+    public function email(Viralbatch $batch)
+    {
+        $facility = Facility::find($batch->facility_id);
+        // if($facility->email != null || $facility->email != '')
+        // {
+            // Mail::to($facility->email)->send(new EidDispatch($batch));
+            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+            // $mail_array = array('joelkith@gmail.com');
+            Mail::to($mail_array)->send(new VlDispatch($batch));
+        // }
+
+        session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
+        return back();
     }
 
     public function search(Request $request)

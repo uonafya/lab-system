@@ -27,7 +27,7 @@ class VlDispatch extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Viralbatch $batch, $facility)
+    public function __construct(Viralbatch $batch)
     {
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $this->batch = $batch;
