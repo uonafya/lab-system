@@ -1,6 +1,6 @@
 <p>
 
-	Hello {{ $facility->name }},
+	Hello {{ $batch->facility->name }},
 
 	<br />
 	<br />
@@ -9,15 +9,15 @@
 	Batch No {{ $batch->id }} with {{ $batch->sample->count() }} samples that were received on {{ $batch->datereceived }}  have been processed and results have been dispatched. 
 	<br />
 
-	@isset($g4sbranchlocation)
-		The samples results can be collected at your nearest G4S branch in {{$g4sbranchlocation}}.
+	@isset($batch->facility->G4Slocation )
+		The samples results can be collected at your nearest G4S branch in {{$batch->facility->G4Slocation}}.
 	@endisset
 
 	<br />
 	
 	Please confirm that this email address
 
-	@isset($g4sbranchlocation)
+	@isset($batch->facility->G4Slocation)
 		and the G4S branch above 
 	@endisset
 
