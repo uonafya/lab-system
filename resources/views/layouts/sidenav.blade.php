@@ -260,12 +260,6 @@
                 <a href="https://eid.nascop.org"> <span class="nav-label">NASCOP</span><span class="label label-success pull-right">National</span></a>
             </li>
             <hr />
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
-            <li>
-                <a href="#"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <span class="label label-success pull-right">Special</span></a>
-            </li>
-            <hr />
-        @endif
         @if (auth()->user()->user_type_id != 5)
             <li>
                 <a href="#"> <span class="nav-label">Change Password</span></a>
@@ -289,6 +283,12 @@
         --}}
         <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
         <hr />
+        @if (auth()->user()->user_type_id == 1)
+            <li>
+                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <!--<span class="label label-success pull-right">Special</span>--></a>
+            </li>
+            <hr />
+        @endif
         @if(Auth()->user()->user_type_id != 2)
             <li><a href="{{ url('downloads/VL') }}">Download VL Form</a></li>
             <li><a href="{{ url('downloads/EID') }}">Download EID Form</a></li>

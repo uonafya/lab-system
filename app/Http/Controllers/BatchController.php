@@ -11,6 +11,7 @@ use App\Lookup;
 
 use DOMPDF;
 
+
 use App\Mail\EidDispatch;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -37,7 +38,9 @@ class BatchController extends Controller
             $myurl2 = url("batch/facility/{$facility_id}"); 
         }
         else{ 
-            $myurl = $myurl2 = url('batch/index/' . $batch_complete); 
+            $myurl =  url('batch/index/' . $batch_complete); 
+            $myurl2 = url('batch/index'); 
+
         }
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
@@ -235,11 +238,11 @@ class BatchController extends Controller
             $facility = Facility::find($batch->facility_id);
             // if($facility->email != null || $facility->email != '')
             // {
-                // Mail::to($facility->email)->send(new EidDispatch($batch, $facility));
+                // Mail::to($facility->email)->send(new EidDispatch($batch));
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
                 // $mail_array = array('joelkith@gmail.com');
-                Mail::to($mail_array)->send(new EidDispatch($batch, $facility));
-            // }            
+                Mail::to($mail_array)->send(new EidDispatch($batch));
+            // }         
         }
 
         Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
@@ -325,7 +328,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '']);
+        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => ''])->with('pageTitle','Site Approval');
     }
 
 
@@ -463,6 +466,21 @@ class BatchController extends Controller
         $data['batches'] = $batches;
         $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('summary.pdf');
+    }
+
+    public function email(Batch $batch)
+    {
+        $facility = Facility::find($batch->facility_id);
+        // if($facility->email != null || $facility->email != '')
+        // {
+            // Mail::to($facility->email)->send(new EidDispatch($batch));
+            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+            // $mail_array = array('joelkith@gmail.com');
+            Mail::to($mail_array)->send(new EidDispatch($batch));
+        // }
+
+        session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
+        return back();
     }
 
 

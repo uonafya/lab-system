@@ -20,9 +20,13 @@
                     </div>
                     
                 </div>
-                <div class="panel-body">
+                <div class="panel-body">                    
 
-                    @include('shared/viral-abbot-header-partial')
+                    @if($worksheet->machine_type == 1)
+                        @include('shared/other-header-partial')
+                    @else
+                        @include('shared/viral-abbot-header-partial')
+                    @endif
 
                 </div>
             </div>
@@ -178,7 +182,7 @@
                                             @if($sample->approvedby)
                                                 @foreach($actions as $action)
                                                     @if($sample->repeatt == $action->id)
-                                                        {{ $action->name }}
+                                                        {!! $action->name_colour !!}
                                                     @endif
                                                 @endforeach
 

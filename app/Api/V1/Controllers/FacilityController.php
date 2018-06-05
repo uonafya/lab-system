@@ -28,7 +28,7 @@ class FacilityController extends Controller
     public function store(BlankRequest $request)
     {
         $data = json_decode($request->input('facility'));
-        $facility = Facility::create($data);
+        $facility = Facility::firstOrCreate($data);
 
         return response()->json([
           'status' => 'ok',

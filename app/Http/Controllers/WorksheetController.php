@@ -534,8 +534,6 @@ class WorksheetController extends Controller
     {        
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
-        $results = DB::table('results')->get();
-        $actions = DB::table('actions')->get();
         $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
 
         $s = $this->get_worksheets($worksheet->id);
@@ -550,7 +548,12 @@ class WorksheetController extends Controller
 
         $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
 
-        return view('tables.confirm_results', ['results' => $results, 'actions' => $actions, 'samples' => $samples, 'subtotals' => $subtotals, 'worksheet' => $worksheet, 'double_approval' => Lookup::$double_approval])->with('pageTitle', 'Approve Results');
+        $data = Lookup::worksheet_approve_lookups();
+        $data['samples'] = $samples;
+        $data['subtotals'] = $subtotals;
+        $data['worksheet'] = $worksheet;
+
+        return view('tables.confirm_results', $data)->with('pageTitle', 'Approve Results');
     }
 
     public function approve(Request $request, Worksheet $worksheet)

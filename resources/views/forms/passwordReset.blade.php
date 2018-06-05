@@ -22,12 +22,10 @@
             <div class="row">
                 <div class="col-lg-12">
                 @if($user)
-                @if($user == 'personal')
-                    {{ Form::open(['url' => '/user/'.md5(Auth()->user()->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    {{ Form::open(['url' => '/user/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    @if($user == 'personal')
                     <input type="hidden" name="user" value="1">
-                @else
-                    {{ Form::open(['url' => '/user/'.md5($user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
-                @endif
+                    @endif
                     <div class="hpanel">
                         <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                             <center>User Information</center>

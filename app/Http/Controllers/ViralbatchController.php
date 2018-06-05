@@ -37,7 +37,8 @@ class ViralbatchController extends Controller
             $myurl2 = url("viralbatch/facility/{$facility_id}"); 
         }
         else{ 
-            $myurl = $myurl2 = url('viralbatch/index/' . $batch_complete); 
+            $myurl = url('viralbatch/index/' . $batch_complete); 
+            $myurl2 = url('viralbatch/index'); 
         }
 
         $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
@@ -242,10 +243,10 @@ class ViralbatchController extends Controller
             $facility = Facility::find($batch->facility_id);
             // if($facility->email != null || $facility->email != '')
             // {
-                // Mail::to($facility->email)->send(new VlDispatch($batch, $facility));
+                // Mail::to($facility->email)->send(new VlDispatch($batch));
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
                 // $mail_array = array('joelkith@gmail.com');
-                Mail::to($mail_array)->send(new VlDispatch($batch, $facility));
+                Mail::to($mail_array)->send(new VlDispatch($batch));
             // }            
         }
 
@@ -546,6 +547,21 @@ class ViralbatchController extends Controller
         $data['batches'] = $batches;
         $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('summary.pdf');
+    }
+
+    public function email(Viralbatch $batch)
+    {
+        $facility = Facility::find($batch->facility_id);
+        // if($facility->email != null || $facility->email != '')
+        // {
+            // Mail::to($facility->email)->send(new VlDispatch($batch));
+            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+            // $mail_array = array('joelkith@gmail.com');
+            Mail::to($mail_array)->send(new VlDispatch($batch));
+        // }
+
+        session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
+        return back();
     }
 
     public function search(Request $request)
