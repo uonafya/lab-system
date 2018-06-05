@@ -72,11 +72,12 @@ class VlDispatch extends Mailable implements ShouldQueue
         //     'mime' => 'application/pdf',
         // ]);
 
-        // $this->attach($this->individual_path);
+        $this->attach($this->individual_path);
+        $this->attach($this->summary_path);
 
         Log::warning('The individual path is '. $this->individual_path);
         Log::warning('The summary path is '. $this->summary_path);
 
-        return $this->view('emails.eid_dispatch')->attach($this->individual_path);
+        return $this->view('emails.eid_dispatch');
     }
 }
