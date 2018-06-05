@@ -554,9 +554,9 @@ class ViralbatchController extends Controller
         $facility = Facility::find($batch->facility_id);
         // if($facility->email != null || $facility->email != '')
         // {
-            // Mail::to($facility->email)->send(new EidDispatch($batch));
-            // $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            $mail_array = array('joelkith@gmail.com');
+            // Mail::to($facility->email)->send(new VlDispatch($batch));
+            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+            // $mail_array = array('joelkith@gmail.com');
             Mail::to($mail_array)->send(new VlDispatch($batch));
         // }
 
