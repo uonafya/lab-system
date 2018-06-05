@@ -36,11 +36,11 @@ class VlDispatch extends Mailable implements ShouldQueue
         $lab = auth()->user()->lab_id;
         $this->site_url ='http://www.nascop.org/eid/users/facilityresults.php?key='.$sessionVar.'&BatchNo='.$batch->id.'&LabID='.$lab.'&fauto='.$batch->facility->id;
 
-        // $this->individual_path = storage_path('app/batches/vl/individual-' . $batch->id . '.pdf');
-        // $this->summary_path = storage_path('app/batches/vl/summary-' . $batch->id . '.pdf');
+        $this->individual_path = storage_path('app/batches/vl/individual-' . $batch->id . '.pdf');
+        $this->summary_path = storage_path('app/batches/vl/summary-' . $batch->id . '.pdf');
 
-        $this->individual_path = public_path('batches/vl/individual-' . $batch->id . '.pdf');
-        $this->summary_path = public_path('batches/vl/summary-' . $batch->id . '.pdf');
+        // $this->individual_path = public_path('batches/vl/individual-' . $batch->id . '.pdf');
+        // $this->summary_path = public_path('batches/vl/summary-' . $batch->id . '.pdf');
 
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);
@@ -61,14 +61,18 @@ class VlDispatch extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->view('emails.eid_dispatch')
-        ->attach($this->individual_path, [
-            'as' => 'individual-' . $this->batch->id . '.pdf',
-            'mime' => 'application/pdf',
-        ])
-        ->attach($this->summary_path, [
-            'as' => 'summary-' . $this->batch->id . '.pdf',
-            'mime' => 'application/pdf',
-        ]);
+        // return $this->view('emails.eid_dispatch')
+        // ->attach($this->individual_path, [
+        //     'as' => 'individual-' . $this->batch->id . '.pdf',
+        //     'mime' => 'application/pdf',
+        // ])
+        // ->attach($this->summary_path, [
+        //     'as' => 'summary-' . $this->batch->id . '.pdf',
+        //     'mime' => 'application/pdf',
+        // ]);
+
+        // $this->attach($this->individual_path);
+
+        return $this->view('emails.eid_dispatch')->attach($this->individual_path);
     }
 }
