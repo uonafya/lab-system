@@ -15,7 +15,7 @@ class CheckAuth
      */
     public function handle($request, Closure $next, $user_type)
     {
-        if(auth()->user()->user_type_id <= $user_type) abort(403);
+        if(auth()->user()->user_type_id > $user_type) abort(403);
 
         return $next($request);
     }
