@@ -45,7 +45,7 @@ class EidDispatch extends Mailable implements ShouldQueue
         if(file_exists($this->summary_path)) unlink($this->summary_path);
 
         $data = Lookup::get_lookups();
-        $data = array_merge($data, ['batch' => $batch, 'samples' => $sample]);
+        $data = array_merge($data, ['batch' => $batch, 'samples' => $samples]);
         DOMPDF::loadView('exports.samples', $data)->setPaper('a4', 'landscape')->save($this->individual_path);
 
         $data = Lookup::get_lookups();
