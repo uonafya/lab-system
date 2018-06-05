@@ -2,15 +2,22 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
 use Carbon\Carbon;
 
 class Common
 {
 
+    public static function test_email()
+    {
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail());
+    }
 
 
 	public static function get_days($start, $finish)
 	{
+		if(!$start || !$finish) return 0;
 		$workingdays= self::working_days($start, $finish);
 
 		$start_time = strtotime($start);

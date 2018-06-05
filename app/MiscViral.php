@@ -3,8 +3,11 @@
 namespace App;
 
 use App\Common;
+use Carbon\Carbon;
 use App\Viralsample;
 use App\ViralsampleView;
+
+use App\DrPatient;
 
 class MiscViral extends Common
 {
@@ -310,6 +313,7 @@ class MiscViral extends Common
 
     public function set_rcategory($result, $repeatt=null)
     {
+        if(!$result) return ['rcategory' => 0];
         if(is_numeric($result)){
             if($result > 0 && $result < 1001){
                 return ['rcategory' => 2];
@@ -338,6 +342,78 @@ class MiscViral extends Common
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
 
+    }
+
+    public static function generate_dr_list()
+    {
+        $min_date = Carbon::now()->subMonths(3)->toDateString();
+
+        $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')
+            ->where('batch_complete', 1)
+            ->whereIn('rcategory', [3, 4])
+            ->where('datereceived', '>', $min_date)
+            ->where('repeatt', 0)
+            ->whereRaw("patient_id NOT IN (SELECT distinct patient_id from dr_patients)")
+            ->get();
+
+        foreach ($samples as $sample) {
+            $data = $sample->only(['patient_id', 'datereceived', 'result', 'rcategory']);
+            if($sample->age < 19){
+                $pat = new DrPatient;
+                $pat->fill($data);
+                $pat->dr_reason_id = 2;
+                $pat->save();
+                continue;
+            }
+            else if($sample->pmtct == 1 || $sample->pmtct == 2){
+                $pat = new DrPatient;
+                $pat->fill($data);
+                $pat->dr_reason_id = 3;
+                $pat->save();
+                continue;                
+            }
+            else{
+                if(self::get_previous_test($sample->patient_id, $sample->datetested)){
+                    $pat = new DrPatient;
+                    $pat->fill($data);
+                    $pat->dr_reason_id = 1;
+                    $pat->save();
+                    continue; 
+                }
+            }
+
+        }
+
+
+    }
+
+    public static function get_previous_test($patient_id, $datetested)
+    {
+
+        $sql = "SELECT * FROM viralsamples WHERE patient_id={$patient_id} AND datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$datetested}')
+        "; 
+        $sample = \DB::select($sql);
+
+        if($sample->rcategory == 1 || $sample->rcategory == 2) return false;
+
+        $recent_date = Carbon::parse($datetested);
+        $prev_date = Carbon::parse($sample->datetested);
+
+        $months = $recent_date->diffInMonths($prev_date);
+        if($months < 3){
+
+            $sql = "SELECT * FROM viralsamples WHERE patient_id={$patient_id} AND datetested=
+                        (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$sample->datetested}')
+            "; 
+            $sample = \DB::select($sql);
+
+            if($sample->rcategory == 3 || $sample->rcategory == 4) return true;
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
 }

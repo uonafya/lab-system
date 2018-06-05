@@ -94,7 +94,7 @@ Artisan::command('copy:worksheet', function(){
 
 
 Artisan::command('email:test', function(){
-	$str = \App\Resolver::test_email();
+	$str = \App\Common::test_email();
     $this->info($str);
 })->describe('Send test email.');
 
