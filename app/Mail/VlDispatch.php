@@ -6,6 +6,7 @@ use App\Viralbatch;
 use App\Lookup;
 
 use DOMPDF;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
