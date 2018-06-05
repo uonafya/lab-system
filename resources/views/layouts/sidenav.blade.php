@@ -287,6 +287,8 @@
             <hr />
         @endif
         --}}
+        <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
+        <hr />
         @if(Auth()->user()->user_type_id != 2)
             <li><a href="{{ url('downloads/VL') }}">Download VL Form</a></li>
             <li><a href="{{ url('downloads/EID') }}">Download EID Form</a></li>

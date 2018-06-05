@@ -121,7 +121,11 @@ class UserController extends Controller
         } else {
             session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
         }
-        return redirect()->route('users');        
+        if (isset($request->user)) {
+            return back();
+        } else {
+            return redirect()->route('users');
+        }      
     }
 
     /**
@@ -139,7 +143,7 @@ class UserController extends Controller
     {
         $user = null;
         if (null == $id) {
-            $user = true;
+            $user = 'personal';
             return view('forms.passwordReset', compact('user'))->with('pageTitle', 'Password Reset');
         } else {
             $user = self::__unHashUser($id);

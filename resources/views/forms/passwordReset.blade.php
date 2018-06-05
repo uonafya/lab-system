@@ -22,7 +22,12 @@
             <div class="row">
                 <div class="col-lg-12">
                 @if($user)
-                {{ Form::open(['url' => '/user/'.md5($user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                @if($user == 'personal')
+                    {{ Form::open(['url' => '/user/'.md5(Auth()->user()->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    <input type="hidden" name="user" value="1">
+                @else
+                    {{ Form::open(['url' => '/user/'.md5($user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                @endif
                     <div class="hpanel">
                         <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                             <center>User Information</center>
@@ -39,13 +44,13 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="email" id="email" type="email" value="{{ $user->email }}" disabled>
+                                    <input class="form-control" name="email" id="email" type="email" value="{{ $user->email ?? Auth()->user()->email }}" disabled>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Full Names</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="name" id="name" type="text" value="{{ $user->getFullNameAttribute() }}" disabled>
+                                    <input class="form-control" name="name" id="name" type="text" value="@if($user == 'personal') {{ Auth()->user()->surname.' '.Auth()->user()->oname }} @else {{ $user->getFullNameAttribute() }} @endif" disabled>
                                 </div>
                             </div>
                         </div>
