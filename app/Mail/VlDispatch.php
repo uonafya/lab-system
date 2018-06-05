@@ -73,6 +73,8 @@ class VlDispatch extends Mailable implements ShouldQueue
 
         // $this->attach($this->individual_path);
 
-        return $this->view('emails.eid_dispatch')->attach($this->individual_path);
+        $path = app_path('schedule.txt');
+
+        return $this->view('emails.eid_dispatch')->attach($path);
     }
 }
