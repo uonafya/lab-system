@@ -68,11 +68,11 @@
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
-		<td> {{ $worksheet->sorter->full_name or '' }} </td>
+		<td> {{ $worksheet->sorter->full_name ?? '' }} </td>
 		<td><strong>Bulked By	</strong>    </td>
-		<td> {{ $worksheet->bulker->full_name or '' }} </td>
+		<td> {{ $worksheet->bulker->full_name ?? '' }} </td>
 		<td><strong>Run By	</strong>    </td>
-		<td> {{ $worksheet->runner->full_name or '' }}</td>
+		<td> {{ $worksheet->runner->full_name ?? '' }}</td>
 	</tr>
 
 </table>
