@@ -176,7 +176,7 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $work = new $model;
-                    $work->created_at = self::clean_date($worksheet->created_at);
+                    // $work->created_at = self::clean_date($worksheet->created_at);
                     unset($worksheet->created_at);
                     $work->fill($worksheet->toArray());
                     foreach ($date_array as $date_field) {
