@@ -47,7 +47,7 @@
                         <a href="{{ url('viralbatch') }}">VL Samples</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('viralbatch/index/4/1') }}">VL Results</a>
+                        <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
                     </li>
                     <li class="">
                         <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
@@ -91,9 +91,9 @@
                     <li class="">
                         <a href="
                             @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralbatch/index/4/1') }}
+                                {{ url('viralbatch/index/1') }}
                             @else
-                                {{ url('batch/index/4/1') }}
+                                {{ url('batch/index/1') }}
                             @endif">Dispatched Results</a>
                     </li>
                     <li class="">
@@ -127,13 +127,13 @@
                     <a href="{{ url('batch') }}">EID Samples</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('batch/index/4/1') }}">EID Results</a>
+                    <a href="{{ url('batch/index/1') }}">EID Results</a>
                 </li>
                 <li class="">
                     <a href="{{ url('viralbatch') }}">VL Samples</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('viralbatch/index/4/1') }}">VL Results</a>
+                    <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
                 </li>
                 <li class="">
                     <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>

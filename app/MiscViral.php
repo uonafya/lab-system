@@ -370,7 +370,7 @@ class MiscViral extends Common
                 $pat->fill($data);
                 $pat->dr_reason_id = 3;
                 $pat->save();
-                continue;                
+                continue;
             }
             else{
                 if(self::get_previous_test($sample->patient_id, $sample->datetested)){
@@ -381,10 +381,7 @@ class MiscViral extends Common
                     continue; 
                 }
             }
-
         }
-
-
     }
 
     public static function get_previous_test($patient_id, $datetested)
