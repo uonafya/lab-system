@@ -46,7 +46,7 @@
 	</tr>
 	<tr>
 		<td><strong>Status</strong> </td>
-		<td>{!! $worksheet_statuses->where('id', $worksheet->id)->first()->output ?? '' !!} </td>
+		<td>{!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output ?? '' !!} </td>
 		<td><strong>Lot No</strong> </td>
 		<td>{{ $worksheet->lot_no }}</td>
 		<td><strong>Date Cut</strong> </td>

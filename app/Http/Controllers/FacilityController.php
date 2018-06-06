@@ -212,7 +212,7 @@ class FacilityController extends Controller
         //                 ->where('facilitys.id', '=', $id)
         //                 ->get();
 
-        return DB::table('view_facilitys')->select('*', 'name as facility')->get();              
+        return DB::table('view_facilitys')->select('*', 'name as facility')->where('id', $id)->get();              
     }
 
     /**
