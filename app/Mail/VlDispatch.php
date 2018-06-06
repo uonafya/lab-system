@@ -44,7 +44,7 @@ class VlDispatch extends Mailable implements ShouldQueue
 
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batch' => $batch, 'samples' => $samples]);
-        DOMPDF::loadView('exports.viralsamples', $data)->setPaper('a4', 'potrait')->save($this->individual_path);
+        DOMPDF::loadView('exports.viralsamples', $data)->setPaper('a4', 'landscape')->save($this->individual_path);
 
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batches' => [$batch]]);

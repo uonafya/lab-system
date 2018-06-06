@@ -109,7 +109,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) Patient Names</label>
+                            <label class="col-sm-4 control-label">Patient Names</label>
                             <div class="col-sm-8">
                                 <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
                             </div>
@@ -585,11 +585,11 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
-                        $(".lockable").prop("disabled", true);
+                        // $(".lockable").attr("disabled", "disabled");
                     }
                     else{
                         localStorage.setItem("new_patient", 1);
-                        $(".lockable").prop("disabled", false);
+                        // $(".lockable").removeAttr("disabled");
                         $(".lockable").val('').change();
 
                         $('.patient_details').remove();

@@ -55,7 +55,7 @@
 
                         @if(!$batch)    
                           <div class="form-group">
-                              <label class="col-sm-4 control-label">Facility</label>
+                              <label class="col-sm-4 control-label"><i class='fa fa-bolt'></i> Facility</label>
                               <div class="col-sm-8">
                                 <select class="form-control" required name="facility_id" id="facility_id">
                                     @isset($sample)
@@ -738,11 +738,11 @@
                         // }).appendTo("#samples_form");
 
 
-                        $(".lockable").attr("disabled", "disabled");
+                        // $(".lockable").attr("disabled", "disabled");
                     }
                     else{
                         localStorage.setItem("new_patient", 1);
-                        $(".lockable").removeAttr("disabled");
+                        // $(".lockable").removeAttr("disabled");
                         $(".lockable").val('').change();
                         $('#pcrtype option[value=1]').attr('selected','selected').change();
                         // $("#hidden_pcr").val(1);
