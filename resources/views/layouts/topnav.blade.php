@@ -45,13 +45,13 @@
                         <a href="{{ url('batch') }}">EID Samples</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('batch/index/4/1') }}">EID Results</a>
+                        <a href="{{ url('batch/index/1') }}">EID Results</a>
                     </li>
                     <li class="">
                         <a href="{{ url('viralbatch') }}">VL Samples</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('viralbatch/index/4/1') }}">VL Results</a>
+                        <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
                     </li>
                     <li class="">
                         <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
@@ -216,9 +216,9 @@
                     <li class="">
                         <a href="
                             @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralbatch/index/4/1') }}
+                                {{ url('viralbatch/index/1') }}
                             @else
-                                {{ url('batch/index/4/1') }}
+                                {{ url('batch/index/1') }}
                             @endif">Dispatched Results</a>
                     </li>
                     <li class="">
@@ -236,6 +236,103 @@
                         <a href="#">Kits</a>
                     </li>
                     @endif
+                @endif
+                    <li>
+                        <a class="" href="{{ url('/logout') }}"
+                        onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <ul class="nav navbar-nav no-borders">
+            @if (Auth()->user()->user_type_id == 5)
+                <li class="">
+                    <a href="{{ url('batch') }}">EID Samples</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('batch/index/1') }}">EID Results</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('viralbatch') }}">VL Samples</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
+                </li>
+                <li class="">
+                    <a href="#">VL POC Samples</a>
+                </li>
+                <li class="">
+                    <a href="#">POC Worklists</a>
+                </li>
+                <li class="">
+                    <a href="#">EID Reports</a>
+                </li>
+                <li class="">
+                    <a href="#">VL Reports</a>
+                </li>
+            @else
+                <li class="">
+                    <a class="label-menu-corner" href="{{ url('home') }}">
+                    <i class="pe-7s-home" style="font-size: 25px;"></i>
+                        <span class="label label-danger">
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                        @else
+                            {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch }}
+                        @endif
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralbatch') }}
+                        @else
+                            {{ url('batch') }}
+                        @endif">Samples</a>
+                </li>
+                
+                @if(session('testingSystem') != 'Viralload')
+                <li class="">
+                    <a href="#">Requisitions</a>
+                </li>
+                @endif
+                
+                <li class="">
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralworksheet') }}
+                        @else
+                            {{ url('worksheet') }}
+                        @endif">Worksheets</a>
+                </li>
+                <li class="">
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralbatch/index/1') }}
+                        @else
+                            {{ url('batch/index/1') }}
+                        @endif">Dispatched Results</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('facility') }}">Facilities</a>
+                </li>
+                <li class="">
+                    <a href="{{ route('reports') }}">Reports</a>
+                </li>
+                <li class="">
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                </li>
+                
+                @if(session('testingSystem') != 'Viralload')
+                <li class="">
+                    <a href="#">Kits</a>
+                </li>
                 @endif
             @endif
                 <li class="dropdown">

@@ -41,7 +41,7 @@ width:1180px;
 	<div align="center">
 		<table>
 			<tr>
-				<td><strong>HIV	LAB EARLY INFANT DIAGNOSIS <br/> {{ $machine_name or '' }} </strong></td>
+				<td><strong>HIV	LAB EARLY INFANT DIAGNOSIS <br/> {{ $machine_name ?? '' }} </strong></td>
 			</tr>
 		</table>
 	</div>
