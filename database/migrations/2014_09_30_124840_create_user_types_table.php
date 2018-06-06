@@ -18,7 +18,7 @@ class CreateUserTypesTable extends Migration
             $table->string('user_type');
             $table->softDeletes();
             $table->timestamps();
-        // });
+        });
     }
 
     /**
