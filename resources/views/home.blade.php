@@ -233,7 +233,7 @@
 		                        <span class="badge badge-{{ $badge }}">{{ $widgets['samplesForRepeat'] }}</span>
 		                        <a href="#">Samples to be repeated.</a>
 		                    </li>
-		            		@if ((int)$widgets['rejectedForDispatch'][0]->rejectfordispatch > 0)
+		            		@if ((int)$widgets['rejectedForDispatch'] > 0)
 		            			@php
 		            				$style = 'background-color: #FDE3A7';
 		            				$badge = 'danger';
@@ -245,7 +245,7 @@
 		            			@endphp
 		            		@endif
 		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['rejectedForDispatch'][0]->rejectfordispatch }}</span>
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['rejectedForDispatch'] }}</span>
 		                        <a href="#">Rejected samples awaiting dispatch.</a>
 		                    </li>
 		            		@if ((int)$widgets['pendingSamplesOverTen'] > 0)
