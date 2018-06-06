@@ -21,6 +21,10 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Viralsample;
 
+use App\Common;
+use App\Misc;
+use App\MiscViral;
+
 class Copier
 {
     private static $limit = 5000;
@@ -77,6 +81,9 @@ class Copier
             $offset_value += self::$limit;
             echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
+
+        Misc::save_tat(App\SampleView::class, Sample::class);
+        echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
 
@@ -129,6 +136,9 @@ class Copier
             $offset_value += self::$limit;
             echo "Completed vl {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
+
+        MiscViral::save_tat(App\ViralsampleView::class, Viralsample::class);
+        echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
     private static function set_batch_id($batch_id)
@@ -146,13 +156,13 @@ class Copier
 
         $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'created_at'];
 
+        ini_set("memory_limit", "-1");
 
         foreach ($work_array as $key => $value) {
             $model = $value['model'];
             $view = $value['view'];
 
-            $start = $model::max('id');
-            ini_set("memory_limit", "-1");  
+            $start = $model::max('id');              
 
             $offset_value = 0;
             while(true)
