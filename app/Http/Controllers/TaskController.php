@@ -402,15 +402,15 @@ class TaskController extends Controller
                         'equipment_id' => $value,
                         'datesubmitted' => date('Y-m-d'),
                         'submittedBy' => Auth()->user()->id,
-                        'datebrokendown' => $request->datebrokendown[$key],
-                        'datereported' => $request->datereported[$key],
-                        'datefixed' => $request->datefixed[$key],
-                        'downtime' => $request->downtime[$key],
-                        'samplesnorun' => $request->samplesnorun[$key],
-                        'failedruns' => $request->failedruns[$key],
-                        'reagentswasted' => $request->reagentswasted[$key],
-                        'breakdownreason' => $request->breakdownreason[$key],
-                        'othercomments' => $request->otherreasons
+                        'datebrokendown' => ($request->datebrokendown[$key] == "") ? null : $request->datebrokendown[$key],
+                        'datereported' => ($request->datereported[$key] == "") ? null : $request->datereported[$key],
+                        'datefixed' => ($request->datefixed[$key] == "") ? null : $request->datefixed[$key],
+                        'downtime' => ($request->downtime[$key] == "") ? null : $request->downtime[$key],
+                        'samplesnorun' => ($request->samplesnorun[$key] == "") ? null : $request->samplesnorun[$key],
+                        'failedruns' => ($request->failedruns[$key] == "") ? null : $request->failedruns[$key],
+                        'reagentswasted' => ($request->reagentswasted[$key] == "") ? null : $request->reagentswasted[$key],
+                        'breakdownreason' => ($request->breakdownreason[$key] == "") ? null : $request->breakdownreason[$key],
+                        'othercomments' => ($request->otherreasons == "") ? null : $request->otherreasons
                     ];
             }
             

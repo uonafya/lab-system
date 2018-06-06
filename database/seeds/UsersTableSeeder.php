@@ -13,13 +13,13 @@ class UsersTableSeeder extends Seeder
     {
         //
 
-  //       DB::table('user_types')->insert([
-		//     ['id' => '1', 'user_type' => 'Lab User'],
-		//     ['id' => '2', 'user_type' => 'System Administrator'],
-		//     ['id' => '3', 'user_type' => 'Program Officers'],
-		//     ['id' => '4', 'user_type' => 'Data Clerk'],
-		//     ['id' => '5', 'user_type' => 'Facility Users'],
-		// ]);
+        DB::table('user_types')->insert([
+		    ['id' => '1', 'user_type' => 'Lab User'],
+		    ['id' => '2', 'user_type' => 'System Administrator'],
+		    ['id' => '3', 'user_type' => 'Program Officers'],
+		    ['id' => '4', 'user_type' => 'Data Clerk'],
+		    ['id' => '5', 'user_type' => 'Facility Users'],
+		]);
 
         $users = factory(App\User::class, 1)->create([
 	        'user_type_id' => 1,

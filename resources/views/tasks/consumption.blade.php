@@ -204,8 +204,6 @@
                                         $received = $kits['alias'].'received';
                                         $damaged = $kits['alias'].'damaged';
                                         $lot = $kits['alias'].'lotno';
-                                        $prevabbott = 'prevabbott'.$types;
-                                        $abbotdeliveries = 'abbotdeliveries'.$types;
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
@@ -222,8 +220,8 @@
                                         <td>
                                             <input class="form-control input-edit" type="text" name="abbott{{ $types }}beginingbal{{ $kits['alias'] }}" id="abbott{{ $types }}beginingbal{{ $kits['alias'] }}" value="{{ $data->$prevabbott->$prefix ?? 0 }}" disabled="true">
                                         </td>
-                                        <td>{{ $data->$abbotdeliveries->$received ?? 0 }}</td>
-                                        <td>{{ $data->$abbotdeliveries->$lot ?? '-' }}</td>
+                                        <td>{{ $data->$abbottdeliveries->$received ?? 0 }}</td>
+                                        <td>{{ $data->$abbottdeliveries->$lot ?? '-' }}</td>
                                         <td>{{ $used ?? $qualkitused }}</td>
                                         <td>
                                             <input class="form-control input-edit" type="text" name="abbott{{ $types }}wasted{{ $kits['alias'] }}" id="abbott{{ $types }}wasted{{ $kits['alias'] }}" value="" required>
