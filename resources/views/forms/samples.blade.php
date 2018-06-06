@@ -55,7 +55,9 @@
 
                         @if(!$batch)    
                           <div class="form-group">
-                              <label class="col-sm-4 control-label"><i class='fa fa-bolt'></i> Facility</label>
+                              <label class="col-sm-4 control-label">Facility 
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                              </label>
                               <div class="col-sm-8">
                                 <select class="form-control" required name="facility_id" id="facility_id">
                                     @isset($sample)
@@ -138,14 +140,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">HEI ID Number</label>
+                            <label class="col-sm-4 control-label">HEI ID Number
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <input class="form-control" required name="patient" type="text" value="{{ $sample->patient->patient ?? '' }}" id="patient">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">PCR Type</label>
+                            <label class="col-sm-4 control-label">PCR Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-5">
                                 <select class="form-control" required name="pcrtype" id="pcrtype">
 
@@ -173,7 +179,9 @@
                         <!-- <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> -->
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth</label>
+                            <label class="col-sm-4 control-label">Date of Birth
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -183,7 +191,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Sex</label>
+                            <label class="col-sm-4 control-label">Sex
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable" required name="sex" id="sex">
                                     <option value=""> Select One </option>
@@ -202,7 +212,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Entry Point</label>
+                            <label class="col-sm-4 control-label">Entry Point
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable" required name="entry_point" id="entry_point">
 
@@ -223,7 +235,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Infant Prophylaxis</label>
+                            <label class="col-sm-4 control-label">Infant Prophylaxis
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="regimen">
 
@@ -244,7 +258,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Infant Feeding Code</label>
+                            <label class="col-sm-4 control-label">Infant Feeding Code
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="feeding">
 
@@ -329,7 +345,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">PMTCT Regimen </label>
+                            <label class="col-sm-4 control-label">PMTCT Regimen
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8"><select class="form-control" required name="mother_prophylaxis">
 
                                 <option value=""> Select One </option>
@@ -413,7 +431,9 @@
                             <input type="hidden" value=2 name="site_entry">
 
                             <div class="form-group">
-                              <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                                <label class="col-sm-4 control-label">POC Site Sample Tested at
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                               <div class="col-sm-8">
                                 <select class="form-control" required name="lab_id" id="lab_id">
                                     @isset($sample)
@@ -427,7 +447,9 @@
                         
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">No of Spots</label>
+                                <label class="col-sm-4 control-label">No of Spots
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
                                     <input class="form-control" required name="spots" number="number" min=1 max=5 type="text" value="{{ $sample->spots ?? '' }}">
                                 </div>
@@ -435,7 +457,9 @@
                         @endif
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Collection</label>
+                            <label class="col-sm-4 control-label">Date of Collection
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -460,7 +484,9 @@
 
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received</label>
+                                <label class="col-sm-4 control-label">Date Received
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -473,7 +499,9 @@
                         @if(auth()->user()->user_type_id != 5)
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Received Status</label>
+                                <label class="col-sm-4 control-label">Received Status
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="receivedstatus" id="receivedstatus">
 
