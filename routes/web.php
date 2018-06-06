@@ -32,6 +32,7 @@ Route::get('/config', 'RandomController@config');
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
 
+
 Auth::routes();
 
 // Route::get('datatables', function () {
@@ -59,7 +60,6 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('refresh_cache', 'RandomController@refresh_cache');
 	Route::get('sysswitch/{sys}', 'RandomController@sysswitch');
-
 
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
@@ -118,9 +118,10 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('facility/served', 'FacilityController@served');
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+	Route::get('facility/add', 'FacilityController@create')->name('facility.add');
 	Route::resource('facility', 'FacilityController');
 
-	Route::get('/home', 'HomeController@index');
+	Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::get('reports', 'ReportController@index')->name('reports');
 	Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');
@@ -140,6 +141,18 @@ Route::middleware(['web', 'auth'])->group(function(){
 	});
 	Route::resource('patient', 'PatientController');
 
+
+	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
+	Route::post('consumption', 'TaskController@consumption');
+	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
+	Route::post('equipmentlog', 'TaskController@equipmentlog');
+	Route::get('/pending', 'TaskController@index')->name('pending');
+	Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
+	Route::post('/performancelog', 'TaskController@performancelog');
+	Route::get('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+	Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+	
+	Route::post('viralpatient/search/', 'ViralpatientController@search');
 	Route::prefix('viralpatient')->name('viralpatient.')->group(function () {
 		Route::post('search/{facility_id?}/{female?}', 'ViralpatientController@search');
 		Route::get('index/{facility_id?}', 'ViralpatientController@index');	
@@ -152,6 +165,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('{patient}/transfer', 'ViralpatientController@transfer');		
 		Route::put('{patient}/transfer', 'ViralpatientController@transfer_patient');
 	});
+
 	Route::resource('viralpatient', 'ViralpatientController');
 
 
@@ -169,6 +183,11 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::post('search', 'SampleController@search');		
 	});
 	Route::resource('sample', 'SampleController');
+
+	Route::get('users', 'UserController@index')->name('users');
+	Route::get('user/add', 'UserController@create')->name('user.add');
+	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
+	Route::resource('user', 'UserController');
 
 
 	Route::prefix('viralsample')->name('viralsample.')->group(function () {

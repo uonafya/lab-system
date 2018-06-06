@@ -807,6 +807,28 @@ CREATE TABLE `dr_primers` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+DROP TABLE IF EXISTS `lab_equipment_mapping`;
+
+CREATE TABLE IF NOT EXISTS `lab_equipment_mapping` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `type` int(10) DEFAULT '0' COMMENT '1=roche 2-abbott 3-c8800 4-panther',
+  `name` varchar(50) DEFAULT NULL,
+  `serialno` varchar(10) DEFAULT NULL,
+  `lab` int(10) DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `type` (`type`),
+  KEY `serialno` (`serialno`),
+  KEY `lab` (`lab`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
+
+LOCK TABLES `lab_equipment_mapping` WRITE;
+-- Dumping data for table alupedb.lab_equipment_mapping: ~39 rows (approximately)
+/*!40000 ALTER TABLE `lab_equipment_mapping` DISABLE KEYS */;
+INSERT INTO `lab_equipment_mapping` (`ID`, `type`, `name`, `serialno`, `lab`) VALUES(1, 2, 'Abbott M2000 #1', '11083', 4),(2, 2, ' Abbott M2000#2\r\n', '10317', 4),(3, 2, ' Abbott M2000#3\r\n', '11143', 4),(4, 1, 'CAP/CTM#1\r\n', '394118', 4),(5, 1, 'CAP/CTM#2\r\n', '395770', 4),(6, 2, 'Abbott M2000 #1', '11142/2950', 3),(7, 2, 'Abbott M2000#2\r\n', '10700/2750', 3),(8, 2, 'Abbott M2000#3\r\n', '11026/2750', 3),(9, 1, 'CAP/CTM#1\r\n', '393241/391', 3),(10, 1, 'CAP/CTM#2\r\n', '395668/393', 3),(11, 2, 'Abbott M2000 #1', '11087/2750', 9),(12, 1, 'CAP/CTM#1\r\n', '395771/393', 9),(13, 2, 'Abbott M2000 #1', '11025/2750', 2),(14, 2, 'Abbott M2000#2\r\n', '10435/2750', 2),(15, 2, 'Abbott M2000#3\r\n', '10843/2750', 2),(16, 1, 'CAP/CTM#1\r\n', '394119/392', 2),(17, 1, 'CAP/CTM#2\r\n', '395416/393', 2),(18, 1, 'CAP/CTM#3', '393447/392', 2),(19, 3, 'Roche C8800\r\n', '5048\r\n', 2),(20, 2, 'Abbott M2000 #1', '10918', 1),(21, 2, 'Abbott M2000#2\r\n', '10919', 1),(22, 2, 'Abbott M2000#3\r\n', '10689', 1),(23, 1, 'CAP/CTM#1\r\n', '39540/3932', 1),(24, 2, 'Abbott M2000 #1', '10842', 6),(25, 2, 'Abbott M2000#2\r\n', '10425\r\n', 6),(26, 1, 'CAP/CTM#1\r\n', '393433/392', 6),(27, 2, 'Abbott M2000 #1', '11084/2750', 7),(28, 2, 'Abbott M2000#2\r\n', '10840/2750', 7),(29, 1, 'CAP/CTM#1\r\n', '393343/395', 7),(30, 1, 'CAP/CTM#2\r\n', '394128\r\n', 7),(31, 1, 'CAP/CTM#3', '394928/392', 7),(32, 2, 'Abbott M2000 #1', 'n/a', 5),(33, 2, 'Abbott M2000#2\r\n', 'n/a', 5),(34, 1, 'CAP/CTM#1\r\n', 'n/a', 5),(35, 1, 'CAP/CTM#2\r\n', 'n/a', 5),(36, 4, 'Pantha Hologic', '2090001876', 3),(37, 4, 'Pantha Hologic', '2090001279', 1),(38, 4, 'Pantha Hologic', '2090001', 4),(39, 4, 'Pantha Hologic', '2090001855', 5);
+/*!40000 ALTER TABLE `lab_equipment_mapping` ENABLE KEYS */;
+UNLOCK TABLES;
+
 INSERT INTO `dr_primers` (`id`, `name`, `full_name`) VALUES
 (1, 'F1', 'Forward Primer 1'),
 (2, 'F2', 'Forward Primer 2'),

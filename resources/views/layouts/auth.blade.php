@@ -22,8 +22,13 @@
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css') }}" />
     <link rel="stylesheet" href="{{ asset('fonts/pe-icon-7-stroke/css/helper.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-
+    <style type="text/css">
+        .back-link {
+            margin: 4px;
+        }
+    </style>
     @yield('css_scripts')
+    @yield('custom_css')
 
 </head>
 <body class="light-skin blank">

@@ -328,7 +328,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '']);
+        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => ''])->with('pageTitle','Site Approval');
     }
 
 

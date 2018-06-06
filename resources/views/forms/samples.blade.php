@@ -32,7 +32,7 @@
         <input type="hidden" value=0 name="new_patient" id="new_patient">
 
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
 
@@ -125,7 +125,7 @@
 
 
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                         <center>Infant Information</center>
@@ -325,7 +325,7 @@
 
 
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                         <center>Mother Information</center>
@@ -420,7 +420,7 @@
 
 
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                         <center>Sample Information</center>
@@ -566,7 +566,7 @@
 
                 
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>

@@ -32,12 +32,6 @@
     @yield('custom_css')
     
     <style type="text/css">
-        body.light-skin #menu {
-            width: 240px;
-        }
-        #wrapper {
-            margin: 0px 0px 0px 230px;
-        }
         #toast-container > div {
             color: black;
         }
@@ -58,60 +52,10 @@
 <!-- Header -->
 @include('layouts.topnav')
 <!-- Navigation -->
-@include('layouts.sidenav')
 
 <!-- Main Wrapper -->
 <div id="wrapper">
-    <div class="small-header">
-        <div class="hpanel">
-            <div class="panel-body" style="padding-top:.5em;padding-bottom:.1em;">
-                <h6 class="font-light pull-right" style="margin: 0px;">
-                    <strong>
-                        Welcome, 
-                        @if(Auth()->user()->user_type_id == 5)
-                            {{ $user->name }}
-                        @else
-                            {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
-                        @endif
-                    </strong>
-                    <p style="margin-top: .5em;margin-bottom: 0px;">{{ @Date("l, d F Y") }}</p>
-                </h6>
-                <div class="row">
-                    @if (Auth()->user()->user_type_id == 5 || Auth()->user()->user_type_id == 2)
-                        <div class="col-md-3" style="margin-top: .7em;margin-bottom: .7em;">
-                            <h2 class="font-light m-b-xs">
-                                {{ $pageTitle ?? '' }}
-                            </h2>
-                        </div>
-                        <div class="col-md-6">
-                            
-                        </div>
-                    @else
-                    <div class="col-md-3" style="margin-top: .7em;">
-                        <h2 class="font-light m-b-xs">
-                            {{ $pageTitle ?? '' }}
-                        </h2>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="col-md-8" style="padding-top: 8px;">
-                            <center>
-                                <p style="margin-top:6px;font-size: 14px;display: inline;">
-                                    <div id="systxt" style="display: inline;"><strong>EARLY INFANT DIAGNOSIS</strong></div> <strong>TESTING SYSTEM</strong>
-                                </p>
-                            </center>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
-                            Switch to Viralload
-                        </button>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     @yield('content')
 
     <!-- Footer-->
@@ -170,26 +114,7 @@
         });
 
         $(".confirmSubmit").on('submit', function(){
-            var message = $(this).attr("confirm_message");
-            if(message){
-                return confirm(message);
-            }
             return confirm('Are you sure you would like to submit?');
-        });
-
-        current = "<?= @session('testingSystem')?>";
-        if(current != ''){
-            if(current == 'Viralload'){test = 'EID';text = '<strong>VIRAL LOAD</strong>';}else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
-            $("#sysSwitch").html("Switch to "+test);
-            $("#sysSwitch").val(test);
-            $("#systxt").html(text);
-        }
-        
-        $("#sysSwitch").click(function(){
-            sys = $(this).val();
-            $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
-                location.replace("<?= url('home'); ?>");
-            });
         });
     });
 
@@ -208,8 +133,6 @@
     }
 
 </script>
-
-@include('layouts.searches')
 
 @yield('scripts')
 

@@ -39,6 +39,7 @@ class DashboardComposer
      */
     public function compose(View $view)
     {
+        // dd($this->DashboardData);
         $view->with('widgets',$this->DashboardData);
 
     }
@@ -46,15 +47,17 @@ class DashboardComposer
     public function tasks(View $view)
     {
     	$this->tasks['labname'] = DB::table('labs')->select('name')->where('id', '=', Auth()->user()->lab_id)->get();
-    	$this->tasks['facilityServed'] = Facility::where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->count();
-    	$this->tasks['facilitieswithSmsPrinters'] = Facility::where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->where('smsprinter', '<>', '')->count();
-    	$this->tasks['facilitiesWithoutEmails'] = Facility::where('Flag', '=', 1)
+    	$this->tasks['facilityServed'] = Facility::selectRaw('COUNT(*) as total')->where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->get()->first()->total;
+    	$this->tasks['facilitieswithSmsPrinters'] = Facility::selectRaw('COUNT(*) as total')->where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->where('smsprinter', '<>', '')->get()->first()->total;
+    	$this->tasks['facilitiesWithoutEmails'] = Facility::selectRaw('COUNT(*) as total')
+                                                ->where('Flag', '=', 1)
     											->where('lab', '=', Auth()->user()->lab_id)
     											->whereRaw("((email = '' and ContactEmail ='') or (email = '' and ContactEmail is null) or (email is null and ContactEmail ='') or ((email is null and ContactEmail is null)))")
-    											->count();
-    	$this->tasks['facilitiesWithoutG4s'] = Facility::where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)
-    													->where('G4Sbranchname', '=', '')->where('G4Slocation', '=', '')
-    													->count();
+    											->get()->first()->total;
+    	$this->tasks['facilitiesWithoutG4s'] = Facility::selectRaw('COUNT(*) as total')
+                                                    ->where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)
+    												->where('G4Sbranchname', '=', '')->where('G4Slocation', '=', '')
+    												->get()->first()->total;
     	
     	$view->with('tasks', $this->tasks);
     }
@@ -79,33 +82,31 @@ class DashboardComposer
 	{
         if (session('testingSystem') == 'Viralload') {
             if ($over == true) {
-                $model = ViralsampleView::whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->count();
+                $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
+                                ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
-                    $model[$key] = ViralsampleView::whereNotIn('receivedstatus', ['0', '2', '4'])
+                    $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')->whereNotIn('receivedstatus', ['0', '2', '4'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', '2016-12-31')
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '=', '1')
-                        ->where('flag', '=', '1')->count(); 
+                        ->where('flag', '=', '1')->get()->first()->total; 
                 }
             }
         } else {
             if ($over == true) {
-                $model = SampleView::whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->count();
+                $model = SampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
+                                ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
             } else {
-                $model = SampleView::whereNull('worksheet_id')
+                $model = SampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
                     ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
-                    ->where('flag', '1')->count();
+                    ->where('flag', '1')->get()->first()->total;
             }
         }
         
@@ -139,13 +140,13 @@ class DashboardComposer
         } else {
             $model = Batch::class;
         }
-        return $model::where('lab_id', '=', Auth()->user()->lab_id)->where('batch_complete', '=', '2')->count();
+        return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', Auth()->user()->lab_id)->where('batch_complete', '=', '2')->get()->first()->total;
 	}
 
 	public function samplesAwaitingRepeat()
 	{
         if(session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::whereBetween('sampletype', [1, 5])
+            $model = ViralsampleView::selectRaw('COUNT(*) as total')->whereBetween('sampletype', [1, 5])
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereNull('worksheet_id')
                         ->where(DB::raw('YEAR(datereceived)'), '>', '2015')
@@ -154,7 +155,7 @@ class DashboardComposer
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1');
         } else {
-            $model = SampleView::whereNull('worksheet_id')
+            $model = SampleView::selectRaw('COUNT(*) as total')->whereNull('worksheet_id')
                     ->whereNotIn('receivedstatus', ['0', '2'])
                     ->where(function ($query) {
                         $query->whereNull('result')
@@ -164,44 +165,44 @@ class DashboardComposer
                     ->where('flag', '=', '1')
                     ->where('parentid', '>', '0');
         }
-		return $model->count();
+		return $model->get()->first()->total;
 	}
 
 	public function rejectedSamplesAwaitingDispatch()
 	{
         $year = Date('Y')-3;
         if (session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::where('receivedstatus', '=', 2)
+            $model = ViralsampleView::selectRaw('count(*) as rejectfordispatch')
+                        ->where('receivedstatus', '=', 2)
                         ->where('flag', '=', 1)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
                         ->where('datedispatched', '=', '')
                         ->orWhere('datedispatched', '=', '0000-00-00')
                         ->orWhere('datedispatched', '=', '1970-01-01')
-                        ->orWhereNotNull('datedispatched')->count();
+                        ->orWhereNotNull('datedispatched');
         } else {
             $model = SampleView::selectRaw('count(*) as rejectfordispatch')
                         ->where('receivedstatus', '=', 2)
                         ->whereNotNull('datereceived')
-                        ->whereYear('datereceived', '>', $year)
-                        ->get();
+                        ->whereYear('datereceived', '>', $year);
         }
         
-		return $model;
+		return $model->get()->first()->rejectedForDispatch ?? 0;
 	}
 
     public function batchesMarkedNotReceived()
     {
         $model = 0;
         if (session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::select(DB::raw('distinct(batch_id)'))
+            $model = ViralsampleView::selectRaw('count(distinct batch_id) as total')
                         ->where('receivedstatus', '=', '4')
-                        ->orWhereNull('receivedstatus')->count();
+                        ->orWhereNull('receivedstatus')->get()->first();
         } else {
             # code...
         }
         
-        return $model;
+        return $model->total ?? 0;
     }
 
     public function resultsAwaitingpdate()
@@ -212,7 +213,7 @@ class DashboardComposer
             $model = Worksheet::with(['creator']);
         }
 
-        return $model->where('status_id', '=', '1')->count();
+        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
     }
 }
 

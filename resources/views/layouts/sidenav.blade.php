@@ -23,7 +23,7 @@
            {{--<!--  <li class="active">
                 <a href="{{!! url('home') !!}}"> <span class="nav-label">Tasks</span> 
                     <span class="label label-success pull-right">
-                    $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'][0]->rejectfordispatch
+                    $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch']
                     </span>
                 </a>
             </li> -->--}}
@@ -225,21 +225,22 @@
             </li>
             <hr />
         @endif
-        @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 4)
-        	<li>
-                <a href="{{ route('facility.index') }}"> <span class="nav-label">Facilities</span></a>
-            </li>
-        @endif
+        --}}
+        
+        <!-- Admin Side Bar -->
         @if (auth()->user()->user_type_id == 2)
-        	<li>
-                <a href="{{ route('district.index') }}"> <span class="nav-label">Districts</span></a>
+            <li>
+                <a href="{{ url('user/add') }}"><span class="nav-label">Add Users</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"> <span class="nav-label">User Activity Log</span></a>
+                <a href="{{ url('facility/add') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
         @endif
+        <!-- Admin Side Bar -->
+
+        {{--
         @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
             <li>
                 <a href="#"> <span class="nav-label">KITS</span></a>
@@ -259,12 +260,6 @@
                 <a href="https://eid.nascop.org"> <span class="nav-label">NASCOP</span><span class="label label-success pull-right">National</span></a>
             </li>
             <hr />
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
-            <li>
-                <a href="#"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <span class="label label-success pull-right">Special</span></a>
-            </li>
-            <hr />
-        @endif
         @if (auth()->user()->user_type_id != 5)
             <li>
                 <a href="#"> <span class="nav-label">Change Password</span></a>
@@ -286,6 +281,15 @@
             <hr />
         @endif
         --}}
+        <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
+        <hr />
+        @if (auth()->user()->user_type_id == 1)
+            <li>
+                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <!--<span class="label label-success pull-right">Special</span>--></a>
+            </li>
+            <hr />
+        @endif
+        @if(Auth()->user()->user_type_id != 2)
             <li><a href="{{ url('downloads/VL') }}">Download VL Form</a></li>
             <li><a href="{{ url('downloads/EID') }}">Download EID Form</a></li>
         <!-- </ul>
@@ -311,6 +315,7 @@
             <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+        @endif
         @endif
         </ul>
     </div>
