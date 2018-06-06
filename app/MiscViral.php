@@ -412,5 +412,5 @@ class MiscViral extends Common
             return true;
         }
     }
-
+    
 }

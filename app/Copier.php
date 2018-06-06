@@ -82,7 +82,8 @@ class Copier
             echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
 
-        Misc::save_tat(App\SampleView::class, Sample::class);
+        $my = new Misc;
+        $my->compute_tat(App\SampleView::class, Sample::class);
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
@@ -137,7 +138,8 @@ class Copier
             echo "Completed vl {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
 
-        MiscViral::save_tat(App\ViralsampleView::class, Viralsample::class);
+        $my = new MiscViral;
+        $my->compute_tat(App\ViralsampleView::class, Viralsample::class);
         echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 

@@ -176,7 +176,8 @@ class Synch
 
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
-		$misc_class::save_tat($sampleview_class, $sample_class);
+		$my = new $misc_class;
+		$my->save_tat($sampleview_class, $sample_class);
 
 		if($batch_class == "App\\Batch"){
 			$url = 'synch/batches';

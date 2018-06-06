@@ -113,7 +113,7 @@ class Common
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
-	public static function save_tat($view_model, $sample_model, $batch_id = NULL)
+	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
 		// if($sample_model == "App\\Sample") echo "Success";
 		$samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])
@@ -136,10 +136,8 @@ class Common
 					'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 					'age_category' => $this->set_age_cat($sample->age),
 				];
-				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));
-				
+				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));				
 			}
-
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
@@ -148,7 +146,7 @@ class Common
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
-	public static function compute_tat($view_model, $sample_model)
+	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
         $offset_value = 0;
@@ -172,10 +170,8 @@ class Common
 						'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 						'age_category' => $this->set_age_cat($sample->age),
 					];
-					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));
-					
+					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));					
 				}
-
 				$sample_model::where('id', $sample->id)->update($data);
 			}
 	        $offset_value += 1000;
@@ -202,9 +198,5 @@ class Common
 	{
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
 	}
-
-
-
-
 
 }
