@@ -326,10 +326,10 @@ class MiscViral extends Common
             }
         }
         $data = $this->get_rcategory($result);
-        dd($data);
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
+    
 
     public function get_rcategory($result)
     {
