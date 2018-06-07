@@ -325,6 +325,7 @@ class MiscViral extends Common
                 return ['rcategory' => 4];
             }
         }
+        dd($result);
         $data = $this->get_rcategory($result);
         if($repeatt == 0 && $data['rcategory'] == 5){
             $data = array_merge($data, ['labcomment' => 'Failed Test']);
@@ -342,7 +343,6 @@ class MiscViral extends Common
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
         return [];
-
     }
 
     public static function generate_dr_list()
