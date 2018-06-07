@@ -39,7 +39,7 @@ class MiscViral extends Common
             'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'interpretation' => 'Aborted']
         ],
         [
-            'search_array' =>  ['REJECTED', 'Redraw New Sample', 'collect new samp', 'collect new saple', 'insufficient', 'Failed Collect New sample', ],
+            'search_array' =>  ['REJECTED', 'Redraw New Sample', 'collect new samp', 'collect new saple', 'insufficient', 'Failed Collect New sample', 'Collect New Sample'],
             'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'labcomment' => 'Failed Test']
         ],
     ];
@@ -325,11 +325,9 @@ class MiscViral extends Common
                 return ['rcategory' => 4];
             }
         }
-        dd($result);
         $data = $this->get_rcategory($result);
-        if($repeatt == 0 && $data['rcategory'] == 5){
-            $data = array_merge($data, ['labcomment' => 'Failed Test']);
-        }
+        dd($data);
+        if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
 
