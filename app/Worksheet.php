@@ -10,8 +10,7 @@ class Worksheet extends BaseModel
 
     // protected $withCount = ['sample'];
     
-    public $timestamps = false;
-    protected $dateFormat = 'Y-m-d';
+    // public $timestamps = false;
 
     public function sample()
     {
