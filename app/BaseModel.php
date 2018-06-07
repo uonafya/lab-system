@@ -13,8 +13,6 @@ class BaseModel extends Model
     
     // protected $guarded = ['created_at'];
     protected $guarded = [];
-    
-    public $timestamps = false;
 
     protected static function boot()
     {
