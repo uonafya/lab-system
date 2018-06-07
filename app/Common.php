@@ -174,8 +174,8 @@ class Common
 				}
 				$sample_model::where('id', $sample->id)->update($data);
 			}
-			echo "Completed clean at {$offset_value} " . date('d/m/Y h:i:s a', time()). "\n";
 	        $offset_value += 1000;
+			echo "Completed clean at {$offset_value} " . date('d/m/Y h:i:s a', time()). "\n";
         }
 	}
 
