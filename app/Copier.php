@@ -83,7 +83,7 @@ class Copier
         }
 
         $my = new Misc;
-        $my->compute_tat(App\SampleView::class, Sample::class);
+        $my->compute_tat(\App\SampleView::class, Sample::class);
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
@@ -139,7 +139,7 @@ class Copier
         }
 
         $my = new MiscViral;
-        $my->compute_tat(App\ViralsampleView::class, Viralsample::class);
+        $my->compute_tat(\App\ViralsampleView::class, Viralsample::class);
         echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
@@ -176,6 +176,8 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $work = new $model;
+                    return $work;
+                    
                     $work->fill($worksheet->toArray());
                     foreach ($date_array as $date_field) {
                         $work->$date_field = self::clean_date($worksheet->$date_field);
