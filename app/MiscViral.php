@@ -18,7 +18,7 @@ class MiscViral extends Common
         '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000'],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
-        '5' => ['Failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', ]
+        '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', ]
     ];
 
     protected $compound_categories = [
