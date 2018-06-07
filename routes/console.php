@@ -93,10 +93,15 @@ Artisan::command('copy:worksheet', function(){
 
 
 
-Artisan::command('email:test', function(){
+Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();
     $this->info($str);
 })->describe('Send test email.');
+
+Artisan::command('test:connection', function(){
+    $str = \App\Synch::test_connection();
+    $this->info($str);
+})->describe('Check connection to lab-2.test.nascop.org.');
 
 
 
