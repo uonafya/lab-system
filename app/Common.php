@@ -155,6 +155,7 @@ class Common
 			$samples = $view_model::where(['batch_complete' => 1])
 			->limit(1000)->offset($offset_value)
 			->get();
+			if($samples->isEmpty()) break;
 
 			foreach ($samples as $key => $sample) {
 				$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
