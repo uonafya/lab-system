@@ -156,7 +156,7 @@ class Copier
             'vl' => ['model' => Viralworksheet::class, 'view' => ViralworksheetView::class],
         ];
 
-        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'created_at'];
+        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun'];
 
         ini_set("memory_limit", "-1");
 
@@ -176,7 +176,8 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $work = new $model;
-                    return $work;
+                    $work->created_at = self::clean_date($worksheet->created_at);
+                    unset($created_at);
                     
                     $work->fill($worksheet->toArray());
                     foreach ($date_array as $date_field) {
