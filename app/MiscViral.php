@@ -341,6 +341,7 @@ class MiscViral extends Common
         foreach ($this->rcategories as $key => $value) {
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
+        return [];
 
     }
 
