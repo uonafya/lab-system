@@ -176,8 +176,8 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $work = new $model;
-                    $work->created_at = self::clean_date($worksheet->created_at);
-                    unset($created_at);
+                    $work->created_at = self::clean_createdat($worksheet->created_at);
+                    unset($worksheet->created_at);
                     
                     $work->fill($worksheet->toArray());
                     foreach ($date_array as $date_field) {
@@ -202,6 +202,19 @@ class Copier
             return null;
         }
     }
+
+    public static function clean_createdat($mydate)
+    {
+        if(!$mydate) return null;
+
+        try {
+            $my = Carbon::parse($mydate);
+            return $my->toDateString() . ' 00:00:01';
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
 
     public static function calculate_age($date_collected, $dob)
     {
