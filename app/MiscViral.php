@@ -314,7 +314,9 @@ class MiscViral extends Common
     public function set_rcategory($result, $repeatt=null)
     {
         if(!$result) return ['rcategory' => 0];
-        if(is_numeric($result)){
+        $numeric_result = preg_replace('/[^0-9]/', '', $result);
+        if(is_numeric($numeric_result)){
+            $result = (int) $numeric_result;
             if($result > 0 && $result < 1001){
                 return ['rcategory' => 2];
             }
