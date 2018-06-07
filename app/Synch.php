@@ -105,10 +105,8 @@ class Synch
 	public static function test_connection()
 	{
 		$client = new Client(['base_uri' => self::$base]);
-
 		$response = $client->request('get', 'hello');
 		$body = json_decode($response->getBody());
-		// dd($body);
 		return $body->message;
 	}
 

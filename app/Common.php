@@ -136,7 +136,7 @@ class Common
 					'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 					'age_category' => $this->set_age_cat($sample->age),
 				];
-				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));				
+				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));				
 			}
 			$sample_model::where('id', $sample->id)->update($data);
 		}
@@ -170,10 +170,11 @@ class Common
 						'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 						'age_category' => $this->set_age_cat($sample->age),
 					];
-					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));					
+					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));					
 				}
 				$sample_model::where('id', $sample->id)->update($data);
 			}
+			echo "Completed clean at {$offset_value} " . date('d/m/Y h:i:s a', time()). "\n";
 	        $offset_value += 1000;
         }
 	}
