@@ -2615,3 +2615,19 @@ INSERT INTO `dr_primers` (`id`, `name`, `full_name`) VALUES
 (6, 'R3', 'Reverse Primer 3');
 
 
+DROP TABLE IF EXISTS `dr_patient_statuses`;
+
+CREATE TABLE `dr_patient_statuses` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
+(1, 'Awaiting Test'),
+(2, 'In DR Worklist'),
+(3, 'Completed Test'),
+(4, 'Insufficient sample'),
+(5, 'Failed Test');
+
+

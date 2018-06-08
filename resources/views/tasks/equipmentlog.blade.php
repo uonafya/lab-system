@@ -57,19 +57,19 @@
                             <td>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" required class="form-control input-sm" value="" name="datebrokendown[]">
+                                    <input type="text" class="form-control input-sm" value="" name="datebrokendown[]">
                                 </div>
                             </td>
                             <td>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" required class="form-control input-sm" value="" name="datereported[]">
+                                    <input type="text" class="form-control input-sm" value="" name="datereported[]">
                                 </div>
                             </td>
                             <td>
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" required class="form-control input-sm" value="" name="datefixed[]">
+                                    <input type="text" class="form-control input-sm" value="" name="datefixed[]">
                                 </div>
                             </td>
                             <td>

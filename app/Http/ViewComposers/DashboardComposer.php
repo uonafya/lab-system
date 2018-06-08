@@ -82,37 +82,35 @@ class DashboardComposer
 	{
         if (session('testingSystem') == 'Viralload') {
             if ($over == true) {
-                $model = ViralsampleView::selectRaw('COUNT(id) as aggregate')->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->get();
+                $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
+                                ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
-                    $model[$key] = ViralsampleView::selectRaw('COUNT(id) as aggregate')->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')->whereNotIn('receivedstatus', ['0', '2', '4'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', '2016-12-31')
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '=', '1')
-                        ->where('flag', '=', '1')->get(); 
+                        ->where('flag', '=', '1')->get()->first()->total; 
                 }
             }
         } else {
             if ($over == true) {
-                $model = SampleView::selectRaw('COUNT(id) as aggregate')->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->get();
+                $model = SampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
+                                ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
             } else {
-                $model = SampleView::selectRaw('COUNT(id) as aggregate')->whereNull('worksheet_id')
+                $model = SampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
                     ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
-                    ->where('flag', '1')->get();
+                    ->where('flag', '1')->get()->first()->total;
             }
         }
         
-        return $model[0]->aggregate;
+        return $model;
 	}
 
 	public function siteBatchesAwaitingApproval()
