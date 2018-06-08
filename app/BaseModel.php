@@ -11,6 +11,7 @@ class BaseModel extends Model
     // protected $revisionCleanup = true; 
     // protected $historyLimit = 500; 
     
+    // protected $guarded = ['created_at'];
     protected $guarded = [];
 
     protected static function boot()

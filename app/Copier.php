@@ -21,6 +21,10 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Viralsample;
 
+use App\Common;
+use App\Misc;
+use App\MiscViral;
+
 class Copier
 {
     private static $limit = 5000;
@@ -30,7 +34,8 @@ class Copier
         $start = Sample::max('id');
         ini_set("memory_limit", "-1");
         $fields = self::samples_arrays(); 
-        $date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2'];
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted'];
         $offset_value = 0;
         while(true)
         {
@@ -58,12 +63,15 @@ class Copier
 
                 if(!$batch){
                     $batch = new Batch($value->only($fields['batch']));
+                    foreach ($batch_date_array as $date_field) {
+                        $batch->$date_field = self::clean_date($batch->$date_field);
+                    }
                     $batch->id = $value->original_batch_id;
                     $batch->save();
                 }
 
                 $sample = new Sample($value->only($fields['sample']));
-                foreach ($date_array as $date_field) {
+                foreach ($sample_date_array as $date_field) {
                     $sample->$date_field = self::clean_date($sample->$date_field);
                 }
                 $sample->batch_id = $batch->id;
@@ -73,6 +81,10 @@ class Copier
             $offset_value += self::$limit;
             echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
+
+        $my = new Misc;
+        $my->compute_tat(\App\SampleView::class, Sample::class);
+        echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
 
@@ -81,7 +93,8 @@ class Copier
         $start = Viralsample::max('id');
         ini_set("memory_limit", "-1");
         $fields = self::viralsamples_arrays();  
-        $date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2'];  
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted'];
         $offset_value = 0;
         while(true)
         {
@@ -97,6 +110,7 @@ class Copier
                     $patient = new Viralpatient($value->only($fields['patient']));
                     $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0);
                     $patient->sex = self::resolve_gender($value->gender);
+                    $patient->initiation_date = self::clean_date($patient->initiation_date);
                     $patient->save();
                 }
 
@@ -105,12 +119,15 @@ class Copier
 
                 if(!$batch){
                     $batch = new Viralbatch($value->only($fields['batch']));
+                    foreach ($batch_date_array as $date_field) {
+                        $batch->$date_field = self::clean_date($batch->$date_field);
+                    }
                     $batch->id = $value->original_batch_id;
                     $batch->save();
                 }
 
                 $sample = new Viralsample($value->only($fields['sample']));
-                foreach ($date_array as $date_field) {
+                foreach ($sample_date_array as $date_field) {
                     $sample->$date_field = self::clean_date($sample->$date_field);
                 }
                 $sample->batch_id = $batch->id;
@@ -120,6 +137,10 @@ class Copier
             $offset_value += self::$limit;
             echo "Completed vl {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
+
+        $my = new MiscViral;
+        $my->compute_tat(\App\ViralsampleView::class, Viralsample::class);
+        echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
     private static function set_batch_id($batch_id)
@@ -137,13 +158,13 @@ class Copier
 
         $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'created_at'];
 
+        ini_set("memory_limit", "-1");
 
         foreach ($work_array as $key => $value) {
             $model = $value['model'];
             $view = $value['view'];
 
-            $start = $model::max('id');
-            ini_set("memory_limit", "-1");  
+            $start = $model::max('id');              
 
             $offset_value = 0;
             while(true)
@@ -154,10 +175,10 @@ class Copier
                 if($worksheets->isEmpty()) break;
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
-                    $work = new $model;
+                    $work = new $model;                    
                     $work->fill($worksheet->toArray());
                     foreach ($date_array as $date_field) {
-                        $work->$date_field = self::clean_date($work->$date_field);
+                        $work->$date_field = self::clean_date($worksheet->$date_field);
                     }
                     $work->save();
                 }
@@ -178,6 +199,19 @@ class Copier
             return null;
         }
     }
+
+    public static function clean_createdat($mydate)
+    {
+        if(!$mydate) return null;
+
+        try {
+            $my = Carbon::parse($mydate);
+            return $my->toDateString() . ' 00:00:01';
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
 
     public static function calculate_age($date_collected, $dob)
     {

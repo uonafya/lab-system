@@ -18,7 +18,7 @@ class MiscViral extends Common
         '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000'],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
-        '5' => ['Failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', ]
+        '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
     ];
 
     protected $compound_categories = [
@@ -39,7 +39,7 @@ class MiscViral extends Common
             'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'interpretation' => 'Aborted']
         ],
         [
-            'search_array' =>  ['REJECTED', 'Redraw New Sample', 'collect new samp', 'collect new saple', 'insufficient', 'Failed Collect New sample', ],
+            'search_array' =>  ['REJECTED', 'Redraw New Sample', 'collect new samp', 'collect new saple', 'insufficient', 'Failed Collect New sample', 'failed', 'Collect New Sample'],
             'update_array' => ['rcategory' => 5, 'result' => 'Collect New Sample', 'labcomment' => 'Failed Test']
         ],
     ];
@@ -314,7 +314,9 @@ class MiscViral extends Common
     public function set_rcategory($result, $repeatt=null)
     {
         if(!$result) return ['rcategory' => 0];
-        if(is_numeric($result)){
+        $numeric_result = preg_replace('/[^0-9]/', '', $result);
+        if(is_numeric($numeric_result)){
+            $result = (int) $numeric_result;
             if($result > 0 && $result < 1001){
                 return ['rcategory' => 2];
             }
@@ -326,11 +328,11 @@ class MiscViral extends Common
             }
         }
         $data = $this->get_rcategory($result);
-        if($repeatt == 0 && $data['rcategory'] == 5){
-            $data = array_merge($data, ['labcomment' => 'Failed Test']);
-        }
+        if(!isset($data['rcategory'])) dd($result);
+        if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
+    
 
     public function get_rcategory($result)
     {
@@ -341,7 +343,7 @@ class MiscViral extends Common
         foreach ($this->rcategories as $key => $value) {
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
-
+        return [];
     }
 
     public static function generate_dr_list()
@@ -412,5 +414,5 @@ class MiscViral extends Common
             return true;
         }
     }
-
+    
 }

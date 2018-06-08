@@ -6,6 +6,7 @@ use Hash;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -15,6 +16,8 @@ class User extends Authenticatable implements JWTSubject
     // protected $historyLimit = 500; 
     
     use Notifiable;
+    use SoftDeletes;
+
 
     /**
      * The attributes that are not mass assignable.
@@ -22,6 +25,13 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * The attributes that are automatically mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that should be hidden for arrays.

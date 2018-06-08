@@ -102,6 +102,14 @@ class Synch
 		'samples' => 'national_sample_id',
 	];
 
+	public static function test_connection()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$response = $client->request('get', 'hello');
+		$body = json_decode($response->getBody());
+		return $body->message;
+	}
+
 	public static function synch_eid_patients()
 	{
 		$client = new Client(['base_uri' => self::$base]);
@@ -176,7 +184,8 @@ class Synch
 
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
-		$misc_class::save_tat($sampleview_class, $sample_class);
+		$my = new $misc_class;
+		$my->save_tat($sampleview_class, $sample_class);
 
 		if($batch_class == "App\\Batch"){
 			$url = 'synch/batches';

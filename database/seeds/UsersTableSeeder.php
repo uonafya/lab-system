@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use \App\User;
 
 class UsersTableSeeder extends Seeder
 {
@@ -19,7 +20,28 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '3', 'user_type' => 'Program Officers'],
 		    ['id' => '4', 'user_type' => 'Data Clerk'],
 		    ['id' => '5', 'user_type' => 'Facility Users'],
+		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
 		]);
+
+		$old_users = DB::connection('old')->table('users')->get();
+
+		foreach ($old_users as $old_user) {
+			$user = new User;
+			$user->id = $old_user->ID;
+			$user->user_type_id = $old_user->account;
+			$user->lab_id = $old_user->lab;
+			$user->surname = $old_user->surname;
+			$user->oname = $old_user->oname;
+			$user->email = $old_user->email;
+
+			$existing = User::where('email', $old_user->email)->get()->first();
+			if($existing) $user->email = rand(1, 20) . $user->email;
+
+			$user->password = '12345678';
+			$user->save();
+		}
+
+
 
         $users = factory(App\User::class, 1)->create([
 	        'user_type_id' => 1,

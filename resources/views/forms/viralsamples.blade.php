@@ -42,7 +42,9 @@
 
                         @if(!$batch)    
                           <div class="form-group">
-                              <label class="col-sm-4 control-label">Facility</label>
+                              <label class="col-sm-4 control-label">Facility
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                               <div class="col-sm-8">
                                 <select class="form-control" required name="facility_id" id="facility_id">
                                     @isset($viralsample)
@@ -95,7 +97,9 @@
                     <div class="panel-body">
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient / Sample ID</label>
+                            <label class="col-sm-4 control-label">Patient / Sample ID
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <input class="form-control" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
                             </div>
@@ -109,14 +113,16 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) Patient Names</label>
+                            <label class="col-sm-4 control-label">Patient Names</label>
                             <div class="col-sm-8">
                                 <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Sex</label>
+                            <label class="col-sm-4 control-label">Sex
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable" required name="sex" id="sex">
 
@@ -160,7 +166,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth</label>
+                            <label class="col-sm-4 control-label">Date of Birth
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -215,7 +223,9 @@
                             <input type="hidden" value=2 name="site_entry">
 
                             <div class="form-group">
-                              <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                              <label class="col-sm-4 control-label">POC Site Sample Tested at
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                               <div class="col-sm-8">
                                 <select class="form-control" required name="lab_id" id="lab_id">
                                     @isset($sample)
@@ -256,7 +266,9 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Current Regimen</label>
+                            <label class="col-sm-4 control-label">Current Regimen
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="prophylaxis" id="prophylaxis">
                                     <option value=""> Select One </option>
@@ -275,7 +287,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen</label>
+                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="regimenline" id="regimenline">
                                     <option value=""> Select One </option>
@@ -294,7 +308,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Justification</label>
+                            <label class="col-sm-4 control-label">Justification
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="justification" id="justification">
                                     <option value=""> Select One </option>
@@ -316,7 +332,9 @@
                         <div class="hr-line-dashed"></div>                        
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Collection</label>
+                            <label class="col-sm-4 control-label">Date of Collection
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -340,7 +358,9 @@
                         @if(auth()->user()->user_type_id != 5)
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received</label>
+                                <label class="col-sm-4 control-label">Date Received
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -350,7 +370,9 @@
                             </div> 
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Received Status</label>
+                                <label class="col-sm-4 control-label">Received Status
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="receivedstatus" id="receivedstatus">
 
@@ -585,11 +607,11 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
-                        $(".lockable").prop("disabled", true);
+                        // $(".lockable").attr("disabled", "disabled");
                     }
                     else{
                         localStorage.setItem("new_patient", 1);
-                        $(".lockable").prop("disabled", false);
+                        // $(".lockable").removeAttr("disabled");
                         $(".lockable").val('').change();
 
                         $('.patient_details').remove();
