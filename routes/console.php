@@ -92,6 +92,29 @@ Artisan::command('copy:worksheet', function(){
 
 
 
+Artisan::command('match:eid-patients', function(){
+    $str = \App\Synch::match_eid_patients();
+    $this->info($str);
+})->describe('Match eid patients with records on the national database.');
+
+Artisan::command('match:vl-patients', function(){
+    $str = \App\Synch::match_vl_patients();
+    $this->info($str);
+})->describe('Match vl patients with records on the national database.');
+
+
+Artisan::command('match:eid-batches', function(){
+    $str = \App\Synch::match_batches('eid');
+    $this->info($str);
+})->describe('Match eid batches with records on the national database.');
+
+Artisan::command('match:vl-batches', function(){
+    $str = \App\Synch::match_batches('vl');
+    $this->info($str);
+})->describe('Match vl batches with records on the national database.');
+
+
+
 
 Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();

@@ -48,5 +48,13 @@ class CreateFacility implements ShouldQueue
                 'lab_id' => env('APP_LAB', null),
             ],
         ]);
+
+        $body = json_decode($response->getBody());
+
+        // $facility_data = get_object_vars($body->facility);
+        // $facility = new Facility;
+        // $facility->fill($facility_data);
+        // $facility->save();
+
     }
 }

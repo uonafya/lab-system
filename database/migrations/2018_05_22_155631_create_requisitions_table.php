@@ -15,24 +15,26 @@ class CreateRequisitionsTable extends Migration
     {
         Schema::create('requisitions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('facility')->comment('Facility Code');
-            $table->integer('lab')->comment('Lab ID');
+            $table->integer('facility')->unsigned()->comment('Facility Code');
+            $table->tinyInteger('lab')->unsigned()->comment('Lab ID');
             $table->integer('request');
             $table->integer('supply');
             $table->string('comments', 50)->nullable()->comment('Requisition Comments');
-            $table->integer('createdby');
-            $table->timestamps();
-            $table->integer('approvedby')->nullable();
+            $table->integer('createdby')->unsigned();
+            $table->integer('approvedby')->unsigned()->nullable();
             $table->string('approvecomments', 100)->nullable();
             $table->string('disapprovecomments', 100)->nullable();
             $table->integer('status');
-            $table->integer('flag')->default(1);
+            $table->tinyInteger('flag')->default(1);
             $table->integer('parentid');
             $table->date('requisitiondate');
             $table->date('datesubmitted');
-            $table->integer('submittedby')->nullable();
+            $table->integer('submittedby')->unsigned()->nullable();
             $table->date('dateapproved')->nullable();
-            $table->date('datesynchronized')->nullable();
+            // $table->date('datesynchronized')->nullable();
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
+            $table->timestamps();
         });
     }
 

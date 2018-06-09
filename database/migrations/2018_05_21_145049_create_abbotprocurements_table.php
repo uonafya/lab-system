@@ -17,9 +17,9 @@ class CreateAbbotprocurementsTable extends Migration
     {
         Schema::create('abbotprocurements', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('month')->unsigned()->index();
-            $table->integer('year')->unsigned()->index();
-            $table->tinyInteger('testtype')->unsigned()->index();
+            $table->tinyInteger('month')->unsigned();
+            $table->integer('year')->unsigned();
+            $table->tinyInteger('testtype')->unsigned();
             $table->integer('received')->unsigned()->default(0)->nullable();
             $table->integer('tests')->unsigned()->default(0)->nullable();
             foreach ($this->main as $key => $value) {
@@ -28,15 +28,19 @@ class CreateAbbotprocurementsTable extends Migration
                 }
             }
             $table->date('datesubmitted');
-            $table->bigInteger('submittedBy')->unsigned();
-            $table->integer('lab_id')->unsigned()->index();
+            $table->integer('submittedBy')->unsigned();
+            $table->tinyInteger('lab_id')->unsigned();
             // $table->tinyInteger('synchronized')->unsigned()->nullable();
-            $table->date('datesynchronized');
+            // $table->date('datesynchronized');
             $table->string('comments', 50)->nullable();
             $table->string('issuedcomments', 100)->nullable();
-            $table->bigInteger('approve')->unsigned()->index();
+            $table->integer('approve')->unsigned()->index();
             $table->string('disapproverreason', 100)->nullable();
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
             $table->timestamps();
+
+            $table->index(['year', 'month'], 'year_month');
         });
     }
 
