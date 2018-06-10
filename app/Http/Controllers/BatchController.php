@@ -146,6 +146,18 @@ class BatchController extends Controller
         return view('tables.batch_details', $data)->with('pageTitle', 'Batches');
     }
 
+    public function transfer(Batch $batch)
+    {
+        $samples = $batch->sample;
+        $samples->load(['patient.mother']);
+        $batch->load(['view_facility', 'receiver', 'creator.facility']);
+        $data = Lookup::get_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        return view('tables.transfer_batch_samples', $data)->with('pageTitle', 'Transfer Samples');
+    }
+
     public function transfer_to_new_batch(Request $request, Batch $batch)
     {
         $sample_ids = $request->input('samples');
@@ -157,8 +169,8 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_batch->fill($batch->except(['created_at', 'update_at', 'synched', 'batch_full']));
-        $new_batch->id += 0.5;
+        $new_batch->fill($batch->replicate(['synched', 'batch_full']));
+        $new_batch->id = $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
