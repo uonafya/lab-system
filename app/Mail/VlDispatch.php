@@ -6,6 +6,7 @@ use App\Viralbatch;
 use App\Lookup;
 
 use DOMPDF;
+use Mpdf\Mpdf;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -29,6 +30,8 @@ class VlDispatch extends Mailable implements ShouldQueue
      */
     public function __construct(Viralbatch $batch)
     {
+        $mpdf = new Mpdf;
+
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $samples = $batch->sample;
         $this->batch = $batch;
@@ -44,11 +47,17 @@ class VlDispatch extends Mailable implements ShouldQueue
 
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batch' => $batch, 'samples' => $samples]);
-        DOMPDF::loadView('exports.viralsamples', $data)->setPaper('a4', 'landscape')->save($this->individual_path);
+        // DOMPDF::loadView('exports.viralsamples', $data)->setPaper('a4', 'landscape')->save($this->individual_path);
+
+        $view_data = view('exports.viralsamples', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
+
 
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batches' => [$batch]]);
         DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);
+
     }
 
     /**

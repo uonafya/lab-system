@@ -10,7 +10,7 @@ class Viralworksheet extends BaseModel
 
     // protected $withCount = ['sample'];  
     
-    public $timestamps = false;
+    // public $timestamps = false;
 
     public function sample()
     {

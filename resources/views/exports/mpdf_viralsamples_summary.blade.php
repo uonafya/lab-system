@@ -38,6 +38,10 @@
 
 	@foreach($batches as $batch)
 
+		<center>
+			<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
+		</center>
+
 		<table border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
@@ -47,22 +51,22 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3" class="comment style1 style4">
+				<td colspan="3">
 					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name ?? ''}} </strong> 
 				</td>
-				<td colspan="3" class="comment style1 style4" align="right">
+				<td colspan="3" align="right">
 					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="9" class="comment style1 style4">
+				<td colspan="9">
 					<strong>NOTICE:</strong>
 					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
 				</td>
 			</tr>
 		</table>
 
-		<table style="width:100%;">
+		<table >
 			<tr>
 				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>		
 			</tr>
@@ -79,7 +83,7 @@
 			</tr>
 		</table>
 
-		<table style="width: 100%;">
+		<table>
 			<tr>
 				<td colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
 			</tr>
@@ -117,11 +121,7 @@
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>
 					<td>
-	                    @foreach($genders as $gender)
-	                        @if($sample->patient->sex == $gender->id)
-	                            {{ $gender->gender ?? '' }}
-	                        @endif
-	                    @endforeach
+						{{ $sample->patient->gender }}
 					</td>
 					<td>{{ $sample->age }} </td>
 					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
@@ -254,7 +254,9 @@
 			@break
 		@endif
 
-		<div class="page-break"></div>
+		<!-- <div class="page-break"></div> -->
+
+		<pagebreak>
 
 	@endforeach
 
