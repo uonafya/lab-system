@@ -780,9 +780,9 @@ CREATE TABLE IF NOT EXISTS `results` (
 INSERT INTO `results` (`id`, `name`, `alias`, `name_colour`) VALUES
 	(1, 'Negative', 'NEG', '<strong><div style=\'color: #00ff00;\'>Negative</div></strong>'),
 	(2, 'Positive', 'POS', '<strong><div style=\'color: #ff0000;\'>Positive</div></strong>'),
-	(3, 'Failed', '', '<strong><div style=\'color: #ffff00;\'>Failed</div></strong>'),
-	(4, 'Unknown', '', '<strong><div style=\'color: #ffff00;\'>Unknown</div></strong>'),
-	(5, 'Collect New Sample', '', '<strong><div style=\'color: #ffff00;\'>Collect New Sample</div></strong>');
+	(3, 'Failed', '', '<strong><div style=\'color: #cccc00;\'>Failed</div></strong>'),
+	(4, 'Unknown', '', '<strong><div style=\'color: #cccc00;\'>Unknown</div></strong>'),
+	(5, 'Collect New Sample', '', '<strong><div style=\'color: #cccc00;\'>Collect New Sample</div></strong>');
 /*!40000 ALTER TABLE `results` ENABLE KEYS */;
 
 DROP TABLE IF EXISTS `testtype`;
@@ -2375,7 +2375,7 @@ LOCK TABLES `actions` WRITE;
 /*!40000 ALTER TABLE `actions` DISABLE KEYS */;
 INSERT INTO `actions` VALUES 
 (0,'Dispatch', '<strong><div style=\'color: #00ff00;\'>Dispatch</div></strong>', 1),
-(1,'Rerun', '<strong><div style=\'color: #ffff00;\'>Rerun</div></strong>', 1);
+(1,'Rerun', '<strong><div style=\'color: #cccc00;\'>Rerun</div></strong>', 1);
 /*!40000 ALTER TABLE `actions` ENABLE KEYS */;
 UNLOCK TABLES;
 
