@@ -5,7 +5,6 @@ namespace App\Mail;
 use App\Viralbatch;
 use App\Lookup;
 
-use DOMPDF;
 use Mpdf\Mpdf;
 
 use Illuminate\Bus\Queueable;
@@ -30,8 +29,6 @@ class VlDispatch extends Mailable implements ShouldQueue
      */
     public function __construct(Viralbatch $batch)
     {
-        $mpdf = new Mpdf;
-
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $samples = $batch->sample;
         $this->batch = $batch;
@@ -45,19 +42,21 @@ class VlDispatch extends Mailable implements ShouldQueue
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);
 
+        $mpdf = new Mpdf;
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batch' => $batch, 'samples' => $samples]);
-        // DOMPDF::loadView('exports.viralsamples', $data)->setPaper('a4', 'landscape')->save($this->individual_path);
-
         $view_data = view('exports.viralsamples', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
 
 
+        $mpdf = new Mpdf(['orientation' => 'L']);
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batches' => [$batch]]);
-        DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);
-
+        $view_data = view('exports.viralsamples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($this->summary_path, \Mpdf\Output\Destination::FILE);
+        // DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);
     }
 
     /**
