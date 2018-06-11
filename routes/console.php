@@ -17,6 +17,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('generate:dr-list', function(){
+    $str = \App\MiscViral::generate_dr_list();
+    $this->info($str);
+})->describe('Generate a list of potential dr patients.');
+
+
 Artisan::command('input_complete:eid', function(){
 	$str = \App\Common::input_complete_batches(\App\Batch::class);
     $this->info($str);

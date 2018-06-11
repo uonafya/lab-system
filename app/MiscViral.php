@@ -348,6 +348,8 @@ class MiscViral extends Common
 
     public static function generate_dr_list()
     {
+        ini_set("memory_limit", "-1");
+
         $min_date = Carbon::now()->subMonths(3)->toDateString();
 
         $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')
