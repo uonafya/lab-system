@@ -258,7 +258,7 @@
 
 		<!-- <div class="page-break"></div> -->
 
-		<pagebreak>
+		<pagebreak orientation='L'>
 
 	@endforeach
 
