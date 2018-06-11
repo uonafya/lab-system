@@ -50,10 +50,10 @@ class VlDispatch extends Mailable implements ShouldQueue
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
 
 
-        $mpdf = new Mpdf(['orientation' => 'L']);
+        $mpdf = new Mpdf(['format' => 'A4-L']);
         $data = Lookup::get_viral_lookups();
         $data = array_merge($data, ['batches' => [$batch]]);
-        $view_data = view('exports.viralsamples_summary', $data)->render();
+        $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->summary_path, \Mpdf\Output\Destination::FILE);
         // DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);

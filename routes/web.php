@@ -100,7 +100,6 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::post('transfer/{batch}', 'ViralbatchController@transfer_to_new_batch')->name('post.transfer');
 		
 		Route::get('summary/{batch}', 'ViralbatchController@summary');
-		Route::get('summary2/{batch}', 'ViralbatchController@summary_two');
 		Route::post('summaries', 'ViralbatchController@summaries');
 		Route::get('individual/{batch}', 'ViralbatchController@individual');
 		Route::get('email/{batch}', 'ViralbatchController@email')->name('email');

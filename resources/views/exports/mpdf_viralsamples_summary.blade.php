@@ -19,9 +19,6 @@
      		font-size: 10px;
 		}
 
-		.page-break {
-			page-break-after: always;
-		}
 
 		h5 {
 			margin-top: 6px;

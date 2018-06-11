@@ -8,8 +8,7 @@ use App\Viralsample;
 use App\MiscViral;
 use App\Lookup;
 
-use DB;
-use DOMPDF;
+// use DOMPDF;
 use Mpdf\Mpdf;
 
 use App\Mail\VlDispatch;
@@ -538,32 +537,17 @@ class ViralbatchController extends Controller
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_viral_lookups();
         $data['batches'] = [$batch];
-        // dd($data);
-        return view('exports.viralsamples_summary', $data)->with('pageTitle', 'Individual Batches');
-        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
-    }
 
-    /**
-     * Print the specified resource.
-     *
-     * @param  \App\Viralbatch  $batch
-     * @return \Illuminate\Http\Response
-     */
-    public function summary_two(Viralbatch $batch)
-    {
-        if(!$batch->datebatchprinted){
-            $batch->datebatchprinted = date('Y-m-d');
-            $batch->pre_update();
-        }
-
-        $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
-        $data = Lookup::get_viral_lookups();
-        $data['batches'] = [$batch];
-        $mpdf = new Mpdf(['orientation' => 'L']);
+        $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+
+
+
+        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('summary.pdf');
     }
 
     public function summaries(Request $request)
@@ -584,6 +568,7 @@ class ViralbatchController extends Controller
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
         
         // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         // return $pdf->stream('summary.pdf');

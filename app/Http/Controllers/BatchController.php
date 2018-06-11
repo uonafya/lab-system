@@ -9,7 +9,8 @@ use App\Misc;
 use App\Common;
 use App\Lookup;
 
-use DOMPDF;
+// use DOMPDF;
+use Mpdf\Mpdf;
 
 
 use App\Mail\EidDispatch;
@@ -458,8 +459,14 @@ class BatchController extends Controller
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
         $data['batches'] = [$batch];
-        $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        $mpdf = new Mpdf(['format' => 'A4-L']);
+        $view_data = view('exports.mpdf_samples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+
+        // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function summaries(Request $request)
@@ -476,8 +483,14 @@ class BatchController extends Controller
 
         $data = Lookup::get_lookups();
         $data['batches'] = $batches;
-        $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        $mpdf = new Mpdf(['format' => 'A4-L']);
+        $view_data = view('exports.mpdf_samples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+        
+        // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function email(Batch $batch)
