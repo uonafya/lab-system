@@ -2,9 +2,11 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class Lab extends Model
+class Lab extends BaseModel
 {
-    //
+    // 
+    
+    public $timestamps = false;
 }

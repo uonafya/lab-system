@@ -87,21 +87,24 @@ class DashboardComposer
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
-                    $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')
+                        ->whereNotIn('receivedstatus', ['0', '2', '4'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', '2016-12-31')
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
-                        ->where('input_complete', '=', '1')
-                        ->where('flag', '=', '1')->get()->first()->total; 
+                        ->where('input_complete', '1')
+                        ->where('flag', '1')->get()->first()->total; 
                 }
             }
         } else {
             if ($over == true) {
-                $model = SampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
+                $model = SampleView::selectRaw('COUNT(id) as total')
+                                ->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
             } else {
-                $model = SampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
+                $model = SampleView::selectRaw('COUNT(id) as total')
+                    ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
                     ->whereRaw("(result is null or result = 0)")
@@ -116,21 +119,21 @@ class DashboardComposer
 	public function siteBatchesAwaitingApproval()
 	{
         if (session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::selectRaw('COUNT(ID) as totalsamples')
+            $model = ViralsampleView::selectRaw('COUNT(id) as total')
                         ->where('lab_id', '=', Auth()->user()->lab_id)
                         ->where('flag', '=', '1')
                         ->where('repeatt', '=', '0')
                         ->whereNull('receivedstatus')
                         ->where('site_entry', '=', '1');
         } else {
-            $model = SampleView::selectRaw('COUNT(ID) as totalsamples')
+            $model = SampleView::selectRaw('COUNT(id) as total')
                     ->where('lab_id', '=', Auth()->user()->lab_id)
                     ->where('flag', '=', '1')
                     ->where('repeatt', '=', '0')
                     ->whereNull('receivedstatus')
                     ->where('site_entry', '=', '1');
         }
-        return $model->get()->first()->totalsamples ?? 0;
+        return $model->get()->first()->total ?? 0;
 	}
 
 	public function batchCompleteAwaitingDispatch()
@@ -146,24 +149,26 @@ class DashboardComposer
 	public function samplesAwaitingRepeat()
 	{
         if(session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::selectRaw('COUNT(*) as total')->whereBetween('sampletype', [1, 5])
+            $model = ViralsampleView::selectRaw('COUNT(*) as total')
+                        ->whereBetween('sampletype', [1, 5])
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereNull('worksheet_id')
-                        ->where(DB::raw('YEAR(datereceived)'), '>', '2015')
+                        ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
-                        ->whereRaw("result is null or result = 0 or result != 'Collect New Sample'")
+                        ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1');
         } else {
-            $model = SampleView::selectRaw('COUNT(*) as total')->whereNull('worksheet_id')
-                    ->whereNotIn('receivedstatus', ['0', '2'])
-                    ->where(function ($query) {
-                        $query->whereNull('result')
-                              ->orWhere('result', '=', 0);
-                    })
-                    // ->where(DB::raw(('samples.result is null or samples.result = 0')))
-                    ->where('flag', '=', '1')
-                    ->where('parentid', '>', '0');
+            $model = SampleView::selectRaw('COUNT(*) as total')
+                        ->whereNull('worksheet_id')
+                        ->whereNotIn('receivedstatus', ['0', '2'])
+                        ->where(function ($query) {
+                            $query->whereNull('result')
+                                  ->orWhere('result', '=', 0);
+                        })
+                        // ->where(DB::raw(('samples.result is null or samples.result = 0')))
+                        ->where('flag', '=', '1')
+                        ->where('parentid', '>', '0');
         }
 		return $model->get()->first()->total;
 	}
@@ -172,23 +177,25 @@ class DashboardComposer
 	{
         $year = Date('Y')-3;
         if (session('testingSystem') == 'Viralload') {
-            $model = ViralsampleView::selectRaw('count(*) as rejectfordispatch')
-                        ->where('receivedstatus', '=', 2)
+            $model = ViralsampleView::selectRaw('count(*) as total')
+                        ->where('receivedstatus', 2)
                         ->where('flag', '=', 1)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
-                        ->where('datedispatched', '=', '')
-                        ->orWhere('datedispatched', '=', '0000-00-00')
-                        ->orWhere('datedispatched', '=', '1970-01-01')
-                        ->orWhereNotNull('datedispatched');
+                        ->whereNull('datedispatched');
+                        // ->where('datedispatched', '=', '')
+                        // ->orWhere('datedispatched', '=', '0000-00-00')
+                        // ->orWhere('datedispatched', '=', '1970-01-01')
+                        // ->orWhereNotNull('datedispatched');
         } else {
-            $model = SampleView::selectRaw('count(*) as rejectfordispatch')
-                        ->where('receivedstatus', '=', 2)
+            $model = SampleView::selectRaw('count(*) as total')
+                        ->where('receivedstatus', 2)
+                        ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
-                        ->whereYear('datereceived', '>', $year);
+                        ->whereNull('datedispatched');
         }
         
-		return $model->get()->first()->rejectedForDispatch ?? 0;
+		return $model->get()->first()->total ?? 0;
 	}
 
     public function batchesMarkedNotReceived()

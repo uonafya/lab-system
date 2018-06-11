@@ -119,7 +119,7 @@ class Synch
 			$patients = Patient::with(['mother'])->where('synched', 0)->limit(20)->get();
 			if($patients->isEmpty()) break;
 
-			$response = $client->request('post', 'synch/patients', [
+			$response = $client->request('post', 'insert/patients', [
 				'headers' => [
 					'Accept' => 'application/json',
 				],
@@ -153,7 +153,7 @@ class Synch
 			$patients = Viralpatient::where('synched', 0)->limit(30)->get();
 			if($patients->isEmpty()) break;
 
-			$response = $client->request('post', 'synch/viralpatients', [
+			$response = $client->request('post', 'insert/viralpatients', [
 				'headers' => [
 					'Accept' => 'application/json',
 				],
@@ -188,9 +188,9 @@ class Synch
 		$my->save_tat($sampleview_class, $sample_class);
 
 		if($batch_class == "App\\Batch"){
-			$url = 'synch/batches';
+			$url = 'insert/batches';
 		}else{
-			$url = 'synch/viralbatches';
+			$url = 'insert/viralbatches';
 		}
 
 		while (true) {
@@ -230,9 +230,9 @@ class Synch
 		$worksheet_class = self::$synch_arrays[$type]['worksheet_class'];
 
 		if($worksheet_class == "App\\Worksheet"){
-			$url = 'synch/worksheets';
+			$url = 'insert/worksheets';
 		}else{
-			$url = 'synch/viralworksheets';
+			$url = 'insert/viralworksheets';
 		}
 
 		while (true) {
@@ -339,6 +339,144 @@ class Synch
 					$update_class::where('id', $row->original_id)->delete();
 				}
 			}			
+		}
+	}
+
+
+	public static function match_eid_patients()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+		$done = 0;
+
+		while (true) {
+			$patients = Patient::select('id', 'facility_id', 'patient')
+				->with(['mother:id'])
+				->where('synched', 1)
+				->whereNull('national_patient_id')
+				->limit(100)
+				->get();
+			if($patients->isEmpty()) break;
+
+			$response = $client->request('post', 'synch/patients', [
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'form_params' => [
+					'patients' => $patients->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->patients as $key => $value) {
+				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
+				Patient::where('id', $value->original_id)->update($update_data);
+			}
+
+			foreach ($body->mothers as $key => $value) {
+				$update_data = ['national_mother_id' => $value->national_mother_id, 'synched' => 1, 'datesynched' => $today,];
+				Mother::where('id', $value->original_id)->update($update_data);
+			}
+
+			$done+=100;
+			echo "Matched {$done} eid patient records at " . date('d/m/Y h:i:s a', time()). "\n";
+		}
+	}
+
+	public static function match_vl_patients()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+		$done=0;
+
+		while (true) {
+			$patients = Viralpatient::select('id', 'facility_id', 'patient')
+				->where('synched', 1)
+				->whereNull('national_patient_id')
+				->limit(100)
+				->get();
+			if($patients->isEmpty()) break;
+
+			$response = $client->request('post', 'synch/viralpatients', [
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'form_params' => [
+					'patients' => $patients->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->patients as $key => $value) {
+				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
+				Viralpatient::where('id', $value->original_id)->update($update_data);
+			}
+
+			$done+=100;
+			echo "Matched {$done} vl patient records at " . date('d/m/Y h:i:s a', time()). "\n";
+		}
+	}
+
+	public static function match_batches($type)
+	{
+		$classes = self::$synch_arrays[$type];
+
+		$misc_class = $classes['misc_class'];
+		$sample_class = $classes['sample_class'];
+		$sampleview_class = $classes['sampleview_class'];
+		$batch_class = $classes['batch_class'];
+
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+		$my = new $misc_class;
+		$my->save_tat($sampleview_class, $sample_class);
+
+		if($batch_class == "App\\Batch"){
+			$url = 'synch/batches';
+		}else{
+			$url = 'synch/viralbatches';
+		}
+		$done=0;
+
+		while (true) {
+			$batches = $batch_class::with(['sample:id'])
+				->where('synched', 1)
+				->whereNull('national_batch_id')
+				->limit(70)
+				->get();
+			if($batches->isEmpty()) break;
+
+			$response = $client->request('post', $url, [
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'form_params' => [
+					'batches' => $batches->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->batches as $key => $value) {
+				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
+				$batch_class::where('id', $value->original_id)->update($update_data);
+			}
+
+			foreach ($body->samples as $key => $value) {
+				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
+				$sample_class::where('id', $value->original_id)->update($update_data);
+			}
+
+			$done+=70;
+			echo "Matched {$done} {$type} batch records at " . date('d/m/Y h:i:s a', time()). "\n";
 		}
 	}
 

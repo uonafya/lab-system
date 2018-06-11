@@ -128,7 +128,6 @@
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> {!! $worksheet->mylinks !!} </td>
                                 </tr>
-
                             @endforeach
 
                             @php

@@ -16,12 +16,12 @@ class CreateLabPerformanceTrackersTable extends Migration
         Schema::create('lab_performance_trackers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('lab_id')->unsigned()->index();
-            $table->tinyInteger('month')->unsigned()->index();
-            $table->integer('year')->unsigned()->index();
+            $table->tinyInteger('month')->unsigned();
+            $table->integer('year')->unsigned();
             // $table->tinyInteger('submitted')->unsigned()->index();
             // $table->tinyInteger('eamilsent')->unsigned()->index();
             $table->date('dateemailsent')->nullable();
-            $table->tinyInteger('testtype')->unsigned()->index();
+            $table->tinyInteger('testtype')->unsigned();
             $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->integer('received')->unsigned()->nullable();
             $table->integer('rejected')->unsigned()->nullable();
@@ -30,8 +30,12 @@ class CreateLabPerformanceTrackersTable extends Migration
             $table->integer('tested')->unsigned()->nullable();
             $table->string('reasonforbacklog', 100)->nullable();
             $table->date('datesubmitted');
-            $table->bigInteger('submittedBy');
+            $table->integer('submittedBy')->unsigned();
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
             $table->timestamps();
+
+            $table->index(['year', 'month'], 'year_month');
         });
     }
 

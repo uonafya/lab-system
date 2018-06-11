@@ -19,8 +19,8 @@ class CreateTaqmandeliveriesTable extends Migration
             $table->increments('id');
             $table->tinyInteger('testtype')->unsigned()->index();
             $table->tinyInteger('lab')->unsigned()->index();
-            $table->tinyInteger('quarter')->unsigned()->index();
-            $table->integer('year')->unsigned()->index();
+            $table->tinyInteger('quarter')->unsigned();
+            $table->integer('year')->unsigned();
             $table->tinyInteger('source')->unsigned()->nullable();
             $table->tinyInteger('labfrom')->unsigned()->nullable();
             $table->string('kitlotno', 12)->nullable();
@@ -36,8 +36,12 @@ class CreateTaqmandeliveriesTable extends Migration
             $table->integer('enteredby')->unsigned()->index()->nullable();
             $table->date('dateentered')->nullable();
             $table->tinyInteger('flag')->unsigned()->default(1);
-            $table->date('datesynchronized')->nullable();
+            // $table->date('datesynchronized')->nullable();
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
             $table->timestamps();
+
+            $table->index(['year', 'quarter'], 'year_quarter');
         });
     }
 

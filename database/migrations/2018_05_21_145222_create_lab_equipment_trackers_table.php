@@ -15,12 +15,12 @@ class CreateLabEquipmentTrackersTable extends Migration
     {
         Schema::create('lab_equipment_trackers', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('month')->unsigned()->index();
-            $table->integer('year')->unsigned()->index();
-            $table->integer('lab_id')->unsigned()->index();
+            $table->tinyInteger('month')->unsigned();
+            $table->integer('year')->unsigned();
+            $table->tinyInteger('lab_id')->unsigned()->index();
             $table->tinyInteger('equipment_id')->unsigned()->index();
             $table->date('datesubmitted');
-            $table->bigInteger('submittedBy');
+            $table->integer('submittedBy')->unsigned();
             $table->date('dateemailsent')->nullable();
             $table->date('datebrokendown')->nullable();
             $table->date('datereported')->nullable();
@@ -31,7 +31,11 @@ class CreateLabEquipmentTrackersTable extends Migration
             $table->string('reagentswasted', 300)->nullable();
             $table->string('breakdownreason', 300)->nullable();
             $table->string('othercomments', 300)->nullable();
+            $table->tinyInteger('synched')->default(0);
+            $table->date('datesynched')->nullable();
             $table->timestamps();
+
+            $table->index(['year', 'month'], 'year_month');
         });
     }
 

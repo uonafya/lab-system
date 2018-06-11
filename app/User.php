@@ -88,4 +88,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo('App\Facility');
     }
+
+    public function set_last_access()
+    {
+        $this->last_access = date('Y-m-d H:i:s');
+        $this->save();
+    }
 }

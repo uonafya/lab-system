@@ -52,8 +52,8 @@ class Copier
                     $mother->save();
                     $patient = new Patient($value->only($fields['patient']));
                     $patient->mother_id = $mother->id;
-                    $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age);
-                    $patient->sex = self::resolve_gender($value->gender);
+                    $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
                     $patient->ccc_no = $value->enrollment_ccc_no;
                     $patient->save();
                 }
@@ -67,6 +67,8 @@ class Copier
                         $batch->$date_field = self::clean_date($batch->$date_field);
                     }
                     $batch->id = $value->original_batch_id;
+                    // Temporarily use 
+                    $batch->received_by = $value->user_id;
                     $batch->save();
                 }
 
@@ -108,8 +110,8 @@ class Copier
 
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
-                    $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0);
-                    $patient->sex = self::resolve_gender($value->gender);
+                    $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0, ViralsampleView::class, $value->patient, $value->facility_id);
+                    $patient->sex = self::resolve_gender($value->gender, ViralsampleView::class, $value->patient, $value->facility_id);
                     $patient->initiation_date = self::clean_date($patient->initiation_date);
                     $patient->save();
                 }
@@ -123,6 +125,8 @@ class Copier
                         $batch->$date_field = self::clean_date($batch->$date_field);
                     }
                     $batch->id = $value->original_batch_id;
+                    // Temporarily use 
+                    $batch->received_by = $value->user_id;
                     $batch->save();
                 }
 
@@ -175,11 +179,13 @@ class Copier
                 if($worksheets->isEmpty()) break;
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
+                    $duplicate = $worksheet->replicate();
                     $work = new $model;                    
-                    $work->fill($worksheet->toArray());
+                    $work->fill($duplicate->toArray());
                     foreach ($date_array as $date_field) {
                         $work->$date_field = self::clean_date($worksheet->$date_field);
                     }
+                    $work->id = $worksheet->id;
                     $work->save();
                 }
                 $offset_value += self::$limit;
@@ -190,7 +196,7 @@ class Copier
 
     public static function clean_date($mydate)
     {
-        if(!$mydate) return null;
+        if(!$mydate || $mydate == '0000-00-00') return null;
 
         try {
             $my = Carbon::parse($mydate);
@@ -236,9 +242,8 @@ class Copier
         return $years;
     }
 
-    public static function calculate_dob($date_collected, $years, $months)
+    public static function calculate_dob($datecollected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
     {
-    	if((!$years && !$months) || !$date_collected ) return null;
         // if(Carbon::createFromFormat('Y-m-d', $date_collected) !== false){            
         //     $dc = Carbon::createFromFormat('Y-m-d', $date_collected);
         //     $dc->subYears($years);
@@ -247,8 +252,23 @@ class Copier
         // }
         // return null;
 
+        if((!$years && !$months) || !$datecollected || $datecollected == '0000-00-00'){
+            $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
+                        ->where('age', '!=', 0)
+                        ->where('datecollected', '!=', '0000-00-00')
+                        ->whereNotNull('datecollected')
+                        ->get()->first();
+            if($row){
+                if($class_name == "App\OldModels\ViralsampleView"){ 
+                    return self::calculate_dob($row->datecollected, $row->age, 0);
+                }
+                return self::calculate_dob($row->datecollected, 0, $row->age);
+            }   
+            return null;         
+        }
+
         try {           
-            $dc = Carbon::createFromFormat('Y-m-d', $date_collected);
+            $dc = Carbon::createFromFormat('Y-m-d', $datecollected);
             $dc->subYears($years);
             $dc->subMonths($months);
             return $dc->toDateString();
@@ -259,7 +279,7 @@ class Copier
         return null;
     }
 
-    public static function resolve_gender($value)
+    public static function resolve_gender($value, $class_name=null, $patient=null, $facility_id=null)
     {
         $value = trim($value);
         $value = strtolower($value);
@@ -278,6 +298,9 @@ class Copier
         //     return $value;
         // }
         else{
+            $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
+                        ->whereRaw("(gender = 'M' or gender = 'F')")->get()->first();
+            if($row) return self::resolve_gender($row->gender);
             return 3;
         }
     }
@@ -287,11 +310,11 @@ class Copier
     {
         return [
 
-            'batch' => ['highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted'],
+            'batch' => ['highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'synched', 'datesynched' ],
 
-            'mother' => ['hiv_status', 'facility_id', 'ccc_no'],
+            'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'synched', 'datesynched' ],
 
-            'patient' => ['patient', 'patient_name', 'sex', 'facility_id', 'caregiver_phone', 'dob', 'entry_point', 'dateinitiatedontreatment'],
+            'patient' => ['patient', 'patient_name', 'sex', 'facility_id', 'caregiver_phone', 'dob', 'entry_point', 'dateinitiatedontreatment', 'synched', 'datesynched' ],
 
             'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'sample_type', 'receivedstatus', 'age', 'redraw', 'pcrtype', 'regimen', 'mother_prophylaxis', 'feeding', 'spots', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'worksheet_id', 'hei_validation', 'enrollment_ccc_no', 'enrollment_status', 'referredfromsite', 'otherreason', 'flag', 'run', 'repeatt', 'eqa', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'mother_last_result', 'mother_age' ], 
         ];
@@ -301,12 +324,16 @@ class Copier
     {
         return [
 
-            'batch' => ['highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted'],
+            'batch' => ['highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'synched', 'datesynched' ],
 
-            'patient' => ['patient', 'sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date'],
+            'patient' => ['patient', 'sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date', 'synched', 'datesynched' ],
 
             'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched' ],
             
         ];
     }
+
+
+
+
 }

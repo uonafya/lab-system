@@ -18,10 +18,12 @@ class CreateUsersTable extends Migration
         //     $table->integer('user_type_id')->unsigned();
         //     $table->integer('lab_id')->unsigned();
         //     $table->integer('facility_id')->unsigned()->nullable();
-        //     $table->string('surname');
-        //     $table->string('oname');
+        //     $table->string('surname', 30);
+        //     $table->string('oname', 50);
+        //     $table->string('telephone', 20)->nullable();
         //     $table->string('email')->unique();
         //     $table->string('password');
+        //     $table->timestamp('last_access')->nullable();
         //     $table->rememberToken();
         //     $table->softDeletes();
         //     $table->timestamps();

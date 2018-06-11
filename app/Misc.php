@@ -54,7 +54,7 @@ class Misc extends Common
 	public static function save_repeat($sample_id)
 	{
 		$original = Sample::find($sample_id);
-		if($original->run == 4) return false;
+		if($original->run == 5) return false;
 
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();

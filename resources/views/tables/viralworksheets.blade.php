@@ -105,7 +105,7 @@
                             @foreach($worksheets as $key => $worksheet)
                                 <tr>
                                     <td>{{ $worksheet->id }} </td>
-                                    <td> {{ $worksheet->created_at }} </td>
+                                    <td> {{ $worksheet->my_date_format('created_at') }} </td>
                                     <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
 
                                     {{--<td> {!! $machines->where('machine', $worksheet->machine_type)->first()['string'] !!} </td>
@@ -117,9 +117,9 @@
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
 
                                     <td> {{ $worksheet->samples_no }} </td>
-                                    <td> {{ $worksheet->daterun }} </td>
-                                    <td> {{ $worksheet->dateuploaded }} </td>
-                                    <td> {{ $worksheet->datereviewed }} </td>
+                                    <td> {{ $worksheet->my_date_format('daterun') }} </td>
+                                    <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
+                                    <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
                                         @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
                                     </td>

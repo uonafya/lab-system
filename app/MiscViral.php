@@ -62,7 +62,7 @@ class MiscViral extends Common
 	public static function save_repeat($sample_id)
 	{
         $original = Viralsample::find($sample_id);
-        if($original->run == 4) return false;
+        if($original->run == 5) return false;
 
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
@@ -348,6 +348,8 @@ class MiscViral extends Common
 
     public static function generate_dr_list()
     {
+        ini_set("memory_limit", "-1");
+
         $min_date = Carbon::now()->subMonths(3)->toDateString();
 
         $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')

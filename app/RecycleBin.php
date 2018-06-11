@@ -2,9 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class RecycleBin extends Model
+class RecycleBin
 {
 
     public static function page_links($base, $page=NULL, $last_page=NULL, $date_start=NULL, $date_end=NULL)

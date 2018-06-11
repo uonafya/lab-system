@@ -95,7 +95,7 @@ class Viralsample extends BaseModel
             return "<strong><div style='color: #00ff00;'>&lt; LDL copies/ml</div></strong>";
         }
         else{
-            return "<strong><div style='color: #ffff00;'>{$this->result} </div></strong>";
+            return "<strong><div style='color: #cccc00;'>{$this->result} </div></strong>";
         }
     }
     
