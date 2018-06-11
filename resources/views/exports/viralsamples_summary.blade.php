@@ -201,7 +201,7 @@
 						<td>{{ $sample->justification }} </td>
 
 						<td>
-		                    @foreach($rejected_reasons as $rejected_reason)
+		                    @foreach($viral_rejected_reasons as $rejected_reason)
 		                        @if($sample->rejectedreason == $rejected_reason->id)
 		                            {{ $rejected_reason->name }}
 		                        @endif
