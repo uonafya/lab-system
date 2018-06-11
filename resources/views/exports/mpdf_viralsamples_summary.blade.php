@@ -120,9 +120,7 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>
-					<td>
-						{{ $sample->patient->gender }}
-					</td>
+					<td> {{ $sample->patient->gender ?? '' }} </td>
 					<td>{{ $sample->age }} </td>
 					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 					<td>{{ $sample->my_date_format('datecollected') }} </td>
@@ -151,7 +149,7 @@
 			@endforeach		
 		</table>
 
-		<p>Result Reviewed By: {{ $sample->approver->full_name }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
+		<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
 
 		@isset($rejection)
 			<table>

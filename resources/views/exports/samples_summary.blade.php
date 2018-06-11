@@ -164,7 +164,7 @@
 			@endforeach		
 		</table>
 
-		Result Reviewed By: {{ $sample->approver->full_name }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}
+		Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}
 
 		@isset($rejection)
 			<table>
