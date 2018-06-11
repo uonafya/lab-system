@@ -33,7 +33,7 @@
      		font-size: 12px;
 		}
 		* {
-			font-size: 10px;
+			font-size: 8px;
 		}
 	</style>
 </head>
