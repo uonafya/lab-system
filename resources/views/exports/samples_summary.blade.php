@@ -184,7 +184,7 @@
 					<td>Date Dispatched</td>			
 				</tr>
 
-				@foreach($batch->samples as $key => $sample)
+				@foreach($batch->sample as $key => $sample)
 					@continue($sample->receivedstatus != 2)
 					<tr>
 						<td>{{ ($key+1) }} </td>
