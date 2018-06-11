@@ -149,9 +149,9 @@ class DashboardComposer
             $model = ViralsampleView::selectRaw('COUNT(*) as total')->whereBetween('sampletype', [1, 5])
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereNull('worksheet_id')
-                        ->where(DB::raw('YEAR(datereceived)'), '>', '2015')
+                        ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
-                        ->whereRaw("result is null or result = 0 or result != 'Collect New Sample'")
+                        ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1');
         } else {
