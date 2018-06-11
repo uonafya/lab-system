@@ -244,7 +244,6 @@ class Copier
 
     public static function calculate_dob($date_collected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
     {
-    	if((!$years && !$months) || !$date_collected ) return null;
         // if(Carbon::createFromFormat('Y-m-d', $date_collected) !== false){            
         //     $dc = Carbon::createFromFormat('Y-m-d', $date_collected);
         //     $dc->subYears($years);
@@ -253,9 +252,10 @@ class Copier
         // }
         // return null;
 
-        if(!$years && !$months){
+        if((!$years && !$months) || !$datecollected || $datecollected == '0000-00-00'){
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
                         ->where('age', '!=', 0)
+                        ->where('datecollected', '!=', '0000-00-00')
                         ->whereNotNull('datecollected')
                         ->get()->first();
             if($row){
