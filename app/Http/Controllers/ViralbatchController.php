@@ -580,8 +580,12 @@ class ViralbatchController extends Controller
         
         $data = Lookup::get_viral_lookups();
         $data['batches'] = $batches;
-        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        
+        // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function email(Viralbatch $batch)

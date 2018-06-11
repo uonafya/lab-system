@@ -67,6 +67,8 @@ class Copier
                         $batch->$date_field = self::clean_date($batch->$date_field);
                     }
                     $batch->id = $value->original_batch_id;
+                    // Temporarily use 
+                    $batch->received_by = $value->user_id;
                     $batch->save();
                 }
 
@@ -123,6 +125,8 @@ class Copier
                         $batch->$date_field = self::clean_date($batch->$date_field);
                     }
                     $batch->id = $value->original_batch_id;
+                    // Temporarily use 
+                    $batch->received_by = $value->user_id;
                     $batch->save();
                 }
 
@@ -192,7 +196,7 @@ class Copier
 
     public static function clean_date($mydate)
     {
-        if(!$mydate) return null;
+        if(!$mydate || $mydate == '0000-00-00') return null;
 
         try {
             $my = Carbon::parse($mydate);
