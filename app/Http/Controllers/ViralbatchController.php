@@ -580,6 +580,7 @@ class ViralbatchController extends Controller
         
         $data = Lookup::get_viral_lookups();
         $data['batches'] = $batches;
+        $mpdf = new Mpdf(['orientation' => 'L']);
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
