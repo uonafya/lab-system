@@ -566,7 +566,7 @@ class ViralbatchController extends Controller
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
     }
 
-    public function batches_summary(Request $request)
+    public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
         $batches = Viralbatch::whereIn('id', $batch_ids)->with(['sample.patient', 'facility', 'lab', 'receiver', 'creator'])->get();
