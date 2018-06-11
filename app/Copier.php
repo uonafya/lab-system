@@ -242,7 +242,7 @@ class Copier
         return $years;
     }
 
-    public static function calculate_dob($date_collected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
+    public static function calculate_dob($datecollected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
     {
         // if(Carbon::createFromFormat('Y-m-d', $date_collected) !== false){            
         //     $dc = Carbon::createFromFormat('Y-m-d', $date_collected);
@@ -268,7 +268,7 @@ class Copier
         }
 
         try {           
-            $dc = Carbon::createFromFormat('Y-m-d', $date_collected);
+            $dc = Carbon::createFromFormat('Y-m-d', $datecollected);
             $dc->subYears($years);
             $dc->subMonths($months);
             return $dc->toDateString();
