@@ -563,7 +563,7 @@ class ViralbatchController extends Controller
         $mpdf = new Mpdf(['orientation' => 'L']);
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
     }
 
     public function batches_summary(Request $request)

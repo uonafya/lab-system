@@ -38,11 +38,12 @@
 
 	@foreach($batches as $batch)
 
-		<center>
-			<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
-		</center>
-
 		<table border="0" id='table1' align="center">
+			<tr>
+				<td colspan="9" align="center">
+					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
+				</td>
+			</tr>
 			<tr>
 				<td colspan="9" align="center">
 					<h5>MINISTRY OF HEALTH</h5>
@@ -94,21 +95,21 @@
 				<td colspan="4"><b>Lab Information</b></td>
 			</tr>
 			<tr>
-				<th>No</th>
-				<th>Patient CCC No</th>
-				<th>Sex</th>
-				<th>Age (yrs)</th>
-				<th>ART Initiation Date</th>
-				<th>Date Collected</th>
-				<th>Date Received</th>
-				<th>Status</th>
-				<th>Sample Type</th>
-				<th>Current Regimen</th>
-				<th>Justification</th>
-				<th>Date Tested</th>
-				<th>Date Dispatched</th>
-				<th>Test Result</th>
-				<th>TAT</th>
+				<th><b>No </b></th>
+				<th><b>Patient CCC No </b></th>
+				<th><b>Sex </b></th>
+				<th><b>Age (yrs) </b></th>
+				<th><b>ART Initiation Date </b></th>
+				<th><b>Date Collected </b></th>
+				<th><b>Date Received </b></th>
+				<th><b>Status </b></th>
+				<th><b>Sample Type </b></th>
+				<th><b>Current Regimen </b></th>
+				<th><b>Justification </b></th>
+				<th><b>Date Tested </b></th>
+				<th><b>Date Dispatched </b></th>
+				<th><b>Test Result </b></th>
+				<th><b>TAT </b></th>
 			</tr>
 			@foreach($batch->sample as $key => $sample)
 				@if($sample->receivedstatus == 2)
@@ -154,21 +155,21 @@
 		@isset($rejection)
 			<table>
 				<tr>
-					<td colspan="12">REJECTED SAMPLE(s)</td>
+					<td colspan="12" style="text-align: center;"><b>REJECTED SAMPLE(s)</b></td>
 				</tr>
 				<tr>
-					<td>No</td>
-					<td>Patient CCC no</td>
-					<td>Sex</td>
-					<td>Age (yrs)</td>
-					<td>ART Initiation Date</td>
-					<td>Date Collected</td>
-					<td>Date Received</td>
-					<td>Sample Type</td>
-					<td>Current Regimen</td>
-					<td>Justification</td>
-					<td>Rejected Reason</td>
-					<td>Date Dispatched</td>			
+					<td><b> No </b></td>
+					<td><b> Patient CCC no </b></td>
+					<td><b> Sex </b></td>
+					<td><b> Age (yrs) </b></td>
+					<td><b> ART Initiation Date </b></td>
+					<td><b> Date Collected </b></td>
+					<td><b> Date Received </b></td>
+					<td><b> Sample Type </b></td>
+					<td><b> Current Regimen </b></td>
+					<td><b> Justification </b></td>
+					<td><b> Rejected Reason </b></td>
+					<td><b> Date Dispatched </b></td>			
 				</tr>
 
 				@foreach($batch->sample as $key => $sample)

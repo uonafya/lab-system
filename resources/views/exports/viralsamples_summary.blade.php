@@ -154,7 +154,7 @@
 		<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
 
 		@isset($rejection)
-			<table>
+			<table style="width: 100%;">
 				<tr>
 					<td colspan="12">REJECTED SAMPLE(s)</td>
 				</tr>
