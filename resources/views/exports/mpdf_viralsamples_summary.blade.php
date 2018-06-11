@@ -16,11 +16,6 @@
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
-     		font-size: 12px;
-		}
-
-		.page-break {
-			page-break-after: always;
 		}
 
 		h5 {
@@ -28,12 +23,8 @@
 		    margin-bottom: 6px;
 		}
 
-		p {
-			margin-top: 2px;
-     		font-size: 12px;
-		}
 		* {
-			font-size: 8px;
+			font-size: 6px;
 		}
 	</style>
 </head>
