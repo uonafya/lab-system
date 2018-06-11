@@ -92,8 +92,8 @@ class DashboardComposer
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', '2016-12-31')
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
-                        ->where('input_complete', '=', '1')
-                        ->where('flag', '=', '1')->get()->first()->total; 
+                        ->where('input_complete', '1')
+                        ->where('flag', '1')->get()->first()->total; 
                 }
             }
         } else {
@@ -173,19 +173,21 @@ class DashboardComposer
         $year = Date('Y')-3;
         if (session('testingSystem') == 'Viralload') {
             $model = ViralsampleView::selectRaw('count(*) as rejectfordispatch')
-                        ->where('receivedstatus', '=', 2)
+                        ->where('receivedstatus', 2)
                         ->where('flag', '=', 1)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
-                        ->where('datedispatched', '=', '')
-                        ->orWhere('datedispatched', '=', '0000-00-00')
-                        ->orWhere('datedispatched', '=', '1970-01-01')
-                        ->orWhereNotNull('datedispatched');
+                        ->whereNull('datedispatched');
+                        // ->where('datedispatched', '=', '')
+                        // ->orWhere('datedispatched', '=', '0000-00-00')
+                        // ->orWhere('datedispatched', '=', '1970-01-01')
+                        // ->orWhereNotNull('datedispatched');
         } else {
             $model = SampleView::selectRaw('count(*) as rejectfordispatch')
-                        ->where('receivedstatus', '=', 2)
+                        ->where('receivedstatus', 2)
+                        ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
-                        ->whereYear('datereceived', '>', $year);
+                        ->whereNull('datedispatched');
         }
         
 		return $model->get()->first()->rejectedForDispatch ?? 0;
