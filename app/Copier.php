@@ -242,7 +242,7 @@ class Copier
         return $years;
     }
 
-    public static function calculate_dob($date_collected, $years, $months)
+    public static function calculate_dob($date_collected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
     {
     	if((!$years && !$months) || !$date_collected ) return null;
         // if(Carbon::createFromFormat('Y-m-d', $date_collected) !== false){            
@@ -252,6 +252,20 @@ class Copier
         //     return $dc->toDateString();
         // }
         // return null;
+
+        if(!$years && !$months){
+            $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
+                        ->where('age', '!=', 0)
+                        ->whereNotNull('datecollected')
+                        ->get()->first();
+            if($row){
+                if($class_name == "App\OldModels\ViralsampleView"){ 
+                    return self::calculate_dob($row->datecollected, $row->age, 0);
+                }
+                return self::calculate_dob($row->datecollected, 0, $row->age);
+            }   
+            return null;         
+        }
 
         try {           
             $dc = Carbon::createFromFormat('Y-m-d', $date_collected);
@@ -265,7 +279,7 @@ class Copier
         return null;
     }
 
-    public static function resolve_gender($value)
+    public static function resolve_gender($value, $class_name=null, $patient=null, $facility_id=null)
     {
         $value = trim($value);
         $value = strtolower($value);
@@ -284,6 +298,9 @@ class Copier
         //     return $value;
         // }
         else{
+            $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
+                        ->whereRaw("(gender = 'M' or gender = 'F')")->get()->first();
+            if($row) return self::resolve_gender($row->gender);
             return 3;
         }
     }
