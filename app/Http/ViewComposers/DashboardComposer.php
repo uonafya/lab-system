@@ -188,7 +188,7 @@ class DashboardComposer
                         // ->orWhere('datedispatched', '=', '1970-01-01')
                         // ->orWhereNotNull('datedispatched');
         } else {
-            $model = SampleView::selectRaw('count(*) as rejectfordispatch')
+            $model = SampleView::selectRaw('count(*) as total')
                         ->where('receivedstatus', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
