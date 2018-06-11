@@ -252,10 +252,12 @@ class Copier
         // }
         // return null;
 
+        if(!$class_name) return null;
+
         if((!$years && !$months) || !$datecollected || $datecollected == '0000-00-00'){
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
                         ->where('age', '!=', 0)
-                        ->where('datecollected', '!=', '0000-00-00')
+                        ->whereNotIn('datecollected', ['0000-00-00', ''])
                         ->whereNotNull('datecollected')
                         ->get()->first();
             if($row){
