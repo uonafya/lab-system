@@ -240,10 +240,11 @@ class Copier
         // }
         // return null;
 
-        if(!$class_name) return null;
+        
         $datecollected = self::clean_date($datecollected);
 
         if((!$years && !$months) || !$datecollected || $datecollected == '0000-00-00'){
+            if(!$class_name) return null;
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
                         ->where('age', '!=', 0)
                         ->whereNotIn('datecollected', ['0000-00-00', ''])
