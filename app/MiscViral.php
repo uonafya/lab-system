@@ -421,8 +421,9 @@ class MiscViral extends Common
                     (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$sample->datetested}')")
                     ->get()->first();
 
-            if($sample2->rcategory == 3 || $sample2->rcategory == 4) return true;
-            return false;
+            if(!$sample2 || $sample2->rcategory == 1 || $sample2->rcategory == 2) return false;
+
+            return true;
         }
         else{
             return true;
