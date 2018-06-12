@@ -355,7 +355,8 @@ class MiscViral extends Common
         $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')
             ->where('batch_complete', 1)
             ->whereIn('rcategory', [3, 4])
-            ->where('datereceived', '>', $min_date)
+            // ->where('datereceived', '>', $min_date)
+            ->whereYear('datereceived', date('Y'))
             ->where('repeatt', 0)
             ->whereRaw("patient_id NOT IN (SELECT distinct patient_id from dr_patients)")
             ->get();
@@ -415,6 +416,7 @@ class MiscViral extends Common
         else{
             return true;
         }
+        return false;
     }
     
 }
