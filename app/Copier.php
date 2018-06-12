@@ -21,6 +21,7 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Viralsample;
 
+use App\Lookup;
 use App\Common;
 use App\Misc;
 use App\MiscViral;
@@ -78,6 +79,11 @@ class Copier
                 }
                 $sample->batch_id = $batch->id;
                 $sample->patient_id = $patient->id;
+
+                if($sample->age == 0 && $batch->datecollected && $patient->dob){
+                    $sample->age = Lookup::calculate_age($batch->datecollected, $patient->dob);
+                }
+
                 $sample->save();
             }
             $offset_value += self::$limit;
@@ -136,6 +142,11 @@ class Copier
                 }
                 $sample->batch_id = $batch->id;
                 $sample->patient_id = $patient->id;
+
+                if($sample->age == 0 && $batch->datecollected && $patient->dob){
+                    $sample->age = Lookup::calculate_viralage($batch->datecollected, $patient->dob);
+                }
+
                 $sample->save();
             }
             $offset_value += self::$limit;
@@ -219,29 +230,6 @@ class Copier
     }
 
 
-    public static function calculate_age($date_collected, $dob)
-    {
-    	if(!$dob) return 0;
-        $dob = Carbon::parse( $dob );
-        $dc = Carbon::parse( $date_collected );
-        $months = $dc->diffInMonths($dob);
-        $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
-        $total = $months + ($weeks / 4);
-        if($total == 0) $total = 0.1;
-        return $total;
-    }
-
-    public static function calculate_viralage($date_collected, $dob)
-    {
-    	if(!$dob) return 0;
-        $dob = Carbon::parse( $dob );
-        $dc = Carbon::parse( $date_collected );
-        $years = $dc->diffInYears($dob, true);
-
-        if($years == 0) $years = ($dc->diffInMonths($dob)/12);
-        return $years;
-    }
-
     public static function calculate_dob($datecollected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
     {
         // if(Carbon::createFromFormat('Y-m-d', $date_collected) !== false){            
@@ -253,6 +241,7 @@ class Copier
         // return null;
 
         if(!$class_name) return null;
+        $datecollected = self::clean_date($datecollected);
 
         if((!$years && !$months) || !$datecollected || $datecollected == '0000-00-00'){
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
@@ -261,6 +250,9 @@ class Copier
                         ->whereNotNull('datecollected')
                         ->get()->first();
             if($row){
+                $mydate = self::clean_date($row->datecollected);
+                if(!$mydate) return null;
+
                 if($class_name == "App\OldModels\ViralsampleView"){ 
                     return self::calculate_dob($row->datecollected, $row->age, 0);
                 }
@@ -291,14 +283,7 @@ class Copier
         else if(str_contains($value, ['f', '2'])){
             return 2;
         }
-        // else if($value == 'No Data' || $value == 'no data'){
-        //     return 3;
-        // }
-        // else if (is_numeric($value)){
-        //     $value = (int) $value;
-        //     if($value < 3) return $value;
-        //     return $value;
-        // }
+
         else{
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
                         ->whereRaw("(gender = 'M' or gender = 'F')")->get()->first();
