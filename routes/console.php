@@ -30,8 +30,6 @@ Artisan::command('compute:vl-tat', function(){
 })->describe('Compute Vl Tat.');
 
 
-
-
 Artisan::command('input_complete:eid', function(){
 	$str = \App\Common::input_complete_batches(\App\Batch::class);
     $this->info($str);

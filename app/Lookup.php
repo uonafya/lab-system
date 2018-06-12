@@ -43,6 +43,16 @@ class Lookup
         }
     }
 
+    public static function get_dr()
+    {
+        self::cacher();
+        return [
+            'drug_resistance_reasons' => Cache::get('drug_resistance_reasons'),
+            'dr_primers' => Cache::get('dr_primers'),
+            'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
+        ];
+    }
+
     public static function get_api()
     {
         self::cacher();
@@ -267,7 +277,7 @@ class Lookup
 
 	public static function cacher()
 	{
-        if(Cache::has('worksheet_statuses')){}
+        if(Cache::has('dr_patient_statuses')){}
 
         else{
             // Common Lookup Data
@@ -301,6 +311,11 @@ class Lookup
             $dilutions = DB::table('viraldilutionfactors')->get();
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
+            // Drug Resistance Lookup Data
+            $drug_resistance_reasons = DB::table('drug_resistance_reasons')->get();
+            $dr_primers = DB::table('dr_primers')->get();
+            $dr_patient_statuses = DB::table('dr_patient_statuses')->get();
+
             // Cache::put('facilities', $facilities, 60);
             Cache::put('amrs_locations', $amrs_locations, 60);
             Cache::put('genders', $genders, 60);
@@ -328,6 +343,10 @@ class Lookup
             Cache::put('actions', $actions, 60);
             Cache::put('dilutions', $dilutions, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
+
+            Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
+            Cache::put('dr_primers', $dr_primers, 60);
+            Cache::put('dr_patient_statuses', $dr_patient_statuses, 60);
         }		
 	}
 
@@ -356,6 +375,9 @@ class Lookup
         Cache::forget('actions');
         Cache::forget('dilutions');
         Cache::forget('worksheet_statuses');
+        Cache::forget('drug_resistance_reasons');
+        Cache::forget('dr_primers');
+        Cache::forget('dr_patient_statuses');
     }
 
     public static function refresh_cache()
