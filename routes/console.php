@@ -25,7 +25,7 @@ Artisan::command('generate:dr-list', function(){
 Artisan::command('compute:vl-tat', function(){
     $my = new \App\MiscViral;
     $str = $my->compute_tat(\App\ViralsampleView::class, \App\Viralsample::class);
-    $str .= "Completed vl {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+    $str .= "Completed vl at " . date('d/m/Y h:i:s a', time()). "\n";
     $this->info($str);
 })->describe('Compute Vl Tat.');
 
