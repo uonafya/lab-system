@@ -165,8 +165,6 @@ class Common
 				$tat4 = $tat1 + $tat2 + $tat3;
 				$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
 
-				dd($sample_model);
-
 				if($sample_model == "App\\Viralsample"){
 					$viral_data = [
 						'justification' => $this->set_justification($sample->justification),
@@ -176,6 +174,8 @@ class Common
 					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));					
 				}
 				$sample_model::where('id', $sample->id)->update($data);
+
+				dd($data);
 			}
 	        $offset_value += 1000;
 			echo "Completed clean at {$offset_value} " . date('d/m/Y h:i:s a', time()). "\n";
