@@ -19,28 +19,17 @@ $api->version('v1', function (Router $api) {
             $api->get('me', 'UserController@me');
         });
 
+
         $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
-            $api->get('protected', function() {
-                return response()->json([
-                    'message' => 'Access to protected resources granted! You are seeing this text as you provided the token correctly.'
-                ]);
+
+            $api->get('protected', 'RandomController@protected_route');
+
+            $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
+                $api->get('refresh', 'RandomController@refresh_route');
             });
-
-            $api->get('refresh', [
-                'middleware' => 'jwt.refresh',
-                function() {
-                    return response()->json([
-                        'message' => 'By accessing this endpoint, you can refresh your access token at each request. Check out this response headers!'
-                    ]);
-                }
-            ]);
         });
 
-        $api->get('hello', function() {
-            return response()->json([
-                'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
-            ]);
-        });
+        $api->get('hello', 'RandomController@hello');
 
         $api->post('eid', 'EidController@eid');        
         $api->post('eid_complete', 'EidController@complete_result');  

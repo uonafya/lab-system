@@ -356,6 +356,7 @@ class MiscViral extends Common
             ->where('batch_complete', 1)
             ->whereIn('rcategory', [3, 4])
             ->where('datereceived', '>', $min_date)
+            // ->whereYear('datereceived', date('Y'))
             ->where('repeatt', 0)
             ->whereRaw("patient_id NOT IN (SELECT distinct patient_id from dr_patients)")
             ->get();
@@ -390,13 +391,19 @@ class MiscViral extends Common
 
     public static function get_previous_test($patient_id, $datetested)
     {
-
-        $sql = "SELECT * FROM viralsamples WHERE patient_id={$patient_id} AND datetested=
+        /*$sql = "SELECT * FROM viralsamples WHERE patient_id={$patient_id} AND datetested=
                     (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$datetested}')
         "; 
-        $sample = \DB::select($sql);
 
-        if($sample->rcategory == 1 || $sample->rcategory == 2) return false;
+
+        $sample = \DB::select($sql)->first();*/
+
+        $sample = Viralsample::where('patient_id', $patient_id)
+                    ->whereRaw("datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$datetested}')")
+                    ->get()->first();
+
+        if(!$sample || $sample->rcategory == 1 || $sample->rcategory == 2) return false;
 
         $recent_date = Carbon::parse($datetested);
         $prev_date = Carbon::parse($sample->datetested);
@@ -404,17 +411,24 @@ class MiscViral extends Common
         $months = $recent_date->diffInMonths($prev_date);
         if($months < 3){
 
-            $sql = "SELECT * FROM viralsamples WHERE patient_id={$patient_id} AND datetested=
+            /*$sql = "SELECT * FROM viralsamples WHERE patient_id={$patient_id} AND datetested=
                         (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$sample->datetested}')
             "; 
-            $sample = \DB::select($sql);
+            $sample = \DB::select($sql);*/
 
-            if($sample->rcategory == 3 || $sample->rcategory == 4) return true;
-            return false;
+            $sample2 = Viralsample::where('patient_id', $patient_id)
+                    ->whereRaw("datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$sample->datetested}')")
+                    ->get()->first();
+
+            if(!$sample2 || $sample2->rcategory == 1 || $sample2->rcategory == 2) return false;
+
+            return true;
         }
         else{
             return true;
         }
+        return false;
     }
     
 }
