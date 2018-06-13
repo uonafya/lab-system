@@ -171,7 +171,7 @@ class BatchController extends Controller
 
         $new_batch = new Batch;
         $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
-        $new_batch->id = $batch->id + 0.5;
+        $new_batch->id = (int) $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
@@ -193,7 +193,7 @@ class BatchController extends Controller
         Misc::check_batch($batch->id);
         Misc::check_batch($new_batch->id);
 
-        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch{$new_batch->id}."]);
+        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_batch->id}."]);
         return redirect('batch/' . $new_batch->id);
     }
 

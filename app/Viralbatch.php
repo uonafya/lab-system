@@ -11,6 +11,7 @@ class Viralbatch extends BaseModel
     // protected $withCount = ['sample'];
 
     protected $keyType = 'string';
+    public $incrementing = 'false';
 
     public function tat()
     {
