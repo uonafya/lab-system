@@ -46,7 +46,7 @@
 			<tr>
 				<td colspan="9" align="center">
 
-					<span class="style1"><br>
+					<span><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
 					  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
@@ -54,20 +54,20 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="5" class="comment style1 style4">
+				<td colspan="5">
 					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
 				</td>
-				<td colspan="4" class="comment style1 style4" align="right">
+				<td colspan="4">
 					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="9" class="comment style1 style4">
+				<td colspan="9">
 					<strong>NOTICE:</strong> 
 				</td>
 			</tr>
 			<tr>
-				<td colspan="9" class="comment style1 style4">
+				<td colspan="9">
 					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
 				</td>
 			</tr>
@@ -314,7 +314,8 @@
 			@break
 		@endif
 
-		<div class="page-break"></div>
+
+		<pagebreak sheet-size='A4-L'>
 
 	@endforeach
 

@@ -22,8 +22,7 @@ class ViralworksheetController extends Controller
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
-            ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
-            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+            ->leftJoin('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
             ->where('site_entry', '!=', 2)
             ->when($worksheet_id, function ($query) use ($worksheet_id){

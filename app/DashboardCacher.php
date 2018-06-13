@@ -1,5 +1,11 @@
 <?php
-namespace App\Http\ViewComposers;
+
+namespace App;
+
+use Illuminate\Support\Facades\Cache;
+use DB;
+
+use Carbon\Carbon;
 
 use DB;
 use Illuminate\View\View;
@@ -11,39 +17,11 @@ use App\ViralsampleView;
 use App\Worksheet;
 use App\Viralworksheet;
 
-/**
-* 
-*/
-class DashboardComposer
+class DashboardCacher
 {
-	
-	public $DashboardData = [];
-	public $tasks = [];
-    public $user = [];
-	function __construct()
-	{
-		$this->DashboardData['pendingSamples'] = self::pendingSamplesAwaitingTesting();
-        $this->DashboardData['pendingSamplesOverTen'] = self::pendingSamplesAwaitingTesting(true);
-		$this->DashboardData['batchesForApproval'] = self::siteBatchesAwaitingApproval();
-        $this->DashboardData['batchesNotReceived'] = self::batchesMarkedNotReceived();
-		$this->DashboardData['batchesForDispatch'] = self::batchCompleteAwaitingDispatch();
-		$this->DashboardData['samplesForRepeat'] = self::samplesAwaitingRepeat();
-		$this->DashboardData['rejectedForDispatch'] = self::rejectedSamplesAwaitingDispatch();
-        $this->DashboardData['resultsForUpdate'] = self::resultsAwaitingpdate();
-	}
 
-	/**
-     * Bind data to the view.
-     *
-     * @param  View  $view
-     * @return void
-     */
-    public function compose(View $view)
-    {
-        // dd($this->DashboardData);
-        $view->with('widgets',$this->DashboardData);
 
-    }
+
 
     public function tasks(View $view)
     {
@@ -61,22 +39,6 @@ class DashboardComposer
     												->get()->first()->total;
     	
     	$view->with('tasks', $this->tasks);
-    }
-
-	public function sidenav(View $view)
-	{
-		
-	}
-
-    public function users(View $view)
-    {
-        if(!empty(auth()->user()->facility_id)) {
-            foreach(Facility::where('id', auth()->user()->facility_id)->get() as $key => $value) {
-                $this->user = $value;
-            }
-        }
-        
-        $view->with('user', $this->user);
     }
 
 	public function pendingSamplesAwaitingTesting($over = false)
@@ -223,6 +185,28 @@ class DashboardComposer
 
         return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
     }
-}
 
-?>
+    public function cacher()
+    {
+		$pendingSamples = self::pendingSamplesAwaitingTesting();
+        $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
+		$batchesForApproval = self::siteBatchesAwaitingApproval();
+        $batchesNotReceived = self::batchesMarkedNotReceived();
+		$batchesForDispatch = self::batchCompleteAwaitingDispatch();
+		$samplesForRepeat = self::samplesAwaitingRepeat();
+		$rejectedForDispatch = self::rejectedSamplesAwaitingDispatch();
+        $resultsForUpdate = self::resultsAwaitingpdate();
+
+        
+        Cache::put('amrs_locations', $amrs_locations, 60);
+
+    }
+
+
+    public static function refresh_cache()
+    {
+        self::clear_cache();
+        self::cacher();
+    }
+
+}
