@@ -116,7 +116,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('downloads/{type}', 'HomeController@download')->name('downloads');
 
 	Route::resource('district', 'DistrictController');
-	Route::resource('drug-resistance', 'DrPatient');
+	Route::resource('dr', 'DrPatient');
 
 	Route::get('facility/served', 'FacilityController@served');
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
