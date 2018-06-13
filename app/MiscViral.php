@@ -168,6 +168,7 @@ class MiscViral extends Common
                     return $query->where('result', '!=', 'Failed')
                     ->where('result', '!=', 'Collect New Sample')
                     ->where('result', '!=', '< LDL copies/ml')
+                    ->where('result', '!=', '')
                     ->whereNotNull('result');
                 }
                 else if ($result == 3) {
