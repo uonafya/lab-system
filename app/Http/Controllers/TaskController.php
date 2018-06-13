@@ -426,7 +426,7 @@ class TaskController extends Controller
             
         }
         $data = DB::table('lab_equipment_mapping')->where('lab', '=', Auth()->user()->lab_id)->get();
-
+        // dd($data);
         return view('tasks.equipmentlog', compact('data'))->with('pageTitle', 'Lab Equipment Log::'.date("F", mktime(null, null, null, $month)).', '.date('Y'));
     }
 
