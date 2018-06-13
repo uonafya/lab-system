@@ -23,23 +23,23 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
 		]);
 
-		$old_users = DB::connection('old')->table('users')->get();
+		// $old_users = DB::connection('old')->table('users')->get();
 
-		foreach ($old_users as $old_user) {
-			$user = new User;
-			$user->id = $old_user->ID;
-			$user->user_type_id = $old_user->account;
-			$user->lab_id = $old_user->lab;
-			$user->surname = $old_user->surname;
-			$user->oname = $old_user->oname;
-			$user->email = $old_user->email;
+		// foreach ($old_users as $old_user) {
+		// 	$user = new User;
+		// 	$user->id = $old_user->ID;
+		// 	$user->user_type_id = $old_user->account;
+		// 	$user->lab_id = $old_user->lab;
+		// 	$user->surname = $old_user->surname;
+		// 	$user->oname = $old_user->oname;
+		// 	$user->email = $old_user->email;
 
-			$existing = User::where('email', $old_user->email)->get()->first();
-			if($existing) $user->email = rand(1, 20) . $user->email;
+		// 	$existing = User::where('email', $old_user->email)->get()->first();
+		// 	if($existing) $user->email = rand(1, 20) . $user->email;
 
-			$user->password = '12345678';
-			$user->save();
-		}
+		// 	$user->password = '12345678';
+		// 	$user->save();
+		// }
 
 
 
