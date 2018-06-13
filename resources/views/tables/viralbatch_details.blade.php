@@ -75,7 +75,7 @@
                         @endif                        
                     </div>
                     <div class="row">
-                        <div class="pull-right">
+                        <div class="col-md-4 pull-right">
                             <button class="btn btn-primary">Transfer</button>
                         </div>
                     </div>
