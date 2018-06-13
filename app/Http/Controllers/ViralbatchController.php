@@ -187,18 +187,18 @@ class ViralbatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
-            // if($sample->parentid) continue;
-            // if($sample->result) continue;
+            if($sample->parentid) continue;
+            if($sample->result) continue;
             $sample->batch_id = $new_id;
             $sample->pre_update();
             $count++;
         }
 
         MiscViral::check_batch($batch->id);
-        MiscViral::check_batch($new_batch->id);
+        MiscViral::check_batch($new_id);
 
-        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_batch->id}."]);
-        return redirect('viralbatch/' . $new_batch->id);
+        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        return redirect('viralbatch/' . $new_id);
     }
 
     /**
