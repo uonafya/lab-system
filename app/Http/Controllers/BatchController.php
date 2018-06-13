@@ -194,7 +194,7 @@ class BatchController extends Controller
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
 
-        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_batch->id}."]);
+        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
         return redirect('batch/' . $new_batch->id);
     }
 
