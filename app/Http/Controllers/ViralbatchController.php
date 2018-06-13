@@ -186,8 +186,8 @@ class ViralbatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
-            if($sample->parentid) continue;
-            if($sample->result) continue;
+            // if($sample->parentid) continue;
+            // if($sample->result) continue;
             $sample->batch_id = $new_batch->id;
             $sample->pre_update();
             $count++;
