@@ -76,9 +76,10 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 pull-right">
-                            <button class="btn btn-primary">Transfer</button>
+                            <button class="btn btn-primary">Transfer Samples To Another Batch</button>
                         </div>
                     </div>
+                    <br />
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
