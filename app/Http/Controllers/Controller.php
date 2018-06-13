@@ -18,6 +18,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    // public function __construct() {
+    //     // parent::__construct();
+    //     // dd(session('pendingTasks')); 
+    //     if (session('pendingTasks'))
+    //         return redirect('pending');
+    // }
+
     public function _columnBuilder($columns = null)
     {
         $column = '<tr>';

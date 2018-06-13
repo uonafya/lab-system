@@ -811,7 +811,7 @@ CREATE TABLE `dr_primers` (
 DROP TABLE IF EXISTS `lab_equipment_mapping`;
 
 CREATE TABLE IF NOT EXISTS `lab_equipment_mapping` (
-  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `type` int(10) DEFAULT '0' COMMENT '1=roche 2-abbott 3-c8800 4-panther',
   `name` varchar(50) DEFAULT NULL,
   `serialno` varchar(10) DEFAULT NULL,
