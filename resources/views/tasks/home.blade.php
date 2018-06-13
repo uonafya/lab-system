@@ -44,7 +44,7 @@
                                 </font>
                             </p>
                         </div>
-                    @elseif ($data->submittedkits == 1)
+                    @elseif ($data->submittedkits == 1)  
                         @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)))
                             <div class="alert alert-success spacing bottom">
                                 <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Consumption Report Submitted</a></strong>
