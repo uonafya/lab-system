@@ -277,7 +277,7 @@ class Lookup
 
 	public static function cacher()
 	{
-        if(Cache::has('dr_patient_statuses')){}
+        if(Cache::has('amrslocations')){}
 
         else{
             // Common Lookup Data

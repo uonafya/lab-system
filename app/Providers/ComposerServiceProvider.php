@@ -21,9 +21,9 @@ class ComposerServiceProvider extends ServiceProvider
             'home', 'App\Http\ViewComposers\DashboardComposer@tasks'
         );
 
-        view()->composer(
-            'layouts.master', 'App\Http\ViewComposers\DashboardComposer@users'
-        );
+        // view()->composer(
+        //     'layouts.master', 'App\Http\ViewComposers\DashboardComposer@users'
+        // );
     }
 
     /**

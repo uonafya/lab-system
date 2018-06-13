@@ -1,11 +1,8 @@
 <?php
+namespace App\Http\ViewComposers;
 
-namespace App;
-
-use Illuminate\Support\Facades\Cache;
-use Illuminate\View\View;
 use DB;
-
+use Illuminate\View\View;
 use App\Batch;
 use App\Viralbatch;
 use App\Facility;
@@ -14,77 +11,75 @@ use App\ViralsampleView;
 use App\Worksheet;
 use App\Viralworksheet;
 
-class DashboardCacher
+/**
+* 
+*/
+class DashboardComposerOld
 {
+	
+	public $DashboardData = [];
+	public $tasks = [];
+    public $user = [];
+	function __construct()
+	{
+		$this->DashboardData['pendingSamples'] = self::pendingSamplesAwaitingTesting();
+        $this->DashboardData['pendingSamplesOverTen'] = self::pendingSamplesAwaitingTesting(true);
+		$this->DashboardData['batchesForApproval'] = self::siteBatchesAwaitingApproval();
+        $this->DashboardData['batchesNotReceived'] = self::batchesMarkedNotReceived();
+		$this->DashboardData['batchesForDispatch'] = self::batchCompleteAwaitingDispatch();
+		$this->DashboardData['samplesForRepeat'] = self::samplesAwaitingRepeat();
+		$this->DashboardData['rejectedForDispatch'] = self::rejectedSamplesAwaitingDispatch();
+        $this->DashboardData['resultsForUpdate'] = self::resultsAwaitingpdate();
+	}
 
-
-
-
-    public static function tasks()
+	/**
+     * Bind data to the view.
+     *
+     * @param  View  $view
+     * @return void
+     */
+    public function compose(View $view)
     {
-    	self::tasks_cacher();
+        // dd($this->DashboardData);
+        $view->with('widgets',$this->DashboardData);
 
-    	return [
-    		'labname' => Cache::get('labname'),
-    		'facilityServed' => Cache::get('facilityServed'),
-    		'facilitiesWithoutEmails' => Cache::get('facilitiesWithoutEmails'),
-    		'facilitiesWithoutG4s' => Cache::get('facilitiesWithoutG4s'),
-    	];
     }
 
-    public static function tasks_cacher()
+    public function tasks(View $view)
     {
-    	if(Cache::has('labname')) return true;
-
-    	$minutes = 15;
-    	$min_year = date('Y') - 2;
-    	$lab_id = env('APP_LAB');
-    	$labname =  \App\Lab::find(env('APP_LAB'))->name;
-
-    	$facilityServed = Viralbatch::selectRaw("COUNT(DISTINCT facility_id) AS total")
-    						->whereIn('site_entry', [1, 2])
-    						->where('lab_id', $lab_id)
-    						->whereYear('datereceived', '>', $min_year)
-    						->get()->first()->total;
-
-    	$facilitiesWithoutEmails = Facility::selectRaw('COUNT(*) as total')
-    		->whereRaw("( (email = '' or email is null) AND (ContactEmail = '' or ContactEmail is null) )")
-    		->whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")
-    		->get()->first()->total;
-
-    	$facilitiesWithoutG4s = Facility::selectRaw('COUNT(*) as total')
-    		->whereRaw("(G4Sbranchname is null or G4Sbranchname = '')")
-    		->whereRaw("(G4Slocation is null or G4Slocation = '')")
-    		->whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")
-    		->get()->first()->total;
-
-
-
-        Cache::put('labname', $labname, $minutes);
-        Cache::put('facilityServed', $facilityServed, $minutes);
-        Cache::put('facilitiesWithoutEmails', $facilitiesWithoutEmails, $minutes);
-        Cache::put('facilitiesWithoutG4s', $facilitiesWithoutG4s, $minutes);
+    	$this->tasks['labname'] = DB::table('labs')->select('name')->where('id', '=', Auth()->user()->lab_id)->get();
+    	$this->tasks['facilityServed'] = Facility::selectRaw('COUNT(*) as total')->where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->get()->first()->total;
+    	$this->tasks['facilitieswithSmsPrinters'] = Facility::selectRaw('COUNT(*) as total')->where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)->where('smsprinter', '<>', '')->get()->first()->total;
+    	$this->tasks['facilitiesWithoutEmails'] = Facility::selectRaw('COUNT(*) as total')
+                                                ->where('Flag', '=', 1)
+    											->where('lab', '=', Auth()->user()->lab_id)
+    											->whereRaw("((email = '' and ContactEmail ='') or (email = '' and ContactEmail is null) or (email is null and ContactEmail ='') or ((email is null and ContactEmail is null)))")
+    											->get()->first()->total;
+    	$this->tasks['facilitiesWithoutG4s'] = Facility::selectRaw('COUNT(*) as total')
+                                                    ->where('Flag', '=', 1)->where('lab', '=', Auth()->user()->lab_id)
+    												->where('G4Sbranchname', '=', '')->where('G4Slocation', '=', '')
+    												->get()->first()->total;
+    	
+    	$view->with('tasks', $this->tasks);
     }
 
-    public static function dashboard()
-    {
-    	self::cacher();
+	public function sidenav(View $view)
+	{
+		
+	}
 
-    	return [
-    		'pendingSamples' => Cache::get('pendingSamples'),
-    		'pendingSamplesOverTen' => Cache::get('pendingSamplesOverTen'),
-    		'batchesForApproval' => Cache::get('batchesForApproval'),
-    		'batchesNotReceived' => Cache::get('batchesNotReceived'),
-    		'batchesForDispatch' => Cache::get('batchesForDispatch'),
-    		'samplesForRepeat' => Cache::get('samplesForRepeat'),
-    		'rejectedForDispatch' => Cache::get('rejectedForDispatch'),
-    		'resultsForUpdate' => Cache::get('resultsForUpdate'),
-    	];
+    public function users(View $view)
+    {
+        if(!empty(auth()->user()->facility_id)) {
+            foreach(Facility::where('id', auth()->user()->facility_id)->get() as $key => $value) {
+                $this->user = $value;
+            }
+        }
+        
+        $view->with('user', $this->user);
     }
 
-
-
-	public static function pendingSamplesAwaitingTesting($over = false)
+	public function pendingSamplesAwaitingTesting($over = false)
 	{
         if (session('testingSystem') == 'Viralload') {
             if ($over == true) {
@@ -122,7 +117,7 @@ class DashboardCacher
         return $model;
 	}
 
-	public static function siteBatchesAwaitingApproval()
+	public function siteBatchesAwaitingApproval()
 	{
         if (session('testingSystem') == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(id) as total')
@@ -142,7 +137,7 @@ class DashboardCacher
         return $model->get()->first()->total ?? 0;
 	}
 
-	public static function batchCompleteAwaitingDispatch()
+	public function batchCompleteAwaitingDispatch()
 	{
         if (session('testingSystem') == 'Viralload') {
             $model = Viralbatch::class;
@@ -152,7 +147,7 @@ class DashboardCacher
         return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', Auth()->user()->lab_id)->where('batch_complete', '=', '2')->get()->first()->total;
 	}
 
-	public static function samplesAwaitingRepeat()
+	public function samplesAwaitingRepeat()
 	{
         if(session('testingSystem') == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(*) as total')
@@ -179,7 +174,7 @@ class DashboardCacher
 		return $model->get()->first()->total;
 	}
 
-	public static function rejectedSamplesAwaitingDispatch()
+	public function rejectedSamplesAwaitingDispatch()
 	{
         $year = Date('Y')-3;
         if (session('testingSystem') == 'Viralload') {
@@ -204,7 +199,7 @@ class DashboardCacher
 		return $model->get()->first()->total ?? 0;
 	}
 
-    public static function batchesMarkedNotReceived()
+    public function batchesMarkedNotReceived()
     {
         $model = 0;
         if (session('testingSystem') == 'Viralload') {
@@ -218,7 +213,7 @@ class DashboardCacher
         return $model->total ?? 0;
     }
 
-    public static function resultsAwaitingpdate()
+    public function resultsAwaitingpdate()
     {
         if (session('testingSystem') == 'Viralload') {
             $model = Viralworksheet::with(['creator']);
@@ -228,50 +223,6 @@ class DashboardCacher
 
         return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
     }
-
-    public static function cacher()
-    {
-    	if(Cache::has('pendingSamples')) return true;
-
-    	$minutes = 5;
-
-		$pendingSamples = self::pendingSamplesAwaitingTesting();
-        $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
-		$batchesForApproval = self::siteBatchesAwaitingApproval();
-        $batchesNotReceived = self::batchesMarkedNotReceived();
-		$batchesForDispatch = self::batchCompleteAwaitingDispatch();
-		$samplesForRepeat = self::samplesAwaitingRepeat();
-		$rejectedForDispatch = self::rejectedSamplesAwaitingDispatch();
-        $resultsForUpdate = self::resultsAwaitingpdate();
-
-        
-        Cache::put('pendingSamples', $pendingSamples, $minutes);
-        Cache::put('pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
-        Cache::put('batchesForApproval', $batchesForApproval, $minutes);
-        Cache::put('batchesNotReceived', $batchesNotReceived, $minutes);
-        Cache::put('batchesForDispatch', $batchesForDispatch, $minutes);
-        Cache::put('samplesForRepeat', $samplesForRepeat, $minutes);
-        Cache::put('rejectedForDispatch', $rejectedForDispatch, $minutes);
-        Cache::put('resultsForUpdate', $resultsForUpdate, $minutes);
-    }
-
-    public static function clear_cache()
-    {
-    	Cache::forget('pendingSamples');
-    	Cache::forget('pendingSamplesOverTen');
-    	Cache::forget('batchesForApproval');
-    	Cache::forget('batchesNotReceived');
-    	Cache::forget('batchesForDispatch');
-    	Cache::forget('samplesForRepeat');
-    	Cache::forget('rejectedForDispatch');
-    	Cache::forget('resultsForUpdate');
-    }
-
-
-    public static function refresh_cache()
-    {
-        self::clear_cache();
-        self::cacher();
-    }
-
 }
+
+?>
