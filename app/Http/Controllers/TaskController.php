@@ -43,6 +43,7 @@ class TaskController extends Controller
                             ['name'=>"1000 uL Eppendorf (Tecan) Disposable Tips (for 1000 tests)", 'alias'=>'1000disposable','factor'=>['EID'=>(2*(421/192)),'VL'=>(841/192)]],
                             ['name'=>"200 ML Eppendorf (Tecan) Disposable Tips", 'alias'=>'200disposable','factor'=>['EID'=>(2*(48/192)),'VL'=>(96/192)]]
                         ];
+
     public function index() 
     {
         $tasks = $this->pendingTasks();
