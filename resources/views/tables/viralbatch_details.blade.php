@@ -18,7 +18,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                         <div class="col-md-4">
+                        <div class="col-md-4">
                             <p><strong>Batch:</strong> {{ $batch->id  ?? '' }}</p>
                         </div>
                         <div class="col-md-8">
@@ -73,6 +73,11 @@
                                 <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
                             </div>
                         @endif                        
+                    </div>
+                    <div class="row">
+                        <div class="pull-right">
+                            <button class="btn btn-primary">Transfer</button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" >
