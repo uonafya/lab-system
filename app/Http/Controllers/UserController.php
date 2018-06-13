@@ -45,7 +45,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $accounts = UserType::whereNull('deleted_at')->get();
+        $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
 
         return view('forms.users', compact('accounts'))->with('pageTitle', 'Add User');
     }
