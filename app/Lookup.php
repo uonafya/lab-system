@@ -271,7 +271,7 @@ class Lookup
 
         else{
             // Common Lookup Data
-            $facilities = DB::table('facilitys')->select('id', 'name', 'facilitycode')->get();
+            // $facilities = DB::table('facilitys')->select('id', 'name', 'facilitycode')->get();
             $amrs_locations = DB::table('amrslocations')->get();
             $genders = DB::table('gender')->where('id', '<', 3)->get();
             $received_statuses = DB::table('receivedstatus')->where('id', '<', 3)->get();
@@ -301,7 +301,7 @@ class Lookup
             $dilutions = DB::table('viraldilutionfactors')->get();
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
-            Cache::put('facilities', $facilities, 60);
+            // Cache::put('facilities', $facilities, 60);
             Cache::put('amrs_locations', $amrs_locations, 60);
             Cache::put('genders', $genders, 60);
             Cache::put('received_statuses', $received_statuses, 60);
@@ -333,7 +333,7 @@ class Lookup
 
     public static function clear_cache()
     {
-        Cache::forget('facilities');
+        // Cache::forget('facilities');
         Cache::forget('amrs_locations');
         Cache::forget('genders');
         Cache::forget('received_statuses');

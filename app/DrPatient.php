@@ -2,9 +2,14 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class DrPatient extends Model
+class DrPatient extends BaseModel
 {
     //
+
+    public function batch()
+    {
+        return $this->belongsTo('App\Batch');
+    }
 }

@@ -862,6 +862,8 @@
 
         $(".date").datepicker({
             todayBtn: "linked",
+            forceParse: true,
+            autoclose: true,
             format: "yyyy-mm-dd"
         });
 

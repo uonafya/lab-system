@@ -48,7 +48,7 @@
                         <tr>
                             <th>
                                 {{ $equipment->name }}
-                                <input type="hidden" value="{{ $equipment->ID }}" name="equipmentid[]">
+                                <input type="hidden" value="{{ $equipment->id }}" name="equipmentid[]">
                             </th>
                             <th>
                                 {{ $equipment->serialno }}
@@ -128,6 +128,8 @@
 
         $(".date").datepicker({
             todayBtn: "linked",
+            forceParse: true,
+            autoclose: true,
             format: "yyyy-mm-dd"
         });
 

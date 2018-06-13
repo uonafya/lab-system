@@ -4,19 +4,33 @@
 <head>
 
 	<style type="text/css">
+		body {
+			font-weight: 1px;
+		}
+
 		table {
 			border-collapse: collapse;
+			margin-bottom: .5em;
 		}
 
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
+     		font-size: 10px;
 		}
 
-		.page-break {
-			page-break-after: always;
+		h5 {
+			margin-top: 6px;
+		    margin-bottom: 6px;
 		}
 
+		p {
+			margin-top: 2px;
+     		font-size: 8px;
+		}
+		* {
+			font-size: 8px;
+		}
 	</style>
 </head>
 <body>
@@ -24,6 +38,11 @@
 	@foreach($batches as $batch)
 
 		<table border="0" id='table1' align="center">
+			<tr>
+				<td colspan="9" align="center">
+					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
+				</td>
+			</tr>
 			<tr>
 				<td colspan="9" align="center">
 
@@ -39,7 +58,7 @@
 					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>LAB: {{ $batch->lab->name }}</strong>
+					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			<tr>
@@ -63,7 +82,7 @@
 			<tr>
 				<td>Facility Name: {{ $batch->facility->name }} </td>
 				<td>Contact: {{ $batch->facility->contactperson }} </td>
-				<td>Tel(personal): {{ $batch->facility->contacttelephone }} </td>
+				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
 				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress }}</td>
@@ -77,7 +96,7 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan="17" style="text-align: center;"><b>SAMPLE LOG</b></td>
+				<td colspan="17" style="text-align: center;"><b>SAMPLE LOG </b></td>
 			</tr>
 			<tr>
 				<td colspan="5"><b> Patient Information</b></td>
@@ -86,23 +105,23 @@
 				<td colspan="4"><b>Lab Information</b></td>
 			</tr>
 			<tr>
-				<td>No</td>
-				<td>Patient ID</td>
-				<td>Sex</td>
-				<td>Age (mths)</td>
-				<td>Prophylaxis</td>
-				<td>Date Collected</td>
-				<td>Date Received</td>
-				<td>Status</td>
-				<td>Test Type</td>
-				<td>HIV Status</td>
-				<td>PMTCT</td>
-				<td>Feeding</td>
-				<td>Entry Point</td>
-				<td>Date Tested</td>
-				<td>Date Dispatched</td>
-				<td>Test Result</td>
-				<td>TAT</td>
+				<td><b> No</b></td>
+				<td><b> Patient ID</b></td>
+				<td><b> Sex</b></td>
+				<td><b> Age (mths)</b></td>
+				<td><b> Prophylaxis</b></td>
+				<td><b> Date Collected</b></td>
+				<td><b> Date Received</b></td>
+				<td><b> Status</b></td>
+				<td><b> Test Type</b></td>
+				<td><b> HIV Status</b></td>
+				<td><b> PMTCT</b></td>
+				<td><b> Feeding</b></td>
+				<td><b> Entry Point</b></td>
+				<td><b> Date Tested</b></td>
+				<td><b> Date Dispatched</b></td>
+				<td><b> Test Result</b></td>
+				<td><b> TAT</b></td>
 			</tr>
 
 			@foreach($batch->sample as $key => $sample)
@@ -169,19 +188,19 @@
 		@isset($rejection)
 			<table>
 				<tr>
-					<td colspan="10">REJECTED SAMPLE(s)</td>
+					<td colspan="10" style="text-align: center;"><b> REJECTED SAMPLE(s)</b></td>
 				</tr>
 				<tr>
-					<td>No</td>
-					<td>Patient ID</td>
-					<td>Sex</td>
-					<td>Age (mths)</td>
-					<td>Prophylaxis</td>
-					<td>Date Collected</td>
-					<td>Date Received</td>
-					<td>Status</td>
-					<td>Rejected Reason</td>
-					<td>Date Dispatched</td>			
+					<td><b> No</b></td>
+					<td><b> Patient ID</b></td>
+					<td><b> Sex</b></td>
+					<td><b> Age (mths)</b></td>
+					<td><b> Prophylaxis</b></td>
+					<td><b> Date Collected</b></td>
+					<td><b> Date Received</b></td>
+					<td><b> Status</b></td>
+					<td><b> Rejected Reason</b></td>
+					<td><b> Date Dispatched</b></td>			
 				</tr>
 
 				@foreach($batch->sample as $key => $sample)

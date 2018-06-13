@@ -103,8 +103,11 @@ class LoginController extends Controller
 
     private function set_session($facility = false)
     {
+        $user = auth()->user();
+        $user->set_last_access();
+
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
-        if (Auth()->user()->user_type_id == 1)
+        if (auth()->user()->user_type_id == 1)
         {
             $tasks = $this->pendingTasks();
             // dd($tasks);

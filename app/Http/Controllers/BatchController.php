@@ -9,7 +9,8 @@ use App\Misc;
 use App\Common;
 use App\Lookup;
 
-use DOMPDF;
+// use DOMPDF;
+use Mpdf\Mpdf;
 
 
 use App\Mail\EidDispatch;
@@ -146,6 +147,18 @@ class BatchController extends Controller
         return view('tables.batch_details', $data)->with('pageTitle', 'Batches');
     }
 
+    public function transfer(Batch $batch)
+    {
+        $samples = $batch->sample;
+        $samples->load(['patient.mother']);
+        $batch->load(['view_facility', 'receiver', 'creator.facility']);
+        $data = Lookup::get_lookups();
+        $data['batch'] = $batch;
+        $data['samples'] = $samples;
+
+        return view('tables.transfer_batch_samples', $data)->with('pageTitle', 'Transfer Samples');
+    }
+
     public function transfer_to_new_batch(Request $request, Batch $batch)
     {
         $sample_ids = $request->input('samples');
@@ -157,8 +170,8 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_batch->fill($batch->except(['created_at', 'update_at', 'synched', 'batch_full']));
-        $new_batch->id += 0.5;
+        $new_batch->fill($batch->replicate(['synched', 'batch_full']));
+        $new_batch->id = $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
@@ -446,8 +459,14 @@ class BatchController extends Controller
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
         $data['batches'] = [$batch];
-        $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        $mpdf = new Mpdf(['format' => 'A4-L']);
+        $view_data = view('exports.mpdf_samples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+
+        // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function summaries(Request $request)
@@ -464,8 +483,14 @@ class BatchController extends Controller
 
         $data = Lookup::get_lookups();
         $data['batches'] = $batches;
-        $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        $mpdf = new Mpdf(['format' => 'A4-L']);
+        $view_data = view('exports.mpdf_samples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+        
+        // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function email(Batch $batch)

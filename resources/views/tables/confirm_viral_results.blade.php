@@ -23,10 +23,11 @@
                 <div class="panel-body">                    
 
                     @if($worksheet->machine_type == 1)
-                        @include('shared/other-header-partial')
+                        @include('shared/viral-other-header-partial')
                     @else
                         @include('shared/viral-abbot-header-partial')
                     @endif
+
 
                 </div>
             </div>

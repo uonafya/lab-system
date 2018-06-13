@@ -5,7 +5,7 @@ namespace App\Mail;
 use App\Batch;
 use App\Lookup;
 
-use DOMPDF;
+use Mpdf\Mpdf;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -44,13 +44,21 @@ class EidDispatch extends Mailable implements ShouldQueue
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);
 
+        $mpdf = new Mpdf;
         $data = Lookup::get_lookups();
         $data = array_merge($data, ['batch' => $batch, 'samples' => $samples]);
-        DOMPDF::loadView('exports.samples', $data)->setPaper('a4', 'potrait')->save($this->individual_path);
+        $view_data = view('exports.samples', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
 
+
+        $mpdf = new Mpdf(['format' => 'A4-L']);
         $data = Lookup::get_lookups();
         $data = array_merge($data, ['batches' => [$batch]]);
-        DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);
+        $view_data = view('exports.mpdf_samples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($this->summary_path, \Mpdf\Output\Destination::FILE);
+        // DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class DrSuggestion extends Model
+class DrSuggestion extends BaseModel
 {
     //
 }

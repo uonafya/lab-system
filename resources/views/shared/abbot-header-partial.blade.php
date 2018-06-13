@@ -30,7 +30,7 @@
 <table  class="table table-striped table-bordered table-hover">
 
 	<tr class="odd">
-		<td colspan="3"><strong>WorkSheet Details</strong>	</td>
+		<td colspan="3"><strong>Worksheet Details</strong>	</td>
 		<td colspan="2"><strong>Extraction Reagent</strong>	</td>
 		<td colspan="3"><strong>Amplification Reagent</strong></td>
 	</tr>

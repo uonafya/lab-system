@@ -36,7 +36,7 @@ class DashboardController extends Controller
             
             $data[$value] = ($currentTestingSystem == 'Viralload') ? 
                             DB::table('viralsamples')
-                                ->select(DB::RAW("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value"))
+                                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
                                 ->when($value, function($query) use ($value){
                                     if ($value == 'received') {
                                         return $query->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id');
@@ -54,11 +54,11 @@ class DashboardController extends Controller
                                     }                
                                 })
                                 ->where('repeatt', '=', 0)
-                                ->whereRaw("YEAR(".$table.") = ".Date('Y'))
+                                ->whereYear($table, date('Y'))
                                 ->groupBy('month', 'monthname')->get() 
                             :
                             DB::table('samples')
-                                ->select(DB::RAW("MONTH(`datetested`) as `month`,MONTHNAME(`datetested`) as `monthname`,count(*) as $value"))
+                                ->selectRaw("MONTH(`datetested`) as `month`,MONTHNAME(`datetested`) as `monthname`,count(*) as $value")
                                 ->when($value, function($query) use ($value){
                                     if($value == 'tests'){
                                         return $query->whereRaw('result between 1 and 7');
@@ -72,7 +72,7 @@ class DashboardController extends Controller
                                 })
                                 ->where('repeatt', '=', 0)
                                 ->where('parentid', '=', 0)
-                                ->whereRaw('YEAR(datetested) = '.Date('Y'))
+                                ->whereYear($table, date('Y'))
                                 ->groupBy('month', 'monthname')->get();
         }
         

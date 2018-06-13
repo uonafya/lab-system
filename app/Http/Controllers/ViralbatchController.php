@@ -8,8 +8,8 @@ use App\Viralsample;
 use App\MiscViral;
 use App\Lookup;
 
-use DB;
-use DOMPDF;
+// use DOMPDF;
+use Mpdf\Mpdf;
 
 use App\Mail\VlDispatch;
 use Illuminate\Support\Facades\Mail;
@@ -150,6 +150,18 @@ class ViralbatchController extends Controller
         return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }
 
+    public function transfer(Viralbatch $viralbatch)
+    {
+        $viralsamples = $viralbatch->sample;
+        $viralsamples->load(['patient']);
+        $viralbatch->load(['view_facility', 'receiver', 'creator.facility']);
+        $data = Lookup::get_viral_lookups();
+        $data['batch'] = $viralbatch;
+        $data['samples'] = $viralsamples;
+
+        return view('tables.transfer_viralbatch_samples', $data)->with('pageTitle', 'Transfer Samples');
+    }
+
     public function transfer_to_new_batch(Request $request, Viralbatch $batch)
     {
         $sample_ids = $request->input('samples');
@@ -161,8 +173,8 @@ class ViralbatchController extends Controller
         }
 
         $new_batch = new Viralbatch;
-        $new_batch->fill($batch->except(['created_at', 'update_at', 'synched', 'batch_full']));
-        $new_batch->id += 0.5;
+        $new_batch->fill($batch->replicate(['synched', 'batch_full']));
+        $new_batch->id = $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
@@ -525,13 +537,20 @@ class ViralbatchController extends Controller
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_viral_lookups();
         $data['batches'] = [$batch];
-        // dd($data);
-        return view('exports.viralsamples_summary', $data)->with('pageTitle', 'Individual Batches');
+
+        $mpdf = new Mpdf(['format' => 'A4-L']);
+        $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+
+
+
         $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('summary.pdf');
     }
 
-    public function batches_summary(Request $request)
+    public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
         $batches = Viralbatch::whereIn('id', $batch_ids)->with(['sample.patient', 'facility', 'lab', 'receiver', 'creator'])->get();
@@ -545,8 +564,14 @@ class ViralbatchController extends Controller
         
         $data = Lookup::get_viral_lookups();
         $data['batches'] = $batches;
-        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        $mpdf = new Mpdf(['format' => 'A4-L']);
+        $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+        
+        // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function email(Viralbatch $batch)

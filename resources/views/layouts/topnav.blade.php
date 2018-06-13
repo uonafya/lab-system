@@ -177,65 +177,63 @@
                         <a href="{{ url('facility') }}">Facilities</a>
                     </li>
             @else
-                @if(!Session('pendingTasks'))
-                    <li class="">
-                        <a class="label-menu-corner" href="{{ url('home') }}">
-                        <i class="pe-7s-home" style="font-size: 25px;"></i>
-                            <span class="label label-danger">
-                            @if(session('testingSystem') == 'Viralload')
-                                {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
-                            @else
-                                {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
-                            @endif
-                            </span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="
-                            @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralbatch') }}
-                            @else
-                                {{ url('batch') }}
-                            @endif">Samples</a>
-                    </li>
-                    
-                    @if(session('testingSystem') != 'Viralload')
-                    <li class="">
-                        <a href="#">Requisitions</a>
-                    </li>
-                    @endif
-                    
-                    <li class="">
-                        <a href="
-                            @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralworksheet') }}
-                            @else
-                                {{ url('worksheet') }}
-                            @endif">Worksheets</a>
-                    </li>
-                    <li class="">
-                        <a href="
-                            @if(session('testingSystem') == 'Viralload')
-                                {{ url('viralbatch/index/1') }}
-                            @else
-                                {{ url('batch/index/1') }}
-                            @endif">Dispatched Results</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('facility') }}">Facilities</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ route('reports') }}">Reports</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
-                    
-                    @if(session('testingSystem') != 'Viralload')
-                    <li class="">
-                        <a href="#">Kits</a>
-                    </li>
-                    @endif
+                <li class="">
+                    <a class="label-menu-corner" href="{{ url('home') }}">
+                    <i class="pe-7s-home" style="font-size: 25px;"></i>
+                        <span class="label label-danger">
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                        @else
+                            {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                        @endif
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralbatch') }}
+                        @else
+                            {{ url('batch') }}
+                        @endif">Samples</a>
+                </li>
+                
+                @if(session('testingSystem') != 'Viralload')
+                <li class="">
+                    <a href="#">Requisitions</a>
+                </li>
+                @endif
+                
+                <li class="">
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralworksheet') }}
+                        @else
+                            {{ url('worksheet') }}
+                        @endif">Worksheets</a>
+                </li>
+                <li class="">
+                    <a href="
+                        @if(session('testingSystem') == 'Viralload')
+                            {{ url('viralbatch/index/1') }}
+                        @else
+                            {{ url('batch/index/1') }}
+                        @endif">Dispatched Results</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('facility') }}">Facilities</a>
+                </li>
+                <li class="">
+                    <a href="{{ route('reports') }}">Reports</a>
+                </li>
+                <li class="">
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                </li>
+                
+                @if(session('testingSystem') != 'Viralload')
+                <li class="">
+                    <a href="#">Kits</a>
+                </li>
                 @endif
             @endif
                 <li class="dropdown">

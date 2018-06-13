@@ -17,6 +17,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('generate:dr-list', function(){
+    $str = \App\MiscViral::generate_dr_list();
+    $this->info($str);
+})->describe('Generate a list of potential dr patients.');
+
+
 Artisan::command('input_complete:eid', function(){
 	$str = \App\Common::input_complete_batches(\App\Batch::class);
     $this->info($str);
@@ -92,11 +98,39 @@ Artisan::command('copy:worksheet', function(){
 
 
 
+Artisan::command('match:eid-patients', function(){
+    $str = \App\Synch::match_eid_patients();
+    $this->info($str);
+})->describe('Match eid patients with records on the national database.');
 
-Artisan::command('email:test', function(){
+Artisan::command('match:vl-patients', function(){
+    $str = \App\Synch::match_vl_patients();
+    $this->info($str);
+})->describe('Match vl patients with records on the national database.');
+
+
+Artisan::command('match:eid-batches', function(){
+    $str = \App\Synch::match_batches('eid');
+    $this->info($str);
+})->describe('Match eid batches with records on the national database.');
+
+Artisan::command('match:vl-batches', function(){
+    $str = \App\Synch::match_batches('vl');
+    $this->info($str);
+})->describe('Match vl batches with records on the national database.');
+
+
+
+
+Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();
     $this->info($str);
 })->describe('Send test email.');
+
+Artisan::command('test:connection', function(){
+    $str = \App\Synch::test_connection();
+    $this->info($str);
+})->describe('Check connection to lab-2.test.nascop.org.');
 
 
 

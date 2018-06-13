@@ -109,13 +109,7 @@
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $sample->patient->patient }} </td>
-                                        <td>
-                                            @foreach($genders as $gender)
-                                                @if($sample->patient->sex == $gender->id)
-                                                    {{ $gender->gender_description }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td>
@@ -141,7 +135,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td> {{ $sample->patient->initiation_date }} </td>
+                                        <td> {{ $sample->patient->my_date_format('initiation_date') }} </td>
                                         <td>
                                             @foreach($justifications as $justification)
                                                 @if($sample->justification == $justification->id)

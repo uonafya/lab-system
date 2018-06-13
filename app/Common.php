@@ -113,7 +113,7 @@ class Common
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
-	public static function save_tat($view_model, $sample_model, $batch_id = NULL)
+	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
 		// if($sample_model == "App\\Sample") echo "Success";
 		$samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])
@@ -136,10 +136,8 @@ class Common
 					'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 					'age_category' => $this->set_age_cat($sample->age),
 				];
-				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));
-				
+				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));				
 			}
-
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
@@ -148,35 +146,38 @@ class Common
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
-	public static function compute_tat($view_model, $sample_model)
+	public function compute_tat($view_model, $sample_model)
 	{
-		// if($sample_model == "App\\Sample") echo "Success";
-		$samples = $view_model::where(['batch_complete' => 1])
-		->when($batch_id, function($query) use ($batch_id){
-			return $query->where(['batch_id' => $batch_id]);
-		})
-		->get();
+        ini_set("memory_limit", "-1");
+        $offset_value = 0;
+        while(true){
 
-		foreach ($samples as $key => $sample) {
-			$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
-			$tat2 = self::get_days($sample->datereceived, $sample->datetested);
-			$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
-			// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
-			$tat4 = $tat1 + $tat2 + $tat3;
-			$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
+			$samples = $view_model::where(['batch_complete' => 1, 'repeatt' => 0])
+			->limit(1000)->offset($offset_value)
+			->get();
+			if($samples->isEmpty()) break;
 
-			if($sample_model == "App\\Viralsample"){
-				$viral_data = [
-					'justification' => $this->set_justification($sample->justification),
-					'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
-					'age_category' => $this->set_age_cat($sample->age),
-				];
-				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample_repeatt));
-				
+			foreach ($samples as $key => $sample) {
+				$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
+				$tat2 = self::get_days($sample->datereceived, $sample->datetested);
+				$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
+				// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
+				$tat4 = $tat1 + $tat2 + $tat3;
+				$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
+
+				if($sample_model == "App\\Viralsample"){
+					$viral_data = [
+						'justification' => $this->set_justification($sample->justification),
+						'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
+						'age_category' => $this->set_age_cat($sample->age),
+					];
+					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));					
+				}
+				$sample_model::where('id', $sample->id)->update($data);
 			}
-
-			$sample_model::where('id', $sample->id)->update($data);
-		}
+	        $offset_value += 1000;
+			echo "Completed clean at {$offset_value} " . date('d/m/Y h:i:s a', time()). "\n";
+        }
 	}
 
 
@@ -199,9 +200,5 @@ class Common
 	{
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
 	}
-
-
-
-
 
 }
