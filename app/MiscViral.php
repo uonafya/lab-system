@@ -159,7 +159,7 @@ class MiscViral extends Common
             })
             ->when(true, function($query) use ($result){
                 if ($result == 0) {
-                    return $query->whereRaw('(result is null or result = '')');
+                    return $query->whereRaw("(result is null or result = '')");
                 }
                 else if ($result == 1) {
                     return $query->where('result', '< LDL copies/ml');
