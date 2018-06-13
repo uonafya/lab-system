@@ -12,7 +12,7 @@ class Batch extends BaseModel
 
     // protected $withCount = ['sample'];
 
-    protected $keyType = 'decimal';
+    protected $keyType = 'string';
 
     protected static function boot()
     {
