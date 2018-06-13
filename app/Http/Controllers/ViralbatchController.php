@@ -175,6 +175,7 @@ class ViralbatchController extends Controller
         $new_batch = new Viralbatch;
         $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
         $new_batch->id = (int) $batch->id + 0.5;
+        $new_id = $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
@@ -188,7 +189,7 @@ class ViralbatchController extends Controller
             $sample = Viralsample::find($id);
             // if($sample->parentid) continue;
             // if($sample->result) continue;
-            $sample->batch_id = $new_batch->id;
+            $sample->batch_id = $new_id;
             $sample->pre_update();
             $count++;
         }
