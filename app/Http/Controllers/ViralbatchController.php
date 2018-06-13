@@ -182,7 +182,7 @@ class ViralbatchController extends Controller
         }
         $new_batch->save();
 
-        $count = count($sample_ids);
+        $count = 0;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
@@ -190,6 +190,7 @@ class ViralbatchController extends Controller
             if($sample->result) continue;
             $sample->batch_id = $new_batch->id;
             $sample->pre_update();
+            $count++;
         }
 
         MiscViral::check_batch($batch->id);

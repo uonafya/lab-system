@@ -179,7 +179,7 @@ class BatchController extends Controller
         }
         $new_batch->save();
 
-        $count = count($sample_ids);
+        $count = 0;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
@@ -187,6 +187,7 @@ class BatchController extends Controller
             if($sample->result) continue;
             $sample->batch_id = $new_batch->id;
             $sample->pre_update();
+            $count++;
         }
 
         Misc::check_batch($batch->id);
