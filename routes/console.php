@@ -22,6 +22,13 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:vl-tat', function(){
+    $my = new \App\MiscViral;
+    $str = $my->compute_tat(\App\ViralsampleView::class, \App\Viralsample::class);
+    $str .= "Completed vl at " . date('d/m/Y h:i:s a', time()). "\n";
+    $this->info($str);
+})->describe('Compute Vl Tat.');
+
 
 Artisan::command('input_complete:eid', function(){
 	$str = \App\Common::input_complete_batches(\App\Batch::class);

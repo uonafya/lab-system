@@ -30,7 +30,7 @@
         @if(Session('pendingTasks'))
             <form role="search" class="navbar-form-custom" style="width: 400px;">
                 <div class="form-group">
-                    <h4 style="margin-top:1em;">{{ $pageTitle }}</h4>
+                    <h4 style="margin-top:1em;">{{ $pageTitle ?? '' }}</h4>
                 </div>
             </form>
         @endif

@@ -8,8 +8,8 @@ class DrPatient extends BaseModel
 {
     //
 
-    public function batch()
+    public function patient()
     {
-        return $this->belongsTo('App\Batch');
+        return $this->belongsTo('App\Viralpatient');
     }
 }

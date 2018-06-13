@@ -136,7 +136,8 @@ class Common
 					'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 					'age_category' => $this->set_age_cat($sample->age),
 				];
-				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));				
+				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));
+				$data = array_merge($data, $viral_data);				
 			}
 			$sample_model::where('id', $sample->id)->update($data);
 		}
@@ -153,7 +154,7 @@ class Common
         while(true){
 
 			$samples = $view_model::where(['batch_complete' => 1, 'repeatt' => 0])
-			->limit(1000)->offset($offset_value)
+			->limit(5000)->offset($offset_value)
 			->get();
 			if($samples->isEmpty()) break;
 
@@ -171,11 +172,12 @@ class Common
 						'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
 						'age_category' => $this->set_age_cat($sample->age),
 					];
-					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));					
+					$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));	
+					$data = array_merge($data, $viral_data);				
 				}
 				$sample_model::where('id', $sample->id)->update($data);
 			}
-	        $offset_value += 1000;
+	        $offset_value += 5000;
 			echo "Completed clean at {$offset_value} " . date('d/m/Y h:i:s a', time()). "\n";
         }
 	}
