@@ -20,8 +20,13 @@
         <div class="col-md-12">
             <div class="hpanel" style="margin-top: 1em;margin-right: 20%;">
             	<div class="alert alert-danger">
-		                <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
-		            </div>
+	                <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
+	            </div>
+
+                @php
+                    $prevmonth = date('m')-1;
+                @endphp
+                
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                     <!-- Kit and kits consumption -->
                     @if ($data->submittedkits == 0)
@@ -41,28 +46,30 @@
                         </div>
                     @elseif ($data->submittedkits == 1)
                         <div class="alert alert-warning spacing bottom">
-                            <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, date('m'))) }}, {{ date('Y') }}]</a></strong>
-                            <p style="margin-left: 3em;">
-                                <font color="#CCCCCC">
-                                    @if (($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0))
-                                        ABBOTT
-                                    @elseif (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0))
-                                        TAQMAN
-                                    @elseif (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0) && ($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0))
-                                        TAQMAN & ABBOTT
-                                    @endif
-                                </font>
-                            </p>
-                            <div class="alert alert-default bottom">
-                                <strong><a href="{{ url('consumption/report') }}"><font color="#CCCCCC">Kits Consumption Reporting Guide</font></a></strong>
-                            </div>
+                            @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)))
+                                <div class="alert alert-success spacing bottom">
+                                    <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Consumption Report Submitted</a></strong>
+                                </div>
+                            @else
+                                <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, date('m'))) }}, {{ date('Y') }}]</a></strong>
+                                <p style="margin-left: 3em;">
+                                    <font color="#CCCCCC">
+                                        @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0)))
+                                            ABBOTT
+                                        @elseif ((($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)) && (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0)))
+                                            TAQMAN
+                                        @elseif (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0) && ($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0))
+                                            TAQMAN & ABBOTT
+                                        @endif
+                                    </font>
+                                </p>
+                                <div class="alert alert-default bottom">
+                                    <strong><a href="{{ url('consumption/report') }}"><font color="#CCCCCC">Kits Consumption Reporting Guide</font></a></strong>
+                                </div>
+                            @endif
                         </div>
                     @endif
                     <!-- Kit and kits consumption -->
-
-                    @php
-                        $prevmonth = date('m')-1;
-                    @endphp
 
                     <!-- Lab performance Report -->
                     @if ($data->performance == 0)

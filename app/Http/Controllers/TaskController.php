@@ -38,7 +38,7 @@ class TaskController extends Controller
                             ['name'=>"ABBOTT 96-Deep-Well Plate", 'alias'=>'deepplate','factor'=>['EID'=>(2*(2/4)),'VL'=>(3/4)]],
                             ['name'=>"Saarstet Master Mix Tube", 'alias'=>'mixtube','factor'=>['EID'=>(2*(1/25)),'VL'=>(1/25)]],
                             ['name'=>"Saarstet 5ml Reaction Vessels", 'alias'=>'reactionvessels','factor'=>['EID'=>(192/500),'VL'=>(192/500)]],
-                            ['name'=>"200mL Reagent Vessels", 'alias'=>'reagentvessels','factor'=>['EID'=>(2*(5/6)),'VL'=>(6/6)]],
+                            ['name'=>"200mL Reagent Vessels", 'alias'=>'reagent','factor'=>['EID'=>(2*(5/6)),'VL'=>(6/6)]],
                             ['name'=>"ABBOTT 96-Well Optical Reaction Plate", 'alias'=>'reactionplate','factor'=>['EID'=>(192/500),'VL'=>(1/20)]],
                             ['name'=>"1000 uL Eppendorf (Tecan) Disposable Tips (for 1000 tests)", 'alias'=>'1000disposable','factor'=>['EID'=>(2*(421/192)),'VL'=>(841/192)]],
                             ['name'=>"200 ML Eppendorf (Tecan) Disposable Tips", 'alias'=>'200disposable','factor'=>['EID'=>(2*(48/192)),'VL'=>(96/192)]]
@@ -443,11 +443,13 @@ class TaskController extends Controller
 
     public function getConsumption()
     {
+        $previousMonth = date('m')-1;
+        $currentyear = date('Y');
         return [
-            'eidtaqconsumption' => 0,
-            'vltaqconsumption' => 0,
-            'eidabconsumption' => 0,
-            'vlabconsumption' => 0
+            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$previousMonth,$currentyear),
+            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$previousMonth,$currentyear),
+            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$previousMonth,$currentyear),
+            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$previousMonth,$currentyear)
         ];
     }
 
@@ -464,12 +466,23 @@ class TaskController extends Controller
     public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
 
     	if ($platform==1)
-			$model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+            $model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
-		if ($platform==2)
-			$model = Abbotdeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+        if ($platform==2)
+            $model = Abbotdeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
-		return $model->count();
+        return $model->count();
+    }
+
+    public static function __getifConsumptionEntered($testtype,$platform,$month,$currentyear){
+
+        if ($platform==1)
+            $model = Taqmanprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
+
+        if ($platform==2)
+            $model = Abbotprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
+
+        return $model->count();
     }
 
     public static function __getLabperformanceLog($data) {
