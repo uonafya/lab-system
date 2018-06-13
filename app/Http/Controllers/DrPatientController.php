@@ -17,7 +17,7 @@ class DrPatientController extends Controller
     {
         $data = Lookup::get_dr();
         $data['dr_patients'] = DrPatient::with(['patient.facility'])->paginate();
-        return view('tables.dr_patients', $data);
+        return view('tables.dr_patients', $data)->with('pageTitle', 'Drug Resistance Patients');
     }
 
     /**
