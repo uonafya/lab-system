@@ -45,29 +45,29 @@
                             </p>
                         </div>
                     @elseif ($data->submittedkits == 1)
+                        @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)))
+                            <div class="alert alert-success spacing bottom">
+                                <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Consumption Report Submitted</a></strong>
+                            </div>
+                        @else
                         <div class="alert alert-warning spacing bottom">
-                            @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)))
-                                <div class="alert alert-success spacing bottom">
-                                    <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Consumption Report Submitted</a></strong>
-                                </div>
-                            @else
-                                <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, date('m'))) }}, {{ date('Y') }}]</a></strong>
-                                <p style="margin-left: 3em;">
-                                    <font color="#CCCCCC">
-                                        @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0)))
-                                            ABBOTT
-                                        @elseif ((($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)) && (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0)))
-                                            TAQMAN
-                                        @elseif (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0) && ($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0))
-                                            TAQMAN & ABBOTT
-                                        @endif
-                                    </font>
-                                </p>
-                                <div class="alert alert-default bottom">
-                                    <strong><a href="{{ url('consumption/report') }}"><font color="#CCCCCC">Kits Consumption Reporting Guide</font></a></strong>
-                                </div>
-                            @endif
+                            <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, date('m'))) }}, {{ date('Y') }}]</a></strong>
+                            <p style="margin-left: 3em;">
+                                <font color="#CCCCCC">
+                                    @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0)))
+                                        ABBOTT
+                                    @elseif ((($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)) && (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0)))
+                                        TAQMAN
+                                    @elseif (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0) && ($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0))
+                                        TAQMAN & ABBOTT
+                                    @endif
+                                </font>
+                            </p>
+                            <div class="alert alert-default bottom">
+                                <strong><a href="{{ url('consumption/report') }}"><font color="#CCCCCC">Kits Consumption Reporting Guide</font></a></strong>
+                            </div>
                         </div>
+                        @endif
                     @endif
                     <!-- Kit and kits consumption -->
 
