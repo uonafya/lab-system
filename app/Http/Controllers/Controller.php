@@ -19,7 +19,7 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     public function __construct() {
-        parent:: __construct();
+        // parent:: __construct();
 
         if (session('pendingTasks'))
             return redirect('pending');
