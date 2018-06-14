@@ -36,7 +36,7 @@ class DashboardCacher
     {
     	if(Cache::has('labname')) return true;
 
-    	$minutes = 15;
+    	$minutes = 30;
     	$min_year = date('Y') - 2;
     	$lab_id = env('APP_LAB');
     	$labname =  \App\Lab::find(env('APP_LAB'))->name;
@@ -248,7 +248,7 @@ class DashboardCacher
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 5;
+    	$minutes = 10;
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
