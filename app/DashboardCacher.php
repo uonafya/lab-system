@@ -70,23 +70,38 @@ class DashboardCacher
     {
     	self::cacher();
 
-    	return [
-    		'pendingSamples' => Cache::get('pendingSamples'),
-    		'pendingSamplesOverTen' => Cache::get('pendingSamplesOverTen'),
-    		'batchesForApproval' => Cache::get('batchesForApproval'),
-    		'batchesNotReceived' => Cache::get('batchesNotReceived'),
-    		'batchesForDispatch' => Cache::get('batchesForDispatch'),
-    		'samplesForRepeat' => Cache::get('samplesForRepeat'),
-    		'rejectedForDispatch' => Cache::get('rejectedForDispatch'),
-    		'resultsForUpdate' => Cache::get('resultsForUpdate'),
-    	];
+        if ($testingSystem == 'Viralload') {
+        	return [
+        		'pendingSamples' => Cache::get('vl_pendingSamples'),
+        		'pendingSamplesOverTen' => Cache::get('vl_pendingSamplesOverTen'),
+        		'batchesForApproval' => Cache::get('vl_batchesForApproval'),
+        		'batchesNotReceived' => Cache::get('vl_batchesNotReceived'),
+        		'batchesForDispatch' => Cache::get('vl_batchesForDispatch'),
+        		'samplesForRepeat' => Cache::get('vl_samplesForRepeat'),
+        		'rejectedForDispatch' => Cache::get('vl_rejectedForDispatch'),
+        		'resultsForUpdate' => Cache::get('vl_resultsForUpdate'),
+        	];
+        }
+        else{
+            return [
+                'pendingSamples' => Cache::get('eid_pendingSamples'),
+                'pendingSamplesOverTen' => Cache::get('eid_pendingSamplesOverTen'),
+                'batchesForApproval' => Cache::get('eid_batchesForApproval'),
+                'batchesNotReceived' => Cache::get('eid_batchesNotReceived'),
+                'batchesForDispatch' => Cache::get('eid_batchesForDispatch'),
+                'samplesForRepeat' => Cache::get('eid_samplesForRepeat'),
+                'rejectedForDispatch' => Cache::get('eid_rejectedForDispatch'),
+                'resultsForUpdate' => Cache::get('eid_resultsForUpdate'),
+            ];
+
+        }
     }
 
 
 
-	public static function pendingSamplesAwaitingTesting($over = false)
+	public static function pendingSamplesAwaitingTesting($over = false, $testingSystem = 'Viralload')
 	{
-        if (session('testingSystem') == 'Viralload') {
+        if ($testingSystem == 'Viralload') {
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
@@ -122,9 +137,9 @@ class DashboardCacher
         return $model;
 	}
 
-	public static function siteBatchesAwaitingApproval()
+	public static function siteBatchesAwaitingApproval($testingSystem = 'Viralload')
 	{
-        if (session('testingSystem') == 'Viralload') {
+        if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(id) as total')
                         ->where('lab_id', '=', Auth()->user()->lab_id)
                         ->where('flag', '=', '1')
@@ -142,9 +157,9 @@ class DashboardCacher
         return $model->get()->first()->total ?? 0;
 	}
 
-	public static function batchCompleteAwaitingDispatch()
+	public static function batchCompleteAwaitingDispatch($testingSystem = 'Viralload')
 	{
-        if (session('testingSystem') == 'Viralload') {
+        if ($testingSystem == 'Viralload') {
             $model = Viralbatch::class;
         } else {
             $model = Batch::class;
@@ -152,9 +167,9 @@ class DashboardCacher
         return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', Auth()->user()->lab_id)->where('batch_complete', '=', '2')->get()->first()->total;
 	}
 
-	public static function samplesAwaitingRepeat()
+	public static function samplesAwaitingRepeat($testingSystem = 'Viralload')
 	{
-        if(session('testingSystem') == 'Viralload') {
+        if($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(*) as total')
                         ->whereBetween('sampletype', [1, 5])
                         ->whereNotIn('receivedstatus', ['0', '2'])
@@ -179,10 +194,10 @@ class DashboardCacher
 		return $model->get()->first()->total;
 	}
 
-	public static function rejectedSamplesAwaitingDispatch()
+	public static function rejectedSamplesAwaitingDispatch($testingSystem = 'Viralload')
 	{
         $year = Date('Y')-3;
-        if (session('testingSystem') == 'Viralload') {
+        if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('count(*) as total')
                         ->where('receivedstatus', 2)
                         ->where('flag', '=', 1)
@@ -204,10 +219,10 @@ class DashboardCacher
 		return $model->get()->first()->total ?? 0;
 	}
 
-    public static function batchesMarkedNotReceived()
+    public static function batchesMarkedNotReceived($testingSystem = 'Viralload')
     {
         $model = 0;
-        if (session('testingSystem') == 'Viralload') {
+        if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('count(distinct batch_id) as total')
                         ->where('receivedstatus', '=', '4')
                         ->orWhereNull('receivedstatus')->get()->first();
@@ -218,9 +233,9 @@ class DashboardCacher
         return $model->total ?? 0;
     }
 
-    public static function resultsAwaitingpdate()
+    public static function resultsAwaitingpdate($testingSystem = 'Viralload')
     {
-        if (session('testingSystem') == 'Viralload') {
+        if ($testingSystem == 'Viralload') {
             $model = Viralworksheet::with(['creator']);
         } else {
             $model = Worksheet::with(['creator']);
@@ -231,7 +246,7 @@ class DashboardCacher
 
     public static function cacher()
     {
-    	if(Cache::has('pendingSamples')) return true;
+    	if(Cache::has('vl_pendingSamples')) return true;
 
     	$minutes = 5;
 
@@ -244,27 +259,55 @@ class DashboardCacher
 		$rejectedForDispatch = self::rejectedSamplesAwaitingDispatch();
         $resultsForUpdate = self::resultsAwaitingpdate();
 
+        $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
+        $pendingSamplesOverTen2 = self::pendingSamplesAwaitingTesting(true, 'Eid');
+        $batchesForApproval2 = self::siteBatchesAwaitingApproval('Eid');
+        $batchesNotReceived2 = self::batchesMarkedNotReceived('Eid');
+        $batchesForDispatch2 = self::batchCompleteAwaitingDispatch('Eid');
+        $samplesForRepeat2 = self::samplesAwaitingRepeat('Eid');
+        $rejectedForDispatch2 = self::rejectedSamplesAwaitingDispatch('Eid');
+        $resultsForUpdate2 = self::resultsAwaitingpdate('Eid');
+
         
-        Cache::put('pendingSamples', $pendingSamples, $minutes);
-        Cache::put('pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
-        Cache::put('batchesForApproval', $batchesForApproval, $minutes);
-        Cache::put('batchesNotReceived', $batchesNotReceived, $minutes);
-        Cache::put('batchesForDispatch', $batchesForDispatch, $minutes);
-        Cache::put('samplesForRepeat', $samplesForRepeat, $minutes);
-        Cache::put('rejectedForDispatch', $rejectedForDispatch, $minutes);
-        Cache::put('resultsForUpdate', $resultsForUpdate, $minutes);
+        Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
+        Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
+        Cache::put('vl_batchesForApproval', $batchesForApproval, $minutes);
+        Cache::put('vl_batchesNotReceived', $batchesNotReceived, $minutes);
+        Cache::put('vl_batchesForDispatch', $batchesForDispatch, $minutes);
+        Cache::put('vl_samplesForRepeat', $samplesForRepeat, $minutes);
+        Cache::put('vl_rejectedForDispatch', $rejectedForDispatch, $minutes);
+        Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
+
+        
+        Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
+        Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
+        Cache::put('eid_batchesForApproval', $batchesForApproval2, $minutes);
+        Cache::put('eid_batchesNotReceived', $batchesNotReceived2, $minutes);
+        Cache::put('eid_batchesForDispatch', $batchesForDispatch2, $minutes);
+        Cache::put('eid_samplesForRepeat', $samplesForRepeat2, $minutes);
+        Cache::put('eid_rejectedForDispatch', $rejectedForDispatch2, $minutes);
+        Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
     }
 
     public static function clear_cache()
     {
-    	Cache::forget('pendingSamples');
-    	Cache::forget('pendingSamplesOverTen');
-    	Cache::forget('batchesForApproval');
-    	Cache::forget('batchesNotReceived');
-    	Cache::forget('batchesForDispatch');
-    	Cache::forget('samplesForRepeat');
-    	Cache::forget('rejectedForDispatch');
-    	Cache::forget('resultsForUpdate');
+    	Cache::forget('vl_pendingSamples');
+    	Cache::forget('vl_pendingSamplesOverTen');
+    	Cache::forget('vl_batchesForApproval');
+    	Cache::forget('vl_batchesNotReceived');
+    	Cache::forget('vl_batchesForDispatch');
+    	Cache::forget('vl_samplesForRepeat');
+    	Cache::forget('vl_rejectedForDispatch');
+    	Cache::forget('vl_resultsForUpdate');
+        
+        Cache::forget('eid_pendingSamples');
+        Cache::forget('eid_pendingSamplesOverTen');
+        Cache::forget('eid_batchesForApproval');
+        Cache::forget('eid_batchesNotReceived');
+        Cache::forget('eid_batchesForDispatch');
+        Cache::forget('eid_samplesForRepeat');
+        Cache::forget('eid_rejectedForDispatch');
+        Cache::forget('eid_resultsForUpdate');
     }
 
 
