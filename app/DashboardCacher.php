@@ -141,14 +141,14 @@ class DashboardCacher
 	{
         if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(id) as total')
-                        ->where('lab_id', '=', Auth()->user()->lab_id)
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->where('flag', '=', '1')
                         ->where('repeatt', '=', '0')
                         ->whereNull('receivedstatus')
                         ->where('site_entry', '=', '1');
         } else {
             $model = SampleView::selectRaw('COUNT(id) as total')
-                    ->where('lab_id', '=', Auth()->user()->lab_id)
+                    ->where('lab_id', '=', env('APP_LAB'))
                     ->where('flag', '=', '1')
                     ->where('repeatt', '=', '0')
                     ->whereNull('receivedstatus')
@@ -164,7 +164,7 @@ class DashboardCacher
         } else {
             $model = Batch::class;
         }
-        return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', Auth()->user()->lab_id)->where('batch_complete', '=', '2')->get()->first()->total;
+        return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('batch_complete', '=', '2')->get()->first()->total;
 	}
 
 	public static function samplesAwaitingRepeat($testingSystem = 'Viralload')

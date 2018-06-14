@@ -67,26 +67,36 @@ class ViralbatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
-        $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
-        $failed_a = MiscViral::get_totals(3, $batch_ids, false);
-        $detected_a = MiscViral::get_totals(2, $batch_ids, false);
-        $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
 
-        $rejected = MiscViral::get_rejected($batch_ids, false);
+        if($batch_ids){
+            $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
+            $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
+            $failed_a = MiscViral::get_totals(3, $batch_ids, false);
+            $detected_a = MiscViral::get_totals(2, $batch_ids, false);
+            $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
+
+            $rejected = MiscViral::get_rejected($batch_ids, false);
+        }
+        else{
+            $noresult_a = $redraw_a = $failed_a = $detected_a = $undetected_a = $rejected = false;
+        }
 
         $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected){
 
-            $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            if(!$noresult_a && !$redraw_a && !$failed_a && !$detected_a && !$undetected_a && !$rejected){
+                $total = $rej = $result = $noresult = 0;
+            }else{
+                $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
 
-            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
 
-            $result = $detected + $undetected + $redraw + $failed;
+                $result = $detected + $undetected + $redraw + $failed;
+            }
 
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;

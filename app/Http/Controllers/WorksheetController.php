@@ -48,7 +48,7 @@ class WorksheetController extends Controller
             $status = $worksheet->status_id;
             $total = $worksheet->sample_count;
 
-            if($status == 2 || $status == 3){
+            if(($status == 2 || $status == 3) && $samples){
                 $neg = $samples->where('worksheet_id', $worksheet->id)->where('result', 1)->first()->totals ?? 0;
                 $pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 2)->first()->totals ?? 0;
                 $failed = $samples->where('worksheet_id', $worksheet->id)->where('result', 3)->first()->totals ?? 0;
@@ -708,6 +708,7 @@ class WorksheetController extends Controller
 
     public function get_worksheets($worksheet_id=NULL)
     {
+        if(!$worksheet_id) return false;
         $samples = SampleView::selectRaw("count(*) as totals, worksheet_id, result")
             ->whereNotNull('worksheet_id')
             ->when($worksheet_id, function($query) use ($worksheet_id){                

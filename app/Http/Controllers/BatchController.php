@@ -70,21 +70,31 @@ class BatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $subtotals = Misc::get_subtotals($batch_ids, false);
-        $rejected = Misc::get_rejected($batch_ids, false);
+
+        if($batch_ids){
+            $subtotals = Misc::get_subtotals($batch_ids, false);
+            $rejected = Misc::get_rejected($batch_ids, false);
+        }else{
+            $subtotals = $rejected = false;
+        }
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
-            $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
-            $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
-            $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
-            $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
-            $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+            if(!$subtotals && !$rejected){
+                $total = $rej = $result = $noresult = 0;
+            }
+            else{
+                $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+                $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+                $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+                $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
 
-            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
 
-            $result = $pos + $neg + $redraw + $failed;
+                $result = $pos + $neg + $redraw + $failed;
+            }
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
