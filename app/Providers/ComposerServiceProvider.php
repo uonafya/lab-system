@@ -15,11 +15,11 @@ class ComposerServiceProvider extends ServiceProvider
     {
         view()->composer(
             // ['layouts.sidenav','home','layouts.topnav'],'App\Http\ViewComposers\DashboardComposer'
-            ['layouts.sidenav'],'App\Http\ViewComposers\DashboardComposerChanged'
+            ['layouts.sidenav','home','layouts.topnav'],'App\Http\ViewComposers\DashboardComposerOld'
         );
 
         view()->composer(
-            'home', 'App\Http\ViewComposers\DashboardComposerChanged@tasks'
+            'home', 'App\Http\ViewComposers\DashboardComposer@tasks'
         );
 
         // view()->composer(
