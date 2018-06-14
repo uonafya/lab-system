@@ -77,7 +77,7 @@ class Copier
                 foreach ($sample_date_array as $date_field) {
                     $sample->$date_field = self::clean_date($sample->$date_field);
                 }
-                $sample->batch_id = $batch->id;
+                $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
 
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
@@ -140,7 +140,7 @@ class Copier
                 foreach ($sample_date_array as $date_field) {
                     $sample->$date_field = self::clean_date($sample->$date_field);
                 }
-                $sample->batch_id = $batch->id;
+                $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
 
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
