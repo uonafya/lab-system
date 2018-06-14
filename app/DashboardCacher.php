@@ -70,7 +70,7 @@ class DashboardCacher
     {
     	self::cacher();
 
-        if ($testingSystem == 'Viralload') {
+        if (session('testingSystem') == 'Viralload') {            
         	return [
         		'pendingSamples' => Cache::get('vl_pendingSamples'),
         		'pendingSamplesOverTen' => Cache::get('vl_pendingSamplesOverTen'),
