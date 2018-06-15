@@ -141,6 +141,8 @@ class Lookup
             'pcrtypes' => Cache::get('pcr_types'),
             'receivedstatuses' => Cache::get('received_statuses'),
 
+            'languages' => Cache::get('languages'),
+
             'batch' => session('batch'),
             'facility_name' => session('facility_name', 0),
             'amrs' => self::$amrs,
@@ -180,7 +182,7 @@ class Lookup
 
             'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'mother_dob'],
 
-            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'entry_point', 'patient_status'],
+            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'preferred_language', 'patient', 'dob', 'entry_point', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
 
@@ -264,7 +266,7 @@ class Lookup
         return [
             'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'lab_id', 'site_entry'],
 
-            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date', 'patient_status'],
+            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'preferred_language', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no'],
 
@@ -286,6 +288,11 @@ class Lookup
             $amrs_locations = DB::table('amrslocations')->get();
             $genders = DB::table('gender')->where('id', '<', 3)->get();
             $received_statuses = DB::table('receivedstatus')->where('id', '<', 3)->get();
+
+            $languages = [
+                '1' => 'English',
+                '2' => 'Kiswahili',
+            ];
 
             // Eid Lookup Data
             $rejected_reasons = DB::table('rejectedreasons')->get();
@@ -321,6 +328,7 @@ class Lookup
             Cache::put('amrs_locations', $amrs_locations, 60);
             Cache::put('genders', $genders, 60);
             Cache::put('received_statuses', $received_statuses, 60);
+            Cache::put('languages', $languages, 60);
 
             Cache::put('rejected_reasons', $rejected_reasons, 60);
             Cache::put('feedings', $feedings, 60);
