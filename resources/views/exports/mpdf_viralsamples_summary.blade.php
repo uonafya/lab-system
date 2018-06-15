@@ -118,6 +118,7 @@
 						continue;
 					@endphp
 				@endif
+				@continue($sample->repeatt == 1)
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>

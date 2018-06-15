@@ -486,6 +486,7 @@ class BatchController extends Controller
     public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
+        if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
         $batches = Batch::whereIn('id', $batch_ids)->with(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator'])->get();
 
         foreach ($batches as $key => $batch) {
@@ -505,6 +506,16 @@ class BatchController extends Controller
         
         // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
         // return $pdf->stream('summary.pdf');
+    }
+
+    public function individuals($batch_ids)
+    {
+        $samples = Sample::whereIn('batch_id', $batch_ids)->with(['patient.mother'])->get();
+        $samples->loadMissing(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data = Lookup::get_lookups();
+        $data['samples'] = $samples;
+
+        return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     public function email(Batch $batch)

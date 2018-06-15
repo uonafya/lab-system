@@ -101,7 +101,7 @@
                                         <th rowspan="2">Batch No</th>
 
                                         @if(isset($batch_complete) && $batch_complete == 1)
-                                            <th rowspan="2">Print Multiple</th>
+                                            <th>Print Multiple</th>
                                         @endif
 
                                         <th rowspan="2">Facility</th>
@@ -118,6 +118,11 @@
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
+
+                                        @if(isset($batch_complete) && $batch_complete == 1)
+                                            <th id="check_all">Check All</th>
+                                        @endif
+
                                         <th>Received</th>
                                         <th>Entered</th>
                                         <th>Received</th>
@@ -139,7 +144,11 @@
                                             <td> {{ $batch->id }} </td>
 
                                             @if(isset($batch_complete) && $batch_complete == 1)
-                                                <td> <div align="center"><input name="batch_ids[]" type="checkbox"  value="{{ $batch->id }}"  /></div> </td>
+                                                <td> 
+                                                    <div align="center">
+                                                        <input name="batch_ids[]" type="checkbox" class="checks" value="{{ $batch->id }}"  />
+                                                    </div>
+                                                </td>
                                             @endif
 
                                             <td> {{ $batch->name }} </td>
@@ -186,9 +195,14 @@
 
                                     @if(isset($batch_complete) && $batch_complete == 1)
                                         <tr>
-                                            <td colspan="13"> 
+                                            <td colspan="6"> 
                                                 <center>
-                                                    <input type="submit" name="Print" value="Print the Selected Batches" class="button"  />
+                                                    <button class="btn btn-success" type="submit" name="print_type" value="summary">Print Summaries of the Selected Batches</button>
+                                                </center>
+                                            </td>
+                                            <td colspan="7"> 
+                                                <center>
+                                                    <button class="btn btn-success" type="submit" name="print_type" value="individual">Print Individual Results of the Selected Batches</button>
                                                 </center>
                                             </td>
                                         </tr>
@@ -241,6 +255,18 @@
                 var from = $('#from_date').val();
                 var to = $('#to_date').val();
                 window.location.href = localStorage.getItem('base_url') + from + '/' + to;
+            });
+
+            $("#check_all").on('click', function(){
+                var str = $(this).html();
+                if(str == "Check All"){
+                    $(this).html("Uncheck All");
+                    $(".checks").prop('checked', true);
+                }
+                else{
+                    $(this).html("Check All");
+                    $(".checks").prop('checked', false);           
+                }
             });
 
         });

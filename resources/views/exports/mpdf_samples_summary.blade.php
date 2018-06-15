@@ -37,41 +37,27 @@
 
 	@foreach($batches as $batch)
 
-		<table border="0" id='table1' align="center">
-			<tr>
-				<td colspan="9" align="center">
-					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
-				</td>
-			</tr>
-			<tr>
-				<td colspan="9" align="center">
+		<center><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></center>
 
-					<span><br>
-					  <span class="style7">MINISTRY OF HEALTH <br />
-					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-					  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="5">
-					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
-				</td>
-				<td colspan="4">
-					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="9">
-					<strong>NOTICE:</strong> 
-				</td>
-			</tr>
-			<tr>
-				<td colspan="9">
-					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
-				</td>
-			</tr>
-		</table>
+		<p>
+			<strong> 
+				<center>MINISTRY OF HEALTH</center> <br />
+				<center>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</center><br />
+				<center>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</center>
+			</strong>			
+		</p>
+		<br />
+
+		<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+		<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
+		<br />
+
+		<strong>NOTICE:</strong> 
+		<br />
+		<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>			
 
 		<br />
 
@@ -81,7 +67,7 @@
 			</tr>
 			<tr>
 				<td>Facility Name: {{ $batch->facility->name }} </td>
-				<td>Contact: {{ $batch->facility->contactperson }} </td>
+				<td>Contact: {{ $batch->facility->contactperson ?? '' }} </td>
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
@@ -131,6 +117,7 @@
 						continue;
 					@endphp
 				@endif
+				@continue($sample->repeatt == 1)
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>

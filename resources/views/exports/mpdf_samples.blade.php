@@ -12,7 +12,6 @@
 	-->
 	</style>
 	<style>
-
 	 td
 	 {
 
@@ -58,10 +57,10 @@
 			</tr>
 			<tr>
 				<td colspan="5" class="comment style1 style4">
-					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>LAB: {{ $batch->lab->name }}</strong>
+					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
 				</td>
 			</tr>
 

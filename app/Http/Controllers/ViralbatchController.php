@@ -567,6 +567,7 @@ class ViralbatchController extends Controller
     public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
+        if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
         $batches = Viralbatch::whereIn('id', $batch_ids)->with(['sample.patient', 'facility', 'lab', 'receiver', 'creator'])->get();
 
         foreach ($batches as $key => $batch) {
@@ -586,6 +587,16 @@ class ViralbatchController extends Controller
         
         // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
         // return $pdf->stream('summary.pdf');
+    }
+
+    public function individuals($batch_ids)
+    {
+        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient'])->get();
+        $samples->loadMissing(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data = Lookup::get_viral_lookups();
+        $data['samples'] = $samples;
+
+        return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     public function email(Viralbatch $batch)
