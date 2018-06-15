@@ -284,7 +284,7 @@ class Misc extends Common
     public static function sms_test()
     {
 
-        $client = new Client(['base_uri' => self::$sms_url]);
+        // $client = new Client(['base_uri' => self::$sms_url]);
 
         $sms = json_encode([
 				'sender' => env('SMS_SENDER_ID'),
@@ -292,22 +292,39 @@ class Misc extends Common
 				'message' => 'This is a successful test.',
 			]);
 
-		$response = $client->request('post', '', [
-			'headers' => [
-				'Accept' => 'application/json',
-				'Content-Length' => strlen($sms)
-			],
-			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-			'form_params' => [
-				'sender' => env('SMS_SENDER_ID'),
-				'recepient' => '254702266217',
-				'message' => 'This is a successful test.',
-			],
+		// $response = $client->request('post', '', [
+		// 	'headers' => [
+		// 		'Accept' => 'application/json',
+		// 		'Content-Length' => strlen($sms)
+		// 	],
+		// 	'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+		// 	'form_params' => [
+		// 		'sender' => env('SMS_SENDER_ID'),
+		// 		'recepient' => '254702266217',
+		// 		'message' => 'This is a successful test.',
+		// 	],
 
-		]);
+		// ]);
 
-		$body = json_decode($response->getBody());
-		echo 'Status code is ' . $response->getStatusCode();
-		dd($body);
+		// $body = json_decode($response->getBody());
+		// echo 'Status code is ' . $response->getStatusCode();
+		// dd($body);
+
+		$httpRequest = curl_init($URL);
+		curl_setopt($httpRequest, CURLOPT_NOBODY, true);
+		curl_setopt($httpRequest, CURLOPT_POST, true);
+		curl_setopt($httpRequest, CURLOPT_POSTFIELDS, $sms);
+		curl_setopt($httpRequest, CURLOPT_TIMEOUT, 30); //timeout after 30 seconds
+		curl_setopt($httpRequest, CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($httpRequest, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($sms)));
+		curl_setopt($httpRequest, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+		// curl_setopt($httpRequest, CURLOPT_USERPWD, "$username:$password");
+		curl_setopt($httpRequest, CURLOPT_USERPWD, env('SMS_USERNAME') .':'. env('SMS_PASSWORD'));
+		$results=curl_exec ($httpRequest);
+		$status_code = curl_getinfo($httpRequest, CURLINFO_HTTP_CODE); //get status code
+		curl_close ($httpRequest);
+		$response = json_decode($results);
+		echo $status_code;
+		echo $response;
     }
 }
