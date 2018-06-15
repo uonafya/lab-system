@@ -325,6 +325,6 @@ class Misc extends Common
 		curl_close ($httpRequest);
 		$response = json_decode($results);
 		echo $status_code;
-		echo $response;
+		dd($response);
     }
 }
