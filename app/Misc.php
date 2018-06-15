@@ -299,6 +299,7 @@ class Misc extends Common
 			],
 			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'debug' => true,
+			'http_errors' => false,
 			'form_params' => [
 				'sender' => env('SMS_SENDER_ID'),
 				'recepient' => '254702266217',
