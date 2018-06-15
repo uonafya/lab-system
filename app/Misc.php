@@ -310,7 +310,7 @@ class Misc extends Common
 		// echo 'Status code is ' . $response->getStatusCode();
 		// dd($body);
 
-		$httpRequest = curl_init($URL);
+		$httpRequest = curl_init(self::$sms_url);
 		curl_setopt($httpRequest, CURLOPT_NOBODY, true);
 		curl_setopt($httpRequest, CURLOPT_POST, true);
 		curl_setopt($httpRequest, CURLOPT_POSTFIELDS, $sms);
