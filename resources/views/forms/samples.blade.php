@@ -145,7 +145,7 @@
                                 @foreach($languages as $key => $value)
                                     <label><input type="radio" class="i-checks" name="preferred_language" value={{ $key }} 
 
-                                        @if($sample->patient->preferred_language == $key)
+                                        @if(isset($sample) && $sample->patient->preferred_language == $key)
                                             checked="checked"
                                         @endif
                                         > 
