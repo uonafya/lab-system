@@ -45,12 +45,9 @@
 			</tr>
 			<tr>
 				<td colspan="9" align="center">
-
-					<span><br>
-					  <span class="style7">MINISTRY OF HEALTH <br />
-					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-					  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
-					</span>
+					<h5>MINISTRY OF HEALTH</h5>
+					<h5>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</h5>
+					<h5>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</h5>
 				</td>
 			</tr>
 			<tr>
@@ -63,11 +60,7 @@
 			</tr>
 			<tr>
 				<td colspan="9">
-					<strong>NOTICE:</strong> 
-				</td>
-			</tr>
-			<tr>
-				<td colspan="9">
+					<strong>NOTICE:</strong>
 					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
 				</td>
 			</tr>

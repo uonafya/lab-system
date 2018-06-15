@@ -27,7 +27,7 @@
 
 		p {
 			margin-top: 2px;
-     		font-size: 6px;
+     		font-size: 8px;
 		}
 		* {
 			font-size: 8px;
@@ -84,7 +84,9 @@
 			</tr>
 		</table>
 
-		<table>
+		<br />
+
+		<table style="width: 100%;">
 			<tr>
 				<td colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
 			</tr>
