@@ -133,7 +133,7 @@
                     <div class="panel-body" style="padding-bottom: 6px;">
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Phone No(format 254725******)</strong>
+                            <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
                             </label>
                             <div class="col-sm-3">
                                 <input class="form-control" name="caregiver_phone" id="caregiver_phone" type="text" value="{{ $sample->patient->caregiver_phone ?? '' }}">
@@ -153,11 +153,7 @@
                                     </label>
 
                                 @endforeach
-
-                                <!-- <label> <input type="radio" class="i-checks" name="preferred_language" value=1> English </label>
-                                <label> <input type="radio" class="i-checks" name="preferred_language" value=2> Kiswahili </label> -->
                             </div>
-
                         </div>
 
 

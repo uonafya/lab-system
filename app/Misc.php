@@ -2,6 +2,8 @@
 
 namespace App;
 
+use GuzzleHttp\Client;
+
 use App\Common;
 use App\Sample;
 use App\SampleView;
@@ -213,5 +215,92 @@ class Misc extends Common
             ->get();
 
         return $samples;
+    }
+
+    public static function patient_sms()
+    {
+        ini_set("memory_limit", "-1");
+    	$samples = SampleView::whereNotNull('patient_phone_no')->whereNull('time_result_sms_sent')->get();
+
+    	foreach ($samples as $key => $sample) {
+    		// English
+    		if($sample->preferred_language == 1){
+    			if($sample->result == 2){
+    				$message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
+    			}
+    			else if($sample->result == 3 || $sample->result == 5){
+    				$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+    			}
+    			else{
+    				if($sample->receivedstatus == 2){
+    					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+    				}
+    				else{
+    					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you"; 	
+    				}
+    			}
+    		}
+    		// Kiswahili
+    		else{
+    			if($sample->result == 2){
+    				$message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
+    			}
+    			else if($sample->result == 3 || $sample->result == 5){
+    				$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+    			}
+    			else{
+    				if($sample->receivedstatus == 2){
+    					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+    				}
+    				else{
+    					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+    				}
+    			}    			
+    		}
+
+    		if(!$message) continue;
+
+	        $client = new Client(['base_uri' => self::$sms_url]);
+
+			$response = $client->request('post', '', [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Content-Length' => strlen($message)
+				],
+				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+				'form_params' => [
+					'sender' => env('SMS_SENDER_ID'),
+					'recepient' => $sample->patient_phone_no,
+					'message' => $message,
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+    	}
+
+    }
+
+    public static function sms_test()
+    {
+
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+		$response = $client->request('post', '', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Content-Length' => strlen($message)
+			],
+			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'form_params' => [
+				'sender' => env('SMS_SENDER_ID'),
+				'recepient' => '254702266217',
+				'message' => 'This is a successful test.',
+			],
+
+		]);
+
+		$body = json_decode($response->getBody());
+		dd($body);
     }
 }

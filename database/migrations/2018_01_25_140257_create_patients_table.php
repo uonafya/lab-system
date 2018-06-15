@@ -29,7 +29,7 @@ class CreatePatientsTable extends Migration
             // 1 for English
             // 2 for Kiswahili
             $table->tinyInteger('preferred_language')->nullable();
-            $table->string('caregiver_phone', 15)->nullable();
+            $table->string('patient_phone_no', 15)->nullable();
             $table->tinyInteger('sex')->unsigned();
             $table->date('dob')->nullable();
             $table->date('dateinitiatedontreatment')->nullable();
