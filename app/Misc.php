@@ -268,7 +268,7 @@ class Misc extends Common
 					// 'Content-Length' => strlen($message)
 				],
 				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-				'form_params' => [
+				'json' => [
 					'sender' => env('SMS_SENDER_ID'),
 					'recepient' => $sample->patient_phone_no,
 					'message' => $message,
@@ -291,7 +291,6 @@ class Misc extends Common
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
-
 		$response = $client->request('post', '', [
 			'headers' => [
 				// 'Accept' => 'application/json',
@@ -300,7 +299,7 @@ class Misc extends Common
 			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'debug' => true,
 			'http_errors' => false,
-			'form_params' => [
+			'json' => [
 				'sender' => env('SMS_SENDER_ID'),
 				'recepient' => '254702266217',
 				'message' => 'This is a successful test.',

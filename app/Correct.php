@@ -39,7 +39,7 @@ class Correct
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'samples' => $samples->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -93,7 +93,7 @@ class Correct
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'samples' => $samples->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
