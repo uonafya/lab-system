@@ -283,19 +283,19 @@ class Misc extends Common
 
     public static function sms_test()
     {
-
-        // $client = new Client(['base_uri' => self::$sms_url]);
-
         $sms = json_encode([
 				'sender' => env('SMS_SENDER_ID'),
 				'recepient' => '254702266217',
 				'message' => 'This is a successful test.',
 			]);
 
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+
 		$response = $client->request('post', '', [
 			'headers' => [
-				'Accept' => 'application/json',
-				'Content-Length' => strlen($sms)
+				// 'Accept' => 'application/json',
+				// 'Content-Length' => strlen($sms)
 			],
 			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'debug' => true,

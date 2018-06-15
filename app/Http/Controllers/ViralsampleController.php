@@ -77,12 +77,17 @@ class ViralsampleController extends Controller
             return redirect("viralbatch/{$batch->id}");
         }
 
+        $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient_id', 'datecollected']) )->get()->first();
+        if($existing){
+            session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+            session(['toast_error' => 1]);
+            return back();            
+        }
+
         $highpriority = $request->input('highpriority');
 
         if($highpriority == 1)
         {
-            $facility_id = $request->input('facility_id');
-
             $batch = new Viralbatch;
             $batch->user_id = auth()->user()->id;
             $batch->lab_id = auth()->user()->lab_id;
