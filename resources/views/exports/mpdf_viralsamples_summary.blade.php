@@ -67,7 +67,7 @@
 			</tr>
 		</table>
 
-		<table >
+		<table style="width: 100%;">
 			<tr>
 				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>		
 			</tr>

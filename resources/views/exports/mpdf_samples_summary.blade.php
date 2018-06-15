@@ -16,7 +16,7 @@
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
-     		font-size: 10px;
+     		font-size: 8px;
 		}
 
 		h5 {
@@ -26,7 +26,7 @@
 
 		p {
 			margin-top: 2px;
-     		font-size: 6px;
+     		font-size: 8px;
 		}
 		* {
 			font-size: 8px;
@@ -37,31 +37,45 @@
 
 	@foreach($batches as $batch)
 
-		<center><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></center>
+		<table border="0" style="border: 0px;" align="center">
+			<tr>
+				<td colspan="9" align="center">
+					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="9" align="center">
 
-		<p>
-			<strong> 
-				<center>MINISTRY OF HEALTH</center> <br />
-				<center>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</center><br />
-				<center>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</center>
-			</strong>			
-		</p>
+					<span><br>
+					  <span class="style7">MINISTRY OF HEALTH <br />
+					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
+					  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+				</td>
+				<td colspan="4">
+					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="9">
+					<strong>NOTICE:</strong> 
+				</td>
+			</tr>
+			<tr>
+				<td colspan="9">
+					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
+				</td>
+			</tr>
+		</table>
+
 		<br />
 
-		<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
-
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-		<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
-		<br />
-
-		<strong>NOTICE:</strong> 
-		<br />
-		<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>			
-
-		<br />
-
-		<table>
+		<table style="width: 100%;">
 			<tr>
 				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>				
 			</tr>
