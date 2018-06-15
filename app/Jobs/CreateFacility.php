@@ -40,11 +40,9 @@ class CreateFacility implements ShouldQueue
         $today = date('Y-m-d');
 
         $response = $client->request('post', 'facility', [
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-            'form_params' => [
-                'facility_data' => json_encode($this->facility_data),
+            'json' => [
+                // 'facility_data' => json_encode($this->facility_data),
+                'facility_data' => $this->facility_data,
                 'lab_id' => env('APP_LAB', null),
             ],
         ]);

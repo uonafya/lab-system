@@ -70,4 +70,13 @@ class Sample extends BaseModel
         }
     }
 
+    public function last_test()
+    {
+        $sample = \App\Sample::where('patient_id', $this->patient_id)
+                ->whereRaw("datetested=
+                    (SELECT max(datetested) FROM samples WHERE patient_id={$this->patient_id} AND repeatt=0 AND result in (1, 2) AND datetested < '{$this->datetested}')")
+                ->get()->first();
+        $this->recent = $sample;
+    }
+
 }

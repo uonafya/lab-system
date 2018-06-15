@@ -27,7 +27,7 @@
 
 		p {
 			margin-top: 2px;
-     		font-size: 8px;
+     		font-size: 6px;
 		}
 		* {
 			font-size: 8px;

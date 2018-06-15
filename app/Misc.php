@@ -220,7 +220,11 @@ class Misc extends Common
     public static function patient_sms()
     {
         ini_set("memory_limit", "-1");
-    	$samples = SampleView::whereNotNull('patient_phone_no')->whereNull('time_result_sms_sent')->get();
+    	$samples = SampleView::whereNotNull('patient_phone_no')
+    				->whereNull('time_result_sms_sent')
+    				->where('batch_complete', 1)
+    				->where('datereceived', '>', '2018-05-01')
+    				->get();
 
     	foreach ($samples as $key => $sample) {
     		// English
@@ -263,45 +267,35 @@ class Misc extends Common
 	        $client = new Client(['base_uri' => self::$sms_url]);
 
 			$response = $client->request('post', '', [
-				'headers' => [
-					'Accept' => 'application/json',
-					// 'Content-Length' => strlen($message)
-				],
 				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+				'http_errors' => false,
 				'json' => [
 					'sender' => env('SMS_SENDER_ID'),
-					'recepient' => $sample->patient_phone_no,
+					'recipient' => $sample->patient_phone_no,
 					'message' => $message,
 				],
-
 			]);
 
 			$body = json_decode($response->getBody());
+			if($response->getStatusCode() == 201){
+				$s = Sample::find($sample->id);
+				$s->time_result_sms_sent = date('Y-m-d H:i:s');
+				$s->pre_update();
+			}
     	}
-
     }
 
     public static function sms_test()
     {
-        $sms = json_encode([
-				'sender' => env('SMS_SENDER_ID'),
-				'recepient' => '254702266217',
-				'message' => 'This is a successful test.',
-			]);
-
         $client = new Client(['base_uri' => self::$sms_url]);
 
 		$response = $client->request('post', '', [
-			'headers' => [
-				// 'Accept' => 'application/json',
-				// 'Content-Length' => strlen($sms)
-			],
 			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'debug' => true,
 			'http_errors' => false,
 			'json' => [
 				'sender' => env('SMS_SENDER_ID'),
-				'recepient' => '254702266217',
+				'recipient' => '254702266217',
 				'message' => 'This is a successful test.',
 			],
 
@@ -310,22 +304,5 @@ class Misc extends Common
 		$body = json_decode($response->getBody());
 		echo 'Status code is ' . $response->getStatusCode();
 		dd($body);
-
-		// $httpRequest = curl_init(self::$sms_url);
-		// curl_setopt($httpRequest, CURLOPT_NOBODY, true);
-		// curl_setopt($httpRequest, CURLOPT_POST, true);
-		// curl_setopt($httpRequest, CURLOPT_POSTFIELDS, $sms);
-		// curl_setopt($httpRequest, CURLOPT_TIMEOUT, 30); //timeout after 30 seconds
-		// curl_setopt($httpRequest, CURLOPT_RETURNTRANSFER,1);
-		// curl_setopt($httpRequest, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($sms)));
-		// curl_setopt($httpRequest, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-		// // curl_setopt($httpRequest, CURLOPT_USERPWD, "$username:$password");
-		// curl_setopt($httpRequest, CURLOPT_USERPWD, env('SMS_USERNAME') .':'. env('SMS_PASSWORD'));
-		// $results=curl_exec ($httpRequest);
-		// $status_code = curl_getinfo($httpRequest, CURLINFO_HTTP_CODE); //get status code
-		// curl_close ($httpRequest);
-		// $response = json_decode($results);
-		// echo $status_code;
-		// dd($response);
     }
 }

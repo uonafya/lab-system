@@ -98,6 +98,15 @@ class Viralsample extends BaseModel
             return "<strong><div style='color: #cccc00;'>{$this->result} </div></strong>";
         }
     }
+
+    public function last_test()
+    {
+        $sample = \App\Viralsample::where('patient_id', $this->patient_id)
+                ->whereRaw("datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$this->patient_id} AND repeatt=0 AND rcategory between 1 and 4 AND datetested < '{$this->datetested}')")
+                ->get()->first();
+        $this->recent = $sample;
+    }
     
     /*public function getColouredResultAttribute()
     {

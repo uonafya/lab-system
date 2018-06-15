@@ -284,7 +284,8 @@
 		<br>
 
 		@if($key % 2 == 1)
-			<p class="breakhere"></p>
+			<!-- <p class="breakhere"></p> -->
+			<pagebreak sheet-size='A4-L'>
 		@endif
 
 	@endforeach
