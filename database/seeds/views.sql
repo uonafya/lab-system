@@ -44,7 +44,7 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
     s.dilutionfactor, s.dilutiontype, s.comments, s.labcomment, s.parentid, s.rejectedreason, s.reason_for_repeat,
     s.rcategory, s.result, s.units, s.interpretation, s.worksheet as worksheet_id, s.flag, s.run, s.repeatt, s.approvedby,
     s.approved2by as approvedby2, s.datecollected, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2,
-    s.patientsmsdatesent as time_result_sms_sent,
+    #s.patientsmsdatesent as time_result_sms_sent,
     #s.tat1, s.tat2, s.tat3, s.tat4,  s.previous_nonsuppressed,
     s.synched, s.datesynched, s.dateentered as created_at,
 

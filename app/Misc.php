@@ -265,7 +265,7 @@ class Misc extends Common
 			$response = $client->request('post', '', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Content-Length' => strlen($message)
+					// 'Content-Length' => strlen($message)
 				],
 				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 				'form_params' => [
@@ -289,7 +289,7 @@ class Misc extends Common
 		$response = $client->request('post', '', [
 			'headers' => [
 				'Accept' => 'application/json',
-				'Content-Length' => strlen($message)
+				// 'Content-Length' => strlen($message)
 			],
 			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'form_params' => [
@@ -301,6 +301,7 @@ class Misc extends Common
 		]);
 
 		$body = json_decode($response->getBody());
+		echo 'Status code is ' . $response->getStatusCode();
 		dd($body);
     }
 }
