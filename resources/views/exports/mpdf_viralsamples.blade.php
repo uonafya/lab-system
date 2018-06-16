@@ -179,11 +179,11 @@ p.breakhere {page-break-before: always}
 					$routcome= "Sample ".$status . " Reason:  ".$reason;
 				}
 
-				$sample->prev_tests();
+				$prev_tests = $sample->prev_results();
 
 				$s_type = $sample_types->where('id', $sample->sampletype)->first();
 
-				$test_no = $patient_samples->count();
+				$test_no = $prev_tests->count();
 				$test_no++;
 
 				if(($sample->result > 1000 && $s_type->typecode == 2)
@@ -247,8 +247,8 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			@if($sample->previous_tests)
-				@foreach($sample->previous_tests as $prev)
+			@if($prev_tests->count() > 0)
+				@foreach($prev_tests as $prev)
 
 					<tr class="evenrow">
 						<td colspan="1"> <span class="style1">Previous VL Results</span></td>

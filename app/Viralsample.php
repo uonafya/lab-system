@@ -117,5 +117,15 @@ class Viralsample extends BaseModel
                 ->get();
         $this->previous_tests = $samples;
     }
+
+    public function prev_results()
+    {
+        $samples = \App\Viralsample::where('patient_id', $this->patient_id)
+                ->where('datetested', '<', $this->datetested)
+                ->where('repeatt', 0)
+                ->whereIn('rcategory', [1, 2, 3, 4])
+                ->get();
+        return $samples;
+    }
     
 }
