@@ -205,6 +205,7 @@ class Lookup
             'received_statuses' => Cache::get('received_statuses'),
             'prophylaxis' => Cache::get('prophylaxis'),
             'justifications' => Cache::get('justifications'),
+            'pmtct_types' => Cache::get('pmtct_types'),
         ];        
     }
 

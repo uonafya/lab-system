@@ -79,4 +79,14 @@ class Sample extends BaseModel
         $this->recent = $sample;
     }
 
+    public function prev_tests()
+    {
+        $samples = \App\Sample::where('patient_id', $this->patient_id)
+                ->where('datetested', '<', $this->datetested)
+                ->where('repeatt', 0)
+                ->whereIn('result', [1, 2])
+                ->get();
+        $this->previous_tests = $samples;
+    }
+
 }

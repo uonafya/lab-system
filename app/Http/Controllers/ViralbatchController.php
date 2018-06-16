@@ -525,14 +525,21 @@ class ViralbatchController extends Controller
             $batch->pre_update();
         }
 
-        $samples = $batch->sample;
-        $samples->load(['patient']);
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $samples = $batch->sample;
+        // $samples->load(['patient']);
+        // $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $data = Lookup::get_viral_lookups();
+        // $data['batch'] = $batch;
+        // $data['samples'] = $samples;
+
+        // return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
+
         $data = Lookup::get_viral_lookups();
-        $data['batch'] = $batch;
+        $samples = $batch->sample;
+        $samples->loadMissing(['patient', 'approver' 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
 
-        return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
+        return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     /**
@@ -591,7 +598,7 @@ class ViralbatchController extends Controller
 
     public function individuals($batch_ids)
     {
-        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient'])->get();
+        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->get();
         $samples->loadMissing(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
