@@ -536,7 +536,7 @@ class ViralbatchController extends Controller
 
         $data = Lookup::get_viral_lookups();
         $samples = $batch->sample;
-        $samples->loadMissing(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $samples->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
 
         return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
@@ -566,9 +566,8 @@ class ViralbatchController extends Controller
         // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
 
-
-        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function summaries(Request $request)
@@ -599,7 +598,7 @@ class ViralbatchController extends Controller
     public function individuals($batch_ids)
     {
         $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->get();
-        $samples->loadMissing(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
 

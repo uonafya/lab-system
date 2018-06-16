@@ -511,7 +511,7 @@ class BatchController extends Controller
     public function individuals($batch_ids)
     {
         $samples = Sample::whereIn('batch_id', $batch_ids)->with(['patient.mother', 'approver'])->get();
-        $samples->loadMissing(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_lookups();
         $data['samples'] = $samples;
 
