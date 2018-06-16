@@ -453,8 +453,7 @@ class BatchController extends Controller
         // $data = Lookup::get_lookups();
         // $data['batch'] = $batch;
         // $data['samples'] = $samples;
-
-        return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
+        // return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
 
         $data = Lookup::get_lookups();
         $samples = $batch->sample;
