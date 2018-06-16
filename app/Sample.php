@@ -81,8 +81,12 @@ class Sample extends BaseModel
 
     public function prev_tests()
     {
+        $s = $this;
         $samples = \App\Sample::where('patient_id', $this->patient_id)
-                ->where('datetested', '<', $this->datetested)
+                ->when(true, function($query) use ($s){
+                    if($s->datetested) return $query->where('datetested', '<', $s->datetested);
+                    return $query->where('datecollected', '<', $s->datecollected);
+                })
                 ->where('repeatt', 0)
                 ->whereIn('result', [1, 2])
                 ->get();

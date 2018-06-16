@@ -460,15 +460,11 @@ class SampleController extends Controller
      */
     public function individual(Sample $sample)
     {
-        $batch = $sample->batch;
-        $sample->load(['patient.mother']);
-        $samples[0] = $sample;
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
-        $data['batch'] = $batch;
-        $data['samples'] = $samples;
+        $sample->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data['samples'] = [$sample];
 
-        return view('exports.samples', $data)->with('pageTitle', 'Individual Sample');
+        return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Sample');
     }
 
     public function release_redraw(Sample $sample)

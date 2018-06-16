@@ -46,7 +46,8 @@ class EidDispatch extends Mailable implements ShouldQueue
 
         $mpdf = new Mpdf;
         $data = Lookup::get_lookups();
-        $data = array_merge($data, ['batch' => $batch, 'samples' => $samples]);
+        $samples->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data['samples'] = $samples;
         $view_data = view('exports.samples', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);

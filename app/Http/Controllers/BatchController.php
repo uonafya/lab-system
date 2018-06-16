@@ -447,14 +447,21 @@ class BatchController extends Controller
             $batch->pre_update();
         }
 
-        $samples = $batch->sample;
-        $samples->load(['patient.mother']);
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
-        $data = Lookup::get_lookups();
-        $data['batch'] = $batch;
-        $data['samples'] = $samples;
+        // $samples = $batch->sample;
+        // $samples->load(['patient.mother']);
+        // $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $data = Lookup::get_lookups();
+        // $data['batch'] = $batch;
+        // $data['samples'] = $samples;
 
         return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
+
+        $data = Lookup::get_lookups();
+        $samples = $batch->sample;
+        $samples->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data['samples'] = $samples;
+
+        return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     /**

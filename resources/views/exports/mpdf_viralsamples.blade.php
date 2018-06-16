@@ -178,17 +178,11 @@ p.breakhere {page-break-before: always}
 					$status = $received_statuses->where('id', $sample->receivedstatus)->first()->name;
 					$routcome= "Sample ".$status . " Reason:  ".$reason;
 				}
-
-				// $prev_tests = $sample->prev_results();
-				$prev_tests = \App\Viralsample::where('patient_id', $sample->patient_id)
-				                ->where('datetested', '<', $sample->datetested)
-				                ->where('repeatt', 0)
-				                ->whereIn('rcategory', [1, 2, 3, 4])
-				                ->get();;
+				$sample->prev_tests();
 
 				$s_type = $sample_types->where('id', $sample->sampletype)->first();
 
-				$test_no = $prev_tests->count();
+				$test_no = $sample->previous_tests->count();
 				$test_no++;
 
 				if(($sample->result > 1000 && $s_type->typecode == 2)
@@ -252,8 +246,8 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			@if($prev_tests->count() > 0)
-				@foreach($prev_tests as $prev)
+			@if($sample->previous_tests->count() > 0)
+				@foreach($sample->previous_tests as $prev)
 
 					<tr class="evenrow">
 						<td colspan="1"> <span class="style1">Previous VL Results</span></td>

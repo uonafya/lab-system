@@ -376,15 +376,11 @@ class ViralsampleController extends Controller
      */
     public function individual(Viralsample $sample)
     {
-        $batch = $sample->batch;
-        $sample->load(['patient']);
-        $samples[0] = $sample;
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_viral_lookups();
-        $data['batch'] = $batch;
-        $data['samples'] = $samples;
+        $sample->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data['samples'] = [$sample];
 
-        return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Samples');
+        return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Samples');
     }
 
     public function release_redraw(Viralsample $sample)
