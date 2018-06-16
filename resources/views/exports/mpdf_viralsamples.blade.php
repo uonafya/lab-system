@@ -180,8 +180,8 @@ p.breakhere {page-break-before: always}
 				}
 
 				// $prev_tests = $sample->prev_results();
-				$prev_tests = \App\Viralsample::where('patient_id', $this->patient_id)
-				                ->where('datetested', '<', $this->datetested)
+				$prev_tests = \App\Viralsample::where('patient_id', $sample->patient_id)
+				                ->where('datetested', '<', $sample->datetested)
 				                ->where('repeatt', 0)
 				                ->whereIn('rcategory', [1, 2, 3, 4])
 				                ->get();;
