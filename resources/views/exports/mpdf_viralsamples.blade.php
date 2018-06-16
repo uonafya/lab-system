@@ -227,7 +227,7 @@ p.breakhere {page-break-before: always}
 						<strong>
 							@if($sample->receivedstatus == 2)
 								{{ $routcome }}
-							$else
+							@else
 								&nbsp;&nbsp;&nbsp;&nbsp; Viral Load{{ $routcome}} &nbsp;&nbsp;&nbsp; Log 10 
 								<u>{{ $vlresultinlog}} </u>
 							@endif
