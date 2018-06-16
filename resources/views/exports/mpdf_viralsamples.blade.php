@@ -181,12 +181,6 @@ p.breakhere {page-break-before: always}
 
 				$sample->prev_tests();
 
-				$patient = $sample->patient;
-				$patient_samples = $patient->sample->where('id', '!=', $sample->id)
-													->where('patient_id', $sample->patient_id)
-													->where('repeatt', 0)
-													->where('approved', 1);
-
 				$s_type = $sample_types->where('id', $sample->sampletype)->first();
 
 				$test_no = $patient_samples->count();
