@@ -536,7 +536,7 @@ class ViralbatchController extends Controller
 
         $data = Lookup::get_viral_lookups();
         $samples = $batch->sample;
-        $samples->loadMissing(['patient', 'approver' 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $samples->loadMissing(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
 
         return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
