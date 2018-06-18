@@ -195,14 +195,19 @@
 
                                     @if(isset($batch_complete) && $batch_complete == 1)
                                         <tr>
-                                            <td colspan="6"> 
+                                            <td colspan="4"> 
                                                 <center>
                                                     <button class="btn btn-success" type="submit" name="print_type" value="summary">Print Summaries of the Selected Batches</button>
                                                 </center>
                                             </td>
-                                            <td colspan="7"> 
+                                            <td colspan="5"> 
                                                 <center>
                                                     <button class="btn btn-success" type="submit" name="print_type" value="individual">Print Individual Results of the Selected Batches</button>
+                                                </center>
+                                            </td>
+                                            <td colspan="4"> 
+                                                <center>
+                                                    <button class="btn btn-success" type="submit" name="print_type" value="envelope">Print Envelopes for the Selected Batches</button>
                                                 </center>
                                             </td>
                                         </tr>

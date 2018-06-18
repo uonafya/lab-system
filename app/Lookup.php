@@ -13,6 +13,7 @@ class Lookup
     public static $double_approval = [2, 4, 5];
     public static $amrs = [3, 5];
     public static $worksheet_received = [1, 3];
+    public static $sms = [1, 4];
 
     public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
 
@@ -146,6 +147,7 @@ class Lookup
             'batch' => session('batch'),
             'facility_name' => session('facility_name', 0),
             'amrs' => self::$amrs,
+            'sms' => self::$sms,
         ];
 	}
 
@@ -227,6 +229,7 @@ class Lookup
             'batch' => session('viral_batch'),
             'facility_name' => session('viral_facility_name', 0),
             'amrs' => self::$amrs,
+            'sms' => self::$sms,
         ];
     }
 

@@ -493,6 +493,7 @@ class BatchController extends Controller
     {
         $batch_ids = $request->input('batch_ids');
         if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
+        if($request->input('print_type') == "envelope") return $this->envelopes($batch_ids);
         $batches = Batch::whereIn('id', $batch_ids)->with(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator'])->get();
 
         foreach ($batches as $key => $batch) {
@@ -522,6 +523,19 @@ class BatchController extends Controller
         $data['samples'] = $samples;
 
         return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
+    }
+
+    public function envelope(Batch $batch)
+    {
+        $batch->load(['facility', 'view_facility']);
+        $data['batches'] = [$batch];
+        return view('exports.envelopes', $data);
+    }
+
+    public function envelopes($batch_ids)
+    {
+        $batches = Batch::whereIn('id', $batch_ids)->with(['facility', 'view_facility'])->get();
+        return view('exports.envelopes', ['batches' => $batches]);
     }
 
     public function email(Batch $batch)

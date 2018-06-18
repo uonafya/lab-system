@@ -106,7 +106,7 @@ CREATE OR REPLACE
 VIEW view_facilitys AS
 SELECT  
 
-fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, dis.id as subcounty_id, countys.name as county, countys.id as county_id, 
+fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, dis.id as subcounty_id, countys.name as county, countys.id as county_id, dis.province as province_id,
 labs.name as lab, partners.name as partner, partners.id as partner_id, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, 
 fac.email, fac.contactperson, fac.ContactEmail, fac.contacttelephone, fac.contacttelephone2, 
 fac.sms_printer_phoneno, fac.G4Sbranchname, fac.G4Slocation, fac.G4Sphone1, fac.G4Sphone2, fac.G4Sphone3, fac.G4Sfax
