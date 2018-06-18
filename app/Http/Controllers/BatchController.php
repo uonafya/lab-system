@@ -549,6 +549,11 @@ class BatchController extends Controller
             Mail::to($mail_array)->send(new EidDispatch($batch));
         // }
 
+        if(!$batch->sent_email){
+            $batch->sent_email = true;
+            $batch->save();
+        }
+
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();
     }

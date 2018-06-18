@@ -66,7 +66,9 @@
                         </div>   
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">POC Site Sample Tested at</label>
+                            <label class="col-sm-4 control-label">POC Site Sample Tested at
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control" required name="lab_id" id="lab_id">
                                     @if($sample->batch->facility_lab)
@@ -80,7 +82,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Tested</label>
+                            <label class="col-sm-4 control-label">Date Tested
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -92,7 +96,9 @@
                         @if($pre == '')
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Result</label>
+                                <label class="col-sm-4 control-label">Result
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
                                     <select class="form-control" required name="result">
 
@@ -115,7 +121,9 @@
                         @else
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Result</label>
+                                <label class="col-sm-4 control-label">Result
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
 
                                 <div class="col-sm-8">
                                     <label> <input type="checkbox" class="i-checks" name="result" value="< LDL copies/ml"/> &lt; ldl copies per ml (Check if result is Target Not Detected. If the result is numerical, fill the field below.)</label>

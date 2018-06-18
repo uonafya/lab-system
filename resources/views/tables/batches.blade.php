@@ -114,6 +114,11 @@
                                         @endif
 
                                         <th rowspan="1">TAT</th>
+
+                                        @if(isset($batch_complete) && $batch_complete == 1)
+                                            <th rowspan="2">Email</th>
+                                        @endif
+
                                         <th rowspan="2">Status</th>
                                         <th rowspan="2">Task</th>
                                     </tr>
@@ -173,6 +178,16 @@
                                                     In-Process
                                                 @endif
                                             </td>
+
+                                            @if(isset($batch_complete) && $batch_complete == 1)
+                                                @if($batch->sent_email)
+                                                    <td><strong><div style=\'color: #00ff00;\'>Y</div></strong> </td>
+                                                @else
+                                                    <td><strong><div style=\'color: #ff0000;\'>N</div></strong></td>
+                                                @endif                                                
+                                            @endif
+
+
                                             <td> 
                                                 @if($batch->approval)
                                                     <a href="{{ url($pre . 'batch/site_approval/' . $batch->id) }}">View Samples For Approval ({{ $batch->sample_count ?? 0 }}) </a> |
@@ -206,7 +221,7 @@
                                                     <button class="btn btn-success" type="submit" name="print_type" value="individual">Print Individual Results of the Selected Batches</button>
                                                 </center>
                                             </td>
-                                            <td colspan="4"> 
+                                            <td colspan="5"> 
                                                 <center>
                                                     <button class="btn btn-success" type="submit" name="print_type" value="envelope">Print Envelopes for the Selected Batches</button>
                                                 </center>

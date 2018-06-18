@@ -103,10 +103,12 @@
 				<td><b> Sex</b></td>
 				<td><b> Age (mths)</b></td>
 				<td><b> Prophylaxis</b></td>
+
 				<td><b> Date Collected</b></td>
 				<td><b> Date Received</b></td>
 				<td><b> Status</b></td>
 				<td><b> Test Type</b></td>
+				
 				<td><b> HIV Status</b></td>
 				<td><b> PMTCT</b></td>
 				<td><b> Feeding</b></td>
