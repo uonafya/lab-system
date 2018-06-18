@@ -34,7 +34,7 @@
 <body class="light-skin blank">
 
 <div class="back-link">
-    <img src="{{ asset('img/nascoplogo.png') }}">
+    <img src="{{ asset(env('LOGO', 'img/nascoplogo.png') ) }}">
 </div>
 <div class="pull-right" style="margin: 1.5em;">
     <a href="#" class="btn btn-primary" style="background-color: rgba(0, 0, 0, 0); color: black; border: none;"><strong class="font-extra-bold font-uppercase">{{ @Date("l, d F Y") }}</strong></a>
