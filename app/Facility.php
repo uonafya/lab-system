@@ -53,13 +53,13 @@ class Facility extends BaseModel
 
     public function getContactsAttribute()
     {
-        if($this->contacttelephone != '' && $this->contacttelephone2 && != ''){
+        if($this->contacttelephone != '' && $this->contacttelephone2 != ''){
         	return $this->contacttelephone . ' / ' . $this->contacttelephone2;
 		}
-		else if($this->contacttelephone != '' && $this->contacttelephone2 && == ''){
+		else if($this->contacttelephone != '' && $this->contacttelephone2 == ''){
         	return $this->contacttelephone;
 		}
-		else if($this->contacttelephone == '' && $this->contacttelephone2 && != ''){
+		else if($this->contacttelephone == '' && $this->contacttelephone2 != ''){
         	return $this->contacttelephone2;
 		}
 		else{
@@ -69,13 +69,13 @@ class Facility extends BaseModel
 
     public function getFacilityContactsAttribute()
     {
-        if($this->telephone != '' && $this->telephone2 && != ''){
+        if($this->telephone != '' && $this->telephone2 != ''){
         	return $this->telephone . ' / ' . $this->telephone2;
 		}
-		else if($this->telephone != '' && $this->telephone2 && == ''){
+		else if($this->telephone != '' && $this->telephone2 == ''){
         	return $this->telephone;
 		}
-		else if($this->telephone == '' && $this->telephone2 && != ''){
+		else if($this->telephone == '' && $this->telephone2 != ''){
         	return $this->telephone2;
 		}
 		else{

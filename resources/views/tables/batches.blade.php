@@ -195,7 +195,7 @@
 
                                     @if(isset($batch_complete) && $batch_complete == 1)
                                         <tr>
-                                            <td colspan="4"> 
+                                            <td colspan="5"> 
                                                 <center>
                                                     <button class="btn btn-success" type="submit" name="print_type" value="summary">Print Summaries of the Selected Batches</button>
                                                 </center>
