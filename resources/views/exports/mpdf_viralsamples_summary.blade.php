@@ -16,7 +16,7 @@
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
-     		font-size: 10px;
+     		font-size: 8px;
 		}
 
 
