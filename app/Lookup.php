@@ -226,6 +226,8 @@ class Lookup
             'sampletypes' => Cache::get('sample_types'),
             'regimenlines' => Cache::get('regimen_lines'),
 
+            'languages' => Cache::get('languages'),
+
             'batch' => session('viral_batch'),
             'facility_name' => session('viral_facility_name', 0),
             'amrs' => self::$amrs,
