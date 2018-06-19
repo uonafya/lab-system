@@ -114,12 +114,12 @@
                                         @endif
 
                                         <th rowspan="1">TAT</th>
+                                        <th rowspan="2">Status</th>
 
                                         @if(isset($batch_complete) && $batch_complete == 1)
                                             <th rowspan="2">Email</th>
                                         @endif
-
-                                        <th rowspan="2">Status</th>
+                                        
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
@@ -181,9 +181,9 @@
 
                                             @if(isset($batch_complete) && $batch_complete == 1)
                                                 @if($batch->sent_email)
-                                                    <td><strong><div style=\'color: #00ff00;\'>Y</div></strong> </td>
+                                                    <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
                                                 @else
-                                                    <td><strong><div style=\'color: #ff0000;\'>N</div></strong></td>
+                                                    <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                                 @endif                                                
                                             @endif
 
