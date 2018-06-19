@@ -81,7 +81,7 @@ class BatchController extends Controller
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
             if(!$subtotals && !$rejected){
-                $total = $rej = $result = $noresult = 0;
+                $total = $rej = $result = $noresult = $pos + $neg + $redraw + $failed = 0;
             }
             else{
                 $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
@@ -104,6 +104,10 @@ class BatchController extends Controller
             $batch->rejected = $rej;
             $batch->result = $result;
             $batch->noresult = $noresult;
+
+            $batch->pos = $pos;
+            $batch->neg = $neg;
+
             $batch->status = $batch->batch_complete;
             $batch->approval = false;
             return $batch;
