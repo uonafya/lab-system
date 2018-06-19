@@ -95,12 +95,14 @@
                                 <thead>
                                     <tr class="colhead">
                                         <th rowspan="2">Batch No</th>
-                                        <th rowspan="1">Print Multiple</th>
+
+                                        <th>Print Multiple</th>
+
                                         <th rowspan="2">Facility</th>
                                         <th rowspan="1">Date</th>
                                         <th colspan="2"># of samples</th>
                                         <th colspan="2">Date</th>
-                                        <th colspan="4">Test Outcomes</th>
+                                        <th colspan="3">Test Outcomes</th>
                                         <th rowspan="1">Date</th>
                                         <th rowspan="1">TAT</th>
                                         <th rowspan="2">Email</th>                                        
@@ -113,10 +115,11 @@
                                         <th>Rejected</th>
                                         <th>Tested</th>
                                         <th>Updated</th>
-                                        <th>+</th>
-                                        <th>-</th>
+
+                                        <th>Suppressed</th>
+                                        <th>Non-Suppressed</th>
                                         <th>RD</th>
-                                        <th>F</th>
+
                                         <th>Dispatched</th>
                                         <th>(Dys)</th> 
                                     </tr>
@@ -139,10 +142,9 @@
                                             <td> {{ $batch->my_date_format('date_tested') }} </td> 
                                             <td> {{ $batch->my_date_format('date_modified') }} </td> 
 
-                                            <td> {{ $batch->pos }} </td> 
-                                            <td> {{ $batch->neg }} </td> 
-                                            <td> {{ $batch->redraw }} </td> 
-                                            <td> {{ $batch->failed }} </td> 
+                                            <td> {{ $batch->suppressed }} </td> 
+                                            <td> {{ $batch->nonsuppressed }} </td> 
+                                            <td> {{ $batch->failures }} </td>
 
                                             <td> {{ $batch->datedispatched }} </td>
                                             <td> {{ $batch->tat() }} </td>
