@@ -16,7 +16,7 @@
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
-     		font-size: 10px;
+     		font-size: 8px;
 		}
 
 		h5 {
@@ -37,7 +37,7 @@
 
 	@foreach($batches as $batch)
 
-		<table border="0" id='table1' align="center">
+		<table border="0" style="border: 0px;" align="center">
 			<tr>
 				<td colspan="9" align="center">
 					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
@@ -45,29 +45,22 @@
 			</tr>
 			<tr>
 				<td colspan="9" align="center">
-
-					<span class="style1"><br>
-					  <span class="style7">MINISTRY OF HEALTH <br />
-					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-					  EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</span>
-					</span>
+					<h5>MINISTRY OF HEALTH</h5>
+					<h5>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</h5>
+					<h5>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</h5>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="5" class="comment style1 style4">
+				<td colspan="5">
 					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
 				</td>
-				<td colspan="4" class="comment style1 style4" align="right">
+				<td colspan="4">
 					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="9" class="comment style1 style4">
-					<strong>NOTICE:</strong> 
-				</td>
-			</tr>
-			<tr>
-				<td colspan="9" class="comment style1 style4">
+				<td colspan="9">
+					<strong>NOTICE:</strong>
 					<strong>The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.Call the official EID lines for more information. Thank you.</strong>
 				</td>
 			</tr>
@@ -75,13 +68,13 @@
 
 		<br />
 
-		<table>
+		<table style="width: 100%;">
 			<tr>
 				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>				
 			</tr>
 			<tr>
 				<td>Facility Name: {{ $batch->facility->name }} </td>
-				<td>Contact: {{ $batch->facility->contactperson }} </td>
+				<td>Contact: {{ $batch->facility->contactperson ?? '' }} </td>
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
@@ -110,10 +103,12 @@
 				<td><b> Sex</b></td>
 				<td><b> Age (mths)</b></td>
 				<td><b> Prophylaxis</b></td>
+
 				<td><b> Date Collected</b></td>
 				<td><b> Date Received</b></td>
 				<td><b> Status</b></td>
 				<td><b> Test Type</b></td>
+				
 				<td><b> HIV Status</b></td>
 				<td><b> PMTCT</b></td>
 				<td><b> Feeding</b></td>
@@ -131,6 +126,7 @@
 						continue;
 					@endphp
 				@endif
+				@continue($sample->repeatt == 1)
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
@@ -183,7 +179,7 @@
 			@endforeach		
 		</table>
 
-		Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}
+		<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
 
 		@isset($rejection)
 			<table>
@@ -314,7 +310,8 @@
 			@break
 		@endif
 
-		<div class="page-break"></div>
+
+		<pagebreak sheet-size='A4-L'>
 
 	@endforeach
 

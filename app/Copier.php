@@ -6,6 +6,7 @@ use Carbon\Carbon;
 
 use App\OldModels\SampleView;
 use App\OldModels\ViralsampleView;
+use App\OldModels\FormerViralsampleView;
 
 use App\OldModels\WorksheetView;
 use App\OldModels\ViralworksheetView;
@@ -35,8 +36,8 @@ class Copier
         $start = Sample::max('id');
         ini_set("memory_limit", "-1");
         $fields = self::samples_arrays(); 
-        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2'];
-        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted'];
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
         $offset_value = 0;
         while(true)
         {
@@ -65,7 +66,7 @@ class Copier
                 if(!$batch){
                     $batch = new Batch($value->only($fields['batch']));
                     foreach ($batch_date_array as $date_field) {
-                        $batch->$date_field = self::clean_date($batch->$date_field);
+                        $batch->$date_field = self::clean_date($value->$date_field);
                     }
                     $batch->id = $value->original_batch_id;
                     // Temporarily use 
@@ -75,9 +76,9 @@ class Copier
 
                 $sample = new Sample($value->only($fields['sample']));
                 foreach ($sample_date_array as $date_field) {
-                    $sample->$date_field = self::clean_date($sample->$date_field);
+                    $sample->$date_field = self::clean_date($value->$date_field);
                 }
-                $sample->batch_id = $batch->id;
+                $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
 
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
@@ -101,15 +102,28 @@ class Copier
         $start = Viralsample::max('id');
         ini_set("memory_limit", "-1");
         $fields = self::viralsamples_arrays();  
-        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2'];
-        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted'];
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
         $offset_value = 0;
+        $sample_class = FormerViralsampleView::class;
+
         while(true)
         {
-            $samples = ViralsampleView::when($start, function($query) use ($start){
+            // If the samples table already has values, then the former table has already been copied
+            if(!$start) $sample_class = ViralsampleView::class;
+            $samples = $sample_class::when($start, function($query) use ($start){
                 return $query->where('id', '>', $start);
             })->limit(self::$limit)->offset($offset_value)->get();
-            if($samples->isEmpty()) break;
+
+            
+            if($samples->isEmpty()){
+                // If the samples table has been copied, exit the loop
+                if($sample_class == 'App\OldModels\ViralsampleView') break;
+                // Else, has finished copying the former table
+                // Switch to the one in use and commence copying
+                $sample_class = ViralsampleView::class;
+                continue;
+            }
 
             foreach ($samples as $key => $value) {
                 $patient = Viralpatient::existing($value->facility_id, $value->patient)->get()->first();
@@ -128,7 +142,7 @@ class Copier
                 if(!$batch){
                     $batch = new Viralbatch($value->only($fields['batch']));
                     foreach ($batch_date_array as $date_field) {
-                        $batch->$date_field = self::clean_date($batch->$date_field);
+                        $batch->$date_field = self::clean_date($value->$date_field);
                     }
                     $batch->id = $value->original_batch_id;
                     // Temporarily use 
@@ -138,9 +152,9 @@ class Copier
 
                 $sample = new Viralsample($value->only($fields['sample']));
                 foreach ($sample_date_array as $date_field) {
-                    $sample->$date_field = self::clean_date($sample->$date_field);
+                    $sample->$date_field = self::clean_date($value->$date_field);
                 }
-                $sample->batch_id = $batch->id;
+                $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
 
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
@@ -229,6 +243,15 @@ class Copier
         }
     }
 
+    public static function clean_preferred_language($val)
+    {
+        if(!$val) return null;
+
+        $val = (int) $val;
+        if($val == 0) return null;
+        return $val;
+    }
+
 
     public static function calculate_dob($datecollected, $years, $months, $class_name=null, $patient=null, $facility_id=null)
     {
@@ -302,9 +325,9 @@ class Copier
 
             'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'synched', 'datesynched' ],
 
-            'patient' => ['patient', 'patient_name', 'sex', 'facility_id', 'caregiver_phone', 'dob', 'entry_point', 'dateinitiatedontreatment', 'synched', 'datesynched' ],
+            'patient' => ['patient', 'patient_name', 'sex', 'facility_id', 'dob', 'entry_point', 'dateinitiatedontreatment', 'caregiver_phone', 'patient_phone_no', 'preferred_language', 'synched', 'datesynched' ],
 
-            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'sample_type', 'receivedstatus', 'age', 'redraw', 'pcrtype', 'regimen', 'mother_prophylaxis', 'feeding', 'spots', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'worksheet_id', 'hei_validation', 'enrollment_ccc_no', 'enrollment_status', 'referredfromsite', 'otherreason', 'flag', 'run', 'repeatt', 'eqa', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'mother_last_result', 'mother_age' ], 
+            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'sample_type', 'receivedstatus', 'age', 'redraw', 'pcrtype', 'regimen', 'mother_prophylaxis', 'feeding', 'spots', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'worksheet_id', 'hei_validation', 'enrollment_ccc_no', 'enrollment_status', 'referredfromsite', 'otherreason', 'flag', 'run', 'repeatt', 'eqa', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'mother_last_result', 'mother_age', 'time_result_sms_sent' ], 
         ];
     }
 
@@ -314,9 +337,9 @@ class Copier
 
             'batch' => ['highpriority', 'input_complete', 'batch_complete', 'site_entry', 'sent_email', 'printedby', 'user_id', 'lab_id', 'facility_id', 'datedispatchedfromfacility', 'datereceived', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'synched', 'datesynched' ],
 
-            'patient' => ['patient', 'sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date', 'synched', 'datesynched' ],
+            'patient' => ['patient', 'sex', 'patient_name', 'facility_id', 'patient', 'dob', 'initiation_date', 'caregiver_phone', 'patient_phone_no', 'preferred_language', 'synched', 'datesynched' ],
 
-            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched' ],
+            'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'time_result_sms_sent' ],
             
         ];
     }

@@ -2,8 +2,10 @@
 
 namespace App;
 
-use App\Common;
+use GuzzleHttp\Client;
 use Carbon\Carbon;
+
+use App\Common;
 use App\Viralsample;
 use App\ViralsampleView;
 
@@ -82,10 +84,10 @@ class MiscViral extends Common
         }
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND repeatt = 0 AND approvedby IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL) )";
         }
 
 
@@ -159,7 +161,7 @@ class MiscViral extends Common
             })
             ->when(true, function($query) use ($result){
                 if ($result == 0) {
-                    return $query->whereNull('result');
+                    return $query->whereRaw("(result is null or result = '')");
                 }
                 else if ($result == 1) {
                     return $query->where('result', '< LDL copies/ml');
@@ -167,7 +169,9 @@ class MiscViral extends Common
                 else if ($result == 2) {
                     return $query->where('result', '!=', 'Failed')
                     ->where('result', '!=', 'Collect New Sample')
-                    ->where('result', '!=', '< LDL copies/ml');
+                    ->where('result', '!=', '< LDL copies/ml')
+                    ->where('result', '!=', '')
+                    ->whereNotNull('result');
                 }
                 else if ($result == 3) {
                     return $query->where('result', 'Failed');
@@ -350,7 +354,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $min_date = Carbon::now()->subMonths(3)->toDateString();
+        $min_date = Carbon::now()->subMonths(2)->toDateString();
 
         $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')
             ->where('batch_complete', 1)
@@ -429,6 +433,86 @@ class MiscViral extends Common
             return true;
         }
         return false;
+    }
+
+    public static function patient_sms()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = ViralsampleView::whereNotNull('patient_phone_no')
+                    ->whereNull('time_result_sms_sent')
+                    ->where('batch_complete', 1)
+                    ->where('datereceived', '>', '2018-05-01')
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            if($sample->receivedstatus == 1 && !$sample->rcategory) continue;
+
+            // English
+            if($sample->preferred_language == 1){
+                if($sample->rcategory == 1 || $sample->rcategory == 2){
+                    if($sample->age > 15 && $sample->age < 24){
+                        $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
+                    }
+                    else{
+                        $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
+                    }
+                }
+                else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                    if($sample->age > 15 && $sample->age < 24){
+                        $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
+                    }
+                    else{
+                        $message = $sample->patient_name . ", Your VL results are ready. Please visit the health facility as soon as you can.";                        
+                    }
+                }
+                else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you.";
+                }
+            }
+            // Kiswahili
+            else{
+                if($sample->rcategory == 1 || $sample->rcategory == 2){
+                    if($sample->age > 15 && $sample->age < 24){
+                        $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
+                    }
+                    else{
+                        $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
+                    }
+                }
+                else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                    if($sample->age > 15 && $sample->age < 24){
+                        $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
+                    }
+                    else{
+                        $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                    }
+                }
+                else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+                }             
+            }
+
+            if(!$message) continue;
+
+            $client = new Client(['base_uri' => self::$sms_url]);
+
+            $response = $client->request('post', '', [
+                'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+                'http_errors' => false,
+                'json' => [
+                    'sender' => env('SMS_SENDER_ID'),
+                    'recipient' => $sample->patient_phone_no,
+                    'message' => $message,
+                ],
+            ]);
+
+            $body = json_decode($response->getBody());
+            if($response->getStatusCode() == 201){
+                $s = Sample::find($sample->id);
+                $s->time_result_sms_sent = date('Y-m-d H:i:s');
+                $s->pre_update();
+            }
+        }
     }
     
 }

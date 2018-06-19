@@ -70,7 +70,14 @@ class SampleController extends Controller
             $this->clear_session();
             session(['toast_message' => "The batch {$batch->id} has been released."]);
             return redirect("batch/{$batch->id}");
-        }        
+        }   
+
+        $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient_id', 'datecollected']) )->get()->first();
+        if($existing){
+            session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+            session(['toast_error' => 1]);
+            return back();            
+        }     
 
         if(!$batch){
             $facility_id = $request->input('facility_id');
@@ -453,15 +460,11 @@ class SampleController extends Controller
      */
     public function individual(Sample $sample)
     {
-        $batch = $sample->batch;
-        $sample->load(['patient.mother']);
-        $samples[0] = $sample;
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
-        $data['batch'] = $batch;
-        $data['samples'] = $samples;
+        $sample->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data['samples'] = [$sample];
 
-        return view('exports.samples', $data)->with('pageTitle', 'Individual Sample');
+        return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Sample');
     }
 
     public function release_redraw(Sample $sample)

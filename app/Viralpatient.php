@@ -53,9 +53,15 @@ class Viralpatient extends BaseModel
 
     public function last_test()
     {
-        $sql = "SELECT * FROM viralsamples WHERE patient_id={$this->id} AND datetested=
+        /*$sql = "SELECT * FROM viralsamples WHERE patient_id={$this->id} AND datetested=
                     (SELECT max(datetested) FROM viralsamples WHERE patient_id={$this->id} AND repeatt=0  and rcategory between 1 and 4)
-        "; 
-        $this->recent = \DB::select($sql);
+        ";*/ 
+        // $this->recent = \DB::select($sql);
+
+        $sample = \App\Viralsample::where('patient_id', $this->id)
+                ->whereRaw("datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$this->id} AND repeatt=0  and rcategory between 1 and 4)")
+                ->get()->first();
+        $this->recent = $sample;
     }
 }

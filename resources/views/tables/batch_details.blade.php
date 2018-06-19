@@ -40,10 +40,12 @@
                         </div>
                         <div class="col-md-4">
                             <p><strong>Entered By:</strong> 
-                                @if($batch->creator->full_name != ' ')
-                                    {{ $batch->creator->full_name }}
-                                @else
-                                    {{ $batch->creator->facility->name ?? '' }}
+                                @if($batch->creator)
+                                    @if($batch->creator->full_name != ' ')
+                                        {{ $batch->creator->full_name }}
+                                    @else
+                                        {{ $batch->creator->facility->name ?? '' }}
+                                    @endif
                                 @endif
                             </p>
                         </div>
@@ -54,6 +56,16 @@
                             <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
                         </div>                       
                     </div>
+                    @if(auth()->user()->user_type_id != 5)
+                        <div class="row">
+                            <div class="col-md-4 pull-right">
+                                <a href="{{ url('batch/transfer/' . $batch->id) }} ">
+                                    <button class="btn btn-primary">Transfer Samples To Another Batch</button>
+                                </a>
+                            </div>
+                        </div>
+                        <br />
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>

@@ -42,14 +42,18 @@
                             @if($machine_type == 1)
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Lot No</label>
+                                    <label class="col-sm-4 control-label">Lot No
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-8">
                                         <input class="form-control" required name="lot_no" type="text" value="{{ $worksheet->lot_no ?? '' }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Date Cut</label>
+                                    <label class="col-sm-4 control-label">Date Cut
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-8">
                                         <div class="input-group date date_cut">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -59,28 +63,36 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">HIQCAP Kit No</label>
+                                    <label class="col-sm-4 control-label">HIQCAP Kit No
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-8">
                                         <input class="form-control" required name="hiqcap_no" type="text" value="{{ $worksheet->hiqcap_no ?? '' }}">
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Rack No</label>
+                                    <label class="col-sm-4 control-label">Rack No
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-8">
                                         <input class="form-control" required name="rack_no" type="text" value="{{ $worksheet->rack_no ?? '' }}">
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Spek Kit No</label>
+                                    <label class="col-sm-4 control-label">Spek Kit No
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-8">
                                         <input class="form-control" required name="spekkit_no" type="text" value="{{ $worksheet->spekkit_no ?? '' }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">KIT EXP</label>
+                                    <label class="col-sm-4 control-label">KIT EXP
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-8">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -92,7 +104,9 @@
                             @else
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Sample Prep</label>
+                                    <label class="col-sm-4 control-label">Sample Prep
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-3">
                                         <input class="form-control" required name="sample_prep_lot_no" type="text" value="{{ $worksheet->sample_prep_lot_no ?? '' }}">
                                     </div>
@@ -105,7 +119,9 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Bulk Lysis Buffer</label>
+                                    <label class="col-sm-4 control-label">Bulk Lysis Buffer
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-3">
                                         <input class="form-control" required name="bulklysis_lot_no" type="text" value="{{ $worksheet->bulklysis_lot_no ?? '' }}">
                                     </div>
@@ -118,7 +134,9 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Control</label>
+                                    <label class="col-sm-4 control-label">Control
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-3">
                                         <input class="form-control" required name="control_lot_no" type="text" value="{{ $worksheet->control_lot_no ?? '' }}">
                                     </div>
@@ -134,7 +152,9 @@
 
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Calibrator</label>
+                                    <label class="col-sm-4 control-label">Calibrator
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-3">
                                         <input class="form-control" required name="calibrator_lot_no" type="text" value="{{ $worksheet->calibrator_lot_no ?? '' }}">
                                     </div>
@@ -151,7 +171,9 @@
 
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Amplification Kit</label>
+                                    <label class="col-sm-4 control-label">Amplification Kit
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
                                     <div class="col-sm-3">
                                         <input class="form-control" required name="amplification_kit_lot_no" type="text" value="{{ $worksheet->amplification_kit_lot_no ?? '' }}">
                                     </div>

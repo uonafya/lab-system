@@ -67,26 +67,36 @@ class ViralbatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
-        $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
-        $failed_a = MiscViral::get_totals(3, $batch_ids, false);
-        $detected_a = MiscViral::get_totals(2, $batch_ids, false);
-        $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
 
-        $rejected = MiscViral::get_rejected($batch_ids, false);
+        if($batch_ids){
+            $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
+            $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
+            $failed_a = MiscViral::get_totals(3, $batch_ids, false);
+            $detected_a = MiscViral::get_totals(2, $batch_ids, false);
+            $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
+
+            $rejected = MiscViral::get_rejected($batch_ids, false);
+        }
+        else{
+            $noresult_a = $redraw_a = $failed_a = $detected_a = $undetected_a = $rejected = false;
+        }
 
         $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected){
 
-            $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+            if(!$noresult_a && !$redraw_a && !$failed_a && !$detected_a && !$undetected_a && !$rejected){
+                $total = $rej = $result = $noresult = 0;
+            }else{
+                $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
 
-            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
 
-            $result = $detected + $undetected + $redraw + $failed;
+                $result = $detected + $undetected + $redraw + $failed;
+            }
 
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
@@ -173,8 +183,9 @@ class ViralbatchController extends Controller
         }
 
         $new_batch = new Viralbatch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full']));
-        $new_batch->id = $batch->id + 0.5;
+        $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
+        $new_batch->id = (int) $batch->id + 0.5;
+        $new_id = $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
@@ -182,19 +193,22 @@ class ViralbatchController extends Controller
         }
         $new_batch->save();
 
-        $count = count($sample_ids);
+        $count = 0;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
-            $sample->batch_id = $new_batch->id;
+            if($sample->parentid) continue;
+            if($sample->result) continue;
+            $sample->batch_id = $new_id;
             $sample->pre_update();
+            $count++;
         }
 
         MiscViral::check_batch($batch->id);
-        MiscViral::check_batch($new_batch->id);
+        MiscViral::check_batch($new_id);
 
-        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch{$new_batch->id}."]);
-        return redirect('viralbatch/' . $new_batch->id);
+        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        return redirect('viralbatch/' . $new_id);
     }
 
     /**
@@ -511,14 +525,21 @@ class ViralbatchController extends Controller
             $batch->pre_update();
         }
 
-        $samples = $batch->sample;
-        $samples->load(['patient']);
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $samples = $batch->sample;
+        // $samples->load(['patient']);
+        // $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $data = Lookup::get_viral_lookups();
+        // $data['batch'] = $batch;
+        // $data['samples'] = $samples;
+
+        // return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
+
         $data = Lookup::get_viral_lookups();
-        $data['batch'] = $batch;
+        $samples = $batch->sample;
+        $samples->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
 
-        return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
+        return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     /**
@@ -545,14 +566,15 @@ class ViralbatchController extends Controller
         // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
 
-
-        $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
-        return $pdf->stream('summary.pdf');
+        // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
+        // return $pdf->stream('summary.pdf');
     }
 
     public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
+        if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
+        if($request->input('print_type') == "envelope") return $this->envelopes($batch_ids);
         $batches = Viralbatch::whereIn('id', $batch_ids)->with(['sample.patient', 'facility', 'lab', 'receiver', 'creator'])->get();
 
         foreach ($batches as $key => $batch) {
@@ -574,6 +596,29 @@ class ViralbatchController extends Controller
         // return $pdf->stream('summary.pdf');
     }
 
+    public function individuals($batch_ids)
+    {
+        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->get();
+        $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data = Lookup::get_viral_lookups();
+        $data['samples'] = $samples;
+
+        return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
+    }
+
+    public function envelope(Viralbatch $batch)
+    {
+        $batch->load(['facility', 'view_facility']);
+        $data['batches'] = [$batch];
+        return view('exports.envelopes', $data);
+    }
+
+    public function envelopes($batch_ids)
+    {
+        $batches = Viralbatch::whereIn('id', $batch_ids)->with(['facility', 'view_facility'])->get();
+        return view('exports.envelopes', ['batches' => $batches]);
+    }
+
     public function email(Viralbatch $batch)
     {
         $facility = Facility::find($batch->facility_id);
@@ -584,6 +629,11 @@ class ViralbatchController extends Controller
             // $mail_array = array('joelkith@gmail.com');
             Mail::to($mail_array)->send(new VlDispatch($batch));
         // }
+
+        if(!$batch->sent_email){
+            $batch->sent_email = true;
+            $batch->save();
+        }
 
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();

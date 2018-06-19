@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 class Common
 {
+	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
 
     public static function test_email()
     {
@@ -17,7 +18,7 @@ class Common
 
 	public static function get_days($start, $finish)
 	{
-		if(!$start || !$finish) return 0;
+		if(!$start || !$finish) return null;
 		$workingdays= self::working_days($start, $finish);
 
 		$start_time = strtotime($start);

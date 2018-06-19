@@ -106,6 +106,11 @@ class LoginController extends Controller
         $user = auth()->user();
         $user->set_last_access();
 
+        if($facility){
+            $fac = Facility::find($user->facility_id);
+            session(['logged_facility' => $fac]);
+        }
+
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
         if (auth()->user()->user_type_id == 1)
         {

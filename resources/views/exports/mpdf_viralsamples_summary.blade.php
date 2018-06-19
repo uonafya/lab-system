@@ -16,7 +16,7 @@
 		table, th, td {
 			border: 1px solid black;
 			border-style: solid;
-     		font-size: 10px;
+     		font-size: 8px;
 		}
 
 
@@ -67,7 +67,7 @@
 			</tr>
 		</table>
 
-		<table >
+		<table style="width: 100%;">
 			<tr>
 				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>		
 			</tr>
@@ -84,7 +84,9 @@
 			</tr>
 		</table>
 
-		<table>
+		<br />
+
+		<table style="width: 100%;">
 			<tr>
 				<td colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
 			</tr>
@@ -118,6 +120,7 @@
 						continue;
 					@endphp
 				@endif
+				@continue($sample->repeatt == 1)
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>

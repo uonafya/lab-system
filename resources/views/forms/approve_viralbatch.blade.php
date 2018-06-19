@@ -69,7 +69,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-4 control-label">Date Received</label>
+                                <label class="col-md-4 control-label">Date Received
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-md-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>

@@ -70,21 +70,31 @@ class BatchController extends Controller
             ->paginate();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
-        $subtotals = Misc::get_subtotals($batch_ids, false);
-        $rejected = Misc::get_rejected($batch_ids, false);
+
+        if($batch_ids){
+            $subtotals = Misc::get_subtotals($batch_ids, false);
+            $rejected = Misc::get_rejected($batch_ids, false);
+        }else{
+            $subtotals = $rejected = false;
+        }
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected){
 
-            $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
-            $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
-            $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
-            $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
-            $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+            if(!$subtotals && !$rejected){
+                $total = $rej = $result = $noresult = 0;
+            }
+            else{
+                $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+                $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+                $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+                $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
 
-            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
-            $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
 
-            $result = $pos + $neg + $redraw + $failed;
+                $result = $pos + $neg + $redraw + $failed;
+            }
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
@@ -170,8 +180,9 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full']));
-        $new_batch->id = $batch->id + 0.5;
+        $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
+        $new_batch->id = (int) $batch->id + 0.5;
+        $new_id = $batch->id + 0.5;
         if($new_batch->id == floor($new_batch->id)){
             session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
             session(['toast_error' => 1]);
@@ -179,18 +190,21 @@ class BatchController extends Controller
         }
         $new_batch->save();
 
-        $count = count($sample_ids);
+        $count = 0;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
-            $sample->batch_id = $new_batch->id;
+            if($sample->parentid) continue;
+            if($sample->result) continue;
+            $sample->batch_id = $new_id;
             $sample->pre_update();
+            $count++;
         }
 
         Misc::check_batch($batch->id);
-        Misc::check_batch($new_batch->id);
+        Misc::check_batch($new_id);
 
-        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch{$new_batch->id}."]);
+        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
         return redirect('batch/' . $new_batch->id);
     }
 
@@ -433,14 +447,20 @@ class BatchController extends Controller
             $batch->pre_update();
         }
 
-        $samples = $batch->sample;
-        $samples->load(['patient.mother']);
-        $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $samples = $batch->sample;
+        // $samples->load(['patient.mother']);
+        // $batch->load(['facility', 'lab', 'receiver', 'creator']);
+        // $data = Lookup::get_lookups();
+        // $data['batch'] = $batch;
+        // $data['samples'] = $samples;
+        // return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
+
         $data = Lookup::get_lookups();
-        $data['batch'] = $batch;
+        $samples = $batch->sample;
+        $samples->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
 
-        return view('exports.samples', $data)->with('pageTitle', 'Individual Batch');
+        return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
     }
 
     /**
@@ -472,6 +492,8 @@ class BatchController extends Controller
     public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
+        if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
+        if($request->input('print_type') == "envelope") return $this->envelopes($batch_ids);
         $batches = Batch::whereIn('id', $batch_ids)->with(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator'])->get();
 
         foreach ($batches as $key => $batch) {
@@ -493,6 +515,29 @@ class BatchController extends Controller
         // return $pdf->stream('summary.pdf');
     }
 
+    public function individuals($batch_ids)
+    {
+        $samples = Sample::whereIn('batch_id', $batch_ids)->with(['patient.mother', 'approver'])->get();
+        $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data = Lookup::get_lookups();
+        $data['samples'] = $samples;
+
+        return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
+    }
+
+    public function envelope(Batch $batch)
+    {
+        $batch->load(['facility', 'view_facility']);
+        $data['batches'] = [$batch];
+        return view('exports.envelopes', $data);
+    }
+
+    public function envelopes($batch_ids)
+    {
+        $batches = Batch::whereIn('id', $batch_ids)->with(['facility', 'view_facility'])->get();
+        return view('exports.envelopes', ['batches' => $batches]);
+    }
+
     public function email(Batch $batch)
     {
         $facility = Facility::find($batch->facility_id);
@@ -503,6 +548,11 @@ class BatchController extends Controller
             // $mail_array = array('joelkith@gmail.com');
             Mail::to($mail_array)->send(new EidDispatch($batch));
         // }
+
+        if(!$batch->sent_email){
+            $batch->sent_email = true;
+            $batch->save();
+        }
 
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();

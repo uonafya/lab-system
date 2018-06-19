@@ -22,8 +22,7 @@ class ViralworksheetController extends Controller
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
-            ->join('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
-            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+            ->leftJoin('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
             ->where('site_entry', '!=', 2)
             ->when($worksheet_id, function ($query) use ($worksheet_id){
@@ -65,24 +64,30 @@ class ViralworksheetController extends Controller
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
-        if($machine == NULL || $machine->vl_limit == NULL)
-        {
-            return back();
-        }
+        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $user = auth()->user();
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        if($machine == NULL || $machine->vl_limit == NULL) return back();
+
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
+            ->when($test, function($query) use ($user){
+                return $query->where('received_by', $user->id);
+            })
             ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw('((result IS NULL ) OR (result =0 ))')
+            ->whereRaw("(result IS NULL OR result = 0 OR result = '' )")
             ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
+            ->orderBy('site_entry', 'asc')
+            ->orderBy('site_entry', 'asc')
             ->orderBy('viralsamples.id', 'asc')
             ->limit($machine->vl_limit)
             ->get();
@@ -113,21 +118,27 @@ class ViralworksheetController extends Controller
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
+        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $user = auth()->user();
+
         $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
+            ->when($test, function($query) use ($user){
+                return $query->where('batches.received_by', $user->id);
+            })
             ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw('((result IS NULL ) OR (result =0 ))')
+            ->whereRaw("(result IS NULL OR result = 0 OR result = '' )")
             ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
+            ->orderBy('site_entry', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit(93)
             ->limit($machine->vl_limit)
             ->get();
 

@@ -39,8 +39,6 @@
                         <li><a href="{{ url('batch') }}">View</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('patient') }}">View Patients</a></li>
-                <hr />
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li>
@@ -85,8 +83,6 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralpatient') }}">View Patients</a></li>
-                <hr />
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 <hr />
                 <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>

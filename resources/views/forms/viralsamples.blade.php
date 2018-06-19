@@ -46,7 +46,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                               <div class="col-sm-8">
-                                <select class="form-control" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" required name="facility_id" id="facility_id">
                                     @isset($viralsample)
                                         <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
                                     @endisset
@@ -96,12 +96,40 @@
                     </div>
                     <div class="panel-body">
 
+                        @if( in_array(env('APP_LAB'), $sms))
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
+                                </label>
+                                <div class="col-sm-3">
+                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}">
+                                </div>
+
+                                <div class="col-sm-1">Preferred Language</div>
+
+                                <div class="col-sm-4">
+                                    @foreach($languages as $key => $value)
+                                        <label><input type="radio" class="i-checks" name="preferred_language" value={{ $key }} 
+
+                                            @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
+                                                checked="checked"
+                                            @endif
+                                            > 
+                                            {{ $value }} 
+                                        </label>
+
+                                    @endforeach
+                                </div>
+                            </div>
+
+                        @endif
+
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient / Sample ID
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
                             </div>
                         </div>
 
@@ -124,7 +152,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control lockable" required name="sex" id="sex">
+                                <select class="form-control lockable requirable" required name="sex" id="sex">
 
                                     <option value=""> Select One </option>
                                     @foreach ($genders as $gender)
@@ -146,7 +174,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PMTCT(If Female)</label>
                             <div class="col-sm-8">
-                                <select class="form-control" name="pmtct" id="pmtct">
+                                <select class="form-control requirable" name="pmtct" id="pmtct">
 
                                     <option value=""> Select One </option>
                                     @foreach ($pmtct_types as $pmtct)
@@ -172,7 +200,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
                                 </div>
                             </div>                            
                         </div>
@@ -227,7 +255,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                               <div class="col-sm-8">
-                                <select class="form-control" required name="lab_id" id="lab_id">
+                                <select class="form-control requirable" required name="lab_id" id="lab_id">
                                     @isset($sample)
                                         <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
                                     @endisset
@@ -240,14 +268,15 @@
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
+                                <input class="form-control" name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Type of Sample</label>
+                            <label class="col-sm-4 control-label">Type of Sample
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="sampletype" id="sampletype">
+                                <select class="form-control requirable" required name="sampletype" id="sampletype">
                                     <option value=""> Select One </option>
                                     @foreach ($sampletypes as $sampletype)
                                         <option value="{{ $sampletype->id }}"
@@ -270,7 +299,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="prophylaxis" id="prophylaxis">
+                                <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option value=""> Select One </option>
                                     @foreach ($prophylaxis as $proph)
                                         <option value="{{ $proph->id }}"
@@ -291,7 +320,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="regimenline" id="regimenline">
+                                <select class="form-control requirable" required name="regimenline" id="regimenline">
                                     <option value=""> Select One </option>
                                     @foreach ($regimenlines as $regimenline)
                                         <option value="{{ $regimenline->id }}"
@@ -312,7 +341,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control" required name="justification" id="justification">
+                                <select class="form-control requirable" required name="justification" id="justification">
                                     <option value=""> Select One </option>
                                     @foreach ($justifications as $justification)
                                         <option value="{{ $justification->id }}"
@@ -338,7 +367,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datecollected" required class="form-control" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
+                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
                                 </div>
                             </div>                            
                         </div> 
@@ -364,7 +393,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
                                     </div>
                                 </div>                            
                             </div> 
@@ -374,7 +403,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                        <select class="form-control" required name="receivedstatus" id="receivedstatus">
+                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
                                         <option value=""> Select One </option>
                                         @foreach ($receivedstatuses as $receivedstatus)
@@ -539,6 +568,17 @@
                 var facility = $("#facility_id").val();
                 check_new_patient(patient, facility);
             });
+
+            $("#facility_id").change(function(){ requirable
+                var val = $(this).val();
+
+                if(val == 7148 || $val == '7148'){
+                    $('.requirable').removeAttr("disabled");
+                }
+                else{
+                    $('.requirable').attr("disabled", "disabled");
+                }
+            }); 
 
             $("#sex").change(function(){
                 var val = $(this).val();

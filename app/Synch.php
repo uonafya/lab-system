@@ -21,6 +21,7 @@ use App\Facility;
 class Synch
 {
 	// public static $base = 'http://127.0.0.1:9000/api/';
+	// public static $base = 'http://eid-dash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
 
 	public static $synch_arrays = [
@@ -123,7 +124,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -157,7 +158,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -201,7 +202,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'batches' => $batches->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -243,7 +244,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'worksheets' => $worksheets->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -284,7 +285,7 @@ class Synch
 					'headers' => [
 						'Accept' => 'application/json',
 					],
-					'form_params' => [
+					'json' => [
 						$key => $models->toJson(),
 						'lab_id' => env('APP_LAB', null),
 					],
@@ -326,7 +327,7 @@ class Synch
 					'headers' => [
 						'Accept' => 'application/json',
 					],
-					'form_params' => [
+					'json' => [
 						$key => $models->toJson(),
 						'lab_id' => env('APP_LAB', null),
 					],
@@ -362,7 +363,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -404,7 +405,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -456,7 +457,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'batches' => $batches->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
@@ -496,7 +497,7 @@ class Synch
 				'headers' => [
 					'Accept' => 'application/json',
 				],
-				'form_params' => [
+				'json' => [
 					'facilities' => $facilities->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],

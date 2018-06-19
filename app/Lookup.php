@@ -12,6 +12,8 @@ class Lookup
 
     public static $double_approval = [2, 4, 5];
     public static $amrs = [3, 5];
+    public static $worksheet_received = [1, 3];
+    public static $sms = [1, 4];
 
     public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
 
@@ -140,9 +142,12 @@ class Lookup
             'pcrtypes' => Cache::get('pcr_types'),
             'receivedstatuses' => Cache::get('received_statuses'),
 
+            'languages' => Cache::get('languages'),
+
             'batch' => session('batch'),
             'facility_name' => session('facility_name', 0),
             'amrs' => self::$amrs,
+            'sms' => self::$sms,
         ];
 	}
 
@@ -179,7 +184,7 @@ class Lookup
 
             'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'mother_dob'],
 
-            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'entry_point', 'patient_status'],
+            'patient' => ['sex', 'patient_name', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'entry_point', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
 
@@ -202,6 +207,7 @@ class Lookup
             'received_statuses' => Cache::get('received_statuses'),
             'prophylaxis' => Cache::get('prophylaxis'),
             'justifications' => Cache::get('justifications'),
+            'pmtct_types' => Cache::get('pmtct_types'),
         ];        
     }
 
@@ -223,6 +229,7 @@ class Lookup
             'batch' => session('viral_batch'),
             'facility_name' => session('viral_facility_name', 0),
             'amrs' => self::$amrs,
+            'sms' => self::$sms,
         ];
     }
 
@@ -263,7 +270,7 @@ class Lookup
         return [
             'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'lab_id', 'site_entry'],
 
-            'patient' => ['sex', 'patient_name', 'facility_id', 'caregiver_phone', 'patient', 'dob', 'initiation_date', 'patient_status'],
+            'patient' => ['sex', 'patient_name', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no'],
 
@@ -277,7 +284,7 @@ class Lookup
 
 	public static function cacher()
 	{
-        if(Cache::has('dr_patient_statuses')){}
+        if(Cache::has('amrslocations')){}
 
         else{
             // Common Lookup Data
@@ -285,6 +292,11 @@ class Lookup
             $amrs_locations = DB::table('amrslocations')->get();
             $genders = DB::table('gender')->where('id', '<', 3)->get();
             $received_statuses = DB::table('receivedstatus')->where('id', '<', 3)->get();
+
+            $languages = [
+                '1' => 'English',
+                '2' => 'Kiswahili',
+            ];
 
             // Eid Lookup Data
             $rejected_reasons = DB::table('rejectedreasons')->get();
@@ -320,6 +332,7 @@ class Lookup
             Cache::put('amrs_locations', $amrs_locations, 60);
             Cache::put('genders', $genders, 60);
             Cache::put('received_statuses', $received_statuses, 60);
+            Cache::put('languages', $languages, 60);
 
             Cache::put('rejected_reasons', $rejected_reasons, 60);
             Cache::put('feedings', $feedings, 60);

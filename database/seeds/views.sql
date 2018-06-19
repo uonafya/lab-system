@@ -11,8 +11,9 @@ CREATE OR REPLACE VIEW old_samples_view AS
     s.hei_validation, s.enrollmentCCCno as enrollment_ccc_no, s.enrollmentstatus as enrollment_status, s.referredfromsite,
     s.otherreason, s.flag, s.run, s.repeatt, s.eqa, s.approvedby, s.approved2by as approvedby2, 
     s.datecollected, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2,
+    s.patientsmsdatesent as time_result_sms_sent,
     #s.tat1, s.tat2, s.tat3, s.tat4, s.previous_positive, 
-    s.synched, s.datesynched,
+    s.synched, s.datesynched, s.dateentered as created_at,
     m.lastvl as mother_last_result, m.age as mother_age,
 
 
@@ -23,7 +24,8 @@ CREATE OR REPLACE VIEW old_samples_view AS
     s.dateindividualresultprinted,  
 
     p.originalautoid as original_patient_id, s.patient, s.fullnames as patient_name, s.caregiverphoneno as 
-    caregiver_phone, p.gender, m.entry_point,  s.dateinitiatedontreatment, p.dob,
+    caregiver_phone, p.gender, m.entry_point,  s.dateinitiatedontreatment, p.dob, 
+    s.patientphoneno as patient_phone_no, s.patientlanguage as preferred_language,
 
     m.status as hiv_status, m.cccno as ccc_no
 
@@ -42,8 +44,9 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
     s.dilutionfactor, s.dilutiontype, s.comments, s.labcomment, s.parentid, s.rejectedreason, s.reason_for_repeat,
     s.rcategory, s.result, s.units, s.interpretation, s.worksheet as worksheet_id, s.flag, s.run, s.repeatt, s.approvedby,
     s.approved2by as approvedby2, s.datecollected, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2,
+    #s.patientsmsdatesent as time_result_sms_sent,
     #s.tat1, s.tat2, s.tat3, s.tat4,  s.previous_nonsuppressed,
-    s.synched, s.datesynched,
+    s.synched, s.datesynched, s.dateentered as created_at,
 
     s.batchno as original_batch_id, s.highpriority, s.inputcomplete as input_complete, s.batchcomplete as 
     batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, s.printedby, s.userid as user_id, 
@@ -52,10 +55,35 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
     s.dateindividualresultprinted, 
 
     p.originalautoid as original_patient_id, s.patient, s.fullnames as patient_name, s.caregiverphoneno as 
-    caregiver_phone, p.gender, p.initiationdate as initiation_date, p.dob
+    caregiver_phone, p.gender, p.initiationdate as initiation_date, p.dob, 
+    s.patientphoneno as patient_phone_no, s.patientlanguage as preferred_language
 
     FROM viralsamples s
     LEFT JOIN viralpatients p ON p.AutoID=s.patientid
+
+);
+
+CREATE OR REPLACE VIEW old_viralsamples_1214_view AS
+(
+    SELECT s.id, 
+    s.receivedstatus, p.age, s.justification,
+    s.otherjustification as other_justification, s.sampletype, s.prophylaxis, s.regimenline, p.pmtct,
+    s.dilutionfactor, s.dilutiontype, s.comments, s.labcomment, s.parentid, s.rejectedreason, s.reason_for_repeat,
+    s.result, s.units, s.interpretation, s.worksheet as worksheet_id, s.flag, s.run, s.repeatt, s.approvedby,
+    s.datecollected, s.datetested, s.datemodified, s.dateapproved,
+    #s.tat1, s.tat2, s.tat3, s.tat4,  s.previous_nonsuppressed,
+    s.synched, s.datesynched, s.dateentered as created_at,
+
+    s.batchno as original_batch_id, s.inputcomplete as input_complete, s.batchcomplete as 
+    batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, s.printedby, s.userid as user_id, 
+    s.labtestedin as lab_id, s.facility as facility_id, 
+    s.datedispatchedfromfacility, s.datereceived, s.datebatchprinted, s.datedispatched, 
+    s.dateindividualresultprinted, 
+
+    s.patient, s.caregiverphoneno as caregiver_phone, p.gender, p.initiationdate as initiation_date, p.dob
+
+    FROM viralsamples1214 s
+    LEFT JOIN viralpatients1214 p ON p.AutoID=s.patientid
 
 );
 

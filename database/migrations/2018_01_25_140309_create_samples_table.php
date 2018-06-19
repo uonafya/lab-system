@@ -67,6 +67,7 @@ class CreateSamplesTable extends Migration
             $table->date('datemodified')->nullable();
             $table->date('dateapproved')->nullable();
             $table->date('dateapproved2')->nullable();
+            $table->dateTime('time_result_sms_sent')->nullable();
 
             $table->tinyInteger('tat1')->unsigned()->default(0)->nullable();
             $table->tinyInteger('tat2')->unsigned()->default(0)->nullable();

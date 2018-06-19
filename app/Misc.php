@@ -2,6 +2,8 @@
 
 namespace App;
 
+use GuzzleHttp\Client;
+
 use App\Common;
 use App\Sample;
 use App\SampleView;
@@ -213,5 +215,94 @@ class Misc extends Common
             ->get();
 
         return $samples;
+    }
+
+    public static function patient_sms()
+    {
+        ini_set("memory_limit", "-1");
+    	$samples = SampleView::whereNotNull('patient_phone_no')
+    				->whereNull('time_result_sms_sent')
+    				->where('batch_complete', 1)
+    				->where('datereceived', '>', '2018-05-01')
+    				->get();
+
+    	foreach ($samples as $key => $sample) {
+    		// English
+    		if($sample->preferred_language == 1){
+    			if($sample->result == 2){
+    				$message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
+    			}
+    			else if($sample->result == 3 || $sample->result == 5){
+    				$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+    			}
+    			else{
+    				if($sample->receivedstatus == 2){
+    					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+    				}
+    				else{
+    					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you"; 	
+    				}
+    			}
+    		}
+    		// Kiswahili
+    		else{
+    			if($sample->result == 2){
+    				$message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
+    			}
+    			else if($sample->result == 3 || $sample->result == 5){
+    				$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+    			}
+    			else{
+    				if($sample->receivedstatus == 2){
+    					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+    				}
+    				else{
+    					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+    				}
+    			}    			
+    		}
+
+    		if(!$message) continue;
+
+	        $client = new Client(['base_uri' => self::$sms_url]);
+
+			$response = $client->request('post', '', [
+				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+				'http_errors' => false,
+				'json' => [
+					'sender' => env('SMS_SENDER_ID'),
+					'recipient' => $sample->patient_phone_no,
+					'message' => $message,
+				],
+			]);
+
+			$body = json_decode($response->getBody());
+			if($response->getStatusCode() == 201){
+				$s = Sample::find($sample->id);
+				$s->time_result_sms_sent = date('Y-m-d H:i:s');
+				$s->pre_update();
+			}
+    	}
+    }
+
+    public static function sms_test()
+    {
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+		$response = $client->request('post', '', [
+			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'debug' => true,
+			'http_errors' => false,
+			'json' => [
+				'sender' => env('SMS_SENDER_ID'),
+				'recipient' => '254702266217',
+				'message' => 'This is a successful test.',
+			],
+
+		]);
+
+		$body = json_decode($response->getBody());
+		echo 'Status code is ' . $response->getStatusCode();
+		dd($body);
     }
 }
