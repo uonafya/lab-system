@@ -81,10 +81,6 @@
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-heading">
-                    <div class="panel-tools">
-                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
-                    </div>
                     @if(isset($site_approval))
                         Site Entry Batches Awaiting Approval [{{ $batches->count() }}]
                     @else
