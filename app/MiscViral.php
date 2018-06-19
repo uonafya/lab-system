@@ -193,7 +193,7 @@ class MiscViral extends Common
 
     public static function get_subtotals($batch_id=NULL, $complete=true)
     {
-        $samples = Viralsample::selectRaw("count(samples.id) as totals, batch_id, rcategory")
+        $samples = Viralsample::selectRaw("count(viralsamples.id) as totals, batch_id, rcategory")
             ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->when($batch_id, function($query) use ($batch_id){
                 if (is_array($batch_id)) {
