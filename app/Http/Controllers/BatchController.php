@@ -74,11 +74,13 @@ class BatchController extends Controller
         if($batch_ids){
             $subtotals = Misc::get_subtotals($batch_ids, false);
             $rejected = Misc::get_rejected($batch_ids, false);
+            $date_modified = Misc::get_maxdatemodified($batch_ids, false);
+            $date_tested = Misc::get_maxdatetested($batch_ids, false);
         }else{
             $subtotals = $rejected = false;
         }
 
-        $batches->transform(function($batch, $key) use ($subtotals, $rejected){
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
 
             if(!$subtotals && !$rejected){
                 $total = $rej = $result = $noresult = $pos + $neg + $redraw + $failed = 0;
@@ -96,6 +98,9 @@ class BatchController extends Controller
                 $result = $pos + $neg + $redraw + $failed;
             }
 
+            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
@@ -105,13 +110,19 @@ class BatchController extends Controller
             $batch->result = $result;
             $batch->noresult = $noresult;
 
+
+
             $batch->pos = $pos;
             $batch->neg = $neg;
+            $batch->redraw = $redraw;
+            $batch->failed = $failed;
 
             $batch->status = $batch->batch_complete;
             $batch->approval = false;
             return $batch;
         });
+
+        if($batch_complete == 1) return view('tables.dispatched_batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
 
         return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
