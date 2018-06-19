@@ -272,7 +272,7 @@ p.breakhere {page-break-before: always}
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<strong>Result Reviewed By: </strong> 
 					&nbsp;&nbsp;&nbsp;&nbsp; 
-					<strong> {{ $sample->approver->full_name }}</strong> 
+					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
 				</td>
@@ -295,7 +295,7 @@ p.breakhere {page-break-before: always}
 		<br>
 
 		@if($key % 2 == 1)
-			<!-- <p class="breakhere"></p> -->
+			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4-L'>
 		@endif
 
