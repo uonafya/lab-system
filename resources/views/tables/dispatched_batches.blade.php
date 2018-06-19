@@ -138,10 +138,10 @@
                                             <td> {{ $batch->name }} </td>
                                             <td> {{ $batch->datereceived }} </td> 
                                             <td> {{ $batch->total }} </td> 
-                                            <td> {{ $batch->rej }} </td>
+                                            <td> {{ $batch->rejected }} </td>
 
-                                            <td> {{ $batch->date_tested }} </td> 
-                                            <td> {{ $batch->date_modified }} </td> 
+                                            <td> {{ $batch->my_date_format('date_tested') }} </td> 
+                                            <td> {{ $batch->my_date_format('date_modified') }} </td> 
 
                                             <td> {{ $batch->pos }} </td> 
                                             <td> {{ $batch->neg }} </td> 
