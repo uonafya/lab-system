@@ -58,6 +58,16 @@ width:1180px;
 					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
 				</td>
 
+				@if($key == 77)
+					<td>Positive Control</td>
+					<td>Positive Control</td>
+					<td>Positive Control</td>
+					<td>Positive Control</td>
+					<td>Positive Control</td>
+					<td>Positive Control</td>
+					<?php $i+=6;  ?>
+				@endif
+
 				@if($i % 12 == 11)
 					</tr>
 				@endif

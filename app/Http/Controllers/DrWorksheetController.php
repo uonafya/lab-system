@@ -88,7 +88,7 @@ class DrWorksheetController extends Controller
 
         $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
         $patient_ids = $patients->pluck(['id'])->toArray();
-        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'desc')->orderBy('dr_primer_id', 'asc')->get();
+        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
         $data['dr_samples'] = $dr_samples;
         return view('worksheets.dr', $data);
     }
