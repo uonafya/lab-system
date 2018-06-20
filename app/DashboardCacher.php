@@ -17,9 +17,6 @@ use App\Viralworksheet;
 class DashboardCacher
 {
 
-
-
-
     public static function tasks()
     {
     	self::tasks_cacher();
@@ -92,6 +89,8 @@ class DashboardCacher
                 'samplesForRepeat' => Cache::get('eid_samplesForRepeat'),
                 'rejectedForDispatch' => Cache::get('eid_rejectedForDispatch'),
                 'resultsForUpdate' => Cache::get('eid_resultsForUpdate'),
+                'overduetesting' => Cache::get('eid_overduetesting'),
+                'overduedispatched' => Cache::get('eid_overduedispatched'),
             ];
 
         }
@@ -244,6 +243,22 @@ class DashboardCacher
         return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
     }
 
+    public static function overdue($level = 'testing',$testingSystem = 'Viralload') {
+        if ($testingSystem == 'Viralload') {
+            $model = ViralsampleView::selectRaw('count(*) as total');
+        } else {
+            $model = SampleView::selectRaw('count(*) as total');
+        }
+
+        if ($level == 'testing') {
+            $model = $model->whereNull('worksheet_id');
+        } else {
+            $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
+        }
+
+        return $model->whereRaw("datediff(curdate(), datereceived)")->get()->first()->total ?? 0;
+    }
+
     public static function cacher()
     {
     	if(Cache::has('vl_pendingSamples')) return true;
@@ -267,6 +282,8 @@ class DashboardCacher
         $samplesForRepeat2 = self::samplesAwaitingRepeat('Eid');
         $rejectedForDispatch2 = self::rejectedSamplesAwaitingDispatch('Eid');
         $resultsForUpdate2 = self::resultsAwaitingpdate('Eid');
+        $overduetesting2 = self::overdue('testing','Eid');
+        $overduedispatched2 = self::overdue('dispatched','Eid');
 
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
@@ -287,6 +304,8 @@ class DashboardCacher
         Cache::put('eid_samplesForRepeat', $samplesForRepeat2, $minutes);
         Cache::put('eid_rejectedForDispatch', $rejectedForDispatch2, $minutes);
         Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
+        Cache::put('eid_overduetesting', $overduetesting2, $minutes);
+        Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
     }
 
     public static function clear_cache()

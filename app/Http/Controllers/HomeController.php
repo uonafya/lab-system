@@ -52,6 +52,17 @@ class HomeController extends Controller
         return $chart;
     }
 
+    public function overdue($level = 'testing')
+    {
+        dd("here");
+        if (session('testingSystem') == 'Viralload') {
+            # code...
+        } else {
+            # code...
+        }
+        
+    }
+
     static function __getEnteredSamples() 
     {
         if (session('testingSystem') == 'Viralload') {

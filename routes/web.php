@@ -55,6 +55,7 @@ Route::get('/synch', 'HomeController@test');
 Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::get('/home', 'HomeController@index');
+	Route::get('/home/overdue{level?}', 'HomeController@overdue');
 
 	Route::get('search', 'RandomController@search');
 

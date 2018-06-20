@@ -173,7 +173,39 @@
 		                    </li>
 
 		            	@else
-		            		@if ((int)$widgets['pendingSamples'] > 0)
+		            		@if ((int)$widgets['overduetesting'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+	            		    <li class="list-group-item" style="{{ $style }}">
+	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['overduetesting'] }}</span>
+			                    <a href="{{ url('home/overdue/testing') }}">EID Samples Overdue for Testing ( > 14 Days since Receipt at Lab )</a>
+		                    </li>
+
+		                    @if ((int)$widgets['overduedispatched'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+	            		    <li class="list-group-item" style="{{ $style }}">
+	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['overduedispatched'] }}</span>
+			                    <a href="{{ url('home/overdue/dispatch') }}">EID Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
+		                    </li>
+
+		                    @if ((int)$widgets['pendingSamples'] > 0)
 		            			@php
 		            				$style = 'background-color: #FDE3A7';
 		            				$badge = 'danger';
@@ -188,6 +220,7 @@
 	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamples'] }}</span>
 			                    <a href="#">Samples awaiting testing</a>
 		                    </li>
+
 		            		@if ((int)$widgets['batchesForApproval'] > 0)
 		            			@php
 		            				$style = 'background-color: #FDE3A7';
