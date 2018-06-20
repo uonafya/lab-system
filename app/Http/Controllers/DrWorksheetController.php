@@ -50,7 +50,28 @@ class DrWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dr_worksheet = new DrWorksheet;
+        $dr_worksheet->lab_id = env('APP_LAB');
+        $dr_worksheet->save();
+
+        $patients = DrPatient::selectRaw("dr_patients.*")
+                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_patients.dr_reason_id')
+                        ->orderBy('drug_resistance_reasons.rank', 'asc')
+                        ->whereNull('worksheet_id')
+                        ->limit(14)
+                        ->get();
+        $data = Lookup::get_dr();
+        $dr_primers = $data['dr_primers'];
+
+        foreach ($patients as $patient) {
+            foreach ($dr_primers as $dr_primer) {
+                $dr_result = new DrResult;
+                $dr_result->patient_id = $patient->id;
+                $dr_result->dr_primer_id = $dr_primer->id;
+                $dr_result->save();
+            }
+        }
+        return redirect('dr_worksheet/' . $dr_worksheet->id);
     }
 
     /**
@@ -61,7 +82,9 @@ class DrWorksheetController extends Controller
      */
     public function show(DrWorksheet $drWorksheet)
     {
-        //
+        $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
+        $patient_ids = $patients->pluck(['id'])->toArray();
+        
     }
 
     /**

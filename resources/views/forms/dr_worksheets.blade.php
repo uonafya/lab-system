@@ -28,7 +28,6 @@
                                     <th>Date Received</th>
                                     <th>Result</th>
                                     <th>Reason</th>
-                                    <th>DR Worksheet</th>
                                     <th>Patient History</th>
                                 </tr>
                             </thead>
@@ -42,7 +41,6 @@
                                         <td> {{ $dr_patient->datereceived }} </td>
                                         <td> {{ $dr_patient->result }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $dr_patient->dr_reason_id)->first()->name ?? '' }} </td>
-                                        <td></td>
                                         <td>
                                             <a href="{{ url('viralpatient/' . $dr_patient->patient->id) }}" target="_blank">
                                                 View History 
@@ -63,6 +61,12 @@
                     @else
                         {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
                     @endif
+
+                            <div class="form-group">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <button class="btn btn-success" type="submit">Save & Print Worksheet</button>
+                                </div>
+                            </div>
 
 
                     {{ Form::close() }}

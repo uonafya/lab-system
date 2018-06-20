@@ -70,7 +70,7 @@
                         Welcome, 
                         @if(Auth()->user()->user_type_id == 5)
                             {{-- $user->name  --}}
-                            {{ session('logged_facility')->name  }}
+                            {{ session('logged_facility')->name ?? ''  }}
                         @else
                             {{ Auth()->user()->surname }} {{ Auth()->user()->oname }}
                         @endif

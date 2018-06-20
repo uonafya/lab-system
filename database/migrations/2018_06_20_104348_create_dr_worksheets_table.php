@@ -26,7 +26,11 @@ class CreateDrWorksheetsTable extends Migration
             $table->date('datereviewed')->nullable();
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
-            $table->date('daterun')->nullable();
+
+            $table->integer('reviewedby')->unsigned()->nullable();
+            $table->integer('uploadedby')->unsigned()->nullable();
+            $table->integer('cancelledby')->unsigned()->nullable();
+            $table->integer('createdby')->unsigned()->nullable();
 
             $table->timestamps();
         });
