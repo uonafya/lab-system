@@ -65,6 +65,13 @@ class UsersTableSeeder extends Seeder
     	]);
 
         $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 1,
+	        'surname' => 'Lusike',
+	        'oname' => 'Judy',
+	        'email' => 'judy@gmail.com',
+    	]);
+
+        $users = factory(App\User::class, 1)->create([
 	        'user_type_id' => 2,
 	        'surname' => 'Default',
 	        'oname' => 'Admin',
