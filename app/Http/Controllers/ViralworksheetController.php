@@ -24,7 +24,6 @@ class ViralworksheetController extends Controller
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->leftJoin('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
-            ->where('site_entry', '!=', 2)
             ->when($worksheet_id, function ($query) use ($worksheet_id){
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
@@ -86,7 +85,6 @@ class ViralworksheetController extends Controller
             ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
-            ->orderBy('site_entry', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('viralsamples.id', 'asc')
             ->limit($machine->vl_limit)

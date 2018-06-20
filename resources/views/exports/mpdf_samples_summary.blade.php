@@ -37,7 +37,7 @@
 
 	@foreach($batches as $batch)
 
-		<table border="0" style="border: 0px;" align="center">
+		<table border="0" style="border: 0px; width: 100%;">
 			<tr>
 				<td colspan="9" align="center">
 					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">

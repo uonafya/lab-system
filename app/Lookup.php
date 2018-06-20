@@ -52,6 +52,7 @@ class Lookup
             'drug_resistance_reasons' => Cache::get('drug_resistance_reasons'),
             'dr_primers' => Cache::get('dr_primers'),
             'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
+            'worksheet_statuses' => Cache::get('worksheet_statuses'),
         ];
     }
 
@@ -225,6 +226,8 @@ class Lookup
             'justifications' => Cache::get('justifications'),
             'sampletypes' => Cache::get('sample_types'),
             'regimenlines' => Cache::get('regimen_lines'),
+
+            'languages' => Cache::get('languages'),
 
             'batch' => session('viral_batch'),
             'facility_name' => session('viral_facility_name', 0),

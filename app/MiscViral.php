@@ -189,6 +189,30 @@ class MiscViral extends Common
 
         return $samples;
     }
+    
+
+    public static function get_subtotals($batch_id=NULL, $complete=true)
+    {
+        $samples = Viralsample::selectRaw("count(viralsamples.id) as totals, batch_id, rcategory")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('repeatt', 0)
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id', 'rcategory')
+            ->get();
+
+        return $samples;
+    }
 
     public static function sample_result($result, $error)
     {

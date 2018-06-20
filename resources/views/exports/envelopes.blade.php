@@ -100,7 +100,7 @@ margin-top: 0px;
 
 				<tr>
 					<td class="style4 style1 comment" ><strong>{{ $batch->lab->name }} </strong></td>
-					<td rowspan="4" ><img src="../img/kemrilogo.jpg" alt="" width="60" height="60" /></td>
+					<td rowspan="4" ><img src="{{ asset(env('ENVELOPE_LOGO') ) }} " alt="" width="60" height="60" /></td>
 				</tr>
 
 				<tr></tr>

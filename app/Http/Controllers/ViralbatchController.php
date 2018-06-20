@@ -27,6 +27,7 @@ class ViralbatchController extends Controller
     {
         $user = auth()->user();
         $facility_user = false;
+        $subtotals = null;
         $date_column = "viralbatches.datereceived";
         if($batch_complete == 1) $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
@@ -74,14 +75,19 @@ class ViralbatchController extends Controller
             $failed_a = MiscViral::get_totals(3, $batch_ids, false);
             $detected_a = MiscViral::get_totals(2, $batch_ids, false);
             $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
+            
+            $date_modified = MiscViral::get_maxdatemodified($batch_ids, false);
+            $date_tested = MiscViral::get_maxdatetested($batch_ids, false);
 
             $rejected = MiscViral::get_rejected($batch_ids, false);
+
+            if($batch_complete == 1) $subtotals = MiscViral::get_subtotals($batch_ids, false);
         }
         else{
             $noresult_a = $redraw_a = $failed_a = $detected_a = $undetected_a = $rejected = false;
         }
 
-        $batches->transform(function($batch, $key) use ($undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected){
+        $batches->transform(function($batch, $key) use ($batch_complete, $undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected, $subtotals, $date_modified, $date_tested){
 
             if(!$noresult_a && !$redraw_a && !$failed_a && !$detected_a && !$undetected_a && !$rejected){
                 $total = $rej = $result = $noresult = 0;
@@ -98,6 +104,22 @@ class ViralbatchController extends Controller
                 $result = $detected + $undetected + $redraw + $failed;
             }
 
+            if($batch_complete == 1){
+                $und = $subtotals->where('batch_id', $batch->id)->where('rcategory', 1)->first()->totals ?? 0;
+                $under1000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 2)->first()->totals ?? 0;
+                $under5000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 3)->first()->totals ?? 0;
+                $over5000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 4)->first()->totals ?? 0;
+                $unknown = $subtotals->where('batch_id', $batch->id)->where('rcategory', 0)->first()->totals ?? 0;
+                $f = $subtotals->where('batch_id', $batch->id)->where('rcategory', 5)->first()->totals ?? 0;
+
+                $batch->suppressed = $und + $under1000;
+                $batch->nonsuppressed = $under5000 + $over5000;
+                $batch->failures = $unknown + $f;
+            }
+
+            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
             $batch->datecreated = $batch->my_date_format('created_at');
@@ -111,6 +133,8 @@ class ViralbatchController extends Controller
             $batch->approval = false;
             return $batch;
         });
+
+        if($batch_complete == 1) return view('tables.dispatched_viralbatches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
 
         return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }

@@ -18,6 +18,7 @@ class CreateDrPatientsTable extends Migration
             $table->bigInteger('patient_id')->unsigned()->index();
             $table->date('datereceived')->nullable();
             $table->string('result', 20)->nullable();
+            $table->integer('worksheet_id')->unsigned()->index();
             $table->tinyInteger('rcategory')->unsigned()->index();
             $table->tinyInteger('dr_reason_id')->unsigned()->index();
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
