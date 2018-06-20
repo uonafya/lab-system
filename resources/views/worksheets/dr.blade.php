@@ -64,7 +64,7 @@ width:1180px;
 					<b> {{ $sample->id }} </b> <br />
 					<b> {{ $sample->patient_id }} - {{ $dr_primers->where('id', $sample->dr_primer_id)->first()->name ?? '' }} </b> <br />
 
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="50" width="100"  />
+					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
 				</td>
 
 				@if($key == 77)
