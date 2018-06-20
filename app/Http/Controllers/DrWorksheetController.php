@@ -82,9 +82,13 @@ class DrWorksheetController extends Controller
      */
     public function show(DrWorksheet $drWorksheet)
     {
+        $data = Lookup::get_dr();
+
         $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
         $patient_ids = $patients->pluck(['id'])->toArray();
-        
+        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'desc')->orderBy('dr_primer_id', 'desc')->get();
+        $data['dr_samples'] = $dr_samples;
+        return view('worksheets.dr', $data);
     }
 
     /**
