@@ -107,7 +107,7 @@ class LoginController extends Controller
         $user->set_last_access();
 
         if($facility){
-            $fac = Facility::find($user->facility_id);
+            $fac = \App\Facility::find($user->facility_id);
             session(['logged_facility' => $fac]);
         }
 
