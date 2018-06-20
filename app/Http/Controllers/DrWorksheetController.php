@@ -36,6 +36,7 @@ class DrWorksheetController extends Controller
                         ->orderBy('drug_resistance_reasons.rank', 'asc')
                         ->whereNull('worksheet_id')
                         ->limit(14)
+                        ->get();
         $patients->load(['patient.facility']);
         $data['dr_patients'] = $patients;
         return view('forms.dr_worksheets', $data);
