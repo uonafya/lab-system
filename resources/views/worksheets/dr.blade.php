@@ -60,6 +60,8 @@ width:1180px;
 					</tr>
 				@endif
 
+				<?php $i++;  ?>
+
 			@endforeach
 				
 		</table>
