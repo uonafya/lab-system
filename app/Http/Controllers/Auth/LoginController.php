@@ -95,6 +95,12 @@ class LoginController extends Controller
         return $this->failed_facility_login(); 
     }
 
+    public function outdated_batch()
+    {
+        session(['login_error' => 'The batch that you have used is outdated. Use a more recent batch.']);
+        return redirect('/login/facility');
+    }
+
     public function failed_facility_login()
     {
         session(['login_error' => 'There was no batch for that facility']);
