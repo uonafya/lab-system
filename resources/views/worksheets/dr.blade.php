@@ -59,12 +59,12 @@ width:1180px;
 				</td>
 
 				@if($key == 77)
-					<td>Positive Control</td>
-					<td>Positive Control</td>
-					<td>Positive Control</td>
-					<td>Positive Control</td>
-					<td>Positive Control</td>
-					<td>Positive Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
 					<?php $i+=6;  ?>
 				@endif
 
@@ -75,6 +75,14 @@ width:1180px;
 				<?php $i++;  ?>
 
 			@endforeach
+
+				<td>Water</td>
+				<td>Water</td>
+				<td>Water</td>
+				<td>Water</td>
+				<td>Water</td>
+				<td>pGEM</td>
+			</tr>
 				
 		</table>
 	</div>
