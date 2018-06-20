@@ -27,7 +27,7 @@ class ViralbatchController extends Controller
     {
         $user = auth()->user();
         $facility_user = false;
-        $subtotals = null;
+        $subtotals = $date_modified = $date_tested = null;
         $date_column = "viralbatches.datereceived";
         if($batch_complete == 1) $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;

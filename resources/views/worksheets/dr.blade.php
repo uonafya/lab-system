@@ -28,6 +28,10 @@ width:1180px;
 }
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
+
+#mytable{
+	transform:rotate(270deg);
+}
 </style>
 
 <STYLE TYPE="text/css">
@@ -43,7 +47,7 @@ width:1180px;
 >
 	<div align="center">
 
-		<table border="0" class="data-table">
+		<table border="0" class="data-table" id='mytable'>
 
 			<?php $i=0;  ?>
 
