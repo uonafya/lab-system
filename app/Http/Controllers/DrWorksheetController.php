@@ -70,6 +70,8 @@ class DrWorksheetController extends Controller
                 $dr_result->dr_primer_id = $dr_primer->id;
                 $dr_result->save();
             }
+            $patient->worksheet_id = $dr_worksheet->id;
+            $patient->save();
         }
         return redirect('dr_worksheet/' . $dr_worksheet->id);
     }
