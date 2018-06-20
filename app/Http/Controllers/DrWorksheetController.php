@@ -37,7 +37,7 @@ class DrWorksheetController extends Controller
                         ->whereNull('worksheet_id')
                         ->limit(14)
         $patients->load(['patient.facility']);
-        $data['patients'] = $patients;
+        $data['dr_patients'] = $patients;
         return view('forms.dr_worksheets', $data);
     }
 
