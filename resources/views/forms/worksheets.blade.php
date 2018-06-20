@@ -11,7 +11,7 @@
         @if($create)
 
             <div class="row">
-                <div class="col-lg-9 col-lg-offset-1">
+                <div class="col-lg-12">
                     <div class="hpanel">
                         <div class="panel-heading">
                             <center>Samples</center>
@@ -32,7 +32,7 @@
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
             <div class="row">
-                <div class="col-lg-9 col-lg-offset-1">
+                <div class="col-lg-12">
                     <div class="hpanel">
                         <div class="panel-heading">
                             <center>Worksheet Information</center>

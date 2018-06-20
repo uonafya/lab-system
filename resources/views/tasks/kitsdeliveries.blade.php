@@ -318,8 +318,8 @@
                             <!-- VL Section -->
                             <div class="col-sm-12">
                                 <center>
-                                <button class="btn btn-success" type="submit" name="saveTaqman" value="saveTaqman">Save Kit Delivery</button>
-                                <button class="btn btn-primary" type="submit" name="discard" value="add">Discard Changes</button>
+                                <button class="btn btn-success" type="submit" id="saveTaqman" name="saveTaqman" value="saveTaqman">Save Kit Delivery</button>
+                                <button class="btn btn-primary" type="reset" name="discard" value="add">Discard Changes</button>
                                 </center>
                             </div>
                         </div>
@@ -875,6 +875,28 @@
             if ($(this).val() == 1) {
                 $("#taqman").show();
                 $("#abbott").hide();
+                $("#kitlotno").attr("required", "true");$("#vkitlotno").attr("required", "true");
+                $("#rqualkit").attr("required", "true");$("#rspexagent").attr("required", "true");    
+                $("#rampinput").attr("required", "true");$("#rampflapless").attr("required", "true");    
+                $("#rampktips").attr("required", "true");$("#rampwash").attr("required", "true");    
+                $("#rktubes").attr("required", "true");$("#dqualkit").attr("required", "true");    
+                $("#dspexagent").attr("required", "true");$("#dampinput").attr("required", "true");    
+                $("#dampflapless").attr("required", "true");$("#dampktips").attr("required", "true");    
+                $("#dampwash").attr("required", "true");$("#dktubes").attr("required", "true");    
+                $("#uqualkit").attr("required", "true");$("#uspexagent").attr("required", "true");    
+                $("#uampinput").attr("required", "true");$("#uampflapless").attr("required", "true");    
+                $("#uampktips").attr("required", "true");$("#uampwash").attr("required", "true");    
+                $("#uktubes").attr("required", "true");$("#vrqualkit").attr("required", "true");    
+                $("#vrspexagent").attr("required", "true");$("#vrampinput").attr("required", "true");    
+                $("#vrampflapless").attr("required", "true");$("#vrampktips").attr("required", "true");
+                $("#vrampwash").attr("required", "true");$("#vrktubes").attr("required", "true");    
+                $("#vdqualkit").attr("required", "true");$("#vdspexagent").attr("required", "true");    
+                $("#vdampinput").attr("required", "true");$("#vdampflapless").attr("required", "true");
+                $("#vdampktips").attr("required", "true");$("#vdampwash").attr("required", "true");    
+                $("#vdktubes").attr("required", "true");$("#vuqualkit").attr("required", "true");    
+                $("#vuspexagent").attr("required", "true");$("#vuampinput").attr("required", "true");
+                $("#vuampflapless").attr("required", "true");$("#vuampktips").attr("required", "true");
+                $("#vuampwash").attr("required", "true");$("#vuktubes").attr("required", "true");
             } else if ($(this).val() == 2) {      
                 $("#taqman").hide();
                 $("#abbott").show();
@@ -883,6 +905,11 @@
                 $("#abbott").hide();
             }
         });
+
+        $("#saveTaqman").submit(function(e){
+            
+        });
+        
 
         /********************************
         *** TAQMAN FORM MANIPULATIONS ***
