@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\DrWorksheet;
+use App\DrPatient;
+use App\DrResult;
+
+use App\Lookup;
 use Illuminate\Http\Request;
 
 class DrWorksheetController extends Controller
@@ -14,7 +18,8 @@ class DrWorksheetController extends Controller
      */
     public function index()
     {
-        //
+
+
     }
 
     /**
@@ -24,7 +29,16 @@ class DrWorksheetController extends Controller
      */
     public function create()
     {
-        //
+        $data = Lookup::get_dr();
+
+        $patients = DrPatient::selectRaw("dr_patients.*")
+                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_patients.dr_reason_id')
+                        ->orderBy('drug_resistance_reasons.rank', 'asc')
+                        ->whereNull('worksheet_id')
+                        ->limit(14)
+        $patients->load(['patient.facility']);
+        $data['patients'] = $patients;
+        return view('forms.dr_worksheets', $data);
     }
 
     /**

@@ -52,6 +52,7 @@ class Lookup
             'drug_resistance_reasons' => Cache::get('drug_resistance_reasons'),
             'dr_primers' => Cache::get('dr_primers'),
             'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
+            'worksheet_statuses' => Cache::get('worksheet_statuses'),
         ];
     }
 

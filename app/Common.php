@@ -117,8 +117,8 @@ class Common
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
 		// if($sample_model == "App\\Sample") echo "Success";
-		// $samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])
-		$samples = $view_model::where(['rcategory' => 0, 'repeatt' => 0, 'receivedstatus' => 1])->where('result', '>', 0)
+		// $samples = $view_model::where(['rcategory' => 0, 'repeatt' => 0, 'receivedstatus' => 1])->where('result', '>', 0)
+		$samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])
 		->when($batch_id, function($query) use ($batch_id){
 			return $query->where(['batch_id' => $batch_id]);
 		})

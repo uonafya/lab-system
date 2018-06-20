@@ -119,6 +119,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::resource('district', 'DistrictController');
 	Route::resource('dr', 'DrPatientController');
+	Route::resource('dr_worksheet', 'DrWorksheetController');
 
 	Route::get('facility/served', 'FacilityController@served');
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
