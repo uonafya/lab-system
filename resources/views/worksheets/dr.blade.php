@@ -1,4 +1,5 @@
 <html>
+<link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ asset('css/worksheet_style.css') }}" media="screen" />
 <style type="text/css">
 <!--
@@ -30,7 +31,11 @@ width:1180px;
 .style10 {font-size: 16px}
 
 #mytable{
-	transform:rotate(270deg);
+	transform:rotate(90deg);
+}
+
+#mytable table td {
+	padding: 15px;
 }
 </style>
 
@@ -45,9 +50,9 @@ width:1180px;
 		onLoad="JavaScript:window.print();"
 	@endisset
 >
-	<div align="center">
+	<div>
 
-		<table border="0" class="data-table" id='mytable'>
+		<table border="0" class="table table-bordered" id='mytable'>
 
 			<?php $i=0;  ?>
 
@@ -90,5 +95,6 @@ width:1180px;
 				
 		</table>
 	</div>
+	<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 </body>
 </html>

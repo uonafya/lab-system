@@ -77,7 +77,7 @@ class BatchController extends Controller
             $date_modified = Misc::get_maxdatemodified($batch_ids, false);
             $date_tested = Misc::get_maxdatetested($batch_ids, false);
         }else{
-            $subtotals = $rejected = false;
+            $subtotals = $rejected = $date_modified = $date_tested = false;
         }
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
