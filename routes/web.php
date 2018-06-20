@@ -119,6 +119,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::resource('district', 'DistrictController');
 	Route::resource('dr', 'DrPatientController');
+	Route::get('dr_worksheet/print/{drWorksheet}', 'DrWorksheetController@print')->name('dr_worksheet.print');
 	Route::resource('dr_worksheet', 'DrWorksheetController');
 
 	Route::get('facility/served', 'FacilityController@served');
