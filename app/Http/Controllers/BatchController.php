@@ -154,11 +154,14 @@ class BatchController extends Controller
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
         $date_end = $request->input('end_date', 0);
 
+        if($date_start == '') $date_start = 0;
+        if($date_end == '') $date_end = 0;
+
         $partner_id = $request->input('partner_id', 0);
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
-        return redirect("batches/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        return redirect("batch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**
