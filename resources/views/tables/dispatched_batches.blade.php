@@ -29,7 +29,7 @@
 
     <br />
 
-    {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'post']) }}
+    {{ Form::open(['url' => '/batch/index', 'method' => 'post']) }}
 
         <div class="row">
             <div class="col-md-4"> 
