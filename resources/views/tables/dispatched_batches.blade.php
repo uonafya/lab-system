@@ -49,7 +49,7 @@
                     <label class="col-sm-3 control-label">Select Subcounty</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="subcounty_id" id="subcounty_id">
-                            <option>  Select One  </option>
+                            <option value=0>  Select One  </option>
                             @foreach ($subcounties as $subcounty)
                                 <option value="{{ $subcounty->id }}"
 
