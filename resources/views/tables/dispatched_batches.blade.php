@@ -37,9 +37,9 @@
                     <label class="col-sm-3 control-label">Select Facility</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="facility_id" id="facility_id">
-                            @isset($facility)
+                            @if(isset($facility) && $facility)
                                 <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
-                            @endisset
+                            @endif
                         </select>
                     </div>                        
                 </div> 
