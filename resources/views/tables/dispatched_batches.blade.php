@@ -29,7 +29,7 @@
 
     <br />
 
-    {{ Form::open(['url' => '/batch/index', 'method' => 'post']) }}
+    {{ Form::open(['url' => '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
         <div class="row">
             <div class="col-md-4"> 
@@ -49,6 +49,7 @@
                     <label class="col-sm-3 control-label">Select Subcounty</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="subcounty_id" id="subcounty_id">
+                            <option value="">  </option>
                             @foreach ($subcounties as $subcounty)
                                 <option value="{{ $subcounty->id }}"
 
@@ -68,6 +69,7 @@
                     <label class="col-sm-3 control-label">Select Partner</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="partner_id" id="partner_id">
+                            <option value="">  </option>
                             @foreach ($partners as $partner)
                                 <option value="{{ $partner->id }}"
 
@@ -266,6 +268,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
+            $(".my_form select").select2(); 
 
             set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 

@@ -150,13 +150,13 @@ class BatchController extends Controller
     public function batch_search(Request $request)
     {
         $submit_type = $request->input('submit_type');
-        $date_start = $request->input('from_date');
-        if($submit_type == 'submit_date') $date_start = $request->input('filter_date');
-        $date_end = $request->input('end_date');
+        $date_start = $request->input('from_date') ?? 0;
+        if($submit_type == 'submit_date') $date_start = $request->input('filter_date') ?? 0;
+        $date_end = $request->input('end_date') ?? 0;
 
-        $partner_id = $request->input('partner_id');
-        $subcounty_id = $request->input('subcounty_id');
-        $facility_id = $request->input('facility_id');
+        $partner_id = $request->input('partner_id') ?? 0;
+        $subcounty_id = $request->input('subcounty_id') ?? 0;
+        $facility_id = $request->input('facility_id') ?? 0;
 
         return redirect("batches/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
