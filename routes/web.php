@@ -54,9 +54,14 @@ Route::get('/synch', 'HomeController@test');
 
 Route::middleware(['web', 'auth'])->group(function(){
 
-	Route::get('/home', 'HomeController@index');
-	Route::get('/home/overdue{level?}', 'HomeController@overdue');
-
+	Route::prefix('home')->name('home.')->group(function(){
+		Route::get('/', 'HomeController@index');
+		Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
+		Route::get('pending/{type?}/{sampletype?}', 'HomeController@pending')->name('pending');
+		Route::get('repeat', 'HomeController@repeat')->name('repeat');
+		Route::get('rejected', 'HomeController@rejected')->name('rejected');
+	});
+	
 	Route::get('search', 'RandomController@search');
 
 	Route::get('refresh_cache', 'RandomController@refresh_cache');

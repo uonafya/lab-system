@@ -171,7 +171,7 @@ class DashboardCacher
         if($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(*) as total')
                         ->whereBetween('sampletype', [1, 5])
-                        ->whereNotIn('receivedstatus', ['0', '2'])
+                        ->where('receivedstatus', 3)
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
@@ -181,7 +181,7 @@ class DashboardCacher
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
-                        ->whereNotIn('receivedstatus', ['0', '2'])
+                        ->where('receivedstatus', 3)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
@@ -256,7 +256,7 @@ class DashboardCacher
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
         }
 
-        return $model->whereRaw("datediff(curdate(), datereceived)")->get()->first()->total ?? 0;
+        return $model->whereRaw("datediff(curdate(), datereceived) > 14")->get()->first()->total ?? 0;
     }
 
     public static function cacher()
