@@ -63,7 +63,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
-		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@index');
+		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@index');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@facility_batches');
 		Route::get('dispatch/', 'BatchController@batch_dispatch');
 		Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
