@@ -233,7 +233,7 @@ class Copier
             while(true)
             {
                 $rows = DB::connection('old')->table($value['table'])->limit(self::$limit)->offset($offset_value)->get()->toArray();
-                if($rows->isEmpty()) break;
+                if(!$rows) break;
 
                 foreach ($rows as $row) {
                     $del = new $value['class'];
