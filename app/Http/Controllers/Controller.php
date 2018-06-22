@@ -119,4 +119,15 @@ class Controller extends BaseController
         return $quota;
     }
 
+    public function auth_user($usertypes)
+    {
+        $user_type_id = auth()->user()->user_type_id;
+        if(is_array($usertypes)){
+            if(!in_array($user_type_id, $usertypes)) abort(403);
+        }
+        else{
+            if($user_type_id != $usertypes) abort(403);
+        }
+    }
+
 }
