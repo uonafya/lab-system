@@ -232,12 +232,12 @@ class Copier
 
             while(true)
             {
-                $rows = DB::connection('old')->table($value['table'])->limit(self::$limit)->offset($offset_value)->get();
+                $rows = DB::connection('old')->table($value['table'])->limit(self::$limit)->offset($offset_value)->get()->toArray();
                 if($rows->isEmpty()) break;
 
                 foreach ($rows as $row) {
                     $del = new $value['class'];
-                    $del->fill($row->toArray());
+                    $del->fill($row);
                     foreach ($unset_array as $u) {
                         unset($del->$u);
                     }
