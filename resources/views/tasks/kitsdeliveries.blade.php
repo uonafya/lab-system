@@ -318,8 +318,8 @@
                             <!-- VL Section -->
                             <div class="col-sm-12">
                                 <center>
-                                <button class="btn btn-success" type="submit" name="saveTaqman" value="saveTaqman">Save Kit Delivery</button>
-                                <button class="btn btn-primary" type="submit" name="discard" value="add">Discard Changes</button>
+                                <button class="btn btn-success" type="submit" id="saveTaqman" name="saveTaqman" value="saveTaqman">Save Kit Delivery</button>
+                                <button class="btn btn-primary" type="reset" name="discard" value="add">Discard Changes</button>
                                 </center>
                             </div>
                         </div>
@@ -352,7 +352,7 @@
                                         <td>1</td>
                                         <td><strong>ABBOTT RealTime HIV-1 Qualitative Amplification Reagent Kit</strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="aqualkitlotno" name="aqualkitlotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" id="aqualkitlotno" required name="aqualkitlotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -361,20 +361,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="arqualkit" name="arqualkit" type="text" value="">
+                                            <input class="form-control input-sm input-edit" id="arqualkit" name="arqualkit" required type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adqualkit" name="adqualkit" type="text" value="">
+                                            <input class="form-control input-sm input-edit" id="adqualkit" name="adqualkit" required type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="auqualkit" name="auqualkit" type="text" value="">
+                                            <input class="form-control input-sm" id="auqualkit" name="auqualkit" required type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>2</td>
                                         <td><strong>ABBOTT RealTime HIV-1 Qualitative Control Kit </strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="acontrollotno" name="acontrollotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" id="acontrollotno" required name="acontrollotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -383,20 +383,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="arcontrol" name="arcontrol" type="text" value="">
+                                            <input class="form-control input-sm" id="arcontrol" name="arcontrol" required type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adcontrol" name="adcontrol" type="text" value="">
+                                            <input class="form-control input-sm input-edit" id="adcontrol" name="adcontrol" required type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aucontrol" name="aucontrol" type="text" value="">
+                                            <input class="form-control input-sm" id="aucontrol" name="aucontrol" required type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>3</td>
                                         <td><strong>Bulk mLysisDNA Buffer (for DBS processing only)</strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="abufferlotno" name="abufferlotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" id="abufferlotno" required name="abufferlotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -405,20 +405,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="arbuffer" name="arbuffer" type="text" value="">
+                                            <input class="form-control input-sm" id="arbuffer" required name="arbuffer" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adbuffer" name="adbuffer" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="adbuffer" name="adbuffer" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aubuffer" name="aubuffer" type="text" value="">
+                                            <input class="form-control input-sm" id="aubuffer" required name="aubuffer" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>4</td>
                                         <td><strong>ABBOTT mSample Preparation System DNA</strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="apreparationlotno" name="apreparationlotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" required id="apreparationlotno" name="apreparationlotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -427,13 +427,13 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="arpreparation" name="arpreparation" type="text" value="">
+                                            <input class="form-control input-sm" id="arpreparation" required name="arpreparation" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adpreparation" name="adpreparation" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="adpreparation" name="adpreparation" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aupreparation" name="aupreparation" type="text" value="">
+                                            <input class="form-control input-sm" required id="aupreparation" name="aupreparation" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -442,13 +442,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="aradhesive" name="aradhesive" type="text" value="">
+                                            <input class="form-control input-sm" required id="aradhesive" name="aradhesive" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adadhesive" name="adadhesive" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="adadhesive" name="adadhesive" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="auadhesive" name="auadhesive" type="text" value="">
+                                            <input class="form-control input-sm" required id="auadhesive" name="auadhesive" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -457,13 +457,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="ardeepplate" name="ardeepplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="ardeepplate" name="ardeepplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="addeepplate" name="addeepplate" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="addeepplate" name="addeepplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="audeepplate" name="audeepplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="audeepplate" name="audeepplate" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -472,13 +472,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="armixtube" name="armixtube" type="text" value="">
+                                            <input class="form-control input-sm" required id="armixtube" name="armixtube" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="admixtube" name="admixtube" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="admixtube" name="admixtube" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aumixtube" name="aumixtube" type="text" value="">
+                                            <input class="form-control input-sm" required id="aumixtube" name="aumixtube" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -487,13 +487,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="arreactionvessels" name="arreactionvessels" type="text" value="">
+                                            <input class="form-control input-sm" required id="arreactionvessels" name="arreactionvessels" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adreactionvessels" name="adreactionvessels" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="adreactionvessels" name="adreactionvessels" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aureactionvessels" name="aureactionvessels" type="text" value="">
+                                            <input class="form-control input-sm" required id="aureactionvessels" name="aureactionvessels" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -502,13 +502,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="arreagent" name="arreagent" type="text" value="">
+                                            <input class="form-control input-sm" required id="arreagent" name="arreagent" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adreagent" name="adreagent" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="adreagent" name="adreagent" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aureagent" name="aureagent" type="text" value="">
+                                            <input class="form-control input-sm" required id="aureagent" name="aureagent" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -517,13 +517,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="arreactionplate" name="arreactionplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="arreactionplate" name="arreactionplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="adreactionplate" name="adreactionplate" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="adreactionplate" name="adreactionplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="aureactionplate" name="aureactionplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="aureactionplate" name="aureactionplate" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -532,13 +532,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="ar1000disposable" name="ar1000disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="ar1000disposable" name="ar1000disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="ad1000disposable" name="ad1000disposable" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="ad1000disposable" name="ad1000disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="au1000disposable" name="au1000disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="au1000disposable" name="au1000disposable" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -547,13 +547,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="ar200disposable" name="ar200disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="ar200disposable" name="ar200disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="ad200disposable" name="ad200disposable" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="ad200disposable" name="ad200disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="au200disposable" name="au200disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="au200disposable" name="au200disposable" type="text" value="">
                                         </td>
                                     </tr>
                                 </tbody>
@@ -604,7 +604,7 @@
                                         <td>1</td>
                                         <td><strong>ABBOTT RealTime HIV-1 Qualitative Amplification Reagent Kit</strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="vaqualkitlotno" name="vaqualkitlotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" required id="vaqualkitlotno" name="vaqualkitlotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -613,20 +613,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="varqualkit" name="varqualkit" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="varqualkit" name="varqualkit" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadqualkit" name="vadqualkit" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadqualkit" name="vadqualkit" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vauqualkit" name="vauqualkit" type="text" value="">
+                                            <input class="form-control input-sm" required id="vauqualkit" name="vauqualkit" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>2</td>
                                         <td><strong>ABBOTT RealTime HIV-1 Qualitative Control Kit </strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="vacontrollotno" name="vacontrollotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" required id="vacontrollotno" name="vacontrollotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -635,20 +635,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="varcontrol" name="varcontrol" type="text" value="">
+                                            <input class="form-control input-sm" required id="varcontrol" name="varcontrol" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadcontrol" name="vadcontrol" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadcontrol" name="vadcontrol" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaucontrol" name="vaucontrol" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaucontrol" name="vaucontrol" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>3</td>
                                         <td><strong>Bulk mLysisDNA Buffer (for DBS processing only)</strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="vabufferlotno" name="vabufferlotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" required id="vabufferlotno" name="vabufferlotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -657,20 +657,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="varbuffer" name="varbuffer" type="text" value="">
+                                            <input class="form-control input-sm" id="varbuffer" required name="varbuffer" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadbuffer" name="vadbuffer" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadbuffer" name="vadbuffer" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaubuffer" name="vaubuffer" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaubuffer" name="vaubuffer" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>4</td>
                                         <td><strong>ABBOTT mSample Preparation System DNA</strong></td>
                                         <td>
-                                            <input class="form-control input-sm input-edit-empty" id="vapreparationlotno" name="vapreparationlotno" type="text" value="">
+                                            <input class="form-control input-sm input-edit-empty" required id="vapreparationlotno" name="vapreparationlotno" type="text" value="">
                                         </td>
                                         <td>
                                             <div class="input-group date">
@@ -679,13 +679,13 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="varpreparation" name="varpreparation" type="text" value="">
+                                            <input class="form-control input-sm" required id="varpreparation" name="varpreparation" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadpreparation" name="vadpreparation" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadpreparation" name="vadpreparation" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaupreparation" name="vaupreparation" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaupreparation" name="vaupreparation" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -694,13 +694,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="varadhesive" name="varadhesive" type="text" value="">
+                                            <input class="form-control input-sm" required id="varadhesive" name="varadhesive" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadadhesive" name="vadadhesive" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadadhesive" name="vadadhesive" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vauadhesive" name="vauadhesive" type="text" value="">
+                                            <input class="form-control input-sm" required id="vauadhesive" name="vauadhesive" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -709,13 +709,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="vardeepplate" name="vardeepplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="vardeepplate" name="vardeepplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vaddeepplate" name="vaddeepplate" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vaddeepplate" name="vaddeepplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaudeepplate" name="vaudeepplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaudeepplate" name="vaudeepplate" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -724,13 +724,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="varmixtube" name="varmixtube" type="text" value="">
+                                            <input class="form-control input-sm" required id="varmixtube" name="varmixtube" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadmixtube" name="vadmixtube" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadmixtube" name="vadmixtube" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaumixtube" name="vaumixtube" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaumixtube" name="vaumixtube" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -739,13 +739,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="varreactionvessels" name="varreactionvessels" type="text" value="">
+                                            <input class="form-control input-sm" required id="varreactionvessels" name="varreactionvessels" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadreactionvessels" name="vadreactionvessels" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadreactionvessels" name="vadreactionvessels" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaureactionvessels" name="vaureactionvessels" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaureactionvessels" name="vaureactionvessels" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -754,13 +754,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="varreagent" name="varreagent" type="text" value="">
+                                            <input class="form-control input-sm" required id="varreagent" name="varreagent" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadreagent" name="vadreagent" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadreagent" name="vadreagent" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaureagent" name="vaureagent" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaureagent" name="vaureagent" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -769,13 +769,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="varreactionplate" name="varreactionplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="varreactionplate" name="varreactionplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vadreactionplate" name="vadreactionplate" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vadreactionplate" name="vadreactionplate" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vaureactionplate" name="vaureactionplate" type="text" value="">
+                                            <input class="form-control input-sm" required id="vaureactionplate" name="vaureactionplate" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -784,13 +784,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="var1000disposable" name="var1000disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="var1000disposable" name="var1000disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vad1000disposable" name="vad1000disposable" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vad1000disposable" name="vad1000disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vau1000disposable" name="vau1000disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="vau1000disposable" name="vau1000disposable" type="text" value="">
                                         </td>
                                     </tr>
                                     <tr>
@@ -799,13 +799,13 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <input class="form-control input-sm" id="var200disposable" name="var200disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="var200disposable" name="var200disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit" id="vad200disposable" name="vad200disposable" type="text" value="">
+                                            <input class="form-control input-sm input-edit" required id="vad200disposable" name="vad200disposable" type="text" value="">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm" id="vau200disposable" name="vau200disposable" type="text" value="">
+                                            <input class="form-control input-sm" required id="vau200disposable" name="vau200disposable" type="text" value="">
                                         </td>
                                     </tr>
                                 </tbody>
@@ -875,6 +875,28 @@
             if ($(this).val() == 1) {
                 $("#taqman").show();
                 $("#abbott").hide();
+                $("#kitlotno").attr("required", "true");$("#vkitlotno").attr("required", "true");
+                $("#rqualkit").attr("required", "true");$("#rspexagent").attr("required", "true");    
+                $("#rampinput").attr("required", "true");$("#rampflapless").attr("required", "true");    
+                $("#rampktips").attr("required", "true");$("#rampwash").attr("required", "true");    
+                $("#rktubes").attr("required", "true");$("#dqualkit").attr("required", "true");    
+                $("#dspexagent").attr("required", "true");$("#dampinput").attr("required", "true");    
+                $("#dampflapless").attr("required", "true");$("#dampktips").attr("required", "true");    
+                $("#dampwash").attr("required", "true");$("#dktubes").attr("required", "true");    
+                $("#uqualkit").attr("required", "true");$("#uspexagent").attr("required", "true");    
+                $("#uampinput").attr("required", "true");$("#uampflapless").attr("required", "true");    
+                $("#uampktips").attr("required", "true");$("#uampwash").attr("required", "true");    
+                $("#uktubes").attr("required", "true");$("#vrqualkit").attr("required", "true");    
+                $("#vrspexagent").attr("required", "true");$("#vrampinput").attr("required", "true");    
+                $("#vrampflapless").attr("required", "true");$("#vrampktips").attr("required", "true");
+                $("#vrampwash").attr("required", "true");$("#vrktubes").attr("required", "true");    
+                $("#vdqualkit").attr("required", "true");$("#vdspexagent").attr("required", "true");    
+                $("#vdampinput").attr("required", "true");$("#vdampflapless").attr("required", "true");
+                $("#vdampktips").attr("required", "true");$("#vdampwash").attr("required", "true");    
+                $("#vdktubes").attr("required", "true");$("#vuqualkit").attr("required", "true");    
+                $("#vuspexagent").attr("required", "true");$("#vuampinput").attr("required", "true");
+                $("#vuampflapless").attr("required", "true");$("#vuampktips").attr("required", "true");
+                $("#vuampwash").attr("required", "true");$("#vuktubes").attr("required", "true");
             } else if ($(this).val() == 2) {      
                 $("#taqman").hide();
                 $("#abbott").show();
@@ -883,6 +905,11 @@
                 $("#abbott").hide();
             }
         });
+
+        $("#saveTaqman").submit(function(e){
+            
+        });
+        
 
         /********************************
         *** TAQMAN FORM MANIPULATIONS ***

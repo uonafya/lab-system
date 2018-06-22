@@ -166,8 +166,6 @@ class WorksheetController extends Controller
             ->limit($machine->eid_limit)
             ->get();
 
-        // dd($samples);
-
         $count = $samples->count();
 
         if($count == $machine->eid_limit){

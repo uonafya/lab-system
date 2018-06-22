@@ -68,11 +68,11 @@ class ReportController extends Controller
     	}
 
         if ($request->category == 'county') {
-            $model = $model->where('view_facilitys.county', '=', $request->county);
+            $model = $model->where('view_facilitys.county_id', '=', $request->county);
         } else if ($request->category == 'subcounty') {
-            $model = $model->where('view_facilitys.county', '=', $request->district);
+            $model = $model->where('view_facilitys.subcounty_id', '=', $request->district);
         } else if ($request->category == 'facility') {
-            $model = $model->where('view_facilitys.county', '=', $request->facility);
+            $model = $model->where('view_facilitys.id', '=', $request->facility);
         }
 
     	if (isset($request->specificDate)) {

@@ -19,7 +19,7 @@
         <input type="hidden" value=0 name="new_patient" id="new_patient">
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body">
 
@@ -89,7 +89,7 @@
 
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading">
                         <center>Patient Information</center>
@@ -240,7 +240,7 @@
 
 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading">
                         <center>Sample Information</center>
@@ -467,7 +467,7 @@
 
                 
         <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
+            <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body">
                         <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>

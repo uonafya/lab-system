@@ -121,12 +121,9 @@
                             <li class="">
                                 <a href="{{ route('dashboard') }}">Dashboard</a>
                             </li>
-                            
-                            @if(session('testingSystem') != 'Viralload')
                             <li class="">
                                 <a href="#">Kits</a>
                             </li>
-                            @endif
                         @endif
                     @endif
                 @endif
@@ -232,12 +229,9 @@
                     <li class="">
                         <a href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
-                    
-                    @if(session('testingSystem') != 'Viralload')
                     <li class="">
                         <a href="#">Kits</a>
                     </li>
-                    @endif
                 @endif
             @endif
                 <li class="dropdown">

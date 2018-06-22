@@ -58,10 +58,10 @@
 			</tr>
 			<tr>
 				<td colspan="5" class="comment style1 style4">
-					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $batch->id ?? '' }} &nbsp;&nbsp; {{ $batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>LAB: {{ $batch->lab->name }}</strong>
+					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 
@@ -109,7 +109,7 @@
 			</tr>
 			<tr >
 				<td colspan="2" class="style4 style1 comment"><strong>Date Received </strong></td>
-				<td colspan="1" class="comment" ><span class="style5">{{ $batch->datereceived }}</span></td>
+				<td colspan="1" class="comment" ><span class="style5">{{ $batch->datereceived ?? '' }}</span></td>
 				<td class="style4 style1 comment" colspan="3"><strong> Infant Prophylaxis </strong></td>
 				<td colspan="1" class="comment ">
 					<span class="style5">
@@ -188,10 +188,10 @@
 		</table>
 
 		<span class="style8" > 
-			If you have questions or problems regarding samples, please contact the {{ $batch->lab->name }}  
+			If you have questions or problems regarding samples, please contact the {{ $batch->lab->name ?? '' }}  
 			<br> 
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			at {{ $batch->lab->email }}
+			at {{ $batch->lab->email ?? '' }}
 			<br> 
 			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
 		</span>
