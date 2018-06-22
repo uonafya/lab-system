@@ -18,7 +18,7 @@ class CreateTaqmandeliveriesTable extends Migration
         Schema::create('taqmandeliveries', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('testtype')->unsigned()->index();
-            $table->tinyInteger('lab')->unsigned()->index();
+            $table->tinyInteger('lab_id')->unsigned()->index();
             $table->tinyInteger('quarter')->unsigned();
             $table->integer('year')->unsigned();
             $table->tinyInteger('source')->unsigned()->nullable();

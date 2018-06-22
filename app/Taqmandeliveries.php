@@ -12,7 +12,7 @@ class Taqmandeliveries extends BaseModel
 
     public function lab()
     {
-        return $this->belongsTo('App\Lab', 'lab');
+        return $this->belongsTo('App\Lab');
     }
 
     public function lab_from()

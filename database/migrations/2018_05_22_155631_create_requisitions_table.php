@@ -16,7 +16,7 @@ class CreateRequisitionsTable extends Migration
         Schema::create('requisitions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('facility')->unsigned()->comment('Facility Code');
-            $table->tinyInteger('lab')->unsigned()->comment('Lab ID');
+            $table->tinyInteger('lab_id')->unsigned()->comment('Lab ID');
             $table->integer('request');
             $table->integer('supply');
             $table->string('comments', 50)->nullable()->comment('Requisition Comments');
@@ -24,7 +24,7 @@ class CreateRequisitionsTable extends Migration
             $table->integer('approvedby')->unsigned()->nullable();
             $table->string('approvecomments', 100)->nullable();
             $table->string('disapprovecomments', 100)->nullable();
-            $table->integer('status');
+            $table->tinyInteger('status');
             $table->tinyInteger('flag')->default(1);
             $table->integer('parentid');
             $table->date('requisitiondate');
