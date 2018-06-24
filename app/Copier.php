@@ -232,7 +232,11 @@ class Copier
 
             while(true)
             {
-                $rows = DB::connection('old')->table($value['table'])->limit(self::$limit)->offset($offset_value)->get();
+                $rows = DB::connection('old')->table($value['table'])
+                ->when($start, function($query) use ($start){
+                    return $query->where('id', '>', $start);
+                })
+                ->limit(self::$limit)->offset($offset_value)->get();
                 if($rows->isEmpty()) break;
 
                 foreach ($rows as $row) {
