@@ -390,7 +390,7 @@ class Copier
     {
         return [
             'taqmanprocurements' => ['table' => 'taqmanprocurement', 'class' => \App\Taqmanprocurement::class, 'dates' => ['datesubmitted']],
-            'abbotprocurements' => ['table' => 'abbotprocurement', 'class' => \App\Abbotprocurement::class, 'dates' => ['datesubmitted']],
+            'abbotprocurements' => ['table' => 'abbottprocurement', 'class' => \App\Abbotprocurement::class, 'dates' => ['datesubmitted']],
 
             'lab_equipment_trackers' => ['table' => 'lab_equipment_tracker', 'class' => \App\LabEquipmentTracker::class, 'dates' => ['datesubmitted', 'dateemailsent', 'datebrokendown', 'datereported', 'datefixed']],
             'lab_performance_trackers' => ['table' => 'lab_performance_tracker', 'class' => \App\LabPerformanceTracker::class, 'dates' => ['datesubmitted', 'dateemailsent']],
