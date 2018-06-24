@@ -397,7 +397,7 @@ class Copier
             'abbotprocurements' => ['table' => 'abbottprocurement', 'class' => \App\Abbotprocurement::class, 'dates' => ['datesubmitted']],
 
             'lab_equipment_trackers' => ['table' => 'lab_equipment_tracker', 'class' => \App\LabEquipmentTracker::class, 'dates' => ['datesubmitted', 'dateemailsent', 'datebrokendown', 'datereported', 'datefixed']],
-            'lab_performance_trackers' => ['table' => 'lab_performance_tracker', 'class' => \App\LabPerformanceTracker::class, 'dates' => ['datesubmitted', 'dateemailsent']],
+            'lab_performance_trackers' => ['table' => 'lab_perfomance_tracker', 'class' => \App\LabPerformanceTracker::class, 'dates' => ['datesubmitted', 'dateemailsent']],
 
             'abbotdeliveries' => ['table' => 'abbottdeliveries', 'class' => \App\Abbotdeliveries::class, 'dates' => ['datereceived', 'dateentered']],
             'taqmandeliveries' => ['table' => 'taqmandeliveries', 'class' => \App\Taqmandeliveries::class, 'dates' => ['datereceived', 'dateentered']],
