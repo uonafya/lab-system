@@ -27,9 +27,9 @@ class CreateTaqmanprocurementsTable extends Migration
                     $table->integer($value.$subvalue)->unsigned()->default(0)->nullable();
                 }
             }
-            $table->date('datesubmitted');
-            $table->integer('submittedBy')->unsigned();
-            $table->tinyInteger('lab_id')->unsigned();
+            $table->date('datesubmitted')->nullable();
+            $table->integer('submittedBy')->unsigned()->nullable();
+            $table->tinyInteger('lab_id')->unsigned()->nullable();
             // $table->tinyInteger('synchronized')->unsigned()->nullable();
             // $table->date('datesynchronized');
             $table->string('comments', 50)->nullable();
