@@ -224,7 +224,7 @@ class Copier
     {
         ini_set("memory_limit", "-1");
         $deliveries = self::deliveries();
-        $unset_array = ['synchronized', 'datesynchronized', 'lab', 'approve'];
+        $unset_array = ['synchronized', 'datesynchronized', 'lab', 'approve', 'yearofrecordset', 'monthofrecordset', 'testsdone'];
 
         foreach ($deliveries as $key => $value) {
             $offset_value = 0;
@@ -247,6 +247,9 @@ class Copier
                         $del->$date_field = self::clean_date($del->$date_field);
                     }
                     if($row->approve && $row->approve == 'Y') $del->approve = 1;
+                    if($row->testsdone) $del->tests = $row->testsdone;
+                    if($row->yearofrecordset) $del->year = $row->yearofrecordset;
+                    if($row->yearofrecordset) $del->month = $row->monthofrecordset;
 
                     $del->save();
                 }
