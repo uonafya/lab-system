@@ -35,7 +35,7 @@ class CreateAbbotprocurementsTable extends Migration
             $table->string('comments', 50)->nullable();
             $table->string('issuedcomments', 100)->nullable();
             $table->boolean('approve')->default(0);
-            $table->string('disapproverreason', 100)->nullable();
+            $table->string('disapprovereason', 100)->nullable();
             $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
             $table->timestamps();
