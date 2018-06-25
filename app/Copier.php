@@ -252,10 +252,10 @@ class Copier
                     foreach ($value['dates'] as $date_field) {
                         $del->$date_field = self::clean_date($del->$date_field);
                     }
-                    if($row->approve && $row->approve == 'Y') $del->approve = 1;
-                    if($row->testsdone) $del->tests = $row->testsdone;
-                    if($row->yearofrecordset) $del->year = $row->yearofrecordset;
-                    if($row->yearofrecordset) $del->month = $row->monthofrecordset;
+                    if(isset($row->approve) && $row->approve == 'Y') $del->approve = 1;
+                    if(isset($row->testsdone)) $del->tests = $row->testsdone;
+                    if(isset($row->yearofrecordset)) $del->year = $row->yearofrecordset;
+                    if(isset($row->monthofrecordset)) $del->month = $row->monthofrecordset;
 
                     $del->save();
                 }
