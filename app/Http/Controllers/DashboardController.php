@@ -59,7 +59,7 @@ class DashboardController extends Controller
                             :
                             DB::table('samples')
                                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
-                                ->when(($value == 'rejected'), function($query) use ($value){
+                                ->when(($value == 'rejected'), function($query){
                                     return $query->join('batches', 'batches.id', '=', 'samples.batch_id');
                                 })
                                 ->when($value, function($query) use ($value){
@@ -130,7 +130,7 @@ class DashboardController extends Controller
 
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
-                                            ->where('smsprinterphoneno', '<>', 0)
+                                            ->where('SMS_printer_phoneNo', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
                             ->when($current, function($query) use ($current){
