@@ -224,7 +224,7 @@ class Copier
     {
         ini_set("memory_limit", "-1");
         $deliveries = self::deliveries();
-        $unset_array = ['synchronized', 'datesynchronized', 'submitted', 'emailsent', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid'];
+        $unset_array = ['synchronized', 'datesynchronized', 'submitted', 'emailsent', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid', 'disposable1000received', 'disposable1000damaged', 'disposable200received', 'disposable200damaged'];
 
         foreach ($deliveries as $key => $value) {
             $offset_value = 0;
@@ -255,6 +255,11 @@ class Copier
                     if(isset($row->yearofrecordset)) $del->year = $row->yearofrecordset;
                     if(isset($row->monthofrecordset)) $del->month = $row->monthofrecordset;
                     if(isset($row->equipmentid)) $del->equipment_id = $row->equipmentid;
+                    
+                    if(isset($row->disposable1000received)) $del->1000disposablereceived = $row->disposable1000received;
+                    if(isset($row->disposable1000damaged)) $del->1000disposabledamaged = $row->disposable1000damaged;
+                    if(isset($row->disposable200received)) $del->200disposablereceived = $row->disposable200received;
+                    if(isset($row->disposable200damaged)) $del->200disposabledamaged = $row->disposable200damaged;
 
                     $del->save();
                 }
