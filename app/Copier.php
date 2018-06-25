@@ -224,12 +224,10 @@ class Copier
     {
         ini_set("memory_limit", "-1");
         $deliveries = self::deliveries();
-        $unset_array = ['synchronized', 'datesynchronized', 'lab', 'approve', 'yearofrecordset', 'monthofrecordset', 'testsdone'];
+        $unset_array = ['synchronized', 'datesynchronized', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid'];
 
         foreach ($deliveries as $key => $value) {
             $offset_value = 0;
-            // $start = DB::connection('old')->table($value['table'])->selectRaw('max(id) as max')->get()->first()->max;
-
             $start = $value['class']::max('id'); 
 
             while(true)
@@ -256,6 +254,7 @@ class Copier
                     if(isset($row->testsdone)) $del->tests = $row->testsdone;
                     if(isset($row->yearofrecordset)) $del->year = $row->yearofrecordset;
                     if(isset($row->monthofrecordset)) $del->month = $row->monthofrecordset;
+                    if(isset($row->equipmentid)) $del->equipment_id = $row->equipmentid;
 
                     $del->save();
                 }
