@@ -256,10 +256,10 @@ class Copier
                     if(isset($row->monthofrecordset)) $del->month = $row->monthofrecordset;
                     if(isset($row->equipmentid)) $del->equipment_id = $row->equipmentid;
                     
-                    if(isset($row->disposable1000received)) $del->1000disposablereceived = $row->disposable1000received;
-                    if(isset($row->disposable1000damaged)) $del->1000disposabledamaged = $row->disposable1000damaged;
-                    if(isset($row->disposable200received)) $del->200disposablereceived = $row->disposable200received;
-                    if(isset($row->disposable200damaged)) $del->200disposabledamaged = $row->disposable200damaged;
+                    if(isset($row->disposable1000received)) $del->{'1000disposablereceived'} = $row->disposable1000received;
+                    if(isset($row->disposable1000damaged)) $del->{'1000disposabledamaged'} = $row->disposable1000damaged;
+                    if(isset($row->disposable200received)) $del->{'200disposablereceived'} = $row->disposable200received;
+                    if(isset($row->disposable200damaged)) $del->{'200disposabledamaged'} = $row->disposable200damaged;
 
                     $del->save();
                 }
