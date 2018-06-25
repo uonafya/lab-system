@@ -13,6 +13,15 @@ class Viralbatch extends BaseModel
     public $keyType = 'string';
     // public $incrementing = 'false';
 
+    /*protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('siteentry', function(Builder $builder){
+            $builder->where('site_entry', '!=', 2);
+        });
+    }*/
+
     public function tat()
     {
         if(!$this->datereceived) return '';

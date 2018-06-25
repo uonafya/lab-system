@@ -32,7 +32,7 @@ class DashboardController extends Controller
         
         
         foreach ($result as $key => $value) {
-            ($value == 'received') ? $table = "`viralbatches`.`datereceived`" : $table = "`viralsamples`.`datetested`";
+            ($value == 'received' || $value == 'rejected') ? $table = "datereceived" : $table = "datetested";
             
             $data[$value] = ($currentTestingSystem == 'Viralload') ? 
                             DB::table('viralsamples')
@@ -69,7 +69,7 @@ class DashboardController extends Controller
                                     }  else if($value == 'rejected'){
                                         return $query->where('receivedstatus', 2);
                                     }                
-                                })
+                                }) 
                                 ->where('repeatt', '=', 0)
                                 ->where('parentid', '=', 0)
                                 ->whereYear($table, date('Y'))
