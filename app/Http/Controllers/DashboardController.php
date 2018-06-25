@@ -38,7 +38,7 @@ class DashboardController extends Controller
                             DB::table('viralsamples')
                                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
                                 ->when($value, function($query) use ($value){
-                                    if ($value == 'received') {
+                                    if ($value == 'received' || $value == 'rejected') {
                                         return $query->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id');
                                     }
                                 })
@@ -58,7 +58,10 @@ class DashboardController extends Controller
                                 ->groupBy('month', 'monthname')->get() 
                             :
                             DB::table('samples')
-                                ->selectRaw("MONTH(`datetested`) as `month`,MONTHNAME(`datetested`) as `monthname`,count(*) as $value")
+                                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                                ->when(($value == 'rejected'), function($query) use ($value){
+                                    return $query->join('batches', 'batches.id', '=', 'samples.batch_id');
+                                })
                                 ->when($value, function($query) use ($value){
                                     if($value == 'tests'){
                                         return $query->whereRaw('result between 1 and 7');
