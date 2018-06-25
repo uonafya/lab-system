@@ -228,7 +228,9 @@ class Copier
 
         foreach ($deliveries as $key => $value) {
             $offset_value = 0;
-            $start = DB::connection('old')->table($value['table'])->selectRaw('max(id) as max')->get()->first()->max;
+            // $start = DB::connection('old')->table($value['table'])->selectRaw('max(id) as max')->get()->first()->max;
+
+            $start = $value['class']::max('id'); 
 
             while(true)
             {
