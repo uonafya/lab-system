@@ -74,7 +74,6 @@ class DashboardController extends Controller
                                     }                
                                 }) 
                                 ->where('repeatt', '=', 0)
-                                ->where('parentid', '=', 0)
                                 ->whereYear($table, date('Y'))
                                 ->groupBy('month', 'monthname')->get();
         }
