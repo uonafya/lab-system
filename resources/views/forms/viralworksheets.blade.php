@@ -214,7 +214,20 @@
 
         @else
 
-            <p> There are only {{ $count }} samples. </p>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-body"> 
+                            <div class="alert alert-warning">
+                                <center>
+                                    There are only {{ $count }} samples that qualify to be in a worksheet.
+                                </center>
+                            </div>
+                        <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         @endif
 
