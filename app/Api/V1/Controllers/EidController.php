@@ -40,7 +40,7 @@ class EidController extends Controller
         $age = Lookup::calculate_age($datecollected, $dob);
         $lab = $request->input('lab') ?? env('APP_LAB');
 
-        $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->first();
+        $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->get()->first();
         $fields = Lookup::samples_arrays();
 
         if($sample_exists){
