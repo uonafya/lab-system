@@ -76,13 +76,13 @@ class EidController extends Controller
 
         $patient = Patient::existing($facility, $hei_number)->get()->first();
 
-        if($patient){
-            $mom = $patient->mother;
-        } 
-        else{
+        // if($patient){
+        //     $mom = $patient->mother;
+        // } 
+        // else{
             $patient = new Patient;
             $mom = new Mother;
-        }
+        // }
 
         $mom->ccc_no = $mother_ccc;
         $mom->facility_id = $facility;
