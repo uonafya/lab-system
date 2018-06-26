@@ -35,6 +35,7 @@ class EidController extends Controller
         $datereceived = $request->input('datereceived');
         $datecollected = $request->input('datecollected');
         $dob = $request->input('dob');
+        $mother_age = $request->input('mother_age');
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_age($datecollected, $dob);
@@ -76,18 +77,18 @@ class EidController extends Controller
 
         $patient = Patient::existing($facility, $hei_number)->get()->first();
 
-        // if($patient){
-        //     $mom = $patient->mother;
-        // } 
-        // else{
+        if($patient){
+            $mom = $patient->mother;
+        } 
+        else{
             $patient = new Patient;
             $mom = new Mother;
-        // }
+        }
 
         $mom->ccc_no = $mother_ccc;
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
-        // $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $request->input('mother_age'));
+        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->save();
         
         $patient->fill($request->only($fields['patient']));
