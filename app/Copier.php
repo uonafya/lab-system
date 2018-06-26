@@ -85,6 +85,7 @@ class Copier
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
                     $sample->age = Lookup::calculate_age($batch->datecollected, $patient->dob);
                 }
+                if($sample->worksheet_id == 0) $sample->worksheet_id = null;
 
                 $sample->save();
             }
@@ -161,6 +162,7 @@ class Copier
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
                     $sample->age = Lookup::calculate_viralage($batch->datecollected, $patient->dob);
                 }
+                if($sample->worksheet_id == 0) $sample->worksheet_id = null;
 
                 $sample->save();
             }

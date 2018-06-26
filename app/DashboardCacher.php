@@ -256,7 +256,7 @@ class DashboardCacher
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
         }
 
-        return $model->whereRaw("datediff(curdate(), datereceived) > 14")->get()->first()->total ?? 0;
+        return $model->where('repeatt', 0)->whereRaw("datediff(curdate(), datereceived) > 14")->get()->first()->total ?? 0;
     }
 
     public static function cacher()
