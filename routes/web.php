@@ -51,6 +51,7 @@ Route::post('facility/search/', 'FacilityController@search')->name('facility.sea
 // });
 
 Route::get('/synch', 'HomeController@test');
+Route::get('download_api', 'RandomController@download_api');
 
 Route::middleware(['web', 'auth'])->group(function(){
 
