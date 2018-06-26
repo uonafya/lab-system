@@ -45,13 +45,7 @@ class EidController extends Controller
         $fields = Lookup::samples_arrays();
 
         if($sample_exists){
-            // return json_encode("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
-
-            return response()
-                ->json([
-                    'error' => 500,
-                    'message' =>  "EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.",
-                ]);
+            return $this->response->errorBadRequest("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
         }
 
         $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
@@ -120,6 +114,7 @@ class EidController extends Controller
         $datedispatched = $request->input('datedispatched');
         // $gender = $request->input('gender');
         $dob = $request->input('dob');
+        $mother_age = $request->input('mother_age');
         
         $ccc_no = $request->input('ccc_no');
         $hiv_status = $request->input('hiv_status');
@@ -132,13 +127,7 @@ class EidController extends Controller
         $fields = Lookup::samples_arrays();
 
         if($sample_exists && !$editted){
-            // return json_encode("EID HEI Number # {$patient_identifier} collected on {$datecollected} already exists in database.");
-
-            return response()
-                ->json([
-                    'error' => 500,
-                    'message' =>  "EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.",
-                ]);
+            return $this->response->errorBadRequest("EID HEI Number {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){
@@ -176,7 +165,7 @@ class EidController extends Controller
         }
 
         $mom->ccc_no = $ccc_no;
-        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $request->input('mother_age'));
+        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
         $mom->save();
@@ -184,8 +173,7 @@ class EidController extends Controller
         $patient->fill($request->only($fields['patient']));
         $patient->mother_id = $mom->id;
         $patient->patient = $patient_identifier;
-        $patient->facility_id = $facility;      
-        // $patient->sex = $sex;
+        $patient->facility_id = $facility;
         $patient->save();
 
         if($editted){
