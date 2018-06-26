@@ -38,8 +38,7 @@ class EidController extends Controller
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_age($datecollected, $dob);
-        // $sex = Lookup::get_gender($gender);
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
 
         $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->first();
         $fields = Lookup::samples_arrays();
@@ -111,7 +110,7 @@ class EidController extends Controller
     public function complete_result(EidCompleteRequest $request)
     {
         $editted = $request->input('editted');
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
         $code = $request->input('mflCode');
         $specimenlabelID = $request->input('specimenlabelID');
         $patient_identifier = $request->input('patient_identifier');

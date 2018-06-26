@@ -60,6 +60,7 @@ return [
         'patient_identifier' => 'required',
         'mflCode' => 'required|integer|digits:5|exists:facilitys,facilitycode', 
         'sex' => 'required|integer|max:3', 
+        'lab' => 'integer',
     ],
 
     'complete_result' => [
@@ -69,7 +70,6 @@ return [
         'datedispatched' => ['date_format:Y-m-d', 'before_or_equal:today', 'required_if:receivedstatus,==,1'],
 
         'editted' => 'filled|integer',
-        'lab' => 'required|integer',
         'result' => 'required_if:receivedstatus,==,1',
         'receivedstatus' => 'required|integer|max:5',
         'rejectedreason' => 'required_if:receivedstatus,==,2',

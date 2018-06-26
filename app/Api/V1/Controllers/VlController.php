@@ -31,7 +31,7 @@ class VlController extends Controller
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $dob = $request->input('dob');
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
@@ -93,7 +93,7 @@ class VlController extends Controller
     public function complete_result(VlCompleteRequest $request)
     {
         $editted = $request->input('editted');
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
         $code = $request->input('mflCode');
         $specimenlabelID = $request->input('specimenlabelID');
         $patient_identifier = $request->input('patient_identifier');
@@ -113,7 +113,6 @@ class VlController extends Controller
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists && !$editted){
-
             return json_encode("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
