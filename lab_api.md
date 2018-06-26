@@ -23,10 +23,10 @@ For the last 4 links, the following fields are common to all
 > - patient_identifier  **required** (ccc_no for vl and hei number for eid)
 > - mflCode  **required**
 > - sex  **required** (1 for male, 2 for female, 3 for unknown)
+> - lab **required**
 
 ---
 The following fields are common to complete requests 
->- lab **required**
 >- receivedstatus **required**
 >- datereceived**required**  *(greater than or equal to **datecollected**)*
 >- rejectedreason *required if received status is 2*

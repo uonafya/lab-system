@@ -29,7 +29,7 @@ class EidController extends Controller
     {
         $code = $request->input('mflCode');
         $mother_ccc = $request->input('ccc_no');
-        $motherHivStatus = $request->input('hiv_status');
+        $hiv_status = $request->input('hiv_status');
         $hei_number = $request->input('patient_identifier');
 
         $datereceived = $request->input('datereceived');
