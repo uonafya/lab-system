@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\SampleView;
 use App\ViralsampleView;
+use App\Abbotdeliveries;
+use App\Taqmandeliveries;
 use Excel;
 
 class ReportController extends Controller
@@ -13,7 +15,7 @@ class ReportController extends Controller
 
     public function index()
     {
-    	return view('shared.reports')->with('pageTitle', 'Lab Reports');
+    	return view('reports.reports')->with('pageTitle', 'Lab Reports');
     }
 
     public function dateselect(Request $request)
@@ -34,6 +36,74 @@ class ReportController extends Controller
         $this->__getExcel($data, $dateString);
         
         return back();
+    }
+
+    public function kits(Request $request)
+    {
+        if($request->method() == 'POST') {
+            $platform = $request->platform;
+            if ($platform == 'abbott') 
+                $model = Abbotdeliveries::select('*');
+            if ($platform == 'taqman')
+                $model = Taqmandeliveries::select('*');
+            
+            if($request->types == 'eid') 
+                $model->where('testtype', '=', 1);
+            if($request->types == 'viralload') 
+                $model->where('testtype', '=', 2);
+            
+            if($request->source == 'scms') 
+                $model->where('source', '=', 1);
+            if($request->source == 'lab') 
+                $model->where('source', '=', 2);
+            if ($request->source == 'kemsa') 
+                $model->where('source', '=', 3);
+
+            $year = $request->year;
+            $model->whereRaw("YEAR(datereceived) = $year");
+            if ($request->period == 'monthly') {
+                $month = $request->month;
+                $model->whereRaw("MONTH(datereceived) = $month");
+            } else if ($request->period == 'quarterly') {
+                $quarter = parent::_getQuarterMonths($request->quarter);
+                $in = "in (";
+                foreach ($quarter as $key => $value) {
+                    if ($key == 2) {
+                        $in .= $value;
+                    } else {
+                        $in .= $value.",";
+                    }
+                }
+                $in .= ")";
+                $model->whereRaw("MONTH(datereceived) $in");
+            }
+            $kits = $model->get();
+            $value = $kits->first();
+
+            if ($value) {
+                $data['kits'] = $kits;
+                if ($platform == 'abbott') {
+                    $data['abbottdata'] = (object) $this->abbottKits;
+                    $data = (object) $data;
+                    return view('reports.abbottkits', compact('data'))->with('pageTitle', '');
+                }
+                if ($platform == 'taqman'){
+                    $data['taqmandata'] = (object) $this->taqmanKits;
+                    $data = (object) $data;
+                    // dd($data);
+                    return view('reports.taqmankits', compact('data'))->with('pageTitle', '');
+                }
+            } else {
+                session(['toast_message'=>'No Kits Deliveries were submitted for the selected criteria']);
+                return back();
+            }
+        }
+        return view('reports.kitsreport')->with('pageTitle', 'Kits Reports');
+    }
+
+    public function consumption(Request $request)
+    {
+        dd($request);
     }
 
     public static function __getDateData($request, &$dateString)

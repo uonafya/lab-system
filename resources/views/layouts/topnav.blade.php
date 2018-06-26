@@ -230,7 +230,7 @@
                         <a href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="">
-                        <a href="#">Kits</a>
+                        <a href="{{ url('reports/kits') }}">Kits</a>
                     </li>
                 @endif
             @endif

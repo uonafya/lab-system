@@ -132,11 +132,11 @@
                                 <label> <input type="radio" name="period" value="annually"> Annually </label>
                             </div>
                             <div class="row" id="periodSelection" style="display: none;">
-                                <div class="col-md-12" id="rangeSelection">
+                                <div class="col-md-9  col-md-offset-3" id="rangeSelection">
                                     <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                         <tbody>
                                             <tr>
-                                                <td>Select Date Range From: </td>
+                                                <th>Select Date Range From: </th>
                                                 <td>
                                                     <div class="input-group date">
                                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -154,11 +154,11 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="col-md-12" id="monthSelection">
+                                <div class="col-md-9  col-md-offset-3" id="monthSelection">
                                     <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                         <tbody>
                                             <tr>
-                                                <td>Select Year and Month </td>
+                                                <th>Select Year and Month </th>
                                                 <td>
                                                     <select class="form-control" id="year" name="year">
                                                         <option selected="true" disabled="true">Select a Year</option>
@@ -182,11 +182,11 @@
                                         </tbody>
                                     </table>    
                                 </div>
-                                <div class="col-md-12" id="quarterSelection">
+                                <div class="col-md-9  col-md-offset-3" id="quarterSelection">
                                     <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                         <tbody>
                                             <tr>
-                                                <td>Select Year and Quarter </td>
+                                                <th>Select Year and Quarter </th>
                                                 <td>
                                                     <select class="form-control" id="year" name="year">
                                                         <option selected="true" disabled="true">Select a Year</option>
@@ -210,11 +210,11 @@
                                         </tbody>
                                     </table>    
                                 </div>
-                                <div class="col-md-12" id="yearSelection">
+                                <div class="col-md-9  col-md-offset-3" id="yearSelection">
                                     <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                         <tbody>
                                             <tr>
-                                                <td>Select Year </td>
+                                                <th>Select Year </th>
                                                 <td>
                                                     <select class="form-control" id="year" name="year">
                                                         <option selected="true" disabled="true">Select a Year</option>
