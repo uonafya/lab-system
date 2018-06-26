@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\VlRequest;
 use App\Api\V1\Requests\VlCompleteRequest;
 
@@ -12,7 +12,7 @@ use App\Viralbatch;
 use App\Viralpatient;
 use App\Viralsample;
 
-class VlController extends Controller
+class VlController extends BaseController
 {
     /**
      * Create a new AuthController instance.

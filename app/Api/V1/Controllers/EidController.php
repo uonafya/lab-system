@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\EidCompleteRequest;
 
@@ -13,7 +13,7 @@ use App\Patient;
 use App\Sample;
 use App\Mother;
 
-class EidController extends Controller
+class EidController extends BaseController
 {
     /**
      * Create a new AuthController instance.
