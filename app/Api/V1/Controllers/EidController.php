@@ -45,7 +45,7 @@ class EidController extends BaseController
         $fields = Lookup::samples_arrays();
 
         if($sample_exists){
-            return response()->errorBadRequest("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
+            return $this->response->errorBadRequest("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
         }
 
         $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
@@ -127,7 +127,7 @@ class EidController extends BaseController
         $fields = Lookup::samples_arrays();
 
         if($sample_exists && !$editted){
-            return response()->errorBadRequest("EID HEI Number {$patient_identifier} collected on {$datecollected} already exists in database.");
+            return $this->response->errorBadRequest("EID HEI Number {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){
