@@ -45,7 +45,13 @@ class EidController extends Controller
         $fields = Lookup::samples_arrays();
 
         if($sample_exists){
-            return json_encode("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
+            // return json_encode("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
+
+            return response()
+                ->json([
+                    'error' => 500,
+                    'message' =>  "EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.",
+                ]);
         }
 
         $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
@@ -126,7 +132,13 @@ class EidController extends Controller
         $fields = Lookup::samples_arrays();
 
         if($sample_exists && !$editted){
-            return json_encode("EID HEI Number # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            // return json_encode("EID HEI Number # {$patient_identifier} collected on {$datecollected} already exists in database.");
+
+            return response()
+                ->json([
+                    'error' => 500,
+                    'message' =>  "EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.",
+                ]);
         }
 
         if(!$editted){

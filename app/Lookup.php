@@ -69,9 +69,11 @@ class Lookup
 
     public static function facility_mfl($mfl)
     {
-        self::cacher(); 
-        $fac = Cache::get('facilities');       
-        return $fac->where('facilitycode', $mfl)->first()->id;
+        // self::cacher(); 
+        // $fac = Cache::get('facilities');       
+        // return $fac->where('facilitycode', $mfl)->first()->id;
+
+        return \App\Facility::locate($mfl)->get()->first()->id;
     }
 
     public static function get_partners()
