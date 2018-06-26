@@ -82,7 +82,7 @@ class EidController extends Controller
         $mom->ccc_no = $mother_ccc;
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
-        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
+        $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->save();
         
         $patient->fill($request->only($fields['patient']));
@@ -165,7 +165,7 @@ class EidController extends Controller
         }
 
         $mom->ccc_no = $ccc_no;
-        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
+        $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
         $mom->save();
