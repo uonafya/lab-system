@@ -41,7 +41,7 @@ class VlController extends Controller
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists){
-            return $this->response->errorBadRequest("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
+            return response()->errorBadRequest("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
         }
 
         $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
@@ -52,10 +52,10 @@ class VlController extends Controller
         else if($batch && $batch->sample_count > 9){
             unset($batch->sample_count);
             $batch->full_batch();
-            $batch = new Batch;
+            $batch = new Viralbatch;
         }
         else{
-            $batch = new Batch;
+            $batch = new Viralbatch;
         }
 
         
@@ -113,7 +113,7 @@ class VlController extends Controller
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists && !$editted){
-            return $this->response->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            return response()->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){
