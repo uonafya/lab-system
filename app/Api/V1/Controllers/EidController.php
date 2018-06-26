@@ -187,7 +187,7 @@ class EidController extends Controller
 
         $sample->fill($request->only($fields['sample']));
         $sample->age = $age;
-        $sample->comment = $specimenlabelID;
+        $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
         $sample->synched = 5;
         $sample->save();

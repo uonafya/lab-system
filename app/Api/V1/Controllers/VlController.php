@@ -165,7 +165,7 @@ class VlController extends Controller
         $sample->age = $age;
         $sample->justification = Lookup::justification($justification);
         $sample->prophylaxis = Lookup::viral_regimen($prophylaxis);
-        $sample->comment = $specimenlabelID;
+        $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
         $sample->synched = 5;
         $sample->save();
