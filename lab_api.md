@@ -1,8 +1,10 @@
 ## LAB API
 
+[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the field you need.
+
+
 All links are **POST** requests.
 *Open the link in **POSTMAN** and then set the request to **POST** *
-
 - Get data by request type [click here](http://lab.test.nascop.org/api/function)
 >Fields
 > - test, 1 for eid, 2 for vl **required**
