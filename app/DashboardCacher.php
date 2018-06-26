@@ -249,7 +249,7 @@ class DashboardCacher
         } else {
             $model = SampleView::selectRaw('count(*) as total');
         }
-        $year = Date('Y')-3;
+        $year = Date('Y')-2;
 
         if ($level == 'testing') {
             $model = $model->whereNull('worksheet_id');

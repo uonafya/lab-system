@@ -126,7 +126,7 @@ class EidController extends Controller
         $fields = Lookup::samples_arrays();
 
         if($sample_exists && !$editted){
-            return json_encode("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            return json_encode("EID HEI Number # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){

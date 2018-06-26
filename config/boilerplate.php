@@ -58,7 +58,7 @@ return [
         'dob' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
         'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
         'patient_identifier' => 'required',
-        'mflCode' => 'required|integer|digits:5', 
+        'mflCode' => 'required|integer|digits:5|exists:facilitys,facilitycode', 
         'sex' => 'required|integer|max:3', 
     ],
 
