@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '4', 'user_type' => 'Data Clerk'],
 		    ['id' => '5', 'user_type' => 'Facility Users'],
 		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
+		    ['id' => '7', 'user_type' => 'POC Admin'],
 		]);
 
 		// $old_users = DB::connection('old')->table('users')->get();
