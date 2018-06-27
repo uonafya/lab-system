@@ -32,13 +32,13 @@ class DashboardController extends Controller
         
         
         foreach ($result as $key => $value) {
-            ($value == 'received') ? $table = "`viralbatches`.`datereceived`" : $table = "`viralsamples`.`datetested`";
+            ($value == 'received' || $value == 'rejected') ? $table = "datereceived" : $table = "datetested";
             
             $data[$value] = ($currentTestingSystem == 'Viralload') ? 
                             DB::table('viralsamples')
                                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
                                 ->when($value, function($query) use ($value){
-                                    if ($value == 'received') {
+                                    if ($value == 'received' || $value == 'rejected') {
                                         return $query->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id');
                                     }
                                 })
@@ -58,7 +58,10 @@ class DashboardController extends Controller
                                 ->groupBy('month', 'monthname')->get() 
                             :
                             DB::table('samples')
-                                ->selectRaw("MONTH(`datetested`) as `month`,MONTHNAME(`datetested`) as `monthname`,count(*) as $value")
+                                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                                ->when(($value == 'rejected'), function($query){
+                                    return $query->join('batches', 'batches.id', '=', 'samples.batch_id');
+                                })
                                 ->when($value, function($query) use ($value){
                                     if($value == 'tests'){
                                         return $query->whereRaw('result between 1 and 7');
@@ -69,9 +72,8 @@ class DashboardController extends Controller
                                     }  else if($value == 'rejected'){
                                         return $query->where('receivedstatus', 2);
                                     }                
-                                })
+                                }) 
                                 ->where('repeatt', '=', 0)
-                                ->where('parentid', '=', 0)
                                 ->whereYear($table, date('Y'))
                                 ->groupBy('month', 'monthname')->get();
         }
@@ -127,7 +129,7 @@ class DashboardController extends Controller
 
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
-                                            ->where('smsprinterphoneno', '<>', 0)
+                                            ->where('SMS_printer_phoneNo', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
                             ->when($current, function($query) use ($current){

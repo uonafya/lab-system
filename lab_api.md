@@ -1,8 +1,10 @@
 ## LAB API
 
+[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the field you need.
+
+
 All links are **POST** requests.
 *Open the link in **POSTMAN** and then set the request to **POST** *
-
 - Get data by request type [click here](http://lab.test.nascop.org/api/function)
 >Fields
 > - test, 1 for eid, 2 for vl **required**
@@ -23,10 +25,10 @@ For the last 4 links, the following fields are common to all
 > - patient_identifier  **required** (ccc_no for vl and hei number for eid)
 > - mflCode  **required**
 > - sex  **required** (1 for male, 2 for female, 3 for unknown)
+> - lab *If the lab is not filled it will be set to the lab where the sample is being sent*
 
 ---
 The following fields are common to complete requests 
->- lab **required**
 >- receivedstatus **required**
 >- datereceived**required**  *(greater than or equal to **datecollected**)*
 >- rejectedreason *required if received status is 2*

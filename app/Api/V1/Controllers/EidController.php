@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\EidCompleteRequest;
 
@@ -13,7 +13,7 @@ use App\Patient;
 use App\Sample;
 use App\Mother;
 
-class EidController extends Controller
+class EidController extends BaseController
 {
     /**
      * Create a new AuthController instance.
@@ -29,23 +29,23 @@ class EidController extends Controller
     {
         $code = $request->input('mflCode');
         $mother_ccc = $request->input('ccc_no');
-        $motherHivStatus = $request->input('hiv_status');
+        $hiv_status = $request->input('hiv_status');
         $hei_number = $request->input('patient_identifier');
 
         $datereceived = $request->input('datereceived');
         $datecollected = $request->input('datecollected');
         $dob = $request->input('dob');
+        $mother_age = $request->input('mother_age');
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_age($datecollected, $dob);
-        // $sex = Lookup::get_gender($gender);
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
 
-        $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->first();
+        $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->get()->first();
         $fields = Lookup::samples_arrays();
 
         if($sample_exists){
-            return json_encode("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
+            return $this->response->errorBadRequest("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
         }
 
         $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
@@ -82,7 +82,7 @@ class EidController extends Controller
         $mom->ccc_no = $mother_ccc;
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
-        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $request->input('mother_age'));
+        $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->save();
         
         $patient->fill($request->only($fields['patient']));
@@ -105,7 +105,7 @@ class EidController extends Controller
     public function complete_result(EidCompleteRequest $request)
     {
         $editted = $request->input('editted');
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
         $code = $request->input('mflCode');
         $specimenlabelID = $request->input('specimenlabelID');
         $patient_identifier = $request->input('patient_identifier');
@@ -114,6 +114,7 @@ class EidController extends Controller
         $datedispatched = $request->input('datedispatched');
         // $gender = $request->input('gender');
         $dob = $request->input('dob');
+        $mother_age = $request->input('mother_age');
         
         $ccc_no = $request->input('ccc_no');
         $hiv_status = $request->input('hiv_status');
@@ -126,7 +127,7 @@ class EidController extends Controller
         $fields = Lookup::samples_arrays();
 
         if($sample_exists && !$editted){
-            return json_encode("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            return $this->response->errorBadRequest("EID HEI Number {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){
@@ -164,7 +165,7 @@ class EidController extends Controller
         }
 
         $mom->ccc_no = $ccc_no;
-        $mother->mother_dob = Lookup::calculate_mother_dob($datecollected, $request->input('mother_age'));
+        $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
         $mom->save();
@@ -172,8 +173,7 @@ class EidController extends Controller
         $patient->fill($request->only($fields['patient']));
         $patient->mother_id = $mom->id;
         $patient->patient = $patient_identifier;
-        $patient->facility_id = $facility;      
-        // $patient->sex = $sex;
+        $patient->facility_id = $facility;
         $patient->save();
 
         if($editted){
@@ -187,7 +187,7 @@ class EidController extends Controller
 
         $sample->fill($request->only($fields['sample']));
         $sample->age = $age;
-        $sample->comment = $specimenlabelID;
+        $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
         $sample->synched = 5;
         $sample->save();

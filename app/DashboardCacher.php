@@ -249,6 +249,7 @@ class DashboardCacher
         } else {
             $model = SampleView::selectRaw('count(*) as total');
         }
+        $year = Date('Y')-2;
 
         if ($level == 'testing') {
             $model = $model->whereNull('worksheet_id');
@@ -256,7 +257,10 @@ class DashboardCacher
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
         }
 
-        return $model->whereRaw("datediff(curdate(), datereceived) > 14")->get()->first()->total ?? 0;
+        return $model->where('repeatt', 0)
+                        ->whereYear('datereceived', '>', $year)
+                        ->whereRaw("datediff(curdate(), datereceived) > 14")
+                        ->get()->first()->total ?? 0;
     }
 
     public static function cacher()

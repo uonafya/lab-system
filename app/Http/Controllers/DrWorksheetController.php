@@ -70,8 +70,10 @@ class DrWorksheetController extends Controller
                 $dr_result->dr_primer_id = $dr_primer->id;
                 $dr_result->save();
             }
+            $patient->worksheet_id = $dr_worksheet->id;
+            $patient->save();
         }
-        return redirect('dr_worksheet/' . $dr_worksheet->id);
+        return redirect('dr_worksheet/print/' . $dr_worksheet->id);
     }
 
     /**
@@ -86,8 +88,26 @@ class DrWorksheetController extends Controller
 
         $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
         $patient_ids = $patients->pluck(['id'])->toArray();
-        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'desc')->orderBy('dr_primer_id', 'desc')->get();
+        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
         $data['dr_samples'] = $dr_samples;
+        return view('worksheets.dr', $data);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\DrWorksheet  $drWorksheet
+     * @return \Illuminate\Http\Response
+     */
+    public function print(DrWorksheet $drWorksheet)
+    {
+        $data = Lookup::get_dr();
+
+        $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
+        $patient_ids = $patients->pluck(['id'])->toArray();
+        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
+        $data['dr_samples'] = $dr_samples;
+        $data['print'] = true;
         return view('worksheets.dr', $data);
     }
 

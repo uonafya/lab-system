@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use DB;
 
 use App\OldModels\SampleView;
 use App\OldModels\ViralsampleView;
@@ -84,6 +85,7 @@ class Copier
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
                     $sample->age = Lookup::calculate_age($batch->datecollected, $patient->dob);
                 }
+                if($sample->worksheet_id == 0) $sample->worksheet_id = null;
 
                 $sample->save();
             }
@@ -160,6 +162,7 @@ class Copier
                 if($sample->age == 0 && $batch->datecollected && $patient->dob){
                     $sample->age = Lookup::calculate_viralage($batch->datecollected, $patient->dob);
                 }
+                if($sample->worksheet_id == 0) $sample->worksheet_id = null;
 
                 $sample->save();
             }
@@ -218,6 +221,57 @@ class Copier
             }
         }
     }
+
+    public static function copy_deliveries()
+    {
+        ini_set("memory_limit", "-1");
+        $deliveries = self::deliveries();
+        $unset_array = ['synchronized', 'datesynchronized', 'submitted', 'emailsent', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid', 'disposable1000received', 'disposable1000damaged', 'disposable200received', 'disposable200damaged'];
+
+        foreach ($deliveries as $key => $value) {
+            $offset_value = 0;
+            $start = $value['class']::max('id'); 
+
+            while(true)
+            {
+                $rows = DB::connection('old')->table($value['table'])
+                ->when($start, function($query) use ($start){
+                    return $query->where('id', '>', $start);
+                })
+                ->limit(self::$limit)->offset($offset_value)->get();
+                if($rows->isEmpty()) break;
+
+                foreach ($rows as $row) {
+                    $del = new $value['class'];
+                    $del->fill(get_object_vars($row));
+                    foreach ($unset_array as $u) {
+                        unset($del->$u);
+                    }
+                    $del->lab_id = $row->lab;
+
+                    foreach ($value['dates'] as $date_field) {
+                        $del->$date_field = self::clean_date($del->$date_field);
+                    }
+                    if(isset($row->approve) && $row->approve == 'Y') $del->approve = 1;
+                    if(isset($row->testsdone)) $del->tests = $row->testsdone;
+                    if(isset($row->yearofrecordset)) $del->year = $row->yearofrecordset;
+                    if(isset($row->monthofrecordset)) $del->month = $row->monthofrecordset;
+                    if(isset($row->equipmentid)) $del->equipment_id = $row->equipmentid;
+                    
+                    if(isset($row->disposable1000received)) $del->{'1000disposablereceived'} = $row->disposable1000received;
+                    if(isset($row->disposable1000damaged)) $del->{'1000disposabledamaged'} = $row->disposable1000damaged;
+                    if(isset($row->disposable200received)) $del->{'200disposablereceived'} = $row->disposable200received;
+                    if(isset($row->disposable200damaged)) $del->{'200disposabledamaged'} = $row->disposable200damaged;
+
+                    $del->save();
+                }
+                $offset_value += self::$limit;
+                echo "Completed {$key} {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+            }
+        }
+    }
+
+
 
     public static function clean_date($mydate)
     {
@@ -341,6 +395,22 @@ class Copier
 
             'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'time_result_sms_sent' ],
             
+        ];
+    }
+
+    public static function deliveries()
+    {
+        return [
+            'taqmanprocurements' => ['table' => 'taqmanprocurement', 'class' => \App\Taqmanprocurement::class, 'dates' => ['datesubmitted']],
+            'abbotprocurements' => ['table' => 'abbottprocurement', 'class' => \App\Abbotprocurement::class, 'dates' => ['datesubmitted']],
+
+            'lab_equipment_trackers' => ['table' => 'lab_equipment_tracker', 'class' => \App\LabEquipmentTracker::class, 'dates' => ['datesubmitted', 'dateemailsent', 'datebrokendown', 'datereported', 'datefixed']],
+            'lab_performance_trackers' => ['table' => 'lab_perfomance_tracker', 'class' => \App\LabPerformanceTracker::class, 'dates' => ['datesubmitted', 'dateemailsent']],
+
+            'abbotdeliveries' => ['table' => 'abbottdeliveries', 'class' => \App\Abbotdeliveries::class, 'dates' => ['datereceived', 'dateentered']],
+            'taqmandeliveries' => ['table' => 'taqmandeliveries', 'class' => \App\Taqmandeliveries::class, 'dates' => ['datereceived', 'dateentered']],
+
+            // 'requisitions' => ['table' => 'taqmandeliveries', 'dates' => ['datereceived', 'dateentered']],
         ];
     }
 

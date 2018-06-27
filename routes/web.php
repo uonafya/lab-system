@@ -51,6 +51,7 @@ Route::post('facility/search/', 'FacilityController@search')->name('facility.sea
 // });
 
 Route::get('/synch', 'HomeController@test');
+Route::get('download_api', 'RandomController@download_api');
 
 Route::middleware(['web', 'auth'])->group(function(){
 
@@ -69,8 +70,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
-		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@index');
+		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@index');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@facility_batches');
+		Route::post('index', 'BatchController@batch_search');
 		Route::get('dispatch/', 'BatchController@batch_dispatch');
 		Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
@@ -94,8 +96,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
-		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
+		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@index');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@facility_batches');
+		Route::post('index', 'ViralbatchController@batch_search');
 		Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
 		Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
 		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
@@ -125,6 +128,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 	Route::resource('district', 'DistrictController');
 	Route::resource('dr', 'DrPatientController');
+	Route::get('dr_worksheet/print/{drWorksheet}', 'DrWorksheetController@print')->name('dr_worksheet.print');
 	Route::resource('dr_worksheet', 'DrWorksheetController');
 
 	Route::get('facility/served', 'FacilityController@served');

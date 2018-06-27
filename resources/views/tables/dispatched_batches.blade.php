@@ -8,24 +8,81 @@
 
 <div class="content">
 
-    @empty($site_approval)
+    <div class="row">
+        <div class="col-md-12">
+            Click To View: 
+            {{--<a href="{{ url($pre . 'batch/index') }}">--}}
+            <a href="{{ $myurl }}">
+                All Batches
+            </a> |
+            <a href="{{ $myurl2 }}/0">
+                In-Process Batches
+            </a> |
+            <a href="{{ $myurl2 }}/2">
+                Awaiting Dispatch
+            </a> |
+            <a href="{{ $myurl2 }}/1">
+                Dispatched Batches
+            </a>
+        </div>
+    </div>
+
+    <br />
+
+    {{ Form::open(['url' => '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
         <div class="row">
-            <div class="col-md-12">
-                Click To View: 
-                {{--<a href="{{ url($pre . 'batch/index') }}">--}}
-                <a href="{{ $myurl }}">
-                    All Batches
-                </a> |
-                <a href="{{ $myurl2 }}/0">
-                    In-Process Batches
-                </a> |
-                <a href="{{ $myurl2 }}/2">
-                    Awaiting Dispatch
-                </a> |
-                <a href="{{ $myurl2 }}/1">
-                    Dispatched Batches
-                </a>
+            <div class="col-md-4"> 
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Select Facility</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="facility_id" id="facility_id">
+                            @if(isset($facility) && $facility)
+                                <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
+                            @endif
+                        </select>
+                    </div>                        
+                </div> 
+            </div>
+            <div class="col-md-4"> 
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Select Subcounty</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="subcounty_id" id="subcounty_id">
+                            <option value=0>  Select One  </option>
+                            @foreach ($subcounties as $subcounty)
+                                <option value="{{ $subcounty->id }}"
+
+                                @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
+                                    selected
+                                @endif
+
+                                > {{ $subcounty->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>                        
+                </div> 
+            </div>
+            <div class="col-md-4"> 
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Select Partner</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="partner_id" id="partner_id">
+                            <option>  Select One  </option>
+                            @foreach ($partners as $partner)
+                                <option value="{{ $partner->id }}"
+
+                                @if (isset($partner_id) && $partner_id == $partner->id)
+                                    selected
+                                @endif
+
+                                > {{ $partner->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>                        
+                </div> 
             </div>
         </div>
 
@@ -38,12 +95,12 @@
                     <div class="col-sm-8">
                         <div class="input-group date">
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="filter_date" required class="form-control">
+                            <input type="text" id="filter_date" name="filter_date" class="form-control">
                         </div>
                     </div> 
 
                     <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="submit_date">Filter</button>  
+                        <button class="btn btn-primary" id="submit_date" name="submit_type" value="submit_date" type='submit' >Filter</button>  
                     </div>                         
                 </div> 
             </div>
@@ -55,7 +112,7 @@
                     <div class="col-sm-4">
                         <div class="input-group date">
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="from_date" required class="form-control">
+                            <input type="text" id="from_date" name="from_date" class="form-control">
                         </div>
                     </div> 
 
@@ -63,19 +120,19 @@
                     <div class="col-sm-4">
                         <div class="input-group date">
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="to_date" required class="form-control">
+                            <input type="text" id="to_date" name="to_date" class="form-control">
                         </div>
                     </div> 
 
                     <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="date_range">Filter</button>  
+                        <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
                     </div>                         
                 </div> 
 
             </div>
         </div>
 
-    @endempty
+    {{ Form::close() }}
     
     <div class="row">
         <div class="col-lg-12">
@@ -211,6 +268,9 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
+            $(".my_form select").select2(); 
+
+            set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
             $(".date").datepicker({
                 startView: 0,
@@ -221,7 +281,7 @@
                 format: "yyyy-mm-dd"
             });
 
-            $('#submit_date').click(function(){
+            /*$('#submit_date').click(function(){
                 var d = $('#filter_date').val();
                 window.location.href = localStorage.getItem('base_url') + d;
             });
@@ -230,7 +290,7 @@
                 var from = $('#from_date').val();
                 var to = $('#to_date').val();
                 window.location.href = localStorage.getItem('base_url') + from + '/' + to;
-            });
+            });*/
 
             $("#check_all").on('click', function(){
                 var str = $(this).html();

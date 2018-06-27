@@ -17,11 +17,13 @@
 <div id="header">
     <div class="">
     </div>
-    <div id="logo" class="light-version" style="padding-left: 2px; padding-top: 6px; width: 250px;">
-        <span>
-            <img src="{{ asset('img/logo.jpg') }}">
-        </span>
-    </div>
+    <a href="{{ url('/home') }} ">
+        <div id="logo" class="light-version" style="padding-left: 2px; padding-top: 6px; width: 250px;">
+            <span>
+                <img src="{{ asset('img/logo.jpg') }}">
+            </span>
+        </div>
+    </a>
     <nav role="navigation">
         <div class="header-link hide-menu"><i class="fa fa-bars"></i></div>
         <div class="small-logo">

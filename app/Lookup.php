@@ -69,9 +69,20 @@ class Lookup
 
     public static function facility_mfl($mfl)
     {
-        self::cacher(); 
-        $fac = Cache::get('facilities');       
-        return $fac->where('facilitycode', $mfl)->first()->id;
+        // self::cacher(); 
+        // $fac = Cache::get('facilities');       
+        // return $fac->where('facilitycode', $mfl)->first()->id;
+
+        return \App\Facility::locate($mfl)->get()->first()->id;
+    }
+
+    public static function get_partners()
+    {
+        self::cacher();
+        return [
+            'partners' => Cache::get('partners'),
+            'subcounties' => Cache::get('subcounties'),
+        ];
     }
 
     public static function get_machines()
@@ -331,6 +342,10 @@ class Lookup
             $dr_primers = DB::table('dr_primers')->get();
             $dr_patient_statuses = DB::table('dr_patient_statuses')->get();
 
+
+            $partners = DB::table('partners')->get();
+            $subcounties = DB::table('districts')->get();
+
             // Cache::put('facilities', $facilities, 60);
             Cache::put('amrs_locations', $amrs_locations, 60);
             Cache::put('genders', $genders, 60);
@@ -363,6 +378,9 @@ class Lookup
             Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
             Cache::put('dr_primers', $dr_primers, 60);
             Cache::put('dr_patient_statuses', $dr_patient_statuses, 60);
+
+            Cache::put('partners', $partners, 60);
+            Cache::put('subcounties', $subcounties, 60);
         }		
 	}
 
@@ -394,6 +412,9 @@ class Lookup
         Cache::forget('drug_resistance_reasons');
         Cache::forget('dr_primers');
         Cache::forget('dr_patient_statuses');
+
+        Cache::forget('partners');
+        Cache::forget('subcounties');
     }
 
     public static function refresh_cache()

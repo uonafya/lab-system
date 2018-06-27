@@ -23,17 +23,17 @@ class ViralbatchController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index($batch_complete=4, $date_start=NULL, $date_end=NULL)
+    public function index($batch_complete=4, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $user = auth()->user();
         $facility_user = false;
-        $subtotals = null;
+        $subtotals = $date_modified = $date_tested = null;
         $date_column = "viralbatches.datereceived";
         if($batch_complete == 1) $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
-        $facility_id = session()->pull('facility_search');
-        if($facility_id){ 
+        $s_facility_id = session()->pull('facility_search');
+        if($s_facility_id){ 
             $myurl = url("viralbatch/facility/{$facility_id}/{$batch_complete}"); 
             $myurl2 = url("viralbatch/facility/{$facility_id}"); 
         }
@@ -60,6 +60,12 @@ class ViralbatchController extends Controller
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('viralbatches.facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
@@ -134,7 +140,17 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
-        if($batch_complete == 1) return view('tables.dispatched_viralbatches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
+        if($batch_complete == 1){
+            $p = Lookup::get_partners();
+            $fac = false;
+            if($facility_id) $fac = Facility::find($facility_id);
+
+            return view('tables.dispatched_viralbatches', [
+                'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 
+                'batch_complete' => $batch_complete, 
+                'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+                'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])->with('pageTitle', 'Samples by Batch');
+        }
 
         return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
@@ -142,7 +158,24 @@ class ViralbatchController extends Controller
     public function facility_batches($facility_id, $batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
         session(['facility_search' => $facility_id]);
-        return $this->index($batch_complete, $date_start, $date_end);
+        return $this->index($batch_complete, $date_start, $date_end, $facility_id);
+    }
+
+    public function batch_search(Request $request)
+    {
+        $submit_type = $request->input('submit_type');
+        $date_start = $request->input('from_date', 0);
+        if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
+        $date_end = $request->input('end_date', 0);
+
+        if($date_start == '') $date_start = 0;
+        if($date_end == '') $date_end = 0;
+
+        $partner_id = $request->input('partner_id', 0);
+        $subcounty_id = $request->input('subcounty_id', 0);
+        $facility_id = $request->input('facility_id', 0);
+
+        return redirect("viralbatch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**

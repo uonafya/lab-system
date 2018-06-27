@@ -1,4 +1,5 @@
 <html>
+<link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ asset('css/worksheet_style.css') }}" media="screen" />
 <style type="text/css">
 <!--
@@ -28,6 +29,14 @@ width:1180px;
 }
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
+
+#mytable{
+	transform:rotate(90deg);
+}
+
+#mytable table td {
+	padding: 15px;
+}
 </style>
 
 <STYLE TYPE="text/css">
@@ -41,9 +50,9 @@ width:1180px;
 		onLoad="JavaScript:window.print();"
 	@endisset
 >
-	<div align="center">
+	<div>
 
-		<table border="0" class="data-table">
+		<table border="0" class="table table-bordered" id='mytable'>
 
 			<?php $i=0;  ?>
 
@@ -52,17 +61,40 @@ width:1180px;
 					<tr>
 				@endif
 				<td>
+					<b> {{ $sample->id }} </b> <br />
 					<b> {{ $sample->patient_id }} - {{ $dr_primers->where('id', $sample->dr_primer_id)->first()->name ?? '' }} </b> <br />
+
 					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
 				</td>
+
+				@if($key == 77)
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<td>Positive <br /> Control</td>
+					<?php $i+=6;  ?>
+				@endif
 
 				@if($i % 12 == 11)
 					</tr>
 				@endif
 
+				<?php $i++;  ?>
+
 			@endforeach
+
+				<td>Water</td>
+				<td>Water</td>
+				<td>Water</td>
+				<td>Water</td>
+				<td>Water</td>
+				<td>pGEM</td>
+			</tr>
 				
 		</table>
 	</div>
+	<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 </body>
 </html>

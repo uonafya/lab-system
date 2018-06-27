@@ -63,7 +63,7 @@ class LoginController extends Controller
         $batch = Batch::find($batch_no);
 
         if($batch){
-            if($batch->outdated()) return $this->failed_facility_login(); 
+            if($batch->outdated()) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
                 
@@ -77,7 +77,7 @@ class LoginController extends Controller
         $batch = Viralbatch::find($batch_no);
 
         if($batch){
-            if($batch->outdated()) return $this->failed_facility_login(); 
+            if($batch->outdated()) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
 
@@ -93,6 +93,12 @@ class LoginController extends Controller
             }
         }
         return $this->failed_facility_login(); 
+    }
+
+    public function outdated_batch_error()
+    {
+        session(['login_error' => 'The batch that you have used is outdated. Use a more recent batch.']);
+        return redirect('/login/facility');
     }
 
     public function failed_facility_login()

@@ -21,7 +21,7 @@ class CreateLabPerformanceTrackersTable extends Migration
             // $table->tinyInteger('submitted')->unsigned()->index();
             // $table->tinyInteger('eamilsent')->unsigned()->index();
             $table->date('dateemailsent')->nullable();
-            $table->tinyInteger('testtype')->unsigned();
+            $table->tinyInteger('testtype')->unsigned()->nullable();
             $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->integer('received')->unsigned()->nullable();
             $table->integer('rejected')->unsigned()->nullable();
@@ -29,8 +29,8 @@ class CreateLabPerformanceTrackersTable extends Migration
             $table->integer('notlogged')->unsigned()->nullable();
             $table->integer('tested')->unsigned()->nullable();
             $table->string('reasonforbacklog', 100)->nullable();
-            $table->date('datesubmitted');
-            $table->integer('submittedBy')->unsigned();
+            $table->date('datesubmitted')->nullable();
+            $table->integer('submittedBy')->unsigned()->nullable();
             $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
             $table->timestamps();

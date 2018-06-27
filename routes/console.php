@@ -103,6 +103,11 @@ Artisan::command('copy:worksheet', function(){
     $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
 
+Artisan::command('copy:deliveries', function(){
+    $str = \App\Copier::copy_deliveries();
+    $this->info($str);
+})->describe('Copy deliveries data from old database to new database.');
+
 
 
 Artisan::command('match:eid-patients', function(){

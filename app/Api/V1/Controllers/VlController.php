@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\VlRequest;
 use App\Api\V1\Requests\VlCompleteRequest;
 
@@ -12,7 +12,7 @@ use App\Viralbatch;
 use App\Viralpatient;
 use App\Viralsample;
 
-class VlController extends Controller
+class VlController extends BaseController
 {
     /**
      * Create a new AuthController instance.
@@ -31,7 +31,7 @@ class VlController extends Controller
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $dob = $request->input('dob');
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
@@ -41,7 +41,7 @@ class VlController extends Controller
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists){
-            return json_encode("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
+            return $this->response->errorBadRequest("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
         }
 
         $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
@@ -52,10 +52,10 @@ class VlController extends Controller
         else if($batch && $batch->sample_count > 9){
             unset($batch->sample_count);
             $batch->full_batch();
-            $batch = new Batch;
+            $batch = new Viralbatch;
         }
         else{
-            $batch = new Batch;
+            $batch = new Viralbatch;
         }
 
         
@@ -93,7 +93,7 @@ class VlController extends Controller
     public function complete_result(VlCompleteRequest $request)
     {
         $editted = $request->input('editted');
-        $lab = $request->input('lab');
+        $lab = $request->input('lab') ?? env('APP_LAB');
         $code = $request->input('mflCode');
         $specimenlabelID = $request->input('specimenlabelID');
         $patient_identifier = $request->input('patient_identifier');
@@ -113,8 +113,7 @@ class VlController extends Controller
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists && !$editted){
-
-            return json_encode("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            return $this->response->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
         if(!$editted){
@@ -126,10 +125,10 @@ class VlController extends Controller
             else if($batch && $batch->sample_count > 9){
                 unset($batch->sample_count);
                 $batch->full_batch();
-                $batch = new Batch;
+                $batch = new Viralbatch;
             }
             else{
-                $batch = new Batch;
+                $batch = new Viralbatch;
             }
 
             $batch->lab_id = $lab;
@@ -166,7 +165,7 @@ class VlController extends Controller
         $sample->age = $age;
         $sample->justification = Lookup::justification($justification);
         $sample->prophylaxis = Lookup::viral_regimen($prophylaxis);
-        $sample->comment = $specimenlabelID;
+        $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
         $sample->synched = 5;
         $sample->save();

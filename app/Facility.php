@@ -11,6 +11,11 @@ class Facility extends BaseModel
 
     public $timestamps = false;
 
+    public function scopeLocate($query, $mfl)
+    {
+        return $query->where("facilitycode", $mfl);
+    }
+
     /**
      * Get the facility's branch location
      *

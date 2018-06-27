@@ -145,7 +145,18 @@ class Controller extends BaseController
         return $quota;
     }
 
-    public static function _getQuarterMonths($quarter=1) {
+    public function auth_user($usertypes)
+    {
+        $user_type_id = auth()->user()->user_type_id;
+        if(is_array($usertypes)){
+            if(!in_array($user_type_id, $usertypes)) abort(403);
+        }
+        else{
+            if($user_type_id != $usertypes) abort(403);
+        }
+    }
+
+     public static function _getQuarterMonths($quarter=1) {
         $quarter = (int) $quarter;
         if ($quarter == 1) 
             $months = [1, 2, 3];
