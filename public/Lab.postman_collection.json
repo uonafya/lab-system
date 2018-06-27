@@ -516,6 +516,142 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Fetch Eid Results",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "test",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "start_date",
+							"value": "2018-01-01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "end_date",
+							"value": "2018-06-06",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "date_dispatched_start",
+							"value": "2018-01-01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "date_dispatched_end",
+							"value": "2018-06-06",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "patient_id",
+							"value": "10263-kljsd,10263-klj",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "facility_code",
+							"value": "10263",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://lab.test.nascop.org/api/function",
+					"protocol": "http",
+					"host": [
+						"lab",
+						"test",
+						"nascop",
+						"org"
+					],
+					"path": [
+						"api",
+						"function"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch VL Results",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "test",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "start_date",
+							"value": "2018-01-01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "end_date",
+							"value": "2018-06-06",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "date_dispatched_start",
+							"value": "2018-01-01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "date_dispatched_end",
+							"value": "2018-06-06",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://lab.test.nascop.org/api/function",
+					"protocol": "http",
+					"host": [
+						"lab",
+						"test",
+						"nascop",
+						"org"
+					],
+					"path": [
+						"api",
+						"function"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
