@@ -79,18 +79,25 @@ class ReportController extends Controller
             }
             $kits = $model->get();
             $value = $kits->first();
-
+            dd($request->all());
             if ($value) {
                 $data['kits'] = $kits;
                 if ($platform == 'abbott') {
+                    if ($request->format == 'excel') {
+                        
+                        return back();
+                    }
                     $data['abbottdata'] = (object) $this->abbottKits;
                     $data = (object) $data;
                     return view('reports.abbottkits', compact('data'))->with('pageTitle', '');
                 }
                 if ($platform == 'taqman'){
+                    if ($request->format == 'excel') {
+                        
+                        return back();
+                    }
                     $data['taqmandata'] = (object) $this->taqmanKits;
                     $data = (object) $data;
-                    // dd($data);
                     return view('reports.taqmankits', compact('data'))->with('pageTitle', '');
                 }
             } else {
@@ -220,4 +227,5 @@ class ReportController extends Controller
             session(['toast_message' => 'No data available for the criteria provided']);
         }
     }
+
 }
