@@ -10,6 +10,7 @@ use App\Lookup;
 
 // use DOMPDF;
 use Mpdf\Mpdf;
+use Excel;
 
 use App\Mail\VlDispatch;
 use Illuminate\Support\Facades\Mail;
@@ -166,7 +167,7 @@ class ViralbatchController extends Controller
         $submit_type = $request->input('submit_type');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
-        $date_end = $request->input('end_date', 0);
+        $date_end = $request->input('to_date', 0);
 
         if($date_start == '') $date_start = 0;
         if($date_end == '') $date_end = 0;
@@ -174,6 +175,8 @@ class ViralbatchController extends Controller
         $partner_id = $request->input('partner_id', 0);
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
+
+        if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         return redirect("viralbatch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
@@ -694,6 +697,67 @@ class ViralbatchController extends Controller
 
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();
+    }
+
+    public function dispatch_report($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    {
+        $date_column = "viralbatches.datedispatched";
+
+        $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralbatches.datedispatched'])
+            ->leftJoin('viralpatients', 'viralpatients.id', '=', 'viralsamples.patient_id')
+            ->leftJoin('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('districts', 'districts.id', '=', 'facilitys.district')
+            // ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('viralbatches.facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
+            ->where('batch_complete', 1)
+            ->orderBy($date_column, 'desc')
+            ->orderBy('batch_id', 'desc')
+            ->get();
+
+        $data;
+
+        foreach ($samples as $key => $sample) {
+            $data[$key]['#'] = $key+1;
+            $data[$key]['Batch #'] = $sample->batch_id;
+            $data[$key]['Facility'] = $sample->facility;
+            $data[$key]['Sub County'] = $sample->subcounty;
+            $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
+            $data[$key]['Test Outcome'] = $sample->result;
+            $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Time Dispatched'] = '';
+            $data[$key]['Dispatched By'] = '';
+            $data[$key]['Initials'] = '';
+            $data[$key]['Collected By'] = '';            
+        }
+
+        $date_start = Lookup::my_date_format($date_start);
+        $date_end = Lookup::my_date_format($date_end);
+
+        $filename = "DISPATCH REPORT FOR Vl RESULTS DISPATCHED BETWEEN {$date_start} AND {$date_end}";
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('xls');
+
     }
 
     public function search(Request $request)

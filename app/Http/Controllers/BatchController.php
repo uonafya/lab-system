@@ -153,7 +153,7 @@ class BatchController extends Controller
         $submit_type = $request->input('submit_type');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
-        $date_end = $request->input('end_date', 0);
+        $date_end = $request->input('to_date', 0);
 
         if($date_start == '') $date_start = 0;
         if($date_end == '') $date_end = 0;

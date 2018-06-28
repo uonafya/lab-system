@@ -89,7 +89,7 @@
         <br />
 
         <div class="row">
-            <div class="col-md-4"> 
+            <div class="col-md-3"> 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Select Date</label>
                     <div class="col-sm-8">
@@ -105,7 +105,7 @@
                 </div> 
             </div>
 
-            <div class="col-md-6"> 
+            <div class="col-md-7"> 
                 <div class="form-group">
 
                     <label class="col-sm-1 control-label">From:</label>
