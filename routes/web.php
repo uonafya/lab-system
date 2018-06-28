@@ -226,7 +226,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::resource('viralsample', 'ViralsampleController');
 
 
-	Route::group(['middleware' => ['utype:4']], function () {
+	Route::group(['middleware' => ['only_utype:4']], function () {
 
 		Route::prefix('worksheet')->name('worksheet.')->group(function () {
 

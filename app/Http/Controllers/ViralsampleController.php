@@ -36,7 +36,7 @@ class ViralsampleController extends Controller
         $samples = ViralsampleView::with(['facility'])->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
-        return view('tables.poc_samples', $data)->with('pageTitle', 'EID POC Samples');
+        return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
     }
 
     /**
