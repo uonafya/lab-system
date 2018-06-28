@@ -60,6 +60,20 @@ class Sample extends BaseModel
         return $this->belongsTo('App\User', 'approvedby');
     }
 
+
+    /**
+     * Get the sample's received status name
+     *
+     * @return string
+     */
+    public function getResultNameAttribute()
+    {
+        if($this->result == 1){ return "Negative"; }
+        else if($this->result == 2){ return "Positive"; }
+        else{ return ""; }
+    }
+
+
     public function scopeRuns($query, $sample)
     {
         if($sample->parentid == 0){

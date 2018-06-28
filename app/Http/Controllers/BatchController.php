@@ -11,6 +11,7 @@ use App\Lookup;
 
 // use DOMPDF;
 use Mpdf\Mpdf;
+use Excel;
 
 
 use App\Mail\EidDispatch;
@@ -160,6 +161,8 @@ class BatchController extends Controller
         $partner_id = $request->input('partner_id', 0);
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
+
+        if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         return redirect("batch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
@@ -604,6 +607,66 @@ class BatchController extends Controller
         return back();
     }
 
+    public function dispatch_report($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    {
+        $date_column = "batches.datedispatched";
+
+        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'batches.datedispatched'])
+            ->leftJoin('patients', 'patients.id', '=', 'samples.patient_id')
+            ->leftJoin('batches', 'batches.id', '=', 'samples.batch_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('districts', 'districts.id', '=', 'facilitys.district')
+            // ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('batches.facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
+            ->where('batch_complete', 1)
+            ->orderBy($date_column, 'desc')
+            ->orderBy('batch_id', 'desc')
+            ->get();
+
+        $data;
+
+        foreach ($samples as $key => $sample) {
+            $data[$key]['#'] = $key+1;
+            $data[$key]['Batch #'] = $sample->batch_id;
+            $data[$key]['Facility'] = $sample->facility;
+            $data[$key]['Sub County'] = $sample->subcounty;
+            $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
+            $data[$key]['Test Outcome'] = $sample->result_name;
+            $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Time Dispatched'] = '';
+            $data[$key]['Dispatched By'] = '';
+            $data[$key]['Initials'] = '';
+            $data[$key]['Collected By'] = '';            
+        }
+
+        $date_start = Lookup::my_date_format($date_start);
+        $date_end = Lookup::my_date_format($date_end);
+
+        $filename = "DISPATCH REPORT FOR EID RESULTS DISPATCHED BETWEEN {$date_start} AND {$date_end}";
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('xls');
+
+    }
 
 
     public function search(Request $request)

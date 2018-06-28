@@ -105,7 +105,7 @@
                 </div> 
             </div>
 
-            <div class="col-md-8"> 
+            <div class="col-md-6"> 
                 <div class="form-group">
 
                     <label class="col-sm-1 control-label">From:</label>
@@ -128,7 +128,12 @@
                         <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
                     </div>                         
                 </div> 
+            </div>
 
+            <div class="col-md-2">
+                <div class="form-group">              
+                    <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
+                </div>                
             </div>
         </div>
 
