@@ -26,6 +26,12 @@ class CreatePatientsTable extends Migration
             $table->tinyInteger('patient_status')->unsigned()->nullable()->default(1);
             $table->integer('facility_id')->unsigned();
 
+            $table->tinyInteger('hei_validation')->unsigned()->default(0)->nullable();
+            $table->string('enrollment_ccc_no', 25)->nullable();
+            $table->tinyInteger('enrollment_status')->unsigned()->default(0)->nullable();
+            $table->tinyInteger('referredfromsite')->unsigned()->nullable();
+            $table->string('otherreason', 50)->nullable(); 
+
             // 1 for English
             // 2 for Kiswahili
             $table->tinyInteger('preferred_language')->nullable();

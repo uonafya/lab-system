@@ -143,7 +143,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient Names</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
+                                <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
                             </div>
                         </div>
 

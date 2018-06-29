@@ -155,7 +155,7 @@ p.breakhere {page-break-before: always}
 				<td colspan="1" class="style4 style1 comment" width="220px"><strong>Date Tested </strong></td>
 				<td colspan="1" class="comment" ><span class="style5">{{ $sample->my_date_format('datetested') }}</span></td>
 				<td class="style4 style1 comment" colspan="3" ><strong>Date Initiated on Current Regimen </strong></td>
-				<td colspan="1" class="comment"><span class="style5"><?php echo  '22-June-2016' ;?></span></td>
+				<td colspan="1" class="comment"><span class="style5">{{ $sample->my_date_format('dateinitiatedonregimen') }} </span></td>
 			</tr>
 
 			<?php
