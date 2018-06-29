@@ -77,6 +77,8 @@ class DashboardCacher
         		'samplesForRepeat' => Cache::get('vl_samplesForRepeat'),
         		'rejectedForDispatch' => Cache::get('vl_rejectedForDispatch'),
         		'resultsForUpdate' => Cache::get('vl_resultsForUpdate'),
+                'overduetesting' => Cache::get('vl_overduetesting'),
+                'overduedispatched' => Cache::get('vl_overduedispatched'),
         	];
         }
         else{
@@ -277,6 +279,8 @@ class DashboardCacher
 		$samplesForRepeat = self::samplesAwaitingRepeat();
 		$rejectedForDispatch = self::rejectedSamplesAwaitingDispatch();
         $resultsForUpdate = self::resultsAwaitingpdate();
+        $overduetesting = self::overdue('testing');
+        $overduedispatched = self::overdue('dispatched');
 
         $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
         $pendingSamplesOverTen2 = self::pendingSamplesAwaitingTesting(true, 'Eid');
@@ -298,6 +302,8 @@ class DashboardCacher
         Cache::put('vl_samplesForRepeat', $samplesForRepeat, $minutes);
         Cache::put('vl_rejectedForDispatch', $rejectedForDispatch, $minutes);
         Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
+        Cache::put('vl_overduetesting', $overduetesting, $minutes);
+        Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
 
         
         Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
@@ -322,6 +328,8 @@ class DashboardCacher
     	Cache::forget('vl_samplesForRepeat');
     	Cache::forget('vl_rejectedForDispatch');
     	Cache::forget('vl_resultsForUpdate');
+        Cache::forget('vl_overduetesting');
+        Cache::forget('vl_overduedispatched');
         
         Cache::forget('eid_pendingSamples');
         Cache::forget('eid_pendingSamplesOverTen');
@@ -331,6 +339,8 @@ class DashboardCacher
         Cache::forget('eid_samplesForRepeat');
         Cache::forget('eid_rejectedForDispatch');
         Cache::forget('eid_resultsForUpdate');
+        Cache::forget('eid_overduetesting');
+        Cache::forget('eid_overduedispatched');
     }
 
 

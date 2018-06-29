@@ -70,7 +70,7 @@ class FunctionController extends Controller
             ->select($select_array)
             ->join($batch_name, 'b.id', '=', 's.batch_id')
             ->join($patient_name, 's.patient_id', '=', 'p.id')
-            ->join('facilitys AS f', 'f.id', '=', 'b.facility_id')
+            ->leftJoin('facilitys AS f', 'f.id', '=', 'b.facility_id')
             ->when($facility, function($query) use($facility){
                 return $query->where('f.facilitycode', $facility);
             })
@@ -89,7 +89,7 @@ class FunctionController extends Controller
             ->when(($date_dispatched_start && $date_dispatched_end), function($query) use($date_dispatched_start, $date_dispatched_end){
                 return $query->whereBetween('b.datedispatched', [$date_dispatched_start, $date_dispatched_end]);
             })
-            ->paginate(10);
+            ->paginate(20);
 
 
         $result->transform(function ($sample, $key) use ($test){
@@ -127,12 +127,12 @@ class FunctionController extends Controller
                 'facility_code' => $sample->facilitycode,
                 'AMRs_location' => $sample->amrs_location,
                 'full_names' => $sample->patient_name,
-                'date_collected' => Lookup::my_date_format('datecollected'),
-                'date_received' => Lookup::my_date_format('datereceived'),
-                'date_tested' => Lookup::my_date_format('datetested'),
+                'date_collected' => Lookup::my_date_format($sample->datecollected),
+                'date_received' => Lookup::my_date_format($sample->datereceived),
+                'date_tested' => Lookup::my_date_format($sample->datetested),
                 'interpretation' => $sample->interpretation,
                 'result' => $sample->result,
-                'date_dispatched' => Lookup::my_date_format('datedispatched'),
+                'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
                 'sample_status' => $sample->sample_status
             ];
         });

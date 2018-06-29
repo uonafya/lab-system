@@ -57,10 +57,33 @@ class HomeController extends Controller
     public function overdue($level = 'testing')
     {
         if (session('testingSystem') == 'Viralload') {
-            # code...
+            $model = ViralsampleView::selectRaw('viralsamples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, viralsampletype.name as sampletype, datediff(curdate(), datereceived) as waitingtime')
+                    ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                    ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
+                    ->join('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype');
         } else {
-            # code...
+            $model = SampleView::selectRaw('samples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
+                    ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
+                    ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus');
         }
+        $year = Date('Y')-2;
+
+        if ($level == 'testing') {
+            $model = $model->whereNull('worksheet_id');
+        } else {
+            $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
+        }
+
+        $samples = $model->where('repeatt', 0)
+                        ->whereYear('datereceived', '>', $year)
+                        ->whereRaw("datediff(curdate(), datereceived) > 14")
+                        ->get();
+
+        $noSamples = $samples->count();
+        $pageTitle = "Samples overdue for $level [$noSamples]";
+        // dd($samples);
+        return view('tables.pending', compact('samples'))->with('pageTitle', $pageTitle);
+        dd($samples);
     }
 
     public function pending($type = 'samples', $sampletypes = null) {
