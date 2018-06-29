@@ -227,11 +227,6 @@
                             </div>                            
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Caregiver Phone No</label>
-                            <div class="col-sm-8"><input class="form-control" name="caregiver_phone" type="text" value="{{ $viralsample->patient->caregiver_phone ?? '' }}"></div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -384,7 +379,7 @@
 
                         <div></div>
 
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->user_type_id != 5 || isset($poc))
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Received

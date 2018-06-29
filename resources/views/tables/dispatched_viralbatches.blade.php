@@ -89,23 +89,8 @@
         <br />
 
         <div class="row">
-            <div class="col-md-3"> 
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Select Date</label>
-                    <div class="col-sm-8">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="filter_date" name="filter_date" class="form-control">
-                        </div>
-                    </div> 
 
-                    <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="submit_date" name="submit_type" value="submit_date" type='submit' >Filter</button>  
-                    </div>                         
-                </div> 
-            </div>
-
-            <div class="col-md-7"> 
+            <div class="col-md-9"> 
                 <div class="form-group">
 
                     <label class="col-sm-1 control-label">From:</label>
@@ -130,7 +115,7 @@
                 </div> 
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="form-group">              
                     <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
                 </div>                

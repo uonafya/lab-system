@@ -512,7 +512,7 @@
 
                         <div></div>
 
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->user_type_id != 5 || isset($poc))
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Received
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -524,9 +524,6 @@
                                     </div>
                                 </div>                            
                             </div>
-                        @endif
-
-                        @if(auth()->user()->user_type_id != 5)
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Received Status
@@ -550,7 +547,6 @@
                                     </select>
                                 </div>
                             </div>
-
 
                             <div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>
