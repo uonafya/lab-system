@@ -33,13 +33,15 @@
 
         <div class="row">
 
-            <div class="alert alert-warning">
+            <div class="alert alert-success">
                 <center>
-                    All the fields below are optional.  <br />
+                    Select facility and/or partner and/or subcounty. <br />
                     If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
-                    The dropdowns also affect the Download As Excel allowing you to get a dispatch list for a particular partner, facility, or subcounty for a particular date or date range.
+                    Click on filter to get the list of batches based on selected criteria. <br />
+                    The Download As Excel depends on all the selected criteria.
                 </center>
             </div>
+            
             <br />
 
             <div class="col-md-4"> 

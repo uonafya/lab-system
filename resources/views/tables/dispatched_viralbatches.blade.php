@@ -32,6 +32,18 @@
     {{ Form::open(['url' => '/viralbatch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
         <div class="row">
+
+            <div class="alert alert-success">
+                <center>
+                    Select facility and/or partner and/or subcounty. <br />
+                    If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
+                    Click on filter to get the list of batches based on selected criteria. <br />
+                    The Download As Excel depends on all the selected criteria.
+                </center>
+            </div>
+            
+            <br />
+            
             <div class="col-md-4"> 
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Select Facility</label>
