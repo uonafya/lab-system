@@ -747,6 +747,8 @@ class ViralbatchController extends Controller
             $data[$key]['Collected By'] = '';            
         }
 
+        if(!$data) return null;
+
         $date_start = Lookup::my_date_format($date_start);
         $date_end = Lookup::my_date_format($date_end);
 
