@@ -22,7 +22,7 @@ class ViewModel extends Model
 
     public function scopeExisting($query, $data_array)
     {
-        return $query->where(['facility_id' => $data_array['facility_id'], 'patient_id' => $data_array['patient_id'], 'datecollected' => $data_array['datecollected']]);
+        return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient'], 'datecollected' => $data_array['datecollected']]);
     }
 
     public function scopePatient($query, $facility, $patient)

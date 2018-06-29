@@ -143,7 +143,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient Names</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
+                                <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
                             </div>
                         </div>
 
@@ -225,11 +225,6 @@
                                     <input type="text" id="initiation_date" class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Caregiver Phone No</label>
-                            <div class="col-sm-8"><input class="form-control" name="caregiver_phone" type="text" value="{{ $viralsample->patient->caregiver_phone ?? '' }}"></div>
                         </div>
 
                     </div>
@@ -384,7 +379,7 @@
 
                         <div></div>
 
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->user_type_id != 5 || isset($poc))
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Received

@@ -48,12 +48,6 @@ class CreateSamplesTable extends Migration
 
             $table->integer('worksheet_id')->unsigned()->nullable()->index();
 
-            $table->tinyInteger('hei_validation')->unsigned()->default(0)->nullable();
-            $table->string('enrollment_ccc_no', 25)->nullable();
-            $table->tinyInteger('enrollment_status')->unsigned()->default(0)->nullable();
-            $table->tinyInteger('referredfromsite')->unsigned()->nullable();
-            $table->string('otherreason', 50)->nullable(); 
-
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();
             $table->tinyInteger('run')->unsigned()->default(1)->nullable();
             $table->tinyInteger('repeatt')->unsigned()->default(0)->nullable();

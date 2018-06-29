@@ -13,32 +13,43 @@
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
-                    EID POC Samples List
+                    @if($pre == 'viral')
+                        VL
+                    @else
+                        EID
+                    @endif
+                    POC Samples List
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover data-table" >
                             <thead>
                                 <tr>
-                                    <th>Batch No</th>
+                                    <th>Lab #</th>
+                                    <th>Batch #</th>
                                     <th>Facility</th>
                                     <th>Patient #</th>
                                     <th>Age </th>
                                     <th>Gender</th>
                                     <th>Date Drawn</th>
+                                    <th>Received Status</th>
                                     <th>Date Tested</th>
                                     <th>Result</th>
                                     <th>Action</th>
+
                                 </tr>
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
                                     <tr>
+                                        <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->batch_id }} </td>
                                         <td> {{ $sample->facility->name }} </td>
+                                        <td> {{ $sample->patient }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $genders->where('id', $sample->gender)->first()->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
+                                        <td> {{ $sample->received }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
                                         <td> 
                                             @if($pre == '')

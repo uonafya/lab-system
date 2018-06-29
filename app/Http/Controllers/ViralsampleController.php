@@ -36,7 +36,7 @@ class ViralsampleController extends Controller
         $samples = ViralsampleView::with(['facility'])->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
-        return view('tables.poc_samples', $data)->with('pageTitle', 'EID POC Samples');
+        return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
     }
 
     /**
@@ -77,7 +77,8 @@ class ViralsampleController extends Controller
             return redirect("viralbatch/{$batch->id}");
         }
 
-        $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient_id', 'datecollected']) )->get()->first();
+
+        $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
         if($existing){
             session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
             session(['toast_error' => 1]);

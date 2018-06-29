@@ -32,6 +32,18 @@
     {{ Form::open(['url' => '/viralbatch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
         <div class="row">
+
+            <div class="alert alert-success">
+                <center>
+                    Select facility and/or partner and/or subcounty. <br />
+                    If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
+                    Click on filter to get the list of batches based on selected criteria. <br />
+                    The Download As Excel depends on all the selected criteria.
+                </center>
+            </div>
+            
+            <br />
+            
             <div class="col-md-4"> 
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Select Facility</label>
@@ -89,23 +101,8 @@
         <br />
 
         <div class="row">
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Select Date</label>
-                    <div class="col-sm-8">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="filter_date" name="filter_date" class="form-control">
-                        </div>
-                    </div> 
 
-                    <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="submit_date" name="submit_type" value="submit_date" type='submit' >Filter</button>  
-                    </div>                         
-                </div> 
-            </div>
-
-            <div class="col-md-8"> 
+            <div class="col-md-9"> 
                 <div class="form-group">
 
                     <label class="col-sm-1 control-label">From:</label>
@@ -128,7 +125,12 @@
                         <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
                     </div>                         
                 </div> 
+            </div>
 
+            <div class="col-md-3">
+                <div class="form-group">              
+                    <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
+                </div>                
             </div>
         </div>
 
