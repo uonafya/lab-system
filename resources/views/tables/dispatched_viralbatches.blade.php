@@ -29,112 +29,116 @@
 
     <br />
 
-    {{ Form::open(['url' => '/viralbatch/index', 'method' => 'post', 'class' => 'my_form']) }}
+    @if(auth()->user()->user_type_id != 5)
 
-        <div class="row">
+        {{ Form::open(['url' => '/viralbatch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
-            <div class="alert alert-success">
-                <center>
-                    Select facility and/or partner and/or subcounty. <br />
-                    If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
-                    Click on filter to get the list of batches based on selected criteria. <br />
-                    The Download As Excel depends on all the selected criteria.
-                </center>
+            <div class="row">
+
+                <div class="alert alert-success">
+                    <center>
+                        Select facility and/or partner and/or subcounty. <br />
+                        If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
+                        Click on filter to get the list of batches based on selected criteria. <br />
+                        The Download As Excel depends on all the selected criteria.
+                    </center>
+                </div>
+                
+                <br />
+                
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Facility</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="facility_id" id="facility_id">
+                                @if(isset($facility) && $facility)
+                                    <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
+                                @endif
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Subcounty</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="subcounty_id" id="subcounty_id">
+                                <option value=0>  Select One  </option>
+                                @foreach ($subcounties as $subcounty)
+                                    <option value="{{ $subcounty->id }}"
+
+                                    @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
+                                        selected
+                                    @endif
+
+                                    > {{ $subcounty->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Partner</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="partner_id" id="partner_id">
+                                <option>  Select One  </option>
+                                @foreach ($partners as $partner)
+                                    <option value="{{ $partner->id }}"
+
+                                    @if (isset($partner_id) && $partner_id == $partner->id)
+                                        selected
+                                    @endif
+
+                                    > {{ $partner->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
             </div>
-            
+
             <br />
-            
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Select Facility</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" name="facility_id" id="facility_id">
-                            @if(isset($facility) && $facility)
-                                <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
-                            @endif
-                        </select>
-                    </div>                        
-                </div> 
-            </div>
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Select Subcounty</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" name="subcounty_id" id="subcounty_id">
-                            <option value=0>  Select One  </option>
-                            @foreach ($subcounties as $subcounty)
-                                <option value="{{ $subcounty->id }}"
 
-                                @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
-                                    selected
-                                @endif
+            <div class="row">
 
-                                > {{ $subcounty->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>                        
-                </div> 
-            </div>
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Select Partner</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" name="partner_id" id="partner_id">
-                            <option>  Select One  </option>
-                            @foreach ($partners as $partner)
-                                <option value="{{ $partner->id }}"
+                <div class="col-md-9"> 
+                    <div class="form-group">
 
-                                @if (isset($partner_id) && $partner_id == $partner->id)
-                                    selected
-                                @endif
+                        <label class="col-sm-1 control-label">From:</label>
+                        <div class="col-sm-4">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="from_date" name="from_date" class="form-control">
+                            </div>
+                        </div> 
 
-                                > {{ $partner->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>                        
-                </div> 
-            </div>
-        </div>
+                        <label class="col-sm-1 control-label">To:</label>
+                        <div class="col-sm-4">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="to_date" name="to_date" class="form-control">
+                            </div>
+                        </div> 
 
-        <br />
-
-        <div class="row">
-
-            <div class="col-md-9"> 
-                <div class="form-group">
-
-                    <label class="col-sm-1 control-label">From:</label>
-                    <div class="col-sm-4">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="from_date" name="from_date" class="form-control">
-                        </div>
+                        <div class="col-sm-2">                
+                            <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
+                        </div>                         
                     </div> 
+                </div>
 
-                    <label class="col-sm-1 control-label">To:</label>
-                    <div class="col-sm-4">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="to_date" name="to_date" class="form-control">
-                        </div>
-                    </div> 
-
-                    <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
-                    </div>                         
-                </div> 
+                <div class="col-md-3">
+                    <div class="form-group">              
+                        <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
+                    </div>                
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="form-group">              
-                    <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
-                </div>                
-            </div>
-        </div>
+        {{ Form::close() }}
 
-    {{ Form::close() }}
+    @endif
     
     <div class="row">
         <div class="col-lg-12">
