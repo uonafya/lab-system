@@ -185,6 +185,38 @@ class Common
 	}
 
 
+
+	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
+	// $sample_model will be \App\Sample::class || \App\Viralsample::class
+	public function compute_tat_sample($view_model, $sample_model, $sample_id=null)
+	{
+        ini_set("memory_limit", "-1");
+        $offset_value = 0;
+
+        $sample = $view_model::find($sample_id);
+
+		$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
+		$tat2 = self::get_days($sample->datereceived, $sample->datetested);
+		$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
+		// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
+		$tat4 = $tat1 + $tat2 + $tat3;
+		$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
+
+		if($sample_model == "App\\Viralsample"){
+			$viral_data = [
+				'justification' => $this->set_justification($sample->justification),
+				'prophylaxis' => $this->set_prophylaxis($sample->prophylaxis),
+				'age_category' => $this->set_age_cat($sample->age),
+			];
+			$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));	
+			$data = array_merge($data, $viral_data);				
+		}
+		$sample_model::where('id', $sample->id)->update($data);
+
+		dd($sample_model);
+	}
+
+
 	public static function check_worklist($view_model, $worklist_id=null)
 	{	
 		if(!$worklist_id) return null;

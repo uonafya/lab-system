@@ -14,7 +14,7 @@ class CreateSamplesTable extends Migration
     public function up()
     {
         Schema::create('samples', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->bigInteger('national_sample_id')->unsigned()->nullable()->index();
             $table->bigInteger('patient_id')->unsigned()->index(); 
             // $table->bigInteger('batch_id')->unsigned()->index();
