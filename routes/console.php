@@ -31,7 +31,7 @@ Artisan::command('compute:vl-tat', function(){
 
 Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
     $my = new \App\MiscViral;
-    $str = $my->compute_tat(\App\ViralsampleView::class, \App\Viralsample::class, $sample_id);
+    $str = $my->compute_tat_sample(\App\ViralsampleView::class, \App\Viralsample::class, $sample_id);
     $str .= "Completed vl at " . date('d/m/Y h:i:s a', time()). "\n";
     $this->info($str);
 })->describe('Compute Vl Tat.');
