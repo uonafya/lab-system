@@ -213,7 +213,7 @@ class Common
 		}
 		$sample_model::where('id', $sample->id)->update($data);
 
-		dd($sample_model);
+		dd($data);
 	}
 
 
