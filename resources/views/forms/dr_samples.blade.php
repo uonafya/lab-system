@@ -78,7 +78,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="dr_reasons" id="dr_reasons">
                                     <option value=""> Select One </option>
-                                    @foreach ($dr_reasons as $reason)
+                                    @foreach ($drug_resistance_reasons as $reason)
                                         <option value="{{ $reason->id }}"
 
                                         @if (isset($sample) && $sample->dr_reason_id == $reason->id)

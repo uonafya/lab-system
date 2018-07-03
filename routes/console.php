@@ -22,10 +22,17 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:eid-tat', function(){
+    $my = new \App\Misc;
+    $str = $my->compute_tat(\App\SampleView::class, \App\Sample::class);
+    $str .= "Completed eid tat computation at " . date('d/m/Y h:i:s a', time()). "\n";
+    $this->info($str);
+})->describe('Compute Eid Tat.');
+
 Artisan::command('compute:vl-tat', function(){
     $my = new \App\MiscViral;
     $str = $my->compute_tat(\App\ViralsampleView::class, \App\Viralsample::class);
-    $str .= "Completed vl at " . date('d/m/Y h:i:s a', time()). "\n";
+    $str .= "Completed vl tat computation at " . date('d/m/Y h:i:s a', time()). "\n";
     $this->info($str);
 })->describe('Compute Vl Tat.');
 

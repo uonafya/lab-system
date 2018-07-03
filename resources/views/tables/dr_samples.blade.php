@@ -64,7 +64,7 @@
                         </table>
                     </div>
 
-                    {{ $samples->links() }}
+                    {{ $dr_samples->links() }}
                 </div>
             </div>
         </div>
