@@ -35,7 +35,7 @@ width:1180px;
 }
 
 #mytable table td {
-	padding: 15px;
+	padding: 5px;
 }
 </style>
 

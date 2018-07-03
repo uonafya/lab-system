@@ -183,7 +183,8 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'Viralload'){test = 'EID';text = '<strong>VIRAL LOAD</strong>';}else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
+            if(current == 'Viralload'){test = 'EID';text = '<strong>VIRAL LOAD</strong>';}
+            else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
             $("#sysSwitch").val(test);
             $("#systxt").html(text);
