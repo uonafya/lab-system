@@ -26,7 +26,7 @@ class Common
 		$holidays = self::get_holidays($month);
 
 		$totaldays = $workingdays - $holidays;
-		if ($totaldays < 0)		$totaldays=0;
+		if ($totaldays < 1)		$totaldays=1;
 		return $totaldays;
 	}
 

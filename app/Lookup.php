@@ -53,6 +53,9 @@ class Lookup
             'dr_primers' => Cache::get('dr_primers'),
             'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
+            'received_statuses' => Cache::get('received_statuses'),
+            'prophylaxis' => Cache::get('prophylaxis'),
+            'rejectedreasons' => Cache::get('viral_rejected_reasons'),
         ];
     }
 
@@ -293,6 +296,8 @@ class Lookup
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 
             'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
+
+            'dr_sample' => ['patient_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen'],
         ];
     }
 

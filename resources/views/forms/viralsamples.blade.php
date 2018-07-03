@@ -269,7 +269,8 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Type of Sample
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></label>
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="sampletype" id="sampletype">
                                     <option value=""> Select One </option>

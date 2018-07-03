@@ -85,8 +85,10 @@
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 <hr />
-                <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
-                <hr />
+                @if(env('APP_LAB') == 4)
+                    <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
+                    <hr />
+                @endif
                 <li>
                     <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>

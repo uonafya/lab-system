@@ -144,6 +144,27 @@ class WorksheetController extends Controller
 
         if($machine == NULL || $machine->eid_limit == NULL) return back();
 
+        $limit = $machine->eid_limit;
+
+        if($test){
+            $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+                ->join('batches', 'samples.batch_id', '=', 'batches.id')
+                ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+                ->join('patients', 'samples.patient_id', '=', 'patients.id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+                ->whereYear('datereceived', '>', 2014)
+                ->where('site_entry', '!=', 2)
+                ->where('isnull', 0)
+                ->whereNull('worksheet_id')
+                ->where('input_complete', true)
+                ->whereIn('receivedstatus', [1, 3])
+                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->orderBy('samples.id', 'asc')
+                ->limit($limit)
+                ->get();
+            $limit -= $repeats->count();
+        }
+
         $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
@@ -151,7 +172,7 @@ class WorksheetController extends Controller
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->when($test, function($query) use ($user){
-                return $query->where('batches.received_by', $user->id);
+                return $query->where('received_by', $user->id)->having('isnull', 1);
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
@@ -163,9 +184,10 @@ class WorksheetController extends Controller
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('samples.id', 'asc')
-            ->limit($machine->eid_limit)
+            ->limit($limit)
             ->get();
 
+        if($test) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
         if($count == $machine->eid_limit){
@@ -195,11 +217,32 @@ class WorksheetController extends Controller
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
         $user = auth()->user();
 
+        $limit = $machine->eid_limit;
+
+        if($test){
+            $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+                ->join('batches', 'samples.batch_id', '=', 'batches.id')
+                ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+                ->join('patients', 'samples.patient_id', '=', 'patients.id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+                ->whereYear('datereceived', '>', 2014)
+                ->where('site_entry', '!=', 2)
+                ->where('isnull', 0)
+                ->whereNull('worksheet_id')
+                ->where('input_complete', true)
+                ->whereIn('receivedstatus', [1, 3])
+                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->orderBy('samples.id', 'asc')
+                ->limit($limit)
+                ->get();
+            $limit -= $repeats->count();
+        }
+
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->whereYear('datereceived', '>', 2014)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id);
+                return $query->where('received_by', $user->id)->having('isnull', 1);
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
@@ -211,8 +254,10 @@ class WorksheetController extends Controller
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('samples.id', 'asc')
-            ->limit($machine->eid_limit)
+            ->limit($limit)
             ->get();
+
+        if($test) $samples = $repeats->merge($samples);
 
         if($samples->count() != $machine->eid_limit){
             $worksheet->delete();

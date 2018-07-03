@@ -378,7 +378,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $min_date = Carbon::now()->subMonths(2)->toDateString();
+        $min_date = Carbon::now()->subMonths(3)->toDateString();
 
         $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')
             ->where('batch_complete', 1)
