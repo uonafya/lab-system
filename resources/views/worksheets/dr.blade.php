@@ -30,9 +30,9 @@ width:1180px;
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
 
-#mytable{
+/*#mytable{
 	transform:rotate(270deg);
-}
+}*/
 
 table td  {
 	font-size: 8px;
