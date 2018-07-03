@@ -55,7 +55,7 @@ class Lookup
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'received_statuses' => Cache::get('received_statuses'),
             'prophylaxis' => Cache::get('prophylaxis'),
-            'rejectedreasons' => Cache::get('viral_rejected_reasons'),
+            'rejected_reasons' => Cache::get('viral_rejected_reasons'),
         ];
     }
 

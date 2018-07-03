@@ -202,7 +202,7 @@
                                     <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
                                     <option value=""> Select One </option>
-                                    @foreach ($receivedstatuses as $receivedstatus)
+                                    @foreach ($received_statuses as $receivedstatus)
                                         <option value="{{ $receivedstatus->id }}"
 
                                         @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
@@ -223,7 +223,7 @@
                                     <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
                                     <option value=""> Select One </option>
-                                    @foreach ($rejectedreasons as $rejectedreason)
+                                    @foreach ($rejected_reasons as $rejectedreason)
                                         <option value="{{ $rejectedreason->id }}"
 
                                         @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)

@@ -18,7 +18,7 @@ class CreateDrSuggestionsTable extends Migration
             $table->integer('patient_id')->unsigned()->index();
             $table->date('datereceived')->nullable();
             $table->string('result', 20)->nullable();
-            $table->integer('worksheet_id')->unsigned()->index();
+            $table->integer('worksheet_id')->nullable()->unsigned()->index();
             $table->tinyInteger('rcategory')->unsigned()->index();
             $table->tinyInteger('dr_reason_id')->unsigned()->index();
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();

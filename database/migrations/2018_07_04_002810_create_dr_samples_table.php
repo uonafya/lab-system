@@ -26,7 +26,7 @@ class CreateDrSamplesTable extends Migration
             $table->date('date_prev_regimen')->nullable(); 
             $table->date('date_current_regimen')->nullable(); 
 
-            $table->integer('worksheet_id')->unsigned()->index();
+            $table->integer('worksheet_id')->nullable()->unsigned()->index();
 
             $table->date('datecollected')->nullable();
             $table->date('datereceived')->nullable();
