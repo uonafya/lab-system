@@ -36,6 +36,11 @@ width:1180px;
 
 #mytable table td {
 	padding: 5px;
+	font-size: 8px;
+}
+
+* {
+	font-size: 8px;
 }
 </style>
 
