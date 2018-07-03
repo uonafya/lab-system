@@ -93,6 +93,25 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-sm-4 control-label">Previous Regimen</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="prev_prophylaxis" id="prev_prophylaxis">
+                                    <option value=""> Select One </option>
+                                    @foreach ($prophylaxis as $proph)
+                                        <option value="{{ $proph->id }}"
+
+                                        @if (isset($sample) && $sample->prev_prophylaxis == $proph->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $proph->displaylabel }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Current Regimen
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -113,36 +132,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Previous Regimen</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" name="prev_prophylaxis" id="prev_prophylaxis">
-                                    <option value=""> Select One </option>
-                                    @foreach ($prophylaxis as $proph)
-                                        <option value="{{ $proph->id }}"
-
-                                        @if (isset($sample) && $sample->prev_prophylaxis == $proph->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $proph->displaylabel }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>                       
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Started on Current Regimen</label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="date_current_regimen" class="form-control" value="{{ $sample->date_current_regimen ?? '' }}" name="date_current_regimen">
-                                </div>
-                            </div>                            
-                        </div>                       
+                        <div class="hr-line-dashed"></div>                        
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Started on Previous Regimen</label>
@@ -150,6 +140,16 @@
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="date_prev_regimen" class="form-control" value="{{ $sample->date_prev_regimen ?? '' }}" name="date_prev_regimen">
+                                </div>
+                            </div>                            
+                        </div>                      
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Started on Current Regimen</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="date_current_regimen" class="form-control" value="{{ $sample->date_current_regimen ?? '' }}" name="date_current_regimen">
                                 </div>
                             </div>                            
                         </div> 
