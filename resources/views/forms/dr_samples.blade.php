@@ -356,6 +356,7 @@
                     }
                     else{
                         $("#submit_form_button").attr("disabled", "disabled");
+                        set_warning("This patient was not found.")
                     }
 
                 }
