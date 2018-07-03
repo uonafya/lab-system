@@ -350,9 +350,11 @@
                     console.log(data);
 
                     $("#new_patient").val(data[0]);
+                    var patient = data[1];
 
                     if(data[0] == 0){
                         $("#submit_form_button").removeAttr("disabled");
+                        $("#patient_id").val(patient.id);
                     }
                     else{
                         $("#submit_form_button").attr("disabled", "disabled");
