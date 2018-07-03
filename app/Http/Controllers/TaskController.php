@@ -157,12 +157,12 @@ class TaskController extends Controller
             $save = Abbotdeliveries::create($vlData);
             session(['toast_message'=>'The KIT delivery has EID/VL ABBOTT KITS SAVED SUCCESSFULLY.']);
         }
-        $taqdeliveries = Taqmandeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
-        $abbottdeliveries = Abbotdeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
+        // $taqdeliveries = Taqmandeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
+        // $abbottdeliveries = Abbotdeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
 
-        if ($taqdeliveries > 0 && $abbottdeliveries > 0) {
-            return redirect()->route('pending');
-        }
+        // if ($taqdeliveries > 0 && $abbottdeliveries > 0) {
+        //     return redirect()->route('pending');
+        // }
 
         $users = User::where('user_type_id', '<', 5)->get();
         return view('tasks.kitsdeliveries', compact('users'))->with('pageTitle', 'Kit Deliveries');
