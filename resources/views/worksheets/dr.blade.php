@@ -57,7 +57,7 @@ width:1180px;
 >
 	<div>
 
-		<table border="0" class="table table-bordered" id='mytable'>
+		<table class="table table-bordered" id='mytable'>
 
 			<?php $i=0;  ?>
 
