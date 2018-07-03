@@ -103,8 +103,11 @@
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
-                            Switch to Viralload
-                        </button>
+                                Switch to Viralload
+                            </button>
+                            <button class="btn btn-success" id="sys_dr" value="DR" style="margin-top:.5em;">
+                                Switch to DR
+                            </button>
                         </div>
                     </div>
                     @endif
@@ -189,6 +192,13 @@
         $("#sysSwitch").click(function(){
             sys = $(this).val();
             $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
+                location.replace("<?= url('home'); ?>");
+            });
+        });
+        
+        $("#sys_dr").click(function(){
+            sys = $(this).val();
+            $.get("<?= url('sysswitch/DR'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });

@@ -129,6 +129,17 @@
                 </li>
                 <hr />
             @endif
+            @if (session('testingSystem') == 'DR')
+                <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
+                <hr />
+                <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
+                <hr />
+                <li><a href="{{ url('dr') }}">Patient List</a></li>
+                <hr />
+                <li><a href="{{ url('dr_worksheet/create') }}">Create Dr Worksheet</a></li>
+                <hr />
+                
+            @endif
             <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
