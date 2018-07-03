@@ -34,8 +34,7 @@ width:1180px;
 	transform:rotate(270deg);
 }
 
-#mytable table td {
-	padding: 5px;
+table td  {
 	font-size: 8px;
 }
 
