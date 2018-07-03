@@ -698,7 +698,7 @@
             $("#facility_id").change(function(){
                 var val = $(this).val();
 
-                if(val == 7148 || $val == '7148'){
+                if(val == 7148 || val == '7148'){
                     $('.requirable').removeAttr("disabled");
                 }
                 else{
