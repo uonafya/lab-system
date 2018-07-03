@@ -355,7 +355,7 @@
                         $("#submit_form_button").removeAttr("disabled");
                     }
                     else{
-                        $(".submit_form_button").attr("disabled", "disabled");
+                        $("#submit_form_button").attr("disabled", "disabled");
                     }
 
                 }
