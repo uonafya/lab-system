@@ -30,9 +30,9 @@ width:1180px;
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
 
-#mytable{
+/*#mytable{
 	transform:rotate(270deg);
-}
+}*/
 
 table td  {
 	font-size: 8px;
@@ -68,7 +68,7 @@ table td  {
 					<b> {{ $sample->id }} </b> <br />
 					<b> {{ $sample->patient_id }} - {{ $dr_primers->where('id', $sample->dr_primer_id)->first()->name ?? '' }} </b> <br />
 
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="20" width="40"  />
+					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="20" width="50"  />
 				</td>
 
 				@if($key == 77)
