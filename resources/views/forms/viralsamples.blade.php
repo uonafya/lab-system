@@ -569,10 +569,10 @@
                 var val = $(this).val();
 
                 if(val == 7148 || val == '7148'){
-                    $('.requirable').removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
                 }
                 else{
-                    $('.requirable').attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                 }
             }); 
 
