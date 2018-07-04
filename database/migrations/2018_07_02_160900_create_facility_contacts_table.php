@@ -17,21 +17,21 @@ class CreateFacilityContactsTable extends Migration
             $table->increments('id');
             $table->integer('facility_id')->unsigned()->index();
             
-            $table->string('telephone', 20)->comment("Facility Telephone 1");
-            $table->string('telephone2', 20)->comment("Facility Telephone 2");
-            $table->string('fax', 30);
-            $table->string('email', 30)->comment("Facility email Address");
-            $table->string('PostalAddress', 40)->comment("Facility Contact Address");
-            $table->string('contactperson', 30)->comment("Facility Contact Name");
-            $table->string('contacttelephone', 20)->comment("Contact Person's Telephone 1");
-            $table->string('contacttelephone2', 20)->comment("Contact Person's Telephone 2");
-            $table->string('physicaladdress', 40);
-            $table->string('G4Sbranchname', 100);
-            $table->string('G4Slocation', 100);
-            $table->string('G4Sphone1', 100);
-            $table->string('G4Sphone2', 100);
-            $table->string('G4Sphone3', 100);
-            $table->string('G4Sfax', 100);
+            $table->string('telephone', 20)->nullable()->comment("Facility Telephone 1");
+            $table->string('telephone2', 20)->nullable()->comment("Facility Telephone 2");
+            $table->string('fax', 30)->nullable();
+            $table->string('email', 30)->nullable()->comment("Facility email Address");
+            $table->string('PostalAddress', 40)->nullable()->comment("Facility Contact Address");
+            $table->string('contactperson', 30)->nullable()->comment("Facility Contact Name");
+            $table->string('contacttelephone', 20)->nullable()->comment("Contact Person's Telephone 1");
+            $table->string('contacttelephone2', 20)->nullable()->comment("Contact Person's Telephone 2");
+            $table->string('physicaladdress', 40)->nullable();
+            $table->string('G4Sbranchname', 100)->nullable();
+            $table->string('G4Slocation', 100)->nullable();
+            $table->string('G4Sphone1', 100)->nullable();
+            $table->string('G4Sphone2', 100)->nullable();
+            $table->string('G4Sphone3', 100)->nullable();
+            $table->string('G4Sfax', 100)->nullable();
 
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();
