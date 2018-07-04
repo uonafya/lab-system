@@ -86,7 +86,7 @@ class ViralworksheetController extends Controller
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw('((result IS NULL ) OR (result =0 ))')
-                ->orderBy('samples.id', 'asc')
+                ->orderBy('viralsamples.id', 'asc')
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
@@ -165,7 +165,7 @@ class ViralworksheetController extends Controller
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw('((result IS NULL ) OR (result =0 ))')
-                ->orderBy('samples.id', 'asc')
+                ->orderBy('viralsamples.id', 'asc')
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
