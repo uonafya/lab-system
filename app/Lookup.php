@@ -46,7 +46,7 @@ class Lookup
     }
 
 
-    public static function calculate_dob($datecollected, $years, $months)
+    public static function calculate_dob($datecollected, $years, $months=0)
     {
         try {           
             $dc = Carbon::createFromFormat('Y-m-d', $datecollected);

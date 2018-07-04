@@ -123,7 +123,7 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age')); 
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -138,7 +138,7 @@ class SampleController extends Controller
             $mother = Mother::existing($data['facility_id'], $data['ccc_no'])->get()->first();
             if(!$mother) $mother = new Mother;
             
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -280,7 +280,7 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -292,7 +292,7 @@ class SampleController extends Controller
         {
             $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();

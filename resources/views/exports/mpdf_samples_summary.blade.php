@@ -92,31 +92,33 @@
 				<td colspan="17" style="text-align: center;"><b>SAMPLE LOG </b></td>
 			</tr>
 			<tr>
-				<td colspan="5"><b> Patient Information</b></td>
-				<td colspan="4"><b>Samples Information</b></td>
+				<td colspan="7"><b> Patient Information</b></td>
 				<td colspan="4"><b>Mother Information</b></td>
-				<td colspan="4"><b>Lab Information</b></td>
+				<td colspan="7"><b>Samples Information</b></td>
+				<!-- <td colspan="4"><b>Lab Information</b></td> -->
 			</tr>
 			<tr>
 				<td><b> No</b></td>
 				<td><b> Patient ID</b></td>
+				<td><b> DOB</b></td>
 				<td><b> Sex</b></td>
-				<td><b> Age (mths)</b></td>
+				<td><b> Entry Point</b></td>
 				<td><b> Prophylaxis</b></td>
+				<td><b> Feeding</b></td>
 
+				<td><b> Age</b></td>
+				<td><b> CCC No</b></td>
+				<td><b> Regimen</b></td>
+				<td><b> Last Vl</b></td>
+
+				<td><b> Test Type</b></td>
 				<td><b> Date Collected</b></td>
 				<td><b> Date Received</b></td>
-				<td><b> Status</b></td>
-				<td><b> Test Type</b></td>
-				
-				<td><b> HIV Status</b></td>
-				<td><b> PMTCT</b></td>
-				<td><b> Feeding</b></td>
-				<td><b> Entry Point</b></td>
 				<td><b> Date Tested</b></td>
 				<td><b> Date Dispatched</b></td>
 				<td><b> Test Result</b></td>
 				<td><b> TAT</b></td>
+
 			</tr>
 
 			@foreach($batch->sample as $key => $sample)
@@ -130,33 +132,10 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
-					<td>
-	                    @foreach($genders as $gender)
-	                        @if($sample->patient->sex == $gender->id)
-	                            {{ $gender->gender }}
-	                        @endif
-	                    @endforeach
-					</td>
-					<td>{{ $sample->age }} </td>
+					<td>{{ $sample->patient->dob }} </td>
+					<td>{{ $sample->patient->gender }} </td>
+	                <td>{{ $sample->patient->entry_point }} </td>
 					<td>{{ $sample->regimen }} </td>
-					<td>{{ $sample->my_date_format('datecollected') }} </td>
-					<td>{{ $batch->my_date_format('datereceived') }} </td>
-					<td>
-	                    @foreach($received_statuses as $received_status)
-	                        @if($sample->receivedstatus == $received_status->id)
-	                            {{ $received_status->name }}
-	                        @endif
-	                    @endforeach
-					</td>
-					<td>{{ $sample->pcrtype }} </td>
-					<td>
-	                    @foreach($results as $result)
-	                        @if($sample->patient->mother->hiv_status == $result->id)
-	                            {{ $result->name }}
-	                        @endif
-	                    @endforeach
-					</td>
-					<td>{{ $sample->mother_prophylaxis }} </td>
 					<td>
 	                    @foreach($feedings as $feeding)
 	                        @if($sample->feeding == $feeding->id)
@@ -164,7 +143,21 @@
 	                        @endif
 	                    @endforeach		
 	                </td>
-	                <td>{{ $sample->patient->entry_point }} </td>
+
+
+					<td>{{ $sample->mother_age }} </td>
+					<td>{{ $sample->patient->mother->ccc_no }} </td>
+					<td>{{ $sample->mother_prophylaxis }} </td>
+					<td>{{ $sample->mother_last_result }} </td>
+
+
+					<td>{{ $sample->pcrtype }} 
+						@if($sample->redraw) 
+							(redraw) 
+						@endif 
+					</td>
+					<td>{{ $sample->my_date_format('datecollected') }} </td>
+					<td>{{ $batch->my_date_format('datereceived') }} </td>
 					<td>{{ $sample->my_date_format('datetested') }} </td>
 					<td>{{ $batch->my_date_format('datedispatched') }} </td>
 					<td>
@@ -190,7 +183,7 @@
 					<td><b> No</b></td>
 					<td><b> Patient ID</b></td>
 					<td><b> Sex</b></td>
-					<td><b> Age (mths)</b></td>
+					<td><b> DOB</b></td>
 					<td><b> Prophylaxis</b></td>
 					<td><b> Date Collected</b></td>
 					<td><b> Date Received</b></td>
@@ -204,14 +197,8 @@
 					<tr>
 						<td>{{ ($key+1) }} </td>
 						<td>{{ $sample->patient->patient }} </td>
-						<td>
-		                    @foreach($genders as $gender)
-		                        @if($sample->patient->sex == $gender->id)
-		                            {{ $gender->gender }}
-		                        @endif
-		                    @endforeach
-						</td>
-						<td>{{ $sample->age }} </td>
+						<td>{{ $sample->patient->gender }} </td>
+						<td>{{ $sample->dob }} </td>
 						<td>{{ $sample->regimen }} </td>
 						<td>{{ $sample->my_date_format('datecollected') }} </td>
 						<td>{{ $batch->my_date_format('datereceived') }} </td>

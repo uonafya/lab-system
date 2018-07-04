@@ -159,12 +159,17 @@
                             </div>                            
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Age (In Years) Fill Either D.O.B. or age. </label>
-                            <div class="col-sm-8">
-                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Years" value="{{ $viralsample->age ?? '' }}">
+                        @if(isset($viralsample) && $viralsample->patient->dob)
+                        @else
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Age (In Years)</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Years" value="{{ $viralsample->age ?? '' }}">
+                                </div>
                             </div>
-                        </div>
+
+                        @endif
 
 
 
