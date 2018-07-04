@@ -22,9 +22,23 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:eid-tat', function(){
+    $my = new \App\Misc;
+    $str = $my->compute_tat(\App\SampleView::class, \App\Sample::class);
+    $str .= "Completed eid tat computation at " . date('d/m/Y h:i:s a', time()). "\n";
+    $this->info($str);
+})->describe('Compute Eid Tat.');
+
 Artisan::command('compute:vl-tat', function(){
     $my = new \App\MiscViral;
     $str = $my->compute_tat(\App\ViralsampleView::class, \App\Viralsample::class);
+    $str .= "Completed vl tat computation at " . date('d/m/Y h:i:s a', time()). "\n";
+    $this->info($str);
+})->describe('Compute Vl Tat.');
+
+Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
+    $my = new \App\MiscViral;
+    $str = $my->compute_tat_sample(\App\ViralsampleView::class, \App\Viralsample::class, $sample_id);
     $str .= "Completed vl at " . date('d/m/Y h:i:s a', time()). "\n";
     $this->info($str);
 })->describe('Compute Vl Tat.');
@@ -107,6 +121,11 @@ Artisan::command('copy:deliveries', function(){
     $str = \App\Copier::copy_deliveries();
     $this->info($str);
 })->describe('Copy deliveries data from old database to new database.');
+
+Artisan::command('copy:facility-contacts', function(){
+    $str = \App\Copier::copy_facility_contacts();
+    $this->info($str);
+})->describe('Copy facility contacts from old database to new database.');
 
 
 

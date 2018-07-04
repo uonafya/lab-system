@@ -271,11 +271,26 @@ class Copier
         }
     }
 
+    public static function copy_facility_contacts()
+    {
+        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax'];
+        $facilities = \App\Facility::all();
+        foreach ($facilities as $key => $facility) {
+            $old = \App\OldModels\Facility::find($facility->id);
+            // $old = \App\OldModels\Facility::locate($facility->facilitycode)->get()->first();
+            $contact = new \App\Facility();
+            $contact->fill($old->only($contact_array));
+            $contact->facility_id = $facility->id;
+            $contact->save();
+        }
+    }
+
 
 
     public static function clean_date($mydate)
     {
-        if(!$mydate || $mydate == '0000-00-00') return null;
+        $mydate = preg_replace("/[^<0-9-\/]/", "", $mydate);
+        if(!$mydate || $mydate == '0000-00-00' || $mydate == '(NULL)') return null;
 
         try {
             $my = Carbon::parse($mydate);

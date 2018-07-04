@@ -14,9 +14,9 @@ class CreateViralsamplesTable extends Migration
     public function up()
     {
         Schema::create('viralsamples', function (Blueprint $table) {
-            $table->bigIncrements('id'); 
-            $table->bigInteger('national_sample_id')->unsigned()->nullable()->index();
-            $table->bigInteger('patient_id')->unsigned()->index();
+            $table->increments('id'); 
+            $table->integer('national_sample_id')->unsigned()->nullable()->index();
+            $table->integer('patient_id')->unsigned()->index();
             // $table->bigInteger('batch_id')->unsigned()->index();
             $table->double('batch_id', 14, 2)->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
@@ -40,7 +40,7 @@ class CreateViralsamplesTable extends Migration
 
             $table->string('comments', 30)->nullable();
             $table->string('labcomment', 50)->nullable();
-            $table->bigInteger('parentid')->unsigned()->default(0)->index()->nullable();
+            $table->integer('parentid')->unsigned()->default(0)->index()->nullable();
             // $table->tinyInteger('spots')->unsigned()->nullable();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
             $table->string('reason_for_repeat', 50)->nullable();

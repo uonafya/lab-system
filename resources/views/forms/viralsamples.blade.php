@@ -63,7 +63,7 @@
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
 
-                      <div class="form-group">
+                      <div class="form-group ampath-div">
                           <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
                           <div class="col-sm-8"><select class="form-control ampath-only" name="amrs_location">
 
@@ -105,7 +105,7 @@
                                     <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}">
                                 </div>
 
-                                <div class="col-sm-1">Preferred Language</div>
+                                <div class="col-sm-1">Patient's Preferred Language</div>
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)
@@ -133,7 +133,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
                             <div class="col-sm-8">
                                 <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $viralsample->provider_identifier ?? '' }}">
@@ -146,6 +146,27 @@
                                 <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient_name ?? '' }}">
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date of Birth
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Age</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="age" placeholder="Years" value="{{ $viralsample->age ?? '' }}">
+                            </div>
+                        </div>
+
+
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Sex
@@ -193,83 +214,12 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
-                                </div>
-                            </div>                            
-                        </div>
-
                         <div class="hr-line-dashed"></div>
 
-                        <!-- <div class="form-group">
-                            <label class="col-sm-4 control-label">Age</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" type="text" required name="sample_months" placeholder="Months" value="{{ $months ?? '' }}">
-                            </div>
-                            <div class="col-sm-8 col-sm-offset-4 input-sm" style="margin-top: 1em;">
-                                <input class="form-control" type="text" required name="sample_weeks" placeholder="Weeks" value="{{ $weeks ?? '' }}">
-                            </div>
-                        </div> -->
-
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">ART Inititation Date</label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" class="form-control lockable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
-                                </div>
-                            </div>                            
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="hpanel">
-                    <div class="panel-heading">
-                        <center>Sample Information</center>
-                    </div>
-                    <div class="panel-body">
-
-                        @if(isset($poc))
-                            <input type="hidden" value=2 name="site_entry">
-
-                            <div class="form-group">
-                              <label class="col-sm-4 control-label">POC Site Sample Tested at
+                            <label class="col-sm-4 control-label">Sample Type
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                              <div class="col-sm-8">
-                                <select class="form-control requirable" required name="lab_id" id="lab_id">
-                                    @isset($sample)
-                                        <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
-                                    @endisset
-                                </select>
-                              </div>
-                            </div>
-
-                        @endif
-
-                        <div class="form-group alupe-div">
-                            <label class="col-sm-4 control-label">VL Test Request Number</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Type of Sample
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></label>
+                            </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="sampletype" id="sampletype">
                                     <option value=""> Select One </option>
@@ -285,6 +235,52 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div> 
+
+                        <div class="hr-line-dashed"></div>                      
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date of Collection
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
+                                </div>
+                            </div>                            
+                        </div>                      
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date of Separation</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="dateseparated" class="form-control" value="{{ $viralsample->dateseparated ?? '' }}" name="dateseparated">
+                                </div>
+                            </div>                            
+                        </div>  
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Started on ART
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="initiation_date" required class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
+                                </div>
+                            </div>                            
                         </div>
 
                         <div class="hr-line-dashed"></div>
@@ -311,6 +307,16 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Initiated on Current Regimen</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen">
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">1st or 2nd Line Regimen
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -330,6 +336,8 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="hr-line-dashed"></div>  
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Justification
@@ -352,30 +360,51 @@
                             </div>
                         </div>
 
+                        <div class="hr-line-dashed"></div> 
 
-                        <div class="hr-line-dashed"></div>                        
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Collection
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <!-- <div class="panel-heading">
+                        <center>Sample Information</center>
+                    </div> -->
+                    <div class="panel-body">
+
+                        @if(isset($poc))
+                            <input type="hidden" value=2 name="site_entry">
+
+                            <div class="form-group">
+                              <label class="col-sm-4 control-label">POC Site Sample Tested at
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
-                                </div>
-                            </div>                            
-                        </div> 
+                                </label>
+                              <div class="col-sm-8">
+                                <select class="form-control requirable" required name="lab_id" id="lab_id">
+                                    @isset($viralsample)
+                                        <option value="{{ $viralsample->batch->facility_lab->id }}" selected>{{ $viralsample->batch->facility_lab->facilitycode }} {{ $viralsample->batch->facility_lab->name }}</option>
+                                    @endisset
+                                </select>
+                              </div>
+                            </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
+                        @endif
+
+                        <div class="form-group alupe-div">
+                            <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
-                                </div>
-                            </div>                            
-                        </div> 
+                                <input class="form-control" name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
+                            </div>
+                        </div>
+
+
+                        <div class="hr-line-dashed"></div> 
 
                         <div></div>
 
@@ -567,11 +596,11 @@
             $("#facility_id").change(function(){ requirable
                 var val = $(this).val();
 
-                if(val == 7148 || $val == '7148'){
-                    $('.requirable').removeAttr("disabled");
+                if(val == 7148 || val == '7148'){
+                    $('.requirable').removeAttr("required");
                 }
                 else{
-                    $('.requirable').attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                 }
             }); 
 
@@ -598,6 +627,11 @@
                     $("#rejectedreason").attr("disabled", "disabled");
                 }
             });
+
+
+            @if(!in_array(env('APP_LAB'), $amrs))
+                $(".ampath-div").hide();
+            @endif 
 
             @if(env('APP_LAB', 3) != 2)
                 $(".alupe-div").hide();

@@ -30,12 +30,16 @@ width:1180px;
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
 
-#mytable{
-	transform:rotate(90deg);
+/*#mytable{
+	transform:rotate(270deg);
+}*/
+
+table td  {
+	font-size: 8px;
 }
 
-#mytable table td {
-	padding: 15px;
+* {
+	font-size: 8px;
 }
 </style>
 
@@ -52,7 +56,7 @@ width:1180px;
 >
 	<div>
 
-		<table border="0" class="table table-bordered" id='mytable'>
+		<table class="table table-bordered" id='mytable'>
 
 			<?php $i=0;  ?>
 
@@ -64,7 +68,7 @@ width:1180px;
 					<b> {{ $sample->id }} </b> <br />
 					<b> {{ $sample->patient_id }} - {{ $dr_primers->where('id', $sample->dr_primer_id)->first()->name ?? '' }} </b> <br />
 
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
+					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="20" width="50"  />
 				</td>
 
 				@if($key == 77)

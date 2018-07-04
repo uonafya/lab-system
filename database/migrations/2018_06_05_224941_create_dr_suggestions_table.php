@@ -14,8 +14,14 @@ class CreateDrSuggestionsTable extends Migration
     public function up()
     {
         Schema::create('dr_suggestions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('dr_patient_id')->unsigned()->index();
+            $table->increments('id');          
+            $table->integer('patient_id')->unsigned()->index();
+            $table->date('datereceived')->nullable();
+            $table->string('result', 20)->nullable();
+            $table->integer('worksheet_id')->nullable()->unsigned()->index();
+            $table->tinyInteger('rcategory')->unsigned()->index();
+            $table->tinyInteger('dr_reason_id')->unsigned()->index();
+            $table->tinyInteger('status_id')->unsigned()->default(1)->index();
             $table->timestamps();
         });
     }

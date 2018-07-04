@@ -100,6 +100,7 @@ INSERT INTO `facilitys` (`id`, `facilitycode`, `district`, `wardid`, `name`, `la
 
 
 UPDATE facilitys set synched=1 where synched=0;
+ALTER TABLE facilitys DROP COLUMN `active`;
 
 
 CREATE OR REPLACE

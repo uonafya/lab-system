@@ -668,14 +668,14 @@ class ViralbatchController extends Controller
 
     public function envelope(Viralbatch $batch)
     {
-        $batch->load(['facility', 'view_facility']);
+        $batch->load(['facility.facility_contact', 'view_facility']);
         $data['batches'] = [$batch];
         return view('exports.envelopes', $data);
     }
 
     public function envelopes($batch_ids)
     {
-        $batches = Viralbatch::whereIn('id', $batch_ids)->with(['facility', 'view_facility'])->get();
+        $batches = Viralbatch::whereIn('id', $batch_ids)->with(['facility.facility_contact', 'view_facility'])->get();
         return view('exports.envelopes', ['batches' => $batches]);
     }
 

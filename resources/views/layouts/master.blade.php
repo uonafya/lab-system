@@ -103,8 +103,8 @@
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
-                            Switch to Viralload
-                        </button>
+                                Switch to Viralload
+                            </button>
                         </div>
                     </div>
                     @endif
@@ -180,7 +180,10 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'Viralload'){test = 'EID';text = '<strong>VIRAL LOAD</strong>';}else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
+            if(current == 'DR'){test = 'EID';text = '<strong>DRUG RESISTANCE</strong>';}
+            else if(current == 'EID'){test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
+            else if(current == 'Viralload'){test = 'DR';text = '<strong>VIRAL LOAD</strong>';}
+            // else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
             $("#sysSwitch").val(test);
             $("#systxt").html(text);
@@ -192,6 +195,7 @@
                 location.replace("<?= url('home'); ?>");
             });
         });
+        
     });
 
     function set_warning(message)

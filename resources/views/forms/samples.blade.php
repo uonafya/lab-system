@@ -141,7 +141,7 @@
                                     <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $sample->patient->patient_phone_no ?? '' }}">
                                 </div>
 
-                                <div class="col-sm-1">Preferred Language</div>
+                                <div class="col-sm-1">Patient's Preferred Language</div>
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)
@@ -698,11 +698,11 @@
             $("#facility_id").change(function(){
                 var val = $(this).val();
 
-                if(val == 7148 || $val == '7148'){
-                    $('.requirable').removeAttr("disabled");
+                if(val == 7148 || val == '7148'){
+                    $('.requirable').removeAttr("required");
                 }
                 else{
-                    $('.requirable').attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                 }
             }); 
 
