@@ -77,7 +77,7 @@ class ViralworksheetController extends Controller
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
                 ->whereYear('datereceived', '>', 2014)
-                ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
+                ->when(($machine_type == 1 || $machine_type == 3), function($query){
                     return $query->where('sampletype', 1);
                 })
                 ->where('site_entry', '!=', 2)
@@ -101,7 +101,7 @@ class ViralworksheetController extends Controller
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
-            ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
+            ->when(($machine_type == 1 || $machine_type == 3), function($query){
                 return $query->where('sampletype', 1);
             })
             ->where('site_entry', '!=', 2)
