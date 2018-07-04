@@ -154,15 +154,15 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                    <input type="text" id="dob" class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
                                 </div>
                             </div>                            
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Age</label>
+                            <label class="col-sm-4 control-label">Age (In Years) Fill Either D.O.B. or age. </label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="age" placeholder="Years" value="{{ $viralsample->age ?? '' }}">
+                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Years" value="{{ $viralsample->age ?? '' }}">
                             </div>
                         </div>
 
@@ -560,7 +560,11 @@
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date of Dispatch", "Date Received"]
-                }                
+                },
+                age: {
+                    required: '#dob:blank'
+                }
+
             }
         @endslot
 
@@ -593,7 +597,7 @@
                 check_new_patient(patient, facility);
             });
 
-            $("#facility_id").change(function(){ requirable
+            $("#facility_id").change(function(){
                 var val = $(this).val();
 
                 if(val == 7148 || val == '7148'){

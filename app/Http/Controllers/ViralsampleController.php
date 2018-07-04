@@ -107,9 +107,7 @@ class ViralsampleController extends Controller
             $message = 'The high priority sample has been saved in batch no ' . $batch->id . '.';
 
             session(['toast_message' => $message]);
-            return redirect()->route('viralsample.create');
         }
-
 
         if(!$batch){
             $facility_id = $request->input('facility_id');
@@ -128,13 +126,13 @@ class ViralsampleController extends Controller
             if(auth()->user()->user_type_id == 5){
                 $batch->site_entry = 1;
             }
-
-            $data = $request->only($viralsamples_arrays['batch']);
-            $batch->fill($data);
-
-            $batch->save();
-            session(['viral_batch' => $batch]);
         }
+
+        $data = $request->only($viralsamples_arrays['batch']);
+        $batch->fill($data);
+
+        $batch->save();
+        session(['viral_batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
 
@@ -150,17 +148,16 @@ class ViralsampleController extends Controller
             }
 
             $viralpatient = Viralpatient::find($patient_id);
-            $data = $request->only($viralsamples_arrays['patient']);
-            $viralpatient->fill($data);
-            $viralpatient->save();
         }
-
         else{
             $data = $request->only($viralsamples_arrays['patient']);
             $viralpatient = new Viralpatient;
-            $viralpatient->fill($data);
-            $viralpatient->save();
         }
+
+        $data = $request->only($viralsamples_arrays['patient']);
+        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        $viralpatient->fill($data);
+        $viralpatient->save();
 
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample = new Viralsample;
@@ -268,6 +265,8 @@ class ViralsampleController extends Controller
         else{
             $viralpatient = new Viralpatient;
         }
+
+        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->pre_update();
 

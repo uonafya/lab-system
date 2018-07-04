@@ -95,12 +95,12 @@ class SampleController extends Controller
             else{
                 $batch->site_entry = 1;
             }
-
-            $data = $request->only($samples_arrays['batch']);
-            $batch->fill($data);
-            $batch->save();
-            session(['batch' => $batch]);
         }
+
+        $data = $request->only($samples_arrays['batch']);
+        $batch->fill($data);
+        $batch->save();
+        session(['batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
         $last_result = $request->input('last_result');

@@ -279,7 +279,7 @@ class Copier
             $old = \App\OldModels\Facility::find($facility->id);
             // $old = \App\OldModels\Facility::locate($facility->facilitycode)->get()->first();
             $contact = new \App\FacilityContact();
-            $contact->fill($old->only($contact_array));
+            if($old) $contact->fill($old->only($contact_array));
             $contact->facility_id = $facility->id;
             $contact->save();
         }

@@ -45,6 +45,21 @@ class Lookup
         }
     }
 
+
+    public static function calculate_dob($datecollected, $years, $months)
+    {
+        try {           
+            $dc = Carbon::createFromFormat('Y-m-d', $datecollected);
+            $dc->subYears($years);
+            $dc->subMonths($months);
+            return $dc->toDateString();
+            
+        } catch (Exception $e) {
+            return null;
+        }
+        return null;
+    }
+
     public static function get_dr()
     {
         self::cacher();
