@@ -289,7 +289,7 @@ class Lookup
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated'],
 
             'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid'],
 

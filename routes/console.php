@@ -122,6 +122,11 @@ Artisan::command('copy:deliveries', function(){
     $this->info($str);
 })->describe('Copy deliveries data from old database to new database.');
 
+Artisan::command('copy:facility-contacts', function(){
+    $str = \App\Copier::copy_facility_contacts();
+    $this->info($str);
+})->describe('Copy facility contacts from old database to new database.');
+
 
 
 Artisan::command('match:eid-patients', function(){

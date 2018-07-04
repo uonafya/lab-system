@@ -141,7 +141,7 @@
                                     <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $sample->patient->patient_phone_no ?? '' }}">
                                 </div>
 
-                                <div class="col-sm-1">Preferred Language</div>
+                                <div class="col-sm-1">Patient's Preferred Language</div>
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)

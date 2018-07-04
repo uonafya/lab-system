@@ -15,6 +15,8 @@ class CreateFacilityContactsTable extends Migration
     {
         Schema::create('facility_contacts', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('facility_id')->unsigned()->index();
+            
             $table->string('telephone', 20)->comment("Facility Telephone 1");
             $table->string('telephone2', 20)->comment("Facility Telephone 2");
             $table->string('fax', 30);
@@ -30,7 +32,6 @@ class CreateFacilityContactsTable extends Migration
             $table->string('G4Sphone2', 100);
             $table->string('G4Sphone3', 100);
             $table->string('G4Sfax', 100);
-
 
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();

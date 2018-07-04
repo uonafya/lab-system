@@ -576,14 +576,14 @@ class BatchController extends Controller
 
     public function envelope(Batch $batch)
     {
-        $batch->load(['facility', 'view_facility']);
+        $batch->load(['facility.facility_contact', 'view_facility']);
         $data['batches'] = [$batch];
         return view('exports.envelopes', $data);
     }
 
     public function envelopes($batch_ids)
     {
-        $batches = Batch::whereIn('id', $batch_ids)->with(['facility', 'view_facility'])->get();
+        $batches = Batch::whereIn('id', $batch_ids)->with(['facility.facility_contact', 'view_facility'])->get();
         return view('exports.envelopes', ['batches' => $batches]);
     }
 

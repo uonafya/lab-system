@@ -81,7 +81,7 @@ class ViralworksheetController extends Controller
                     return $query->where('sampletype', 1);
                 })
                 ->where('site_entry', '!=', 2)
-                ->where('isnull', 0)
+                ->having('isnull', 0)
                 ->whereNull('worksheet_id')
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
@@ -160,7 +160,7 @@ class ViralworksheetController extends Controller
                     return $query->where('sampletype', 1);
                 })
                 ->where('site_entry', '!=', 2)
-                ->where('isnull', 0)
+                ->having('isnull', 0)
                 ->whereNull('worksheet_id')
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])

@@ -8,8 +8,13 @@ class Facility extends BaseModel
 {
     //
     protected $table = "facilitys";
-
     public $timestamps = false;
+
+
+    public function facility_contact()
+    {
+        return $this->hasOne('App\FacilityContact');
+    }
 
     public function scopeLocate($query, $mfl)
     {
@@ -23,14 +28,14 @@ class Facility extends BaseModel
      */
     public function getBranchLocationAttribute()
     {
-        if($this->G4Sbranchname && $this->G4Slocation){
-        	return $this->G4Sbranchname . ' , ' . $this->G4Slocation;
+        if($this->facility_contact->G4Sbranchname && $this->facility_contact->G4Slocation){
+        	return $this->facility_contact->G4Sbranchname . ' , ' . $this->facility_contact->G4Slocation;
 		}
-		else if($this->G4Sbranchname && !$this->G4Slocation){
-			return $this->G4Sbranchname;
+		else if($this->facility_contact->G4Sbranchname && !$this->facility_contact->G4Slocation){
+			return $this->facility_contact->G4Sbranchname;
 		}
-		else if(!$this->G4Sbranchname && $this->G4Slocation){
-        	return $this->G4Slocation;
+		else if(!$this->facility_contact->G4Sbranchname && $this->facility_contact->G4Slocation){
+        	return $this->facility_contact->G4Slocation;
 		}
 		else{
 			return null;
@@ -39,17 +44,17 @@ class Facility extends BaseModel
 
     public function getBranchPhonesAttribute()
     {
-        if($this->G4Sphone1 != '' && $this->G4Sphone2 != '' && $this->G4Sphone3 != ''){
-        	return $this->G4Sphone1 . ' / ' . $this->G4Sphone2 . ' / ' . $this->G4Sphone3;
+        if($this->facility_contact->G4Sphone1 != '' && $this->facility_contact->G4Sphone2 != '' && $this->facility_contact->G4Sphone3 != ''){
+        	return $this->facility_contact->G4Sphone1 . ' / ' . $this->facility_contact->G4Sphone2 . ' / ' . $this->facility_contact->G4Sphone3;
 		}
-		else if($this->G4Sphone1 != '' && $this->G4Sphone2 != '' && $this->G4Sphone3 == ''){
-        	return $this->G4Sphone1 . ' / ' . $this->G4Sphone2;
+		else if($this->facility_contact->G4Sphone1 != '' && $this->facility_contact->G4Sphone2 != '' && $this->facility_contact->G4Sphone3 == ''){
+        	return $this->facility_contact->G4Sphone1 . ' / ' . $this->facility_contact->G4Sphone2;
 		}
-		else if($this->G4Sphone1 != '' && $this->G4Sphone2 == '' && $this->G4Sphone3 != ''){
-        	return $this->G4Sphone1 . ' / ' . $this->G4Sphone3;
+		else if($this->facility_contact->G4Sphone1 != '' && $this->facility_contact->G4Sphone2 == '' && $this->facility_contact->G4Sphone3 != ''){
+        	return $this->facility_contact->G4Sphone1 . ' / ' . $this->facility_contact->G4Sphone3;
 		}
-		else if($this->G4Sphone1 != '' && $this->G4Sphone2 == '' && $this->G4Sphone3 == ''){
-        	return $this->G4Sphone1;
+		else if($this->facility_contact->G4Sphone1 != '' && $this->facility_contact->G4Sphone2 == '' && $this->facility_contact->G4Sphone3 == ''){
+        	return $this->facility_contact->G4Sphone1;
 		}
 		else{
 			return null;
@@ -58,14 +63,14 @@ class Facility extends BaseModel
 
     public function getContactsAttribute()
     {
-        if($this->contacttelephone != '' && $this->contacttelephone2 != ''){
-        	return $this->contacttelephone . ' / ' . $this->contacttelephone2;
+        if($this->facility_contact->contacttelephone != '' && $this->facility_contact->contacttelephone2 != ''){
+        	return $this->facility_contact->contacttelephone . ' / ' . $this->facility_contact->contacttelephone2;
 		}
-		else if($this->contacttelephone != '' && $this->contacttelephone2 == ''){
-        	return $this->contacttelephone;
+		else if($this->facility_contact->contacttelephone != '' && $this->facility_contact->contacttelephone2 == ''){
+        	return $this->facility_contact->contacttelephone;
 		}
-		else if($this->contacttelephone == '' && $this->contacttelephone2 != ''){
-        	return $this->contacttelephone2;
+		else if($this->facility_contact->contacttelephone == '' && $this->facility_contact->contacttelephone2 != ''){
+        	return $this->facility_contact->contacttelephone2;
 		}
 		else{
 			return null;
@@ -74,14 +79,14 @@ class Facility extends BaseModel
 
     public function getFacilityContactsAttribute()
     {
-        if($this->telephone != '' && $this->telephone2 != ''){
-        	return $this->telephone . ' / ' . $this->telephone2;
+        if($this->facility_contact->telephone != '' && $this->facility_contact->telephone2 != ''){
+        	return $this->facility_contact->telephone . ' / ' . $this->facility_contact->telephone2;
 		}
-		else if($this->telephone != '' && $this->telephone2 == ''){
-        	return $this->telephone;
+		else if($this->facility_contact->telephone != '' && $this->facility_contact->telephone2 == ''){
+        	return $this->facility_contact->telephone;
 		}
-		else if($this->telephone == '' && $this->telephone2 != ''){
-        	return $this->telephone2;
+		else if($this->facility_contact->telephone == '' && $this->facility_contact->telephone2 != ''){
+        	return $this->facility_contact->telephone2;
 		}
 		else{
 			return null;
