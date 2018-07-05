@@ -92,9 +92,9 @@
 				<td colspan="17" style="text-align: center;"><b>SAMPLE LOG </b></td>
 			</tr>
 			<tr>
-				<td colspan="7"><b> Patient Information</b></td>
-				<td colspan="4"><b>Mother Information</b></td>
-				<td colspan="7"><b>Samples Information</b></td>
+				<td colspan="7" style="text-align: center;"><b> Patient Information</b></td>
+				<td colspan="4" style="text-align: center;"><b>Mother Information</b></td>
+				<td colspan="7" style="text-align: center;"><b>Samples Information</b></td>
 				<!-- <td colspan="4"><b>Lab Information</b></td> -->
 			</tr>
 			<tr>
@@ -151,7 +151,13 @@
 					<td>{{ $sample->mother_last_result }} </td>
 
 
-					<td>{{ $sample->pcrtype }} 
+					<td>
+	                    @foreach($pcrtypes as $pcrtype)
+	                        @if($sample->pcrtype == $pcrtype->id)
+	                            {{ $pcrtype->alias }}
+	                        @endif
+	                    @endforeach	
+
 						@if($sample->redraw) 
 							(redraw) 
 						@endif 

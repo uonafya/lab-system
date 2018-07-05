@@ -18,12 +18,11 @@
 
 
    <div class="content">
-        <div>
             
         @if($create)
 
             <div class="row">
-                <div class="col-lg-9 col-lg-offset-1">
+                <div class="col-lg-11 col-lg-offset-1">
                     <div class="hpanel">
                         <div class="panel-heading">
                             <center>Viralload Samples</center>
@@ -232,8 +231,6 @@
         @endif
 
         
-
-      </div>
     </div>
 
 @endsection

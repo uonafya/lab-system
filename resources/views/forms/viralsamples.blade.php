@@ -165,7 +165,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Age (In Years)</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Years" value="{{ $viralsample->age ?? '' }}">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
                                 </div>
                             </div>
 
