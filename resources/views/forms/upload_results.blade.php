@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Created</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->created_at ?? '' }}" disabled>
+                                <input class="form-control" required type="text" value="{{ $worksheet->my_date_format('created_at') ?? '' }}" disabled>
                             </div>
                         </div>
 

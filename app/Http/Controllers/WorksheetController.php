@@ -383,10 +383,17 @@ class WorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
+
+        if($worksheet->uploadedby != auth()->user()->id){
+            session(['toast_message' => 'Only the user who uploaded the results can cancel the upload.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = null;
         $worksheet->save();
 
         session(['toast_message' => 'The upload has been cancelled.']);
@@ -580,6 +587,7 @@ class WorksheetController extends Controller
         $worksheet->pos_control_interpretation = $positive_control;
         $worksheet->pos_control_result = $pos_result;
         $worksheet->daterun = $dateoftest;
+        $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
         Misc::requeue($worksheet->id);

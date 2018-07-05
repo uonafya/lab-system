@@ -58,8 +58,7 @@
                                     <th>Dilution Factor</th>                
                                     <th>Interpretation</th>                
                                     <th>Units</th>                
-                                    <th>Action</th>                
-                                    <th>Approved</th>                
+                                    <th>Action</th>               
                                     <th>Approved Date</th>                
                                     <th>Approved By</th>                
                                     <th>Task</th>                
@@ -78,8 +77,7 @@
                                      </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
-                                    <td >&nbsp; </td>
-                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>  
                                     <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
@@ -95,8 +93,7 @@
                                      </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
-                                    <td >&nbsp; </td>
-                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>  
                                     <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
@@ -113,8 +110,7 @@
                                      </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
-                                    <td >&nbsp; </td>
-                                    <td >&nbsp; </td>   
+                                    <td >&nbsp; </td>  
                                     <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
@@ -201,12 +197,7 @@
 
                                             @endif
                                         </td>
-
-                                        <td> 
-                                            <div align="center">
-                                                <input name="approved[]" type="checkbox"  value="{{ $key }}" checked disabled="disabled"  class="{{ $class }}" />
-                                            </div> 
-                                        </td>
+                                        
                                         <td> {{ $sample->dateapproved }} </td>
                                         <td> {{ $sample->approver->full_name ?? '' }} </td>
                                         <td> 

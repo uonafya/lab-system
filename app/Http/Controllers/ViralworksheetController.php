@@ -317,10 +317,16 @@ class ViralworksheetController extends Controller
             return back();
         }
 
+        if($worksheet->uploadedby != auth()->user()->id){
+            session(['toast_message' => 'Only the user who uploaded the results can cancel the upload.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
+        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = null;
         $worksheet->save();
 
         session(['toast_message' => 'The upload has been cancelled.']);
@@ -331,7 +337,7 @@ class ViralworksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', '<', 5)->get();
-        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Wroksheet Upload');
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Worksheet Upload');
     }
 
 
@@ -459,6 +465,8 @@ class ViralworksheetController extends Controller
         $worksheet->lowpos_control_result = $lpc;
 
         $worksheet->daterun = $dateoftest;
+        $worksheet->uploadedby = auth()->user()->id;
+
         $worksheet->save();
 
         MiscViral::requeue($worksheet->id);
