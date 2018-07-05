@@ -328,8 +328,9 @@ class BatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
-        $batches = Batch::select('batches.*', 'facilitys.email', 'facilitys.name')
+        $batches = Batch::select('batches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('batches.id', $batch_list);
             })

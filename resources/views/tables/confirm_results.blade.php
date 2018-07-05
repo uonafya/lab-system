@@ -200,7 +200,8 @@
                                         <tr bgcolor="#999999">
                                             <td  colspan="10" bgcolor="#00526C" >
                                                 <center>
-                                                    <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  />
+                                                    <!-- <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  /> -->
+                                                    <button class="btn btn-success" type="submit">Confirm & Approve Results</button>
                                                 </center>
                                             </td>
                                         </tr>

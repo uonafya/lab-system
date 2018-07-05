@@ -92,4 +92,9 @@ class Facility extends BaseModel
 			return null;
 		}
     }
+
+    public function getEmailAttribute()
+    {
+        return $this->facility_contact->email ?? '';
+    }
 }
