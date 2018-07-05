@@ -139,7 +139,8 @@ class WorksheetController extends Controller
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
-        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $test = false;
         $user = auth()->user();
 
         if($machine == NULL || $machine->eid_limit == NULL) return back();
