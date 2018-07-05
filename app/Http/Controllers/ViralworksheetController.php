@@ -69,6 +69,7 @@ class ViralworksheetController extends Controller
         if($machine == NULL || $machine->vl_limit == NULL) return back();
 
         $limit = $machine->vl_limit;
+        $year = date('Y') - 2;
 
         if($test){
             $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -76,7 +77,7 @@ class ViralworksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-                ->whereYear('datereceived', '>', 2014)
+                ->whereYear('datereceived', '>', $year)
                 ->when(($machine_type == 1 || $machine_type == 3), function($query){
                     return $query->where('sampletype', 1);
                 })
@@ -97,7 +98,7 @@ class ViralworksheetController extends Controller
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->whereYear('datereceived', '>', 2014)
+            ->whereYear('datereceived', '>', $year)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
@@ -148,6 +149,7 @@ class ViralworksheetController extends Controller
         $user = auth()->user();
 
         $limit = $machine->vl_limit;
+        $year = date('Y') - 2;
 
         if($test){
             $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -155,7 +157,7 @@ class ViralworksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-                ->whereYear('datereceived', '>', 2014)
+                ->whereYear('datereceived', '>', $year)
                 ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
                     return $query->where('sampletype', 1);
                 })
@@ -175,7 +177,7 @@ class ViralworksheetController extends Controller
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->whereYear('datereceived', '>', 2014)
+            ->whereYear('datereceived', '>', $year)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
