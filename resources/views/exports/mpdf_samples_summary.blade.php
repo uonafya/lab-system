@@ -89,10 +89,10 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan="17" style="text-align: center;"><b>SAMPLE LOG </b></td>
+				<td colspan="19" style="text-align: center;"><b>SAMPLE LOG </b></td>
 			</tr>
 			<tr>
-				<td colspan="7" style="text-align: center;"><b> Patient Information</b></td>
+				<td colspan="8" style="text-align: center;"><b> Patient Information</b></td>
 				<td colspan="4" style="text-align: center;"><b>Mother Information</b></td>
 				<td colspan="7" style="text-align: center;"><b>Samples Information</b></td>
 				<!-- <td colspan="4"><b>Lab Information</b></td> -->
@@ -101,6 +101,7 @@
 				<td><b> No</b></td>
 				<td><b> Patient ID</b></td>
 				<td><b> DOB</b></td>
+				<td><b> Age (in months) </b></td>
 				<td><b> Sex</b></td>
 				<td><b> Entry Point</b></td>
 				<td><b> Prophylaxis</b></td>
@@ -133,6 +134,7 @@
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
 					<td>{{ $sample->patient->dob }} </td>
+					<td>{{ $sample->age }} </td>
 					<td>{{ $sample->patient->gender }} </td>
 	                <td>{{ $sample->patient->entry_point }} </td>
 					<td>{{ $sample->regimen }} </td>

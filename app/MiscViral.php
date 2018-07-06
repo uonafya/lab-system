@@ -330,12 +330,12 @@ class MiscViral extends Common
 
     public function set_age_cat($age = null)
     {
-        if($age > 0.00001 && $age < 2){ return 6; }
-        else if($age >= 2 && $age < 10){ return 7; }
-        else if($age >= 10 && $age < 15){ return 8; }
-        else if($age >= 15 && $age < 19){ return 9; }
-        else if($age >= 19 && $age < 24){ return 10; }
-        else if($age >= 24){ return 11; }
+        if($age > 0.00001 && $age < 2) return 6; 
+        else if($age >= 2 && $age < 10) return 7; 
+        else if($age >= 10 && $age < 15) return 8; 
+        else if($age >= 15 && $age < 19) return 9; 
+        else if($age >= 19 && $age < 24) return 10;
+        else if($age >= 24) return 11;
         else{ return 0; }
     }
 
@@ -345,15 +345,9 @@ class MiscViral extends Common
         $numeric_result = preg_replace('/[^0-9]/', '', $result);
         if(is_numeric($numeric_result)){
             $result = (int) $numeric_result;
-            if($result > 0 && $result < 1001){
-                return ['rcategory' => 2];
-            }
-            else if($result > 1000 && $result < 5001){
-                return ['rcategory' => 3];
-            }
-            else if($result > 5000){
-                return ['rcategory' => 4];
-            }
+            if($result > 0 && $result < 1001) return ['rcategory' => 2];
+            else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
+            else if($result > 5000) return ['rcategory' => 4];
         }
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) dd($result);
