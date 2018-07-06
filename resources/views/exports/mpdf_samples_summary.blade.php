@@ -136,7 +136,13 @@
 					<td>{{ $sample->patient->dob }} </td>
 					<td>{{ $sample->age }} </td>
 					<td>{{ $sample->patient->gender }} </td>
-	                <td>{{ $sample->patient->entry_point }} </td>
+	                <td>
+						@foreach($entry_points as $entry_point)
+	                        @if($sample->patient->entry_point == $entry_point->id)
+	                            {{ $entry_point->name }}
+	                        @endif
+						@endforeach
+	                </td>
 					<td>{{ $sample->regimen }} </td>
 					<td>
 	                    @foreach($feedings as $feeding)

@@ -333,9 +333,9 @@ class MiscViral extends Common
         if($age > 0.00001 && $age < 2) return 6; 
         else if($age >= 2 && $age < 10) return 7; 
         else if($age >= 10 && $age < 15) return 8; 
-        else if($age >= 15 && $age < 19) return 9; 
-        else if($age >= 19 && $age < 24) return 10;
-        else if($age >= 24) return 11;
+        else if($age >= 15 && $age < 20) return 9; 
+        else if($age >= 19 && $age < 25) return 10;
+        else if($age >= 25) return 11;
         else{ return 0; }
     }
 
