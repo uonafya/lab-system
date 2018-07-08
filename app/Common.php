@@ -164,8 +164,8 @@ class Common
 				$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
 				$tat2 = self::get_days($sample->datereceived, $sample->datetested);
 				$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
-				// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
-				$tat4 = $tat1 + $tat2 + $tat3;
+				$tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
+				// $tat4 = $tat1 + $tat2 + $tat3;
 				$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
 
 				if($sample_model == "App\\Viralsample"){
