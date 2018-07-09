@@ -83,6 +83,7 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
+                <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 <hr />
                 @if(env('APP_LAB') == 4)
