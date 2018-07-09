@@ -106,7 +106,8 @@ class DashboardCacher
         if ($testingSystem == 'Viralload') {
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
+                                ->whereRaw("datediff(datereceived, datetested) > 10")
+                                ->whereRaw("(result is null or result = 0)")->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
@@ -115,7 +116,6 @@ class DashboardCacher
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', '2016-12-31')
-                        // ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = 0)")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 
@@ -125,7 +125,8 @@ class DashboardCacher
             if ($over == true) {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                                 ->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")->get()->first()->total;
+                                ->whereRaw("datediff(datereceived, datetested) > 10")
+                                ->whereRaw("(result is null or result = 0)")->get()->first()->total;
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereIn('receivedstatus', [1, 3])
