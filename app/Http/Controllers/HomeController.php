@@ -71,7 +71,7 @@ class HomeController extends Controller
         if ($level == 'testing') {
             $model = $model->whereNull('worksheet_id')->whereIn('receivedstatus', [1, 3])->whereRaw("(result is null or result=0)");
         } else {
-            $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
+            $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched')->whereNull('datesynched');
         }
 
         $samples = $model->where('repeatt', 0)
