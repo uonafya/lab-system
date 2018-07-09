@@ -312,7 +312,8 @@ class WorksheetController extends Controller
      */
     public function edit(Worksheet $worksheet)
     {
-        //
+        $samples = $worksheet->sample;
+        return view('forms.worksheets', ['create' => true, 'machine_type' => $worksheet->machine_type, 'samples' => $samples, 'worksheet' => $worksheet])->with('pageTitle', 'Edit Worksheet');
     }
 
     /**
@@ -324,7 +325,9 @@ class WorksheetController extends Controller
      */
     public function update(Request $request, Worksheet $worksheet)
     {
-        //
+        $worksheet->fill($request->except('_token'));
+        $worksheet->save();
+        return redirect('worksheet/print/' . $worksheet->id);
     }
 
     /**
@@ -356,6 +359,18 @@ class WorksheetController extends Controller
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
         }
+    }
+
+    public function convert_worksheet($machine_type, Worksheet $worksheet)
+    {
+        if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
+            session(['toast_error' => 1]);
+            return back();            
+        }
+        $worksheet->machine_type = $machine_type;
+        $worksheet->save();
+        return redirect('worksheet/' . $worksheet->id . '/edit');
     }
 
     public function cancel(Worksheet $worksheet)
@@ -393,7 +408,7 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = null;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
 
         session(['toast_message' => 'The upload has been cancelled.']);
@@ -658,7 +673,11 @@ class WorksheetController extends Controller
                 $data['repeatt'] = 0;
             } 
 
-            Sample::where('id', $samples[$key])->update($data);
+            // Sample::where('id', $samples[$key])->update($data);
+            
+            $sample = Sample::find($samples[$key]);
+            $sample->fill($data);
+            $sample->pre_update();
 
             // if($actions[$key] == 1){
             if($data['repeatt'] == 1){

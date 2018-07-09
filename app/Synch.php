@@ -265,6 +265,17 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
+		$classes = self::$synch_arrays;
+
+		foreach ($classes as $c) {
+			$misc_class = $c['misc_class'];
+			$sample_class = $c['sample_class'];
+			$sampleview_class = $c['sampleview_class'];
+
+			$my = new $misc_class;
+			$my->save_tat($sampleview_class, $sample_class);		
+		}
+
 		$updates = self::$update_arrays[$type];
 
 		foreach ($updates as $key => $value) {

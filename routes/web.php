@@ -226,6 +226,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
 		Route::post('nhrl', 'ViralsampleController@approve_nhrl');
 
+		Route::get('upload', 'ViralsampleController@site_sample_page');
+		Route::post('upload', 'ViralsampleController@upload_site_samples');
+
 		Route::post('new_patient', 'ViralsampleController@new_patient');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
@@ -250,6 +253,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 			Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
+			Route::get('convert/{machine_type}/{worksheet}', 'WorksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
@@ -263,7 +267,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 		});
 		Route::get('worksheetserverside/', 'WorksheetController@getworksheetserverside')->name('worksheetserverside');
 
-		Route::resource('worksheet', 'WorksheetController', ['except' => ['edit']]);
+		Route::resource('worksheet', 'WorksheetController');
 
 
 		Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
@@ -273,6 +277,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
+			Route::get('convert/{machine_type}/{worksheet}', 'ViralworksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
@@ -285,7 +290,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 			Route::post('search/', 'ViralworksheetController@search')->name('search');
 
 		});
-		Route::resource('viralworksheet', 'ViralworksheetController', ['except' => ['edit']]);
+		Route::resource('viralworksheet', 'ViralworksheetController');
 	});
 
 	Route::group(['middleware' => ['only_utype:5']], function () {

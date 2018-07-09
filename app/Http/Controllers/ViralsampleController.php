@@ -451,18 +451,89 @@ class ViralsampleController extends Controller
         return back();
     }
 
+    public function site_sample_page()
+    {
+        return view('forms.upload_site_samples', ['type' => 'viralload'])->with('pageTitle', 'Upload Facility Samples');
+    }
+
     public function upload_site_samples(Request $request)
     {
         $file = $request->upload->path();
         $path = $request->upload->store('public/site_samples/vl');
 
-        $problem_rows;
+        $problem_rows = 0;
+        $created_rows = 0;
 
         $handle = fopen($file, "r");
-        while (($value = fgetcsv($handle, 1000, ",")) !== FALSE){
-            $facility = Facility::locate($value[3])->get()->first();
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+
+            $facility = Facility::locate($row[3])->get()->first();
+            $datecollected = Lookup::other_date($row[8]);
+            $datereceived = Lookup::other_date($row[15]);
+            $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+
+            if($existing) continue;
+
+            $site_entry = Lookup::get_site_entry($row[14]);
+
+            $batch = Viralbatch::with('sample_count')
+                                    ->where('received_by', auth()->user()->id)
+                                    ->where('datereceived', $datereceived)
+                                    ->where('input_complete', 0)
+                                    ->where('site_entry', $site_entry)
+                                    ->get()->first();
+
+            if($batch){
+                if($batch->sample_count > 9){
+                    unset($batch->sample_count);
+                    $batch->full_batch();
+                    $batch = null;
+                }
+            }
+
+            if(!$batch){
+                $batch = new Viralbatch;
+                $batch->user_id = $facility->facility_user->id;
+                $batch->received_by = auth()->user()->id;
+                $batch->lab_id = auth()->user()->lab_id;
+                $batch->datereceived = $datereceived;
+                $batch->site_entry = $site_entry;
+                $batch->save();
+            }
+
+            $patient = Viralpatient::existing($facility->id, $row[1])->get()->first();
+            if(!$patient){
+                $patient = new Viralpatient;
+            }
+            $dob = Lookup::other_date($row[5]);
+            if (!$dob) {
+                if(strlen($row[5]) == 4) $dob = $row[5] . '-01-01';
+            }
+            if($dob) $patient->dob = $dob;            
+            $patient->facility_id = $facility->id;
+            $patient->patient = $row[1];
+            $patient->sex = Lookup::get_gender($row[4]);
+            $patient->initiation_date = Lookup::other_date($row[9]);
+            if(!$patient->dob && $value[6]) $patient->dob = Lookup::calculate_dob($datecollected, $value[6]); 
+            $patient->save();
+
+            $sample = new Viralsample;
+            $sample->batch_id = $batch->id;
+            $sample->patient_id = $patient->id;
+            $sample->age = $row[6];
+            if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
+            $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+            $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
+            $sample->justification = Lookup::justification($row[12]);
+            $sample->sampletype = $row[7];
+            $sample->pmtct = $row[13];
+            $sample->rejectedreason = $row[17];
+            $sample->receivedstatus = $row[16];
+            $sample->save();
+            $created_rows++;
         }
-        
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
     }
 
     public function search(Request $request)

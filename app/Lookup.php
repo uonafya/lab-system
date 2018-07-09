@@ -52,6 +52,18 @@ class Lookup
         }
     }
 
+    public static function get_site_entry($value)
+    {
+        $value = trim($value);
+        $value = strtolower($value);
+        if(str_contains($value, ['n', '1'])){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    }
+
 
     public static function calculate_dob($datecollected, $years, $months=0)
     {
@@ -245,7 +257,7 @@ class Lookup
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
-            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'mother_prophylaxis', 'feeding', 'pcrtype', 'regimen', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
+            'sample_api' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'datetested', 'result'],
         ]; 
     }
 
@@ -335,7 +347,7 @@ class Lookup
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 
-            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
+            'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
             'dr_sample' => ['patient_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen'],
         ];

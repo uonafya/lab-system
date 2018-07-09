@@ -93,6 +93,8 @@ class EidController extends BaseController
 
         $sample = new Sample;
         $sample->fill($request->only($fields['sample']));
+        $sample->regimen = Lookup::eid_regimen($sample->regimen);
+        $sample->mother_prophylaxis = Lookup::eid_intervention($sample->mother_prophylaxis);
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
@@ -185,7 +187,9 @@ class EidController extends BaseController
             $sample->patient_id = $patient->id;
         }
 
-        $sample->fill($request->only($fields['sample']));
+        $sample->fill($request->only($fields['sample_api']));
+        $sample->regimen = Lookup::eid_regimen($sample->regimen);
+        $sample->mother_prophylaxis = Lookup::eid_intervention($sample->mother_prophylaxis);
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;

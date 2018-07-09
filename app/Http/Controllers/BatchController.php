@@ -312,16 +312,24 @@ class BatchController extends Controller
         foreach ($batches as $key => $value) {
             $batch = Batch::find($value);
             $facility = Facility::find($batch->facility_id);
+
+            if(!$batch->sent_email){ 
+                $batch->sent_email = true;
+                $batch->dateemailsent = date('Y-m-d');
+            }
+            $batch->datedispatched = date('Y-m-d');
+            $batch->batch_complete = 1;
+            $batch->pre_update();
+
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new EidDispatch($batch));
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-                // $mail_array = array('joelkith@gmail.com');
                 Mail::to($mail_array)->send(new EidDispatch($batch));
             // }         
         }
 
-        Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
+        // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
         return redirect('/batch');
     }
@@ -601,6 +609,7 @@ class BatchController extends Controller
 
         if(!$batch->sent_email){
             $batch->sent_email = true;
+            $batch->dateemailsent = date('Y-m-d');
             $batch->save();
         }
 

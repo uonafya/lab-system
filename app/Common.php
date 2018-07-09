@@ -19,7 +19,10 @@ class Common
 	public static function get_days($start, $finish)
 	{
 		if(!$start || !$finish) return null;
-		$workingdays= self::working_days($start, $finish);
+		// $workingdays= self::working_days($start, $finish);
+		$s = Carbon::parse($start);
+		$f = Carbon::parse($finish);
+		$workingdays = $s->diffInWeekdays($f);
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
@@ -116,9 +119,8 @@ class Common
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
-		// if($sample_model == "App\\Sample") echo "Success";
-		// $samples = $view_model::where(['rcategory' => 0, 'repeatt' => 0, 'receivedstatus' => 1])->where('result', '>', 0)
-		$samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])
+		$samples = $view_model::where(['batch_complete' => 1])
+		->whereRaw("(synched = 0 or synched = 2)")
 		->when($batch_id, function($query) use ($batch_id){
 			return $query->where(['batch_id' => $batch_id]);
 		})

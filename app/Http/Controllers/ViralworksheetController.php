@@ -122,7 +122,7 @@ class ViralworksheetController extends Controller
         $count = $samples->count();
 
         if($count == $machine->vl_limit){
-            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine])->with('pageTitle', 'Add Worksheet');
+            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples])->with('pageTitle', 'Add Worksheet');
         }
 
         return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Add Worksheet');
@@ -230,6 +230,9 @@ class ViralworksheetController extends Controller
         if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
         }
+        else if($Viralworksheet->machine_type == 3){
+            return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
+        }
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
@@ -249,7 +252,8 @@ class ViralworksheetController extends Controller
      */
     public function edit(Viralworksheet $Viralworksheet)
     {
-        //
+        $samples = $Viralworksheet->sample;
+        return view('forms.viralworksheets', ['create' => true, 'machine_type' => $Viralworksheet->machine_type, 'samples' => $samples, 'worksheet' => $Viralworksheet])->with('pageTitle', 'Edit Worksheet');
     }
 
     /**
@@ -261,7 +265,9 @@ class ViralworksheetController extends Controller
      */
     public function update(Request $request, Viralworksheet $Viralworksheet)
     {
-        //
+        $Viralworksheet->fill($request->except('_token'));
+        $Viralworksheet->save();
+        return redirect('viralworksheet/print/' . $Viralworksheet->id);
     }
 
     /**
@@ -286,9 +292,24 @@ class ViralworksheetController extends Controller
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
         }
+        else if($Viralworksheet->machine_type == 3){
+            return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
+        }
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
         }
+    }
+
+    public function convert_worksheet($machine_type, Viralworksheet $worksheet)
+    {
+        if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
+            session(['toast_error' => 1]);
+            return back();            
+        }
+        $worksheet->machine_type = $machine_type;
+        $worksheet->save();
+        return redirect('viralworksheet/' . $worksheet->id . '/edit');
     }
 
     public function cancel(Viralworksheet $worksheet)
@@ -326,11 +347,24 @@ class ViralworksheetController extends Controller
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = null;
+        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
 
         session(['toast_message' => 'The upload has been cancelled.']);
         return redirect("/viralworksheet/upload/" . $worksheet->id);
+    }
+
+    public function reverse_upload(Viralworksheet $worksheet)
+    {
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
+        $worksheet->save();
+
+        $batches_data = ['batch_complete' => 0, 'sent_email' => 0, 'dateemailsent' => null, 'dateindividualresultprinted' => null, ];
+        $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
+
+
+
     }
 
     public function upload(Viralworksheet $worksheet)
@@ -594,8 +628,11 @@ class ViralworksheetController extends Controller
                 $data['repeatt'] = 0;
                 // dd($data);
             }
+            $sample = Viralsample::find($samples[$key]);
+            $sample->fill($data);
+            $sample->pre_update();
 
-            Viralsample::where('id', $samples[$key])->update($data);
+            // Viralsample::where('id', $samples[$key])->update($data);
 
             if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
         }

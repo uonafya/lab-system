@@ -50,15 +50,15 @@ width:1180px;
 				<td class="comment style1 style4">Lot No </td>
 				<td><span class="comment style1 style4"> {{ $worksheet->lot_no }}78 </span></td>
 				<td><span class="style5">Date Cut </span></td>
-				<td colspan="2">{{ $worksheet->datecut or '' }}</td>
+				<td colspan="2">{{ $worksheet->my_date_format('datecut') }}</td>
 			</tr>
 			<tr >
 				<td class="comment style1 style4"> Date Created		</td>
-				<td class="comment" ><span class="style5">{{ $worksheet->created_at }}</span></td>
+				<td class="comment" ><span class="style5">{{ $worksheet->my_date_format('created_at') }}</span></td>
 				<td class="comment style1 style4">HIQCAP Kit No</td>	
 				<td><span class="comment style1 style4">{{ $worksheet->hiqcap_no }}</span></td>	
 				<td><span class="style5">Reviewed By  </span></td>
-				<td colspan="2">N/A</td>
+				<td colspan="2">{{ $worksheet->reviewer->full_name ?? '' }}</td>
 			</tr>
 			<tr >
 				<td class="comment style1 style4"> Created By	    </td>
@@ -66,22 +66,22 @@ width:1180px;
 				<td class="comment style1 style4"> Rack <strong>#</strong></td>
 				<td><span class="comment style1 style4">{{ $worksheet->rack_no }}</span></td>
 				<td><span class="style5">Date Reviewed</span></td>
-				<td colspan="2">N/A</td>
+				<td colspan="2"> {{ $worksheet->my_date_format('datereviewed') }} </td>
 		    </tr>
 		    <tr ></tr>
 			<tr >
-				<td><span class="style5">Spek Kit No		</span></td>
+				<td><span class="style5">Spek Kit No</span></td>
 				<td  colspan=""> <span class="style5">{{ $worksheet->spekkit_no }}</span> </td>
 				<td><span class="style5">KIT EXP </span></td>
-				<td><span class="style4">{{ $worksheet->kitexpirydate or '' }}</span></td>
+				<td><span class="style4">{{ $worksheet->my_date_format('kitexpirydate') }}</span></td>
 				<td colspan="3">&nbsp;</td>
 			</tr>
 			<tr class="even">
 				<td><strong>Sorted By	</strong>    </td>
-				<td>_____________________________	</td>
+				<td> {{ $worksheet->sorter->full_name ?? '' }} </td>
 						
 				<td><strong>Run By	</strong>    </td>
-				<td>_____________________________	</td>
+				<td> {{ $worksheet->runner->full_name ?? '' }} </td>
 			</tr>
 		</table>
 		<table>

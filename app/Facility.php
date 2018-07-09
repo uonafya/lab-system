@@ -16,6 +16,11 @@ class Facility extends BaseModel
         return $this->hasOne('App\FacilityContact');
     }
 
+    public function facility_user()
+    {
+        return $this->hasOne('App\User');
+    }
+
     public function scopeLocate($query, $mfl)
     {
         return $query->where("facilitycode", $mfl);
