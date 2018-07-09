@@ -69,7 +69,7 @@ class HomeController extends Controller
         $year = Date('Y')-2;
 
         if ($level == 'testing') {
-            $model = $model->whereNull('worksheet_id')->whereIn('receivedstatus', [1, 3]);
+            $model = $model->whereNull('worksheet_id')->whereIn('receivedstatus', [1, 3])->whereRaw("(result is null or result=0)");
         } else {
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
         }
@@ -106,7 +106,7 @@ class HomeController extends Controller
                     })
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2016-12-31')
-                    ->whereNull('result')
+                    ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
                     ->where('viralsamples_view.flag', '1')->get();
         } else {
