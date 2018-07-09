@@ -26,6 +26,7 @@ class CreateFacilityContactsTable extends Migration
             $table->string('contacttelephone', 20)->nullable()->comment("Contact Person's Telephone 1");
             $table->string('contacttelephone2', 20)->nullable()->comment("Contact Person's Telephone 2");
             $table->string('physicaladdress', 40)->nullable();
+            $table->string('ContactEmail', 40)->nullable();
             $table->string('G4Sbranchname', 100)->nullable();
             $table->string('G4Slocation', 100)->nullable();
             $table->string('G4Sphone1', 100)->nullable();
