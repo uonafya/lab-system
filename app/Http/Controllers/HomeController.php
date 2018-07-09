@@ -92,7 +92,7 @@ class HomeController extends Controller
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                     ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                     ->join('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    ->whereIn('receivedstatus', [1, 3])
                     ->when($sampletypes, function($query) use ($sampletypes){
                         if ($sampletypes == 'plasma') {
                             return $query->where('viralsamples_view.sampletype', '=', 1);
@@ -106,8 +106,8 @@ class HomeController extends Controller
                     })
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2016-12-31')
-                    // ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
-                    ->whereRaw("(result is null or result = 0)")
+                    ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                    // ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
                     ->where('viralsamples_view.flag', '1')->get();
         } else {
@@ -116,7 +116,7 @@ class HomeController extends Controller
                     ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    ->whereIn('receivedstatus', [1, 3])
                     ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->get();
