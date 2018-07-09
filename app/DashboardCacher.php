@@ -9,6 +9,7 @@ use DB;
 use App\Batch;
 use App\Viralbatch;
 use App\Facility;
+use App\FacilityContact;
 use App\SampleView;
 use App\ViralsampleView;
 use App\Worksheet;
@@ -44,12 +45,12 @@ class DashboardCacher
     						->whereYear('datereceived', '>', $min_year)
     						->get()->first()->total;
 
-    	$facilitiesWithoutEmails = Facility::selectRaw('COUNT(*) as total')
+    	$facilitiesWithoutEmails = FacilityContact::selectRaw('COUNT(*) as total')
     		->whereRaw("( (email = '' or email is null) AND (ContactEmail = '' or ContactEmail is null) )")
     		->whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")
     		->get()->first()->total;
 
-    	$facilitiesWithoutG4s = Facility::selectRaw('COUNT(*) as total')
+    	$facilitiesWithoutG4s = FacilityContact::selectRaw('COUNT(*) as total')
     		->whereRaw("(G4Sbranchname is null or G4Sbranchname = '')")
     		->whereRaw("(G4Slocation is null or G4Slocation = '')")
     		->whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")

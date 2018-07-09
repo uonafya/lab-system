@@ -336,7 +336,7 @@ class ViralworksheetController extends Controller
     public function upload(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::where('user_type_id', '<', 5)->get();
+        $users = User::where('user_type_id', '<', 5)->where('user_type_id', 0)->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -388,12 +388,15 @@ class ViralworksheetController extends Controller
                     if($sample_id == "HIV_NEG"){
                         $nc = $result_array['result'];
                         $nc_int = $result_array['interpretation']; 
+                        $nc_units = $result_array['units']; 
                     }else if($sample_id == "HIV_HIPOS"){
                         $hpc = $result_array['result'];
                         $hpc_int = $result_array['interpretation'];
+                        $hpc_units = $result_array['units'];
                     }else if($sample_id == "HIV_LOPOS"){
                         $lpc = $result_array['result'];
                         $lpc_int = $result_array['interpretation'];
+                        $lpc_units = $result_array['units'];
                     }
 
                     $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
@@ -408,6 +411,41 @@ class ViralworksheetController extends Controller
 
                 }
                 if($bool && $value[5] == "RESULT") break;
+            }
+        }
+        else if($worksheet->machine_type == 3){
+            $handle = fopen($file, "r");
+            while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                $sample_id = $value[1];
+                $result = $value[6];
+                $result_array = MiscViral::exponential_result($result);
+
+                if(!is_numeric($sample_id)){
+                    $control = $value[4];
+                    if($control == 'HxV H (+) C'){
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
+                        $hpc_units = $result_array['units'];                        
+                    }
+                    else if($control == 'HxV L (+) C'){
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
+                        $lpc_units = $result_array['units'];
+                    }
+                    else if($control == '(-) C'){
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
+                        $nc_units = $result_array['units']; 
+                    }
+                }
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
+
+                $sample = Viralsample::find($sample_id);
+                if(!$sample) continue;
+                if($sample->worksheet_id != $worksheet->id) continue;
+                $sample->fill($data_array);
+                $sample->save();
             }
         }
         else
@@ -428,19 +466,24 @@ class ViralworksheetController extends Controller
                 if($sample_type == "NC"){
                     $nc = $result_array['result'];
                     $nc_int = $result_array['interpretation']; 
+                    $nc_units = $result_array['units']; 
                 }
                 else if($sample_type == "HPC"){
                     $hpc = $result_array['result'];
                     $hpc_int = $result_array['interpretation'];
+                    $hpc_units = $result_array['units'];
                 }
                 else if($sample_type == "LPC"){
                     $lpc = $result_array['result'];
                     $lpc_int = $result_array['interpretation'];
+                    $lpc_units = $result_array['units'];
                 }
 
-                $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                // $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                 // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                 // Viralsample::where($search)->update($data_array);
+
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
 
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
@@ -455,12 +498,15 @@ class ViralworksheetController extends Controller
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
 
+        $worksheet->neg_units = $nc_units;
         $worksheet->neg_control_interpretation = $nc_int;
         $worksheet->neg_control_result = $nc;
 
+        $worksheet->hpc_units = $hpc_units;
         $worksheet->highpos_control_interpretation = $hpc_int;
         $worksheet->highpos_control_result = $hpc;
 
+        $worksheet->lpc_units = $lpc_units;
         $worksheet->lowpos_control_interpretation = $lpc_int;
         $worksheet->lowpos_control_result = $lpc;
 

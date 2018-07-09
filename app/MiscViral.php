@@ -246,6 +246,30 @@ class MiscViral extends Common
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
 
+    public static function exponential_result($result)
+    {
+        if($result == 'Invalid'){
+            $res= "Collect New Sample";
+            $interpretation="Invalid";
+            $units="";              
+        }
+        else if($result == '< Titer min' || $result == 'Target Not Detected'){
+            $res= "< LDL copies/ml";
+            $interpretation= $result;
+            $units="";            
+        }
+        else{
+            $a = explode('e+', $result);
+            $u = explode(' ', $a[1]);
+            $power = (int) $u[0];
+            $res = (int) $a[0] * (10**$power);
+            $interpretation = $result;
+            $units = $u[1] ?? 'cp/mL';
+        }
+
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+    }
+
     
 
     public static function get_rejected($batch_id=NULL, $complete=true)
