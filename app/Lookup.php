@@ -25,20 +25,27 @@ class Lookup
         return '';
     }
 
+    public static function other_date($value)
+    {
+        if(!$value) return null;
+
+        try {
+            $d = Carbon::createFromFormat('d/m/y', $value);
+            return $d->toDateString();
+        } catch (Exception $e) {
+            return null;
+        }        
+    }
+
     public static function get_gender($value)
     {
         $value = trim($value);
-        if($value == 'M' || $value == 'm'){
+        $value = strtolower($value);
+        if(str_contains($value, ['m', '1'])){
             return 1;
         }
-        else if($value == 'F' || $value == 'f'){
+        else if(str_contains($value, ['f', '2'])){
             return 2;
-        }
-        else if($value == 'No Data' || $value == 'No data'){
-            return 3;
-        }
-        else if (is_int($value)){
-            return $value;
         }
         else{
             return 3;
@@ -91,7 +98,7 @@ class Lookup
         // $fac = Cache::get('facilities');       
         // return $fac->where('facilitycode', $mfl)->first()->id;
 
-        return \App\Facility::locate($mfl)->get()->first()->id;
+        return \App\Facility::locate($mfl)->get()->first()->id ?? null;
     }
 
     public static function get_partners()
@@ -207,6 +214,22 @@ class Lookup
         return $dc->toDateString();
     }
 
+
+    public static function eid_regimen($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('iprophylaxis');       
+        return $my_array->where('rank', $val)->first()->id ?? 14;
+    } 
+
+
+    public static function eid_intervention($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('interventions');       
+        return $my_array->where('rank', $val)->first()->id ?? 7;
+    }  
+
     public static function samples_arrays()
     {
         return [
@@ -276,25 +299,27 @@ class Lookup
     }
 
 
-    public static function viral_regimen($value)
+    public static function viral_regimen($val)
     {
         self::cacher();       
         $my_array = Cache::get('prophylaxis');       
         return $my_array->where('category', $val)->first()->id ?? 16;
     }    
 
-    public static function justification($value)
+    public static function justification($val)
     {
         self::cacher();       
         $my_array = Cache::get('justifications');       
         return $my_array->where('rank', $val)->first()->id ?? 8;
     }    
 
-    public static function sample_type($value)
+    public static function sample_type($val)
     {
         self::cacher();       
         $my_array = Cache::get('sample_types');       
-        return $my_array->where('alias', $val)->first()->id;
+        $id =  $my_array->where('sampletype', $val)->first()->id ?? 4;
+        if($id == 3) return 4;
+        return $id;
     }
 
     public static function viralsamples_arrays()

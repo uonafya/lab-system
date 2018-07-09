@@ -451,6 +451,20 @@ class ViralsampleController extends Controller
         return back();
     }
 
+    public function upload_site_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/vl');
+
+        $problem_rows;
+
+        $handle = fopen($file, "r");
+        while (($value = fgetcsv($handle, 1000, ",")) !== FALSE){
+            $facility = Facility::locate($value[3])->get()->first();
+        }
+        
+    }
+
     public function search(Request $request)
     {
         $user = auth()->user();

@@ -69,7 +69,7 @@ class HomeController extends Controller
         $year = Date('Y')-2;
 
         if ($level == 'testing') {
-            $model = $model->whereNull('worksheet_id');
+            $model = $model->whereNull('worksheet_id')->whereIn('receivedstatus', [1, 3]);
         } else {
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
         }
@@ -106,7 +106,8 @@ class HomeController extends Controller
                     })
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2016-12-31')
-                    ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                    // ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                    ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
                     ->where('viralsamples_view.flag', '1')->get();
         } else {
@@ -133,11 +134,12 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                         ->whereBetween('sampletype', [1, 5])
-                        ->where('receivedstatus', 3)
+                        // ->where('receivedstatus', 3)
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
-                        ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                        // ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                        ->whereRaw("(result is null or result = 0)")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1')->get();
         } else {
@@ -145,7 +147,7 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                         ->whereNull('worksheet_id')
-                        ->where('receivedstatus', 3)
+                        // ->where('receivedstatus', 3)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
