@@ -263,7 +263,7 @@ class DashboardCacher
                             ->whereIn('receivedstatus', [1, 3])
                             ->whereRaw("(result is null or result = 0)");
         } else {
-            $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
+            $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched')->whereNull('datesynched');
         }
 
         return $model->where('repeatt', 0)
