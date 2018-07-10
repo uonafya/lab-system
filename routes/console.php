@@ -45,9 +45,16 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
 
 
 Artisan::command('input-complete {type}', function($type){
-	$str = \App\Common::input_complete_batches($type);
+    $str = \App\Common::input_complete_batches($type);
     $this->info($str);
 })->describe('Mark batches as input completed.');
+
+
+
+Artisan::command('lablog {type}', function($type){
+	$str = \App\Synch::labactivity($type);
+    $this->info($str);
+})->describe('Send lablog data to national.');
 
 // Artisan::command('synch:vl-patients', function(){
 // 	$str = \App\Synch::synch_vl_patients();

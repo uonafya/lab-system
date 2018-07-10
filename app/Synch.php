@@ -354,6 +354,241 @@ class Synch
 		}
 	}
 
+	public static function labactivity($type)
+	{
+		$classes = self::$synch_arrays[$type];
+		$sample_class = $classes['sample_class'];
+		$sampleview_class = $classes['sampleview_class'];
+
+		$samples_table = 'samples';
+		$data['testtype'] = 1;
+		if($type == 'vl'){
+			$samples_table = 'viralsamples';
+			$data['testtype'] = 2;
+		}
+
+		$today = date('Y-m-d');
+		$data['yeartodate'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereYear('datetested', date('Y'))
+								->where(['flag' => 1, 'repeatt' => 0, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+		$data['monthtodate'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereYear('datetested', date('Y'))
+								->whereMonth('datetested', date('m'))
+								->where(['flag' => 1, 'repeatt' => 0, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+		$data['receivedsamples'] = $sampleview_class::selectRaw('count(id) as totals')
+								->where('datereceived', $today)
+								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+		$data['enteredsamplesatlab'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereDate('created_at', $today)
+								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null), 'site_entry' => 0])
+								->get()->first()->totals;
+
+		$data['enteredsamplesatsite'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereDate('created_at', $today)
+								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null), 'site_entry' => 1])
+								->get()->first()->totals;
+
+		$data['enteredreceivedsameday'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereDate('created_at', $today)
+								->where('datereceived', $today)
+								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+		$data['enterednotreceivedsameday'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereDate('created_at', $today)
+								->where('datereceived', '!=', date('Y-m-d'))
+								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+		$data['inqueuesamples'] = $sampleview_class::selectRaw('count(id) as totals')
+								->where('datereceived', '>', '2017-09-31')
+								->whereNull('worksheet_id')
+								->whereNull('approvedby')
+								->whereNotIn('receivedstatus', [0, 2])
+								->whereRaw("(result is null or result=0)")
+								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->when(($type == 'vl'), function($query){
+									return $query->where('sampletype', '>', 0)
+								})
+								->get()->first()->totals;
+
+		$mindate = $sampleview_class::selectRaw('MIN(datereceived) as mindate')
+								->where('datereceived', '>', '2017-09-31')
+								->whereNull('worksheet_id')
+								->whereNull('approvedby')
+								->whereIn('receivedstatus', [1, 3])
+								->whereRaw("(result is null or result=0)")
+								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->when(($type == 'vl'), function($query){
+									return $query->where('sampletype', '>', 0)
+								})
+								->get()->first()->mindate;
+
+		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
+
+		$data['inprocesssamples'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['abbottinprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where('machine_type', 2)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['rocheinprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where('machine_type', 1)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['panthainprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where('machine_type', 4)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		// Check error in Tim's code
+		$data['processedsamples'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 2)
+						->where('datetested', $today)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['abbottprocessed'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 2)
+						->where('machine_type', 2)
+						->where('datetested', $today)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['rocheprocessed'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 2)
+						->where('machine_type', 1)
+						->where('datetested', $today)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['panthaprocessed'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 2)
+						->where('machine_type', 4)
+						->where('datetested', $today)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['updatedresults'] = $sampleview_class::selectRaw('count(id) as totals')
+								->where('datemodified', $today)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+		$['approvedresults'] = $sampleview_class::selectRaw('count(id) as totals')
+								->where('dateapproved', $today)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null)])
+								->get()->first()->totals;
+
+
+		$data['pendingapproval'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 2)
+						->whereNull('approvedby')
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+
+		$data['dispatchedresults'] = $sampleview_class::selectRaw('count(id) as totals')
+								->where('datedispatched', $today)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null), 'repeatt' => 0])
+								->get()->first()->totals;
+
+
+		$data['oneweek'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereNull('datedispatched')
+								->whereYear('datereceived', date('Y'))
+								->where('receivedstatus', '!=', 0)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null), 'repeatt' => 0])
+								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 1 AND 7")
+								->get()->first()->totals;
+
+		$data['twoweeks'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereNull('datedispatched')
+								->whereYear('datereceived', date('Y'))
+								->where('receivedstatus', '!=', 0)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null), 'repeatt' => 0])
+								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 8 AND 14")
+								->get()->first()->totals;
+
+		$data['threeweeks'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereNull('datedispatched')
+								->whereYear('datereceived', date('Y'))
+								->where('receivedstatus', '!=', 0)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null), 'repeatt' => 0])
+								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 15 AND 28")
+								->get()->first()->totals;
+
+		$data['aboveamonth'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereNull('datedispatched')
+								->whereYear('datereceived', date('Y'))
+								->where('receivedstatus', '!=', 0)
+								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null), 'repeatt' => 0])
+								->whereRaw("DATEDIFF(NOW(), datereceived) > 28")
+								->get()->first()->totals;
+
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('post', 'lablogs', [
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+			'json' => [
+				'data' => json_encode($data),
+				'lab_id' => env('APP_LAB', null),
+			],
+		]);
+
+	}
+
 
 	public static function match_eid_patients()
 	{

@@ -31,7 +31,7 @@ class SampleController extends Controller
         $samples = SampleView::with(['facility'])->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
-        return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
+        return view('tables.poc_samples', $data)->with('pageTitle', 'Eid POC Samples');
     }
 
     /**

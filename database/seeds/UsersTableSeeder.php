@@ -79,6 +79,13 @@ class UsersTableSeeder extends Seeder
 	        'email' => 'admin@admin.com',
     	]);
 
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 7,
+	        'surname' => 'POC',
+	        'oname' => 'Admin',
+	        'email' => 'poc@gmail.com',
+    	]);
+
     	$facilitys = DB::table('facilitys')->get();
 
     	$i=0;
