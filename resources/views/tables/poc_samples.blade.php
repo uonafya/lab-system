@@ -47,7 +47,7 @@
                                         <td> {{ $sample->facility->name }} </td>
                                         <td> {{ $sample->patient }} </td>
                                         <td> {{ $sample->age }} </td>
-                                        <td> {{ $genders->where('id', $sample->gender)->first()->gender ?? '' }} </td>
+                                        <td> {{ $sample->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
