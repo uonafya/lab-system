@@ -44,15 +44,10 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
 })->describe('Compute Vl Tat.');
 
 
-Artisan::command('input_complete:eid', function(){
-	$str = \App\Common::input_complete_batches(\App\Batch::class);
+Artisan::command('input:complete {type}', function($type){
+	$str = \App\Common::input_complete_batches($type);
     $this->info($str);
-})->describe('Mark eid batches as input completed.');
-
-Artisan::command('input_complete:vl', function(){
-	$str = \App\Common::input_complete_batches(\App\Viralbatch::class);
-    $this->info($str);
-})->describe('Mark vl batches as input completed.');
+})->describe('Mark batches as input completed.');
 
 
 Artisan::command('synch:eid-patients', function(){
@@ -77,7 +72,7 @@ Artisan::command('synch:vl-batches', function(){
 })->describe('Synch vl batches to the national database.');
 
 
-Artisan::command('synch:eid-worksheets', function(){
+Artisan::command('synch:eid-worksheets ', function(){
 	$str = \App\Synch::synch_worksheets('eid');
     $this->info($str);
 })->describe('Synch eid worksheets to the national database.');
@@ -86,6 +81,19 @@ Artisan::command('synch:vl-worksheets', function(){
 	$str = \App\Synch::synch_worksheets('vl');
     $this->info($str);
 })->describe('Synch vl worksheets to the national database.');
+
+
+Artisan::command('synch:eid-updates', function(){
+    $str = \App\Synch::synch_updates('eid');
+    $this->info($str);
+})->describe('Synch eid updates to the national database.');
+
+Artisan::command('synch:vl-updates', function(){
+    $str = \App\Synch::synch_updates('vl');
+    $this->info($str);
+})->describe('Synch vl updates to the national database.');
+
+
 
 
 Artisan::command('synch:eid-deletes', function(){

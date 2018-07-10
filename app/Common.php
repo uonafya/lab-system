@@ -234,8 +234,13 @@ class Common
         }
 	}
 
-	public static function input_complete_batches($batch_model)
+	public static function input_complete_batches($type)
 	{
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
 	}
 
