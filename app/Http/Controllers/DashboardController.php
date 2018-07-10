@@ -117,7 +117,7 @@ class DashboardController extends Controller
                 $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
             }
         }
-
+        dd($data);
         return $data;
         
     }

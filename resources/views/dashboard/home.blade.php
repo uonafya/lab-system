@@ -40,6 +40,27 @@
 @section('content')
 <div class="p-lg">
     <div class="content animate-panel" data-child="hpanel">
+        <div class="row" style="margin-bottom: 1em;">
+            <!-- Year -->
+            <div class="col-md-6">
+                <center><h5>Year Filter</h5></center>
+                @for ($i = 0; $i <= 9; $i++)
+                    @php
+                        $year=Date('Y')-$i
+                    @endphp
+                    <a href='{{-- url("hei/validate/$year") --}}'>{{ Date('Y')-$i }}</a> |
+                @endfor
+            </div>
+            <!-- Year -->
+            <!-- Month -->
+            <div class="col-md-6">
+                <center><h5>Month Filter</h5></center>
+                @for ($i = 1; $i <= 12; $i++)
+                    <a href='{{-- url("hei/validate/null/$i") --}}'>{{ date("F", mktime(null, null, null, $i)) }}</a> |
+                @endfor
+            </div>
+            <!-- Month -->
+        </div>
         <div class="row">
             <div class="col-lg-7">
                 <div class="hpanel">

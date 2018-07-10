@@ -128,6 +128,10 @@
                             </li>
                         @endif
                     @endif
+                @else
+                    <li class="">
+                        <a href="{{ url('pending') }}">Pending Tasks</a>
+                    </li>
                 @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
@@ -235,6 +239,10 @@
                         <a href="{{ url('reports/kits') }}">Kits</a>
                     </li>
                 @endif
+            @else
+                <li class="">
+                    <a href="{{ url('pending') }}">Pending Tasks</a>
+                </li>
             @endif
                 <li class="dropdown">
                         
