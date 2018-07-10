@@ -44,7 +44,7 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
 })->describe('Compute Vl Tat.');
 
 
-Artisan::command('input:complete {type}', function($type){
+Artisan::command('input-complete {type}', function($type){
 	$str = \App\Common::input_complete_batches($type);
     $this->info($str);
 })->describe('Mark batches as input completed.');

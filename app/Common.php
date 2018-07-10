@@ -242,6 +242,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+		return "Batches of {$type} have been marked as input complete";
 	}
 
 }
