@@ -237,6 +237,17 @@
             <hr />
         @endif
         --}}
+
+        @if (auth()->user()->user_type_id == 7 || auth()->user()->user_type_id == 0)
+            <li>
+                <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
+            </li>
+            <hr />
+        @endif
         
         <!-- Admin Side Bar -->
         @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 0)

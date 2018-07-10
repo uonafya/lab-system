@@ -55,10 +55,9 @@ class Copier
                     $mother->save();
                     $patient = new Patient($value->only($fields['patient']));
                     $patient->mother_id = $mother->id;
-                    if($patient->dob){
-                        $patient->dob = self::clean_date($patient->dob);
-                    }
-                    else{
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob){
                         $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
                     }
                     $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
@@ -137,10 +136,9 @@ class Copier
 
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
-                    if($patient->dob){
-                        $patient->dob = self::clean_date($patient->dob);
-                    }
-                    else{
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+                    
+                    if(!$patient->dob){
                         $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0, ViralsampleView::class, $value->patient, $value->facility_id);
                     }
                     $patient->sex = self::resolve_gender($value->gender, ViralsampleView::class, $value->patient, $value->facility_id);
