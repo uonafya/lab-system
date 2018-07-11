@@ -106,7 +106,7 @@ class HomeController extends Controller
                     })
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2016-12-31')
-                    ->whereRaw("(result is null)")
+                    ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('viralsamples_view.flag', '1')->get();
         } else {
