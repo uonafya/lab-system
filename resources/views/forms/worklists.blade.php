@@ -60,6 +60,7 @@
                                                 </div>
                                             </td>
 
+                                            <td> {{ $sample->id }} </td>
                                             <td> {{ $sample->patient }} </td>
                                             <td> {{ $sample->gender }} </td>
                                             <td> {{ $sample->age }} </td>

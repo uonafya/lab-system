@@ -1,6 +1,6 @@
 ## LAB API
 
-[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the field you need.
+[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the field you need. Open this file using **POSTMAN**.
 
 
 All links are **POST** requests.
