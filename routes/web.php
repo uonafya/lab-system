@@ -206,6 +206,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::get('print/{sample}', 'SampleController@individual');
 		Route::get('runs/{sample}', 'SampleController@runs');
 
+		Route::get('sms_log', 'SampleController@list_sms');
+		Route::get('sms/{sample}', 'SampleController@send_sms');
+
 		Route::get('create_poc', 'SampleController@create_poc');
 		Route::get('list_poc', 'SampleController@list_poc');
 		Route::get('{sample}/edit_result', 'SampleController@edit_poc');
@@ -228,6 +231,9 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 		Route::get('upload', 'ViralsampleController@site_sample_page');
 		Route::post('upload', 'ViralsampleController@upload_site_samples');
+
+		Route::get('sms_log', 'ViralsampleController@list_sms');
+		Route::get('sms/{sample}', 'ViralsampleController@send_sms');
 
 		Route::post('new_patient', 'ViralsampleController@new_patient');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');

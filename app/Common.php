@@ -157,7 +157,7 @@ class Common
         $offset_value = 0;
         while(true){
 
-			$samples = $view_model::where(['batch_complete' => 1, 'repeatt' => 0])
+			$samples = $view_model::where(['batch_complete' => 1])
 			->limit(5000)->offset($offset_value)
 			->get();
 			if($samples->isEmpty()) break;

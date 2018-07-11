@@ -62,6 +62,14 @@ Artisan::command('lablog {type}', function($type){
 // })->describe('Synch vl patients to the national database.');
 
 
+Artisan::command('send:sms {type}', function($type){
+    if($type == 'eid') $str = \App\Misc::patient_sms();
+    else { $str = \App\MiscViral::patient_sms(); }    
+    $this->info($str);
+})->describe('Send result sms.');
+
+
+
 Artisan::command('synch:patients {type}', function($type){
     if($type == 'eid') $str = \App\Synch::synch_eid_patients();
     else { $str = \App\Synch::synch_vl_patients(); }    

@@ -39,6 +39,14 @@ class ViralsampleController extends Controller
         return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
     }
 
+    public function list_sms()
+    {
+        $samples = ViralsampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $data['samples'] = $samples;
+        $data['pre'] = 'viral';
+        return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -381,6 +389,13 @@ class ViralsampleController extends Controller
         $data['samples'] = [$sample];
 
         return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Samples');
+    }
+
+    public function send_sms(ViralsampleView $sample)
+    {
+        MiscViral::send_sms($sample);
+        session(['toast_message' => 'The sms has been sent.']);
+        return back();
     }
 
     public function release_redraw(Viralsample $sample)

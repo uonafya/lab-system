@@ -34,6 +34,15 @@ class SampleController extends Controller
         return view('tables.poc_samples', $data)->with('pageTitle', 'Eid POC Samples');
     }
 
+    public function list_sms()
+    {
+        $data = Lookup::get_lookups();
+        $samples = SampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $data['samples'] = $samples;
+        $data['pre'] = '';
+        return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -465,6 +474,13 @@ class SampleController extends Controller
         $data['samples'] = [$sample];
 
         return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Sample');
+    }
+
+    public function send_sms(SampleView $sample)
+    {
+        Misc::send_sms($sample);
+        session(['toast_message' => 'The sms has been sent.']);
+        return back();
     }
 
     public function release_redraw(Sample $sample)
