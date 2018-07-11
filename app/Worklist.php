@@ -4,7 +4,7 @@ namespace App;
 
 use App\BaseModel;
 
-class Worklist extends Model
+class Worklist extends BaseModel
 {
 
     public function sample()
