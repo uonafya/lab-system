@@ -268,7 +268,7 @@ class Misc extends Common
 			}    			
 		}
 
-		if(!$message) continue;
+		if(!$message) return;
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
