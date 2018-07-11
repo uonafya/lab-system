@@ -107,7 +107,7 @@ class DashboardCacher
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->whereRaw("(result is null or result = 0)")->get()->first()->total;
+                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
@@ -116,7 +116,7 @@ class DashboardCacher
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', '2016-12-31')
-                        ->whereRaw("(result is null or result = 0)")
+                        ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 
                 }
@@ -126,14 +126,14 @@ class DashboardCacher
                 $model = SampleView::selectRaw('COUNT(id) as total')
                                 ->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->whereRaw("(result is null or result = 0)")->get()->first()->total;
+                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereIn('receivedstatus', [1, 3])
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2016-12-31')
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
-                    ->whereRaw("(result is null or result = 0)")
+                    ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->get()->first()->total;
             }
@@ -181,8 +181,8 @@ class DashboardCacher
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
-                        // ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
-                        ->whereRaw("(result is null or result = 0)")
+                        // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
+                        ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1');
         } else {
@@ -261,7 +261,7 @@ class DashboardCacher
         if ($level == 'testing') {
             $model = $model->whereNull('worksheet_id')
                             ->whereIn('receivedstatus', [1, 3])
-                            ->whereRaw("(result is null or result = 0)");
+                            ->whereRaw("(result is null or result = '0')");
         } else {
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched')->whereNull('datesynched');
         }

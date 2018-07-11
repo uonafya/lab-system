@@ -116,7 +116,7 @@ class HomeController extends Controller
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
                     ->whereIn('receivedstatus', [1, 3])
-                    ->whereRaw("(result is null or result = 0)")
+                    ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->get();
         }
@@ -137,8 +137,7 @@ class HomeController extends Controller
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
-                        // ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
-                        ->whereRaw("(result is null or result = 0)")
+                        ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1')->get();
         } else {
