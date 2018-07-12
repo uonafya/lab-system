@@ -520,7 +520,7 @@ class Synch
 								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null)])
 								->get()->first()->totals;
 
-		$['approvedresults'] = $sampleview_class::selectRaw('count(id) as totals')
+		$data['approvedresults'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('dateapproved', $today)
 								->where(['flag' => 1, 'lab_id' => env('APP_LAB', null)])
 								->get()->first()->totals;
