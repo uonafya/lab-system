@@ -639,7 +639,7 @@ class Synch
 				Mother::where('id', $value->original_mother_id)->update($update_data);
 			}
 
-			$done+=100;
+			$done+=200;
 			echo "Matched {$done} eid patient records at " . date('d/m/Y h:i:s a', time()). "\n";
 		}
 	}
@@ -682,7 +682,7 @@ class Synch
 				Viralpatient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
-			$done+=100;
+			$done+=200;
 			echo "Matched {$done} vl patient records at " . date('d/m/Y h:i:s a', time()). "\n";
 		}
 	}
@@ -739,7 +739,7 @@ class Synch
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
 
-			$done+=70;
+			$done+=200;
 			echo "Matched {$done} {$type} batch records at " . date('d/m/Y h:i:s a', time()). "\n";
 		}
 	}
