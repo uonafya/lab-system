@@ -414,7 +414,7 @@ class Synch
 								->whereRaw("(result is null or result=0)")
 								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->when(($type == 'vl'), function($query){
-									return $query->where('sampletype', '>', 0)
+									return $query->where('sampletype', '>', 0);
 								})
 								->get()->first()->totals;
 
@@ -426,7 +426,7 @@ class Synch
 								->whereRaw("(result is null or result=0)")
 								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->when(($type == 'vl'), function($query){
-									return $query->where('sampletype', '>', 0)
+									return $query->where('sampletype', '>', 0);
 								})
 								->get()->first()->mindate;
 
