@@ -618,13 +618,25 @@ class Synch
 			$body = json_decode($response->getBody());
 
 			foreach ($body->patients as $key => $value) {
-				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
-				Patient::where('id', $value->original_id)->update($update_data);
+				$update_data = get_object_vars($value);
+				$update_data['national_patient_id'] = $value->id;
+				$update_data['synched'] = 1;
+				$update_data['datesynched'] = $today;
+				unset($update_data['id']);
+				unset($update_data['original_patient_id']);
+
+				Patient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
 			foreach ($body->mothers as $key => $value) {
-				$update_data = ['national_mother_id' => $value->national_mother_id, 'synched' => 1, 'datesynched' => $today,];
-				Mother::where('id', $value->original_id)->update($update_data);
+				$update_data = get_object_vars($value);
+				$update_data['national_mother_id'] = $value->id;
+				$update_data['synched'] = 1;
+				$update_data['datesynched'] = $today;
+				unset($update_data['id']);
+				unset($update_data['original_mother_id']);
+
+				Mother::where('id', $value->original_mother_id)->update($update_data);
 			}
 
 			$done+=100;
@@ -660,8 +672,14 @@ class Synch
 			$body = json_decode($response->getBody());
 
 			foreach ($body->patients as $key => $value) {
-				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
-				Viralpatient::where('id', $value->original_id)->update($update_data);
+				$update_data = get_object_vars($value);
+				$update_data['national_patient_id'] = $value->id;
+				$update_data['synched'] = 1;
+				$update_data['datesynched'] = $today;
+				unset($update_data['id']);
+				unset($update_data['original_patient_id']);
+
+				Viralpatient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
 			$done+=100;
