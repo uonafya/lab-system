@@ -601,7 +601,7 @@ class Synch
 				->with(['mother:id'])
 				->where('synched', 1)
 				->whereNull('national_patient_id')
-				->limit(100)
+				->limit(200)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -654,7 +654,7 @@ class Synch
 			$patients = Viralpatient::select('id', 'facility_id', 'patient')
 				->where('synched', 1)
 				->whereNull('national_patient_id')
-				->limit(100)
+				->limit(200)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -712,7 +712,7 @@ class Synch
 			$batches = $batch_class::with(['sample:id'])
 				->where('synched', 1)
 				->whereNull('national_batch_id')
-				->limit(70)
+				->limit(200)
 				->get();
 			if($batches->isEmpty()) break;
 
