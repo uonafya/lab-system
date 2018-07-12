@@ -9,10 +9,10 @@
 
 #35 21 * * * php /usr/share/nginx/html/lab/artisan generate:dr-list 2>&1
 
-#30 23 * * * php /usr/share/nginx/html/lab/artisan match:eid-patients >> /usr/share/nginx/html/lab/storage/app/test/match_eid.txt  2>&1
-#30 23 * * * php /usr/share/nginx/html/lab/artisan match:eid-batches >> /usr/share/nginx/html/lab/storage/app/test/match_eid.txt  2>&1
-#30 23 * * * php /usr/share/nginx/html/lab/artisan match:vl-patients >> /usr/share/nginx/html/lab/storage/app/test/match_vl.txt  2>&1
-#30 23 * * * php /usr/share/nginx/html/lab/artisan match:vl-batches >> /usr/share/nginx/html/lab/storage/app/test/match_vl.txt  2>&1
+#30 23 * * * php /usr/share/nginx/html/lab/artisan match:patients eid >> /usr/share/nginx/html/lab/storage/app/test/match_eid.txt  2>&1
+#30 23 * * * php /usr/share/nginx/html/lab/artisan match:batches eid >> /usr/share/nginx/html/lab/storage/app/test/match_eid.txt  2>&1
+#30 23 * * * php /usr/share/nginx/html/lab/artisan match:patients vl >> /usr/share/nginx/html/lab/storage/app/test/match_vl.txt  2>&1
+#30 23 * * * php /usr/share/nginx/html/lab/artisan match:batches vl >> /usr/share/nginx/html/lab/storage/app/test/match_vl.txt  2>&1
 
 0 3 * * * php /usr/share/nginx/html/lab/artisan input-complete eid 2>&1
 0 3 * * * php /usr/share/nginx/html/lab/artisan input-complete vl 2>&1

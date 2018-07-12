@@ -131,27 +131,17 @@ Artisan::command('copy:facility-contacts', function(){
 
 
 
-Artisan::command('match:eid-patients', function(){
-    $str = \App\Synch::match_eid_patients();
+Artisan::command('match:patients {type}', function($type){
+    if($type == 'eid') $str = \App\Synch::match_eid_patients();
+    else { $str = \App\Synch::match_vl_patients(); }    
     $this->info($str);
-})->describe('Match eid patients with records on the national database.');
+})->describe('Match patients with records on the national database.');
 
-Artisan::command('match:vl-patients', function(){
-    $str = \App\Synch::match_vl_patients();
+
+Artisan::command('match:batches {type}', function($type){
+    $str = \App\Synch::match_batches();
     $this->info($str);
-})->describe('Match vl patients with records on the national database.');
-
-
-Artisan::command('match:eid-batches', function(){
-    $str = \App\Synch::match_batches('eid');
-    $this->info($str);
-})->describe('Match eid batches with records on the national database.');
-
-Artisan::command('match:vl-batches', function(){
-    $str = \App\Synch::match_batches('vl');
-    $this->info($str);
-})->describe('Match vl batches with records on the national database.');
-
+})->describe('Match batches with records on the national database.');
 
 
 

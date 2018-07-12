@@ -86,7 +86,7 @@ class ViralworksheetController extends Controller
                 ->whereNull('worksheet_id')
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
-                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->whereRaw("(result IS NULL OR result='0')")
                 ->orderBy('viralsamples.id', 'asc')
                 ->limit($limit)
                 ->get();
@@ -109,7 +109,7 @@ class ViralworksheetController extends Controller
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw("(result IS NULL OR result = 0 OR result = '' )")
+            ->whereRaw("(result IS NULL OR result='0')")
             ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
@@ -166,7 +166,7 @@ class ViralworksheetController extends Controller
                 ->whereNull('worksheet_id')
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
-                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->whereRaw("(result IS NULL OR result='0')")
                 ->orderBy('viralsamples.id', 'asc')
                 ->limit($limit)
                 ->get();
@@ -188,7 +188,7 @@ class ViralworksheetController extends Controller
             ->whereNull('worksheet_id')
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw("(result IS NULL OR result = 0 OR result = '' )")
+            ->whereRaw("(result IS NULL OR result='0')")
             ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
@@ -360,10 +360,32 @@ class ViralworksheetController extends Controller
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
 
-        $batches_data = ['batch_complete' => 0, 'sent_email' => 0, 'dateemailsent' => null, 'dateindividualresultprinted' => null, ];
-        $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
+        $batches_data = ['batch_complete' => 0, 'sent_email' => 0, 'printedby' => null,  'dateemailsent' => null, 'datebatchprinted' => null, 'dateindividualresultprinted' => null, 'datedispatched' => null, ];
+        $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
 
+        $samples = Viralsample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
 
+        foreach ($samples as $key => $sample) {
+            if($sample->parentid == 0) $del_samples = Viralsample::where('parentid', $sample->id)->get();
+            else{
+                $run = $sample->run+1;
+                $del_samples = Viralsample::where(['parentid' => $sample->parentid, 'run' => $run])->get();
+            }
+            foreach ($del_samples as $del) {
+                $del->pre_delete();
+            }
+            $sample->fill($samples_data);
+            $sample->pre_update();
+            $batch_ids[$key] = $sample->batch_id;
+        }
+        $batch_ids = collect($batch_ids);
+        $unique = $batch_ids->unique();
+
+        foreach ($unique as $key => $id) {
+            $batch = \App\Viralbatch::find($id);
+            $batch->fill($batches_data);
+            $batches->pre_update();
+        }
 
     }
 

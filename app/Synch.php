@@ -613,7 +613,6 @@ class Synch
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
-
 			]);
 
 			$body = json_decode($response->getBody());
