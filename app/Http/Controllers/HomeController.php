@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Sample;
 use App\SampleView;
 use App\Viralsample;
@@ -41,7 +42,8 @@ class HomeController extends Controller
         $data = ['Entered Samples' => self::__getEnteredSamples(),
                 'Received Samples' => self::__getReceivedSamples(),
                 'Tested Samples' => self::__getTestedSamples(),
-                'Dispatched Samples' => self::__getDispatchedSamples()
+                'Dispatched Samples' => self::__getDispatchedSamples(),
+                'Rejected Samples' => self::__getRejectedSamples(),
             ];
 
         $chart['series']['name'] = 'Samples Progress';
@@ -50,7 +52,6 @@ class HomeController extends Controller
             $chart['series']['data'][$count] = $value;
             $count++;
         }
-
         return $chart;
     }
 
@@ -187,40 +188,117 @@ class HomeController extends Controller
         return view('tables.pending', compact('samples'))->with('pageTitle', $pageTitle);
     }
 
-    static function __getEnteredSamples() 
+    static function __getEnteredSamples($period = 'day') 
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return Viralsample::whereRaw('DATE(created_at) = CURDATE()')->count();
+            return Viralsample::selectRaw("count(*) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('created_at', '>', $param);
+                return $query->whereDate('created_at', $param);
+            })->get()->first()->total;
         } else {
-            return Sample::whereRaw('DATE(created_at) = CURDATE()')->count();
+            return Sample::selectRaw("count(*) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('created_at', '>', $param);
+                return $query->whereDate('created_at', $param);
+            })->get()->first()->total;
         }
     }
 
-    static function __getReceivedSamples()
+    static function __getReceivedSamples($period = 'day')
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return DB::table('viralsamples')->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')->whereRaw('DATE(viralbatches.datereceived) = CURDATE()')->count();
+            return ViralsampleView::selectRaw("count(*) as total")
+            ->where('repeatt', 0)
+            ->whereIn('receivedstatus', [1, 3])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->get()->first()->total;
         } else {
-            return DB::table('samples')->join('batches', 'batches.id', '=', 'samples.batch_id')->whereRaw('DATE(batches.datereceived) = CURDATE()')->count();
+            return SampleView::selectRaw("count(*) as total")
+            ->where('repeatt', 0)
+            ->whereIn('receivedstatus', [1, 3])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->get()->first()->total;
         }
     }
 
-    static function __getTestedSamples()
+    static function __getRejectedSamples($period = 'day')
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return Viralsample::whereRaw('DATE(datetested) = CURDATE()')->count();
+            return ViralsampleView::selectRaw("count(*) as total")
+            ->where('receivedstatus', 2)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->get()->first()->total;
         } else {
-            return Sample::whereRaw('DATE(datetested) = CURDATE()')->count();
+            return SampleView::selectRaw("count(*) as total")
+            ->where('receivedstatus', 2)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->get()->first()->total;
         }
     }
 
-    static function __getDispatchedSamples()
+    static function __getTestedSamples($period = 'day')
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return DB::table('viralsamples')->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')->whereRaw('DATE(viralbatches.datedispatched) = CURDATE()')->count();
+            return Viralsample::selectRaw("count(*) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datetested', '>', $param);
+                return $query->whereDate('datetested', $param);
+            })->get()->first()->total;
         } else {
-            return DB::table('samples')->join('batches', 'batches.id', '=', 'samples.batch_id')->whereRaw('DATE(batches.datedispatched) = CURDATE()')->count();
+            return Sample::selectRaw("count(*) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datetested', '>', $param);
+                return $query->whereDate('datetested', $param);
+            })->get()->first()->total;
         }
+    }
+
+    static function __getDispatchedSamples($period = 'day')
+    {
+        $param = self::starting_day($period);
+
+        if (session('testingSystem') == 'Viralload') {
+            return ViralsampleView::selectRaw("count(*) as total")
+            ->where('repeatt', 0)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datedispatched', '>', $param);
+                return $query->whereDate('datedispatched', $param);
+            })->get()->first()->total;
+        } else {
+            return SampleView::selectRaw("count(*) as total")
+            ->where('repeatt', 0)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datedispatched', '>', $param);
+                return $query->whereDate('datedispatched', $param);
+            })->get()->first()->total;
+        }
+    }
+
+    public static function starting_day($period)
+    {
+        if($period == 'day') $param = date('Y-m-d');
+        else if($period == 'month'){
+            $days = Carbon::now()->day;
+            $param = Carbon::now()->subDays($days)->toDateString();
+        }
+        else{
+            $days = Carbon::now()->dayOfWeek;
+            $param = Carbon::now()->subDays($days)->toDateString();
+        }
+        return $param;
     }
 
     public function countysearch(Request $request)
