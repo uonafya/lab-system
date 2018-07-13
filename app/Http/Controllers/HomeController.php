@@ -31,19 +31,21 @@ class HomeController extends Controller
     public function index()
     {
         $chart = $this->getHomeGraph();
+        $week_chart = $this->getHomeGraph('week');
+        $month_chart = $this->getHomeGraph('month');
         
-        return view('home', ['chart'=>$chart])->with('pageTitle', 'Home');
+        return view('home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
     }
 
-    public function getHomeGraph()
+    public function getHomeGraph($period = 'day')
     {
         $chart = [];
         $count = 0;
-        $data = ['Entered Samples' => self::__getEnteredSamples(),
-                'Received Samples' => self::__getReceivedSamples(),
-                'Tested Samples' => self::__getTestedSamples(),
-                'Dispatched Samples' => self::__getDispatchedSamples(),
-                'Rejected Samples' => self::__getRejectedSamples(),
+        $data = ['Entered Samples' => self::__getEnteredSamples($period),
+                'Received Samples' => self::__getReceivedSamples($period),
+                'Tested Samples' => self::__getTestedSamples($period),
+                'Dispatched Samples' => self::__getDispatchedSamples($period),
+                'Rejected Samples' => self::__getRejectedSamples($period),
             ];
 
         $chart['series']['name'] = 'Samples Progress';
