@@ -194,13 +194,13 @@ class HomeController extends Controller
     {
         $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return Viralsample::selectRaw("count(*) as total")
+            return Viralsample::selectRaw("count(id) as total")
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
             })->get()->first()->total;
         } else {
-            return Sample::selectRaw("count(*) as total")
+            return Sample::selectRaw("count(id) as total")
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
@@ -212,7 +212,7 @@ class HomeController extends Controller
     {
         $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(*) as total")
+            return ViralsampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
             ->whereIn('receivedstatus', [1, 3])
             ->when(true, function($query) use ($period, $param){
@@ -220,7 +220,7 @@ class HomeController extends Controller
                 return $query->where('datereceived', $param);
             })->get()->first()->total;
         } else {
-            return SampleView::selectRaw("count(*) as total")
+            return SampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
             ->whereIn('receivedstatus', [1, 3])
             ->when(true, function($query) use ($period, $param){
@@ -234,18 +234,18 @@ class HomeController extends Controller
     {
         $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(*) as total")
+            return ViralsampleView::selectRaw("count(id) as total")
             ->where('receivedstatus', 2)
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
-                return $query->whereDate('datereceived', $param);
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
             })->get()->first()->total;
         } else {
-            return SampleView::selectRaw("count(*) as total")
+            return SampleView::selectRaw("count(id) as total")
             ->where('receivedstatus', 2)
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
-                return $query->whereDate('datereceived', $param);
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
             })->get()->first()->total;
         }
     }
@@ -254,16 +254,16 @@ class HomeController extends Controller
     {
         $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return Viralsample::selectRaw("count(*) as total")
+            return Viralsample::selectRaw("count(id) as total")
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datetested', '>', $param);
-                return $query->whereDate('datetested', $param);
+                if($period != 'day') return $query->where('datetested', '>', $param);
+                return $query->where('datetested', $param);
             })->get()->first()->total;
         } else {
-            return Sample::selectRaw("count(*) as total")
+            return Sample::selectRaw("count(id) as total")
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datetested', '>', $param);
-                return $query->whereDate('datetested', $param);
+                if($period != 'day') return $query->where('datetested', '>', $param);
+                return $query->where('datetested', $param);
             })->get()->first()->total;
         }
     }
@@ -273,18 +273,18 @@ class HomeController extends Controller
         $param = self::starting_day($period);
 
         if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(*) as total")
+            return ViralsampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datedispatched', '>', $param);
-                return $query->whereDate('datedispatched', $param);
+                if($period != 'day') return $query->where('datedispatched', '>', $param);
+                return $query->where('datedispatched', $param);
             })->get()->first()->total;
         } else {
-            return SampleView::selectRaw("count(*) as total")
+            return SampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datedispatched', '>', $param);
-                return $query->whereDate('datedispatched', $param);
+                if($period != 'day') return $query->where('datedispatched', '>', $param);
+                return $query->where('datedispatched', $param);
             })->get()->first()->total;
         }
     }
