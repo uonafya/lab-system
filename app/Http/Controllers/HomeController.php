@@ -51,7 +51,7 @@ class HomeController extends Controller
         $chart['series']['name'] = 'Samples Progress';
         foreach ($data as $key => $value) {
             $chart['categories'][$count] = $key;
-            $chart['series']['data'][$count] = $value;
+            $chart['series']['data'][$count] = (int) $value;
             $count++;
         }
         return $chart;
