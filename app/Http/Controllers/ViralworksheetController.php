@@ -372,8 +372,28 @@ class ViralworksheetController extends Controller
                 $del_samples = Viralsample::where(['parentid' => $sample->parentid, 'run' => $run])->get();
             }
             foreach ($del_samples as $del) {
-                $del->pre_delete();
+                if($del->worksheet_id && $del->result){  
+                    if($sample->parentid == 0){
+                        if($del->run == 2){
+                            $del->run = 1;
+                            $del->parentid = 0;
+                            $del->pre_update();
+
+                            $sample->run = 2;
+                            $sample->parentid = $del->id;
+                        }
+                    } 
+                    else{
+                        $del->run--;
+                        $del->pre_update();
+                        $sample->run++;
+                    }
+                }
+                else{
+                    $del->pre_delete();                       
+                }
             }
+
             $sample->fill($samples_data);
             $sample->pre_update();
             $batch_ids[$key] = $sample->batch_id;

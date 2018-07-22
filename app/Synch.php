@@ -17,7 +17,6 @@ use App\Viralworksheet;
 
 use App\Facility;
 
-
 class Synch
 {
 	// public static $base = 'http://127.0.0.1:9000/api/';
