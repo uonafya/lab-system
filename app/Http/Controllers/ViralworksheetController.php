@@ -363,7 +363,8 @@ class ViralworksheetController extends Controller
         $batches_data = ['batch_complete' => 0, 'sent_email' => 0, 'printedby' => null,  'dateemailsent' => null, 'datebatchprinted' => null, 'dateindividualresultprinted' => null, 'datedispatched' => null, ];
         $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
 
-        $samples = Viralsample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
+        // $samples = Viralsample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
+        $samples = Viralsample::where(['worksheet_id' => $worksheet->id])->get();
 
         foreach ($samples as $key => $sample) {
             if($sample->parentid == 0) $del_samples = Viralsample::where('parentid', $sample->id)->get();
@@ -377,6 +378,7 @@ class ViralworksheetController extends Controller
                         if($del->run == 2){
                             $del->run = 1;
                             $del->parentid = 0;
+                            $del->repeatt = 1;
                             $del->pre_update();
 
                             $sample->run = 2;
