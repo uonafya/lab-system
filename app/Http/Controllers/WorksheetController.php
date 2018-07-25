@@ -140,11 +140,13 @@ class WorksheetController extends Controller
         $machine = $machines->where('id', $machine_type)->first();
 
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $test = false;
         $user = auth()->user();
 
         if($machine == NULL || $machine->eid_limit == NULL) return back();
 
         $limit = $machine->eid_limit;
+        $year = date('Y') - 2;
 
         if($test){
             $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -152,7 +154,7 @@ class WorksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'batches.user_id')
                 ->join('patients', 'samples.patient_id', '=', 'patients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-                ->whereYear('datereceived', '>', 2014)
+                ->whereYear('datereceived', '>', $year)
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
                 ->whereNull('worksheet_id')
@@ -170,7 +172,7 @@ class WorksheetController extends Controller
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-            ->whereYear('datereceived', '>', 2014)
+            ->whereYear('datereceived', '>', $year)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
@@ -215,9 +217,11 @@ class WorksheetController extends Controller
         $machine = $machines->where('id', $worksheet->machine_type)->first();
 
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $test=false;
         $user = auth()->user();
 
         $limit = $machine->eid_limit;
+        $year = date('Y') - 2;
 
         if($test){
             $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -225,7 +229,7 @@ class WorksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'batches.user_id')
                 ->join('patients', 'samples.patient_id', '=', 'patients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-                ->whereYear('datereceived', '>', 2014)
+                ->whereYear('datereceived', '>', $year)
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
                 ->whereNull('worksheet_id')
@@ -240,7 +244,7 @@ class WorksheetController extends Controller
 
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
-            ->whereYear('datereceived', '>', 2014)
+            ->whereYear('datereceived', '>', $year)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
@@ -308,7 +312,8 @@ class WorksheetController extends Controller
      */
     public function edit(Worksheet $worksheet)
     {
-        //
+        $samples = $worksheet->sample;
+        return view('forms.worksheets', ['create' => true, 'machine_type' => $worksheet->machine_type, 'samples' => $samples, 'worksheet' => $worksheet])->with('pageTitle', 'Edit Worksheet');
     }
 
     /**
@@ -320,7 +325,9 @@ class WorksheetController extends Controller
      */
     public function update(Request $request, Worksheet $worksheet)
     {
-        //
+        $worksheet->fill($request->except('_token'));
+        $worksheet->save();
+        return redirect('worksheet/print/' . $worksheet->id);
     }
 
     /**
@@ -354,6 +361,18 @@ class WorksheetController extends Controller
         }
     }
 
+    public function convert_worksheet($machine_type, Worksheet $worksheet)
+    {
+        if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
+            session(['toast_error' => 1]);
+            return back();            
+        }
+        $worksheet->machine_type = $machine_type;
+        $worksheet->save();
+        return redirect('worksheet/' . $worksheet->id . '/edit');
+    }
+
     public function cancel(Worksheet $worksheet)
     {
         if($worksheet->status_id != 1){
@@ -379,10 +398,17 @@ class WorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
+
+        if($worksheet->uploadedby != auth()->user()->id){
+            session(['toast_message' => 'Only the user who uploaded the results can cancel the upload.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
         $worksheet->status_id = 1;
-        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = null;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
 
         session(['toast_message' => 'The upload has been cancelled.']);
@@ -392,7 +418,7 @@ class WorksheetController extends Controller
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::where('user_type_id', '<', 5)->get();
+        $users = User::where('user_type_id', '<', 5)->where('user_type_id', 0)->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -576,6 +602,7 @@ class WorksheetController extends Controller
         $worksheet->pos_control_interpretation = $positive_control;
         $worksheet->pos_control_result = $pos_result;
         $worksheet->daterun = $dateoftest;
+        $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
         Misc::requeue($worksheet->id);
@@ -646,7 +673,11 @@ class WorksheetController extends Controller
                 $data['repeatt'] = 0;
             } 
 
-            Sample::where('id', $samples[$key])->update($data);
+            // Sample::where('id', $samples[$key])->update($data);
+            
+            $sample = Sample::find($samples[$key]);
+            $sample->fill($data);
+            $sample->pre_update();
 
             // if($actions[$key] == 1){
             if($data['repeatt'] == 1){

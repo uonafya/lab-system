@@ -14,6 +14,13 @@ class ViewModel extends Model
         return '';
     }
 
+    public function my_time_format($value)
+    {
+        if($this->$value) return date('d-M-Y H:i:s', strtotime($this->$value));
+
+        return '';
+    }
+
 
     public function scopeSample($query, $facility, $patient, $datecollected)
     {

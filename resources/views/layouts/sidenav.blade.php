@@ -29,7 +29,7 @@
             </li> -->--}}
         @endif
         
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
+        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4  || auth()->user()->user_type_id == 0)
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -83,8 +83,9 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
+                <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                 <hr />
+                <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 @if(env('APP_LAB') == 4)
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                     <hr />
@@ -206,7 +207,7 @@
                 <a href="#"> <span class="nav-label">Search</span></a>
             </li> -->
         {{--
-        @if (auth()->user()->user_type_id == 1)
+        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 0)
             <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
@@ -228,16 +229,27 @@
             </li>
             <hr />
         @endif
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
+        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4 || auth()->user()->user_type_id == 0)
             <li>
                 <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
             </li>
             <hr />
         @endif
         --}}
+
+        @if (auth()->user()->user_type_id == 7 || auth()->user()->user_type_id == 0)
+            <li>
+                <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
+            </li>
+            <hr />
+        @endif
         
         <!-- Admin Side Bar -->
-        @if (auth()->user()->user_type_id == 2)
+        @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 0)
             <li>
                 <a href="{{ url('user/add') }}"><span class="nav-label">Add Users</span></a>
             </li>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Sample;
 use App\SampleView;
 use App\Viralsample;
@@ -30,27 +31,29 @@ class HomeController extends Controller
     public function index()
     {
         $chart = $this->getHomeGraph();
+        $week_chart = $this->getHomeGraph('week');
+        $month_chart = $this->getHomeGraph('month');
         
-        return view('home', ['chart'=>$chart])->with('pageTitle', 'Home');
+        return view('home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
     }
 
-    public function getHomeGraph()
+    public function getHomeGraph($period = 'day')
     {
         $chart = [];
         $count = 0;
-        $data = ['Entered Samples' => self::__getEnteredSamples(),
-                'Received Samples' => self::__getReceivedSamples(),
-                'Tested Samples' => self::__getTestedSamples(),
-                'Dispatched Samples' => self::__getDispatchedSamples()
+        $data = ['Entered Samples' => self::__getEnteredSamples($period),
+                'Received Samples' => self::__getReceivedSamples($period),
+                'Tested Samples' => self::__getTestedSamples($period),
+                'Dispatched Samples' => self::__getDispatchedSamples($period),
+                'Rejected Samples' => self::__getRejectedSamples($period),
             ];
 
         $chart['series']['name'] = 'Samples Progress';
         foreach ($data as $key => $value) {
             $chart['categories'][$count] = $key;
-            $chart['series']['data'][$count] = $value;
+            $chart['series']['data'][$count] = (int) $value;
             $count++;
         }
-
         return $chart;
     }
 
@@ -69,7 +72,7 @@ class HomeController extends Controller
         $year = Date('Y')-2;
 
         if ($level == 'testing') {
-            $model = $model->whereNull('worksheet_id');
+            $model = $model->whereNull('worksheet_id')->whereIn('receivedstatus', [1, 3])->whereRaw("(result is null or result=0)");
         } else {
             $model = $model->whereNotNull('worksheet_id')->whereNull('datedispatched');
         }
@@ -92,7 +95,7 @@ class HomeController extends Controller
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                     ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                     ->join('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    ->whereIn('receivedstatus', [1, 3])
                     ->when($sampletypes, function($query) use ($sampletypes){
                         if ($sampletypes == 'plasma') {
                             return $query->where('viralsamples_view.sampletype', '=', 1);
@@ -106,7 +109,7 @@ class HomeController extends Controller
                     })
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2016-12-31')
-                    ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                    ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('viralsamples_view.flag', '1')->get();
         } else {
@@ -115,8 +118,8 @@ class HomeController extends Controller
                     ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                     ->whereNull('worksheet_id')
                     ->where('datereceived', '>', '2014-12-31')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
-                    ->whereRaw("(result is null or result = 0)")
+                    ->whereIn('receivedstatus', [1, 3])
+                    ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->get();
         }
@@ -133,11 +136,11 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                         ->whereBetween('sampletype', [1, 5])
-                        ->where('receivedstatus', 3)
+                        // ->where('receivedstatus', 3)
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
-                        ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
+                        ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1')->get();
         } else {
@@ -145,7 +148,7 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                         ->whereNull('worksheet_id')
-                        ->where('receivedstatus', 3)
+                        // ->where('receivedstatus', 3)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
@@ -187,40 +190,117 @@ class HomeController extends Controller
         return view('tables.pending', compact('samples'))->with('pageTitle', $pageTitle);
     }
 
-    static function __getEnteredSamples() 
+    static function __getEnteredSamples($period = 'day') 
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return Viralsample::whereRaw('DATE(created_at) = CURDATE()')->count();
+            return Viralsample::selectRaw("count(id) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('created_at', '>', $param);
+                return $query->where('created_at', $param);
+            })->get()->first()->total;
         } else {
-            return Sample::whereRaw('DATE(created_at) = CURDATE()')->count();
+            return Sample::selectRaw("count(id) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('created_at', '>', $param);
+                return $query->where('created_at', $param);
+            })->get()->first()->total;
         }
     }
 
-    static function __getReceivedSamples()
+    static function __getReceivedSamples($period = 'day')
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return DB::table('viralsamples')->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')->whereRaw('DATE(viralbatches.datereceived) = CURDATE()')->count();
+            return ViralsampleView::selectRaw("count(id) as total")
+            ->where('repeatt', 0)
+            ->whereIn('receivedstatus', [1, 3])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
+            })->get()->first()->total;
         } else {
-            return DB::table('samples')->join('batches', 'batches.id', '=', 'samples.batch_id')->whereRaw('DATE(batches.datereceived) = CURDATE()')->count();
+            return SampleView::selectRaw("count(id) as total")
+            ->where('repeatt', 0)
+            ->whereIn('receivedstatus', [1, 3])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->get()->first()->total;
         }
     }
 
-    static function __getTestedSamples()
+    static function __getRejectedSamples($period = 'day')
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return Viralsample::whereRaw('DATE(datetested) = CURDATE()')->count();
+            return ViralsampleView::selectRaw("count(id) as total")
+            ->where('receivedstatus', 2)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
+            })->get()->first()->total;
         } else {
-            return Sample::whereRaw('DATE(datetested) = CURDATE()')->count();
+            return SampleView::selectRaw("count(id) as total")
+            ->where('receivedstatus', 2)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
+            })->get()->first()->total;
         }
     }
 
-    static function __getDispatchedSamples()
+    static function __getTestedSamples($period = 'day')
     {
+        $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
-            return DB::table('viralsamples')->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')->whereRaw('DATE(viralbatches.datedispatched) = CURDATE()')->count();
+            return Viralsample::selectRaw("count(id) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datetested', '>', $param);
+                return $query->where('datetested', $param);
+            })->get()->first()->total;
         } else {
-            return DB::table('samples')->join('batches', 'batches.id', '=', 'samples.batch_id')->whereRaw('DATE(batches.datedispatched) = CURDATE()')->count();
+            return Sample::selectRaw("count(id) as total")
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datetested', '>', $param);
+                return $query->where('datetested', $param);
+            })->get()->first()->total;
         }
+    }
+
+    static function __getDispatchedSamples($period = 'day')
+    {
+        $param = self::starting_day($period);
+
+        if (session('testingSystem') == 'Viralload') {
+            return ViralsampleView::selectRaw("count(id) as total")
+            ->where('repeatt', 0)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datedispatched', '>', $param);
+                return $query->where('datedispatched', $param);
+            })->get()->first()->total;
+        } else {
+            return SampleView::selectRaw("count(id) as total")
+            ->where('repeatt', 0)
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('datedispatched', '>', $param);
+                return $query->where('datedispatched', $param);
+            })->get()->first()->total;
+        }
+    }
+
+    public static function starting_day($period)
+    {
+        if($period == 'day') $param = date('Y-m-d');
+        else if($period == 'month'){
+            $days = Carbon::now()->day;
+            $param = Carbon::now()->subDays($days)->toDateString();
+        }
+        else{
+            $days = Carbon::now()->dayOfWeek;
+            $param = Carbon::now()->subDays($days)->toDateString();
+        }
+        return $param;
     }
 
     public function countysearch(Request $request)

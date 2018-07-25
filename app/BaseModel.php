@@ -38,6 +38,13 @@ class BaseModel extends Model
         return '';
     }
 
+    public function my_time_format($value)
+    {
+        if($this->$value) return date('d-M-Y H:i:s', strtotime($this->$value));
+
+        return '';
+    }
+
     public function pre_update()
     {
         if($this->synched == 1 && $this->isDirty()) $this->synched = 2;

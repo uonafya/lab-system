@@ -44,59 +44,61 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
 })->describe('Compute Vl Tat.');
 
 
-Artisan::command('input_complete:eid', function(){
-	$str = \App\Common::input_complete_batches(\App\Batch::class);
+Artisan::command('input-complete {type}', function($type){
+    $str = \App\Common::input_complete_batches($type);
     $this->info($str);
-})->describe('Mark eid batches as input completed.');
+})->describe('Mark batches as input completed.');
 
-Artisan::command('input_complete:vl', function(){
-	$str = \App\Common::input_complete_batches(\App\Viralbatch::class);
+
+
+Artisan::command('lablog {type}', function($type){
+	$str = \App\Synch::labactivity($type);
     $this->info($str);
-})->describe('Mark vl batches as input completed.');
+})->describe('Send lablog data to national.');
+
+// Artisan::command('synch:vl-patients', function(){
+// 	$str = \App\Synch::synch_vl_patients();
+//     $this->info($str);
+// })->describe('Synch vl patients to the national database.');
 
 
-Artisan::command('synch:eid-patients', function(){
-	$str = \App\Synch::synch_eid_patients();
+Artisan::command('send:sms {type}', function($type){
+    if($type == 'eid') $str = \App\Misc::patient_sms();
+    else { $str = \App\MiscViral::patient_sms(); }    
     $this->info($str);
-})->describe('Synch eid patients to the national database.');
+})->describe('Send result sms.');
 
-Artisan::command('synch:vl-patients', function(){
-	$str = \App\Synch::synch_vl_patients();
+
+
+Artisan::command('synch:patients {type}', function($type){
+    if($type == 'eid') $str = \App\Synch::synch_eid_patients();
+    else { $str = \App\Synch::synch_vl_patients(); }    
     $this->info($str);
-})->describe('Synch vl patients to the national database.');
+})->describe('Synch patients to the national database.');
 
 
-Artisan::command('synch:eid-batches', function(){
-	$str = \App\Synch::synch_batches('eid');
+Artisan::command('synch:batches {type}', function($type){
+	$str = \App\Synch::synch_batches($type);
     $this->info($str);
-})->describe('Synch eid batches to the national database.');
+})->describe('Synch batches to the national database.');
 
-Artisan::command('synch:vl-batches', function(){
-	$str = \App\Synch::synch_batches('vl');
+
+Artisan::command('synch:worksheets {type}', function($type){
+	$str = \App\Synch::synch_worksheets($type);
     $this->info($str);
-})->describe('Synch vl batches to the national database.');
+})->describe('Synch worksheets to the national database.');
 
 
-Artisan::command('synch:eid-worksheets', function(){
-	$str = \App\Synch::synch_worksheets('eid');
+Artisan::command('synch:updates {type}', function($type){
+    $str = \App\Synch::synch_updates($type);
     $this->info($str);
-})->describe('Synch eid worksheets to the national database.');
+})->describe('Synch updates to the national database.');
 
-Artisan::command('synch:vl-worksheets', function(){
-	$str = \App\Synch::synch_worksheets('vl');
+
+Artisan::command('synch:deletes {type}', function($type){
+	$str = \App\Synch::synch_deletes($type);
     $this->info($str);
-})->describe('Synch vl worksheets to the national database.');
-
-
-Artisan::command('synch:eid-deletes', function(){
-	$str = \App\Synch::synch_deletes('eid');
-    $this->info($str);
-})->describe('Synch eid deletes to the national database.');
-
-Artisan::command('synch:vl-deletes', function(){
-	$str = \App\Synch::synch_deletes('vl');
-    $this->info($str);
-})->describe('Synch vl deletes to the national database.');
+})->describe('Synch deletes to the national database.');
 
 
 
@@ -132,24 +134,21 @@ Artisan::command('copy:facility-contacts', function(){
 Artisan::command('match:eid-patients', function(){
     $str = \App\Synch::match_eid_patients();
     $this->info($str);
-})->describe('Match eid patients with records on the national database.');
+})->describe('Copy facility contacts from old database to new database.');
 
-Artisan::command('match:vl-patients', function(){
-    $str = \App\Synch::match_vl_patients();
+
+
+Artisan::command('match:patients {type}', function($type){
+    if($type == 'eid') $str = \App\Synch::match_eid_patients();
+    else { $str = \App\Synch::match_vl_patients(); }    
     $this->info($str);
-})->describe('Match vl patients with records on the national database.');
+})->describe('Match patients with records on the national database.');
 
 
-Artisan::command('match:eid-batches', function(){
-    $str = \App\Synch::match_batches('eid');
+Artisan::command('match:batches {type}', function($type){
+    $str = \App\Synch::match_batches();
     $this->info($str);
-})->describe('Match eid batches with records on the national database.');
-
-Artisan::command('match:vl-batches', function(){
-    $str = \App\Synch::match_batches('vl');
-    $this->info($str);
-})->describe('Match vl batches with records on the national database.');
-
+})->describe('Match batches with records on the national database.');
 
 
 

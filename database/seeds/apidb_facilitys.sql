@@ -108,11 +108,12 @@ VIEW view_facilitys AS
 SELECT  
 
 fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, dis.id as subcounty_id, countys.name as county, countys.id as county_id, dis.province as province_id,
-labs.name as lab, partners.name as partner, partners.id as partner_id, fac.physicaladdress, fac.PostalAddress, fac.telephone, fac.telephone2, fac.fax, 
-fac.email, fac.contactperson, fac.ContactEmail, fac.contacttelephone, fac.contacttelephone2, 
-fac.sms_printer_phoneno, fac.G4Sbranchname, fac.G4Slocation, fac.G4Sphone1, fac.G4Sphone2, fac.G4Sphone3, fac.G4Sfax
+labs.name as lab, partners.name as partner, partners.id as partner_id, fc.physicaladdress, fc.PostalAddress, fc.telephone, fc.telephone2, fc.fax, 
+fc.email, fc.contactperson, fc.ContactEmail, fc.contacttelephone, fc.contacttelephone2, 
+fc.sms_printer_phoneno, fc.G4Sbranchname, fc.G4Slocation, fc.G4Sphone1, fc.G4Sphone2, fc.G4Sphone3, fc.G4Sfax
 
 FROM facilitys fac
+LEFT JOIN facility_contacts fc ON fac.id=fc.facility_id
 LEFT JOIN districts dis ON fac.district=dis.id
 LEFT JOIN countys ON dis.county=countys.id
 LEFT JOIN partners ON fac.partner=partners.id

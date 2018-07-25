@@ -191,7 +191,8 @@ class PatientController extends Controller
         $string = "(facility_id='{$user->facility_id}')";
 
         $search = $request->input('search');
-        $patients = Patient::select('id', 'patient')
+        $patients = Patient::select('patients.id', 'patients.patient', 'facilitys.name', 'facilitys.facilitycode')
+            ->join('facilitys', 'facilitys.id', '=', 'patients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
@@ -201,5 +202,6 @@ class PatientController extends Controller
             })
             ->paginate(10);
         return $patients;
+
     }
 }

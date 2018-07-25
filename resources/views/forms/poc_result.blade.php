@@ -104,6 +104,7 @@
 
                                         <option value=""> Select One </option>
                                         @foreach ($results as $result)
+                                            @continue($result->id == 3 || $result->id == 4)
                                             <option value="{{ $result->id }}"
 
                                             @if (isset($sample) && $sample->result == $result->id)
