@@ -85,8 +85,10 @@
                 </li> -->
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 <hr />
-                <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
-                <hr />
+                @if(env('APP_LAB') == 4)
+                    <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
+                    <hr />
+                @endif
                 <li>
                     <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
                 </li>
@@ -126,6 +128,17 @@
                     <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
                 </li>
                 <hr />
+            @endif
+            @if (session('testingSystem') == 'DR')
+                <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
+                <hr />
+                <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
+                <hr />
+                <li><a href="{{ url('dr') }}">Patient List</a></li>
+                <hr />
+                <li><a href="{{ url('dr_worksheet/create') }}">Create Dr Worksheet</a></li>
+                <hr />
+                
             @endif
             <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>

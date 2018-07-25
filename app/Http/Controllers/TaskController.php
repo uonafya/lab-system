@@ -63,7 +63,7 @@ class TaskController extends Controller
             $source = 3;
             $year = date('Y');
             $eidData = [
-                        'testtype' => 1,'lab' => $lab,
+                        'testtype' => 1,'lab_id' => $lab,
                         'quarter' => $quarter,'year' => $year,'source' => $source,
                         'kitlotno' => $request->kitlotno,'expirydate' => $request->expirydate,
                         'qualkitreceived' => $request->rqualkit,'spexagentreceived' => $request->rspexagent,
@@ -78,7 +78,7 @@ class TaskController extends Controller
                     ];
             $save = Taqmandeliveries::create($eidData);
             $vlData = [
-                        'testtype' => 2,'lab' => $lab,
+                        'testtype' => 2,'lab_id' => $lab,
                         'quarter' => $quarter,'year' => $year,'source' => $source,
                         'kitlotno' => $request->vkitlotno,'expirydate' => $request->vexpirydate,
                         'qualkitreceived' => $request->vrqualkit,'spexagentreceived' => $request->vrspexagent,
@@ -107,7 +107,7 @@ class TaskController extends Controller
             $year = date('Y');
 
             $eidData = [
-                "testtype" => 1,"lab" => $lab,
+                "testtype" => 1,"lab_id" => $lab,
                 "quarter" => $quarter,"year" => $year,"source" => $source,
                 "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->aqualkitexpiry,
                 "qualkitreceived" => $request->arqualkit,"qualkitdamaged" => $request->adqualkit,
@@ -131,7 +131,7 @@ class TaskController extends Controller
             $save = Abbotdeliveries::create($eidData);
 
             $vlData = [
-                "testtype" => 2,"lab" => $lab,
+                "testtype" => 2,"lab_id" => $lab,
                 "quarter" => $quarter,"year" => $year,"source" => $source,
                 "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->vaqualkitexpiry,
                 "qualkitreceived" => $request->varqualkit,"qualkitdamaged" => $request->vadqualkit,

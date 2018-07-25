@@ -68,6 +68,30 @@ class ViralworksheetController extends Controller
 
         if($machine == NULL || $machine->vl_limit == NULL) return back();
 
+        $limit = $machine->vl_limit;
+
+        if($test){
+            $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+                ->whereYear('datereceived', '>', 2014)
+                ->when(($machine_type == 1 || $machine_type == 3), function($query){
+                    return $query->where('sampletype', 1);
+                })
+                ->where('site_entry', '!=', 2)
+                ->having('isnull', 0)
+                ->whereNull('worksheet_id')
+                ->where('input_complete', true)
+                ->whereIn('receivedstatus', [1, 3])
+                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->orderBy('viralsamples.id', 'asc')
+                ->limit($limit)
+                ->get();
+            $limit -= $repeats->count();
+        }
+
         $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
@@ -75,7 +99,10 @@ class ViralworksheetController extends Controller
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id);
+                return $query->where('received_by', $user->id)->having('isnull', 1);
+            })
+            ->when(($machine_type == 1 || $machine_type == 3), function($query){
+                return $query->where('sampletype', 1);
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
@@ -87,9 +114,10 @@ class ViralworksheetController extends Controller
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit($machine->vl_limit)
+            ->limit($limit)
             ->get();
 
+        if($test) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
         if($count == $machine->vl_limit){
@@ -119,13 +147,40 @@ class ViralworksheetController extends Controller
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
         $user = auth()->user();
 
+        $limit = $machine->vl_limit;
+
+        if($test){
+            $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+                ->whereYear('datereceived', '>', 2014)
+                ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
+                    return $query->where('sampletype', 1);
+                })
+                ->where('site_entry', '!=', 2)
+                ->having('isnull', 0)
+                ->whereNull('worksheet_id')
+                ->where('input_complete', true)
+                ->whereIn('receivedstatus', [1, 3])
+                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->orderBy('viralsamples.id', 'asc')
+                ->limit($limit)
+                ->get();
+            $limit -= $repeats->count();
+        }
+
         $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', 2014)
             ->when($test, function($query) use ($user){
-                return $query->where('batches.received_by', $user->id);
+                return $query->where('received_by', $user->id)->having('isnull', 1);
+            })
+            ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
+                return $query->where('sampletype', 1);
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('worksheet_id')
@@ -139,6 +194,8 @@ class ViralworksheetController extends Controller
             ->orderBy('viralsamples.id', 'asc')
             ->limit($machine->vl_limit)
             ->get();
+
+        if($test) $samples = $repeats->merge($samples);
 
 
         if($samples->count() != $machine->vl_limit){
