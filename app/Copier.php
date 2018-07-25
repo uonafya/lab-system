@@ -55,7 +55,11 @@ class Copier
                     $mother->save();
                     $patient = new Patient($value->only($fields['patient']));
                     $patient->mother_id = $mother->id;
-                    $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob){
+                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    }
                     $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
                     $patient->ccc_no = $value->enrollment_ccc_no;
                     $patient->save();
@@ -132,7 +136,11 @@ class Copier
 
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
-                    $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0, ViralsampleView::class, $value->patient, $value->facility_id);
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+                    
+                    if(!$patient->dob){
+                        $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0, ViralsampleView::class, $value->patient, $value->facility_id);
+                    }
                     $patient->sex = self::resolve_gender($value->gender, ViralsampleView::class, $value->patient, $value->facility_id);
                     $patient->initiation_date = self::clean_date($patient->initiation_date);
                     $patient->save();
@@ -273,13 +281,13 @@ class Copier
 
     public static function copy_facility_contacts()
     {
-        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax'];
+        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
         $facilities = \App\Facility::all();
         foreach ($facilities as $key => $facility) {
             $old = \App\OldModels\Facility::find($facility->id);
             // $old = \App\OldModels\Facility::locate($facility->facilitycode)->get()->first();
-            $contact = new \App\Facility();
-            $contact->fill($old->only($contact_array));
+            $contact = new \App\FacilityContact();
+            if($old) $contact->fill($old->only($contact_array));
             $contact->facility_id = $facility->id;
             $contact->save();
         }

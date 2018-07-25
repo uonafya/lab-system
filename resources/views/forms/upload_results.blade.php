@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Created</label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->created_at ?? '' }}" disabled>
+                                <input class="form-control" required type="text" value="{{ $worksheet->my_date_format('created_at') ?? '' }}" disabled>
                             </div>
                         </div>
 
@@ -103,7 +103,7 @@
                                 <span class="input-group-addon btn btn-default btn-file">
                                     <span class="fileinput-new">Select Excel</span>
                                     <span class="fileinput-exists">Change</span>
-                                    <input id="upload" type="file" required accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="upload" >
+                                    <input id="upload" type="file" required accept=".xlsx, .xls, .csv" name="upload" >
                                 </span>
                                 <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                             </div>

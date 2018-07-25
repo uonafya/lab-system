@@ -148,6 +148,8 @@ class Controller extends BaseController
     public function auth_user($usertypes)
     {
         $user_type_id = auth()->user()->user_type_id;
+        if($user_type_id == 0) return null;
+        $a = 1;
         if(is_array($usertypes)){
             if(!in_array($user_type_id, $usertypes)) abort(403);
         }

@@ -80,6 +80,8 @@ class VlController extends BaseController
 
         $sample = new Viralsample;
         $sample->fill($request->only($fields['sample']));
+        $sample->justification = Lookup::justification($sample->justification);
+        $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
@@ -103,9 +105,6 @@ class VlController extends BaseController
         $dob = $request->input('dob');
         // $sex = Lookup::get_gender($gender);
         
-        $justification = $request->input('justification');
-        $prophylaxis = $request->input('prophylaxis');
-
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
 
@@ -162,9 +161,9 @@ class VlController extends BaseController
         }
 
         $sample->fill($request->only($fields['sample_api']));
+        $sample->justification = Lookup::justification($sample->justification);
+        $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
         $sample->age = $age;
-        $sample->justification = Lookup::justification($justification);
-        $sample->prophylaxis = Lookup::viral_regimen($prophylaxis);
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
         $sample->synched = 5;

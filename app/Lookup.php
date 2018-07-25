@@ -25,24 +25,58 @@ class Lookup
         return '';
     }
 
+    public static function other_date($value)
+    {
+        if(!$value) return null;
+
+        try {
+            $d = Carbon::createFromFormat('d/m/y', $value);
+            return $d->toDateString();
+        } catch (Exception $e) {
+            return null;
+        }        
+    }
+
     public static function get_gender($value)
     {
         $value = trim($value);
-        if($value == 'M' || $value == 'm'){
+        $value = strtolower($value);
+        if(str_contains($value, ['m', '1'])){
             return 1;
         }
-        else if($value == 'F' || $value == 'f'){
+        else if(str_contains($value, ['f', '2'])){
             return 2;
-        }
-        else if($value == 'No Data' || $value == 'No data'){
-            return 3;
-        }
-        else if (is_int($value)){
-            return $value;
         }
         else{
             return 3;
         }
+    }
+
+    public static function get_site_entry($value)
+    {
+        $value = trim($value);
+        $value = strtolower($value);
+        if(str_contains($value, ['n', '1'])){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    }
+
+
+    public static function calculate_dob($datecollected, $years, $months=0)
+    {
+        try {           
+            $dc = Carbon::createFromFormat('Y-m-d', $datecollected);
+            $dc->subYears($years);
+            $dc->subMonths($months);
+            return $dc->toDateString();
+            
+        } catch (Exception $e) {
+            return null;
+        }
+        return null;
     }
 
     public static function get_dr()
@@ -76,7 +110,7 @@ class Lookup
         // $fac = Cache::get('facilities');       
         // return $fac->where('facilitycode', $mfl)->first()->id;
 
-        return \App\Facility::locate($mfl)->get()->first()->id;
+        return \App\Facility::locate($mfl)->get()->first()->id ?? null;
     }
 
     public static function get_partners()
@@ -192,6 +226,22 @@ class Lookup
         return $dc->toDateString();
     }
 
+
+    public static function eid_regimen($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('iprophylaxis');       
+        return $my_array->where('rank', $val)->first()->id ?? 14;
+    } 
+
+
+    public static function eid_intervention($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('interventions');       
+        return $my_array->where('rank', $val)->first()->id ?? 7;
+    }  
+
     public static function samples_arrays()
     {
         return [
@@ -207,7 +257,7 @@ class Lookup
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
-            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'mother_prophylaxis', 'feeding', 'pcrtype', 'regimen', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
+            'sample_api' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'enrollment_ccc_no', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'datetested', 'result'],
         ]; 
     }
 
@@ -261,25 +311,27 @@ class Lookup
     }
 
 
-    public static function viral_regimen($value)
+    public static function viral_regimen($val)
     {
         self::cacher();       
         $my_array = Cache::get('prophylaxis');       
         return $my_array->where('category', $val)->first()->id ?? 16;
     }    
 
-    public static function justification($value)
+    public static function justification($val)
     {
         self::cacher();       
         $my_array = Cache::get('justifications');       
         return $my_array->where('rank', $val)->first()->id ?? 8;
     }    
 
-    public static function sample_type($value)
+    public static function sample_type($val)
     {
         self::cacher();       
         $my_array = Cache::get('sample_types');       
-        return $my_array->where('alias', $val)->first()->id;
+        $id =  $my_array->where('sampletype', $val)->first()->id ?? 4;
+        if($id == 3) return 4;
+        return $id;
     }
 
     public static function viralsamples_arrays()
@@ -295,7 +347,7 @@ class Lookup
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 
-            'sample_api' => ['labcomment', 'datecollected', 'datetested', 'patient_id', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'receivedstatus', 'rejectedreason', 'reason_for_repeat', 'result'],
+            'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
             'dr_sample' => ['patient_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen'],
         ];

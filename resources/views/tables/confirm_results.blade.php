@@ -56,7 +56,6 @@
                                     <th>Result</th>                
                                     <th>Interpretation</th>                
                                     <th>Action</th>                
-                                    <th>Approved</th>                
                                     <th>Approved Date</th>                
                                     <th>Approved By</th>                
                                     <th>Task</th>                
@@ -75,7 +74,6 @@
                                     <td >Control </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
-                                    <td >&nbsp; </td>
                                     <td >&nbsp; </td>   
                                 </tr>
 
@@ -89,7 +87,6 @@
                                      </td>
                                     <td ><small><strong><font color='#339900'> {{ $worksheet->neg_control_interpretation }} </font></strong></small> </td>
                                     <td >Control </td>
-                                    <td >&nbsp; </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>   
@@ -186,13 +183,6 @@
                                             @endif
                                         </td>
 
-
-
-                                        <td> 
-                                            <div align="center">
-                                                <input name="approved[]" type="checkbox"  value="{{ $key }}" checked disabled="disabled" class="{{ $class }}" />
-                                            </div> 
-                                        </td>
                                         <td> {{ $sample->dateapproved }} </td>
                                         <td> {{ $sample->approver->full_name ?? '' }} </td>
                                         <td> 
@@ -210,7 +200,8 @@
                                         <tr bgcolor="#999999">
                                             <td  colspan="10" bgcolor="#00526C" >
                                                 <center>
-                                                    <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  />
+                                                    <!-- <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  /> -->
+                                                    <button class="btn btn-success" type="submit">Confirm & Approve Results</button>
                                                 </center>
                                             </td>
                                         </tr>

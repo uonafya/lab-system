@@ -87,7 +87,7 @@ CREATE OR REPLACE VIEW old_viralsamples_1214_view AS
 
 );
 
-CREATE OR REPLACE VIEW old_worksheets AS
+CREATE OR REPLACE VIEW old_worksheets_view AS
 (
     SELECT id, type as machine_type, lab as lab_id, status as status_id,
     runby, updatedby as uploadedby, reviewedby, review2by as reviewedby2,
@@ -110,7 +110,7 @@ CREATE OR REPLACE VIEW old_worksheets AS
     FROM worksheets
 );
 
-CREATE OR REPLACE VIEW old_viralworksheets AS
+CREATE OR REPLACE VIEW old_viralworksheets_view AS
 (
     SELECT id, type as machine_type, lab as lab_id, status as status_id, calibration,
     runby,  updatedby as uploadedby, reviewedby, review2by as reviewedby2,

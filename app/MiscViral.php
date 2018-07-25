@@ -246,6 +246,30 @@ class MiscViral extends Common
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
 
+    public static function exponential_result($result)
+    {
+        if($result == 'Invalid'){
+            $res= "Collect New Sample";
+            $interpretation="Invalid";
+            $units="";              
+        }
+        else if($result == '< Titer min' || $result == 'Target Not Detected'){
+            $res= "< LDL copies/ml";
+            $interpretation= $result;
+            $units="";            
+        }
+        else{
+            $a = explode('e+', $result);
+            $u = explode(' ', $a[1]);
+            $power = (int) $u[0];
+            $res = (int) $a[0] * (10**$power);
+            $interpretation = $result;
+            $units = $u[1] ?? 'cp/mL';
+        }
+
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+    }
+
     
 
     public static function get_rejected($batch_id=NULL, $complete=true)
@@ -330,12 +354,12 @@ class MiscViral extends Common
 
     public function set_age_cat($age = null)
     {
-        if($age > 0.00001 && $age < 2){ return 6; }
-        else if($age >= 2 && $age < 10){ return 7; }
-        else if($age >= 10 && $age < 15){ return 8; }
-        else if($age >= 15 && $age < 19){ return 9; }
-        else if($age >= 19 && $age < 24){ return 10; }
-        else if($age >= 24){ return 11; }
+        if($age > 0.00001 && $age < 2) return 6; 
+        else if($age >= 2 && $age < 10) return 7; 
+        else if($age >= 10 && $age < 15) return 8; 
+        else if($age >= 15 && $age < 20) return 9; 
+        else if($age >= 19 && $age < 25) return 10;
+        else if($age >= 25) return 11;
         else{ return 0; }
     }
 
@@ -345,15 +369,9 @@ class MiscViral extends Common
         $numeric_result = preg_replace('/[^0-9]/', '', $result);
         if(is_numeric($numeric_result)){
             $result = (int) $numeric_result;
-            if($result > 0 && $result < 1001){
-                return ['rcategory' => 2];
-            }
-            else if($result > 1000 && $result < 5001){
-                return ['rcategory' => 3];
-            }
-            else if($result > 5000){
-                return ['rcategory' => 4];
-            }
+            if($result > 0 && $result < 1001) return ['rcategory' => 2];
+            else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
+            else if($result > 5000) return ['rcategory' => 4];
         }
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) dd($result);
@@ -470,72 +488,75 @@ class MiscViral extends Common
 
         foreach ($samples as $key => $sample) {
             if($sample->receivedstatus == 1 && !$sample->rcategory) continue;
+        }
+    }
 
-            // English
-            if($sample->preferred_language == 1){
-                if($sample->rcategory == 1 || $sample->rcategory == 2){
-                    if($sample->age > 15 && $sample->age < 24){
-                        $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
-                    }
-                    else{
-                        $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
-                    }
+    public static function send_sms($sample)
+    {
+        // English
+        if($sample->preferred_language == 1){
+            if($sample->rcategory == 1 || $sample->rcategory == 2){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
                 }
-                else if($sample->rcategory == 3 || $sample->rcategory == 4){
-                    if($sample->age > 15 && $sample->age < 24){
-                        $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
-                    }
-                    else{
-                        $message = $sample->patient_name . ", Your VL results are ready. Please visit the health facility as soon as you can.";                        
-                    }
-                }
-                else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
-                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you.";
+                else{
+                    $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
                 }
             }
-            // Kiswahili
-            else{
-                if($sample->rcategory == 1 || $sample->rcategory == 2){
-                    if($sample->age > 15 && $sample->age < 24){
-                        $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
-                    }
-                    else{
-                        $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
-                    }
+            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
                 }
-                else if($sample->rcategory == 3 || $sample->rcategory == 4){
-                    if($sample->age > 15 && $sample->age < 24){
-                        $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
-                    }
-                    else{
-                        $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
-                    }
+                else{
+                    $message = $sample->patient_name . ", Your VL results are ready. Please visit the health facility as soon as you can.";                        
                 }
-                else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
-                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-                }             
             }
-
-            if(!$message) continue;
-
-            $client = new Client(['base_uri' => self::$sms_url]);
-
-            $response = $client->request('post', '', [
-                'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-                'http_errors' => false,
-                'json' => [
-                    'sender' => env('SMS_SENDER_ID'),
-                    'recipient' => $sample->patient_phone_no,
-                    'message' => $message,
-                ],
-            ]);
-
-            $body = json_decode($response->getBody());
-            if($response->getStatusCode() == 201){
-                $s = Sample::find($sample->id);
-                $s->time_result_sms_sent = date('Y-m-d H:i:s');
-                $s->pre_update();
+            else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you.";
             }
+        }
+        // Kiswahili
+        else{
+            if($sample->rcategory == 1 || $sample->rcategory == 2){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
+                }
+            }
+            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                }
+            }
+            else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+            }             
+        }
+
+        if(!$message) return;
+
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $sample->patient_phone_no,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        if($response->getStatusCode() == 201){
+            $s = Viralsample::find($sample->id);
+            $s->time_result_sms_sent = date('Y-m-d H:i:s');
+            $s->pre_update();
         }
     }
     

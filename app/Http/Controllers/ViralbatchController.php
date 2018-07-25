@@ -327,24 +327,32 @@ class ViralbatchController extends Controller
         foreach ($batches as $key => $value) {
             $batch = Viralbatch::find($value);
             $facility = Facility::find($batch->facility_id);
+
+            if(!$batch->sent_email){ 
+                $batch->sent_email = true;
+                $batch->dateemailsent = date('Y-m-d');
+            }
+            $batch->datedispatched = date('Y-m-d');
+            $batch->batch_complete = 1;
+            $batch->pre_update();
             // if($facility->email != null || $facility->email != '')
             // {
                 // Mail::to($facility->email)->send(new VlDispatch($batch));
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-                // $mail_array = array('joelkith@gmail.com');
                 Mail::to($mail_array)->send(new VlDispatch($batch));
             // }            
         }
 
-        Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
+        // Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
         
         return redirect('/viralbatch');
     }
 
     public function get_rows($batch_list=NULL)
     {
-        $batches = Viralbatch::select('viralbatches.*', 'facilitys.email', 'facilitys.name')
+        $batches = Viralbatch::select('viralbatches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('viralbatches.id', $batch_list);
             })
@@ -692,6 +700,7 @@ class ViralbatchController extends Controller
 
         if(!$batch->sent_email){
             $batch->sent_email = true;
+            $batch->dateemailsent = date('Y-m-d');
             $batch->save();
         }
 

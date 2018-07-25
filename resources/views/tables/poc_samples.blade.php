@@ -47,7 +47,7 @@
                                         <td> {{ $sample->facility->name }} </td>
                                         <td> {{ $sample->patient }} </td>
                                         <td> {{ $sample->age }} </td>
-                                        <td> {{ $genders->where('id', $sample->gender)->first()->gender ?? '' }} </td>
+                                        <td> {{ $sample->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
@@ -60,14 +60,19 @@
                                         </td>
                                         <td> 
                                             @if($sample->datedispatched)
-                                                <a href="{{ url($pre . 'batch/summary/' . $sample->batch_id) }}" target="_blank"><i class='fa fa-print'></i> Print</a> |
-                                            @endif
-                                            <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
-                                            <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
+                                                <a href="{{ url($pre . 'batch/summary/' . $sample->batch_id) }}" target="_blank"><i class='fa fa-print'></i> Summary</a> |
 
-                                            {{ Form::open(['url' => $pre . 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
-                                                <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                            {{ Form::close() }}
+                                                <a href="{{ url($pre . 'sample/print/' . $sample->id) }}" target="_blank"><i class='fa fa-print'></i> Print</a> |
+                                            @endif
+
+                                            @if(auth()->user()->user_type_id != 7)
+                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
+
+                                                {{ Form::open(['url' => $pre . 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
+                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
+                                                {{ Form::close() }}
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

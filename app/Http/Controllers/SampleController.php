@@ -31,7 +31,16 @@ class SampleController extends Controller
         $samples = SampleView::with(['facility'])->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
-        return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
+        return view('tables.poc_samples', $data)->with('pageTitle', 'Eid POC Samples');
+    }
+
+    public function list_sms()
+    {
+        $data = Lookup::get_lookups();
+        $samples = SampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $data['samples'] = $samples;
+        $data['pre'] = '';
+        return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
     }
 
     /**
@@ -95,12 +104,12 @@ class SampleController extends Controller
             else{
                 $batch->site_entry = 1;
             }
-
-            $data = $request->only($samples_arrays['batch']);
-            $batch->fill($data);
-            $batch->save();
-            session(['batch' => $batch]);
         }
+
+        $data = $request->only($samples_arrays['batch']);
+        $batch->fill($data);
+        $batch->save();
+        session(['batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
         $last_result = $request->input('last_result');
@@ -123,7 +132,7 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age')); 
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -138,7 +147,7 @@ class SampleController extends Controller
             $mother = Mother::existing($data['facility_id'], $data['ccc_no'])->get()->first();
             if(!$mother) $mother = new Mother;
             
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -280,7 +289,7 @@ class SampleController extends Controller
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -292,7 +301,7 @@ class SampleController extends Controller
         {
             $data = $request->only($samples_arrays['mother']);
             $mother = new Mother;
-            $mother->mother_dob = Lookup::calculate_mother_dob($request->input('datecollected'), $request->input('mother_age'));
+            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
             $mother->fill($data);
 
             $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
@@ -465,6 +474,13 @@ class SampleController extends Controller
         $data['samples'] = [$sample];
 
         return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Sample');
+    }
+
+    public function send_sms(SampleView $sample)
+    {
+        Misc::send_sms($sample);
+        session(['toast_message' => 'The sms has been sent.']);
+        return back();
     }
 
     public function release_redraw(Sample $sample)

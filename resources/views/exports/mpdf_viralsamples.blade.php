@@ -136,6 +136,7 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
+
 			<tr >
 				<td colspan="1" class="style4 style1 comment"><strong>Date Received </strong></td>
 				<td colspan="1" class="comment" ><span class="style5"></span><span class="style5">{{ $sample->batch->my_date_format('datereceived') }}</span></td>
@@ -227,7 +228,7 @@ p.breakhere {page-break-before: always}
 							@if($sample->receivedstatus == 2)
 								{{ $routcome }}
 							@else
-								&nbsp;&nbsp;&nbsp;&nbsp; Viral Load{{ $routcome}} &nbsp;&nbsp;&nbsp; Log 10 
+								&nbsp;&nbsp;&nbsp;&nbsp; Viral Load {!! $routcome !!} &nbsp;&nbsp;&nbsp; Log 10 
 								<u>{{ $vlresultinlog}} </u>
 							@endif
 		 
@@ -268,13 +269,28 @@ p.breakhere {page-break-before: always}
 			@endif
 			
 			<tr >
-				<td colspan="12" class="style4 style1 comment">
+				{{--<td colspan="12" class="style4 style1 comment">
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<strong>Result Reviewed By: </strong> 
 					&nbsp;&nbsp;&nbsp;&nbsp; 
 					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+
+				</td>--}}
+
+				<td colspan="6" class="style4 style1 comment">
+					<center>
+						<strong>Result Reviewed By: </strong>
+						&nbsp;&nbsp;
+						<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
+					</center>					
+				</td>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+				</td>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
 				</td>
 			</tr>
 		</table>

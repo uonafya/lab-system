@@ -222,7 +222,7 @@
                                                 <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
                                                 | <a href="{{ url($pre . 'batch/summary/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Summary</a> 
                                                 | <a href="{{ url($pre . 'batch/individual/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Individual </a> 
-                                                | <a href="{{ url($pre . 'batch/envelope/' . $batch->id) }}"><i class='fa fa-envelope'></i> Envelope </a>
+                                                | <a href="{{ url($pre . 'batch/envelope/' . $batch->id) }}" target="_blank"><i class='fa fa-envelope'></i> Envelope </a>
                                                 | <a href="{{ url($pre . 'batch/email/' . $batch->id) }}"><i class='fa fa-envelope'></i> Email </a>
                                             </td>
                                         </tr>

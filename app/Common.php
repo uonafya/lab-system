@@ -19,7 +19,10 @@ class Common
 	public static function get_days($start, $finish)
 	{
 		if(!$start || !$finish) return null;
-		$workingdays= self::working_days($start, $finish);
+		// $workingdays= self::working_days($start, $finish);
+		$s = Carbon::parse($start);
+		$f = Carbon::parse($finish);
+		$workingdays = $s->diffInWeekdays($f);
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
@@ -116,9 +119,8 @@ class Common
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
-		// if($sample_model == "App\\Sample") echo "Success";
-		// $samples = $view_model::where(['rcategory' => 0, 'repeatt' => 0, 'receivedstatus' => 1])->where('result', '>', 0)
-		$samples = $view_model::where(['batch_complete' => 1, 'synched' => 0])
+		$samples = $view_model::where(['batch_complete' => 1])
+		->whereRaw("(synched = 0 or synched = 2)")
 		->when($batch_id, function($query) use ($batch_id){
 			return $query->where(['batch_id' => $batch_id]);
 		})
@@ -128,8 +130,8 @@ class Common
 			$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
 			$tat2 = self::get_days($sample->datereceived, $sample->datetested);
 			$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
-			// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
-			$tat4 = $tat1 + $tat2 + $tat3;
+			$tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
+			// $tat4 = $tat1 + $tat2 + $tat3;
 			$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
 
 			if($sample_model == "App\\Viralsample"){
@@ -155,7 +157,7 @@ class Common
         $offset_value = 0;
         while(true){
 
-			$samples = $view_model::where(['batch_complete' => 1, 'repeatt' => 0])
+			$samples = $view_model::where(['batch_complete' => 1])
 			->limit(5000)->offset($offset_value)
 			->get();
 			if($samples->isEmpty()) break;
@@ -164,8 +166,8 @@ class Common
 				$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
 				$tat2 = self::get_days($sample->datereceived, $sample->datetested);
 				$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
-				// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
-				$tat4 = $tat1 + $tat2 + $tat3;
+				$tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
+				// $tat4 = $tat1 + $tat2 + $tat3;
 				$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
 
 				if($sample_model == "App\\Viralsample"){
@@ -198,8 +200,8 @@ class Common
 		$tat1 = self::get_days($sample->datecollected, $sample->datereceived);
 		$tat2 = self::get_days($sample->datereceived, $sample->datetested);
 		$tat3 = self::get_days($sample->datetested, $sample->datedispatched);
-		// $tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
-		$tat4 = $tat1 + $tat2 + $tat3;
+		$tat4 = self::get_days($sample->datecollected, $sample->datedispatched);
+		// $tat4 = $tat1 + $tat2 + $tat3;
 		$data = ['tat1' => $tat1, 'tat2' => $tat2, 'tat3' => $tat3, 'tat4' => $tat4];
 
 		if($sample_model == "App\\Viralsample"){
@@ -232,9 +234,15 @@ class Common
         }
 	}
 
-	public static function input_complete_batches($batch_model)
+	public static function input_complete_batches($type)
 	{
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+		return "Batches of {$type} have been marked as input complete";
 	}
 
 }

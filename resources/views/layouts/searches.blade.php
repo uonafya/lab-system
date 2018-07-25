@@ -93,7 +93,7 @@
 					return {
 						results 	: $.map(data.data, function (row){
 							return {
-								text	: row.patient,
+								text	: row.patient + ' - ' + row.name,
 								id		: row.id		
 							};
 						}),

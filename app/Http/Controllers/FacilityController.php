@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use App\Facility;
+use App\ViewFacility;
 use App\Lookup;
 
 class FacilityController extends Controller
@@ -16,24 +17,26 @@ class FacilityController extends Controller
      */
     public function index()
     {
-        $facilities = DB::table('facilitys')
+        /*$facilities = DB::table('facilitys')
                             ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county','facilitys.ftype','facilitys.telephone','facilitys.telephone2','facilitys.email','facilitys.contactperson','facilitys.PostalAddress','facilitys.contacttelephone','facilitys.contacttelephone2','facilitys.ContactEmail','partners.name as partner','facilitys.SMS_printer_phoneNo AS smsprinterphoneno','facilitys.G4Sbranchname','facilitys.G4Slocation')
                             ->join('districts', 'districts.id', '=', 'facilitys.district')
                             ->join('countys', 'countys.id', '=', 'districts.county')
                             ->join('partners', 'partners.id', '=', 'facilitys.partner')
                             ->where('facilitys.flag', '=', 1)
-                            ->get();
+                            ->get();*/
+
+        $facilities = ViewFacility::all();
         $table = '';
         foreach ($facilities as $key => $value) {
             $table .= '<tr>';
             $table .= '<td>'.$value->facilitycode.'</td>';
-            $table .= '<td>'.$value->facility.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
             $table .= '<td>'.$value->county.'</td>';
-            $table .= '<td>'.$value->district.'</td>';
+            $table .= '<td>'.$value->subcounty.'</td>';
             $table .= '<td>'.$value->telephone.'</td>';
             $table .= '<td>'.$value->telephone2.'</td>';
             $table .= '<td>'.$value->email.'</td>';
-            $table .= '<td>'.$value->smsprinterphoneno.'</td>';
+            $table .= '<td>'.$value->sms_printer_phoneno.'</td>';
             $table .= '<td>'.$value->contactperson.'</td>';
             $table .= '<td>'.$value->contacttelephone.'</td>';
             $table .= '<td>'.$value->contacttelephone2.'</td>';
@@ -49,14 +52,16 @@ class FacilityController extends Controller
 
     public function served()
     {
-        $facilities = DB::table('facilitys')
+        /*$facilities = DB::table('facilitys')
                             ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county','ftype','telephone','telephone2','facilitys.email','facilitys.contactperson','facilitys.PostalAddress','facilitys.contacttelephone','facilitys.contacttelephone2','facilitys.ContactEmail','partners.name as partner','facilitys.SMS_printer_phoneNo AS smsprinterphoneno','facilitys.G4Sbranchname','facilitys.G4Slocation')
                             ->join('districts', 'districts.id', '=', 'facilitys.district')
                             ->join('countys', 'countys.id', '=', 'districts.county')
                             ->join('partners', 'partners.id', '=', 'facilitys.partner')
                             ->where('facilitys.flag', '=', 1)
                             ->where('facilitys.lab', '=', Auth()->user()->lab_id)
-                            ->get();
+                            ->get();*/
+
+        $facilities = ViewFacility::whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")->get();
         $count = 0;
         $table = '';
         foreach ($facilities as $key => $value) {
@@ -64,9 +69,9 @@ class FacilityController extends Controller
             $table .= '<tr>';
             $table .= '<td>'.$count.'</td>';
             $table .= '<td>'.$value->facilitycode.'</td>';
-            $table .= '<td>'.$value->facility.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
             $table .= '<td>'.$value->county.'</td>';
-            $table .= '<td>'.$value->district.'</td>';
+            $table .= '<td>'.$value->subcounty.'</td>';
             $table .= '<td>'.$value->telephone.'</td>';
             $table .= '<td>'.$value->email.'</td>';
             $table .= '<td>'.$value->contactperson.'</td>';
@@ -123,7 +128,7 @@ class FacilityController extends Controller
     {
         $columns = parent::_columnBuilder(['Facility Code', 'Facility Name', 'Mobile No', 'Email Address', 'Contact Person', 'CP Telephone', 'CP Email']);
         
-        $facilities = DB::table('facilitys')
+        /*$facilities = DB::table('facilitys')
                             ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county', 'partners.name as partner','ftype','telephone','telephone2','facilitys.email','facilitys.contactperson','facilitys.PostalAddress','facilitys.contacttelephone','facilitys.contacttelephone2','facilitys.ContactEmail','partners.name as partner','facilitys.SMS_printer_phoneNo AS smsprinterphoneno','facilitys.serviceprovider')
                             ->join('districts', 'districts.id', '=', 'facilitys.district')
                             ->join('countys', 'countys.id', '=', 'districts.county')
@@ -131,13 +136,15 @@ class FacilityController extends Controller
                             ->where('facilitys.flag', '=', 1)
                             ->where('facilitys.lab', '=', Auth()->user()->lab_id)
                             ->whereRaw("((facilitys.email = '' and facilitys.ContactEmail ='') or (facilitys.email = '' and facilitys.ContactEmail is null) or (facilitys.email is null and facilitys.ContactEmail ='') or ((facilitys.email is null and facilitys.ContactEmail is null)))")
-                            ->get();
+                            ->get();*/
+
+        $facilities = ViewFacility::whereRaw("((email = '' and ContactEmail ='') or (email = '' and ContactEmail is null) or (email is null and ContactEmail ='') or ((email is null and ContactEmail is null)))")->get();
         // dd($facilities);
         $table = '';
         foreach ($facilities as $key => $value) {
             $table .= '<tr>';
             $table .= '<td>'.$value->facilitycode.'</td>';
-            $table .= '<td>'.$value->facility.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
             $table .= '<td>'.$value->telephone.'</td>';
             $table .= '<td>
                             <input type="hidden" name="id[]" value="'.$value->id.'">
@@ -155,21 +162,22 @@ class FacilityController extends Controller
     {
         $columns = parent::_columnBuilder(['Facility Code', 'Facility Name', 'County', 'Sub-county', 'G4S Branch Name', 'G4S Branch Location']);
         
-        $facilities = DB::table('facilitys')
+        /*$facilities = DB::table('facilitys')
                             ->select('facilitys.id','facilitys.facilitycode','facilitys.name as facility','districts.name as district', 'countys.name as county', 'facilitys.G4Sbranchname','facilitys.G4Slocation')
                             ->join('districts', 'districts.id', '=', 'facilitys.district')
                             ->join('countys', 'countys.id', '=', 'districts.county')
                             ->join('partners', 'partners.id', '=', 'facilitys.partner')
                             ->where('facilitys.flag', '=', 1)
-                            ->where('facilitys.lab', '=', Auth()->user()->lab_id)
                             ->where('G4Sbranchname', '=', '')
                             ->where('G4Slocation', '=', '')
-                            ->get();
+                            ->get();*/
+
+        $facilities = ViewFacility::where('G4Sbranchname', '')->where('G4Slocation', '')->get();
         $table = '';
         foreach ($facilities as $key => $value) {
             $table .= '<tr>';
             $table .= '<td>'.$value->facilitycode.'</td>';
-            $table .= '<td>'.$value->facility.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
             $table .= '<td>'.$value->county.'</td>';
             $table .= '<td>'.$value->district.'</td>';
             $table .= '<td>
@@ -341,7 +349,7 @@ class FacilityController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $facilities = \App\ViewFacility::select('ID as id', 'name', 'facilitycode', 'county')
+        $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->paginate(10);
         return $facilities;

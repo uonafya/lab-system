@@ -13,6 +13,12 @@ class RandomController extends Controller
 		return back();
 	}
 
+	public function refresh_dashboard()
+	{		
+		$lookup = \App\DashboardCacher::refresh_cache();
+		return back();
+	}
+
 	public function download_api()
 	{		
     	$path = public_path('Lab.postman_collection.json');
