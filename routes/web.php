@@ -263,6 +263,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
+				Route::get('reverse_upload/{worksheet}', 'WorksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'WorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'WorksheetController@save_results')->name('save_results');
 				Route::get('approve/{worksheet}', 'WorksheetController@approve_results')->name('approve_results');
@@ -287,6 +288,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
+				Route::get('reverse_upload/{worksheet}', 'ViralworksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
 				Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
