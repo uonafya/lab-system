@@ -415,10 +415,67 @@ class WorksheetController extends Controller
         return redirect("/worksheet/upload/" . $worksheet->id);
     }
 
+    public function reverse_upload(Worksheet $worksheet)
+    {
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
+        $worksheet->save();
+
+        $batches_data = ['batch_complete' => 0, 'sent_email' => 0, 'printedby' => null,  'dateemailsent' => null, 'datebatchprinted' => null, 'dateindividualresultprinted' => null, 'datedispatched' => null, ];
+        $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
+
+        // $samples = Sample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
+        $samples = Sample::where(['worksheet_id' => $worksheet->id])->get();
+
+        foreach ($samples as $key => $sample) {
+            if($sample->parentid == 0) $del_samples = Sample::where('parentid', $sample->id)->get();
+            else{
+                $run = $sample->run+1;
+                $del_samples = Sample::where(['parentid' => $sample->parentid, 'run' => $run])->get();
+            }
+            foreach ($del_samples as $del) {
+                if($del->worksheet_id && $del->result){  
+                    if($sample->parentid == 0){
+                        if($del->run == 2){
+                            $del->run = 1;
+                            $del->parentid = 0;
+                            $del->repeatt = 1;
+                            $del->pre_update();
+
+                            $sample->run = 2;
+                            $sample->parentid = $del->id;
+                        }
+                    } 
+                    else{
+                        $del->run--;
+                        $del->pre_update();
+                        $sample->run++;
+                    }
+                }
+                else{
+                    $del->pre_delete();                       
+                }
+            }
+
+            $sample->fill($samples_data);
+            $sample->pre_update();
+            $batch_ids[$key] = $sample->batch_id;
+        }
+        $batch_ids = collect($batch_ids);
+        $unique = $batch_ids->unique();
+
+        foreach ($unique as $key => $id) {
+            $batch = \App\Batch::find($id);
+            $batch->fill($batches_data);
+            $batches->pre_update();
+        }
+
+    }
+
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::where('user_type_id', '<', 5)->where('user_type_id', 0)->get();
+        $users = User::where('user_type_id', '<', 5)->where('user_type_id', '!=', 0)->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
