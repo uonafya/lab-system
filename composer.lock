@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f63739b1af679a666bb8696267a03a71",
+    "content-hash": "e8ea3def512641b88f2ef1dc3813374c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1357,16 +1357,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.6.28",
+            "version": "v5.6.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "40ba2ee0e61cb4bc3c9f1dab04908e6acf06b86f"
+                "reference": "acc6b5c54ab196d3358f60acc5f55d9ebaaccc02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/40ba2ee0e61cb4bc3c9f1dab04908e6acf06b86f",
-                "reference": "40ba2ee0e61cb4bc3c9f1dab04908e6acf06b86f",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/acc6b5c54ab196d3358f60acc5f55d9ebaaccc02",
+                "reference": "acc6b5c54ab196d3358f60acc5f55d9ebaaccc02",
                 "shasum": ""
             },
             "require": {
@@ -1492,7 +1492,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-07-17T14:15:36+00:00"
+            "time": "2018-07-26T16:01:26+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1668,16 +1668,16 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "3.2.2",
+            "version": "3.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "0b5930be73582369e10c4d4bb7a12bac927a203c"
+                "reference": "01da822b3c2982ca9f2a1234f802a3ec001527ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/0b5930be73582369e10c4d4bb7a12bac927a203c",
-                "reference": "0b5930be73582369e10c4d4bb7a12bac927a203c",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/01da822b3c2982ca9f2a1234f802a3ec001527ec",
+                "reference": "01da822b3c2982ca9f2a1234f802a3ec001527ec",
                 "shasum": ""
             },
             "require": {
@@ -1722,7 +1722,7 @@
                 "JWS",
                 "jwt"
             ],
-            "time": "2017-09-01T08:23:26+00:00"
+            "time": "2018-07-29T14:38:43+00:00"
         },
         {
             "name": "league/flysystem",
@@ -4312,16 +4312,16 @@
         },
         {
             "name": "tymon/jwt-auth",
-            "version": "dev-develop",
+            "version": "1.0.0-rc.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tymondesigns/jwt-auth.git",
-                "reference": "6e419252cc592afc2ed4cd61be6f5e303a636cc5"
+                "reference": "d5220f6a84cbb8300f6f2f0f20aa908d072b4e4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/6e419252cc592afc2ed4cd61be6f5e303a636cc5",
-                "reference": "6e419252cc592afc2ed4cd61be6f5e303a636cc5",
+                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/d5220f6a84cbb8300f6f2f0f20aa908d072b4e4b",
+                "reference": "d5220f6a84cbb8300f6f2f0f20aa908d072b4e4b",
                 "shasum": ""
             },
             "require": {
@@ -4383,7 +4383,7 @@
                 "jwt",
                 "laravel"
             ],
-            "time": "2018-06-19T20:04:27+00:00"
+            "time": "2018-02-07T20:55:14+00:00"
         },
         {
             "name": "venturecraft/revisionable",
@@ -4435,16 +4435,16 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "6ae3e2e6494bb5e58c2decadafc3de7f1453f70a"
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/6ae3e2e6494bb5e58c2decadafc3de7f1453f70a",
-                "reference": "6ae3e2e6494bb5e58c2decadafc3de7f1453f70a",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
                 "shasum": ""
             },
             "require": {
@@ -4481,7 +4481,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2018-07-01T10:25:50+00:00"
+            "time": "2018-07-29T20:33:41+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -5834,7 +5834,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": [],
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.1.3"
