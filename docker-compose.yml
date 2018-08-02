@@ -10,11 +10,11 @@ services:
          source:  myapp
          target: /var/www/lab
     working_dir: /var/www/lab
-    ports:
-      - 7000:7000
     deploy:
       restart_policy:
         condition: on-failure
+      placement:
+        constraints: [node.role == worker]
     networks:
       - webnet
 
@@ -28,6 +28,11 @@ services:
          source:  myapp
          target: /var/www/lab
     #working_dir: /var/www/lab
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
     ports:
       - 8080:80
     networks:
