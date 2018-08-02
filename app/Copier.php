@@ -304,7 +304,8 @@ class Copier
                     ->whereNotIn('dob', ['0000-00-00', ''])
                     ->whereNotNull('dob')
                     ->first();
-        return self::clean_date($row->dob);
+        $dob = $row->dob ?? null;
+        return self::clean_date($dob);
     }
 
 

@@ -9,7 +9,7 @@ use App\Misc;
 use App\Common;
 use App\Lookup;
 
-// use DOMPDF;
+
 use Mpdf\Mpdf;
 use Excel;
 
