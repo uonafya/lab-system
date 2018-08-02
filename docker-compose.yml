@@ -7,7 +7,7 @@ services:
     #  dockerfile: Dockerfile
     volumes:
       -  type: volume
-         source:  myapp
+         source:  v_app
          target: /var/www/lab
     working_dir: /var/www/lab
     ports:
@@ -25,7 +25,7 @@ services:
     #  dockerfile: web.dockerfile
     volumes:
       -  type: volume
-         source:  myapp
+         source:  v_app
          target: /var/www/lab
     #working_dir: /var/www/lab
     ports:
@@ -63,6 +63,6 @@ services:
 networks:
   webnet: 
 volumes:
-  myapp: 
-  #  driver: vsphere:latest
+  v_app: 
+    driver: vsphere:latest
   redis_data:
