@@ -11,6 +11,7 @@ RUN docker-php-ext-install calendar curl json mbstring gd mysqli xml zip
 
 
 # Set the working directory
+RUN mkdir -p /var/www/lab
 WORKDIR /var/www/lab
 
 # Copy the current directory contents into the working directory

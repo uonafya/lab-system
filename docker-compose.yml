@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   app:
-    image: mwendakith/lab:1
+    image: mwendakith/lab:1.1
     #build:
     #  context: ./
     #  dockerfile: Dockerfile
@@ -27,7 +27,7 @@ services:
       -  type: volume
          source:  myapp
          target: /var/www/lab
-    working_dir: /var/www/lab
+    #working_dir: /var/www/lab
     ports:
       - 8080:80
     networks:
