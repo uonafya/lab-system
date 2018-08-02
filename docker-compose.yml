@@ -5,11 +5,11 @@ services:
     #build:
     #  context: ./
     #  dockerfile: Dockerfile
-    working_dir: /var/www/lab
     volumes:
       -  type: volume
          source:  myapp
-         target: /var/www
+         target: /var/www/lab
+    working_dir: /var/www/lab
     ports:
       - 7000:7000
     deploy:
@@ -23,11 +23,11 @@ services:
     #build:
     #  context: ./
     #  dockerfile: web.dockerfile
-    working_dir: /var/www/lab
     volumes:
       -  type: volume
          source:  myapp
-         target: /var/www
+         target: /var/www/lab
+    working_dir: /var/www/lab
     ports:
       - 8080:80
     networks:
