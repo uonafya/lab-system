@@ -9,7 +9,7 @@ services:
     volumes:
       -  type: volume
          source:  myapp
-         target: /var/www/lab
+         target: /var/www
     ports:
       - 7000:7000
     deploy:
@@ -27,7 +27,7 @@ services:
     volumes:
       -  type: volume
          source:  myapp
-         target: /var/www/lab
+         target: /var/www
     ports:
       - 8080:80
     networks:
