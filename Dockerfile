@@ -16,6 +16,6 @@ WORKDIR /var/www/lab
 # Copy the current directory contents into the working directory
 #ADD . /var/www/lab
 
-#CMD php /var/www/lab/artisan serve --host=0.0.0.0 --port=8181
-#EXPOSE 8181
+#CMD php /var/www/lab/artisan serve --host=0.0.0.0 --port=7000
+#EXPOSE 7000
 # 172.17.0.1

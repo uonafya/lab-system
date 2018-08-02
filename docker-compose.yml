@@ -11,7 +11,7 @@ services:
          source:  myapp
          target: /var/www/lab
     ports:
-      - 8181:8181
+      - 7000:7000
     deploy:
       restart_policy:
         condition: on-failure
@@ -40,6 +40,8 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     deploy:
+      restart_policy:
+        condition: on-failure
       placement:
         constraints: [node.role == manager]
     networks:
