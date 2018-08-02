@@ -57,6 +57,8 @@ class Copier
                     $patient->mother_id = $mother->id;
                     if($patient->dob) $patient->dob = self::clean_date($patient->dob);
 
+                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
+
                     if(!$patient->dob){
                         $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
                     }
@@ -137,6 +139,8 @@ class Copier
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
                     if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob) $patient->dob = self::previous_dob(ViralsampleView::class, $value->patient, $value->facility_id);
                     
                     if(!$patient->dob){
                         $patient->dob = self::calculate_dob($value->datecollected, $value->age, 0, ViralsampleView::class, $value->patient, $value->facility_id);
@@ -293,6 +297,15 @@ class Copier
         }
     }
 
+
+    public static function previous_dob($class_name=null, $patient=null, $facility_id=null)
+    {
+        $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
+                    ->whereNotIn('dob', ['0000-00-00', ''])
+                    ->whereNotNull('dob')
+                    ->first();
+        return self::clean_date($row->dob);
+    }
 
 
     public static function clean_date($mydate)
