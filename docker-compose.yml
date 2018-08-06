@@ -40,6 +40,8 @@ services:
 
   smtp:
     image: namshi/smtp:latest
+    ports:
+      - "25:25"
     deploy:
       restart_policy:
         condition: on-failure
