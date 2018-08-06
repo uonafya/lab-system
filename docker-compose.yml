@@ -38,6 +38,16 @@ services:
     networks:
       - webnet
 
+  smtp:
+    image: namshi/smtp:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+    networks:
+      - webnet
+
   visualizer:
     image: dockersamples/visualizer:stable
     ports:
