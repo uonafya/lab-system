@@ -13,8 +13,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.role == worker]
+      #placement:
+      #  constraints: [node.role == worker]
     networks:
       - webnet
 
@@ -31,10 +31,20 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.role == worker]
+      #placement:
+      #  constraints: [node.role == worker]
     ports:
       - 8080:80
+    networks:
+      - webnet
+
+  smtp:
+    image: namshi/smtp:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+      #placement:
+      #  constraints: [node.role == worker]
     networks:
       - webnet
 
