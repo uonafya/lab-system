@@ -58,7 +58,7 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2)
+    public function create($machine_type=2, $calibration=false)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -69,6 +69,7 @@ class ViralworksheetController extends Controller
         if($machine == NULL || $machine->vl_limit == NULL) return back();
 
         $limit = $machine->vl_limit;
+        if($calibration) $limit = $machine->vl_calibration_limit;
         $year = date('Y') - 2;
 
         if($test){
@@ -121,8 +122,8 @@ class ViralworksheetController extends Controller
         if($test) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
-        if($count == $machine->vl_limit){
-            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples])->with('pageTitle', 'Add Worksheet');
+        if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)){
+            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'calibration' => $calibration])->with('pageTitle', 'Add Worksheet');
         }
 
         return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Add Worksheet');
@@ -149,6 +150,7 @@ class ViralworksheetController extends Controller
         $user = auth()->user();
 
         $limit = $machine->vl_limit;
+        if($worksheet->calibration) $limit = $machine->vl_calibration_limit;
         $year = date('Y') - 2;
 
         if($test){
@@ -200,7 +202,7 @@ class ViralworksheetController extends Controller
         if($test) $samples = $repeats->merge($samples);
 
 
-        if($samples->count() != $machine->vl_limit){
+        if($samples->count() != $machine->vl_limit || ($worksheet->calibration && $samples->count() != $machine->vl_calibration_limit)){
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created."]);
             return back();

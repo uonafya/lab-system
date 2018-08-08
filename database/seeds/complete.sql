@@ -2392,6 +2392,8 @@ CREATE TABLE `machines` (
   `output` varchar(150) DEFAULT NULL,
   `eid_limit` tinyint(4) unsigned  DEFAULT NULL,
   `vl_limit` tinyint(4) unsigned  DEFAULT NULL,
+  `eid_calibration_limit` tinyint(4) unsigned  DEFAULT NULL,
+  `vl_calibration_limit` tinyint(4) unsigned  DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2403,10 +2405,10 @@ CREATE TABLE `machines` (
 LOCK TABLES `machines` WRITE;
 /*!40000 ALTER TABLE `machines` DISABLE KEYS */;
 INSERT INTO `machines` VALUES 
-(1,'TaqMan','<strong> TaqMan </strong>',22,21),
-(2,'Abbott','<strong><div style=\'color: #0000FF;\'> Abbott </div></strong>',94,93),
-(3,'C8800','<strong> C8800 </strong>',NULL,93),
-(4,'Panther','<strong><div style=\'color: #FF00FB;\'> Panther </div></strong>',NULL,93);
+(1,'TaqMan','<strong> TaqMan </strong>',22,21,NULL,NULL),
+(2,'Abbott','<strong><div style=\'color: #0000FF;\'> Abbott </div></strong>',94,93,NULL,85),
+(3,'C8800','<strong> C8800 </strong>',NULL,93,NULL,NULL),
+(4,'Panther','<strong><div style=\'color: #FF00FB;\'> Panther </div></strong>',NULL,93,NULL,NULL);
 /*!40000 ALTER TABLE `machines` ENABLE KEYS */;
 UNLOCK TABLES;
 

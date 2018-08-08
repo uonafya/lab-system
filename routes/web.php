@@ -53,7 +53,7 @@ Route::post('facility/search/', 'FacilityController@search')->name('facility.sea
 Route::get('/synch', 'HomeController@test');
 Route::get('download_api', 'RandomController@download_api');
 
-Route::middleware(['web', 'auth'])->group(function(){
+Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('home')->name('home.')->group(function(){
 		Route::get('/', 'HomeController@index');
@@ -280,7 +280,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
-			Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
+			Route::get('create/{machine_type}/{calibration?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');

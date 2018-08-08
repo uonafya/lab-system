@@ -47,6 +47,8 @@ services:
         condition: on-failure
       #placement:
       #  constraints: [node.role == worker]
+    environment:
+      MAILNAME: 
     networks:
       - webnet
 
