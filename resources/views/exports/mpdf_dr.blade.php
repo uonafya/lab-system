@@ -53,9 +53,9 @@
 <body>
 
 <!-- Main Wrapper -->
-<div id="wrapper">
+<!-- <div id="wrapper"> -->
 
-    <div class="content">
+    <!-- <div class="content"> -->
 
         <div class="row">
             <div class="col-lg-12">
@@ -151,16 +151,14 @@
             </div>
         </div>
 
-    </div>
-
-
+    <!-- </div> -->
 
     <!-- Footer-->
     <footer class="footer">
         <center>&copy; NASCOP 2010 - {{ @Date('Y') }} | All Rights Reserved</center>
     </footer>
 
-</div>
+<!-- </div> -->
 
 <script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/jquery-ui/jquery-ui.min.js') }}"></script>
