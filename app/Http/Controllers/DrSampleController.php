@@ -135,6 +135,10 @@ class DrSampleController extends Controller
     {
         if(Auth::user()) Auth::logout();
         Auth::login($user);
+        
+        $fac = \App\Facility::find($user->facility_id);
+        session(['logged_facility' => $fac]);
+
         $sample->load(['patient.facility']);
         $data = Lookup::get_dr();
         $data['sample'] = $sample;
