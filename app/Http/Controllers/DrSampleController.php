@@ -133,6 +133,7 @@ class DrSampleController extends Controller
 
     public function facility_edit(Request $request, User $user, DrSample $sample)
     {
+        if(Auth::user()) Auth::logout();
         Auth::login($user);
         $sample->load(['patient.facility']);
         $data = Lookup::get_dr();
