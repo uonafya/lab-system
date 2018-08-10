@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\DrSample;
+use App\DrPatient;
 use App\Lookup;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DrugResistance;
+
 
 class DrSampleController extends Controller
 {
@@ -29,6 +34,13 @@ class DrSampleController extends Controller
     {
         $data = Lookup::get_dr();
         return view('forms.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');  
+    }
+
+    public function create_from_patient(DrPatient $patient)
+    {        
+        $sample = DrSample::create($patient->only(['patient_id', 'dr_reason_id']));
+        $mail_array = ['joelkith@gmail.com'];
+        Mail::to($mail_array)->send(new DrugResistance($sample));
     }
 
     /**

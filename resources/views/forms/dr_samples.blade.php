@@ -21,7 +21,6 @@
     <div class="content">
         <div>
 
-
         @if (isset($sample))
             {{ Form::open(['url' => '/dr_sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
@@ -317,8 +316,6 @@
                     $('.requirable').attr("required", "required");
                 }
             }); 
-
-
 
             $("#receivedstatus").change(function(){
                 var val = $(this).val();
