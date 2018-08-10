@@ -44,7 +44,7 @@ class DrugResistance extends Mailable
         $data = Lookup::get_dr();
 
         $path = storage_path('app/dr/sample' . $this->sample->id . '.pdf');
-        $data['sample'] = $sample;
+        $data['sample'] = $this->sample;
 
         if(file_exists($path)) unlink($path);
 
