@@ -9,7 +9,12 @@ class DrSample extends BaseModel
 
     public function patient()
     {
-        return $this->belongsTo('App\Viralpatient');
+        return $this->belongsTo('App\Viralpatient', 'patient_id');
+    }
+
+    public function worksheet()
+    {
+        return $this->belongsTo('App\DrWorksheet', 'worksheet_id');
     }
 
     public function receiver()

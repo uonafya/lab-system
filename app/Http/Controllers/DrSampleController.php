@@ -108,7 +108,7 @@ class DrSampleController extends Controller
         if($request->input('submit_type') == 'cancel') return redirect('/dr_sample');
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $data = $request->only($viralsamples_arrays['dr_sample']);
-        
+
         if((auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) && !$drSample->received_by){
             $data['received_by'] = auth()->user()->id;
         }
@@ -137,6 +137,7 @@ class DrSampleController extends Controller
         $drSample->load(['patient.facility']);
         $data = Lookup::get_dr();
         $data['sample'] = $drSample;
+        
         return view('forms.dr_samples', $data)->with('pageTitle', 'Edit Drug Resistance Sample');
     }
 }

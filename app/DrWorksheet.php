@@ -2,9 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class DrWorksheet extends Model
+class DrWorksheet extends BaseModel
 {
-    //
+    
+
+    public function sample()
+    {
+        return $this->hasMany('App\DrSample', 'worksheet_id');
+    }
+
 }
