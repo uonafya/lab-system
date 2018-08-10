@@ -65,6 +65,7 @@
                         <div class="alert alert-warning">
                             <center>
                                 Please fill the form correctly. <br />
+                                Please fill the date fields in the form "YYYY-MM-DD" <br />
                                 Fields with an asterisk(*) are mandatory.
                             </center>
                         </div>
