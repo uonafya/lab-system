@@ -119,4 +119,9 @@ class DrSampleController extends Controller
     {
         //
     }
+
+    public function facility_edit(Request $request)
+    {
+        dd($request);
+    }
 }
