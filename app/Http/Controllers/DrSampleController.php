@@ -131,13 +131,13 @@ class DrSampleController extends Controller
         //
     }
 
-    public function facility_edit(Request $request, User $user, DrSample $drSample)
+    public function facility_edit(Request $request, User $user, DrSample $sample)
     {
         Auth::login($user);
-        $drSample->load(['patient.facility']);
+        $sample->load(['patient.facility']);
         $data = Lookup::get_dr();
-        $data['sample'] = $drSample;
-        dd($data);
+        $data['sample'] = $sample;
+        // dd($request);
         return view('forms.dr_samples', $data)->with('pageTitle', 'Edit Drug Resistance Sample');
     }
 }
