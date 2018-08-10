@@ -49,11 +49,11 @@ class DrugResistance extends Mailable
         if(file_exists($path)) unlink($path);
 
         $mpdf = new Mpdf;
-        $view_data = view('exports.dr_samples', $data)->render();
+        $view_data = view('exports.mpdf_dr', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
 
         $this->attach($path);
-        return $this->view('view.name');
+        return $this->view('emails.dr');
     }
 }
