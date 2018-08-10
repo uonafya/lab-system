@@ -40,7 +40,7 @@ class DrugResistance extends Mailable
     {
         $this->sample->load(['patient.facility']);
         $user = User::where(['user_type_id' => 5, 'facility_id' => $this->sample->patient->facility->id])->first();
-        $this->form_url = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $sample->id]);
+        $this->form_url = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $this->sample->id]);
         $data = Lookup::get_dr();
 
         $path = storage_path('app/dr/sample' . $this->sample->id . '.pdf');
