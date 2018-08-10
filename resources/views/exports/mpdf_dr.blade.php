@@ -49,7 +49,8 @@
     </style>
 
 </head>
-<body class="light-skin fixed-navbar sidebar-scroll">
+<!-- <body class="light-skin fixed-navbar sidebar-scroll"> -->
+<body>
 
 <!-- Main Wrapper -->
 <div id="wrapper">
