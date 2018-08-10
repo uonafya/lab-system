@@ -43,7 +43,7 @@ class DrSampleController extends Controller
         $data = $patient->only(['patient_id', 'dr_reason_id']);
         $data['user_id'] = auth()->user()->id;
         $sample = DrSample::create($data);
-        $mail_array = ['joelkith@gmail.com'];
+        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
         Mail::to($mail_array)->send(new DrugResistance($sample));
 
         session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
@@ -135,7 +135,7 @@ class DrSampleController extends Controller
     {
         if(Auth::user()) Auth::logout();
         Auth::login($user);
-        
+
         $fac = \App\Facility::find($user->facility_id);
         session(['logged_facility' => $fac]);
 
