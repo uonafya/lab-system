@@ -137,7 +137,7 @@ class DrSampleController extends Controller
         $drSample->load(['patient.facility']);
         $data = Lookup::get_dr();
         $data['sample'] = $drSample;
-        
+        dd($data);
         return view('forms.dr_samples', $data)->with('pageTitle', 'Edit Drug Resistance Sample');
     }
 }
