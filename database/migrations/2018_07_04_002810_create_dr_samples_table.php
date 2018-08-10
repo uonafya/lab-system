@@ -35,6 +35,12 @@ class CreateDrSamplesTable extends Migration
 
             $table->tinyInteger('dr_reason_id')->unsigned()->index();
 
+            $table->integer('user_id')->unsigned()->nullable()->index();
+            $table->integer('received_by')->unsigned()->nullable();
+            
+            $table->tinyInteger('synched')->default(0)->nullable();
+            $table->date('datesynched')->nullable();
+
             $table->timestamps();
         });
     }

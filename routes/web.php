@@ -55,7 +55,6 @@ Route::get('download_api', 'RandomController@download_api');
 
 Route::middleware(['signed'])->group(function(){
 	Route::get('dr_sample/edit/{user}/{sample}', 'DrSampleController@facility_edit')->name('dr_sample.facility_edit');
-	Route::post('dr_sample/update/{user}/{sample}', 'DrSampleController@facility_update')->name('dr_sample.facility_update');
 });
 
 Route::middleware(['auth'])->group(function(){
