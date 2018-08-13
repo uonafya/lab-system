@@ -140,9 +140,13 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::resource('district', 'DistrictController');
 
+	Route::group(['middleware' => ['utype:5']], function () {
+		Route::put('dr_sample/{drSample}', 'DrSampleController@update')->name('dr_sample.update');
+	});
+
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::resource('dr', 'DrPatientController');
-		Route::resource('dr_sample', 'DrSampleController');
+		Route::resource('dr_sample', 'DrSampleController', ['except' => ['edit']]);
 		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
 		Route::get('dr_worksheet/print/{drWorksheet}', 'DrWorksheetController@print')->name('dr_worksheet.print');
 		Route::resource('dr_worksheet', 'DrWorksheetController');
