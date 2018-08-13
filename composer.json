@@ -20,10 +20,7 @@
         "venturecraft/revisionable": "^1.28",
         "milon/barcode": "^5.3",
         "predis/predis": "^1.1",
-        "niklasravnsborg/laravel-pdf": "^2.0",
-        "barryvdh/laravel-dompdf": "^0.8.2",
         "mpdf/mpdf": "^7.0",
-        "laurentbrieu/tcpdf": "^1.0",
         "fideloper/proxy": "^4.0",
         "tymon/jwt-auth": "1.0.*"
     },
