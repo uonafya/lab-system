@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        \Illuminate\Support\Facades\URL::forceScheme('https');
+        
         Mother::observe(MotherObserver::class);
 
         Batch::observe(BatchObserver::class);
