@@ -42,7 +42,7 @@ class CreateSamplesTable extends Migration
             $table->string('labcomment', 50)->nullable();
             $table->integer('parentid')->unsigned()->default(0)->nullable()->index();
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
-            $table->string('reason_for_repeat', 50)->unsigned()->nullable();
+            $table->string('reason_for_repeat', 50)->nullable();
             $table->string('interpretation', 100)->nullable();
             $table->tinyInteger('result')->unsigned()->nullable();
 
