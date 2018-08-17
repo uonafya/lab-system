@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DrWorksheet;
 use App\DrPatient;
+use App\DrSample;
 use App\DrResult;
 
 use App\Lookup;
@@ -30,15 +31,15 @@ class DrWorksheetController extends Controller
     public function create()
     {
         $data = Lookup::get_dr();
-
-        $patients = DrPatient::selectRaw("dr_patients.*")
-                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_patients.dr_reason_id')
+        $samples = DrSample::selectRaw("dr_samples.*")
+                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
                         ->orderBy('drug_resistance_reasons.rank', 'asc')
                         ->whereNull('worksheet_id')
                         ->limit(14)
                         ->get();
-        $patients->load(['patient.facility']);
-        $data['dr_patients'] = $patients;
+
+        $samples->load(['patient.facility']);
+        $data['dr_samples'] = $samples;
         return view('forms.dr_worksheets', $data);
     }
 
@@ -54,8 +55,8 @@ class DrWorksheetController extends Controller
         $dr_worksheet->lab_id = env('APP_LAB');
         $dr_worksheet->save();
 
-        $patients = DrPatient::selectRaw("dr_patients.*")
-                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_patients.dr_reason_id')
+        $samples = DrSample::selectRaw("dr_samples.*")
+                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
                         ->orderBy('drug_resistance_reasons.rank', 'asc')
                         ->whereNull('worksheet_id')
                         ->limit(14)
@@ -63,15 +64,15 @@ class DrWorksheetController extends Controller
         $data = Lookup::get_dr();
         $dr_primers = $data['dr_primers'];
 
-        foreach ($patients as $patient) {
+        foreach ($samples as $sample) {
             foreach ($dr_primers as $dr_primer) {
                 $dr_result = new DrResult;
-                $dr_result->patient_id = $patient->id;
+                $dr_result->patient_id = $sample->id;
                 $dr_result->dr_primer_id = $dr_primer->id;
                 $dr_result->save();
             }
-            $patient->worksheet_id = $dr_worksheet->id;
-            $patient->save();
+            $sample->worksheet_id = $dr_worksheet->id;
+            $sample->save();
         }
         return redirect('dr_worksheet/print/' . $dr_worksheet->id);
     }
@@ -82,14 +83,16 @@ class DrWorksheetController extends Controller
      * @param  \App\DrWorksheet  $drWorksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(DrWorksheet $drWorksheet)
+    public function show(DrWorksheet $drWorksheet, $print=false)
     {
         $data = Lookup::get_dr();
 
-        $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
-        $patient_ids = $patients->pluck(['id'])->toArray();
-        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
-        $data['dr_samples'] = $dr_samples;
+        $samples = $drWorksheet->sample;
+        $sample_ids = $samples->pluck(['id'])->toArray();
+
+        $dr_results = DrResult::whereIn('sample_id', $sample_ids)->orderBy('sample_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
+        $data['dr_results'] = $dr_results;
+        if($print) $data['print'] = true;
         return view('worksheets.dr', $data);
     }
 
@@ -103,10 +106,11 @@ class DrWorksheetController extends Controller
     {
         $data = Lookup::get_dr();
 
-        $patients = DrPatient::where('worksheet_id', $drWorksheet->id)->get();
-        $patient_ids = $patients->pluck(['id'])->toArray();
-        $dr_samples = DrResult::whereIn('patient_id', $patient_ids)->orderBy('patient_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
-        $data['dr_samples'] = $dr_samples;
+        $samples = $drWorksheet->sample;
+        $sample_ids = $samples->pluck(['id'])->toArray();
+
+        $dr_results = DrResult::whereIn('sample_id', $sample_ids)->orderBy('sample_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
+        $data['dr_results'] = $dr_results;
         $data['print'] = true;
         return view('worksheets.dr', $data);
     }
@@ -143,5 +147,25 @@ class DrWorksheetController extends Controller
     public function destroy(DrWorksheet $drWorksheet)
     {
         //
+    }
+
+    public function save_results(Request $request, DrWorksheet $worksheet)
+    {
+        $worksheet->fill($request->except(['_token', 'upload']));
+        $file = $request->upload->path();
+        $zip = new ZipArchive;
+        $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
+        mkdir($path, 0777, true);
+
+        if($zip->open($file) === TRUE){
+            $zip->extractTo($path);
+            $zip->close();
+        }
+    }
+
+    public function cancel_upload(DrWorksheet $worksheet)
+    {
+        $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
+        \App\Common::delete_folder($path);
     }
 }

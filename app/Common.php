@@ -245,4 +245,17 @@ class Common
 		return "Batches of {$type} have been marked as input complete";
 	}
 
+    public static function delete_folder($path)
+    {
+        if(!ends_with($path, '/')) $path .= '/';
+        $files = scandir($path);
+        if(!$files) rmdir($path);
+        else{
+            foreach ($files as $file) {
+                if(is_dir($path . $file)) self::delete_folder($path . $file);
+                rmdir($path . $file);                
+            }
+        }
+    }
+
 }

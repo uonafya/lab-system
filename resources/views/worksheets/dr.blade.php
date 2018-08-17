@@ -60,15 +60,15 @@ table td  {
 
 			<?php $i=0;  ?>
 
-			@foreach($dr_samples as $key => $sample)
+			@foreach($dr_results as $key => $result)
 				@if($i % 12 == 0)
 					<tr>
 				@endif
 				<td>
-					<b> {{ $sample->id }} </b> <br />
-					<b> {{ $sample->patient_id }} - {{ $dr_primers->where('id', $sample->dr_primer_id)->first()->name ?? '' }} </b> <br />
+					<b> {{ $result->id }} </b> <br />
+					<b> {{ $result->sample_id }} - {{ $dr_primers->where('id', $result->dr_primer_id)->first()->name ?? '' }} </b> <br />
 
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="20" width="50"  />
+					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($result->id, 'C39+') }}" alt="barcode" height="30" width="50"  />
 				</td>
 
 				@if($key == 77)

@@ -15,7 +15,7 @@ class CreateDrResultsTable extends Migration
     {
         Schema::create('dr_results', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('patient_id')->unsigned()->index();
+            $table->integer('sample_id')->unsigned()->index();
             $table->tinyInteger('dr_primer_id')->unsigned()->index();
             $table->string('result_file')->nullable();
             $table->string('intepreted_result')->nullable();

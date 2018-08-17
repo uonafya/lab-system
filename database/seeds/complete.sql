@@ -2618,7 +2618,6 @@ INSERT INTO `dr_primers` (`id`, `name`, `full_name`) VALUES
 
 
 DROP TABLE IF EXISTS `dr_patient_statuses`;
-
 CREATE TABLE `dr_patient_statuses` (
   `id` TINYINT UNSIGNED NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -2631,6 +2630,79 @@ INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
 (3, 'Completed Test'),
 (4, 'Insufficient sample'),
 (5, 'Failed Test');
+
+
+DROP TABLE IF EXISTS `dr_sample_types`;
+CREATE TABLE `dr_sample_types` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_sample_types` (`id`, `name`) VALUES
+(1, 'Public'),
+(2, 'Surveillance'),
+(3, 'Study');
+
+
+DROP TABLE IF EXISTS `tb_treatment_phase`;
+CREATE TABLE `tb_treatment_phase` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `tb_treatment_phase` (`id`, `name`) VALUES
+(1, 'None'),
+(2, 'Intensive'),
+(3, 'Continuation');
+
+
+DROP TABLE IF EXISTS `dr_clinical_indications`;
+CREATE TABLE `dr_clinical_indications` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_clinical_indications` (`id`, `name`) VALUES
+(1, 'New or recurrent WHO stage 3 or 4 conditions after >= 6 months of ART'),
+(2, 'New or recurrent papular pruritic eruptions (PPE) after >= 6 months of ART'),
+(3, 'Poor or decline in growth despite giving ART ofra period of >=6 months and after treating for and excluding other causes e.g. TB, malnutrition'),
+(4, 'Failure to meet neuro-development milestones after >=6 months of art'), 
+(5, 'Recurrence of infections that are severe, persistent or refractory to treatment after >=6 months of ART');
+
+
+
+DROP TABLE IF EXISTS `arv_toxicities`;
+CREATE TABLE `arv_toxicities` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `arv_toxicities` (`id`, `name`) VALUES
+(1, 'Renal'),
+(2, 'Lipid'),
+(3, 'Liver');
+
+
+
+DROP TABLE IF EXISTS `other_medications`;
+CREATE TABLE `other_medications` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `other_medications` (`id`, `name`) VALUES
+(1, 'Rifampicin based TB  drugs'),
+(2, 'Ketoconazole'),
+(3, 'Cotrimoxazole'),
+(4, 'Fluconazole'),
+(5, 'Dapsone'),
+(6, 'Multivitamin'),
+(7, 'Hormonal contraceptives');
 
 
 

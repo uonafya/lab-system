@@ -26,4 +26,37 @@ class DrSample extends BaseModel
     {
         return $this->belongsTo('App\User', 'user_id');
     }
+
+    public function result()
+    {
+        return $this->hasMany('App\DrResult', 'sample_id');
+    }
+
+
+    public function setArvToxicitiesAttribute($value)
+    {
+        $val = '[';
+        foreach ($value as $v) {
+            $val .= "'" . $v . "',";
+        }
+        $this->attributes['arv_toxicities'] = $val . ']';
+    }
+
+    public function setClinicationIdAttribute($value)
+    {
+        $val = '[';
+        foreach ($value as $v) {
+            $val .= "'" . $v . "',";
+        }
+        $this->attributes['clinication_id'] = $val . ']';
+    }
+
+    public function setOtherMedicationsAttribute($value)
+    {
+        $val = '[';
+        foreach ($value as $v) {
+            $val .= "'" . $v . "',";
+        }
+        $this->attributes['other_medications'] = $val . ']';
+    }
 }
