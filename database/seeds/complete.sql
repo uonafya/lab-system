@@ -103,8 +103,8 @@ CREATE TABLE IF NOT EXISTS `districts` (
   `SubCountyDHISCode` varchar(50) DEFAULT NULL,
   `SubCountyMFLCode` varchar(50) DEFAULT NULL,
   `SubCountyCoordinates` varchar(3070) DEFAULT NULL,
-  `county` tinyint(3) NOT NULL,
-  `province` int(14) NOT NULL,
+  `county` tinyint(3) unsigned NOT NULL,
+  `province` tinyint(3) unsigned DEFAULT NULL,
   `comment` varchar(32) DEFAULT NULL,
   `flag` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`)
