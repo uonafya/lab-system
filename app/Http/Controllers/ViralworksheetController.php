@@ -42,6 +42,8 @@ class ViralworksheetController extends Controller
             ->groupBy('viralworksheets.id')
             ->paginate();
 
+        $worksheets->setPath(url()->current());
+
         // return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
         
         // $statuses = collect($this->wstatus());
