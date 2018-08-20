@@ -71,7 +71,6 @@ class DrSampleController extends Controller
         $others = explode(',', $others);
         $drSample->other_medications = array_merge($other_medications, $others);
         $drSample->save();
-        // in_array(needle, haystack)
 
         session(['toast_message' => 'The sample has been created.']);
         return back();

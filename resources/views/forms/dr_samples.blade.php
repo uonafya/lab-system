@@ -43,7 +43,7 @@
                         </div>
                         <br />
 
-                        <input type="hidden" value=0 name="patient_id" id="patient_id">
+                        <input type="hidden" value="{{ $sample->patient_id ?? 0 }}" name="patient_id" id="patient_id">
 
    
                         <div class="form-group">
