@@ -2,9 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class DrResult extends Model
+class DrResult extends BaseModel
 {
-    //
+    public function sample()
+    {
+        return $this->belongsTo('App\DrSample', 'sample_id');
+    }
 }

@@ -46,7 +46,10 @@
                                         <td>
                                             <a href="{{ url('viralpatient/' . $dr_patient->patient->id) }}" target="_blank">
                                                 View History 
-                                            </a> 
+                                            </a>  |
+                                            <a href="{{ url('dr_sample/create/' . $dr_patient->id) }}">
+                                                Create Sample 
+                                            </a>  |
                                         </td>
                                     </tr>
                                 @endforeach

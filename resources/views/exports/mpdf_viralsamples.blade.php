@@ -48,8 +48,7 @@ p.breakhere {page-break-before: always}
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />
-					NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-					INDIVIDUAL VIRAL LOAD RESULT FORM</span></span>
+					NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</span></span>
 				</td>
 			</tr>
 			<tr>

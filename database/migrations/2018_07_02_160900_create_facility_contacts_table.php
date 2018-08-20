@@ -32,6 +32,9 @@ class CreateFacilityContactsTable extends Migration
             $table->string('G4Sphone2', 100)->nullable();
             $table->string('G4Sphone3', 100)->nullable();
             $table->string('G4Sfax', 100)->nullable();
+            
+            $table->string('sms_printer_phoneno', 100)->nullable();
+
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();
             

@@ -21,7 +21,6 @@
     <div class="content">
         <div>
 
-
         @if (isset($sample))
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else

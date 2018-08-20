@@ -108,6 +108,8 @@
                 <hr />
                 <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
+                <li><a href="{{ url('viralworksheet/create/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
+                <hr />
                 <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
                 <hr />
                 <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>

@@ -53,7 +53,11 @@ Route::post('facility/search/', 'FacilityController@search')->name('facility.sea
 Route::get('/synch', 'HomeController@test');
 Route::get('download_api', 'RandomController@download_api');
 
-Route::middleware(['web', 'auth'])->group(function(){
+Route::middleware(['signed'])->group(function(){
+	Route::get('dr_sample/edit/{user}/{sample}', 'DrSampleController@facility_edit')->name('dr_sample.facility_edit');
+});
+
+Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('home')->name('home.')->group(function(){
 		Route::get('/', 'HomeController@index');
@@ -135,10 +139,15 @@ Route::middleware(['web', 'auth'])->group(function(){
 	Route::get('downloads/{type}', 'HomeController@download')->name('downloads');
 
 	Route::resource('district', 'DistrictController');
-	
+
+	Route::group(['middleware' => ['utype:5']], function () {
+		Route::put('dr_sample/{drSample}', 'DrSampleController@update')->name('dr_sample.update');
+	});
+
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::resource('dr', 'DrPatientController');
-		Route::resource('dr_sample', 'DrSampleController');
+		Route::resource('dr_sample', 'DrSampleController', ['except' => ['edit']]);
+		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
 		Route::get('dr_worksheet/print/{drWorksheet}', 'DrWorksheetController@print')->name('dr_worksheet.print');
 		Route::resource('dr_worksheet', 'DrWorksheetController');
 	});
@@ -263,6 +272,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
+				Route::get('reverse_upload/{worksheet}', 'WorksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'WorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'WorksheetController@save_results')->name('save_results');
 				Route::get('approve/{worksheet}', 'WorksheetController@approve_results')->name('approve_results');
@@ -279,7 +289,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 		Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
-			Route::get('create/{machine_type}', 'ViralworksheetController@create')->name('create_any');		
+			Route::get('create/{machine_type}/{calibration?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
@@ -287,6 +297,7 @@ Route::middleware(['web', 'auth'])->group(function(){
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
+				Route::get('reverse_upload/{worksheet}', 'ViralworksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
 				Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
@@ -308,7 +319,5 @@ Route::middleware(['web', 'auth'])->group(function(){
 		});
 		Route::resource('worklist', 'WorklistController', ['except' => ['edit']]);
 	});
-
-
 
 });
