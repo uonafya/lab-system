@@ -40,7 +40,7 @@ class WorksheetController extends Controller
         ->orderBy('worksheets.created_at', 'desc')
         ->paginate();
 
-        $worksheets->setPath(env('APP_URL') . url()->current());
+        $worksheets->setPath(url()->current());
 
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $samples = $this->get_worksheets($worksheet_ids);
