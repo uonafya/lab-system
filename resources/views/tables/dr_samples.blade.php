@@ -52,7 +52,7 @@
                                             </a> 
                                         </td>
                                         <td>
-                                            <a href="{{ url('dr_sample/' . $sample->id . '/id') }}" target="_blank">
+                                            <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank">
                                                 Edit
                                             </a> 
                                         </td>
