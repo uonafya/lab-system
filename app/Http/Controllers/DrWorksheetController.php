@@ -187,6 +187,9 @@ class DrWorksheetController extends Controller
             $zip->extractTo($path);
             $zip->close();
         }
+
+        session(['toast_message' => 'The worksheet results has been uploaded.']);
+        return redirect('dr_worksheet');
     }
 
     public function cancel(DrWorksheet $worksheet)
@@ -204,6 +207,9 @@ class DrWorksheetController extends Controller
         $worksheet->datecancelled = date('Y-m-d');
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
+
+        session(['toast_message' => 'The worksheet has been cancelled.']);
+        return redirect('dr_worksheet');
     }
 
 
