@@ -187,8 +187,8 @@
                                             <input name="clinical_indications[]" type="checkbox" class="i-checks" required
                                                 value="{{ $clinical_indication->id }}" 
 
-                                                @if(isset($sample) && is_array($sample->clinication_indications_array) &&
-                                                in_array($clinical_indication->id, $sample->clinication_indications_array) )
+                                                @if(isset($sample) && is_array($sample->clinical_indications_array) &&
+                                                in_array($clinical_indication->id, $sample->clinical_indications_array) )
                                                     checked="checked"
                                                 @endif
                                             /> 

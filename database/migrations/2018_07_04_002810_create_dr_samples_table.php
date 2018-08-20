@@ -25,7 +25,7 @@ class CreateDrSamplesTable extends Migration
 
             $table->tinyInteger('sample_type')->unsigned()->nullable();
             // Multiple
-            $table->string('clinical_indications', 50)->nullable();
+            $table->string('clinical_indications', 50)->nullable(); 
 
 
             $table->boolean('has_opportunistic_infections')->default(0);

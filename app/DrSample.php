@@ -58,7 +58,7 @@ class DrSample extends BaseModel
 
     public function getClinicalIndicationsArrayAttribute()
     {
-        return eval("return " . $this->clinication_indications . ";");
+        return eval("return " . $this->clinical_indications . ";");
     }
 
     public function setOtherMedicationsAttribute($value)
