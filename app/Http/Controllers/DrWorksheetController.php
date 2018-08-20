@@ -6,6 +6,7 @@ use App\DrWorksheet;
 use App\DrPatient;
 use App\DrSample;
 use App\DrResult;
+use App\User;
 
 use App\Lookup;
 use Illuminate\Http\Request;
