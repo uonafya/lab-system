@@ -122,7 +122,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $worksheets->links() }} 
                 </div>
             </div>
         </div>
