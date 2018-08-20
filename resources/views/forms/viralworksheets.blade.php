@@ -42,6 +42,10 @@
 
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
+            @if($calibration)
+                <input type="hidden" value="1" name="calibration" >
+            @endif
+
             <div class="row">
                 <div class="col-lg-9 col-lg-offset-1">
                     <div class="hpanel">

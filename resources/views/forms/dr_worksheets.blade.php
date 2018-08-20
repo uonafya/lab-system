@@ -32,17 +32,17 @@
                                 </tr>
                             </thead>
                             <tbody> 
-                                @foreach($dr_patients as $key => $dr_patient)
+                                @foreach($dr_samples as $key => $dr_sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $dr_patient->patient->patient ?? '' }} </td>
-                                        <td> {{ $dr_patient->patient->facility->name ?? '' }} </td>
-                                        <td> {{ $dr_patient->id }} </td>
-                                        <td> {{ $dr_patient->datereceived }} </td>
-                                        <td> {{ $dr_patient->result }} </td>
-                                        <td> {{ $drug_resistance_reasons->where('id', $dr_patient->dr_reason_id)->first()->name ?? '' }} </td>
+                                        <td> {{ $dr_sample->patient->patient ?? '' }} </td>
+                                        <td> {{ $dr_sample->patient->facility->name ?? '' }} </td>
+                                        <td> {{ $dr_sample->id }} </td>
+                                        <td> {{ $dr_sample->datereceived }} </td>
+                                        <td> {{ $dr_sample->result }} </td>
+                                        <td> {{ $drug_resistance_reasons->where('id', $dr_sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td>
-                                            <a href="{{ url('viralpatient/' . $dr_patient->patient->id) }}" target="_blank">
+                                            <a href="{{ url('viralpatient/' . $dr_sample->patient->id) }}" target="_blank">
                                                 View History 
                                             </a> 
                                         </td>

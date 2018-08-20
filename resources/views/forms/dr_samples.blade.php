@@ -21,7 +21,6 @@
     <div class="content">
         <div>
 
-
         @if (isset($sample))
             {{ Form::open(['url' => '/dr_sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
@@ -181,62 +180,65 @@
                             </div>                            
                         </div> 
 
+                        @if(auth()->user()->user_type_id != 5)
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Received
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date Received
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                    </div>
+                                </div>                            
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Received Status
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+
+                                        <option value=""> Select One </option>
+                                        @foreach ($received_statuses as $receivedstatus)
+                                            <option value="{{ $receivedstatus->id }}"
+
+                                            @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $receivedstatus->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
                                 </div>
-                            </div>                            
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Received Status
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                    <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
-
-                                    <option value=""> Select One </option>
-                                    @foreach ($received_statuses as $receivedstatus)
-                                        <option value="{{ $receivedstatus->id }}"
-
-                                        @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $receivedstatus->name }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
                             </div>
-                        </div>
 
-                        <div class="form-group" id="rejection" >
-                            <label class="col-sm-4 control-label">Rejected Reason</label>
-                            <div class="col-sm-8">
-                                    <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+                            <div class="form-group" id="rejection" >
+                                <label class="col-sm-4 control-label">Rejected Reason</label>
+                                <div class="col-sm-8">
+                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                    <option value=""> Select One </option>
-                                    @foreach ($rejected_reasons as $rejectedreason)
-                                        <option value="{{ $rejectedreason->id }}"
+                                        <option value=""> Select One </option>
+                                        @foreach ($rejected_reasons as $rejectedreason)
+                                            <option value="{{ $rejectedreason->id }}"
 
-                                        @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
-                                            selected
-                                        @endif
+                                            @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
+                                                selected
+                                            @endif
 
-                                        > {{ $rejectedreason->name }}
-                                        </option>
-                                    @endforeach
+                                            > {{ $rejectedreason->name }}
+                                            </option>
+                                        @endforeach
 
-                                </select>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+
+                        @endif
 
                     </div>
                 </div>
@@ -318,8 +320,6 @@
                 }
             }); 
 
-
-
             $("#receivedstatus").change(function(){
                 var val = $(this).val();
                 if(val == 2){
@@ -331,7 +331,6 @@
                     $("#rejectedreason").attr("disabled", "disabled");
                 }
             });   
-
 
         });
 

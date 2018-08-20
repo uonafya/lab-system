@@ -44,7 +44,7 @@ width:1180px;
 	<div align="center">
 		<table border="0" class="data-table">
 			<tr class="odd">
-				<td colspan="3"><strong>WorkSheet Details</strong>	</td>
+				<td colspan="3"><strong>Worksheet Details</strong>	</td>
 				<td colspan="2"><strong>Extraction Reagent</strong>	</td>
 				<td colspan="3"><strong>Amplification Reagent</strong></td>
 			</tr>
@@ -167,8 +167,6 @@ width:1180px;
 						{{ $sample->id }}
 					</td>
 
-
-
 					@php $count++; @endphp
 
 					@if($count % 8 == 0)
@@ -182,6 +180,21 @@ width:1180px;
 					<td align=center > PC </td><td  align=center > NC </td>
 				@endif
 			</tr>
+
+			
+			@if($worksheet->calibration)
+				<tr>
+					<td align=center > Cal A </td>
+					<td align=center > Cal A </td>
+					<td align=center > Cal A </td>
+					<td align=center > Cal A </td>
+					<td align=center > Cal B </td>
+					<td align=center > Cal B </td>
+					<td align=center > Cal B </td>
+					<td align=center > Cal B </td>
+				</tr>
+
+			@endif
 				
 		</table>
 	</div>

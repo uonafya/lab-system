@@ -45,6 +45,11 @@ class BaseModel extends Model
         return '';
     }
 
+    public function output_array($value)
+    {
+        return eval('return ' . $this->value . ';');
+    }
+
     public function pre_update()
     {
         if($this->synched == 1 && $this->isDirty()) $this->synched = 2;
