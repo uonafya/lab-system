@@ -185,7 +185,7 @@
             }
             else if(current == 'EID'){test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             else if(current == 'Viralload'){
-                @if(auth()->user()->user_type_id == 1)
+                @if(auth()->user()->user_type_id < 2)
                     test = 'DR';text = '<strong>VIRAL LOAD</strong>';
                 @else
                     test = 'EID';text = '<strong>VIRAL LOAD</strong>';                
