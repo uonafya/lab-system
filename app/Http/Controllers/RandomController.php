@@ -28,7 +28,7 @@ class RandomController extends Controller
 
 
 	public function sysswitch($sys)
-	{		
+	{
 		if($sys == 'EID'){
 			$new = session(['testingSystem' => 'EID']);
 		}else if ($sys == 'Viralload'){
@@ -36,6 +36,7 @@ class RandomController extends Controller
 		}else if ($sys == 'DR'){
 			$new = session(['testingSystem' => 'DR']);
 		}
+		
 		echo json_encode(session('testingSystem'));
 	}
 

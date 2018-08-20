@@ -180,9 +180,9 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'DR') {if(Auth()->user()->user_type_id == 1){test = 'EID';text = '<strong>DRUG RESISTANCE</strong>';}}
+            if(current == 'DR') {test = 'EID';text = '<strong>DRUG RESISTANCE</strong>';}
             else if(current == 'EID'){test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
-            else if(current == 'Viralload'){test = 'DR';text = '<strong>VIRAL LOAD</strong>';}
+            else if(current == 'Viralload'){@if(Auth()->user()->user_type_id == 1) test = 'DR'@else test = 'EID' @endif;text = '<strong>VIRAL LOAD</strong>';}
             // else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
             $("#sysSwitch").val(test);
