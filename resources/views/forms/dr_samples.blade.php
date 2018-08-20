@@ -387,6 +387,8 @@
                             </div>
                         </div> 
 
+                        <div class="hr-line-dashed"></div>  
+
                         <!-- Other Medications -->
 
                         <div class="form-group"  >
@@ -543,6 +545,9 @@
         @slot('val_rules')
            ,
             rules: {
+                date_prev_regimen: {
+                    lessThanTwo: ["#date_current_regimen", "Date of Previous Regimen", "Date of Current Regimen"]
+                },
                 datecollected: {
                     lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                 }                               

@@ -60,7 +60,12 @@
 
                             <div class="form-group">
                                 <div class="col-sm-8 col-sm-offset-4">
-                                    <button class="btn btn-success" type="submit">Save & Print Worksheet</button>
+                                    <button class="btn btn-success" type="submit"
+                                        @if($dr_samples->count() < 14)
+                                            disabled="disabled"
+                                        @endif
+
+                                    >Save & Print Worksheet</button>
                                 </div>
                             </div>
 
