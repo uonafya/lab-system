@@ -71,7 +71,7 @@ class DrWorksheetController extends Controller
     public function store(Request $request)
     {
         $dr_worksheet = new DrWorksheet;
-        $dr_worksheet->lab_id = env('APP_LAB');
+        $dr_worksheet->fill($request->except(['_token']));
         $dr_worksheet->save();
 
         $samples = DrSample::selectRaw("dr_samples.*")

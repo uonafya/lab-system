@@ -58,6 +58,9 @@
                         {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
                     @endif
 
+                        <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
+                        <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+
                             <div class="form-group">
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <button class="btn btn-success" type="submit"

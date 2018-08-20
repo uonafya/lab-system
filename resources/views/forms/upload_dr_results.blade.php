@@ -68,7 +68,7 @@
                                 <span class="fileinput-filename"></span>
                             </div>
                             <span class="input-group-addon btn btn-default btn-file">
-                                <span class="fileinput-new">Select Excel</span>
+                                <span class="fileinput-new">Select ZIP</span>
                                 <span class="fileinput-exists">Change</span>
                                 <input id="upload" type="file" required accept=".zip" name="upload" >
                             </span>
