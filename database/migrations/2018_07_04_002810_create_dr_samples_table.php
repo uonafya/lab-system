@@ -24,7 +24,9 @@ class CreateDrSamplesTable extends Migration
 
 
             $table->tinyInteger('sample_type')->unsigned()->nullable();
-            $table->string('clinication_id', 50)->nullable();
+            // Multiple
+            $table->string('clinical_indications', 50)->nullable(); 
+
 
             $table->boolean('has_opportunistic_infections')->default(0);
             $table->string('opportunistic_infections', 100)->nullable();
@@ -33,6 +35,7 @@ class CreateDrSamplesTable extends Migration
             $table->tinyInteger('tb_treatment_phase_id')->unsigned()->nullable();
 
             $table->boolean('has_arv_toxicity')->default(0);
+            // Multiple
             $table->string('arv_toxicities', 50)->nullable();
 
             $table->string('cd4_result', 50)->nullable();
@@ -44,7 +47,8 @@ class CreateDrSamplesTable extends Migration
             $table->smallInteger('missed_visits')->unsigned()->nullable();
             $table->boolean('has_missed_pills_because_missed_visits')->default(0);
 
-            $table->string('other_medications', 50)->nullable();
+            // Multiple and mixed
+            $table->string('other_medications', 100)->nullable();
 
 
 
