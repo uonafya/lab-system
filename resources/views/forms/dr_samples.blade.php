@@ -152,6 +152,315 @@
                                 </div>
                             </div>                            
                         </div> 
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Sample Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <select class="form-control requirable" required name="clinical_indications" id="clinical_indications">
+                                    <option value=""> Select One </option>
+                                    @foreach ($dr_sample_types as $sample_type)
+                                        <option value="{{ $sample_type->id }}"
+
+                                        @if (isset($sample) && $sample->sample_type == $sample_type->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $sample_type->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Clinical Indication
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                @foreach ($clinical_indications as $clinical_indication)
+                                    <div>
+                                        <label> 
+                                            <input name="clinical_indications[]" type="checkbox" class="i-checks" required
+                                                value="{{ $clinical_indication->id }}" 
+
+                                                @if(isset($sample) && is_array($sample->clinication_indications_array) &&
+                                                in_array($clinical_indication->id, $sample->clinication_indications_array) )
+                                                    checked="checked"
+                                                @endif
+                                            /> 
+                                            {{ $clinical_indication->name }} 
+                                        </label>
+                                    </div>
+
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Opportunistic Infections -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Has Opportunistic Infections
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div>
+                                    <label> 
+                                        <input name="has_opportunistic_infections" type="radio" class="i-checks" required
+                                            value="1"
+
+                                            @if(isset($sample) && $sample->has_opportunistic_infections)
+                                                checked="checked"
+                                            @endif 
+                                        /> 
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label> 
+                                        <input name="has_opportunistic_infections" type="radio" class="i-checks" required
+                                            value="0"
+
+                                            @if(isset($sample) && !$sample->has_opportunistic_infections)
+                                                checked="checked"
+                                            @endif 
+                                        /> 
+                                        No
+                                    </label>
+                                </div>                                
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="opportunistic_infections_div" 
+                            @if(isset($sample) && $sample->has_opportunistic_infections)
+                            @else
+                                style="display: none;" 
+                            @endif
+                            >
+                            <label class="col-sm-4 control-label">Opportunistic Infections</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="opportunistic_infections" type="text" value="{{ $sample->opportunistic_infections ?? '' }}" id="opportunistic_infections">
+                            </div>
+                        </div>
+
+
+                        <!-- TB -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Has TB
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div>
+                                    <label> 
+                                        <input name="has_tb" type="radio" class="i-checks" required
+                                            value="1"
+
+                                            @if(isset($sample) && $sample->has_tb)
+                                                checked="checked"
+                                            @endif 
+                                        /> 
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label> 
+                                        <input name="has_tb" type="radio" class="i-checks" required
+                                            value="0"
+
+                                            @if(isset($sample) && !$sample->has_tb)
+                                                checked="checked"
+                                            @endif 
+                                        /> 
+                                        No
+                                    </label>
+                                </div>                                
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="has_tb_div" 
+                            @if(isset($sample) && $sample->has_tb)
+                            @else
+                                style="display: none;" 
+                            @endif
+                            >
+                            <label class="col-sm-4 control-label">TB treatment phase</label>
+                            <div class="col-sm-8">
+
+                                <select class="form-control" name="tb_treatment_phase_id" id="tb_treatment_phase_id">
+                                    <option value=""> Select One </option>
+                                    @foreach ($tb_treatment_phases as $tb_treatment_phase)
+                                        <option value="{{ $tb_treatment_phase->id }}"
+
+                                        @if (isset($sample) && $sample->tb_treatment_phase_id == $tb_treatment_phase->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $tb_treatment_phase->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                        </div>
+
+
+
+                        <!-- Arv Toxicity -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Has ARV Toxicity
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                @component('shared/true_or_false', ['obj' => $sample ?? null, 'field' => 'has_arv_toxicity'])
+
+                                @endcomponent   
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="has_arv_toxicity_div" 
+                            @if(isset($sample) && $sample->has_arv_toxicity)
+                            @else
+                                style="display: none;" 
+                            @endif
+
+                            >
+                            <label class="col-sm-4 control-label">ARV Toxicities </label>
+                            <div class="col-sm-8">
+                                @foreach ($arv_toxicities as $arv_toxicity)
+                                    <div>
+                                        <label> 
+                                            <input name="arv_toxicities[]" type="checkbox" class="i-checks" required
+                                                value="{{ $arv_toxicity->id }}" 
+
+                                                @if(isset($sample) && is_array($sample->arv_toxicities_array) &&
+                                                in_array($arv_toxicity->id, $sample->arv_toxicities_array) )
+                                                    checked="checked"
+                                                @endif
+                                            /> 
+                                            {{ $arv_toxicity->name }} 
+                                        </label>
+                                    </div>
+
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- CD4 result -->                        
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CD4 result with the last 6 Months</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="cd4_result" type="text" value="{{ $sample->cd4_result ?? '' }}" id="cd4_result">
+                            </div>
+                        </div>
+
+
+                        <!-- Missed Pills -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Has Missed Pills
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                @component('shared/true_or_false', ['obj' => $sample ?? null, 'field' => 'has_missed_pills'])
+
+                                @endcomponent   
+                            </div>
+                        </div>                        
+
+                        <div class="form-group" id="has_missed_pills_div"
+                            @if(isset($sample) && $sample->has_missed_pills)
+                            @else
+                                style="display: none;" 
+                            @endif
+
+                            >
+                            <label class="col-sm-4 control-label">No of Missed Pills</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="missed_pills" type="text" number="number" value="{{ $sample->missed_pills ?? '' }}" id="missed_pills">
+                            </div>
+                        </div>
+
+
+                        <!-- Missed Visits -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Has Missed Visits
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                @component('shared/true_or_false', ['obj' => $sample ?? null, 'field' => 'has_missed_visits'])
+
+                                @endcomponent   
+                            </div>
+                        </div>                        
+
+                        <div class="form-group" id="has_missed_visits_div"
+                            @if(isset($sample) && $sample->has_missed_visits)
+                            @else
+                                style="display: none;" 
+                            @endif
+
+                            >
+                            <label class="col-sm-4 control-label">No of Missed Visits</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="missed_visits" type="text" number="number" value="{{ $sample->missed_visits ?? '' }}" id="missed_visits">
+                            </div>
+                        </div>
+
+
+                        <!-- Missed Pills because of Missed Visits -->
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Has Missed Pills Because of Missed Visits
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                @component('shared/true_or_false', ['obj' => $sample ?? null, 'field' => 'has_missed_pills_because_missed_visits'])
+
+                                @endcomponent   
+                            </div>
+                        </div> 
+
+                        <!-- Other Medications -->
+
+                        <div class="form-group"  >
+                            <label class="col-sm-4 control-label">Other Medications </label>
+                            <div class="col-sm-8">
+                                @foreach ($other_medications as $other_medication)
+                                    <div>
+                                        <label> 
+                                            <input name="other_medications[]" type="checkbox" class="i-checks"
+                                                value="{{ $other_medication->id }}" 
+
+                                                @if(isset($sample) && is_array($sample->other_medications_array) &&
+                                                in_array($other_medication->id, $sample->other_medications_array) )
+                                                    checked="checked"
+                                                @endif
+                                            /> 
+                                            {{ $other_medication->name }} 
+                                        </label>
+                                    </div>
+
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Other Medications (Separate using commas) </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="other_medications_text" type="text" value="{{ $sample->other_medications_string ?? '' }}" id="other_medications_text">
+                            </div>
+                        </div>
                         
 
                     </div>
@@ -223,7 +532,7 @@
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
                                         <option value=""> Select One </option>
-                                        @foreach ($rejected_reasons as $rejectedreason)
+                                        @foreach ($dr_rejected_reasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
                                             @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
@@ -296,6 +605,8 @@
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+
+        @if
 
     @endcomponent
 

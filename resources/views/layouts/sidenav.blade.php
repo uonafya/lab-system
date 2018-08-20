@@ -138,7 +138,7 @@
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
                 <hr />
-                <li><a href="{{ url('dr') }}">Patient List</a></li>
+                <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
                 <hr />
                 <li><a href="{{ url('dr_worksheet/create') }}">Create Dr Worksheet</a></li>
                 <hr />
