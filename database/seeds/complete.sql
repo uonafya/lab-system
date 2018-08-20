@@ -2745,27 +2745,40 @@ INSERT INTO `dr_sample_types` (`id`, `name`) VALUES
 (3, 'Study');
 
 
-DROP TABLE IF EXISTS `tb_treatment_phase`;
-CREATE TABLE `tb_treatment_phase` (
+DROP TABLE IF EXISTS `dr_rejected_reasons`;
+CREATE TABLE `dr_rejected_reasons` (
   `id` TINYINT UNSIGNED NOT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `tb_treatment_phase` (`id`, `name`) VALUES
+INSERT INTO `dr_rejected_reasons` (`id`, `name`) VALUES
+(1, 'Insufficient sample volumes'),
+(2, 'EID sample over 3 weeks old from time collected'),
+(3, 'Haemolysed sample');
+
+
+DROP TABLE IF EXISTS `tb_treatment_phases`;
+CREATE TABLE `tb_treatment_phases` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `tb_treatment_phases` (`id`, `name`) VALUES
 (1, 'None'),
 (2, 'Intensive'),
 (3, 'Continuation');
 
 
-DROP TABLE IF EXISTS `dr_clinical_indications`;
-CREATE TABLE `dr_clinical_indications` (
+DROP TABLE IF EXISTS `clinical_indications`;
+CREATE TABLE `clinical_indications` (
   `id` TINYINT UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `dr_clinical_indications` (`id`, `name`) VALUES
+INSERT INTO `clinical_indications` (`id`, `name`) VALUES
 (1, 'New or recurrent WHO stage 3 or 4 conditions after >= 6 months of ART'),
 (2, 'New or recurrent papular pruritic eruptions (PPE) after >= 6 months of ART'),
 (3, 'Poor or decline in growth despite giving ART ofra period of >=6 months and after treating for and excluding other causes e.g. TB, malnutrition'),

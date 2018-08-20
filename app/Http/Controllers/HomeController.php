@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Cache;
 use DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -30,6 +31,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        self::cacher();
         $chart = $this->getHomeGraph();
         $week_chart = $this->getHomeGraph('week');
         $month_chart = $this->getHomeGraph('month');
@@ -39,13 +41,23 @@ class HomeController extends Controller
 
     public function getHomeGraph($period = 'day')
     {
+        $testingSystem = 'eid';
+        if (session('testingSystem') == 'Viralload') 
+            $testingSystem = 'vl';
         $chart = [];
         $count = 0;
-        $data = ['Entered Samples' => self::__getEnteredSamples($period),
-                'Received Samples' => self::__getReceivedSamples($period),
-                'Tested Samples' => self::__getTestedSamples($period),
-                'Dispatched Samples' => self::__getDispatchedSamples($period),
-                'Rejected Samples' => self::__getRejectedSamples($period),
+        $period = strtolower(trim($period));
+        $entered = $testingSystem.$period.'entered';
+        $received = $testingSystem.$period.'received';
+        $tested = $testingSystem.$period.'tested';
+        $dispatched = $testingSystem.$period.'dispatched';
+        $rejected = $testingSystem.$period.'rejected';
+        
+        $data = ['Entered Samples' => Cache::get($entered),
+                'Received Samples' => Cache::get($received),
+                'Tested Samples' => Cache::get($tested),
+                'Dispatched Samples' => Cache::get($dispatched),
+                'Rejected Samples' => Cache::get($rejected),
             ];
 
         $chart['series']['name'] = 'Samples Progress';
@@ -188,6 +200,31 @@ class HomeController extends Controller
         $pageTitle = "Rejected Samples for Dispatch [$noSamples]";
 
         return view('tables.pending', compact('samples'))->with('pageTitle', $pageTitle);
+    }
+
+    static function cacher() {
+        $periods = ['day', 'week', 'month'];
+
+        if (session('testingSystem') == 'Viralload') {
+            if(Cache::has('vldayentered'))
+                return true;
+        } else {
+            if(Cache::has('eiddayentered'))
+                return true;
+        }
+        $minutes = 10;
+
+        foreach ($periods as $periodkey => $periodvalue) {
+            $testingSystem = 'eid';
+            if (session('testingSystem') == 'Viralload') 
+                $testingSystem = 'vl';
+            Cache::put($testingSystem.$periodvalue."entered", self::__getEnteredSamples($periodvalue), $minutes);
+            Cache::put($testingSystem.$periodvalue."received", self::__getReceivedSamples($periodvalue), $minutes);
+            Cache::put($testingSystem.$periodvalue."tested", self::__getTestedSamples($periodvalue), $minutes);
+            Cache::put($testingSystem.$periodvalue."dispatched", self::__getDispatchedSamples($periodvalue), $minutes);
+            Cache::put($testingSystem.$periodvalue."rejected", self::__getRejectedSamples($periodvalue), $minutes);
+        }
+        
     }
 
     static function __getEnteredSamples($period = 'day') 

@@ -42,13 +42,23 @@ class DrSample extends BaseModel
         $this->attributes['arv_toxicities'] = $val . ']';
     }
 
-    public function setClinicationIdAttribute($value)
+    public function getArvToxicitiesArrayAttribute()
+    {
+        return eval("return " . $this->arv_toxicities . ";");
+    }
+
+    public function setClinicalIndicationsAttribute($value)
     {
         $val = '[';
         foreach ($value as $v) {
             $val .= "'" . $v . "',";
         }
-        $this->attributes['clinication_id'] = $val . ']';
+        $this->attributes['clinical_indications'] = $val . ']';
+    }
+
+    public function getClinicalIndicationsArrayAttribute()
+    {
+        return eval("return " . $this->clinical_indications . ";");
     }
 
     public function setOtherMedicationsAttribute($value)
@@ -59,4 +69,24 @@ class DrSample extends BaseModel
         }
         $this->attributes['other_medications'] = $val . ']';
     }
+
+    public function getOtherMedicationsArrayAttribute()
+    {
+        return eval("return " . $this->other_medications . ";");   
+    }
+
+    public function getOtherMedicationsStringAttribute()
+    {
+        $my_array = $this->other_medications_array;
+        $str = '';
+
+        if(is_array($my_array)){
+            foreach ($my_array as $value) {
+                if(!is_numeric($value)) $str .= trim($value) . ', ';
+            }
+        }
+
+        return $str;   
+    }
+
 }

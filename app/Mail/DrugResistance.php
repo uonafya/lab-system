@@ -14,7 +14,7 @@ use App\DrSample;
 use App\Lookup;
 use App\User;
 
-class DrugResistance extends Mailable
+class DrugResistance extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

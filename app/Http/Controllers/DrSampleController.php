@@ -65,7 +65,13 @@ class DrSampleController extends Controller
         $data['user_id'] = auth()->user()->id;
         if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) $data['received_by'] = auth()->user()->id;
         $drSample->fill($data);
+
+        $others = $request->input('other_medications_text');
+        $other_medications = $request->input('other_medications');
+        $others = explode(',', $others);
+        $drSample->other_medications = array_merge($other_medications, $others);
         $drSample->save();
+        // in_array(needle, haystack)
 
         session(['toast_message' => 'The sample has been created.']);
         return back();
@@ -114,6 +120,11 @@ class DrSampleController extends Controller
         }
 
         $drSample->fill($data);
+
+        $others = $request->input('other_medications_text');
+        $other_medications = $request->input('other_medications');
+        $others = explode(',', $others);
+        $drSample->other_medications = array_merge($other_medications, $others);
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);

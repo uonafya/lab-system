@@ -20,7 +20,6 @@ class DrWorksheetController extends Controller
     public function index()
     {
 
-
     }
 
     /**
@@ -35,6 +34,7 @@ class DrWorksheetController extends Controller
                         ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
                         ->orderBy('drug_resistance_reasons.rank', 'asc')
                         ->whereNull('worksheet_id')
+                        ->where('receivedstatus', 1)
                         ->limit(14)
                         ->get();
 
@@ -59,6 +59,7 @@ class DrWorksheetController extends Controller
                         ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
                         ->orderBy('drug_resistance_reasons.rank', 'asc')
                         ->whereNull('worksheet_id')
+                        ->where('receivedstatus', 1)
                         ->limit(14)
                         ->get();
         $data = Lookup::get_dr();

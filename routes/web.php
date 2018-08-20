@@ -146,8 +146,8 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::resource('dr', 'DrPatientController');
-		Route::resource('dr_sample', 'DrSampleController', ['except' => ['edit']]);
 		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
+		Route::resource('dr_sample', 'DrSampleController');
 		Route::get('dr_worksheet/print/{drWorksheet}', 'DrWorksheetController@print')->name('dr_worksheet.print');
 		Route::resource('dr_worksheet', 'DrWorksheetController');
 	});
