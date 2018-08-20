@@ -86,7 +86,6 @@
                 <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                 <hr />
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
-                <hr />
                 @if(env('APP_LAB') == 4)
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                     <hr />
@@ -141,6 +140,8 @@
                 <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
                 <hr />
                 <li><a href="{{ url('dr_worksheet/create') }}">Create Dr Worksheet</a></li>
+                <hr />
+                <li><a href="{{ url('dr_worksheet') }}">Dr Worksheet List</a></li>
                 <hr />
                 
             @endif

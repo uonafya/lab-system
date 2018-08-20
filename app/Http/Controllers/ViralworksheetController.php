@@ -42,6 +42,8 @@ class ViralworksheetController extends Controller
             ->groupBy('viralworksheets.id')
             ->paginate();
 
+        $worksheets->setPath(url()->current());
+
         // return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
         
         // $statuses = collect($this->wstatus());
@@ -317,7 +319,7 @@ class ViralworksheetController extends Controller
     public function cancel(Viralworksheet $worksheet)
     {
         if($worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet is not eligible cancelled.']);
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
             session(['toast_error' => 1]);
             return back();
         }
@@ -341,7 +343,7 @@ class ViralworksheetController extends Controller
         }
 
         if($worksheet->uploadedby != auth()->user()->id){
-            session(['toast_message' => 'Only the user who uploaded the results can cancel the upload.']);
+            session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();
         }
@@ -352,7 +354,7 @@ class ViralworksheetController extends Controller
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
 
-        session(['toast_message' => 'The upload has been cancelled.']);
+        session(['toast_message' => 'The upload has been reversed.']);
         return redirect("/viralworksheet/upload/" . $worksheet->id);
     }
 

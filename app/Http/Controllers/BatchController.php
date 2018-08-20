@@ -76,6 +76,8 @@ class BatchController extends Controller
             ->orderBy($date_column, 'desc')
             ->paginate();
 
+        $batches->setPath(url()->current());
+
         $batch_ids = $batches->pluck(['id'])->toArray();
 
         if($batch_ids){

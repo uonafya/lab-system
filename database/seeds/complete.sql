@@ -2726,7 +2726,7 @@ CREATE TABLE `dr_patient_statuses` (
 
 INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
 (1, 'Awaiting Test'),
-(2, 'In DR Worklist'),
+(2, 'Sample Created'),
 (3, 'Completed Test'),
 (4, 'Insufficient sample'),
 (5, 'Failed Test');
@@ -2781,7 +2781,7 @@ CREATE TABLE `clinical_indications` (
 INSERT INTO `clinical_indications` (`id`, `name`) VALUES
 (1, 'New or recurrent WHO stage 3 or 4 conditions after >= 6 months of ART'),
 (2, 'New or recurrent papular pruritic eruptions (PPE) after >= 6 months of ART'),
-(3, 'Poor or decline in growth despite giving ART ofra period of >=6 months and after treating for and excluding other causes e.g. TB, malnutrition'),
+(3, 'Poor or decline in growth despite giving ART over a period of >=6 months and after treating for and excluding other causes e.g. TB, malnutrition'),
 (4, 'Failure to meet neuro-development milestones after >=6 months of art'), 
 (5, 'Recurrence of infections that are severe, persistent or refractory to treatment after >=6 months of ART');
 

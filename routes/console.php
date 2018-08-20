@@ -131,6 +131,13 @@ Artisan::command('copy:facility-contacts', function(){
 
 
 
+Artisan::command('match:eid-patients', function(){
+    $str = \App\Synch::match_eid_patients();
+    $this->info($str);
+})->describe('Copy facility contacts from old database to new database.');
+
+
+
 Artisan::command('match:patients {type}', function($type){
     if($type == 'eid') $str = \App\Synch::match_eid_patients();
     else { $str = \App\Synch::match_vl_patients(); }    

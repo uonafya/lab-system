@@ -24,6 +24,7 @@ class DrSampleController extends Controller
     {
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::with(['patient.facility'])->paginate();
+        $data['dr_samples']->setPath(url()->current());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
     }
 
@@ -45,6 +46,9 @@ class DrSampleController extends Controller
         $sample = DrSample::create($data);
         $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
         Mail::to($mail_array)->send(new DrugResistance($sample));
+
+        $patient->status_id=2;
+        $patient->save();
 
         session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
         return back();
@@ -71,7 +75,6 @@ class DrSampleController extends Controller
         $others = explode(',', $others);
         $drSample->other_medications = array_merge($other_medications, $others);
         $drSample->save();
-        // in_array(needle, haystack)
 
         session(['toast_message' => 'The sample has been created.']);
         return back();
