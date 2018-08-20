@@ -376,7 +376,7 @@ class WorksheetController extends Controller
     public function cancel(Worksheet $worksheet)
     {
         if($worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet is not eligible cancelled.']);
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
             session(['toast_error' => 1]);
             return back();
         }
@@ -400,7 +400,7 @@ class WorksheetController extends Controller
         }
 
         if($worksheet->uploadedby != auth()->user()->id){
-            session(['toast_message' => 'Only the user who uploaded the results can cancel the upload.']);
+            session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();
         }
@@ -411,7 +411,7 @@ class WorksheetController extends Controller
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
 
-        session(['toast_message' => 'The upload has been cancelled.']);
+        session(['toast_message' => 'The upload has been reversed.']);
         return redirect("/worksheet/upload/" . $worksheet->id);
     }
 

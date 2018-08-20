@@ -7953,6 +7953,35 @@ INSERT INTO `facilitys` (`id`, `facilitycode`, `district`, `ward_id`, `name`, `l
 UPDATE facilitys set synched=1 where synched=0;
 ALTER TABLE facilitys DROP COLUMN `districtname`;
 
+DROP TABLE IF EXISTS `facility_contacts`;
+CREATE TABLE `facility_contacts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `facility_id` int(10) unsigned NOT NULL,
+  `telephone` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Facility Telephone 1',
+  `telephone2` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Facility Telephone 2',
+  `fax` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `email` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Facility email Address',
+  `PostalAddress` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Facility Contact Address',
+  `contactperson` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Facility Contact Name',
+  `contacttelephone` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Contact Person''s Telephone 1',
+  `contacttelephone2` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Contact Person''s Telephone 2',
+  `physicaladdress` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ContactEmail` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `G4Sbranchname` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `G4Slocation` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `G4Sphone1` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `G4Sphone2` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `G4Sphone3` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `G4Sfax` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `sms_printer_phoneno` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `synched` tinyint(4) DEFAULT '0',
+  `datesynched` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `facility_contacts_facility_id_index` (`facility_id`)
+) ENGINE=InnoDB;
+
 
 CREATE OR REPLACE
 VIEW view_facilitys AS

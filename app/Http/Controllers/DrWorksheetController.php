@@ -103,11 +103,11 @@ class DrWorksheetController extends Controller
      * @param  \App\DrWorksheet  $drWorksheet
      * @return \Illuminate\Http\Response
      */
-    public function print(DrWorksheet $drWorksheet)
+    public function print(DrWorksheet $worksheet)
     {
         $data = Lookup::get_dr();
 
-        $samples = $drWorksheet->sample;
+        $samples = $worksheet->sample;
         $sample_ids = $samples->pluck(['id'])->toArray();
 
         $dr_results = DrResult::whereIn('sample_id', $sample_ids)->orderBy('sample_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
@@ -150,6 +150,13 @@ class DrWorksheetController extends Controller
         //
     }
 
+    public function upload(DrWorksheet $worksheet)
+    {
+        $worksheet->load(['creator']);
+        $users = User::where('user_type_id', '<', 5)->where('user_type_id', '!=', 0)->get();
+        return view('forms.upload_dr_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'dr'])->with('pageTitle', 'Worksheet Upload');        
+    }
+
     public function save_results(Request $request, DrWorksheet $worksheet)
     {
         $worksheet->fill($request->except(['_token', 'upload']));
@@ -164,9 +171,41 @@ class DrWorksheetController extends Controller
         }
     }
 
+    public function cancel(DrWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        $samples = DrSample::where('worksheet_id', $worksheet->id)->get();
+        $samples_array = $samples->pluck('id')->toArray();
+        DrResult::whereIn('sample_id', $samples_array)->delete();
+        DrSample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'datetested' => null, ]);
+        $worksheet->dateuploaded = $worksheet->uploadedby = null;
+        $worksheet->datecancelled = date('Y-m-d');
+        $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->save();
+    }
+    
+
     public function cancel_upload(DrWorksheet $worksheet)
     {
+        if($worksheet->status_id != 2){
+            session(['toast_message' => 'The worksheet upload cannot be reversed.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
+        if($worksheet->uploadedby != auth()->user()->id){
+            session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         \App\Common::delete_folder($path);
+        session(['toast_message' => 'The worksheet upload has been reversed.']);
+        return redirect('dr_worksheet/upload/' . $worksheet->id);
     }
 }
