@@ -17,9 +17,27 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
+        $worksheets = DrWorksheet::with(['creator', 'reviewer'])->withCount(['sample'])
+            ->when($state, function ($query) use ($state){
+                return $query->where('status_id', $state);
+            })
+            ->when($date_start, function($query) use ($date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate('dr_worksheets.created_at', '>=', $date_start)
+                    ->whereDate('dr_worksheets.created_at', '<=', $date_end);
+                }
+                return $query->whereDate('dr_worksheets.created_at', $date_start);
+            })
+            ->orderBy('dr_worksheets.created_at', 'desc')
+            ->get();
 
+        $data = Lookup::worksheet_lookups();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
+        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
     /**
@@ -187,7 +205,7 @@ class DrWorksheetController extends Controller
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
     }
-    
+
 
     public function cancel_upload(DrWorksheet $worksheet)
     {

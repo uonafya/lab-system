@@ -152,6 +152,8 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::prefix('dr_worksheet')->name('dr_worksheet.')->group(function () {
 
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrWorksheetController@index')->name('list');
+
 			Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 			Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
 
