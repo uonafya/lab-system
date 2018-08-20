@@ -102,16 +102,19 @@
 				<th><b>Sex </b></th>
 				<th><b>Age (yrs) </b></th>
 				<th><b>ART Initiation Date </b></th>
+
 				<th><b>Date Collected </b></th>
 				<th><b>Date Received </b></th>
 				<th><b>Status </b></th>
 				<th><b>Sample Type </b></th>
+
 				<th><b>Current Regimen </b></th>
 				<th><b>Justification </b></th>
+
 				<th><b>Date Tested </b></th>
 				<th><b>Date Dispatched </b></th>
 				<th><b>Test Result </b></th>
-				<th><b>TAT </b></th>
+				<th><b>TAT</b></th>
 			</tr>
 			@foreach($batch->sample as $key => $sample)
 				@if($sample->receivedstatus == 2)

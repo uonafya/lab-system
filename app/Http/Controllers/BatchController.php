@@ -25,7 +25,7 @@ class BatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+    
     public function index($batch_complete=4, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $user = auth()->user();
