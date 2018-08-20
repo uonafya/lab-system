@@ -86,7 +86,7 @@ class DrWorksheetController extends Controller
         foreach ($samples as $sample) {
             foreach ($dr_primers as $dr_primer) {
                 $dr_result = new DrResult;
-                $dr_result->patient_id = $sample->id;
+                $dr_result->sample_id = $sample->id;
                 $dr_result->dr_primer_id = $dr_primer->id;
                 $dr_result->save();
             }
