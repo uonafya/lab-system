@@ -27,7 +27,6 @@
                                     <th>Lab ID</th>
                                     <th>Date Collected</th>
                                     <th>Date Received</th>
-                                    <th>Result</th>
                                     <th>Reason</th>
                                     <th>DR Worksheet</th>
                                     <th>Patient History</th>
@@ -43,7 +42,6 @@
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
-                                        <td> {{ $sample->result }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td></td>
                                         <td>
