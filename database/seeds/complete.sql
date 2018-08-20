@@ -2726,7 +2726,7 @@ CREATE TABLE `dr_patient_statuses` (
 
 INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
 (1, 'Awaiting Test'),
-(2, 'In DR Worklist'),
+(2, 'Sample Created'),
 (3, 'Completed Test'),
 (4, 'Insufficient sample'),
 (5, 'Failed Test');

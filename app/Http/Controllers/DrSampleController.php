@@ -46,6 +46,9 @@ class DrSampleController extends Controller
         $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
         Mail::to($mail_array)->send(new DrugResistance($sample));
 
+        $patient->status_id=2;
+        $patient->save();
+
         session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
         return back();
     }
