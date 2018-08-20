@@ -53,7 +53,7 @@ class DrSample extends BaseModel
         foreach ($value as $v) {
             $val .= "'" . $v . "',";
         }
-        $this->attributes['clinication_indications'] = $val . ']';
+        $this->attributes['clinical_indications'] = $val . ']';
     }
 
     public function getClinicalIndicationsArrayAttribute()
