@@ -178,16 +178,16 @@ class DrWorksheetController extends Controller
 
     public function save_results(Request $request, DrWorksheet $worksheet)
     {
-
         // php_value memory_limit 10M
         // php_value post_max_size 20M
         // php_value upload_max_filesize 10M
-    
+
         ini_set("memory_limit", "-1");
         ini_set("post_max_size", "50M");
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
-        $zip = new ZipArchive;
+        dd($file);
+        $zip = new \ZipArchive;
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         mkdir($path, 0777, true);
 

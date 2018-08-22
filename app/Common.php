@@ -252,9 +252,14 @@ class Common
         if(!$files) rmdir($path);
         else{
             foreach ($files as $file) {
+            	if($file == '.' || $file == '..') continue;
+            	$a=true;
                 if(is_dir($path . $file)) self::delete_folder($path . $file);
-                rmdir($path . $file);                
+                else{
+                	unlink($path . $file);
+                }              
             }
+            rmdir($path);
         }
     }
 
