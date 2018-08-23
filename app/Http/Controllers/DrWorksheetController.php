@@ -183,6 +183,8 @@ class DrWorksheetController extends Controller
         // php_value post_max_size 20M
         // php_value upload_max_filesize 10M
 
+        dd($request);
+
         ini_set("memory_limit", "-1");
         ini_set("post_max_size", "50M");
         $worksheet->fill($request->except(['_token', 'upload']));
@@ -193,6 +195,7 @@ class DrWorksheetController extends Controller
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         if(is_dir($path)) Common::delete_folder($path);
         mkdir($path, 0777, true);
+
 
         $p = $request->upload->store('public/results/dr/' . $worksheet->id );
 
