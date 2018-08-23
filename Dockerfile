@@ -14,6 +14,9 @@ RUN docker-php-ext-install calendar curl json mbstring gd mysqli xml zip pdo_mys
 RUN mkdir -p /var/www/lab
 WORKDIR /var/www/lab
 
+# Add custom php ini files
+ADD ./custom.ini /usr/local/etc/php/conf.d/
+
 # Copy the current directory contents into the working directory
 #ADD . /var/www/lab
 
