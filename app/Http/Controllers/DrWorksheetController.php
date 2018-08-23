@@ -183,10 +183,11 @@ class DrWorksheetController extends Controller
         // php_value post_max_size 20M
         // php_value upload_max_filesize 10M
 
-        dd($request);
-
         ini_set("memory_limit", "-1");
         ini_set("post_max_size", "50M");
+
+        dd($request);
+        
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
 
