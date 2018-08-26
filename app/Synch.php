@@ -114,6 +114,7 @@ class Synch
 
 	public static function login()
 	{
+		Cache::forget('api_token');
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'auth/login', [
