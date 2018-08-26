@@ -151,7 +151,7 @@ class Synch
 			$response = $client->request('post', 'insert/patients', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -186,7 +186,7 @@ class Synch
 			$response = $client->request('post', 'insert/viralpatients', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -231,7 +231,7 @@ class Synch
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'batches' => $batches->toJson(),
@@ -274,7 +274,7 @@ class Synch
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'worksheets' => $worksheets->toJson(),
@@ -327,7 +327,7 @@ class Synch
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer{' . self::get_token() . '}',
+						'Authorization' => 'Bearer ' . self::get_token(),
 					],
 					'json' => [
 						$key => $models->toJson(),
@@ -370,7 +370,7 @@ class Synch
 				$response = $client->request('post', $value['delete_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer{' . self::get_token() . '}',
+						'Authorization' => 'Bearer ' . self::get_token(),
 					],
 					'json' => [
 						$key => $models->toJson(),
@@ -614,7 +614,7 @@ class Synch
 		$response = $client->request('post', 'lablogs', [
 			'headers' => [
 				'Accept' => 'application/json',
-				'Authorization' => 'Bearer{' . self::get_token() . '}',
+				'Authorization' => 'Bearer ' . self::get_token(),
 			],
 			'json' => [
 				'data' => json_encode($data),
@@ -643,7 +643,7 @@ class Synch
 			$response = $client->request('post', 'synch/patients', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -697,7 +697,7 @@ class Synch
 			$response = $client->request('post', 'synch/viralpatients', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -756,7 +756,7 @@ class Synch
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer{' . self::get_token() . '}',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'batches' => $batches->toJson(),
