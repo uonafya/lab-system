@@ -31,16 +31,19 @@ $api->version('v1', function (Router $api) {
 
         $api->get('hello', 'RandomController@hello');
 
-        $api->post('eid', 'EidController@eid');        
-        $api->post('eid_complete', 'EidController@complete_result');  
+        $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
 
-        $api->post('vl', 'VlController@vl');        
-        $api->post('vl_complete', 'VlController@complete_result');        
+            $api->post('eid', 'EidController@eid');        
+            $api->post('eid_complete', 'EidController@complete_result');  
+
+            $api->post('vl', 'VlController@vl');        
+            $api->post('vl_complete', 'VlController@complete_result');        
 
 
-        $api->post('function', 'FunctionController@api');
+            $api->post('function', 'FunctionController@api');
 
-        $api->resource('facility', 'FacilityController');
+            $api->resource('facility', 'FacilityController');
+        });
     });
 
 
