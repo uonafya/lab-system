@@ -10,10 +10,8 @@ use App\DrSample;
 class MiscDr extends Common
 {
 
-	public static function create_plate($worksheet)
+	public static function get_worksheet_files($worksheet)
 	{
-		$client = new Client(['base_uri' => 'https://blablabla']);
-
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
 
 		$samples = $worksheet->sample;
@@ -44,6 +42,15 @@ class MiscDr extends Common
 			$sample_data[] = $s;
 		}
 
+		return $sample_data;
+	}
+
+	public static function create_plate($worksheet)
+	{
+		$client = new Client(['base_uri' => 'https://blablabla']);
+
+		$sample_data = self::get_worksheet_files($worksheet);
+
 		$response = $client->request('post', '', [
 			'headers' => [
 				'Accept' => 'application/json',
@@ -59,6 +66,7 @@ class MiscDr extends Common
 				'included' => $sample_data,
 			],
 		]);
+
 	}
 
 	public static function find_ab_file($path, $obj, $primer)

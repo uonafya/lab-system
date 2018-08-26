@@ -31,6 +31,7 @@ class FacilityObserver
         $response = $client->request('put', $url, [
             'headers' => [
                 'Accept' => 'application/json',
+                'Authorization' => 'Bearer{' . self::get_token() . '}',
             ],
             'form_params' => [
                 'facility' => $facility->toJson(),

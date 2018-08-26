@@ -9,7 +9,7 @@ use App\DrResult;
 use App\User;
 
 use App\Lookup;
-use App\Common;
+use App\MiscDr;
 use Illuminate\Http\Request;
 
 class DrWorksheetController extends Controller
@@ -184,7 +184,7 @@ class DrWorksheetController extends Controller
         
         $zip = new \ZipArchive;
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
-        if(is_dir($path)) Common::delete_folder($path);
+        if(is_dir($path)) MiscDr::delete_folder($path);
         mkdir($path, 0777, true);
 
 
@@ -235,7 +235,7 @@ class DrWorksheetController extends Controller
         }
 
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
-        Common::delete_folder($path);
+        MiscDr::delete_folder($path);
         session(['toast_message' => 'The worksheet upload has been reversed.']);
         return redirect('dr_worksheet/upload/' . $worksheet->id);
     }

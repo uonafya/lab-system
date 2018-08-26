@@ -3,6 +3,8 @@
 namespace App;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
+
 
 use App\Sample;
 use App\Batch;
@@ -110,6 +112,32 @@ class Synch
 		return $body->message;
 	}
 
+	public static function login()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('post', 'auth/login', [
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+			'json' => [
+				'email' => env('MASTER_USERNAME', null),
+				'password' => env('MASTER_PASSWORD', null),
+			],
+		]);
+		$body = json_decode($response->getBody());
+		Cache::put('api_token', $body->token, 60);
+	}
+
+	public static function get_token()
+	{
+		if(Cache::has('api_token')){}
+		else{
+			self::login();
+		}
+		return Cache::get('api_token');
+	}
+
 	public static function synch_eid_patients()
 	{
 		$client = new Client(['base_uri' => self::$base]);
@@ -122,6 +150,7 @@ class Synch
 			$response = $client->request('post', 'insert/patients', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -156,6 +185,7 @@ class Synch
 			$response = $client->request('post', 'insert/viralpatients', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -200,6 +230,7 @@ class Synch
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'batches' => $batches->toJson(),
@@ -242,6 +273,7 @@ class Synch
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'worksheets' => $worksheets->toJson(),
@@ -294,6 +326,7 @@ class Synch
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
+						'Authorization' => 'Bearer{' . self::get_token() . '}',
 					],
 					'json' => [
 						$key => $models->toJson(),
@@ -336,6 +369,7 @@ class Synch
 				$response = $client->request('post', $value['delete_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
+						'Authorization' => 'Bearer{' . self::get_token() . '}',
 					],
 					'json' => [
 						$key => $models->toJson(),
@@ -579,6 +613,7 @@ class Synch
 		$response = $client->request('post', 'lablogs', [
 			'headers' => [
 				'Accept' => 'application/json',
+				'Authorization' => 'Bearer{' . self::get_token() . '}',
 			],
 			'json' => [
 				'data' => json_encode($data),
@@ -607,6 +642,7 @@ class Synch
 			$response = $client->request('post', 'synch/patients', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -660,6 +696,7 @@ class Synch
 			$response = $client->request('post', 'synch/viralpatients', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'patients' => $patients->toJson(),
@@ -718,6 +755,7 @@ class Synch
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer{' . self::get_token() . '}',
 				],
 				'json' => [
 					'batches' => $batches->toJson(),
