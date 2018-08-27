@@ -148,7 +148,20 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('dr', 'DrPatientController');
 		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
 		Route::resource('dr_sample', 'DrSampleController');
-		Route::get('dr_worksheet/print/{drWorksheet}', 'DrWorksheetController@print')->name('dr_worksheet.print');
+
+
+		Route::prefix('dr_worksheet')->name('dr_worksheet.')->group(function () {
+
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrWorksheetController@index')->name('list');
+
+			Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
+
+			Route::get('print/{worksheet}', 'DrWorksheetController@print')->name('print');
+			Route::get('cancel/{worksheet}', 'DrWorksheetController@cancel')->name('cancel');
+			Route::get('cancel_upload/{worksheet}', 'DrWorksheetController@cancel_upload')->name('cancel_upload');
+
+		});
 		Route::resource('dr_worksheet', 'DrWorksheetController');
 	});
 

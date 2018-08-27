@@ -141,6 +141,8 @@
                 <hr />
                 <li><a href="{{ url('dr_worksheet/create') }}">Create Dr Worksheet</a></li>
                 <hr />
+                <li><a href="{{ url('dr_worksheet') }}">Dr Worksheet List</a></li>
+                <hr />
                 
             @endif
             <!-- <li>

@@ -33,25 +33,27 @@ class ViralbatchObserver
         }
     }
 
-    // public function updated(Viralbatch $viralbatch)
-    // {
-    //     $update_array = [
-    //         'highpriority' => $viralbatch->highpriority,
-    //         'inputcomplete' => $viralbatch->input_complete,
-    //         'batchcomplete' => $viralbatch->batch_complete,
-    //         'siteentry' => $viralbatch->site_entry,
-    //         'sentemail' => $viralbatch->sent_email,
-    //         'printedby' => $viralbatch->printedby,
-    //         'userid' => $viralbatch->user_id,
-    //         'labtestedin' => $viralbatch->lab_id,
-    //         'facility' => $viralbatch->facility_id,
-    //         'datedispatchedfromfacility' => $viralbatch->datedispatchedfromfacility,
-    //         'datereceived' => $viralbatch->datereceived,
-    //         'datebatchprinted' => $viralbatch->datebatchprinted,
-    //         'datedispatched' => $viralbatch->datedispatched,
-    //         'dateindividualresultprinted' => $viralbatch->dateindividualresultprinted,
-    //     ];
+    public function updated(Viralbatch $viralbatch)
+    {
+        if(env('DOUBLE_ENTRY')){
+            $update_array = [
+                'highpriority' => $viralbatch->highpriority,
+                'inputcomplete' => $viralbatch->input_complete,
+                'batchcomplete' => $viralbatch->batch_complete,
+                'siteentry' => $viralbatch->site_entry,
+                'sentemail' => $viralbatch->sent_email,
+                'printedby' => $viralbatch->printedby,
+                'userid' => $viralbatch->user_id,
+                'labtestedin' => $viralbatch->lab_id,
+                'facility' => $viralbatch->facility_id,
+                'datedispatchedfromfacility' => $viralbatch->datedispatchedfromfacility,
+                'datereceived' => $viralbatch->datereceived,
+                'datebatchprinted' => $viralbatch->datebatchprinted,
+                'datedispatched' => $viralbatch->datedispatched,
+                'dateindividualresultprinted' => $viralbatch->dateindividualresultprinted,
+            ];
 
-    //     App\OldModels\Viralsample::where('batchno', $viralbatch->id)->update($update_array);
-    // }
+            App\OldModels\Viralsample::where('batchno', $viralbatch->id)->update($update_array);
+        }
+    }
 }

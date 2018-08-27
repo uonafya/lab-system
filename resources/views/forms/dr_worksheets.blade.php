@@ -26,7 +26,6 @@
                                     <th>Facility</th>
                                     <th>Lab ID</th>
                                     <th>Date Received</th>
-                                    <th>Result</th>
                                     <th>Reason</th>
                                     <th>Patient History</th>
                                 </tr>
@@ -39,7 +38,6 @@
                                         <td> {{ $dr_sample->patient->facility->name ?? '' }} </td>
                                         <td> {{ $dr_sample->id }} </td>
                                         <td> {{ $dr_sample->datereceived }} </td>
-                                        <td> {{ $dr_sample->result }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $dr_sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td>
                                             <a href="{{ url('viralpatient/' . $dr_sample->patient->id) }}" target="_blank">
@@ -48,8 +46,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
-
                             </tbody>
                         </table>
                     </div>
@@ -62,9 +58,17 @@
                         {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
                     @endif
 
+                        <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
+                        <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+
                             <div class="form-group">
                                 <div class="col-sm-8 col-sm-offset-4">
-                                    <button class="btn btn-success" type="submit">Save & Print Worksheet</button>
+                                    <button class="btn btn-success" type="submit"
+                                        @if($dr_samples->count() < 14)
+                                            disabled="disabled"
+                                        @endif
+
+                                    >Save & Print Worksheet</button>
                                 </div>
                             </div>
 
