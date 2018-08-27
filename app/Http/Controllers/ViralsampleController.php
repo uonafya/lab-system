@@ -566,6 +566,8 @@ class ViralsampleController extends Controller
                 return $query->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')->whereRaw($string);
             })
             ->paginate(10);
+
+        $samples->setPath(url()->current());
         return $samples;
     }
 

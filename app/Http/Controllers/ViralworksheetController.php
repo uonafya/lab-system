@@ -792,6 +792,7 @@ class ViralworksheetController extends Controller
     {
         $search = $request->input('search');
         $worksheets = Viralworksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $worksheets->setPath(url()->current());
         return $worksheets;
     }
 

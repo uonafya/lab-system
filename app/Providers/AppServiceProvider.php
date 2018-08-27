@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
         // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
-        \Illuminate\Support\Facades\URL::forceRootUrl(url('') .  env('APP_PORT'));
+        \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_PORT'));
 
         Mother::observe(MotherObserver::class);
 
@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
 
         }
         
-        // Facility::observe(FacilityObserver::class);
+        Facility::observe(FacilityObserver::class);
     }
 
     /**

@@ -564,6 +564,8 @@ class SampleController extends Controller
                 return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
             })
             ->paginate(10);
+
+        $samples->setPath(url()->current());
         return $samples;
     }
 

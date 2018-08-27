@@ -786,6 +786,8 @@ class ViralbatchController extends Controller
                 return $query->whereRaw($string);
             })
             ->paginate(10);
+
+        $batches->setPath(url()->current());
         return $batches;
     }
 
