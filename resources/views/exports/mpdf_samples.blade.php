@@ -298,7 +298,7 @@ p.breakhere {page-break-before: always}
 		<span class="style8" > 
 
 			@if(env('APP_LAB') == 1)
-				If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab  <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  at eid-nairobi@googlegroups.com <br />
+				If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
 			@elseif(env('APP_LAB') == 3)
 				If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
 			@else
@@ -308,9 +308,7 @@ p.breakhere {page-break-before: always}
 		</span>
 
 		<br>
-		<br>
 		<img src="{{ asset('img/but_cut.gif') }}">
-		<br>
 		<br>
 
 		@if($key % 2 == 1)
