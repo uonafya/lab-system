@@ -323,12 +323,12 @@ class BatchController extends Controller
             $batch->batch_complete = 1;
             $batch->pre_update();
 
-            // if($facility->email != null || $facility->email != '')
-            // {
-                // Mail::to($facility->email)->send(new EidDispatch($batch));
+            if($facility->email != null || $facility->email != '')
+            {
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+                if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
                 Mail::to($mail_array)->send(new EidDispatch($batch));
-            // }         
+            }         
         }
 
         // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
@@ -601,13 +601,12 @@ class BatchController extends Controller
     public function email(Batch $batch)
     {
         $facility = Facility::find($batch->facility_id);
-        // if($facility->email != null || $facility->email != '')
-        // {
-            // Mail::to($facility->email)->send(new EidDispatch($batch));
+        if($facility->email != null || $facility->email != '')
+        {
             $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            // $mail_array = array('joelkith@gmail.com');
+            if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
             Mail::to($mail_array)->send(new EidDispatch($batch));
-        // }
+        }
 
         if(!$batch->sent_email){
             $batch->sent_email = true;

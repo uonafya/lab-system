@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use GuzzleHttp\Client;
 use App\Facility;
+use App\Synch;
 
 class FacilityObserver
 {
@@ -23,7 +24,7 @@ class FacilityObserver
 
     public function updated(Facility $facility)
     {
-        $base = \App\Synch::$base;
+        $base = Synch::$base;
         $client = new Client(['base_uri' => $base]);
         $today = date('Y-m-d');
         $url = 'facility/' . $facility->id;
@@ -31,6 +32,7 @@ class FacilityObserver
         $response = $client->request('put', $url, [
             'headers' => [
                 'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . Synch::get_token(),
             ],
             'form_params' => [
                 'facility' => $facility->toJson(),

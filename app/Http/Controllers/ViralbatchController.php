@@ -337,12 +337,12 @@ class ViralbatchController extends Controller
             $batch->datedispatched = date('Y-m-d');
             $batch->batch_complete = 1;
             $batch->pre_update();
-            // if($facility->email != null || $facility->email != '')
-            // {
-                // Mail::to($facility->email)->send(new VlDispatch($batch));
+            if($facility->email != null || $facility->email != '')
+            {
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+                if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
                 Mail::to($mail_array)->send(new VlDispatch($batch));
-            // }            
+            }            
         }
 
         // Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
@@ -692,13 +692,12 @@ class ViralbatchController extends Controller
     public function email(Viralbatch $batch)
     {
         $facility = Facility::find($batch->facility_id);
-        // if($facility->email != null || $facility->email != '')
-        // {
-            // Mail::to($facility->email)->send(new VlDispatch($batch));
+        if($facility->email != null || $facility->email != '')
+        {
             $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            // $mail_array = array('joelkith@gmail.com');
+            if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
             Mail::to($mail_array)->send(new VlDispatch($batch));
-        // }
+        }
 
         if(!$batch->sent_email){
             $batch->sent_email = true;

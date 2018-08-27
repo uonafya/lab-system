@@ -39,8 +39,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \Illuminate\Support\Facades\URL::forceScheme('https');
-        \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
+        if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
+        // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
+        \Illuminate\Support\Facades\URL::forceRootUrl(url('') .  env('APP_PORT'));
 
         Mother::observe(MotherObserver::class);
 
@@ -51,12 +52,15 @@ class AppServiceProvider extends ServiceProvider
         Viralpatient::observe(ViralpatientObserver::class);
 
 
+        if(env('DOUBLE_ENTRY')){
         
-        // Sample::observe(SampleObserver::class);
-        // Viralsample::observe(ViralsampleObserver::class);
-        
-        // Worksheet::observe(WorksheetObserver::class);
-        // Viralworksheet::observe(ViralworksheetObserver::class);
+            Sample::observe(SampleObserver::class);
+            Viralsample::observe(ViralsampleObserver::class);
+            
+            Worksheet::observe(WorksheetObserver::class);
+            Viralworksheet::observe(ViralworksheetObserver::class);
+
+        }
         
         // Facility::observe(FacilityObserver::class);
     }

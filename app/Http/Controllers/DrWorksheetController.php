@@ -9,6 +9,7 @@ use App\DrResult;
 use App\User;
 
 use App\Lookup;
+use App\MiscDr;
 use Illuminate\Http\Request;
 
 class DrWorksheetController extends Controller
@@ -178,18 +179,16 @@ class DrWorksheetController extends Controller
 
     public function save_results(Request $request, DrWorksheet $worksheet)
     {
-        // php_value memory_limit 10M
-        // php_value post_max_size 20M
-        // php_value upload_max_filesize 10M
-
-        ini_set("memory_limit", "-1");
-        ini_set("post_max_size", "50M");
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
-        dd($file);
+        
         $zip = new \ZipArchive;
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
+        if(is_dir($path)) MiscDr::delete_folder($path);
         mkdir($path, 0777, true);
+
+
+        $p = $request->upload->store('public/results/dr/' . $worksheet->id );
 
         if($zip->open($file) === TRUE){
             $zip->extractTo($path);
@@ -236,7 +235,7 @@ class DrWorksheetController extends Controller
         }
 
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
-        \App\Common::delete_folder($path);
+        MiscDr::delete_folder($path);
         session(['toast_message' => 'The worksheet upload has been reversed.']);
         return redirect('dr_worksheet/upload/' . $worksheet->id);
     }
