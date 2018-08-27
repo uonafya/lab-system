@@ -98,6 +98,38 @@ class Facility extends BaseModel
 		}
     }
 
+    public function getEmailStringAttribute()
+    {
+        if($this->facility_contact->email != '' && $this->facility_contact->ContactEmail != ''){
+            return $this->facility_contact->email . ' / ' . $this->facility_contact->ContactEmail;
+        }
+        else if($this->facility_contact->email != '' && $this->facility_contact->ContactEmail == ''){
+            return $this->facility_contact->email;
+        }
+        else if($this->facility_contact->email == '' && $this->facility_contact->ContactEmail != ''){
+            return $this->facility_contact->ContactEmail;
+        }
+        else{
+            return null;
+        }
+    }
+
+    public function getTelephoneStringAttribute()
+    {
+        if($this->facility_contact->telephone != '' && $this->facility_contact->contacttelephone != ''){
+            return $this->facility_contact->telephone . ' / ' . $this->facility_contact->contacttelephone;
+        }
+        else if($this->facility_contact->telephone != '' && $this->facility_contact->contacttelephone == ''){
+            return $this->facility_contact->telephone;
+        }
+        else if($this->facility_contact->telephone == '' && $this->facility_contact->contacttelephone != ''){
+            return $this->facility_contact->contacttelephone;
+        }
+        else{
+            return null;
+        }
+    }
+
     public function getEmailAttribute()
     {
         return $this->facility_contact->email ?? $this->email ?? '';

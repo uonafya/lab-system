@@ -63,7 +63,7 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			<tr>
+			{{--<tr>
 				<td colspan="3" class="style4 style1 comment">
 					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
 				</td>
@@ -81,6 +81,15 @@ p.breakhere {page-break-before: always}
 				</td>	
 				<td colspan="2" class="style4 style1 comment">
 					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
+				</td>			
+			</tr>--}}
+
+			<tr>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Contact/Facility Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
+				</td>	
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
 				</td>			
 			</tr>
 
@@ -234,7 +243,12 @@ p.breakhere {page-break-before: always}
 				  <span class="style4 style1 comment"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="7" class="comment" >
-					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }} </span>
+					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}
+						@if($sample->result == 2 && $sample->pcrtype < 4)
+							&nbsp; Initiate on ART, Collect samples for Confirmatory Testing & Baseline Viral Load
+						@endif
+
+					</span>
 				</td>
 			</tr>
 
@@ -315,13 +329,11 @@ p.breakhere {page-break-before: always}
 			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
 		</span>
 
-		<br>
-		<img src="{{ asset('img/but_cut.gif') }}">
-		<br>
-
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4-L'>
+		@else
+			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
 		@endif
 
 
