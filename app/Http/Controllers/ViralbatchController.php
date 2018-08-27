@@ -595,15 +595,6 @@ class ViralbatchController extends Controller
             $batch->pre_update();
         }
 
-        // $samples = $batch->sample;
-        // $samples->load(['patient']);
-        // $batch->load(['facility', 'lab', 'receiver', 'creator']);
-        // $data = Lookup::get_viral_lookups();
-        // $data['batch'] = $batch;
-        // $data['samples'] = $samples;
-
-        // return view('exports.viralsamples', $data)->with('pageTitle', 'Individual Batches');
-
         $data = Lookup::get_viral_lookups();
         $samples = $batch->sample;
         $samples->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);

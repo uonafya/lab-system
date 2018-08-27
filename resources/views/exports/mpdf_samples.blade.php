@@ -33,6 +33,10 @@ width:1000px;
 }
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
+.emph {
+	font-size: 16px;
+	font-weight: bold;
+}
 p.breakhere {page-break-before: always}
 </style>
 
@@ -60,6 +64,19 @@ p.breakhere {page-break-before: always}
 				<td colspan="4" class="comment style1 style4" align="right">
 					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
 				</td>
+			</tr>
+
+			<tr>
+				<td colspan="3">
+					<strong>Email:</strong> {{ $sample->batch->facility->email }}
+					<strong>Telephones:</strong> {{ $sample->batch->facility->facility_contacts }}
+				</td>
+				<td colspan="6">
+					<strong>Contact:</strong> {{ $sample->batch->facility->contactperson }}
+					<strong>Contact Telephones:</strong> {{ $sample->batch->facility->contacts }}
+					<strong>Contact Email:</strong> {{ $sample->batch->facility->contact_email }}
+				</td>
+				
 			</tr>
 
 			<tr>
@@ -167,7 +184,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment"><strong>Date Test Perfomed </strong></td>
+				<td colspan="2" class="style4 style1 comment"><strong>Date Test Performed </strong></td>
 				<td colspan="1" class="comment" >
 					<span class="style5">{{ $sample->my_date_format('datetested') }}</span>
 				</td>
@@ -205,31 +222,34 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
+			@if(env('APP_LAB') != 1)
 
-			<tr>
-				{{--<td colspan="12" class="style4 style1 comment">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Result Reviewed By: </strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp; 
-					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
-				</td>--}}
-
-				<td colspan="6" class="style4 style1 comment">
-					<center>
-						<strong>Result Reviewed By: </strong>
-						&nbsp;&nbsp;
+				<tr>
+					{{--<td colspan="12" class="style4 style1 comment">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong>Result Reviewed By: </strong> 
+						&nbsp;&nbsp;&nbsp;&nbsp; 
 						<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					</center>					
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
-				</td>
-			</tr>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+					</td>--}}
+
+					<td colspan="6" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
+						</center>					
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					</td>
+				</tr>
+
+			@endif
 
 			<?php $sample->prev_tests();  ?>
 
