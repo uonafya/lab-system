@@ -205,22 +205,20 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="evenrow style1">
+				<td colspan="2" class="style1">
 					<strong>
 						Test Result 
 					</strong>
 				</td>
-				<td colspan="5" class="evenrow"  >
-					<span class="style1">
-						<strong> 
-		                    @foreach($results as $result)
-		                        @if($sample->result == $result->id)
-		                            {{ $result->name }}
-		                        @endif
-		                    @endforeach
+				<td colspan="5" class="evenrow style1">
+					<strong> 
+	                    @foreach($results as $result)
+	                        @if($sample->result == $result->id)
+	                            {{ $result->name }}
+	                        @endif
+	                    @endforeach
 
-						</strong>
-					</span>
+					</strong>
 				</td>
 			</tr>
 
