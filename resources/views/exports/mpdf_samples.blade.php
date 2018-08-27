@@ -204,7 +204,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Test Result</strong></td>
-				<td colspan="3" class="style4 style1 comment">
+				<td colspan="2" class="style4 style1 comment">
 					<strong> 
 	                    @foreach($results as $result)
 	                        @if($sample->result == $result->id)
