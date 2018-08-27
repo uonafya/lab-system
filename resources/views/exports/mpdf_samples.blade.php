@@ -210,7 +210,7 @@ p.breakhere {page-break-before: always}
 						Test Result 
 					</strong>
 				</td>
-				<td colspan="5" class="evenrow style1">
+				<td colspan="5" class="">
 					<strong> 
 	                    @foreach($results as $result)
 	                        @if($sample->result == $result->id)
