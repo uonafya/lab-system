@@ -153,7 +153,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> PCR Type</strong></td>
-				<td colspan="1">
+				<td colspan="2">
 					<span class="style5">
                         @foreach($pcrtypes as $pcrtype)
                             @if($sample->pcrtype == $pcrtype->id)
@@ -162,7 +162,7 @@ p.breakhere {page-break-before: always}
                         @endforeach	
 					</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3" ><strong> Mother CCC #</strong></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Mother CCC #</strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5"> {{ $sample->patient->mother->ccc_no ?? '' }} </span>
 				</td>
@@ -286,8 +286,8 @@ p.breakhere {page-break-before: always}
 				@foreach($sample->previous_tests as $prev)
 
 					<tr class="evenrow">
-						<td colspan="1"> <span class="style1">Previous EID Results</span></td>
-						<td colspan="7" class="comment style5" >
+						<td colspan="3"> <span class="style1">Previous EID Results</span></td>
+						<td colspan="4" class="comment style5" >
 							<strong><small>
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 			                    @foreach($results as $result)
@@ -307,10 +307,10 @@ p.breakhere {page-break-before: always}
 
 			@else
 				<tr class="evenrow">
-					<td colspan="2">
+					<td colspan="3">
 						<span class="style1"><strong>Previous EID Results</strong></span>
 					</td>
-					<td colspan="5" class="comment" ><span class="style5 "> N/A </span></td>
+					<td colspan="4" class="comment" ><span class="style5 "> N/A </span></td>
 				</tr>
 			@endif
 
