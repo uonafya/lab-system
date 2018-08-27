@@ -2628,7 +2628,7 @@ CREATE TABLE `vlresultsguidelines` (
   `triagecode` varchar(10) DEFAULT NULL,
   `triage` varchar(10) DEFAULT NULL,
   `indication` varchar(1000) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2638,7 +2638,19 @@ CREATE TABLE `vlresultsguidelines` (
 
 LOCK TABLES `vlresultsguidelines` WRITE;
 /*!40000 ALTER TABLE `vlresultsguidelines` DISABLE KEYS */;
-INSERT INTO `vlresultsguidelines` VALUES (1,2,1,'a','< 1000','Confirm adherence & Routine follow up.'),(2,2,1,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(3,2,2,'a','< 1000','Confirm adherence & Routine follow up.'),(4,2,2,'b','> 1000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(6,2,3,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(5,2,3,'a','< 1000','Confirm adherence & Routine follow up.'),(7,1,1,'a','< 5000','Confirm adherence & Routine follow up.'),(8,1,1,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),(9,1,2,'a','< 5000','Confirm adherence & Routine follow up.'),(10,1,2,'b','> 5000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),(11,1,3,'a','< 5000','Confirm adherence & Routine follow up.'),(12,1,3,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.');
+INSERT INTO `vlresultsguidelines` VALUES 
+(1,2,1,'a','< 1000','Confirm adherence & Routine follow up.'),
+(2,2,1,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),
+(3,2,2,'a','< 1000','Confirm adherence & Routine follow up.'),
+(4,2,2,'b','> 1000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),
+(6,2,3,'b','> 1000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),
+(5,2,3,'a','< 1000','Confirm adherence & Routine follow up.'),
+(7,1,1,'a','< 5000','Confirm adherence & Routine follow up.'),
+(8,1,1,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.'),
+(9,1,2,'a','< 5000','Confirm adherence & Routine follow up.'),
+(10,1,2,'b','> 5000','If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.'),
+(11,1,3,'a','< 5000','Confirm adherence & Routine follow up.'),
+(12,1,3,'b','> 5000','Review adherence, provide adherence, Repeat Viral Load in 3 Months.');
 /*!40000 ALTER TABLE `vlresultsguidelines` ENABLE KEYS */;
 UNLOCK TABLES;
 

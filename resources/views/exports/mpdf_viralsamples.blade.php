@@ -30,7 +30,7 @@ width:1000px;
 width:1000px;
 }
  /*.style7 {font-size: medium}*/
- .style7 {font-size: 14px}
+ .style7 {font-size: 13px}
 .style10 {font-size: 16px}
 .emph {
 	font-size: 16px;
@@ -65,7 +65,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="3" class="style4 style1 comment">
-					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
+					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
 				</td>
 				<td colspan="3" class="style4 style1 comment">
 					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
@@ -76,12 +76,12 @@ p.breakhere {page-break-before: always}
 				<td colspan="2" class="style4 style1 comment">
 					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
 				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Contact Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
-				</td>
 				<td colspan="2" class="style4 style1 comment">
-					<strong>Contact Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
-				</td>				
+					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
+				</td>	
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
+				</td>			
 			</tr>
 
 			<tr>
@@ -186,6 +186,10 @@ p.breakhere {page-break-before: always}
 
 				if($sample->receivedstatus != 2){
 					$routcome = '<u>' . $sample->result . '</u> ' . $sample->units;
+					if (is_numeric($sample->result) && $sample->result > 1000){
+						$routcome = "<span class='emph'><u>" . $sample->result . '</u></span> ' . $sample->units;
+					}
+
 					$resultcomments="";
 					$vlresultinlog='N/A';
 
@@ -193,9 +197,7 @@ p.breakhere {page-break-before: always}
 						$resultcomments="<small>LDL:Lower Detectable Limit i.e. Below Detectable levels by machine( Roche DBS <400 copies/ml , Abbott DBS  <550 copies/ml )</small> ";
 					}
 
-					if (is_numeric($sample->result) ){
-						$vlresultinlog= round(log10($sample->result),1) ;
-					}
+					if (is_numeric($sample->result) ) $vlresultinlog= round(log10($sample->result), 1);
 				}
 				else{
 					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name;
@@ -245,18 +247,27 @@ p.breakhere {page-break-before: always}
 				<td colspan="1" class="evenrow">
 					<span class="style1"><strong> Test Result </strong></span>
 				</td>
-				<td colspan="6" class="evenrow">
+				<td colspan="2" class="evenrow">
 					<span class="style5">
 						<strong>
 							@if($sample->receivedstatus == 2)
 								{{ $routcome }}
 							@else
-								&nbsp;&nbsp;&nbsp;&nbsp; Viral Load {!! $routcome !!} &nbsp;&nbsp;&nbsp; Log 10 
+								&nbsp; Viral Load {!! $routcome !!} &nbsp; Log 10 
 								<u>{{ $vlresultinlog}} </u>
 							@endif
 		 
 						</strong>
 					</span>
+				</td>
+				<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+					@if($sample->worksheet)
+						@if($sample->worksheet->machine_type == 1)
+							HIV-1 DNA qualitative  assay on CAPCTM system
+						@elseif($sample->worksheet->machine_type == 2)
+							HIV-1 DNA qualitative  assay on Abbott M2000 system
+						@endif
+					@endif
 				</td>
 			</tr>
 

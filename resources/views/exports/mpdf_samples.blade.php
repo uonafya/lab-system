@@ -65,7 +65,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="3" class="style4 style1 comment">
-					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
+					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
 				</td>
 				<td colspan="3" class="style4 style1 comment">
 					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
@@ -76,12 +76,12 @@ p.breakhere {page-break-before: always}
 				<td colspan="2" class="style4 style1 comment">
 					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
 				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Contact Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
-				</td>
 				<td colspan="2" class="style4 style1 comment">
-					<strong>Contact Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
-				</td>				
+					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
+				</td>	
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
+				</td>			
 			</tr>
 
 			<tr>
@@ -219,10 +219,12 @@ p.breakhere {page-break-before: always}
 					</strong>
 				</td>
 				<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
-					@if($sample->worksheet->machine_type == 1)
-						HIV-1 DNA qualitative  assay on CAPCTM system
-					@elseif($sample->worksheet->machine_type == 2)
-						HIV-1 DNA qualitative  assay on Abbott M2000 system
+					@if($sample->worksheet)
+						@if($sample->worksheet->machine_type == 1)
+							HIV-1 DNA qualitative  assay on CAPCTM system
+						@elseif($sample->worksheet->machine_type == 2)
+							HIV-1 DNA qualitative  assay on Abbott M2000 system
+						@endif
 					@endif
 				</td>
 			</tr>
