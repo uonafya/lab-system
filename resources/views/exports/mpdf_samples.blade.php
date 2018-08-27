@@ -56,7 +56,7 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 			<tr>
-				<td colspan="5" class="comment style1 style4">
+				<td colspan="4" class="comment style1 style4">
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
@@ -149,7 +149,7 @@ p.breakhere {page-break-before: always}
 					<span class="style5">
                         @foreach($pcrtypes as $pcrtype)
                             @if($sample->pcrtype == $pcrtype->id)
-                                {{ $pcrtype->name }}
+                                {!! $pcrtype->name !!}
                             @endif
                         @endforeach	
 					</span>
@@ -204,7 +204,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Test Result</strong></td>
-				<td colspan="2" class="style4 style1 comment">
+				<td colspan="1" class="style4 style1 comment">
 					<strong> 
 	                    @foreach($results as $result)
 	                        @if($sample->result == $result->id)
@@ -213,7 +213,7 @@ p.breakhere {page-break-before: always}
 	                    @endforeach
 					</strong>
 				</td>
-				<td colspan="4" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+				<td colspan="3" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
 					@if($sample->worksheet->machine_type == 1)
 						HIV-1 DNA qualitative  assay on CAPCTM system
 					@elseif($sample->worksheet->machine_type == 2)
@@ -224,7 +224,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2">
-				  <span class="style1"><strong>Comments:</strong></span>
+				  <span class="style4 style1 comment"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="7" class="comment" >
 					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }} </span>
