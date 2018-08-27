@@ -1,7 +1,6 @@
 
 <html>
 <style type="text/css">
-<!--
 .style1 {font-family: "Courier New", Courier, monospace}
 .style4 {font-size: 12}
 .style5 {font-family: "Courier New", Courier, monospace; font-size: 12; }
@@ -10,7 +9,6 @@
 	font-size: medium;
 	font-weight: bold;
 }
--->
 </style>
 <style>
 
@@ -44,7 +42,7 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" ></strong> 
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />
@@ -58,6 +56,27 @@ p.breakhere {page-break-before: always}
 				<td colspan="4" class="comment style1 style4" align="right">
 					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
 				</td>
+			</tr>
+
+			<tr>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
+				</td>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
+				</td>				
+			</tr>
+
+			<tr>
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
+				</td>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Contact Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
+				</td>
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Contact Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
+				</td>				
 			</tr>
 
 			<tr>

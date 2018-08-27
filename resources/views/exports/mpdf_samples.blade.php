@@ -38,7 +38,7 @@ width:1000px;
 p.breakhere {page-break-before: always}
 </style>
 
-
+<!-- Naslogo dimensions height=64 width=80 -->
 <body onLoad="JavaScript:window.print();">
 
 	@foreach($samples as $key => $sample)
@@ -206,7 +206,13 @@ p.breakhere {page-break-before: always}
 					<strong> 
 	                    @foreach($results as $result)
 	                        @if($sample->result == $result->id)
-	                            {{ $result->name }}
+	                        	<span
+	                        		@if($result->id == 2)
+	                        			class="emph"
+	                        		@endif
+
+	                        	> {{ $result->name }} </span>
+	                            
 	                        @endif
 	                    @endforeach
 					</strong>
