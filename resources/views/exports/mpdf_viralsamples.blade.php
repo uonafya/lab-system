@@ -29,8 +29,13 @@ border : solid 1px black;
 width:1000px;
 width:1000px;
 }
- .style7 {font-size: medium}
+ /*.style7 {font-size: medium}*/
+ .style7 {font-size: 14px}
 .style10 {font-size: 16px}
+.emph {
+	font-size: 16px;
+	font-weight: bold;
+}
 p.breakhere {page-break-before: always}
 </style>
 
@@ -261,7 +266,7 @@ p.breakhere {page-break-before: always}
 				  <span class="style1"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="5" class="comment" >
-					<span class="style5 "><b> {{ $vlmessage }}</b> <br> {{ $sample->labcomment }} </span>
+					<span class="style5 "><b> {{ $vlmessage }}</b>  {{ $sample->labcomment }} </span>
 				</td>
 			</tr>
 
@@ -285,47 +290,36 @@ p.breakhere {page-break-before: always}
 					<td colspan="5" class="comment" ><span class="style5 "> N/A </span></td>
 				</tr>
 			@endif
+
+			@if(env('APP_LAB') != 1)
 			
-			<tr >
-				{{--<td colspan="12" class="style4 style1 comment">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Result Reviewed By: </strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp; 
-					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+				<tr >
+					<td colspan="6" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
+						</center>					
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					</td>
+				</tr>
 
-				</td>--}}
-
-				<td colspan="6" class="style4 style1 comment">
-					<center>
-						<strong>Result Reviewed By: </strong>
-						&nbsp;&nbsp;
-						<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					</center>					
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
-				</td>
-			</tr>
+			@endif
 		</table>
 
 		<span class="style8" > 
-			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }}  
-			<br> 
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			at {{ $sample->batch->lab->email }}
+			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			<br> 
 			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
 		</span>
 
 		<br>
-		<br>
 		<img src="{{ asset('img/but_cut.gif') }}">
-		<br>
 		<br>
 
 		@if($key % 2 == 1)
