@@ -85,10 +85,16 @@ p.breakhere {page-break-before: always}
 			</tr>--}}
 
 			<tr>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Contact/Facility Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
+				<td colspan="4" class="style4 style1 comment">
+					<strong>Contact Name:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
 				</td>	
-				<td colspan="3" class="style4 style1 comment">
+				<td colspan="4" class="style4 style1 comment">
+					<strong>Contact Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
+				</td>			
+			</tr>
+
+			<tr>
+				<td colspan="6" class="style4 style1 comment">
 					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
 				</td>			
 			</tr>
