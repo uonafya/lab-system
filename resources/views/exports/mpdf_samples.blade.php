@@ -30,7 +30,7 @@ width:1000px;
 width:1000px;
 }
  /*.style7 {font-size: medium}*/
- .style7 {font-size: 14px}
+ .style7 {font-size: 13px}
 .style10 {font-size: 16px}
 .emph {
 	font-size: 16px;
