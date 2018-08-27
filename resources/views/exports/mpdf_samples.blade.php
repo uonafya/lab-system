@@ -67,19 +67,19 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="4">
+				<td colspan="3">
 					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
 				</td>
-				<td colspan="5">
+				<td colspan="3">
 					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
 				</td>				
 			</tr>
 
 			<tr>
-				<td colspan="3">
+				<td colspan="1">
 					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
 				</td>
-				<td colspan="4">
+				<td colspan="3">
 					<strong>Contact Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
 				</td>
 				<td colspan="2">
