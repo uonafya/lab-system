@@ -205,8 +205,11 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="evenrow"><span class="style1"><strong>
-				Test Result </strong></span></td>
+				<td colspan="2" class="evenrow style1">
+					<strong>
+						Test Result 
+					</strong>
+				</td>
 				<td colspan="5" class="evenrow"  >
 					<span class="style1">
 						<strong> 
