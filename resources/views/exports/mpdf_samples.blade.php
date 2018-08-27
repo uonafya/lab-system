@@ -45,9 +45,7 @@ p.breakhere {page-break-before: always}
 		<table  border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
-					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" ></strong> 
-					</span>
+					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
