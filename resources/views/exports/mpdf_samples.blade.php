@@ -77,7 +77,7 @@ p.breakhere {page-break-before: always}
 				<td colspan="1" class="style4 style1 comment">
 					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
 				</td>
-				<td colspan="3" class="style4 style1 comment">
+				<td colspan="4" class="style4 style1 comment">
 					<strong>Contact Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
 				</td>
 				<td colspan="2" class="style4 style1 comment">
@@ -203,20 +203,22 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>
-						Test Result 
-					</strong>
-				</td>
-				<td colspan="5" class="style4 style1 comment">
+				<td colspan="2" class="style4 style1 comment"><strong>Test Result</strong></td>
+				<td colspan="3" class="style4 style1 comment">
 					<strong> 
 	                    @foreach($results as $result)
 	                        @if($sample->result == $result->id)
 	                            {{ $result->name }}
 	                        @endif
 	                    @endforeach
-
 					</strong>
+				</td>
+				<td colspan="4" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+					@if($sample->worksheet->machine_type == 1)
+						HIV-1 DNA qualitative  assay on CAPCTM system
+					@elseif($sample->worksheet->machine_type == 2)
+						HIV-1 DNA qualitative  assay on Abbott M2000 system
+					@endif
 				</td>
 			</tr>
 
@@ -225,7 +227,7 @@ p.breakhere {page-break-before: always}
 				  <span class="style1"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="7" class="comment" >
-					<span class="style5 ">{{ $sample->comments }} <br> {{ $sample->labcomment }} </span>
+					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }} </span>
 				</td>
 			</tr>
 
