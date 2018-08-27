@@ -1,7 +1,6 @@
 
 <html>
 <style type="text/css">
-<!--
 .style1 {font-family: "Courier New", Courier, monospace}
 .style4 {font-size: 12}
 .style5 {font-family: "Courier New", Courier, monospace; font-size: 12; }
@@ -10,7 +9,6 @@
 	font-size: medium;
 	font-weight: bold;
 }
--->
 </style>
 <style>
 
@@ -67,22 +65,22 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="3">
+				<td colspan="3" class="style4 style1 comment">
 					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
 				</td>
-				<td colspan="3">
+				<td colspan="3" class="style4 style1 comment">
 					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
 				</td>				
 			</tr>
 
 			<tr>
-				<td colspan="1">
+				<td colspan="1" class="style4 style1 comment">
 					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
 				</td>
-				<td colspan="3">
+				<td colspan="3" class="style4 style1 comment">
 					<strong>Contact Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
 				</td>
-				<td colspan="2">
+				<td colspan="2" class="style4 style1 comment">
 					<strong>Contact Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
 				</td>				
 			</tr>
@@ -205,12 +203,12 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="">
+				<td colspan="2" class="style4 style1 comment">
 					<strong>
 						Test Result 
 					</strong>
 				</td>
-				<td colspan="5" class="">
+				<td colspan="5" class="style4 style1 comment">
 					<strong> 
 	                    @foreach($results as $result)
 	                        @if($sample->result == $result->id)
