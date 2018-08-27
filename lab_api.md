@@ -1,6 +1,6 @@
 ## LAB API
 
-[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the field you need. Open this file using **POSTMAN**.
+[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**.
 
 
 All links are **POST** requests.
@@ -35,7 +35,7 @@ For the last 4 links, the following fields are common to all
 ---
 The following fields are common to complete requests 
 >- receivedstatus **required**
->- datereceived**required**  *(greater than or equal to **datecollected**)*
+>- datereceived **required**  *(greater than or equal to **datecollected**)*
 >- rejectedreason *required if received status is 2*
 >- datetested *required if received status is 1*  *(greater than or equal to **datereceived**)*
 >- result *required if received status is 1*
@@ -54,7 +54,7 @@ The following fields are common to eid requests
 > - mother_age **integer**
 > - ccc_no *(The ccc number of the mother)*
 > - mother_last_result *(The most recent vl of the mother)*
-> - pcrtype  **required**  *(**integer between 1 and 5**) *
+> - pcrtype  **required**  *(**integer between 1 and 5**)*
 > - redraw *(Fill with any non zero integer if the sample is a redraw)*
 > - enrollment_ccc_no *(ccc number of the infant if he/she is already enrolled)*
 
