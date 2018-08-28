@@ -47,7 +47,7 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />
@@ -63,40 +63,18 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			{{--<tr>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
-				</td>				
+			<tr>
+				<td colspan="9" class="style4 style1 comment">
+					<strong>Contact/Facility Telephone:</strong>
+					{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
+					{{ $sample->batch->facility->facility_contacts }}
+				</td>		
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
-				</td>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
-				</td>	
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
-				</td>			
-			</tr>--}}
-
-			<tr>
-				<td colspan="4" class="style4 style1 comment">
-					<strong>Contact Name:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
-				</td>	
-				<td colspan="4" class="style4 style1 comment">
-					<strong>Contact Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
-				</td>			
-			</tr>
-
-			<tr>
-				<td colspan="6" class="style4 style1 comment">
+				<td colspan="9" class="style4 style1 comment">
 					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
-				</td>			
+				</td>					
 			</tr>
 
 			<tr>
@@ -377,7 +355,7 @@ p.breakhere {page-break-before: always}
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4-L'>
+			<pagebreak sheet-size='A4'>
 		@else
 			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
 		@endif

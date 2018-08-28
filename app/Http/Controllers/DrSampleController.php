@@ -44,8 +44,14 @@ class DrSampleController extends Controller
         $data = $patient->only(['patient_id', 'dr_reason_id']);
         $data['user_id'] = auth()->user()->id;
         $sample = DrSample::create($data);
-        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
-        Mail::to($mail_array)->send(new DrugResistance($sample));
+        $facility = $sample->patient->facility;
+
+        if($facility->email != null || $facility->email != '')
+        {
+            $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
+            if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
+            Mail::to($mail_array)->send(new DrugResistance($sample));
+        }         
 
         $patient->status_id=2;
         $patient->save();

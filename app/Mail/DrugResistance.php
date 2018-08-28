@@ -48,7 +48,7 @@ class DrugResistance extends Mailable implements ShouldQueue
 
         if(file_exists($path)) unlink($path);
 
-        $mpdf = new Mpdf;
+        $mpdf = new Mpdf(['format' => 'A4']);
         $view_data = view('exports.mpdf_dr', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
