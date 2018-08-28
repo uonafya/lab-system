@@ -47,7 +47,7 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />
@@ -62,27 +62,6 @@ p.breakhere {page-break-before: always}
 					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
 				</td>
 			</tr>
-
-			{{--<tr>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
-				</td>				
-			</tr>
-
-			<tr>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
-				</td>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
-				</td>	
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
-				</td>			
-			</tr>--}}
 
 			<tr>
 				<td colspan="9" class="style4 style1 comment">
