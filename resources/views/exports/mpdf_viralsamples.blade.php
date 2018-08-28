@@ -198,8 +198,8 @@ p.breakhere {page-break-before: always}
 					if (is_numeric($sample->result) ) $vlresultinlog= round(log10($sample->result), 1);
 				}
 				else{
-					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name;
-					$status = $received_statuses->where('id', $sample->receivedstatus)->first()->name;
+					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '';
+					$status = $received_statuses->where('id', $sample->receivedstatus)->first()->name ?? '';
 					$routcome= "Sample ".$status . " Reason:  ".$reason;
 				}
 				$sample->prev_tests();
