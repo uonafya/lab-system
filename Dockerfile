@@ -6,8 +6,8 @@ RUN apt-get update -y && apt-get install -y openssl zip unzip curl libcurl3-dev 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install missing php packages
-#RUN apt-get update -y && apt-get install -y php7.2-zip php7.2-mbstring php7.2-common php7.2-gd php7.2-cli php7.2-mysqli php7.2-curl php7.2-json
-RUN docker-php-ext-install calendar curl json mbstring gd mysqli xml zip pdo_mysql
+#RUN apt-get update -y && apt-get install -y php7.2-zip php7.2-mbstring php7.2-common php7.2-gd php7.2-cli php7.2-mysqli php7.2-curl php7.2-json php7.2-pdo_mysql php7.2-xml 
+RUN docker-php-ext-install calendar curl json mbstring gd mysqli pdo_mysql xml zip
 
 
 # Set the working directory
