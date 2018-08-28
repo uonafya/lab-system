@@ -77,9 +77,9 @@
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
-				<td>MFL Code {{ $batch->view_facility->facilitycode ?? '' }} </td>
-				<td>Subcounty {{ $batch->view_facility->subcounty ?? '' }} </td>
-				<td>County {{ $batch->view_facility->county ?? '' }} </td>
+				<td>MFL Code: {{ $batch->view_facility->facilitycode ?? '' }} </td>
+				<td>Subcounty: {{ $batch->view_facility->subcounty ?? '' }} </td>
+				<td>County: {{ $batch->view_facility->county ?? '' }} </td>
 			</tr>
 			<tr>
 				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress ?? '' }}</td>
@@ -93,28 +93,26 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
+				<th colspan="14" style="text-align: center;"><b>SAMPLE LOG</b></td>
 			</tr>
 			<tr>
-				<td colspan="5"><b> Patient Information</b></td>
-				<td colspan="3"><b>Samples Information</b></td>
-				<td colspan="2"><b>History Information</b></td>
-				<td colspan="4"><b>Lab Information</b></td>
+				<th colspan="4"><b> Patient Information</b></td>
+				<th colspan="4"><b>Samples Information</b></td>
+				<th colspan="6"><b>Lab Information</b></td>
 			</tr>
 			<tr>
 				<th><b>No </b></th>
 				<th><b>Patient CCC No </b></th>
 				<th><b>DOB & Age (yrs) </b></th>
 				<th><b>Sex </b></th>
-				<th><b>ART Initiation Date </b></th>
+
+				<th><b>Sample Type </b></th>
+				<th><b>Current Regimen </b></th>
+				<th><b>Date Initiated on Regimen </b></th>
+				<th><b>Justification </b></th>
 
 				<th><b>Date Collected </b></th>
 				<th><b>Date Received </b></th>
-				<th><b>Sample Type </b></th>
-
-				<th><b>Current Regimen </b></th>
-				<th><b>Justification </b></th>
-
 				<th><b>Date Tested </b></th>
 				<th><b>Date Dispatched </b></th>
 				<th><b>Test Result </b></th>
@@ -133,9 +131,7 @@
 					<td>{{ $sample->patient->patient ?? '' }} </td>
 					<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
 					<td>{{ $sample->patient->gender ?? '' }} </td>
-					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
-					<td>{{ $sample->my_date_format('datecollected') }} </td>
-					<td>{{ $batch->my_date_format('datereceived') }} </td>
+
 					<td>
 	                    @foreach($sample_types as $sample_type)
 	                        @if($sample->sampletype == $sample_type->id)
@@ -150,6 +146,7 @@
 	                        @endif
 	                    @endforeach
 	                </td>
+					<td>{{ $sample->my_date_format('dateinitiatedonregimen') }} </td>
 					<td>
 	                    @foreach($justifications as $justification)
 	                        @if($sample->justification == $justification->id)
@@ -157,6 +154,9 @@
 	                        @endif
 	                    @endforeach
 	                </td>
+
+					<td>{{ $sample->my_date_format('datecollected') }} </td>
+					<td>{{ $batch->my_date_format('datereceived') }} </td>
 					<td>{{ $sample->my_date_format('datetested') }} </td>
 					<td>{{ $batch->my_date_format('datedispatched') }} </td>
 					<td>{{ $sample->result }} </td>
@@ -171,18 +171,19 @@
 					<td colspan="12" style="text-align: center;"><b>REJECTED SAMPLE(s)</b></td>
 				</tr>
 				<tr>
-					<td><b> No </b></td>
-					<td><b> Patient CCC no </b></td>
-					<td><b> DOB & Age (yrs) </b></td>
-					<td><b> Sex </b></td>
-					<td><b> ART Initiation Date </b></td>
-					<td><b> Date Collected </b></td>
-					<td><b> Date Received </b></td>
-					<td><b> Sample Type </b></td>
-					<td><b> Current Regimen </b></td>
-					<td><b> Justification </b></td>
-					<td><b> Rejected Reason </b></td>
-					<td><b> Date Dispatched </b></td>			
+					<th><b> No </b></td>
+					<th><b> Patient CCC no </b></td>
+					<th><b> DOB & Age (yrs) </b></td>
+					<th><b> Sex </b></td>
+					<th><b> ART Initiation Date </b></td>
+					<th><b> Date Collected </b></td>
+					<th><b> Date Received </b></td>
+					<th><b> Sample Type </b></td>
+					<th><b> Current Regimen </b></td>
+					<th><b>Date Initiated on Regimen </b></th>
+					<th><b> Justification </b></td>
+					<th><b> Rejected Reason </b></td>
+					<th><b> Date Dispatched </b></td>			
 				</tr>
 
 				@foreach($batch->sample as $key => $sample)
@@ -210,6 +211,7 @@
 		                        @endif
 		                    @endforeach
 		                </td>
+						<td>{{ $sample->my_date_format('dateinitiatedonregimen') }} </td>
 						<td>
 		                    @foreach($justifications as $justification)
 		                        @if($sample->justification == $justification->id)
@@ -248,7 +250,7 @@
 
 		<table>
 			<tr>
-				<td><b>Codes for Sample Type </b> </td>
+				<th><b>Codes for Sample Type </b> </td>
 				<td>
 					@foreach($sample_types as $sampletype)
 						{{ $sampletype->id . '-' . $sampletype->name }}
@@ -261,7 +263,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td><b>Codes for Justification </b> </td>
+				<th><b>Codes for Justification </b> </td>
 				<td>
 					@foreach($justifications as $justification)
 						{{ $justification->id . '-' . $justification->name }}
