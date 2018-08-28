@@ -14,7 +14,7 @@
 		}
 
 		table, th, td {
-			border: 1px solid black;
+			border: 4px solid black;
 			border-style: solid;
      		font-size: 8px;
 		}
@@ -136,7 +136,6 @@
 					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 					<td>{{ $sample->my_date_format('datecollected') }} </td>
 					<td>{{ $batch->my_date_format('datereceived') }} </td>
-					{{--<td>{{ $sample->sampletype }} </td>--}}
 					<td>
 	                    @foreach($sample_types as $sample_type)
 	                        @if($sample->sampletype == $sample_type->id)
@@ -234,8 +233,6 @@
 
 		@endif
 
-		<br />
-
 		<p>
 			<strong>NOTE:</strong> Always provide the facility's up-to-date email address(es) and mobile number(s) on the sample requisition form so as to get alerts on the status of your samples.
 			<br />
@@ -245,7 +242,7 @@
 		<h5>KEY/CODES</h5>
 
 		<table>
-			<tr>
+			{{--<tr>
 				<td><b>Codes for Sample Type </b> </td>
 				<td>
 					@foreach($sample_types as $sampletype)
@@ -257,7 +254,7 @@
 						,&nbsp;
 					@endforeach
 				</td>
-			</tr>
+			</tr>--}}
 			<tr>
 				<td><b>Codes for Justification </b> </td>
 				<td>
