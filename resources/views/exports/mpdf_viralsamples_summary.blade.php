@@ -69,7 +69,7 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>		
+				<td colspan='3'>Date Samples Were Dispatched From Facility :  {{ $batch->my_date_format('datedispatchedfromfacility')  }}</td>		
 			</tr>
 			<tr>
 				<td>Facility Name: {{ $batch->facility->name ?? '' }} </td>
@@ -77,10 +77,15 @@
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
+				<td>MFL Code {{ $batch->view_facility->facilitycode ?? '' }} </td>
+				<td>Subcounty {{ $batch->view_facility->subcounty ?? '' }} </td>
+				<td>County {{ $batch->view_facility->county ?? '' }} </td>
+			</tr>
+			<tr>
 				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress ?? '' }}</td>
 			</tr>
 			<tr>
-				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email ?? '' }}</td>
+				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email_string }}</td>
 			</tr>
 		</table>
 

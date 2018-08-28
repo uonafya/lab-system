@@ -70,7 +70,7 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>				
+				<td colspan='3'>Date Samples Were Dispatched From Facility :  {{ $batch->my_date_format('datedispatchedfromfacility')  }}</td>				
 			</tr>
 			<tr>
 				<td>Facility Name: {{ $batch->facility->name }} </td>
@@ -78,10 +78,15 @@
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
-				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress }}</td>
+				<td>MFL Code {{ $batch->view_facility->facilitycode ?? '' }} </td>
+				<td>Subcounty {{ $batch->view_facility->subcounty ?? '' }} </td>
+				<td>County {{ $batch->view_facility->county ?? '' }} </td>
 			</tr>
 			<tr>
-				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email }}</td>
+				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress ?? '' }}</td>
+			</tr>
+			<tr>
+				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email_string }}</td>
 			</tr>
 		</table>
 
@@ -101,7 +106,7 @@
 				<td><b> No</b></td>
 				<td><b> Patient ID</b></td>
 				<td><b> DOB</b></td>
-				<td><b> Age (in months) </b></td>
+				<td><b> Age (M)</b></td>
 				<td><b> Sex</b></td>
 				<td><b> Entry Point</b></td>
 				<td><b> Prophylaxis</b></td>
@@ -119,7 +124,6 @@
 				<td><b> Date Dispatched</b></td>
 				<td><b> Test Result</b></td>
 				<td><b> TAT</b></td>
-
 			</tr>
 
 			@foreach($batch->sample as $key => $sample)
@@ -133,7 +137,7 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
-					<td>{{ $sample->patient->dob }} </td>
+					<td>{{ $sample->patient->my_date_format('dob') }} </td>
 					<td>{{ $sample->age }} </td>
 					<td>{{ $sample->patient->gender }} </td>
 	                <td>
@@ -162,7 +166,7 @@
 					<td>
 	                    @foreach($pcrtypes as $pcrtype)
 	                        @if($sample->pcrtype == $pcrtype->id)
-	                            {{ $pcrtype->alias }}
+	                            {!! $pcrtype->name !!}
 	                        @endif
 	                    @endforeach	
 
@@ -186,7 +190,11 @@
 			@endforeach		
 		</table>
 
-		<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
+		@if(env('APP_LAB') == 1)
+
+			<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
+
+		@endif
 
 		@isset($rejection)
 			<table>

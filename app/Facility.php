@@ -130,38 +130,51 @@ class Facility extends BaseModel
         }
     }
 
+    public function getEmailArrayAttribute()
+    {
+        $emails = [];
+        if($this->email) $emails[] = $this->email;
+        if($this->contact_email) $emails[] = $this->contact_email;
+        $f = ['dmltemail', 'dtlcemail', 'subcountyemail', 'countyemail', 'partneremail', 'partnerlabmail', 'partnerpointmail'];
+
+        foreach ($f as $val) {
+            if($this->$val && $this->$val != '') $emails[] = $this->$val;
+        }
+        return $emails;
+    }
+
     public function getEmailAttribute()
     {
-        return $this->facility_contact->email ?? $this->email ?? '';
+        return $this->facility_contact->email ?? $this->email ?? null;
     }
 
     public function getTelephoneAttribute()
     {
-        return $this->facility_contact->telephone ?? $this->telephone ?? '';
+        return $this->facility_contact->telephone ?? $this->telephone ?? null;
     }
 
     public function getTelephone2Attribute()
     {
-        return $this->facility_contact->telephone2 ?? $this->telephone2 ?? '';
+        return $this->facility_contact->telephone2 ?? $this->telephone2 ?? null;
     }
 
     public function getContactpersonAttribute()
     {
-        return $this->facility_contact->contactperson ?? $this->contactperson ?? '';
+        return $this->facility_contact->contactperson ?? $this->contactperson ?? null;
     }
 
     public function getContacttelephoneAttribute()
     {
-        return $this->facility_contact->contacttelephone ?? $this->contacttelephone ?? '';
+        return $this->facility_contact->contacttelephone ?? $this->contacttelephone ?? null;
     }
 
     public function getContacttelephone2Attribute()
     {
-        return $this->facility_contact->contacttelephone2 ?? $this->contacttelephone2 ?? '';
+        return $this->facility_contact->contacttelephone2 ?? $this->contacttelephone2 ?? null;
     }
 
     public function getContactEmailAttribute()
     {
-        return $this->facility_contact->ContactEmail ?? $this->ContactEmail ?? '';
+        return $this->facility_contact->ContactEmail ?? $this->ContactEmail ?? null;
     }
 }
