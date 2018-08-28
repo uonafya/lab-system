@@ -93,11 +93,11 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<th colspan="14" style="text-align: center;"><b>SAMPLE LOG</b></td>
+				<th colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
 			</tr>
 			<tr>
 				<th colspan="4"><b> Patient Information</b></td>
-				<th colspan="4"><b>Samples Information</b></td>
+				<th colspan="5"><b>Samples Information</b></td>
 				<th colspan="6"><b>Lab Information</b></td>
 			</tr>
 			<tr>
@@ -107,8 +107,9 @@
 				<th><b>Sex </b></th>
 
 				<th><b>Sample Type </b></th>
+				<th><b>ART Initiation Date </b></td>
 				<th><b>Current Regimen </b></th>
-				<th><b>Date Initiated on Regimen </b></th>
+				<th><b>Date Initiated on Current Regimen </b></th>
 				<th><b>Justification </b></th>
 
 				<th><b>Date Collected </b></th>
@@ -139,6 +140,7 @@
 	                        @endif
 	                    @endforeach
 	                </td>
+					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 					<td>
 	                    @foreach($prophylaxis as $proph)
 	                        @if($sample->prophylaxis == $proph->id)
@@ -176,13 +178,13 @@
 					<th><b> DOB & Age (yrs) </b></td>
 					<th><b> Sex </b></td>
 					<th><b> ART Initiation Date </b></td>
-					<th><b> Date Collected </b></td>
-					<th><b> Date Received </b></td>
 					<th><b> Sample Type </b></td>
 					<th><b> Current Regimen </b></td>
-					<th><b>Date Initiated on Regimen </b></th>
+					<th><b>Date Initiated on Current Regimen </b></th>
 					<th><b> Justification </b></td>
 					<th><b> Rejected Reason </b></td>
+					<th><b> Date Collected </b></td>
+					<th><b> Date Received </b></td>
 					<th><b> Date Dispatched </b></td>			
 				</tr>
 
@@ -194,8 +196,6 @@
 						<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
 						<td>{{ $sample->patient->gender ?? '' }} </td>
 						<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
-						<td>{{ $sample->my_date_format('datecollected') }} </td>
-						<td>{{ $batch->my_date_format('datereceived') }} </td>
 
 						<td>
 		                    @foreach($sample_types as $sample_type)
@@ -226,6 +226,8 @@
 		                        @endif
 		                    @endforeach
 						</td>
+						<td>{{ $sample->my_date_format('datecollected') }} </td>
+						<td>{{ $batch->my_date_format('datereceived') }} </td>
 						<td>{{ $batch->my_date_format('datedispatched') }} </td>
 					</tr>
 				@endforeach	

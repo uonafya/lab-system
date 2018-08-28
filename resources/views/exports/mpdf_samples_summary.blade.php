@@ -200,10 +200,10 @@
 					<th><b> Sex</b></td>
 					<th><b> DOB & Age(M)</b></td>
 					<th><b> Prophylaxis</b></td>
-					<th><b> Date Collected</b></td>
-					<th><b> Date Received</b></td>
 					<th><b> Status</b></td>
 					<th><b> Rejected Reason</b></td>
+					<th><b> Date Collected</b></td>
+					<th><b> Date Received</b></td>
 					<th><b> Date Dispatched</b></td>			
 				</tr>
 
@@ -215,8 +215,6 @@
 						<td>{{ $sample->patient->gender }} </td>
 						<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </td>
 						<td>{{ $sample->regimen }} </td>
-						<td>{{ $sample->my_date_format('datecollected') }} </td>
-						<td>{{ $batch->my_date_format('datereceived') }} </td>
 						<td>
 		                    @foreach($received_statuses as $received_status)
 		                        @if($sample->receivedstatus == $received_status->id)
@@ -231,6 +229,8 @@
 		                        @endif
 		                    @endforeach
 						</td>
+						<td>{{ $sample->my_date_format('datecollected') }} </td>
+						<td>{{ $batch->my_date_format('datereceived') }} </td>
 						<td>{{ $batch->my_date_format('datedispatched') }} </td>
 					</tr>
 				@endforeach	
