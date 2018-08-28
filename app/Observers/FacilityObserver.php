@@ -20,6 +20,13 @@ class FacilityObserver
                 'email' => 'facility' . $facility->id . '@nascop-lab.com',
                 'password' => encrypt($facility->name)
             ]);
+
+        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
+
+        $contact = new \App\FacilityContact();
+        $contact->fill($facility->only($contact_array));
+        $contact->facility_id = $facility->id;
+        $contact->save();
     }
 
     public function updated(Facility $facility)

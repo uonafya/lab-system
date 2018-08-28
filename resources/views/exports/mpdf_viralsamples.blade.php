@@ -1,7 +1,6 @@
 
 <html>
 <style type="text/css">
-<!--
 .style1 {font-family: "Courier New", Courier, monospace}
 .style4 {font-size: 12}
 .style5 {font-family: "Courier New", Courier, monospace; font-size: 12; }
@@ -10,7 +9,6 @@
 	font-size: medium;
 	font-weight: bold;
 }
--->
 </style>
 <style>
 
@@ -31,8 +29,13 @@ border : solid 1px black;
 width:1000px;
 width:1000px;
 }
- .style7 {font-size: medium}
+ /*.style7 {font-size: medium}*/
+ .style7 {font-size: 13px}
 .style10 {font-size: 16px}
+.emph {
+	font-size: 16px;
+	font-weight: bold;
+}
 p.breakhere {page-break-before: always}
 </style>
 
@@ -44,7 +47,7 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" ></strong> 
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />
@@ -58,6 +61,42 @@ p.breakhere {page-break-before: always}
 				<td colspan="4" class="comment style1 style4" align="right">
 					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
 				</td>
+			</tr>
+
+			{{--<tr>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
+				</td>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
+				</td>				
+			</tr>
+
+			<tr>
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
+				</td>
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
+				</td>	
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
+				</td>			
+			</tr>--}}
+
+			<tr>
+				<td colspan="4" class="style4 style1 comment">
+					<strong>Contact Name:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
+				</td>	
+				<td colspan="4" class="style4 style1 comment">
+					<strong>Contact Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
+				</td>			
+			</tr>
+
+			<tr>
+				<td colspan="6" class="style4 style1 comment">
+					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
+				</td>			
 			</tr>
 
 			<tr>
@@ -105,7 +144,7 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			<tr >
+			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong>Gender</strong></td>
 				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
 				<td class="style4 style1 comment" colspan="3" ><strong>PMTCT</strong></td>
@@ -121,7 +160,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr >
-				<td colspan="1" class="style4 style1 comment" ><strong>Date	 Collected </strong></td>
+				<td colspan="1" class="style4 style1 comment" ><strong>Dates Collected </strong></td>
 				<td  class="comment" colspan="1"> 
 					<span class="style5">{{ $sample->my_date_format('datecollected') }}</span>
 				</td>
@@ -162,6 +201,10 @@ p.breakhere {page-break-before: always}
 
 				if($sample->receivedstatus != 2){
 					$routcome = '<u>' . $sample->result . '</u> ' . $sample->units;
+					if (is_numeric($sample->result) && $sample->result > 1000){
+						$routcome = "<span class='emph'><u>" . $sample->result . '</u></span> ' . $sample->units;
+					}
+
 					$resultcomments="";
 					$vlresultinlog='N/A';
 
@@ -169,9 +212,7 @@ p.breakhere {page-break-before: always}
 						$resultcomments="<small>LDL:Lower Detectable Limit i.e. Below Detectable levels by machine( Roche DBS <400 copies/ml , Abbott DBS  <550 copies/ml )</small> ";
 					}
 
-					if (is_numeric($sample->result) ){
-						$vlresultinlog= round(log10($sample->result),1) ;
-					}
+					if (is_numeric($sample->result) ) $vlresultinlog= round(log10($sample->result), 1);
 				}
 				else{
 					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name;
@@ -179,6 +220,8 @@ p.breakhere {page-break-before: always}
 					$routcome= "Sample ".$status . " Reason:  ".$reason;
 				}
 				$sample->prev_tests();
+
+				$no_previous_tests = $sample->previous_tests->count();
 
 				$s_type = $sample_types->where('id', $sample->sampletype)->first();
 
@@ -208,12 +251,25 @@ p.breakhere {page-break-before: always}
 					$vlmessage='Failed Test';
 				}
 				else{
-					$guideline = $vl_result_guidelines->where('test', $test_no)->where('triagecode', $outcome_code)->where('sampletype', $s_type->typecode)->first();
-
-					if($guideline){
-						$vlmessage = $guideline->indication;
+					if($sample->result <= 1000){
+						$vlmessage='Confirm adherence & Routine follow up.';
+					}
+					else{
+						if($no_previous_tests != 1){
+							$vlmessage='Review adherence, provide adherence counselling then Repeat Viral Load in 3 Months.';
+						}
+						else{
+							$vlmessage='If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.';
+						}
 					}
 				}
+				// else{
+				// 	$guideline = $vl_result_guidelines->where('test', $test_no)->where('triagecode', $outcome_code)->where('sampletype', $s_type->typecode)->first();
+
+				// 	if($guideline){
+				// 		$vlmessage = $guideline->indication;
+				// 	}
+				// }
 
 			?>
 	
@@ -221,13 +277,13 @@ p.breakhere {page-break-before: always}
 				<td colspan="1" class="evenrow">
 					<span class="style1"><strong> Test Result </strong></span>
 				</td>
-				<td colspan="6" class="evenrow">
+				<td colspan="5" class="evenrow">
 					<span class="style5">
 						<strong>
 							@if($sample->receivedstatus == 2)
 								{{ $routcome }}
 							@else
-								&nbsp;&nbsp;&nbsp;&nbsp; Viral Load {!! $routcome !!} &nbsp;&nbsp;&nbsp; Log 10 
+								&nbsp; Viral Load {!! $routcome !!} &nbsp; Log 10 
 								<u>{{ $vlresultinlog}} </u>
 							@endif
 		 
@@ -236,13 +292,29 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
+			@if($sample->worksheet)
+				<tr>
+					<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+						@if($sample->worksheet->machine_type == 1)
+							HIV-1 RNA quantitative assay on Roche CAP/CTM system
+						@elseif($sample->worksheet->machine_type == 2)
+							HIV-1 RNA quantitative assay on Abbott M2000 system
+						@elseif($sample->worksheet->machine_type == 3)
+							HIV-1 RNA quantitative assay on Cobas C8800 system
+						@elseif($sample->worksheet->machine_type == 4)
+							HIV-1 RNA quantitative assay on Panther system
+						@endif
+					</td>					
+				</tr>
+			@endif
+
 
 			<tr>
 				<td colspan="2">
 				  <span class="style1"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="5" class="comment" >
-					<span class="style5 "><b> {{ $vlmessage }}</b> <br> {{ $sample->labcomment }} </span>
+					<span class="style5 "><b> {{ $vlmessage }}</b>  {{ $sample->labcomment }} </span>
 				</td>
 			</tr>
 
@@ -266,52 +338,47 @@ p.breakhere {page-break-before: always}
 					<td colspan="5" class="comment" ><span class="style5 "> N/A </span></td>
 				</tr>
 			@endif
+
+			@if(env('APP_LAB') != 1)
 			
-			<tr >
-				{{--<td colspan="12" class="style4 style1 comment">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Result Reviewed By: </strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp; 
-					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+				<tr >
+					<td colspan="6" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
+						</center>					
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					</td>
+				</tr>
 
-				</td>--}}
+			@else
 
-				<td colspan="6" class="style4 style1 comment">
-					<center>
-						<strong>Result Reviewed By: </strong>
-						&nbsp;&nbsp;
-						<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					</center>					
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
-				</td>
-			</tr>
+				<tr>
+					<td colspan="6" class="style4 style1 comment">
+						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					</td>
+				</tr>
+
+			@endif
 		</table>
 
 		<span class="style8" > 
-			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }}  
-			<br> 
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			at {{ $sample->batch->lab->email }}
+			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			<br> 
 			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
 		</span>
 
-		<br>
-		<br>
-		<img src="{{ asset('img/but_cut.gif') }}">
-		<br>
-		<br>
-
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4-L'>
+		@else
+			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
 		@endif
 
 	@endforeach

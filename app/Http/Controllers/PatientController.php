@@ -201,6 +201,8 @@ class PatientController extends Controller
                 return $query->where('facility_id', $facility_id);
             })
             ->paginate(10);
+
+        $patients->setPath(url()->current());
         return $patients;
 
     }

@@ -874,6 +874,7 @@ class WorksheetController extends Controller
     {
         $search = $request->input('search');
         $worksheets = Worksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $worksheets->setPath(url()->current());
         return $worksheets;
     }
 

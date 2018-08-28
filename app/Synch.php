@@ -661,6 +661,10 @@ class Synch
 				unset($update_data['id']);
 				unset($update_data['original_patient_id']);
 
+				// $new_update_data['national_patient_id'] = $value->id;
+				// $new_update_data['dob'] = $value->dob;
+				// $new_update_data['sex'] = $value->sex;
+
 				Patient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
@@ -774,6 +778,11 @@ class Synch
 
 			foreach ($body->samples as $key => $value) {
 				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
+				if($batch_class == "App\\Viralbatch"){
+					$update_data['age_category'] = $value->age_category;
+					$update_data['justification'] = $value->justification;
+					$update_data['prophylaxis'] = $value->prophylaxis;
+				}
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
 

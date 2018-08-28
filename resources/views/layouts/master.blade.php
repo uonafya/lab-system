@@ -88,7 +88,7 @@
                             
                         </div>
                     @else
-                    <div class="col-md-3" style="margin-top: .7em;">
+                    <div class="col-md-2" style="margin-top: .7em;">
                         <h2 class="font-light m-b-xs">
                             {{ $pageTitle ?? '' }}
                         </h2>
@@ -107,6 +107,13 @@
                             </button>
                         </div>
                     </div>
+                        @if(Auth()->user()->user_type_id < 2)
+                        <div class="col-md-1">
+                            <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
+                                Switch to DR
+                            </button>
+                        </div>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -180,15 +187,12 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'DR') {test = 'EID';text = '<strong>DRUG RESISTANCE</strong>';}
-            else if(current == 'EID'){test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
-            else if(current == 'Viralload'){
-                @if(Auth()->user()->user_type_id < 2) 
-                    test = 'DR';
-                @else 
-                    test = 'EID';
-                @endif
-                text = '<strong>VIRAL LOAD</strong>';
+            if(current == 'DR') { test = 'EID';text = '<strong>DRUG RESISTANCE</strong>'; } 
+            else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
+            else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; }
+
+            if(current == 'DR'){
+                $("#drswitch").hide();
             }
             // else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
@@ -199,6 +203,12 @@
         $("#sysSwitch").click(function(){
             sys = $(this).val();
             $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
+                location.replace("<?= url('home'); ?>");
+            });
+        });
+
+        $("#drswitch").click(function(){
+            $.get("<?= url('sysswitch/DR'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
