@@ -105,8 +105,7 @@
 			<tr>
 				<td><b> No</b></td>
 				<td><b> Patient ID</b></td>
-				<td><b> DOB</b></td>
-				<td><b> Age (M)</b></td>
+				<td><b> DOB & Age(M)</b></td>
 				<td><b> Sex</b></td>
 				<td><b> Entry Point</b></td>
 				<td><b> Prophylaxis</b></td>
@@ -137,8 +136,8 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
-					<td>{{ $sample->patient->my_date_format('dob') }} </td>
-					<td>{{ $sample->age }} </td>
+					{{--<td>{{ $sample->patient->my_date_format('dob') }} </td>--}}
+					<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </td>
 					<td>{{ $sample->patient->gender }} </td>
 	                <td>
 						@foreach($entry_points as $entry_point)
@@ -199,7 +198,7 @@
 					<td><b> No</b></td>
 					<td><b> Patient ID</b></td>
 					<td><b> Sex</b></td>
-					<td><b> DOB</b></td>
+					<td><b> DOB & Age(M)</b></td>
 					<td><b> Prophylaxis</b></td>
 					<td><b> Date Collected</b></td>
 					<td><b> Date Received</b></td>
@@ -214,7 +213,7 @@
 						<td>{{ ($key+1) }} </td>
 						<td>{{ $sample->patient->patient }} </td>
 						<td>{{ $sample->patient->gender }} </td>
-						<td>{{ $sample->dob }} </td>
+						<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </td>
 						<td>{{ $sample->regimen }} </td>
 						<td>{{ $sample->my_date_format('datecollected') }} </td>
 						<td>{{ $batch->my_date_format('datereceived') }} </td>
@@ -237,7 +236,7 @@
 				@endforeach	
 			</table>
 		@endisset
-		
+
 		<br />
 
 		@if(env('APP_LAB') != 1)
@@ -258,10 +257,6 @@
 		<b>KEY/CODES</b>
 
 		<table>
-			<tr>
-				<td><b>Test Type </b> </td>
-				<td>1-1st test, &nbsp; 2-Repeat for Rejection, &nbsp; 3-Confirmatory PCR at 9mths </td>
-			</tr>
 			<tr>
 				<td><b>Entry Point </b> </td>
 				<td>

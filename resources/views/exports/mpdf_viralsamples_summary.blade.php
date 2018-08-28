@@ -14,7 +14,7 @@
 		}
 
 		table, th, td {
-			border: 4px solid black;
+			border: 1px solid black;
 			border-style: solid;
      		font-size: 8px;
 		}
@@ -104,8 +104,8 @@
 			<tr>
 				<th><b>No </b></th>
 				<th><b>Patient CCC No </b></th>
+				<th><b>DOB & Age (yrs) </b></th>
 				<th><b>Sex </b></th>
-				<th><b>Age (yrs) </b></th>
 				<th><b>ART Initiation Date </b></th>
 
 				<th><b>Date Collected </b></th>
@@ -131,8 +131,8 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>
-					<td> {{ $sample->patient->gender ?? '' }} </td>
-					<td>{{ $sample->age }} </td>
+					<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
+					<td>{{ $sample->patient->gender ?? '' }} </td>
 					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 					<td>{{ $sample->my_date_format('datecollected') }} </td>
 					<td>{{ $batch->my_date_format('datereceived') }} </td>
@@ -150,7 +150,13 @@
 	                        @endif
 	                    @endforeach
 	                </td>
-					<td>{{ $sample->justification }} </td>
+					<td>
+	                    @foreach($justifications as $justification)
+	                        @if($sample->justification == $justification->id)
+	                            {{ $justification->name }}
+	                        @endif
+	                    @endforeach
+	                </td>
 					<td>{{ $sample->my_date_format('datetested') }} </td>
 					<td>{{ $batch->my_date_format('datedispatched') }} </td>
 					<td>{{ $sample->result }} </td>
@@ -167,8 +173,8 @@
 				<tr>
 					<td><b> No </b></td>
 					<td><b> Patient CCC no </b></td>
+					<td><b> DOB & Age (yrs) </b></td>
 					<td><b> Sex </b></td>
-					<td><b> Age (yrs) </b></td>
 					<td><b> ART Initiation Date </b></td>
 					<td><b> Date Collected </b></td>
 					<td><b> Date Received </b></td>
@@ -184,14 +190,8 @@
 					<tr>
 						<td>{{ ($key+1) }} </td>
 						<td>{{ $sample->patient->patient }} </td>
-						<td>
-		                    @foreach($genders as $gender)
-		                        @if($sample->patient->sex == $gender->id)
-		                            {{ $gender->gender }}
-		                        @endif
-		                    @endforeach
-						</td>
-						<td>{{ $sample->age }} </td>
+						<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
+						<td>{{ $sample->patient->gender ?? '' }} </td>
 						<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 						<td>{{ $sample->my_date_format('datecollected') }} </td>
 						<td>{{ $batch->my_date_format('datereceived') }} </td>
@@ -210,8 +210,13 @@
 		                        @endif
 		                    @endforeach
 		                </td>
-						<td>{{ $sample->justification }} </td>
-
+						<td>
+		                    @foreach($justifications as $justification)
+		                        @if($sample->justification == $justification->id)
+		                            {{ $justification->name }}
+		                        @endif
+		                    @endforeach
+		                </td>
 						<td>
 		                    @foreach($viral_rejected_reasons as $rejected_reason)
 		                        @if($sample->rejectedreason == $rejected_reason->id)
@@ -236,13 +241,13 @@
 		<p>
 			<strong>NOTE:</strong> Always provide the facility's up-to-date email address(es) and mobile number(s) on the sample requisition form so as to get alerts on the status of your samples.
 			<br />
-			To Access & Download your current and past results go to : http://www.nascop.org/eid/facilitylogon.php
+			To Access & Download your current and past results go to : http://nascop.org
 		</p>
 
-		<h5>KEY/CODES</h5>
+		{{--<h5>KEY/CODES</h5>
 
 		<table>
-			{{--<tr>
+			<tr>
 				<td><b>Codes for Sample Type </b> </td>
 				<td>
 					@foreach($sample_types as $sampletype)
@@ -254,7 +259,7 @@
 						,&nbsp;
 					@endforeach
 				</td>
-			</tr>--}}
+			</tr>
 			<tr>
 				<td><b>Codes for Justification </b> </td>
 				<td>
@@ -268,7 +273,7 @@
 					@endforeach
 				</td>				
 			</tr>
-		</table>
+		</table>--}}
 
 		@if($loop->last)
 			@break
