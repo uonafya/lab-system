@@ -130,7 +130,7 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>
-					<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
+					<td>{{ $sample->patient->my_date_format('dob') }} &nbsp; ({{ $sample->age }})</td>
 					<td>{{ $sample->patient->gender ?? '' }} </td>
 
 					<td>
@@ -193,7 +193,7 @@
 					<tr>
 						<td>{{ ($key+1) }} </td>
 						<td>{{ $sample->patient->patient }} </td>
-						<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
+						<td>{{ $sample->patient->my_date_format('dob') }} &nbsp; ({{ $sample->age }})</td>
 						<td>{{ $sample->patient->gender ?? '' }} </td>
 						<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 
