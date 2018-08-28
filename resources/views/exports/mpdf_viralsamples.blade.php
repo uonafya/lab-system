@@ -35,6 +35,7 @@ width:1000px;
 .emph {
 	font-size: 16px;
 	font-weight: bold;
+	text-decoration: underline;
 }
 p.breakhere {page-break-before: always}
 </style>
@@ -63,19 +64,23 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			<tr>
-				<td colspan="9" class="style4 style1 comment">
-					<strong>Contact/Facility Telephone:</strong>
-					{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
-					{{ $sample->batch->facility->facility_contacts }}
-				</td>		
-			</tr>
+			@if(env('APP_LAB') == 1)
 
-			<tr>
-				<td colspan="9" class="style4 style1 comment">
-					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
-				</td>					
-			</tr>
+				<tr>
+					<td colspan="9" class="style4 style1 comment">
+						<strong>Contact/Facility Telephone:</strong>
+						{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
+						{{ $sample->batch->facility->facility_contacts }}
+					</td>		
+				</tr>			
+
+				<tr>
+					<td colspan="9" class="style4 style1 comment">
+						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
+					</td>					
+				</tr>
+
+			@endif
 
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
@@ -178,9 +183,9 @@ p.breakhere {page-break-before: always}
 			<?php
 
 				if($sample->receivedstatus != 2){
-					$routcome = '<u>' . $sample->result . '</u> ' . $sample->units;
+					$routcome = $sample->result . ' ' . $sample->units;
 					if (is_numeric($sample->result) && $sample->result > 1000){
-						$routcome = "<span class='emph'><u>" . $sample->result . '</u></span> ' . $sample->units;
+						$routcome = "<span class='emph'>" . $sample->result . '</span> ' . $sample->units;
 					}
 
 					$resultcomments="";
@@ -317,8 +322,11 @@ p.breakhere {page-break-before: always}
 			@else
 
 				<tr>
+					<td colspan="2" class="style4 style1 comment">
+						<strong>Date Dispatched:  </strong>
+					</td>
 					<td colspan="6" class="style4 style1 comment">
-						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+						{{ $sample->batch->my_date_format('datedispatched') }}
 					</td>
 				</tr>
 

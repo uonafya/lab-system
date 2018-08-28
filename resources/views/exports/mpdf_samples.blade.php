@@ -63,21 +63,23 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
+			@if(env('APP_LAB') == 1)
 
-			<tr>
-				<td colspan="9" class="style4 style1 comment">
-					<strong>Contact/Facility Telephone:</strong>
-					{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
-					{{ $sample->batch->facility->facility_contacts }}
-				</td>		
-			</tr>
+				<tr>
+					<td colspan="9" class="style4 style1 comment">
+						<strong>Contact/Facility Telephone:</strong>
+						{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
+						{{ $sample->batch->facility->facility_contacts }}
+					</td>		
+				</tr>			
 
-			<tr>
-				<td colspan="9" class="style4 style1 comment">
-					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
-				</td>					
-			</tr>
+				<tr>
+					<td colspan="9" class="style4 style1 comment">
+						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
+					</td>					
+				</tr>
 
+			@endif
 
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
@@ -197,7 +199,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment"><strong>Test Result</strong></td>
+				<td colspan="3" class="style4 style1 comment"><strong>Test Result</strong></td>
 				<td colspan="1" class="style4 style1 comment">
 					<strong> 
 	                    @foreach($results as $result)
