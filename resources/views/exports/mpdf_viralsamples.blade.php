@@ -377,7 +377,7 @@ p.breakhere {page-break-before: always}
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4-L'>
+			<pagebreak sheet-size='A4'>
 		@else
 			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
 		@endif

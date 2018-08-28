@@ -85,13 +85,19 @@ p.breakhere {page-break-before: always}
 			</tr>--}}
 
 			<tr>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Contact/Facility Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
-				</td>	
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
-				</td>			
+				<td colspan="9" class="style4 style1 comment">
+					<strong>Contact/Facility Telephone:</strong>
+					{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
+					{{ $sample->batch->facility->facility_contacts }}
+				</td>		
 			</tr>
+
+			<tr>
+				<td colspan="9" class="style4 style1 comment">
+					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
+				</td>					
+			</tr>
+
 
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
@@ -331,7 +337,7 @@ p.breakhere {page-break-before: always}
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4-L'>
+			<pagebreak sheet-size='A4'>
 		@else
 			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
 		@endif
