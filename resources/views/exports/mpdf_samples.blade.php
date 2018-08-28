@@ -233,16 +233,20 @@ p.breakhere {page-break-before: always}
 	                    @endforeach
 					</strong>
 				</td>
-				<td colspan="5" class="style4 style1 comment">&nbsp;
-					@if($sample->worksheet)
+			</tr>
+			
+			@if($sample->worksheet)
+				<tr>
+					<td colspan="2"></td>
+					<td colspan="5" class="style4 style1 comment">					
 						@if($sample->worksheet->machine_type == 1)
 							HIV-1 DNA qualitative  assay on CAPCTM system
 						@elseif($sample->worksheet->machine_type == 2)
 							HIV-1 DNA qualitative  assay on Abbott M2000 system
-						@endif
-					@endif
-				</td>
-			</tr>
+						@endif					
+					</td>				
+				</tr>
+			@endif
 
 			<tr>
 				<td colspan="2">
@@ -339,7 +343,7 @@ p.breakhere {page-break-before: always}
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
+			<br/> <br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/> 
 		@endif
 
 
