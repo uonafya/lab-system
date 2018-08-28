@@ -46,7 +46,7 @@ p.breakhere {page-break-before: always}
 		<table  border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
-					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
+					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
@@ -59,39 +59,25 @@ p.breakhere {page-break-before: always}
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
+					<strong>Testing Lab: {{ $sample->batch->lab->name }}</strong>
 				</td>
 			</tr>
 
-			{{--<tr>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
-				</td>				
+
+			<tr>
+				<td colspan="9" class="style4 style1 comment">
+					<strong>Contact/Facility Telephone:</strong>
+					{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
+					{{ $sample->batch->facility->facility_contacts }}
+				</td>		
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
-				</td>
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
-				</td>	
-				<td colspan="2" class="style4 style1 comment">
-					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
-				</td>			
-			</tr>--}}
-
-			<tr>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Contact/Facility Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
-				</td>	
-				<td colspan="3" class="style4 style1 comment">
+				<td colspan="9" class="style4 style1 comment">
 					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
-				</td>			
+				</td>					
 			</tr>
+
 
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
@@ -157,7 +143,7 @@ p.breakhere {page-break-before: always}
 					<span class="style5">
                         @foreach($pcrtypes as $pcrtype)
                             @if($sample->pcrtype == $pcrtype->id)
-                                {!! $pcrtype->name !!}
+                                {!! $pcrtype->alias !!}
                             @endif
                         @endforeach	
 					</span>
@@ -227,16 +213,20 @@ p.breakhere {page-break-before: always}
 	                    @endforeach
 					</strong>
 				</td>
-				<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
-					@if($sample->worksheet)
+			</tr>
+
+			@if($sample->worksheet)
+				<tr>
+					<td colspan="2"></td>
+					<td colspan="5" class="style4 style1 comment">					
 						@if($sample->worksheet->machine_type == 1)
-							HIV-1 DNA qualitative  assay on CAPCTM system
+							HIV-1 DNA qualitative  assay on Roche CAP/CTM system
 						@elseif($sample->worksheet->machine_type == 2)
 							HIV-1 DNA qualitative  assay on Abbott M2000 system
-						@endif
-					@endif
-				</td>
-			</tr>
+						@endif					
+					</td>				
+				</tr>
+			@endif
 
 			<tr>
 				<td colspan="2">
@@ -273,8 +263,11 @@ p.breakhere {page-break-before: always}
 			@else
 
 				<tr>
+					<td colspan="2" class="style4 style1 comment">
+						<strong>Date Dispatched:  </strong>
+					</td>
 					<td colspan="6" class="style4 style1 comment">
-						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+						{{ $sample->batch->my_date_format('datedispatched') }}
 					</td>
 				</tr>
 
@@ -285,32 +278,34 @@ p.breakhere {page-break-before: always}
 			@if($sample->previous_tests->count() > 0)
 				@foreach($sample->previous_tests as $prev)
 
+					<br />
+
 					<tr class="evenrow">
-						<td colspan="3"> <span class="style1">Previous EID Results</span></td>
-						<td colspan="4" class="comment style5" >
-							<strong><small>
-								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+						<td colspan="2"> <span class="style4 style1 comment">Previous EID Results</span></td>
+						<td colspan="1" class="comment style1 style5" >
+							<strong>
+								 
 			                    @foreach($results as $result)
 			                        @if($prev->result == $result->id)
 			                            {{ $result->name }}
 			                        @endif
 			                    @endforeach
-			                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-			                    Date Test Performed
-			                    {{ $prev->my_date_format('datetested') }}
 
-							</small></strong> 
+							</strong> 
 						</td>
+						<td colspan="2"> <span class="style4 style1 comment">Date Test Performed</span></td>
+						<td colspan="1" class="comment style1 style5"> {{ $prev->my_date_format('datetested') }} </td>
+
 					</tr>
 
 				@endforeach
 
 			@else
 				<tr class="evenrow">
-					<td colspan="3">
-						<span class="style1"><strong>Previous EID Results</strong></span>
+					<td colspan="2">
+						<span class="style4 style1 comment"><strong>Previous EID Results</strong></span>
 					</td>
-					<td colspan="4" class="comment" ><span class="style5 "> N/A </span></td>
+					<td colspan="4" class="style4 style1 comment" ><span class="style5 "> N/A </span></td>
 				</tr>
 			@endif
 
@@ -331,9 +326,9 @@ p.breakhere {page-break-before: always}
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4-L'>
+			<pagebreak sheet-size='A4'>
 		@else
-			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
+			<br/> <br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/> 
 		@endif
 
 

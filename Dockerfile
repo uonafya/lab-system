@@ -2,7 +2,7 @@
 FROM php:7.2-fpm-stretch
 
 # Install composer
-RUN apt-get update -y && apt-get install -y openssl zip unzip curl libcurl3-dev apt-utils libpng-dev libxml2-dev
+RUN apt-get update -y && apt-get install -y openssl zip unzip curl libcurl3-dev apt-utils libpng-dev libxml2-dev git
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install missing php packages
