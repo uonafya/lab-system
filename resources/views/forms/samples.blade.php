@@ -192,7 +192,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $pcrtype->name }}
+                                        > {!! $pcrtype->name !!}
                                         </option>
                                     @endforeach
 

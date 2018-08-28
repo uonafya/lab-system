@@ -190,6 +190,8 @@ class ViralpatientController extends Controller
                 return $query->where('sex', 2);
             })
             ->paginate(10);
+
+        $patients->setPath(url()->current());
         return $patients;
     }
 }

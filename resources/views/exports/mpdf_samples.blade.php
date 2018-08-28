@@ -1,7 +1,6 @@
 
 <html>
 <style type="text/css">
-<!--
 .style1 {font-family: "Courier New", Courier, monospace}
 .style4 {font-size: 12}
 .style5 {font-family: "Courier New", Courier, monospace; font-size: 12; }
@@ -10,7 +9,6 @@
 	font-size: medium;
 	font-weight: bold;
 }
--->
 </style>
 <style>
 
@@ -31,21 +29,24 @@ border : solid 1px black;
 width:1000px;
 width:1000px;
 }
- .style7 {font-size: medium}
+ /*.style7 {font-size: medium}*/
+ .style7 {font-size: 13px}
 .style10 {font-size: 16px}
+.emph {
+	font-size: 16px;
+	font-weight: bold;
+}
 p.breakhere {page-break-before: always}
 </style>
 
-
+<!-- Naslogo dimensions height=64 width=80 -->
 <body onLoad="JavaScript:window.print();">
 
 	@foreach($samples as $key => $sample)
 		<table  border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
-					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" ></strong> 
-					</span>
+					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle" height="32" width="40"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
@@ -54,12 +55,42 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 			<tr>
-				<td colspan="5" class="comment style1 style4">
+				<td colspan="4" class="comment style1 style4">
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
 					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
 				</td>
+			</tr>
+
+			{{--<tr>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email }}
+				</td>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->facility_contacts }}
+				</td>				
+			</tr>
+
+			<tr>
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Contact:</strong> &nbsp; {{ $sample->batch->facility->contactperson }}
+				</td>
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Email:</strong> &nbsp; {{ $sample->batch->facility->contact_email }}
+				</td>	
+				<td colspan="2" class="style4 style1 comment">
+					<strong>Telephones:</strong> &nbsp; {{ $sample->batch->facility->contacts }}
+				</td>			
+			</tr>--}}
+
+			<tr>
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Contact/Facility Telephone:</strong> &nbsp; {{ $sample->batch->facility->telephone_string }}
+				</td>	
+				<td colspan="3" class="style4 style1 comment">
+					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
+				</td>			
 			</tr>
 
 			<tr>
@@ -92,7 +123,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Months)</strong></td>
-				<td colspan="1"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} {{ $sample->age }}</span></td>
+				<td colspan="1"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
 				<td class="style4 style1 comment" colspan="3" ><strong>Infant Feeding </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
@@ -122,16 +153,16 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> PCR Type</strong></td>
-				<td colspan="1">
+				<td colspan="2">
 					<span class="style5">
                         @foreach($pcrtypes as $pcrtype)
                             @if($sample->pcrtype == $pcrtype->id)
-                                {{ $pcrtype->name }}
+                                {!! $pcrtype->name !!}
                             @endif
                         @endforeach	
 					</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3" ><strong> Mother CCC #</strong></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Mother CCC #</strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5"> {{ $sample->patient->mother->ccc_no ?? '' }} </span>
 				</td>
@@ -167,7 +198,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment"><strong>Date Test Perfomed </strong></td>
+				<td colspan="2" class="style4 style1 comment"><strong>Date Test Performed </strong></td>
 				<td colspan="1" class="comment" >
 					<span class="style5">{{ $sample->my_date_format('datetested') }}</span>
 				</td>
@@ -180,56 +211,74 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="evenrow"><span class="style1"><strong>
-				Test Result </strong></span></td>
-				<td colspan="5" class="evenrow"  >
-					<span class="style1">
-						<strong> 
-		                    @foreach($results as $result)
-		                        @if($sample->result == $result->id)
-		                            {{ $result->name }}
-		                        @endif
-		                    @endforeach
+				<td colspan="2" class="style4 style1 comment"><strong>Test Result</strong></td>
+				<td colspan="1" class="style4 style1 comment">
+					<strong> 
+	                    @foreach($results as $result)
+	                        @if($sample->result == $result->id)
+	                        	<span
+	                        		@if($result->id == 2)
+	                        			class="emph"
+	                        		@endif
 
-						</strong>
-					</span>
+	                        	> {{ $result->name }} </span>
+	                            
+	                        @endif
+	                    @endforeach
+					</strong>
+				</td>
+				<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+					@if($sample->worksheet)
+						@if($sample->worksheet->machine_type == 1)
+							HIV-1 DNA qualitative  assay on CAPCTM system
+						@elseif($sample->worksheet->machine_type == 2)
+							HIV-1 DNA qualitative  assay on Abbott M2000 system
+						@endif
+					@endif
 				</td>
 			</tr>
 
 			<tr>
 				<td colspan="2">
-				  <span class="style1"><strong>Comments:</strong></span>
+				  <span class="style4 style1 comment"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="7" class="comment" >
-					<span class="style5 ">{{ $sample->comments }} <br> {{ $sample->labcomment }} </span>
+					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}
+						@if($sample->result == 2 && $sample->pcrtype < 4)
+							&nbsp; Initiate on ART, Collect samples for Confirmatory Testing & Baseline Viral Load
+						@endif
+
+					</span>
 				</td>
 			</tr>
 
+			@if(env('APP_LAB') != 1)
 
-			<tr>
-				{{--<td colspan="12" class="style4 style1 comment">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Result Reviewed By: </strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp; 
-					<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
-				</td>--}}
+				<tr>
+					<td colspan="6" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
+						</center>					
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					</td>
+				</tr>
 
-				<td colspan="6" class="style4 style1 comment">
-					<center>
-						<strong>Result Reviewed By: </strong>
-						&nbsp;&nbsp;
-						<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
-					</center>					
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
-				</td>
-				<td colspan="3" class="style4 style1 comment">
-					<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
-				</td>
-			</tr>
+			@else
+
+				<tr>
+					<td colspan="6" class="style4 style1 comment">
+						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					</td>
+				</tr>
+
+			@endif
 
 			<?php $sample->prev_tests();  ?>
 
@@ -237,8 +286,8 @@ p.breakhere {page-break-before: always}
 				@foreach($sample->previous_tests as $prev)
 
 					<tr class="evenrow">
-						<td colspan="1"> <span class="style1">Previous EID Results</span></td>
-						<td colspan="7" class="comment style5" >
+						<td colspan="3"> <span class="style1">Previous EID Results</span></td>
+						<td colspan="4" class="comment style5" >
 							<strong><small>
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 			                    @foreach($results as $result)
@@ -258,10 +307,10 @@ p.breakhere {page-break-before: always}
 
 			@else
 				<tr class="evenrow">
-					<td colspan="2">
+					<td colspan="3">
 						<span class="style1"><strong>Previous EID Results</strong></span>
 					</td>
-					<td colspan="5" class="comment" ><span class="style5 "> N/A </span></td>
+					<td colspan="4" class="comment" ><span class="style5 "> N/A </span></td>
 				</tr>
 			@endif
 
@@ -270,24 +319,21 @@ p.breakhere {page-break-before: always}
 		<span class="style8" > 
 
 			@if(env('APP_LAB') == 1)
-				If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab  <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  at eid-nairobi@googlegroups.com <br />
+				If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
 			@elseif(env('APP_LAB') == 3)
 				If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
 			@else
+				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			@endif
 
 			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
 		</span>
 
-		<br>
-		<br>
-		<img src="{{ asset('img/but_cut.gif') }}">
-		<br>
-		<br>
-
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4-L'>
+		@else
+			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
 		@endif
 
 

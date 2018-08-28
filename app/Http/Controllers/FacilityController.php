@@ -352,6 +352,8 @@ class FacilityController extends Controller
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->paginate(10);
+
+        $facilities->setPath(url()->current());
         return $facilities;
     }
 }

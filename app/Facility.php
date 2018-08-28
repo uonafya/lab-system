@@ -98,8 +98,70 @@ class Facility extends BaseModel
 		}
     }
 
+    public function getEmailStringAttribute()
+    {
+        if($this->facility_contact->email != '' && $this->facility_contact->ContactEmail != ''){
+            return $this->facility_contact->email . ' / ' . $this->facility_contact->ContactEmail;
+        }
+        else if($this->facility_contact->email != '' && $this->facility_contact->ContactEmail == ''){
+            return $this->facility_contact->email;
+        }
+        else if($this->facility_contact->email == '' && $this->facility_contact->ContactEmail != ''){
+            return $this->facility_contact->ContactEmail;
+        }
+        else{
+            return null;
+        }
+    }
+
+    public function getTelephoneStringAttribute()
+    {
+        if($this->facility_contact->telephone != '' && $this->facility_contact->contacttelephone != ''){
+            return $this->facility_contact->telephone . ' / ' . $this->facility_contact->contacttelephone;
+        }
+        else if($this->facility_contact->telephone != '' && $this->facility_contact->contacttelephone == ''){
+            return $this->facility_contact->telephone;
+        }
+        else if($this->facility_contact->telephone == '' && $this->facility_contact->contacttelephone != ''){
+            return $this->facility_contact->contacttelephone;
+        }
+        else{
+            return null;
+        }
+    }
+
     public function getEmailAttribute()
     {
-        return $this->facility_contact->email ?? '';
+        return $this->facility_contact->email ?? $this->email ?? '';
+    }
+
+    public function getTelephoneAttribute()
+    {
+        return $this->facility_contact->telephone ?? $this->telephone ?? '';
+    }
+
+    public function getTelephone2Attribute()
+    {
+        return $this->facility_contact->telephone2 ?? $this->telephone2 ?? '';
+    }
+
+    public function getContactpersonAttribute()
+    {
+        return $this->facility_contact->contactperson ?? $this->contactperson ?? '';
+    }
+
+    public function getContacttelephoneAttribute()
+    {
+        return $this->facility_contact->contacttelephone ?? $this->contacttelephone ?? '';
+    }
+
+    public function getContacttelephone2Attribute()
+    {
+        return $this->facility_contact->contacttelephone2 ?? $this->contacttelephone2 ?? '';
+    }
+
+    public function getContactEmailAttribute()
+    {
+        return $this->facility_contact->ContactEmail ?? $this->ContactEmail ?? '';
     }
 }
