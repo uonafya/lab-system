@@ -283,8 +283,7 @@ p.breakhere {page-break-before: always}
 							@if($sample->receivedstatus == 2)
 								{{ $routcome }}
 							@else
-								&nbsp; Viral Load {!! $routcome !!} &nbsp; Log 10 
-								<u>{{ $vlresultinlog}} </u>
+								&nbsp; Viral Load {!! $routcome !!} &nbsp; 
 							@endif
 		 
 						</strong>
@@ -294,6 +293,7 @@ p.breakhere {page-break-before: always}
 
 			@if($sample->worksheet)
 				<tr>
+					<td colspan="2"></td>
 					<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
 						@if($sample->worksheet->machine_type == 1)
 							HIV-1 RNA quantitative assay on Roche CAP/CTM system
@@ -317,27 +317,6 @@ p.breakhere {page-break-before: always}
 					<span class="style5 "><b> {{ $vlmessage }}</b>  {{ $sample->labcomment }} </span>
 				</td>
 			</tr>
-
-			@if($sample->previous_tests->count() > 0)
-				@foreach($sample->previous_tests as $prev)
-
-					<tr class="evenrow">
-						<td colspan="1"> <span class="style1">Previous VL Results</span></td>
-						<td colspan="7" class="comment style5" >
-							<strong><small>Viral Load {{ $prev->result . ' ' . $prev->units }} &nbsp; Date Tested {{ $prev->my_date_format('datetested') }} </small></strong> 
-						</td>
-					</tr>
-
-				@endforeach
-
-			@else
-				<tr>
-					<td colspan="2">
-						<span class="style1"><strong>Previous VL Results</strong></span>
-					</td>
-					<td colspan="5" class="comment" ><span class="style5 "> N/A </span></td>
-				</tr>
-			@endif
 
 			@if(env('APP_LAB') != 1)
 			
@@ -366,6 +345,28 @@ p.breakhere {page-break-before: always}
 				</tr>
 
 			@endif
+
+			@if($sample->previous_tests->count() > 0)
+				@foreach($sample->previous_tests as $prev)
+
+					<tr class="evenrow">
+						<td colspan="1"> <span class="style1">Previous VL Results</span></td>
+						<td colspan="7" class="comment style5" >
+							<strong><small>Viral Load {{ $prev->result . ' ' . $prev->units }} &nbsp; Date Tested {{ $prev->my_date_format('datetested') }} </small></strong> 
+						</td>
+					</tr>
+
+				@endforeach
+
+			@else
+				<tr>
+					<td colspan="2">
+						<span class="style1"><strong>Previous VL Results</strong></span>
+					</td>
+					<td colspan="5" class="comment" ><span class="style5 "> N/A </span></td>
+				</tr>
+			@endif
+
 		</table>
 
 		<span class="style8" > 
