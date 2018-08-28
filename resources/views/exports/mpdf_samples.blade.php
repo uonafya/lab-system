@@ -233,7 +233,7 @@ p.breakhere {page-break-before: always}
 	                    @endforeach
 					</strong>
 				</td>
-				<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+				<td colspan="5" class="style4 style1 comment">&nbsp;
 					@if($sample->worksheet)
 						@if($sample->worksheet->machine_type == 1)
 							HIV-1 DNA qualitative  assay on CAPCTM system
