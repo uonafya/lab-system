@@ -190,12 +190,6 @@
 			@endforeach		
 		</table>
 
-		@if(env('APP_LAB') == 1)
-
-			<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
-
-		@endif
-
 		@isset($rejection)
 			<table>
 				<tr>
@@ -243,8 +237,15 @@
 				@endforeach	
 			</table>
 		@endisset
-
+		
 		<br />
+
+		@if(env('APP_LAB') != 1)
+
+			<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
+
+		@endif
+
 		<br />
 		<br />
 

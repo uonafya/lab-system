@@ -97,7 +97,7 @@
 			</tr>
 			<tr>
 				<td colspan="5"><b> Patient Information</b></td>
-				<td colspan="4"><b>Samples Information</b></td>
+				<td colspan="3"><b>Samples Information</b></td>
 				<td colspan="2"><b>History Information</b></td>
 				<td colspan="4"><b>Lab Information</b></td>
 			</tr>
@@ -110,7 +110,6 @@
 
 				<th><b>Date Collected </b></th>
 				<th><b>Date Received </b></th>
-				<th><b>Status </b></th>
 				<th><b>Sample Type </b></th>
 
 				<th><b>Current Regimen </b></th>
@@ -137,14 +136,14 @@
 					<td>{{ $sample->patient->my_date_format('initiation_date') }} </td>
 					<td>{{ $sample->my_date_format('datecollected') }} </td>
 					<td>{{ $batch->my_date_format('datereceived') }} </td>
+					{{--<td>{{ $sample->sampletype }} </td>--}}
 					<td>
-	                    @foreach($received_statuses as $received_status)
-	                        @if($sample->receivedstatus == $received_status->id)
-	                            {{ $received_status->name ?? '' }}
+	                    @foreach($sample_types as $sample_type)
+	                        @if($sample->sampletype == $sample_type->id)
+	                            {{ $sample_type->name }}
 	                        @endif
 	                    @endforeach
-					</td>
-					<td>{{ $sample->sampletype }} </td>
+	                </td>
 					<td>
 	                    @foreach($prophylaxis as $proph)
 	                        @if($sample->prophylaxis == $proph->id)
@@ -160,8 +159,6 @@
 				</tr>
 			@endforeach		
 		</table>
-
-		<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
 
 		@isset($rejection)
 			<table>
@@ -200,7 +197,13 @@
 						<td>{{ $sample->my_date_format('datecollected') }} </td>
 						<td>{{ $batch->my_date_format('datereceived') }} </td>
 
-						<td>{{ $sample->sampletype }} </td>
+						<td>
+		                    @foreach($sample_types as $sample_type)
+		                        @if($sample->sampletype == $sample_type->id)
+		                            {{ $sample_type->name }}
+		                        @endif
+		                    @endforeach
+		                </td>
 						<td>
 		                    @foreach($prophylaxis as $proph)
 		                        @if($sample->prophylaxis == $proph->id)
@@ -222,6 +225,16 @@
 				@endforeach	
 			</table>
 		@endisset
+		
+		<br />
+
+		@if(env('APP_LAB') != 1)
+
+			<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
+
+		@endif
+
+		<br />
 
 		<p>
 			<strong>NOTE:</strong> Always provide the facility's up-to-date email address(es) and mobile number(s) on the sample requisition form so as to get alerts on the status of your samples.
