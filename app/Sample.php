@@ -103,6 +103,7 @@ class Sample extends BaseModel
                 })
                 ->where('repeatt', 0)
                 ->whereIn('result', [1, 2])
+                ->orderBy('id', 'desc')
                 ->get();
         $this->previous_tests = $samples;
     }

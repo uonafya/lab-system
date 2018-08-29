@@ -312,7 +312,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CCC No</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->enrollment_ccc_no ?? '' }}" id="enrollment_ccc_no">
+                                <input class="form-control" name="enrollment_ccc_no" type="text" value="{{ $sample->patient->enrollment_ccc_no ?? '' }}" id="enrollment_ccc_no">
                             </div>
                         </div>
 
