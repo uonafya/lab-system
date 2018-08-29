@@ -93,7 +93,7 @@ class Copier
                 $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
 
-                if($sample->age == 0 && $batch->datecollected && $patient->dob){
+                if(!$sample->age && $batch->datecollected && $patient->dob){
                     $sample->age = Lookup::calculate_age($batch->datecollected, $patient->dob);
                 }
                 if($sample->worksheet_id == 0) $sample->worksheet_id = null;
@@ -109,6 +109,8 @@ class Copier
         $my->compute_tat(\App\SampleView::class, Sample::class);
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
+
+    // 840334
 
 
     public static function copy_vl()
@@ -182,7 +184,7 @@ class Copier
                 $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
 
-                if($sample->age == 0 && $batch->datecollected && $patient->dob){
+                if(!$sample->age && $batch->datecollected && $patient->dob){
                     $sample->age = Lookup::calculate_viralage($batch->datecollected, $patient->dob);
                 }
                 if($sample->worksheet_id == 0) $sample->worksheet_id = null;
