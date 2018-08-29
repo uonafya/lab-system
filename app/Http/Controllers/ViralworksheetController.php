@@ -65,7 +65,10 @@ class ViralworksheetController extends Controller
 
     public function set_sampletype(Request $request)
     {
-
+        $sampletype = $request->input('sampletype');
+        $machine_type = $request->input('machine_type');
+        $calibration = $request->input('calibration');
+        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}");
     }
 
     /**
@@ -73,7 +76,7 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2, $calibration=false)
+    public function create($sample_type, $machine_type=2, $calibration=false)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
