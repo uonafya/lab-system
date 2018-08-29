@@ -111,7 +111,7 @@ class DashboardCacher
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 14")
-                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
+                                ->whereNull('result')->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
@@ -130,7 +130,7 @@ class DashboardCacher
                 $model = SampleView::selectRaw('COUNT(id) as total')
                                 ->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 14")
-                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
+                                ->whereNull('result')->get()->first()->total;
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereNull('worksheet_id')

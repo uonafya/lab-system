@@ -7,6 +7,7 @@ use App\Viralbatch;
 use App\Viralsample;
 use App\MiscViral;
 use App\Lookup;
+use App\DashboardCacher as Refresh;
 
 // use DOMPDF;
 use Mpdf\Mpdf;
@@ -271,7 +272,7 @@ class ViralbatchController extends Controller
 
         MiscViral::check_batch($batch->id);
         MiscViral::check_batch($new_id);
-
+        Refresh::refresh_cache();
         session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
         return redirect('viralbatch/' . $new_id);
     }
@@ -347,7 +348,7 @@ class ViralbatchController extends Controller
                 Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
             }            
         }
-
+        Refresh::refresh_cache();
         // Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
         
         return redirect('/viralbatch/index/1');
@@ -529,6 +530,7 @@ class ViralbatchController extends Controller
         else{
             $batch->received_by = auth()->user()->id;
             $batch->save();
+            Refresh::refresh_cache();
             session(['toast_message' => "All the samples in the batch have been received."]);
             return redirect('viralbatch/site_approval');
         }
@@ -579,7 +581,7 @@ class ViralbatchController extends Controller
         $batch->received_by = auth()->user()->id;
         $batch->datereceived = $request->input('datereceived');
         $batch->save();
-
+        Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
 
         $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();

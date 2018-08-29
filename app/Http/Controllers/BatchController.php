@@ -8,6 +8,7 @@ use App\Sample;
 use App\Misc;
 use App\Common;
 use App\Lookup;
+use App\DashboardCacher as Refresh;
 
 
 use Mpdf\Mpdf;
@@ -332,7 +333,7 @@ class BatchController extends Controller
                 Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
             }         
         }
-
+        Refresh::refresh_cache();
         // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
         return redirect('/batch/index/1');
@@ -438,6 +439,7 @@ class BatchController extends Controller
             $batch->received_by = auth()->user()->id;
             $batch->save();
             session(['toast_message' => "All the samples in the batch have been received."]);
+            Refresh::refresh_cache();
             return redirect('batch/site_approval');
         }
     }
@@ -490,7 +492,7 @@ class BatchController extends Controller
         $batch->received_by = auth()->user()->id;
         $batch->datereceived = $request->input('datereceived');
         $batch->save();
-
+        Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
 
         $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
