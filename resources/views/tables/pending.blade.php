@@ -14,6 +14,9 @@
                             <thead>
                                 <tr>
                                     <th>Count</th>
+                                    <th>Entry Type</th>
+                                    <th>Date Entered</th>
+                                    <th>Entered By</th>
                                     <th>Lab Code </th>
                                     <th>Sample Code</th>
                                     <th>Batch No  </th>
@@ -34,6 +37,11 @@
                             @forelse($samples as $key => $sample)
                                 <tr>
                                     <td>{{ $key+1 }}</td>
+                                    <td>{{ ($sample->site_entry == 1) ? 'Site Entry' : 'Lab Entry' }}</td>
+                                    <td>{{ date('Y-m-d', strtotime($sample->created_at)) }}</td>
+                                    <td>{{ ($sample->site_entry == 1) ? 
+                                                    $sample->entered_by ?? '' : 
+                                                    $sample->lab_entered_by($sample->user_id) }}</td>
                                     <td>{{ $sample->id }}</td>
                                     <td>{{ $sample->patient }}</td>
                                     <td>{{ $sample->batch_id }}</td>

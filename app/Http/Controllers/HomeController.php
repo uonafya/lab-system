@@ -12,6 +12,8 @@ use App\Viralsample;
 use App\ViralsampleView;
 use App\Synch;
 use App\User;
+use App\Worksheet;
+use App\Viralworksheet;
 
 class HomeController extends Controller
 {
@@ -40,7 +42,7 @@ class HomeController extends Controller
 
             return view('home.home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
         } else if(auth()->user()->user_type_id == 2) {
-            $data = ['eid_samples' =>[], 'vl_samples' =>[]];
+            $data = ['eid_samples' =>[], 'vl_samples' =>[], 'eid_batches' => [], 'vl_batches' => [], 'eid_worksheets' => [], 'vl_worksheets' => []];
             // $users = User::selectRaw("IF(date(last_access) = curdate(), 'today', 'another_day') as `latest_access` ,count(IF(date(last_access) = curdate(), 'today', 'another_day')) as `user_count`")
             //             ->where('user_type_id', '<>', 5)->whereNull('deleted_at')
             //             ->groupBy('latest_access')->get();
@@ -63,10 +65,37 @@ class HomeController extends Controller
             }
 
             // Batches values
-            $eidbatches = 
-            $data = (object)json_decode(json_encode($data));
-            // dd($dsssata);
-            
+            $eidbatches = SampleView::selectRaw("IF(site_entry = 1, 'site', 'lab') as `entered_at`, count(distinct batch_id) as `totals`")
+                            ->whereNotNull('datetested')->whereNull('datedispatched')
+                            ->groupBy('entered_at')->get();
+            if(!$eidbatches->isEmpty()) {
+                foreach ($eidbatches as $key => $value) {
+                    $data['eid_batches'][$value->entered_at] = $value->totals;
+                }
+            }
+            $vlbatches = ViralsampleView::selectRaw("IF(site_entry = 1, 'site', 'lab') as `entered_at`, count(distinct batch_id) as `totals`")
+                            ->whereNotNull('datetested')->whereNull('datedispatched')
+                            ->groupBy('entered_at')->get();
+            if(!$vlbatches->isEmpty()) {
+                foreach ($vlbatches as $key => $value) {
+                    $data['vl_batches'][$value->entered_at] = $value->totals;
+                }
+            }
+
+            // Worksheet values
+            $eidworksheets = Worksheet::selectRaw("(CASE WHEN status_id = 1 THEN 'inprocess' WHEN status_id = 2 THEN 'tested' ELSE 'rest' END) as `types`, count(CASE WHEN status_id = 1 THEN 'inprocess' WHEN status_id = 2 THEN 'tested' ELSE 'rest' END) AS total")->groupBy('types')->get();
+            if(!$eidworksheets->isEmpty()) {
+                foreach ($eidworksheets as $key => $value) {
+                    $data['eid_worksheets'][$value->types] = $value->total;
+                }
+            }
+            $vlworksheets = Viralworksheet::selectRaw("(CASE WHEN status_id = 1 THEN 'inprocess' WHEN status_id = 2 THEN 'tested' ELSE 'rest' END) as `types`, count(CASE WHEN status_id = 1 THEN 'inprocess' WHEN status_id = 2 THEN 'tested' ELSE 'rest' END) AS total")->groupBy('types')->get();
+            if(!$vlworksheets->isEmpty()) {
+                foreach ($vlworksheets as $key => $value) {
+                    $data['vl_worksheets'][$value->types] = $value->total;
+                }
+            }
+            $data = (object)json_decode(json_encode($data));            
             return view('home.admin', compact('data'))->with('pageTitle', 'Home');
         }
     }
@@ -152,7 +181,7 @@ class HomeController extends Controller
                         }
                     })
                     ->whereNull('worksheet_id')
-                    ->where('datereceived', '>', '2016-12-31')
+                    ->where('datereceived', '>', '2017-12-31')
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('viralsamples_view.flag', '1')->get();
@@ -244,7 +273,7 @@ class HomeController extends Controller
             if(Cache::has('eiddayentered'))
                 return true;
         }
-        $minutes = 10;
+        $minutes = 1;
 
         foreach ($periods as $periodkey => $periodvalue) {
             $testingSystem = 'eid';
