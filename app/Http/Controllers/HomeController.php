@@ -32,7 +32,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
+        if (auth()->user()->user_type_id == 0 || auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
             self::cacher();
             $chart = $this->getHomeGraph();
             $week_chart = $this->getHomeGraph('week');
