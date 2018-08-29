@@ -70,7 +70,7 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan='3'>Date Samples Were Dispatched :  {{ $batch->my_date_format('datedispatched')  }}</td>				
+				<td colspan='3'>Date Samples Were Dispatched From Facility :  {{ $batch->my_date_format('datedispatchedfromfacility')  }}</td>				
 			</tr>
 			<tr>
 				<td>Facility Name: {{ $batch->facility->name }} </td>
@@ -78,10 +78,15 @@
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
 			<tr>
-				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress }}</td>
+				<td>MFL Code: {{ $batch->view_facility->facilitycode ?? '' }} </td>
+				<td>Subcounty: {{ $batch->view_facility->subcounty ?? '' }} </td>
+				<td>County: {{ $batch->view_facility->county ?? '' }} </td>
 			</tr>
 			<tr>
-				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email }}</td>
+				<td colspan='3'>Receiving Address (via Courier): {{ $batch->facility->PostalAddress ?? '' }}</td>
+			</tr>
+			<tr>
+				<td colspan='3'>Email (optional-where provided results will be emailed and also sent by courier ):  {{ $batch->facility->email_string }}</td>
 			</tr>
 		</table>
 
@@ -89,37 +94,35 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<td colspan="19" style="text-align: center;"><b>SAMPLE LOG </b></td>
+				<th colspan="18" style="text-align: center;"><b>SAMPLE LOG </b></td>
 			</tr>
 			<tr>
-				<td colspan="8" style="text-align: center;"><b> Patient Information</b></td>
-				<td colspan="4" style="text-align: center;"><b>Mother Information</b></td>
-				<td colspan="7" style="text-align: center;"><b>Samples Information</b></td>
+				<th colspan="7" style="text-align: center;"><b> Patient Information</b></td>
+				<th colspan="4" style="text-align: center;"><b>Mother Information</b></td>
+				<th colspan="7" style="text-align: center;"><b>Samples Information</b></td>
 				<!-- <td colspan="4"><b>Lab Information</b></td> -->
 			</tr>
 			<tr>
-				<td><b> No</b></td>
-				<td><b> Patient ID</b></td>
-				<td><b> DOB</b></td>
-				<td><b> Age (in months) </b></td>
-				<td><b> Sex</b></td>
-				<td><b> Entry Point</b></td>
-				<td><b> Prophylaxis</b></td>
-				<td><b> Feeding</b></td>
+				<th><b> No</b></td>
+				<th><b> Patient ID</b></td>
+				<th><b> DOB & Age(M)</b></td>
+				<th><b> Sex</b></td>
+				<th><b> Entry Point</b></td>
+				<th><b> Prophylaxis</b></td>
+				<th><b> Feeding</b></td>
 
-				<td><b> Age</b></td>
-				<td><b> CCC No</b></td>
-				<td><b> Regimen</b></td>
-				<td><b> Last Vl</b></td>
+				<th><b> Age</b></td>
+				<th><b> CCC No</b></td>
+				<th><b> Regimen</b></td>
+				<th><b> Last Vl</b></td>
 
-				<td><b> Test Type</b></td>
-				<td><b> Date Collected</b></td>
-				<td><b> Date Received</b></td>
-				<td><b> Date Tested</b></td>
-				<td><b> Date Dispatched</b></td>
-				<td><b> Test Result</b></td>
-				<td><b> TAT</b></td>
-
+				<th><b> Test Type</b></td>
+				<th><b> Date Collected</b></td>
+				<th><b> Date Received</b></td>
+				<th><b> Date Tested</b></td>
+				<th><b> Date Dispatched</b></td>
+				<th><b> Test Result</b></td>
+				<th><b> TAT</b></td>
 			</tr>
 
 			@foreach($batch->sample as $key => $sample)
@@ -133,8 +136,8 @@
 				<tr>
 					<td>{{ ($key+1) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
-					<td>{{ $sample->patient->dob }} </td>
-					<td>{{ $sample->age }} </td>
+					{{--<td>{{ $sample->patient->my_date_format('dob') }} </td>--}}
+					<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </td>
 					<td>{{ $sample->patient->gender }} </td>
 	                <td>
 						@foreach($entry_points as $entry_point)
@@ -162,7 +165,7 @@
 					<td>
 	                    @foreach($pcrtypes as $pcrtype)
 	                        @if($sample->pcrtype == $pcrtype->id)
-	                            {{ $pcrtype->alias }}
+	                            {!! $pcrtype->name !!}
 	                        @endif
 	                    @endforeach	
 
@@ -186,24 +189,22 @@
 			@endforeach		
 		</table>
 
-		<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
-
 		@isset($rejection)
 			<table>
 				<tr>
 					<td colspan="10" style="text-align: center;"><b> REJECTED SAMPLE(s)</b></td>
 				</tr>
 				<tr>
-					<td><b> No</b></td>
-					<td><b> Patient ID</b></td>
-					<td><b> Sex</b></td>
-					<td><b> DOB</b></td>
-					<td><b> Prophylaxis</b></td>
-					<td><b> Date Collected</b></td>
-					<td><b> Date Received</b></td>
-					<td><b> Status</b></td>
-					<td><b> Rejected Reason</b></td>
-					<td><b> Date Dispatched</b></td>			
+					<th><b> No</b></td>
+					<th><b> Patient ID</b></td>
+					<th><b> Sex</b></td>
+					<th><b> DOB & Age(M)</b></td>
+					<th><b> Prophylaxis</b></td>
+					<th><b> Status</b></td>
+					<th><b> Rejected Reason</b></td>
+					<th><b> Date Collected</b></td>
+					<th><b> Date Received</b></td>
+					<th><b> Date Dispatched</b></td>			
 				</tr>
 
 				@foreach($batch->sample as $key => $sample)
@@ -212,10 +213,8 @@
 						<td>{{ ($key+1) }} </td>
 						<td>{{ $sample->patient->patient }} </td>
 						<td>{{ $sample->patient->gender }} </td>
-						<td>{{ $sample->dob }} </td>
+						<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </td>
 						<td>{{ $sample->regimen }} </td>
-						<td>{{ $sample->my_date_format('datecollected') }} </td>
-						<td>{{ $batch->my_date_format('datereceived') }} </td>
 						<td>
 		                    @foreach($received_statuses as $received_status)
 		                        @if($sample->receivedstatus == $received_status->id)
@@ -230,6 +229,8 @@
 		                        @endif
 		                    @endforeach
 						</td>
+						<td>{{ $sample->my_date_format('datecollected') }} </td>
+						<td>{{ $batch->my_date_format('datereceived') }} </td>
 						<td>{{ $batch->my_date_format('datedispatched') }} </td>
 					</tr>
 				@endforeach	
@@ -237,6 +238,13 @@
 		@endisset
 
 		<br />
+
+		@if(env('APP_LAB') != 1)
+
+			<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
+
+		@endif
+
 		<br />
 		<br />
 
@@ -250,11 +258,7 @@
 
 		<table>
 			<tr>
-				<td><b>Test Type </b> </td>
-				<td>1-1st test, &nbsp; 2-Repeat for Rejection, &nbsp; 3-Confirmatory PCR at 9mths </td>
-			</tr>
-			<tr>
-				<td><b>Entry Point </b> </td>
+				<th><b>Entry Point </b> </td>
 				<td>
 					@foreach($entry_points as $entry_point)
 						{{ $entry_point->id . '-' . $entry_point->name }}
@@ -267,7 +271,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td><b>Infant Prophylaxis </b> </td>
+				<th><b>Infant Prophylaxis </b> </td>
 				<td>
 					@foreach($iprophylaxis as $iproph)
 						{{ $iproph->id . '-' . $iproph->name }}
@@ -280,7 +284,7 @@
 				</td>				
 			</tr>
 			<tr>
-				<td><b>Infant Feeding </b> </td>
+				<th><b>Infant Feeding </b> </td>
 				<td>
 					@foreach($feedings as $feeding)
 						{{ $feeding->feeding . ' : ' . $feeding->feeding_description }}
@@ -293,7 +297,7 @@
 				</td>				
 			</tr>
 			<tr>
-				<td><b>PMTCT Intervention </b> </td>
+				<th><b>PMTCT Intervention </b> </td>
 				<td>
 					@foreach($interventions as $intervention)
 						{{ $intervention->id . '-' . $intervention->name }}

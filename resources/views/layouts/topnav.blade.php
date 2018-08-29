@@ -73,7 +73,7 @@
                         </li>
                     @elseif(Auth()->user()->user_type_id == 2)
                         <li>
-                            <a href="">Home</a>
+                            <a href="{{ url('home') }}">Home</a>
                         </li>
                         <li>
                             <a href="{{ url('users') }}">Users</a>
