@@ -386,7 +386,7 @@ class BatchController extends Controller
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
-            ->whereRaw('(receivedstatus is null or receivedby is null)')
+            ->whereRaw('(receivedstatus is null or received_by is null or received_by=0)')
             // ->whereNull('received_by')
             // ->whereNull('receivedstatus')
             ->where('site_entry', 1)
