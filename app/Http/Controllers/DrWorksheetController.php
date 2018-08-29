@@ -173,7 +173,7 @@ class DrWorksheetController extends Controller
     public function upload(DrWorksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::where('user_type_id', '<', 5)->where('user_type_id', '!=', 0)->get();
+        $users = User::where('user_type_id', 1)->get();
         return view('forms.upload_dr_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'dr'])->with('pageTitle', 'Worksheet Upload');        
     }
 
