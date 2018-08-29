@@ -41,13 +41,12 @@ class AppServiceProvider extends ServiceProvider
     {
         if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
 
-        dd(url('') . ' ' . url()->full() . " " . url()->current() . " " . $_SERVER['HTTP_HOST'] . " " . $_SERVER['REQUEST_URI'] . " " . $_SERVER['SERVER_PORT']);
+        // dd(url('') . ' ' . url()->full() . " " . url()->current() . " " . $_SERVER['HTTP_HOST'] . " " . $_SERVER['REQUEST_URI'] . " " . $_SERVER['SERVER_PORT']);
         // if(env('APP_URL') == url('') && env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
 
         // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
 
-        // \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_PORT'));
-        \Illuminate\Support\Facades\URL::forceRootUrl(url(''));
+        if(env('APP_PORT')) \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_PORT'));
 
 
 
