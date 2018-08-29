@@ -37,8 +37,7 @@ CREATE TABLE  `viralworksheetsampletypes` (
   KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
--- Dumping data for table eid_kemri2.viralworksheetsampletype: 3 rows
-/*!40000 ALTER TABLE `viralworksheetsampletype` DISABLE KEYS */;
+
 INSERT INTO `viralworksheetsampletypes` (`id`, `name`) VALUES
 	(1, 'DBS'),
 	(2, 'Plasma / EDTA');
