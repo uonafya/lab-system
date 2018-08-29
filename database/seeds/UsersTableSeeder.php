@@ -14,15 +14,15 @@ class UsersTableSeeder extends Seeder
     {
         //
 
-        DB::table('user_types')->insert([
-		    ['id' => '1', 'user_type' => 'Lab User'],
-		    ['id' => '2', 'user_type' => 'System Administrator'],
-		    ['id' => '3', 'user_type' => 'Program Officers'],
-		    ['id' => '4', 'user_type' => 'Data Clerk'],
-		    ['id' => '5', 'user_type' => 'Facility Users'],
-		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
-		    ['id' => '7', 'user_type' => 'POC Admin'],
-		]);
+  //       DB::table('user_types')->insert([
+		//     ['id' => '1', 'user_type' => 'Lab User'],
+		//     ['id' => '2', 'user_type' => 'System Administrator'],
+		//     ['id' => '3', 'user_type' => 'Program Officers'],
+		//     ['id' => '4', 'user_type' => 'Data Clerk'],
+		//     ['id' => '5', 'user_type' => 'Facility Users'],
+		//     ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
+		//     ['id' => '7', 'user_type' => 'POC Admin'],
+		// ]);
 
 		$old_users = DB::connection('old')->table('users')->get();
 
@@ -35,10 +35,12 @@ class UsersTableSeeder extends Seeder
 			$user->oname = $old_user->oname;
 			$user->email = $old_user->email;
 
+			if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
+
 			$existing = User::where('email', $old_user->email)->get()->first();
 			if($existing) $user->email = rand(1, 20) . $user->email;
 
-			$user->password = '12345678';
+			$user->password = env('DEFAULT_PASSWORD', 12345678);
 			$user->save();
 		}
 
