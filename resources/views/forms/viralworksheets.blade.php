@@ -41,6 +41,7 @@
             @endif
 
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
+            <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
 
             @if($calibration)
                 <input type="hidden" value="1" name="calibration" >

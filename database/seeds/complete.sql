@@ -41,8 +41,7 @@ CREATE TABLE  `viralworksheetsampletypes` (
 /*!40000 ALTER TABLE `viralworksheetsampletype` DISABLE KEYS */;
 INSERT INTO `viralworksheetsampletypes` (`id`, `name`) VALUES
 	(1, 'DBS'),
-	(2, 'Plasma / EDTA'),
-	(3, 'All Sample Types');
+	(2, 'Plasma / EDTA');
 
 
 DROP TABLE IF EXISTS `countys`;

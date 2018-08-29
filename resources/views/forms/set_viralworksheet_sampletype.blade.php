@@ -18,7 +18,7 @@
    <div class="content">
         <div>
 
-        {{ Form::open(['url' => url('patient/' . $patient->id), 'method' => 'put', 'class'=>'form-horizontal', 'confirm_message' => 'Are you sure you would like to update this patient?']) }}
+        {{ Form::open(['url' => url('viralworksheet/set_sampletype'), 'method' => 'post', 'class'=>'form-horizontal']) }}
 
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
@@ -27,21 +27,18 @@
                         <center> </center>
                     </div>
                     <div class="panel-body">
+                        <input type="hidden" name="machine_type" value="{{ $machine_type }}">
+                        @if($calibration)
+                            <input type="hidden" name="calibration" value="{{ $calibration }}">
+                        @endif
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Sex</label>
+                            <label class="col-sm-4 control-label">Worksheet Sample Type</label>
                             <div class="col-sm-8">
-                                <select class="form-control lockable" required name="sex" id="sex">
+                                <select class="form-control lockable" required name="sampletype" id="sampletype">
                                     <option value=""> Select One </option>
-                                    @foreach ($genders as $gender)
-                                        <option value="{{ $gender->id }}"
-
-                                        @if (isset($patient) && $patient->sex == $gender->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $gender->gender_description }}
-                                        </option>
+                                    @foreach ($worksheet_sampletypes as $worksheet_sampletype)
+                                        <option value="{{ $worksheet_sampletype->id }}"> {{ $worksheet_sampletype->name }} </option>
                                     @endforeach
                                 </select>
                             </div>

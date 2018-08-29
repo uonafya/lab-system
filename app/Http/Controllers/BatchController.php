@@ -42,7 +42,6 @@ class BatchController extends Controller
         else{ 
             $myurl =  url('batch/index/' . $batch_complete); 
             $myurl2 = url('batch/index'); 
-
         }
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
@@ -73,7 +72,10 @@ class BatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('batches.id', 'desc')
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
+                return $query->orderBy('batches.id', 'desc');
+            })
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -333,7 +335,7 @@ class BatchController extends Controller
 
         // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
-        return redirect('/batch');
+        return redirect('/batch/index/1');
     }
 
     public function get_rows($batch_list=NULL)

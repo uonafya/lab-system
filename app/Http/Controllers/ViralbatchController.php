@@ -71,7 +71,10 @@ class ViralbatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('viralbatches.id', 'desc')
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
+                return $query->orderBy('viralbatches.id', 'desc');
+            })
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -347,7 +350,7 @@ class ViralbatchController extends Controller
 
         // Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
         
-        return redirect('/viralbatch');
+        return redirect('/viralbatch/index/1');
     }
 
     public function get_rows($batch_list=NULL)
