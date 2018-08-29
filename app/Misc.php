@@ -148,7 +148,7 @@ class Misc extends Common
                 return $query->where('batch_complete', 2);
             })
             ->where('repeatt', 0)
-            ->where('receivedstatus', '!=', 2)
+            ->whereRaw("(receivedstatus != 2 or receivedstatus is null)")
             ->groupBy('batch_id', 'result')
             ->get();
 
