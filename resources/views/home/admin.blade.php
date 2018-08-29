@@ -59,7 +59,7 @@
                             <h4>EID Samples Activity</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="pe-7s-share fa-4x"></i>
+                            <i class="pe-7s-graph1 fa-4x"></i>
                         </div>
                         <div class="m-t-xl">
                             <h3 class="m-b-xs">4 210,160</h3>
@@ -90,30 +90,22 @@
                 <div class="hpanel stats">
                     <div class="panel-body h-200">
                         <div class="stats-title pull-left">
-                            <h4>EID Batches Activity</h4>
+                            <h4>EID Batches History</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="pe-7s-share fa-4x"></i>
+                            <i class="pe-7s-battery fa-4x"></i>
                         </div>
-                        <div class="m-t-xl">
-                            <h3 class="m-b-xs">4 210,160</h3>
-		                    <span class="font-bold no-margins">
-		                        Batches Today
-		                    </span>
-                            <div class="progress m-t-xs full progress-small">
-                                <div style="width: 55%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="55" role="progressbar" class=" progress-bar progress-bar-success">
-                                    <span class="sr-only">35% Complete (success)</span>
-                                </div>
-                            </div>
+                        <div class="clearfix"></div>
+                        <div class="m-t-xs">
+
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <small class="stats-label">Pages / Visit</small>
-                                    <h4>7.80</h4>
+                                    <small class="stat-label">Lab Pending Dispatch</small>
+                                    <h4>$170,20 <i class="fa fa-level-up text-success"></i></h4>
                                 </div>
-
                                 <div class="col-xs-6">
-                                    <small class="stats-label">% New Visits</small>
-                                    <h4>76.43%</h4>
+                                    <small class="stat-label">Site Pending Dispatch</small>
+                                    <h4>$580,90 <i class="fa fa-level-up text-success"></i></h4>
                                 </div>
                             </div>
                         </div>
@@ -124,10 +116,10 @@
                 <div class="hpanel stats">
                     <div class="panel-body h-200">
                         <div class="stats-title pull-left">
-                            <h4>EID Worksheets Activity</h4>
+                            <h4>EID Worksheets History</h4>
                         </div>
                         <div class="stats-icon pull-right">
-                            <i class="pe-7s-share fa-4x"></i>
+                            <i class="pe-7s-cash fa-4x"></i>
                         </div>
                         <div class="m-t-xl">
                             <h3 class="m-b-xs">4 210,160</h3>
