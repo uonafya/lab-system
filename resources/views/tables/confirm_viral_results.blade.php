@@ -175,9 +175,6 @@
                                             @endif                                            
                                         </td>
 
-
-                                        <td></td>
-
                                         <td> 
                                             @if($sample->approvedby)
                                                 @foreach($actions as $action)
