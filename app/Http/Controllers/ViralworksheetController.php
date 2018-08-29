@@ -55,6 +55,19 @@ class ViralworksheetController extends Controller
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
+    public function set_sampletype_form($machine_type, $calibration=false)
+    {
+        $data = Lookup::worksheet_lookups();
+        $data['machine_type'] = $machine_type;
+        $data['calibration'] = $calibration;
+        return view('fomrs.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
+    }
+
+    public function set_sampletype(Request $request)
+    {
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *

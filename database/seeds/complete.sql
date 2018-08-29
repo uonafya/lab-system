@@ -35,7 +35,7 @@ CREATE TABLE  `viralworksheetsampletypes` (
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table eid_kemri2.viralworksheetsampletype: 3 rows
 /*!40000 ALTER TABLE `viralworksheetsampletype` DISABLE KEYS */;
