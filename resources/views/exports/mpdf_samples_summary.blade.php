@@ -261,7 +261,7 @@
 		
 
 		<div>
-			<table style="float: left; display: inline-block;">
+			<table style="display: inline-block;">
 				<th><b>LAB CONTACTS </b> </td>
 				<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
 				<tr><td>{{ $batch->lab->name }} </td></tr>
@@ -271,7 +271,7 @@
 				<tr><td>{{ $batch->lab->email }} </td></tr>
 			</table>
 				
-			<table style="float: left; display: inline-block;">
+			<table style="display: inline-block;">
 				<tr><b>KEY/CODES</b></tr>
 				<tr>
 					<th><b>Entry Point </b> </td>
