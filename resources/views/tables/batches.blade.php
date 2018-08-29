@@ -91,7 +91,7 @@
                     <div class="table-responsive">
                         <form  method="post" action="{{ url($pre . 'batch/summaries/') }}  " >
                             {{ csrf_field() }}
-                            <table class="table table-striped table-bordered table-hover" >
+                            <table class="table table-striped table-bordered table-hover data-table" >
                                 <thead>
                                     <tr class="colhead">
                                         <th rowspan="2">Batch No</th>
