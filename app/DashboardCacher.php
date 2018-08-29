@@ -163,7 +163,7 @@ class DashboardCacher
                     // ->where('site_entry', '=', '1')
                     ->groupBy('batch_id')
                     ->whereNull('receivedstatus')
-                    ->where('site_entry', 1;
+                    ->where('site_entry', 1);
         }
         return $model->get()->first()->total ?? 0;
 	}
