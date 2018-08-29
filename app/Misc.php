@@ -25,7 +25,7 @@ class Misc extends Common
 				}
 			}
 			else{
-				$original = $this->check_original($sample->id);
+				$original = self::check_original($sample->id);
 
 				if($sample->run == 2){
 					if( ($sample->result == 3 && $original->result == 3) || 
@@ -38,7 +38,7 @@ class Misc extends Common
 				}
 
 				else if($sample->run == 3){
-					$second = $this->check_run($sample->id, 2);
+					$second = self::check_run($sample->id, 2);
 
 					if( ($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
 						($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
