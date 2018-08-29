@@ -126,7 +126,7 @@
 
                                         <th>Received</th>
                                         <th>Entered</th>
-                                        <th>Received</th>
+                                        <th>Total</th>
                                         <th>Rejected</th>
                                         <th>Results</th>
                                         <th>No Result</th>
