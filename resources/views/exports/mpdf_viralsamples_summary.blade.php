@@ -155,7 +155,6 @@
 	                            {{ $justification->name }}
 	                        @endif
 	                    @endforeach
-	                    ;lkdf lkjgsdkj alkjfasl sldkjf lkdjsaf lksdfj lsadfj lkjds 
 	                </td>
 
 					<td>{{ $sample->my_date_format('datecollected') }} </td>
