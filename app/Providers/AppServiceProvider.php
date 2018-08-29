@@ -40,12 +40,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
+
+        dd(url(''));
         // if(env('APP_URL') == url('') && env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
 
         // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
 
         // \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_PORT'));
         \Illuminate\Support\Facades\URL::forceRootUrl(url(''));
+
+
 
         Mother::observe(MotherObserver::class);
 
