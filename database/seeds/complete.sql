@@ -521,17 +521,17 @@ CREATE TABLE IF NOT EXISTS `labs` (
 
 -- Dumping data for table apidb.labs: ~10 rows (approximately)
 /*!40000 ALTER TABLE `labs` DISABLE KEYS */;
-INSERT INTO `labs` (`id`, `name`, `email`, `labname`, `labdesc`, `lablocation`, `base_url`, `labtel1`, `labtel2`, `taqman`, `abbott`) VALUES
-	(1, 'KEMRI CVR HIV-P3 Lab, Nairobi', 'eid-nairobi@googlegroups.com', 'KEMRI Nairobi ', 'KEMRI CVR HIV-P3 Lab', 'KEMRI HQ, Mbagathi Road, Nairobi', NULL, '020 2722541 Ext: 2256/2290 ', '0725793260 / 0725796842', 1, 1),
-	(2, 'KEMRI CDC HIV/R Lab,  Kisumu', 'eid-kisumu-kisian@googlegroups.c', 'Kisumu Lab', 'CDC HIV/R Lab', 'Kisumu-Busia Road, Kisumu', NULL, '057 2053017/8 ', ' 0722204614', 1, 1),
-	(3, 'KEMRI ALUPE HIV Laboratory', 'eid-alupe@googlegroups.com', 'Busia Lab', 'KEMRI Alupe Lab', 'Busia - Malaba Rd, Busia', NULL, ' (055) 22410', ' 0726156679', 1, 1),
-	(4, 'KEMRI/Walter Reed CRC Lab, Kericho', 'eid-kericho@googlegroups.com', 'Kericho Lab', 'WRP CRC Lab', 'Hospital Road, Kericho', NULL, ' 052 30388/21064', '0716430261', 1, 1),
-	(5, 'AMPATH Care Lab, Eldoret', 'eid-ampath@googlegroups.com', 'Eldoret Lab', 'AMPATH Care Lab Eldoret', 'Moi Referral Hospital, Eldoret', NULL, NULL, NULL, 1, 1),
-	(6, 'Coast Provincial General Hospital Molecular Lab', 'eid-cpgh@googlegroups.com', 'Coast Lab', 'CPGH Molecular Lab', 'Coast Provincial General Hospital', NULL, ' 0722207868 Ext. Lab', '0720594408 / 0733657392', 1, 1),
-	(7, 'National HIV Reference Laboratory, Nairobi', NULL, 'NHRL Nairobi', 'NHRL Nairobi', NULL, NULL, NULL, NULL, 1, 1),
-	(8, 'Nyumbani Diagnostic Lab', NULL, 'Nyumbani Lab ', 'Nyumbani Lab Nairobi', NULL, NULL, NULL, NULL, 0, 1),
-	(9, 'Kenyatta National Hospial Lab, Nairobi', NULL, 'KNH Nairobi', 'KNH Nairobi', NULL, NULL, NULL, NULL, 1, 1),
-	(10, 'EDARP, Nairobi', NULL, 'Edarp Nairobi', 'EDARP Nairobi', NULL, NULL, NULL, NULL, 1, 1);
+INSERT INTO `labs` (`id`, `name`, `email`, `labname`, `labdesc`, `lablocation`, `base_url`, `labtel1`, `labtel2`, `taqman`, `abbott`) 
+VALUES (1, 'KEMRI,Nairobi HIV Lab', 'eid-nairobi@googlegroups.com', 'KEMRI Nairobi ', 'KEMRI,Nairobi HIV Lab', 'KEMRI HQ, Mbagathi Road, Nairobi', 'https://kemrinairobi.nascop.org:7443/api', '020 2722541 Ext: 2256/2290 ', '0725793260 / 0725796842', 1, 1),
+ (2, 'KEMRI CDC HIV/R Lab,  Kisumu', 'eid-kisumu-kisian@googlegroups.c', 'Kisumu Lab', 'CDC HIV/R Lab', 'Kisumu-Busia Road, Kisumu', NULL, '057 2053017/8 ', ' 0722204614', 1, 1),
+ (3, 'KEMRI,Alupe HIV Lab', 'eid-alupe@googlegroups.com', 'Busia Lab', 'KEMRI,Alupe HIV Lab', 'Busia - Malaba Rd, Busia', NULL, ' (055) 22410', ' 0726156679', 1, 1), 
+ (4, 'KEMRI/Walter Reed CRC Lab, Kericho', 'eid-kericho@googlegroups.com', 'Kericho Lab', 'WRP CRC Lab', 'Hospital Road, Kericho', NULL, ' 052 30388/21064', '0716430261', 1, 1), 
+ (5, 'AMPATH Care Lab, Eldoret', 'eid-ampath@googlegroups.com', 'Eldoret Lab', 'AMPATH Care Lab Eldoret', 'Moi Referral Hospital, Eldoret', NULL, NULL, NULL, 1, 1), 
+ (6, 'Coast Provincial General Hospital Molecular Lab', 'eid-cpgh@googlegroups.com', 'Coast Lab', 'CPGH Molecular Lab', 'Coast Provincial General Hospital', NULL, ' 0722207868 Ext. Lab', '0720594408 / 0733657392', 1, 1), 
+ (7, 'National HIV Reference Laboratory, Nairobi', NULL, 'NHRL Nairobi', 'NHRL Nairobi', NULL, NULL, NULL, NULL, 1, 1), 
+ (8, 'Nyumbani Diagnostic Lab', NULL, 'Nyumbani Lab ', 'Nyumbani Lab Nairobi', NULL, NULL, NULL, NULL, 0, 1),
+ (9, 'Kenyatta National Hospial Lab, Nairobi', NULL, 'KNH Nairobi', 'KNH Nairobi', NULL, NULL, NULL, NULL, 1, 1), 
+ (10, 'EDARP, Nairobi', NULL, 'Edarp Nairobi', 'EDARP Nairobi', NULL, NULL, NULL, NULL, 1, 1);
 /*!40000 ALTER TABLE `labs` ENABLE KEYS */;
 
 DROP TABLE IF EXISTS `partners`;
