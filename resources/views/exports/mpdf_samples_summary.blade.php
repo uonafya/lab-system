@@ -260,79 +260,73 @@
 
 		
 
-		<div style="width: 100%">
-			<div style="float: left;">
-				<b>LAB CONTACTS</b>
-				<table>
-					<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
-					<tr><td>{{ $batch->lab->name }} </td></tr>
-					<tr><td>{{ $batch->lab->lablocation }} </td></tr>
-					<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
-					<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
-					<tr><td>{{ $batch->lab->email }} </td></tr>
-					<tr><td> </td></tr>
-				</table>
+		<div>
+			<table style="float: left; display: inline-block;">
+				<th><b>LAB CONTACTS </b> </td>
+				<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
+				<tr><td>{{ $batch->lab->name }} </td></tr>
+				<tr><td>{{ $batch->lab->lablocation }} </td></tr>
+				<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
+				<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
+				<tr><td>{{ $batch->lab->email }} </td></tr>
+			</table>
 				
-			</div>
+			<table style="float: left; display: inline-block;">
+				<tr><b>KEY/CODES</b></tr>
+				<tr>
+					<th><b>Entry Point </b> </td>
+					<td>
+						@foreach($entry_points as $entry_point)
+							{{ $entry_point->id . '-' . $entry_point->name }}
 
-			<div style="float: right;">
-				<b>KEY/CODES</b>
-				<table>
-					<tr>
-						<th><b>Entry Point </b> </td>
-						<td>
-							@foreach($entry_points as $entry_point)
-								{{ $entry_point->id . '-' . $entry_point->name }}
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>
+				</tr>
+				<tr>
+					<th><b>Infant Prophylaxis </b> </td>
+					<td>
+						@foreach($iprophylaxis as $iproph)
+							{{ $iproph->id . '-' . $iproph->name }}
 
-								@if($loop->last)
-									@break
-								@endif
-								,&nbsp;
-							@endforeach
-						</td>
-					</tr>
-					<tr>
-						<th><b>Infant Prophylaxis </b> </td>
-						<td>
-							@foreach($iprophylaxis as $iproph)
-								{{ $iproph->id . '-' . $iproph->name }}
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>				
+				</tr>
+				<tr>
+					<th><b>Infant Feeding </b> </td>
+					<td>
+						@foreach($feedings as $feeding)
+							{{ $feeding->feeding . ' : ' . $feeding->feeding_description }}
 
-								@if($loop->last)
-									@break
-								@endif
-								,&nbsp;
-							@endforeach
-						</td>				
-					</tr>
-					<tr>
-						<th><b>Infant Feeding </b> </td>
-						<td>
-							@foreach($feedings as $feeding)
-								{{ $feeding->feeding . ' : ' . $feeding->feeding_description }}
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>				
+				</tr>
+				<tr>
+					<th><b>PMTCT Intervention </b> </td>
+					<td>
+						@foreach($interventions as $intervention)
+							{{ $intervention->id . '-' . $intervention->name }}
 
-								@if($loop->last)
-									@break
-								@endif
-								,&nbsp;
-							@endforeach
-						</td>				
-					</tr>
-					<tr>
-						<th><b>PMTCT Intervention </b> </td>
-						<td>
-							@foreach($interventions as $intervention)
-								{{ $intervention->id . '-' . $intervention->name }}
-
-								@if($loop->last)
-									@break
-								@endif
-								,&nbsp;
-							@endforeach
-						</td>				
-					</tr>
-				</table>
-				
-			</div>
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>				
+				</tr>
+			</table>
+			
 			
 		</div>
 
