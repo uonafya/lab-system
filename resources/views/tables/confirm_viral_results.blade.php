@@ -57,7 +57,7 @@
                                     <th>Result</th>                
                                     <th>Dilution Factor</th>                
                                     <th>Interpretation</th>                
-                                    <th>Units</th>                
+                                    <th></th>                 
                                     <th>Action</th>               
                                     <th>Approved Date</th>                
                                     <th>Approved By</th>                
@@ -110,7 +110,7 @@
                                      </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
-                                    <td >&nbsp; </td>  
+                                    <td >&nbsp; </td> 
                                     <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
@@ -166,14 +166,14 @@
                                         </td>
 
                                         <td> 
-                                            @if($sample->approvedby)
-                                                {!! $sample->coloured_result !!}
-                                            @else
-                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
-                                            @endif
+                                            {!! $sample->coloured_result !!}
                                         </td>
 
-                                        <td></td>
+                                        <td>
+                                            @if(!$sample->approvedby)
+                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
+                                            @endif                                            
+                                        </td>
 
                                         <td> 
                                             @if($sample->approvedby)

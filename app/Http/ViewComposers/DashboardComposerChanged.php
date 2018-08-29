@@ -20,6 +20,12 @@ class DashboardComposerChanged
 	public $DashboardData = [];
 	public $tasks = [];
     public $user = [];
+    public $date_str = null;
+    public function __construct(){
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $this->date_str = $year . '-12-31';
+    }
 
 	/**
      * Bind data to the view.
@@ -89,7 +95,7 @@ class DashboardComposerChanged
                         ->whereNotIn('receivedstatus', ['0', '2', '4'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
-                        ->where('datereceived', '>', '2016-12-31')
+                        ->where('datereceived', '>', $this->date_str)
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 
@@ -103,7 +109,7 @@ class DashboardComposerChanged
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereNull('worksheet_id')
-                    ->where('datereceived', '>', '2014-12-31')
+                    ->where('datereceived', '>', $this->date_str)
                     ->whereNotIn('receivedstatus', ['0', '2', '4'])
                     ->whereRaw("(result is null or result = 0)")
                     ->where('input_complete', '1')
@@ -151,7 +157,7 @@ class DashboardComposerChanged
                         ->whereBetween('sampletype', [1, 5])
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereNull('worksheet_id')
-                        ->whereYear('datereceived', '>', '2015')
+                        ->whereYear('datereceived', '>', $this->date_str)
                         ->where('parentid', '>', 0)
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '=', '1')
@@ -159,6 +165,7 @@ class DashboardComposerChanged
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
+                        ->whereYear('datereceived', '>', $this->date_str)
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->where(function ($query) {
                             $query->whereNull('result')

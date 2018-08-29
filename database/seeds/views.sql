@@ -120,6 +120,8 @@ CREATE OR REPLACE VIEW old_viralworksheets_view AS
     sample_prep_lot_no, bulklysislotno as bulklysis_lot_no, controllotno as control_lot_no, calibratorlotno as
     calibrator_lot_no, amplificationkitlotno as amplification_kit_lot_no,
 
+    worksheetsampletype as sampletype,
+
     negcontrolresult as neg_control_result, highposcontrolresult as highpos_control_result, 
     lowposcontrolresult as lowpos_control_result,
 

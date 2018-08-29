@@ -8,6 +8,7 @@ use App\Sample;
 use App\Misc;
 use App\Common;
 use App\Lookup;
+use App\DashboardCacher as Refresh;
 
 
 use Mpdf\Mpdf;
@@ -42,7 +43,6 @@ class BatchController extends Controller
         else{ 
             $myurl =  url('batch/index/' . $batch_complete); 
             $myurl2 = url('batch/index'); 
-
         }
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
@@ -73,7 +73,10 @@ class BatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy('batches.id', 'desc')
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
+                return $query->orderBy('batches.id', 'desc');
+            })
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -100,6 +103,8 @@ class BatchController extends Controller
                 $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
                 $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+                $n = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
+                $noresult += $n;
 
                 $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
                 $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
@@ -330,10 +335,10 @@ class BatchController extends Controller
                 Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
             }         
         }
-
+        Refresh::refresh_cache();
         // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
-        return redirect('/batch');
+        return redirect('/batch/index/1');
     }
 
     public function get_rows($batch_list=NULL)
@@ -389,9 +394,9 @@ class BatchController extends Controller
             ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('batches.id')
-            ->paginate();
+            ->get();
 
-        $batches->setPath(url()->current());
+        // $batches->setPath(url()->current());
 
         $batch_ids = $batches->pluck(['id'])->toArray();
         $subtotals = Misc::get_subtotals($batch_ids, false);
@@ -415,7 +420,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => ''])->with('pageTitle','Site Approval');
+        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '', 'datatable'=>true])->with('pageTitle','Site Approval');
     }
 
 
@@ -436,6 +441,7 @@ class BatchController extends Controller
             $batch->received_by = auth()->user()->id;
             $batch->save();
             session(['toast_message' => "All the samples in the batch have been received."]);
+            Refresh::refresh_cache();
             return redirect('batch/site_approval');
         }
     }
@@ -488,7 +494,7 @@ class BatchController extends Controller
         $batch->received_by = auth()->user()->id;
         $batch->datereceived = $request->input('datereceived');
         $batch->save();
-
+        Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
 
         $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();

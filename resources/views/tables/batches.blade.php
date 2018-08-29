@@ -91,7 +91,7 @@
                     <div class="table-responsive">
                         <form  method="post" action="{{ url($pre . 'batch/summaries/') }}  " >
                             {{ csrf_field() }}
-                            <table class="table table-striped table-bordered table-hover" >
+                            <table class="table table-striped table-bordered table-hover @isset($datatable) data-table @endisset" >
                                 <thead>
                                     <tr class="colhead">
                                         <th rowspan="2">Batch No</th>
@@ -126,7 +126,7 @@
 
                                         <th>Received</th>
                                         <th>Entered</th>
-                                        <th>Received</th>
+                                        <th>Total</th>
                                         <th>Rejected</th>
                                         <th>Results</th>
                                         <th>No Result</th>
@@ -234,8 +234,9 @@
                     </div>
 
                     {{-- {!!  $links !!} --}}
-
-                    {{ $batches->links() }}
+                    @empty($datatable)
+                        {{ $batches->links() }}
+                    @endempty
                 </div>
             </div>
         </div>

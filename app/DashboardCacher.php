@@ -17,7 +17,7 @@ use App\Viralworksheet;
 
 class DashboardCacher
 {
-
+    
     public static function tasks()
     {
     	self::tasks_cacher();
@@ -103,19 +103,23 @@ class DashboardCacher
 
 	public static function pendingSamplesAwaitingTesting($over = false, $testingSystem = 'Viralload')
 	{
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
+
         if ($testingSystem == 'Viralload') {
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 14")
-                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
+                                ->whereNull('result')->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
                     $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')
-                        ->whereIn('receivedstatus', [1, 3])
+                        ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
-                        ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                        ->where('datereceived', '>', '2016-12-31')
+                        ->whereNull('worksheet_id')
+                        ->where('datereceived', '>', $date_str)
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 
@@ -126,13 +130,12 @@ class DashboardCacher
                 $model = SampleView::selectRaw('COUNT(id) as total')
                                 ->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 14")
-                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
+                                ->whereNull('result')->get()->first()->total;
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
-                    ->whereIn('receivedstatus', [1, 3])
-                    ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                    ->where('datereceived', '>', '2016-12-31')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    ->whereNull('worksheet_id')
+                    ->where('datereceived', '>', $date_str)
+                    ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->get()->first()->total;
@@ -145,23 +148,21 @@ class DashboardCacher
 	public static function siteBatchesAwaitingApproval($testingSystem = 'Viralload')
 	{
         if ($testingSystem == 'Viralload') {
-            $model = ViralsampleView::selectRaw("distinct batch_id, COUNT(id) as total")
+            $model = ViralsampleView::selectRaw("COUNT(distinct batch_id) as total")
                         // ->where('lab_id', '=', env('APP_LAB'))
                         // ->where('flag', '=', '1')
                         // ->where('repeatt', '=', '0')
                         // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                         // ->where('site_entry', '=', '1')
-                        ->groupBy('batch_id')
                         ->whereNull('receivedstatus')
                         ->where('site_entry', 1);
         } else {
-            $model = SampleView::selectRaw("distinct batch_id, COUNT(id) as total")
+            $model = SampleView::selectRaw("COUNT(distinct batch_id) as total")
                     // ->where('lab_id', '=', env('APP_LAB'))
                     // ->where('flag', '=', '1')
                     // ->where('repeatt', '=', '0')
                     // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                     // ->where('site_entry', '=', '1')
-                    ->groupBy('batch_id')
                     ->whereNull('receivedstatus')
                     ->where('site_entry', 1);
         }
@@ -180,12 +181,16 @@ class DashboardCacher
 
 	public static function samplesAwaitingRepeat($testingSystem = 'Viralload')
 	{
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
+
         if($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(*) as total')
                         ->whereBetween('sampletype', [1, 5])
                         // ->where('receivedstatus', 3)
                         ->whereNull('worksheet_id')
-                        ->whereYear('datereceived', '>', '2015')
+                        ->whereYear('datereceived', '>', $date_str)
                         ->where('parentid', '>', 0)
                         // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
@@ -194,6 +199,7 @@ class DashboardCacher
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
+                        ->whereYear('datereceived', '>', $date_str)
                         // ->where('receivedstatus', 3)
                         ->where(function ($query) {
                             $query->whereNull('result')
@@ -282,7 +288,7 @@ class DashboardCacher
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 10;
+    	$minutes = 1;
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);

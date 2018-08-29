@@ -104,15 +104,15 @@
                         <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Taqman(24)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/create/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Abbott Calibration Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create C8800 Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Panther Worksheet(96)</a></li>
                 <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>

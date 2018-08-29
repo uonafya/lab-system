@@ -35,9 +35,13 @@
 </head>
 <body>
 
+    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
+	<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
+	<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
 	@foreach($batches as $batch)
 
-		<table border="0" style="border: 0px; width: 100%;">
+		<table class="table" border="0" style="border: 0px; width: 100%;">
 			<tr>
 				<td colspan="9" align="center">
 					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
@@ -251,65 +255,80 @@
 		<p>
 			NOTE: Always provide the facility's up-to-date email address(es) and mobile number(s) on the sample requisition form so as to get alerts on the status of your samples.
 			<br />
-			To Access & Download your current and past results go to : http://www.nascop.org/eid/facilitylogon.php
+			To Access & Download your current and past results go to : http://nascop.org
 		</p>
 
-		<b>KEY/CODES</b>
+		
 
-		<table>
-			<tr>
-				<th><b>Entry Point </b> </td>
-				<td>
-					@foreach($entry_points as $entry_point)
-						{{ $entry_point->id . '-' . $entry_point->name }}
+		<div>
+			<table style="display: inline-block;">
+				<th><b>LAB CONTACTS </b> </td>
+				<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
+				<tr><td>{{ $batch->lab->name }} </td></tr>
+				<tr><td>{{ $batch->lab->lablocation }} </td></tr>
+				<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
+				<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
+				<tr><td>{{ $batch->lab->email }} </td></tr>
+			</table>
+				
+			<table style="display: inline-block;">
+				<tr><b>KEY/CODES</b></tr>
+				<tr>
+					<th><b>Entry Point </b> </td>
+					<td>
+						@foreach($entry_points as $entry_point)
+							{{ $entry_point->id . '-' . $entry_point->name }}
 
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>
-			</tr>
-			<tr>
-				<th><b>Infant Prophylaxis </b> </td>
-				<td>
-					@foreach($iprophylaxis as $iproph)
-						{{ $iproph->id . '-' . $iproph->name }}
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>
+				</tr>
+				<tr>
+					<th><b>Infant Prophylaxis </b> </td>
+					<td>
+						@foreach($iprophylaxis as $iproph)
+							{{ $iproph->id . '-' . $iproph->name }}
 
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>				
-			</tr>
-			<tr>
-				<th><b>Infant Feeding </b> </td>
-				<td>
-					@foreach($feedings as $feeding)
-						{{ $feeding->feeding . ' : ' . $feeding->feeding_description }}
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>				
+				</tr>
+				<tr>
+					<th><b>Infant Feeding </b> </td>
+					<td>
+						@foreach($feedings as $feeding)
+							{{ $feeding->feeding . ' : ' . $feeding->feeding_description }}
 
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>				
-			</tr>
-			<tr>
-				<th><b>PMTCT Intervention </b> </td>
-				<td>
-					@foreach($interventions as $intervention)
-						{{ $intervention->id . '-' . $intervention->name }}
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>				
+				</tr>
+				<tr>
+					<th><b>PMTCT Intervention </b> </td>
+					<td>
+						@foreach($interventions as $intervention)
+							{{ $intervention->id . '-' . $intervention->name }}
 
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>				
-			</tr>
-		</table>
+							@if($loop->last)
+								@break
+							@endif
+							,&nbsp;
+						@endforeach
+					</td>				
+				</tr>
+			</table>
+			
+			
+		</div>
 
 		@if($loop->last)
 			@break

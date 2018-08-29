@@ -130,6 +130,7 @@ class Lookup
         return [
             'machines' => Cache::get('machines'),
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
+            'worksheet_sampletypes' => Cache::get('worksheet_sampletypes'),
         ];
     }
 
@@ -140,6 +141,7 @@ class Lookup
             'machines' => Cache::get('machines'),
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'actions' => Cache::get('actions'),
+            'worksheet_sampletypes' => Cache::get('worksheet_sampletypes'),
             'dilutions' => Cache::get('dilutions'),
             'results' => Cache::get('results'),
             'double_approval' => self::$double_approval
@@ -400,6 +402,7 @@ class Lookup
             // Worksheet Lookup Data
             $machines = DB::table('machines')->get();
             $actions = DB::table('actions')->get();
+            $worksheet_sampletypes = DB::table('viralworksheetsampletypes')->get();
             $dilutions = DB::table('viraldilutionfactors')->get();
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
@@ -444,6 +447,7 @@ class Lookup
 
             Cache::put('machines', $machines, 60);
             Cache::put('actions', $actions, 60);
+            Cache::put('worksheet_sampletypes', $worksheet_sampletypes, 60);
             Cache::put('dilutions', $dilutions, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
 
@@ -488,6 +492,7 @@ class Lookup
 
         Cache::forget('machines');
         Cache::forget('actions');
+        Cache::forget('worksheet_sampletypes');
         Cache::forget('dilutions');
         Cache::forget('worksheet_statuses');
 
