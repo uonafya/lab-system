@@ -77,14 +77,14 @@
 		<td></td>
 	</tr>
 	<tr class="even">
-		<td><strong>Reviewed By	</strong>    </td>
-		<td> {{ $worksheet->reviewer->full_name or '' }}</td>
-		<td><strong>Date Reviewed	</strong>    </td>
-		<td> {{ $worksheet->my_date_format('datereviewed') }}</td>
 		<td><strong>Updated By	</strong>    </td>
 		<td> {{ $worksheet->uploader->full_name or '' }} </td>
 		<td><strong>Date Updated	</strong>    </td>
 		<td> {{ $worksheet->my_date_format('dateuploaded') }}</td>
+		<td><strong>Reviewed By	</strong>    </td>
+		<td> {{ $worksheet->reviewer->full_name or '' }}</td>
+		<td><strong>Date Reviewed	</strong>    </td>
+		<td> {{ $worksheet->my_date_format('datereviewed') }}</td>
 	</tr>
 
 </table>
