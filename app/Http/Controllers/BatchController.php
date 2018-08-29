@@ -386,7 +386,7 @@ class BatchController extends Controller
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
-            ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+            ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('batches.id')
             ->paginate();
@@ -422,7 +422,7 @@ class BatchController extends Controller
 
     public function site_entry_approval(Batch $batch)
     {
-        $sample = Sample::where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get()->first();
+        $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
 
         if($sample){
             session(['site_entry_approval' => true]);

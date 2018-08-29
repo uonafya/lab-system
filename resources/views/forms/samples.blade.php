@@ -568,6 +568,17 @@
                                 </div>
                             </div>
                         @endif
+                        
+                        @if(auth()->user()->user_type_id == 5)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Entered By
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->batch->entered_by ?? '' }}">
+                                </div>
+                            </div>
+                        @endif
 
                     </div>
                 </div>

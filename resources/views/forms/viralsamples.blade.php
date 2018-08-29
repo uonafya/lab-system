@@ -154,35 +154,18 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-<<<<<<< HEAD
-                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
-=======
                                     <input type="text" id="dob" class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
->>>>>>> c8dfe89659b636f1b7661e850af3171ed55117b0
                                 </div>
                             </div>                            
                         </div>
 
-<<<<<<< HEAD
+
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Age</label>
+                            <label class="col-sm-4 control-label">Age (In Years)</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="age" placeholder="Years" value="{{ $viralsample->age ?? '' }}">
+                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
                             </div>
                         </div>
-=======
-                        @if(isset($viralsample) && $viralsample->patient->dob)
-                        @else
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Age (In Years)</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
-                                </div>
-                            </div>
-
-                        @endif
->>>>>>> c8dfe89659b636f1b7661e850af3171ed55117b0
 
 
 
@@ -484,6 +467,17 @@
                                 </div>
                             </div>
                         @endif
+                        
+                        @if(auth()->user()->user_type_id == 5)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Entered By
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->batch->entered_by ?? '' }}">
+                                </div>
+                            </div>
+                        @endif
 
 
                     </div>
@@ -582,7 +576,6 @@
                 age: {
                     required: '#dob:blank'
                 }
-
             }
         @endslot
 

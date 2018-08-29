@@ -478,7 +478,7 @@ class ViralbatchController extends Controller
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'viralbatches.user_id')
-            ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+            ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('viralbatches.id')
             ->paginate();
@@ -513,7 +513,7 @@ class ViralbatchController extends Controller
 
     public function site_entry_approval(Viralbatch $batch)
     {
-        $viralsample = Viralsample::where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get()->first();
+        $viralsample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
 
         if($viralsample){
             session(['site_entry_approval' => true]);
