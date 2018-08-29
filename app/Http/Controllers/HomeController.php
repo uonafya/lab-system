@@ -11,6 +11,7 @@ use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
 use App\Synch;
+use App\User;
 
 class HomeController extends Controller
 {
@@ -31,12 +32,25 @@ class HomeController extends Controller
      */
     public function index()
     {
-        self::cacher();
-        $chart = $this->getHomeGraph();
-        $week_chart = $this->getHomeGraph('week');
-        $month_chart = $this->getHomeGraph('month');
-        
-        return view('home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
+        if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
+            self::cacher();
+            $chart = $this->getHomeGraph();
+            $week_chart = $this->getHomeGraph('week');
+            $month_chart = $this->getHomeGraph('month');
+
+            return view('home.home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
+        } else if(auth()->user()->user_type_id == 2) {
+            $data = [];
+            $users = User::selectRaw("IF(date(last_access) = curdate(), 'today', 'another_day') as `latest_access` ,count(IF(date(last_access) = curdate(), 'today', 'another_day')) as `user_count`")
+                        ->where('user_type_id', '<>', 5)->whereNull('deleted_at')
+                        ->groupBy('latest_access')->get();
+            foreach ($users as $key => $value) {
+                $data['users'][$value->latest_access] = $value->user_count;
+            }
+            $data = (object)json_decode(json_encode($data));
+            
+            return view('home.admin', compact('data'))->with('pageTitle', 'Home');
+        }
     }
 
     public function getHomeGraph($period = 'day')
