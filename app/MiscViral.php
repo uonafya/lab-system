@@ -183,7 +183,7 @@ class MiscViral extends Common
             ->when($complete, function($query){
                 return $query->where('batch_complete', 2);
             })
-            ->where('receivedstatus', '!=', 2)
+            ->whereRaw("(receivedstatus != 2 or receivedstatus is null)")
             ->groupBy('batch_id')
             ->get();
 
@@ -207,7 +207,7 @@ class MiscViral extends Common
                 return $query->where('batch_complete', 2);
             })
             ->where('repeatt', 0)
-            ->where('receivedstatus', '!=', 2)
+            ->whereRaw("(receivedstatus != 2 or receivedstatus is null)")
             ->groupBy('batch_id', 'rcategory')
             ->get();
 
