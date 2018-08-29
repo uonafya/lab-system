@@ -97,8 +97,9 @@ class ViralworksheetController extends Controller
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
                 ->whereYear('datereceived', '>', $year)
-                ->when(($machine_type == 1 || $machine_type == 3), function($query){
-                    return $query->whereIn('sampletype', [1, 2]);
+                ->when($sampletype, function($query) use ($sampletype){
+                    if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
                 })
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
@@ -121,8 +122,9 @@ class ViralworksheetController extends Controller
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
-            ->when(($machine_type == 1 || $machine_type == 3), function($query){
-                return $query->whereIn('sampletype', [1, 2]);
+            ->when($sampletype, function($query) use ($sampletype){
+                if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -178,8 +180,9 @@ class ViralworksheetController extends Controller
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
                 ->whereYear('datereceived', '>', $year)
-                ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
-                    return $query->whereIn('sampletype', [1, 2]);
+                ->when($sampletype, function($query) use ($sampletype){
+                    if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
                 })
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
@@ -198,11 +201,9 @@ class ViralworksheetController extends Controller
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->whereYear('datereceived', '>', $year)
-            ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id)->having('isnull', 1);
-            })
-            ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
-                return $query->whereIn('sampletype', [1, 2]);
+            ->when($sampletype, function($query) use ($sampletype){
+                if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
