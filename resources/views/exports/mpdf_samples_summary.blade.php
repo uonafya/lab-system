@@ -165,7 +165,7 @@
 					<td>
 	                    @foreach($pcrtypes as $pcrtype)
 	                        @if($sample->pcrtype == $pcrtype->id)
-	                            {!! $pcrtype->name !!}
+	                            {!! $pcrtype->alias !!}
 	                        @endif
 	                    @endforeach	
 

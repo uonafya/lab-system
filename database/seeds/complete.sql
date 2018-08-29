@@ -622,10 +622,10 @@ CREATE TABLE `pcrtype` (
 LOCK TABLES `pcrtype` WRITE;
 /*!40000 ALTER TABLE `pcrtype` DISABLE KEYS */;
 INSERT INTO `pcrtype` VALUES 
-(1,'1 &nbsp;Initial PCR (6 week or first contact)','Initial PCR'),
-(2,'2 &nbsp;2nd PCR (6 months)','Second PCR'),
-(3,'3 &nbsp;3rd PCR (12 months)','Third PCR'),
-(4,'4 &nbsp;Confirmatory PCR and Baseline VL','Confirmatory PCR'),
+(1,'1 &nbsp;Initial PCR (6 week or first contact)','Initial PCR (6 week or first contact)'),
+(2,'2 &nbsp;2nd PCR (6 months)','2nd PCR (6 months)'),
+(3,'3 &nbsp;3rd PCR (12 months)','3rd PCR (12 months)'),
+(4,'4 &nbsp;Confirmatory PCR and Baseline VL','Confirmatory PCR and Baseline VL'),
 (5,'5 &nbsp;Discrepant PCR(tie breaker)','Discrepant PCR(tie breaker)');
 /*!40000 ALTER TABLE `pcrtype` ENABLE KEYS */;
 UNLOCK TABLES;
