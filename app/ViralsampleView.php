@@ -14,4 +14,11 @@ class ViralsampleView extends ViewModel
 		$user = \App\User::where('id', '=', $user)->first();
 		return $user->surname . ' '. $user->oname;
 	}
+
+	function batch_received_by($user=null)
+	{
+		if($user == null) return '';
+		$user = \App\User::where('id', '=', $user)->first();
+		return $user->surname . ' '. $user->oname;
+	}
 }
