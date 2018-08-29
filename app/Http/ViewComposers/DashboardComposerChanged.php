@@ -89,7 +89,7 @@ class DashboardComposerChanged
                         ->whereNotIn('receivedstatus', ['0', '2', '4'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
-                        ->where('datereceived', '>', '2016-12-31')
+                        ->where('datereceived', '>', '2017-12-31')
                         ->whereRaw("(result is null or result = 0 or result != 'Collect New Sample')")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 

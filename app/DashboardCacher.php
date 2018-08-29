@@ -115,7 +115,7 @@ class DashboardCacher
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
-                        ->where('datereceived', '>', '2016-12-31')
+                        ->where('datereceived', '>', '2017-12-31')
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 
@@ -130,8 +130,8 @@ class DashboardCacher
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereNull('worksheet_id')
-                    ->where('datereceived', '>', '2016-12-31')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    ->where('datereceived', '>', '2017-12-31')
+                    ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
                     ->where('flag', '1')->get()->first()->total;
@@ -279,7 +279,7 @@ class DashboardCacher
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 10;
+    	$minutes = 1;
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
