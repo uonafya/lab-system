@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
 
-        dd(url()->full());
+        dd(url('') . ' ' . url()->full() . " " . url()->current());
         // if(env('APP_URL') == url('') && env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
 
         // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
