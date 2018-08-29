@@ -60,10 +60,14 @@
                             </div>
                             <div class="col-md-4">
                                 <p><strong>Entered By:</strong> 
-                                    @if($batch->creator->full_name != ' ')
-                                        {{ $batch->creator->full_name }}
+                                    @if($batch->creator)
+                                        @if($batch->creator->full_name != ' ')
+                                            {{ $batch->creator->full_name }}
+                                        @else
+                                            {{ $batch->creator->facility->name ?? '' }} {{ $batch->entered_by ?? '' }}
+                                        @endif
                                     @else
-                                        {{ $batch->creator->facility->name ?? '' }}
+                                        {{ $batch->entered_by ?? '' }}
                                     @endif
                                 </p>
                             </div>
