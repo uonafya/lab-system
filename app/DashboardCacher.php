@@ -146,18 +146,24 @@ class DashboardCacher
 	{
         if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw("distinct batch_id, COUNT(id) as total")
-                        ->where('lab_id', '=', env('APP_LAB'))
-                        ->where('flag', '=', '1')
-                        ->where('repeatt', '=', '0')
-                        ->whereRaw('(receivedstatus is null or receivedstatus=0)')
-                        ->where('site_entry', '=', '1')->groupBy('batch_id');
+                        // ->where('lab_id', '=', env('APP_LAB'))
+                        // ->where('flag', '=', '1')
+                        // ->where('repeatt', '=', '0')
+                        // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+                        // ->where('site_entry', '=', '1')
+                        ->groupBy('batch_id')
+                        ->whereNull('receivedstatus')
+                        ->where('site_entry', 1);
         } else {
             $model = SampleView::selectRaw("distinct batch_id, COUNT(id) as total")
-                    ->where('lab_id', '=', env('APP_LAB'))
-                    ->where('flag', '=', '1')
-                    ->where('repeatt', '=', '0')
-                    ->whereRaw('(receivedstatus is null or receivedstatus=0)')
-                    ->where('site_entry', '=', '1')->groupBy('batch_id');
+                    // ->where('lab_id', '=', env('APP_LAB'))
+                    // ->where('flag', '=', '1')
+                    // ->where('repeatt', '=', '0')
+                    // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+                    // ->where('site_entry', '=', '1')
+                    ->groupBy('batch_id')
+                    ->whereNull('receivedstatus')
+                    ->where('site_entry', 1;
         }
         return $model->get()->first()->total ?? 0;
 	}
