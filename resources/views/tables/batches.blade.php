@@ -155,7 +155,11 @@
                                             <td> {{ $batch->name }} </td>
                                             <td> {{ $batch->datereceived }} </td> 
                                             <td> {{ $batch->datecreated }} </td>
-                                            <td> {{ $batch->creator }} </td>
+                                            @if($batch->creator == ' ')
+                                                <td> {{ $batch->entered_by ?? '' }} </td>
+                                            @else
+                                                <td> {{ $batch->creator }} </td>
+                                            @endif
                                             <td> {{ $batch->total }} </td>
                                             <td> {{ $batch->rejected }} </td>
                                             <td> {{ $batch->result }} </td>
