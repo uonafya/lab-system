@@ -88,7 +88,10 @@ class ViralworksheetController extends Controller
 
         $limit = $machine->vl_limit;
         if($calibration) $limit = $machine->vl_calibration_limit;
-        $year = date('Y') - 2;
+        
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
 
         if($test){
             $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -96,7 +99,7 @@ class ViralworksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-                ->whereYear('datereceived', '>', $year)
+                ->where('datereceived', '>', $date_str)
                 ->when($sampletype, function($query) use ($sampletype){
                     if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                     if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
@@ -118,7 +121,7 @@ class ViralworksheetController extends Controller
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->whereYear('datereceived', '>', $year)
+            ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
@@ -172,7 +175,11 @@ class ViralworksheetController extends Controller
 
         $limit = $machine->vl_limit;
         if($worksheet->calibration) $limit = $machine->vl_calibration_limit;
-        $year = date('Y') - 2;
+        
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
+
 
         if($test){
             $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -180,7 +187,7 @@ class ViralworksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
                 ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-                ->whereYear('datereceived', '>', $year)
+                ->where('datereceived', '>', $date_str)
                 ->when($sampletype, function($query) use ($sampletype){
                     if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                     if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
@@ -201,7 +208,7 @@ class ViralworksheetController extends Controller
             ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
             ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->whereYear('datereceived', '>', $year)
+            ->where('datereceived', '>', $date_str)
             ->when($sampletype, function($query) use ($sampletype){
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                 if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    

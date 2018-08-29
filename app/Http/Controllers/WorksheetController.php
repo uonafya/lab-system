@@ -148,7 +148,10 @@ class WorksheetController extends Controller
         if($machine == NULL || $machine->eid_limit == NULL) return back();
 
         $limit = $machine->eid_limit;
-        $year = date('Y') - 2;
+        
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
 
         if($test){
             $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -156,7 +159,7 @@ class WorksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'batches.user_id')
                 ->join('patients', 'samples.patient_id', '=', 'patients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-                ->whereYear('datereceived', '>', $year)
+                ->where('datereceived', '>', $date_str)
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -174,7 +177,7 @@ class WorksheetController extends Controller
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-            ->whereYear('datereceived', '>', $year)
+            ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
@@ -223,7 +226,10 @@ class WorksheetController extends Controller
         $user = auth()->user();
 
         $limit = $machine->eid_limit;
-        $year = date('Y') - 2;
+        
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year--;
+        $date_str = $year . '-12-31';
 
         if($test){
             $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
@@ -231,7 +237,7 @@ class WorksheetController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'batches.user_id')
                 ->join('patients', 'samples.patient_id', '=', 'patients.id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-                ->whereYear('datereceived', '>', $year)
+                ->where('datereceived', '>', $date_str)
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -246,7 +252,7 @@ class WorksheetController extends Controller
 
         $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
-            ->whereYear('datereceived', '>', $year)
+            ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
