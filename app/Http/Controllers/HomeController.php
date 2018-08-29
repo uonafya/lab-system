@@ -40,14 +40,32 @@ class HomeController extends Controller
 
             return view('home.home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
         } else if(auth()->user()->user_type_id == 2) {
-            $data = [];
-            $users = User::selectRaw("IF(date(last_access) = curdate(), 'today', 'another_day') as `latest_access` ,count(IF(date(last_access) = curdate(), 'today', 'another_day')) as `user_count`")
-                        ->where('user_type_id', '<>', 5)->whereNull('deleted_at')
-                        ->groupBy('latest_access')->get();
-            foreach ($users as $key => $value) {
-                $data['users'][$value->latest_access] = $value->user_count;
+            $data = ['eid_samples' =>[], 'vl_samples' =>[]];
+            // $users = User::selectRaw("IF(date(last_access) = curdate(), 'today', 'another_day') as `latest_access` ,count(IF(date(last_access) = curdate(), 'today', 'another_day')) as `user_count`")
+            //             ->where('user_type_id', '<>', 5)->whereNull('deleted_at')
+            //             ->groupBy('latest_access')->get();
+            // foreach ($users as $key => $value) {
+            //     $data['users'][$value->latest_access] = $value->user_count;
+            // }
+            // Samples values
+            $samples = SampleView::selectRaw("IF(site_entry = 1, 'site', 'lab') as `entered_at`, count(*) as `samples_logged`")->whereRaw("DATE(created_at) = CURDATE()")->groupBy()->get();
+            if(!$samples->isEmpty()) {
+                foreach ($samples as $key => $value) {
+                    $data['eid_samples'][$value->entered_at] = $value->samples_logged;
+                }
             }
+
+            $vlsamples = ViralsampleView::selectRaw("IF(site_entry = 1, 'site', 'lab') as `entered_at`, count(*) as `samples_logged`")->whereRaw("DATE(created_at) = CURDATE()")->groupBy()->get();
+            if(!$vlsamples->isEmpty()) {
+                foreach ($vlsamples as $key => $value) {
+                    $data['eid_samples'][$value->entered_at] = $value->samples_logged;
+                }
+            }
+
+            // Batches values
+            $eidbatches = 
             $data = (object)json_decode(json_encode($data));
+            // dd($dsssata);
             
             return view('home.admin', compact('data'))->with('pageTitle', 'Home');
         }
