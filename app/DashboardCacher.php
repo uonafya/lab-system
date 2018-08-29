@@ -145,19 +145,23 @@ class DashboardCacher
 	public static function siteBatchesAwaitingApproval($testingSystem = 'Viralload')
 	{
         if ($testingSystem == 'Viralload') {
-            $model = ViralsampleView::selectRaw("distinct batch_id, COUNT(id) as total")
-                        ->where('lab_id', '=', env('APP_LAB'))
-                        ->where('flag', '=', '1')
-                        ->where('repeatt', '=', '0')
-                        ->whereRaw('(receivedstatus is null or receivedstatus=0)')
-                        ->where('site_entry', '=', '1')->groupBy('batch_id');
+            $model = ViralsampleView::selectRaw("COUNT(distinct batch_id) as total")
+                        // ->where('lab_id', '=', env('APP_LAB'))
+                        // ->where('flag', '=', '1')
+                        // ->where('repeatt', '=', '0')
+                        // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+                        // ->where('site_entry', '=', '1')
+                        ->whereNull('receivedstatus')
+                        ->where('site_entry', 1);
         } else {
-            $model = SampleView::selectRaw("distinct batch_id, COUNT(id) as total")
-                    ->where('lab_id', '=', env('APP_LAB'))
-                    ->where('flag', '=', '1')
-                    ->where('repeatt', '=', '0')
-                    ->whereRaw('(receivedstatus is null or receivedstatus=0)')
-                    ->where('site_entry', '=', '1')->groupBy('batch_id');
+            $model = SampleView::selectRaw("COUNT(distinct batch_id) as total")
+                    // ->where('lab_id', '=', env('APP_LAB'))
+                    // ->where('flag', '=', '1')
+                    // ->where('repeatt', '=', '0')
+                    // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+                    // ->where('site_entry', '=', '1')
+                    ->whereNull('receivedstatus')
+                    ->where('site_entry', 1);
         }
         return $model->get()->first()->total ?? 0;
 	}

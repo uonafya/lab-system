@@ -136,7 +136,7 @@ class LoginController extends Controller
                 $batch->full_batch();
             }
             else{
-                $fac = \App\Facility::find($batch->id);
+                $fac = \App\Facility::find($batch->facility_id);
                 session(['batch' => $batch, 'facility_name' => $fac->name]);
                 session(['toast_message' => "The batch {$batch->id} is still awaiting release. You can add more samples or release it."]);
                 return '/sample/create';
@@ -149,7 +149,7 @@ class LoginController extends Controller
                 $viralbatch->full_batch();
             }
             else{
-                $fac = \App\Facility::find($viralbatch->id);
+                $fac = \App\Facility::find($viralbatch->facility_id);
                 session(['viral_batch' => $viralbatch, 'viral_facility_name' => $fac->name]);
                 session(['toast_message' => "The batch {$viralbatch->id} is still awaiting release. You can add more samples or release it."]);
                 return '/viralsample/create';

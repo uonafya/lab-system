@@ -65,7 +65,7 @@
 		            		@endif
 	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
 	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduedispatched'] --}}</span>
-			                    <a href="{{ url('home/overdue/dispatch') }}">VL Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
+			                    <a href="{{-- url('home/overdue/dispatch') --}}">VL Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
 		                    </li> -->
 
 		                    @if ((int)$widgets['pendingSamples']['plasma'] > 0)
