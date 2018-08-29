@@ -76,7 +76,7 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($sample_type, $machine_type=2, $calibration=false)
+    public function create($sampletype, $machine_type=2, $calibration=false)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -143,7 +143,7 @@ class ViralworksheetController extends Controller
         $count = $samples->count();
 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)){
-            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'calibration' => $calibration])->with('pageTitle', 'Add Worksheet');
+            return view('forms.viralworksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'calibration' => $calibration, 'sampletype' => $sampletype])->with('pageTitle', 'Add Worksheet');
         }
 
         return view('forms.viralworksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Add Worksheet');
@@ -162,6 +162,7 @@ class ViralworksheetController extends Controller
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
+        $sampletype = $worksheet->$sampletype;
 
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
