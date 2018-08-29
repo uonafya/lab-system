@@ -17,6 +17,12 @@ use App\Viralworksheet;
 
 class DashboardCacher
 {
+    public $date_str = null;
+    public function __construct(){
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $this->date_str = $year . '-12-31';
+    }
 
     public static function tasks()
     {
@@ -115,7 +121,7 @@ class DashboardCacher
                         ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
-                        ->where('datereceived', '>', '2017-12-31')
+                        ->where('datereceived', '>', $this->date_str)
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
                         ->where('flag', '1')->get()->first()->total; 
@@ -130,7 +136,7 @@ class DashboardCacher
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereNull('worksheet_id')
-                    ->where('datereceived', '>', '2017-12-31')
+                    ->where('datereceived', '>', $this->date_str)
                     ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
@@ -182,7 +188,7 @@ class DashboardCacher
                         ->whereBetween('sampletype', [1, 5])
                         // ->where('receivedstatus', 3)
                         ->whereNull('worksheet_id')
-                        ->whereYear('datereceived', '>', '2015')
+                        ->whereYear('datereceived', '>', $this->date_str)
                         ->where('parentid', '>', 0)
                         // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
@@ -191,6 +197,7 @@ class DashboardCacher
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
+                        ->whereYear('datereceived', '>', $this->date_str)
                         // ->where('receivedstatus', 3)
                         ->where(function ($query) {
                             $query->whereNull('result')
