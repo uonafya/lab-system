@@ -37,8 +37,8 @@ class UsersTableSeeder extends Seeder
 
 			if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
 
-			$existing = User::where('email', $old_user->email)->get()->first();
-			if($existing) $user->email = rand(1, 20) . $user->email;
+			$existing = User::withTrashed()->where('email', $old_user->email)->get()->first();
+			if($existing) $user->email = str_random(5) . $user->email;
 
 			$user->password = env('DEFAULT_PASSWORD', 12345678);
 			$user->save();
