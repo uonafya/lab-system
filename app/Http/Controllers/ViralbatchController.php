@@ -485,9 +485,9 @@ class ViralbatchController extends Controller
             ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('viralbatches.id')
-            ->paginate();
+            ->get();
 
-        $batches->setPath(url()->current());
+        // $batches->setPath(url()->current());
 
         $batch_ids = $batches->pluck(['id'])->toArray();
 
@@ -512,7 +512,7 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
-        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
+        return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral', 'datatable'=>true]);
     }
 
     public function site_entry_approval(Viralbatch $batch)
