@@ -665,6 +665,12 @@ class Synch
 				// $new_update_data['dob'] = $value->dob;
 				// $new_update_data['sex'] = $value->sex;
 
+				$update_data = [
+					'national_patient_id' => $value->id,
+					'synched' => 1,
+					'datesynched' => $today,
+				];
+
 				Patient::where('id', $value->original_patient_id)->update($update_data);
 			}
 

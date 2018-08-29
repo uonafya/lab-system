@@ -35,6 +35,7 @@ width:1000px;
 .emph {
 	font-size: 16px;
 	font-weight: bold;
+	text-decoration: underline;
 }
 p.breakhere {page-break-before: always}
 </style>
@@ -59,23 +60,27 @@ p.breakhere {page-break-before: always}
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>LAB: {{ $sample->batch->lab->name }}</strong>
+					<strong>Testing Lab: {{ $sample->batch->lab->name }}</strong>
 				</td>
 			</tr>
 
-			<tr>
-				<td colspan="9" class="style4 style1 comment">
-					<strong>Contact/Facility Telephone:</strong>
-					{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
-					{{ $sample->batch->facility->facility_contacts }}
-				</td>		
-			</tr>
+			@if(env('APP_LAB') == 1)
 
-			<tr>
-				<td colspan="9" class="style4 style1 comment">
-					<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
-				</td>					
-			</tr>
+				<tr>
+					<td colspan="8" class="style4 style1 comment">
+						<strong>Contact/Facility Telephone:</strong>
+						{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
+						{{ $sample->batch->facility->facility_contacts }}
+					</td>		
+				</tr>			
+
+				<tr>
+					<td colspan="8" class="style4 style1 comment">
+						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
+					</td>					
+				</tr>
+
+			@endif
 
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
@@ -93,7 +98,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong> Patient CCC No</strong></td>
-				<td colspan="2"> <span class="style5">{{ $sample->patient->patient }}</span></td>
+				<td colspan="3"> <span class="style5">{{ $sample->patient->patient }}</span></td>
 				<td colspan="2"  class="style4 style1 comment" ><strong> Sample Type </strong></td>
 				<td colspan="2" class="comment" >
 					<span class="style5" > 
@@ -107,10 +112,10 @@ p.breakhere {page-break-before: always}
 			</tr>
 			<tr >
 				<td colspan="1" class="style4 style1 comment"><strong>DOB & Age (Years)</strong></td>
-				<td colspan="1"  >
-					<span class="style5">{{ $sample->patient->my_date_format('dob') }} {{ $sample->age }} </span>
+				<td colspan="3">
+					<span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </span>
 				</td>
-				<td class="style4 style1 comment" colspan="3" ><strong>Justification </strong></td>
+				<td class="style4 style1 comment" colspan="2" ><strong>Justification </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
 	                    @foreach($justifications as $justification)
@@ -124,8 +129,8 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong>Gender</strong></td>
-				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				<td class="style4 style1 comment" colspan="3" ><strong>PMTCT</strong></td>
+				<td colspan="3"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong>PMTCT</strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
 	                    @foreach($pmtct_types as $pmtct_type)
@@ -139,10 +144,10 @@ p.breakhere {page-break-before: always}
 
 			<tr >
 				<td colspan="1" class="style4 style1 comment" ><strong>Dates Collected </strong></td>
-				<td  class="comment" colspan="1"> 
+				<td  class="comment" colspan="3"> 
 					<span class="style5">{{ $sample->my_date_format('datecollected') }}</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3">
+				<td class="style4 style1 comment" colspan="2">
 					<strong> ART Initiation Date </strong>
 				</td>
 				<td colspan="1">
@@ -155,8 +160,8 @@ p.breakhere {page-break-before: always}
 
 			<tr >
 				<td colspan="1" class="style4 style1 comment"><strong>Date Received </strong></td>
-				<td colspan="1" class="comment" ><span class="style5"></span><span class="style5">{{ $sample->batch->my_date_format('datereceived') }}</span></td>
-				<td class="style4 style1 comment" colspan="3"><strong>Current ART Regimen	</strong></td>
+				<td colspan="3" class="comment" ><span class="style5"></span><span class="style5">{{ $sample->batch->my_date_format('datereceived') }}</span></td>
+				<td class="style4 style1 comment" colspan="2"><strong>Current ART Regimen	</strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
 	                    @foreach($prophylaxis as $proph)
@@ -170,17 +175,17 @@ p.breakhere {page-break-before: always}
 
 			<tr >
 				<td colspan="1" class="style4 style1 comment" width="220px"><strong>Date Tested </strong></td>
-				<td colspan="1" class="comment" ><span class="style5">{{ $sample->my_date_format('datetested') }}</span></td>
-				<td class="style4 style1 comment" colspan="3" ><strong>Date Initiated on Current Regimen </strong></td>
+				<td colspan="3" class="comment" ><span class="style5">{{ $sample->my_date_format('datetested') }}</span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong>Date Initiated on Current Regimen </strong></td>
 				<td colspan="1" class="comment"><span class="style5">{{ $sample->my_date_format('dateinitiatedonregimen') }} </span></td>
 			</tr>
 
 			<?php
 
 				if($sample->receivedstatus != 2){
-					$routcome = '<u>' . $sample->result . '</u> ' . $sample->units;
+					$routcome = $sample->result . ' ' . $sample->units;
 					if (is_numeric($sample->result) && $sample->result > 1000){
-						$routcome = "<span class='emph'><u>" . $sample->result . '</u></span> ' . $sample->units;
+						$routcome = "<span class='emph'>" . $sample->result . '</span> ' . $sample->units;
 					}
 
 					$resultcomments="";
@@ -193,8 +198,8 @@ p.breakhere {page-break-before: always}
 					if (is_numeric($sample->result) ) $vlresultinlog= round(log10($sample->result), 1);
 				}
 				else{
-					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name;
-					$status = $received_statuses->where('id', $sample->receivedstatus)->first()->name;
+					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '';
+					$status = $received_statuses->where('id', $sample->receivedstatus)->first()->name ?? '';
 					$routcome= "Sample ".$status . " Reason:  ".$reason;
 				}
 				$sample->prev_tests();
@@ -252,10 +257,10 @@ p.breakhere {page-break-before: always}
 			?>
 	
 			<tr>
-				<td colspan="1" class="evenrow">
+				<td colspan="3" class="evenrow">
 					<span class="style1"><strong> Test Result </strong></span>
 				</td>
-				<td colspan="5" class="evenrow">
+				<td colspan="3" class="evenrow">
 					<span class="style5">
 						<strong>
 							@if($sample->receivedstatus == 2)
@@ -272,7 +277,7 @@ p.breakhere {page-break-before: always}
 			@if($sample->worksheet)
 				<tr>
 					<td colspan="2"></td>
-					<td colspan="5" class="style4 style1 comment"><strong>Machine:</strong>&nbsp;
+					<td colspan="5" class="style4 style1 comment">
 						@if($sample->worksheet->machine_type == 1)
 							HIV-1 RNA quantitative assay on Roche CAP/CTM system
 						@elseif($sample->worksheet->machine_type == 2)
@@ -317,8 +322,11 @@ p.breakhere {page-break-before: always}
 			@else
 
 				<tr>
-					<td colspan="6" class="style4 style1 comment">
-						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
+					<td colspan="2" class="style4 style1 comment">
+						<strong>Date Dispatched:  </strong>
+					</td>
+					<td colspan="3" class="style4 style1 comment">
+						{{ $sample->batch->my_date_format('datedispatched') }}
 					</td>
 				</tr>
 
@@ -326,6 +334,7 @@ p.breakhere {page-break-before: always}
 
 			@if($sample->previous_tests->count() > 0)
 				@foreach($sample->previous_tests as $prev)
+					<br />
 
 					<tr class="evenrow">
 						<td colspan="1"> <span class="style1">Previous VL Results</span></td>
@@ -357,7 +366,7 @@ p.breakhere {page-break-before: always}
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br> <img src="{{ asset('img/but_cut.gif') }}"> <br>
+			<br/><br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/>
 		@endif
 
 	@endforeach

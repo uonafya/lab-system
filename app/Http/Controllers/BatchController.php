@@ -326,8 +326,8 @@ class BatchController extends Controller
             if($facility->email != null || $facility->email != '')
             {
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-                if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
-                Mail::to($mail_array)->send(new EidDispatch($batch));
+                if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+                Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
             }         
         }
 
@@ -596,8 +596,8 @@ class BatchController extends Controller
         if($facility->email != null || $facility->email != '')
         {
             $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
-            Mail::to($mail_array)->send(new EidDispatch($batch));
+            if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+            Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
         }
 
         if(!$batch->sent_email){
