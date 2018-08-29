@@ -35,9 +35,13 @@
 </head>
 <body>
 
+    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
+	<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
+	<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
 	@foreach($batches as $batch)
 
-		<table border="0" style="border: 0px; width: 100%;">
+		<table class="table" border="0" style="border: 0px; width: 100%;">
 			<tr>
 				<td colspan="9" align="center">
 					<img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
