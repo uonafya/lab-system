@@ -248,36 +248,17 @@
 			To Access & Download your current and past results go to : http://nascop.org
 		</p>
 
-		{{--<h5>KEY/CODES</h5>
+		<b>LAB CONTACTS </b>
 
-		<table>
-			<tr>
-				<th><b>Codes for Sample Type </b> </td>
-				<td>
-					@foreach($sample_types as $sampletype)
-						{{ $sampletype->id . '-' . $sampletype->name }}
-
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>
-			</tr>
-			<tr>
-				<th><b>Codes for Justification </b> </td>
-				<td>
-					@foreach($justifications as $justification)
-						{{ $justification->id . '-' . $justification->name }}
-
-						@if($loop->last)
-							@break
-						@endif
-						,&nbsp;
-					@endforeach
-				</td>				
-			</tr>
-		</table>--}}
+		<table style="display: inline-block;">
+			<th> </td>
+			<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
+			<tr><td>{{ $batch->lab->name }} </td></tr>
+			<tr><td>{{ $batch->lab->lablocation }} </td></tr>
+			<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
+			<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
+			<tr><td>{{ $batch->lab->email }} </td></tr>
+		</table>
 
 		@if($loop->last)
 			@break
