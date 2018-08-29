@@ -77,6 +77,7 @@ class Copier
                     $batch = new Batch($value->only($fields['batch']));
                     foreach ($batch_date_array as $date_field) {
                         $batch->$date_field = self::clean_date($value->$date_field);
+                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
                     }
                     $batch->id = $value->original_batch_id;
                     if($batch->site_entry == 0 && !$batch->received_by) $batch->received_by = $value->user_id;
@@ -87,6 +88,7 @@ class Copier
                 $sample = new Sample($value->only($fields['sample']));
                 foreach ($sample_date_array as $date_field) {
                     $sample->$date_field = self::clean_date($value->$date_field);
+                    if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
                 $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
@@ -164,6 +166,7 @@ class Copier
                     $batch = new Viralbatch($value->only($fields['batch']));
                     foreach ($batch_date_array as $date_field) {
                         $batch->$date_field = self::clean_date($value->$date_field);
+                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
                     }
                     $batch->id = $value->original_batch_id;
                     if($batch->site_entry == 0 && !$batch->received_by) $batch->received_by = $value->user_id;
@@ -174,6 +177,7 @@ class Copier
                 $sample = new Viralsample($value->only($fields['sample']));
                 foreach ($sample_date_array as $date_field) {
                     $sample->$date_field = self::clean_date($value->$date_field);
+                    if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
                 $sample->batch_id = $value->original_batch_id;
                 $sample->patient_id = $patient->id;
