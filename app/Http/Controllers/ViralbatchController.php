@@ -526,6 +526,7 @@ class ViralbatchController extends Controller
         else{
             $batch->received_by = auth()->user()->id;
             $batch->save();
+            session(['toast_message' => "All the samples in the batch have been received."]);
             return redirect('viralbatch/site_approval');
         }
     }
@@ -533,7 +534,7 @@ class ViralbatchController extends Controller
 
     public function site_entry_approval_group(Viralbatch $batch)
     {
-        $samples = Viralsample::with(['patient'])->where('batch_id', $batch->id)->whereNull('receivedstatus')->get();
+        $samples = Viralsample::with(['patient'])->where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get();
 
         if($samples->count() > 0){            
             $data = Lookup::viralsample_form();
@@ -544,6 +545,7 @@ class ViralbatchController extends Controller
             return view('forms.approve_viralbatch', $data);
         }
         else{
+            session(['toast_message' => "All the samples in the batch have been received."]);
             return redirect('batch/site_approval');
         }
     }
