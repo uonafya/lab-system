@@ -103,6 +103,8 @@ class BatchController extends Controller
                 $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
                 $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+                $n = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
+                $noresult += $n;
 
                 $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
                 $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
