@@ -55,6 +55,19 @@ class ViralworksheetController extends Controller
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
+    public function set_sampletype_form($machine_type, $calibration=false)
+    {
+        $data = Lookup::worksheet_lookups();
+        $data['machine_type'] = $machine_type;
+        $data['calibration'] = $calibration;
+        return view('fomrs.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
+    }
+
+    public function set_sampletype(Request $request)
+    {
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -82,7 +95,7 @@ class ViralworksheetController extends Controller
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
                 ->whereYear('datereceived', '>', $year)
                 ->when(($machine_type == 1 || $machine_type == 3), function($query){
-                    return $query->where('sampletype', 1);
+                    return $query->whereIn('sampletype', [1, 2]);
                 })
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
@@ -106,7 +119,7 @@ class ViralworksheetController extends Controller
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
             ->when(($machine_type == 1 || $machine_type == 3), function($query){
-                return $query->where('sampletype', 1);
+                return $query->whereIn('sampletype', [1, 2]);
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -163,7 +176,7 @@ class ViralworksheetController extends Controller
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
                 ->whereYear('datereceived', '>', $year)
                 ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
-                    return $query->where('sampletype', 1);
+                    return $query->whereIn('sampletype', [1, 2]);
                 })
                 ->where('site_entry', '!=', 2)
                 ->having('isnull', 0)
@@ -186,7 +199,7 @@ class ViralworksheetController extends Controller
                 return $query->where('received_by', $user->id)->having('isnull', 1);
             })
             ->when(($worksheet->machine_type == 1 || $worksheet->machine_type == 3), function($query){
-                return $query->where('sampletype', 1);
+                return $query->whereIn('sampletype', [1, 2]);
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -296,7 +309,7 @@ class ViralworksheetController extends Controller
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
         }
-        else if($Viralworksheet->machine_type == 3){
+        else if($worksheet->machine_type == 3){
             return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
         }
         else{

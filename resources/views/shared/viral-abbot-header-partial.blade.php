@@ -65,11 +65,6 @@
 		<td> {{ $worksheet->my_date_format('amplificationexpirydate') }} </td>
 
 
-		{{--<td> {{ $worksheet->sampleprepexpirydate }} </td>
-		<td> {{ $worksheet->bulklysisexpirydate }} </td>
-		<td> {{ $worksheet->controlexpirydate }} </td>
-		<td> {{ $worksheet->calibratorexpirydate }} </td>
-		<td> {{ $worksheet->amplificationexpirydate }} </td>--}}
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
