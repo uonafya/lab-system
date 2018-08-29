@@ -22,7 +22,7 @@
 // });
 
 Route::redirect('/', '/login');
-// Route::redirect('/eid', '/login');
+Route::redirect('/eid', '/login');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');

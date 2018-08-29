@@ -44,8 +44,10 @@
                                     @if($batch->creator->full_name != ' ')
                                         {{ $batch->creator->full_name }}
                                     @else
-                                        {{ $batch->creator->facility->name ?? '' }}
+                                        {{ $batch->creator->facility->name ?? '' }} {{ $batch->entered_by ?? '' }}
                                     @endif
+                                @else
+                                    {{ $batch->entered_by ?? '' }}
                                 @endif
                             </p>
                         </div>
