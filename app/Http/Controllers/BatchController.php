@@ -386,7 +386,7 @@ class BatchController extends Controller
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
-            ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+            ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('batches.id')
             ->paginate();
@@ -435,6 +435,7 @@ class BatchController extends Controller
         else{
             $batch->received_by = auth()->user()->id;
             $batch->save();
+            session(['toast_message' => "All the samples in the batch have been received."]);
             return redirect('batch/site_approval');
         }
     }
@@ -442,7 +443,7 @@ class BatchController extends Controller
 
     public function site_entry_approval_group(Batch $batch)
     {
-        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereNull('receivedstatus')->get();
+        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get();
 
         if($samples->count() > 0){            
             $data = Lookup::samples_form();
@@ -453,6 +454,7 @@ class BatchController extends Controller
             return view('forms.approve_batch', $data);
         }
         else{
+            session(['toast_message' => "All the samples in the batch have been received."]);
             return redirect('batch/site_approval');
         }
     }
