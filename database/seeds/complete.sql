@@ -29,6 +29,21 @@ INSERT INTO `age_bands` (`id`, `name`, `lower`, `upper`, `age_range_id`, `age_ra
 	(11, 'Above 36 months', 36.00010, 1200.00000, 5, 'Above 24 months', 24.00000, 1200.00000);
 /*!40000 ALTER TABLE `age_bands` ENABLE KEYS */;
 
+DROP TABLE IF EXISTS `viralworksheetsampletypes`;
+CREATE TABLE  `viralworksheetsampletypes` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+-- Dumping data for table eid_kemri2.viralworksheetsampletype: 3 rows
+/*!40000 ALTER TABLE `viralworksheetsampletype` DISABLE KEYS */;
+INSERT INTO `viralworksheetsampletypes` (`id`, `name`) VALUES
+	(1, 'DBS'),
+	(2, 'Plasma / EDTA'),
+	(3, 'All Sample Types');
+
 
 DROP TABLE IF EXISTS `countys`;
 -- Dumping structure for table apidb.countys

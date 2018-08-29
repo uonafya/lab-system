@@ -261,7 +261,7 @@
 		
 
 		<div style="width: 100%">
-			<div style="width: 20%">
+			<div style="float: left;">
 				<b>LAB CONTACTS</b>
 				<table>
 					<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
@@ -273,7 +273,8 @@
 				</table>
 				
 			</div>
-			<div style="width: 80%">
+
+			<div style="float: right;">
 				<b>KEY/CODES</b>
 				<table>
 					<tr>
