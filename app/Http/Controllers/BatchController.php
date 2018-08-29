@@ -42,7 +42,6 @@ class BatchController extends Controller
         else{ 
             $myurl =  url('batch/index/' . $batch_complete); 
             $myurl2 = url('batch/index'); 
-
         }
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";

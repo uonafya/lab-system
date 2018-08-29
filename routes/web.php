@@ -305,7 +305,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
 
 			Route::get('set_sampletype/{machine_type?}/{calibration?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
-			Route::post('set_sampletype/{machine_type}', 'ViralworksheetController@set_sampletype')->name('set_sampletype');
+			Route::post('set_sampletype', 'ViralworksheetController@set_sampletype')->name('set_sampletype');
 
 			Route::get('create/{sampletype}/{machine_type?}/{calibration?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
