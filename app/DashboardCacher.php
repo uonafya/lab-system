@@ -149,14 +149,14 @@ class DashboardCacher
                         ->where('lab_id', '=', env('APP_LAB'))
                         ->where('flag', '=', '1')
                         ->where('repeatt', '=', '0')
-                        ->whereNull('receivedstatus')
+                        ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                         ->where('site_entry', '=', '1');
         } else {
             $model = SampleView::selectRaw('COUNT(id) as total')
                     ->where('lab_id', '=', env('APP_LAB'))
                     ->where('flag', '=', '1')
                     ->where('repeatt', '=', '0')
-                    ->whereNull('receivedstatus')
+                    ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                     ->where('site_entry', '=', '1');
         }
         return $model->get()->first()->total ?? 0;

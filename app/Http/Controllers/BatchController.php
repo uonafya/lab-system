@@ -73,7 +73,7 @@ class BatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->orderBy($date_column, 'desc')
+            ->orderBy('batches.id', 'desc')
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -386,12 +386,12 @@ class BatchController extends Controller
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
-            ->whereRaw('(receivedstatus is null or received_by is null)')
-            // ->whereNull('received_by')
-            // ->whereNull('receivedstatus')
+            ->whereRaw('(receivedstatus is null or receivedstatus=0)')
             ->where('site_entry', 1)
             ->groupBy('batches.id')
             ->paginate();
+
+        $batches->setPath(url()->current());
 
         $batch_ids = $batches->pluck(['id'])->toArray();
         $subtotals = Misc::get_subtotals($batch_ids, false);
