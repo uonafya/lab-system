@@ -422,7 +422,7 @@ class BatchController extends Controller
 
     public function site_entry_approval(Batch $batch)
     {
-        $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
+        $sample = Sample::where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get()->first();
 
         if($sample){
             session(['site_entry_approval' => true]);
