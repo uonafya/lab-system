@@ -93,6 +93,8 @@ class ViralworksheetController extends Controller
         if(date('m') < 7) $year --;
         $date_str = $year . '-12-31';
 
+        //noeladhis@gmail.com
+
         if($test){
             $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
                 ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
@@ -166,6 +168,7 @@ class ViralworksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
         $sampletype = $worksheet->sampletype;
+
 
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
