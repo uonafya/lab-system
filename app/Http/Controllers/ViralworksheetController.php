@@ -165,7 +165,7 @@ class ViralworksheetController extends Controller
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
-        $sampletype = $worksheet->$sampletype;
+        $sampletype = $worksheet->sampletype;
 
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $worksheet->machine_type)->first();
