@@ -68,18 +68,10 @@ class Facility extends BaseModel
 
     public function getContactsAttribute()
     {
-        if($this->facility_contact->contacttelephone != '' && $this->facility_contact->contacttelephone2 != ''){
-        	return $this->facility_contact->contacttelephone . ' / ' . $this->facility_contact->contacttelephone2;
-		}
-		else if($this->facility_contact->contacttelephone != '' && $this->facility_contact->contacttelephone2 == ''){
-        	return $this->facility_contact->contacttelephone;
-		}
-		else if($this->facility_contact->contacttelephone == '' && $this->facility_contact->contacttelephone2 != ''){
-        	return $this->facility_contact->contacttelephone2;
-		}
-		else{
-			return null;
-		}
+        $contacttelephone = $this->contacttelephone;
+        $contacttelephone2 = $this->contacttelephone2;
+
+        return $this->concat_contacts($contacttelephone, $contacttelephone2);
     }
 
     public function getFacilityContactsAttribute()
