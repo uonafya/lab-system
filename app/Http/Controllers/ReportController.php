@@ -200,10 +200,13 @@ class ReportController extends Controller
 
         if ($request->types == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
+            $title = 'tested outcomes';
         } else {
             $model = $model->where("$table.receivedstatus", "=", '2');
+            $title = 'rejected outcomes';
         }
 
+        $dateString = $title . $dateString;
     	return $model->orderBy('datereceived', 'asc');
     }
 
