@@ -129,7 +129,7 @@ class DashboardController extends Controller
 
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
-                                            ->where('SMS_printer_phoneNo', '<>', 0)
+                                            ->where('smsprinterphoneno', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
                             ->when($current, function($query) use ($current){
