@@ -8,6 +8,7 @@ use App\ViralsampleView;
 use App\Abbotdeliveries;
 use App\Taqmandeliveries;
 use Excel;
+use App\ViewFacility;
 
 class ReportController extends Controller
 {
