@@ -200,10 +200,10 @@ class ReportController extends Controller
 
         if ($request->types == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
-            $title = 'tested outcomes';
+            $title = 'tested outcomes ';
         } else {
             $model = $model->where("$table.receivedstatus", "=", '2');
-            $title = 'rejected outcomes';
+            $title = 'rejected outcomes ';
         }
 
         $dateString = $title . $dateString;
@@ -224,11 +224,12 @@ class ReportController extends Controller
             }
             
             $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
+            $report = strtoupper($report);
             
             Excel::create($report, function($excel) use ($dataArray, $report) {
                 $excel->setTitle($report);
                 $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-                $excel->setDescription('TEST OUTCOME REPORT FOR '.$report);
+                $excel->setDescription($report);
 
                 $excel->sheet($report, function($sheet) use ($dataArray) {
                     $sheet->fromArray($dataArray, null, 'A1', false, false);
