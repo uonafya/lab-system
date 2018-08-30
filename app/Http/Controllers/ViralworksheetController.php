@@ -228,7 +228,7 @@ class ViralworksheetController extends Controller
         dd($samples);
 
         if($test) $samples = $repeats->merge($samples);
-        dd($samples;)
+        dd($samples);
 
         $count = $samples->count();
 
