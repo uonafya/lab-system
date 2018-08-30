@@ -165,7 +165,7 @@ class WorksheetController extends Controller
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
-                ->whereRaw('((result IS NULL ) OR (result =0 ))')
+                ->whereRaw('((result IS NULL ) OR (result=0 ))')
                 ->orderBy('samples.id', 'asc')
                 ->limit($limit)
                 ->get();
