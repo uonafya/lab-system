@@ -225,7 +225,7 @@ class ViralworksheetController extends Controller
             ->limit($limit)
             ->get();
 
-        dd($samples);
+        // dd($samples);
 
         if($test) $samples = $repeats->merge($samples);
         dd($samples);
