@@ -203,32 +203,35 @@ class ViralworksheetController extends Controller
             $limit -= $repeats->count();
         }
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-            ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->where('datereceived', '>', $date_str)
-            ->when($sampletype, function($query) use ($sampletype){
-                if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
-            })
-            ->where('site_entry', '!=', 2)
-            ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-            ->where('input_complete', true)
-            ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw("(result IS NULL OR result='0')")
-            ->orderBy('isnull', 'asc')
-            ->orderBy('highpriority', 'asc')
-            ->orderBy('datereceived', 'asc')
-            ->orderBy('site_entry', 'asc')
-            ->orderBy('viralsamples.id', 'asc')
-            ->limit($limit)
-            ->get();
+        if($limit != 0){
 
-        // dd($samples);
+            $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+                ->where('datereceived', '>', $date_str)
+                ->when($sampletype, function($query) use ($sampletype){
+                    if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+                })
+                ->where('site_entry', '!=', 2)
+                ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+                ->where('input_complete', true)
+                ->whereIn('receivedstatus', [1, 3])
+                ->whereRaw("(result IS NULL OR result='0')")
+                ->orderBy('isnull', 'asc')
+                ->orderBy('highpriority', 'asc')
+                ->orderBy('datereceived', 'asc')
+                ->orderBy('site_entry', 'asc')
+                ->orderBy('viralsamples.id', 'asc')
+                ->limit($limit)
+                ->get();
+            $samples = $repeats->merge($samples);
+        }
 
-        if($test) $samples = $repeats->merge($samples);
-        dd($samples);
+        if(!isset($samples)){
+            $samples = $repeats;            
+        }
 
         $count = $samples->count();
 
