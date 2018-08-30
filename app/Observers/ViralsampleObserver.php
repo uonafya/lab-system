@@ -59,9 +59,9 @@ class ViralsampleObserver
 		$patient->gender = $viralsample->patient->sex;
 		$patient->dob = $viralsample->patient->dob;
 		$patient->initiationdate = $viralsample->patient->initiation_date;
-		$patient->entry_point = $viralsample->patient->mother->entry_point;
 		$patient->labtestedin = $viralsample->batch->lab_id;
 		$patient->save();
+
 
 
 
