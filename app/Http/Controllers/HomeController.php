@@ -213,10 +213,11 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                         ->whereBetween('sampletype', [1, 5])
-                        ->where('repeatt', 0)
+                        // ->where('receivedstatus', 3)
                         ->whereNull('worksheet_id')
-                        ->whereYear('datereceived', '>', '2015')
+                        ->whereYear('datereceived', '>', $date_str)
                         ->where('parentid', '>', 0)
+                        // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1')->get();
@@ -225,7 +226,8 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                         ->whereNull('worksheet_id')
-                        ->where('repeatt', 0)
+                        ->whereYear('datereceived', '>', $date_str)
+                        // ->where('receivedstatus', 3)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
