@@ -177,7 +177,7 @@ class ViralworksheetController extends Controller
         if($worksheet->calibration) $limit = $machine->vl_calibration_limit;
         
         $year = date('Y') - 1;
-        if(date('m') < 7) $year --;
+        if(date('m') < 7) $year--;
         $date_str = $year . '-12-31';
 
 
@@ -223,23 +223,24 @@ class ViralworksheetController extends Controller
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('viralsamples.id', 'asc')
-            ->limit($machine->vl_limit)
+            ->limit($limit)
             ->get();
 
         if($test) $samples = $repeats->merge($samples);
 
+        $count = $samples->count();
 
-        if($samples->count() != $machine->vl_limit || ($worksheet->calibration && $samples->count() != $machine->vl_calibration_limit)){
+        if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)){
+
+            $sample_ids = $samples->pluck('id')->toArray();
+            Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+            return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
+        }
+        else{
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created."]);
-            return back();
+            return back();            
         }
-
-        $sample_ids = $samples->pluck('id');
-
-        Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
-
-        return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
     }
 
     /**
