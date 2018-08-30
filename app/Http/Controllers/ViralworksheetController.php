@@ -201,6 +201,8 @@ class ViralworksheetController extends Controller
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
+
+            dd($repeats);
         }
 
         if($limit != 0){
