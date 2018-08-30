@@ -213,7 +213,7 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                         ->whereBetween('sampletype', [1, 5])
-                        // ->where('receivedstatus', 3)
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
@@ -227,7 +227,7 @@ class HomeController extends Controller
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
-                        // ->where('receivedstatus', 3)
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
