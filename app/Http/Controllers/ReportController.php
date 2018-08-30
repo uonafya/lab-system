@@ -208,7 +208,7 @@ class ReportController extends Controller
             $report .= 'rejected outcomes ';
         }
         
-        $dateString = strtoupper($report . $title . $dateString);
+        $dateString = strtoupper($report . $title . ' ' . $dateString);
         return $model->orderBy('datereceived', 'asc');
     }
 
