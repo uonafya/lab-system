@@ -150,7 +150,6 @@ class ReportController extends Controller
         if ($request->category == 'county') {
             $model = $model->where('view_facilitys.county_id', '=', $request->county);
             $county = ViewFacility::where('county_id', '=', $request->county)->get()->first();
-            dd($county);
             $title .= $county->county;
         } else if ($request->category == 'subcounty') {
             $model = $model->where('view_facilitys.subcounty_id', '=', $request->district);
@@ -206,10 +205,9 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "=", '2');
             $title = 'rejected outcomes ';
         }
-
+        dd($title);
         $dateString = $title . $dateString;
-
-    	return $model->orderBy('datereceived', 'asc');
+        return $model->orderBy('datereceived', 'asc');
     }
 
     public static function __getExcel($data, $dateString)
