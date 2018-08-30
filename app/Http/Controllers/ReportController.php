@@ -203,7 +203,7 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "=", '2');
         }
 
-    	return $model;
+    	return $model->orderBy('datereceived', 'asc');
     }
 
     public static function __getExcel($data, $dateString)
