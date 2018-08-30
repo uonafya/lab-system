@@ -277,7 +277,7 @@ class WorksheetController extends Controller
             return back();
         }
 
-        $sample_ids = $samples->pluck('id')->toArray();
+        $sample_ids = $samples->pluck('id');
 
         Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
