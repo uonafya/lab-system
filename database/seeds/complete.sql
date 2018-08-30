@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `age_bands` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `lower` double(10,5) unsigned DEFAULT NULL,
   `upper` double(10,5) unsigned DEFAULT NULL,
-  `age_range_id` int(11) NOT NULL,
+  `age_range_id` TINYINT UNSIGNED NOT NULL,
   `age_range` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `lower_range` double(10,5) unsigned DEFAULT NULL,
   `upper_range` double(10,5) unsigned DEFAULT NULL,
@@ -111,7 +111,7 @@ INSERT INTO `countys` (`id`, `name`, `CountyDHISCode`, `CountyMFLCode`, `CountyC
 DROP TABLE IF EXISTS `districts`;
 -- Dumping structure for table apidb.districts
 CREATE TABLE IF NOT EXISTS `districts` (
-  `id` smallint(5) NOT NULL AUTO_INCREMENT,
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `SubCountyDHISCode` varchar(50) DEFAULT NULL,
   `SubCountyMFLCode` varchar(50) DEFAULT NULL,
