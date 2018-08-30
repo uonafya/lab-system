@@ -198,19 +198,21 @@ class ReportController extends Controller
             }
     	}
 
+        $report = (session('testingSystem') == 'Viralload') ? 'VL ' : 'EID ';
+
         if ($request->types == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
-            $title .= ' tested outcomes ';
+            $report .= 'tested outcomes ';
         } else {
             $model = $model->where("$table.receivedstatus", "=", '2');
-            $title .= ' rejected outcomes ';
+            $report .= 'rejected outcomes ';
         }
-        dd($title);
-        $dateString = $title . $dateString;
+        
+        $dateString = strtoupper($report . $title . $dateString);
         return $model->orderBy('datereceived', 'asc');
     }
 
-    public static function __getExcel($data, $dateString)
+    public static function __getExcel($data, $title)
     {
         $dataArray = []; 
 
@@ -223,15 +225,12 @@ class ReportController extends Controller
                 $dataArray[] = $report->toArray();
             }
             
-            $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
-            $report = strtoupper($report);
-
-            Excel::create($report, function($excel) use ($dataArray, $report) {
-                $excel->setTitle($report);
+            Excel::create($title, function($excel) use ($dataArray, $title) {
+                $excel->setTitle($title);
                 $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-                $excel->setDescription($report);
+                $excel->setDescription($title);
 
-                $excel->sheet($report, function($sheet) use ($dataArray) {
+                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
                     $sheet->fromArray($dataArray, null, 'A1', false, false);
                 });
 
