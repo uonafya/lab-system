@@ -117,6 +117,7 @@ class ReportController extends Controller
 
     public static function __getDateData($request, &$dateString)
     {
+        dd($request);
         $title = '';
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
@@ -225,7 +226,7 @@ class ReportController extends Controller
             
             $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
             $report = strtoupper($report);
-            
+
             Excel::create($report, function($excel) use ($dataArray, $report) {
                 $excel->setTitle($report);
                 $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
