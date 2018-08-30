@@ -58,10 +58,8 @@ class ViralworksheetController extends Controller
     public function set_sampletype_form($machine_type, $calibration=false)
     {
         $data = Lookup::worksheet_lookups();
-
         $data['machine_type'] = $machine_type;
         $data['calibration'] = $calibration;
-        dd($data);
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
     }
 
