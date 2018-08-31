@@ -181,6 +181,8 @@ class ViralworksheetController extends Controller
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
             return back();            
         }
+        
+        $samples = $data['samples'];
 
         $sample_ids = $samples->pluck('id');
         Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
