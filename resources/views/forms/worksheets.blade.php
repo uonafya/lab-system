@@ -252,7 +252,7 @@
             forceParse: true,
             autoclose: true,
             startDate: "-7d",
-            endDate: "+0d",
+            endDate: "+7d",
             format: "yyyy-mm-dd"
         });
 
