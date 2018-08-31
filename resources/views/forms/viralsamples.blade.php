@@ -567,11 +567,11 @@
                     lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
                 },
                 datecollected: {
-                    lessThan: ["#datedispatched", "Date Collected", "Date of Dispatch"],
+                    lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
                     lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                 },
                 datedispatched: {
-                    lessThan: ["#datereceived", "Date of Dispatch", "Date Received"]
+                    lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
                 },
                 age: {
                     required: '#dob:blank'

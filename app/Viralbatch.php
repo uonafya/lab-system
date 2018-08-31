@@ -92,6 +92,11 @@ class Viralbatch extends BaseModel
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function setDatedispatchedfromfacilityAttribute($value)
+    {
+        if($value = '0000-00-00') $this->attributes['datedispatchedfromfacility'] = null;
+    }
+
 
     public function scopeExisting($query, $facility, $datereceived, $lab)
     {
