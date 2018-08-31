@@ -183,8 +183,8 @@ class DashboardController extends Controller
                                                     return $query->whereMonth('batches.datereceived', $month);
                                                 })->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
                                 }
-                            })->count();
-        // dd($received);
+                            })->toSql();
+        dd($received);
         $redraws = (session('testingSystem') == 'Viralload') ? 
                         self::__getsampleResultByType(1) : 
                         self::__getsampleResultByType(3) + self::__getsampleResultByType(5);
