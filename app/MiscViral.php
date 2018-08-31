@@ -9,6 +9,8 @@ use App\Common;
 use App\Viralsample;
 use App\ViralsampleView;
 
+use App\Viralworksheet;
+
 use App\DrPatient;
 
 class MiscViral extends Common
@@ -558,6 +560,86 @@ class MiscViral extends Common
             $s->time_result_sms_sent = date('Y-m-d H:i:s');
             $s->pre_update();
         }
+    }
+
+    public static function get_worksheet_samples($machine_type, $calibration, $sampletype)
+    {
+        $machines = Lookup::get_machines();
+        $machine = $machines->where('id', $machine_type)->first();
+
+        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $user = auth()->user();
+
+        if($machine == NULL || $machine->vl_limit == NULL) return false;
+        // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
+
+        $limit = $machine->vl_limit;
+        if($calibration) $limit = $machine->vl_calibration_limit;
+        
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
+
+        if($test){
+            $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+                ->where('datereceived', '>', $date_str)
+                ->when($sampletype, function($query) use ($sampletype){
+                    if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+                })
+                ->where('site_entry', '!=', 2)
+                ->having('isnull', 0)
+                ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+                ->where('input_complete', true)
+                ->whereIn('receivedstatus', [1, 3])
+                ->whereRaw("(result IS NULL OR result='0')")
+                ->orderBy('viralsamples.id', 'asc')
+                ->limit($limit)
+                ->get();
+            $limit -= $repeats->count();
+        }
+
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+            ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->where('datereceived', '>', $date_str)
+            ->when($test, function($query) use ($user){
+                return $query->where('received_by', $user->id)->having('isnull', 1);
+            })
+            ->when($sampletype, function($query) use ($sampletype){
+                if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+            })
+            ->where('site_entry', '!=', 2)
+            ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+            ->where('input_complete', true)
+            ->whereIn('receivedstatus', [1, 3])
+            ->whereRaw("(result IS NULL OR result='0')")
+            ->orderBy('isnull', 'asc')
+            ->orderBy('highpriority', 'asc')
+            ->orderBy('datereceived', 'asc')
+            ->orderBy('site_entry', 'asc')
+            ->orderBy('viralsamples.id', 'asc')
+            ->limit($limit)
+            ->get();
+
+        if($test) $samples = $repeats->merge($samples);
+        $count = $samples->count();
+
+        $create = false;
+        if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
+
+        return [
+            'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
+            'sampletype' => $sampletype, 'samples' => $samples
+        ];
+
     }
     
 }
