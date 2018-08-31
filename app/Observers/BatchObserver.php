@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
-use App\Batch;
-use App\Patient;
-use App\Mother;
-use App\SampleView;
+use \App\Batch;
+use \App\Patient;
+use \App\Mother;
+use \App\SampleView;
 
 use DB;
 
@@ -63,7 +63,7 @@ class BatchObserver
                 'dateindividualresultprinted' => $batch->dateindividualresultprinted,
             ];
 
-            App\OldModels\Sample::where('batchno', $batch->id)->update($update_array);
+            \App\OldModels\Sample::where('batchno', $batch->id)->update($update_array);
         }
     }
 }

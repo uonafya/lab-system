@@ -53,7 +53,7 @@ class ViralbatchObserver
                 'dateindividualresultprinted' => $viralbatch->dateindividualresultprinted,
             ];
 
-            App\OldModels\Viralsample::where('batchno', $viralbatch->id)->update($update_array);
+            \App\OldModels\Viralsample::where('batchno', $viralbatch->id)->update($update_array);
         }
     }
 }
