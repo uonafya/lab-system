@@ -194,7 +194,7 @@ class DashboardController extends Controller
             $types = ['received', 'tested', 'rejected'];
             // $sample_types = DB::table('viralsampletypes')->get();
             foreach ($types as $key => $value) {
-                $model = self::__joinedToBatches()->join('viralsampletype', 'viralsampletype.id', '=', 'viralsamples.sampletype')->when($value, function($query) use ($value, $year, $month){
+                $model = self::__joinedToBatches()->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples.sampletype')->when($value, function($query) use ($value, $year, $month){
                         if ($value == 'received' || $value == 'rejected'){
                             $column = 'datereceived';
                             if ($value == 'rejected')
@@ -205,7 +205,7 @@ class DashboardController extends Controller
                         return $query->whereYear($column, $year)->when($month, function($query) use ($month){
                                                 return $query->whereMonth('datetested', $month);
                                             });
-                    })->selectRaw('count(*) as `total`, LOWER(`viralsampletype`.`alias`) as `titles`')
+                    })->selectRaw("count(*) as `total`, IFNULL(LOWER(`viralsampletype`.`alias`), 'none') as `titles`")
                     ->groupBy('titles')->get();
                 foreach ($model as $modelkey => $modelvalue) {
                     $typeData[$value.$modelvalue->titles] = $modelvalue->total;
