@@ -377,6 +377,7 @@ class Misc extends Common
         if($count == $machine->eid_limit) $create = true;
 
         return [
+        	'count' => $count,
             'create' => $create, 'machine_type' => $machine_type, 'machine' => $machine, 'samples' => $samples
         ];
 
