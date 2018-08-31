@@ -143,7 +143,7 @@ class DashboardController extends Controller
     public function lab_statistics($year = null, $month = null)
     {
         $data = [];
-        $currentTestingSystem = session('testingSystem');
+        $current = session('testingSystem');
         // dd($current);
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
