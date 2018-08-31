@@ -34,6 +34,7 @@ class ViralsampleObserver
 		$viralsample->load(['batch', 'patient']);
 
 		$old_sample = OldSample::find($viralsample->id);
+		// if()
 		$patient = $old_sample->patient;
 		$this->my_worker($viralsample, $patient, $old_sample);
 	}
@@ -53,7 +54,7 @@ class ViralsampleObserver
 	private function my_worker($viralsample, $patient, $old_sample)
 	{
 
-		$patient->age = $viralsample->age;
+		$patient->age = $viralsample->age ?? null;
 		$patient->pmtct = $viralsample->pmtct;
 		$patient->prophylaxis = $viralsample->prophylaxis;
 		$patient->gender = $viralsample->patient->sex;
