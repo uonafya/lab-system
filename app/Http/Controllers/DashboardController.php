@@ -143,7 +143,7 @@ class DashboardController extends Controller
     public function lab_statistics($year = null, $month = null)
     {
         $data = [];
-        $current = session('testingSystem');
+        $currentTestingSystem = session('testingSystem');
         // dd($current);
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
@@ -168,8 +168,8 @@ class DashboardController extends Controller
                                             })
                                             ->whereRaw("YEAR(batches.datereceived) = ".$year);
                                 }
-                            })->count();
-        dd($current);
+                            })->toSql();
+        dd($rejection);
         $received = self::__joinedToBatches()
                             ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
