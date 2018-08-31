@@ -174,80 +174,92 @@ class ViralworksheetController extends Controller
         $worksheet->save();
         $sampletype = $worksheet->sampletype;
 
+        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype);
 
-        $machines = Lookup::get_machines();
-        $machine = $machines->where('id', $worksheet->machine_type)->first();
-
-        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
-        $user = auth()->user();
-
-        $limit = $machine->vl_limit;
-        if($worksheet->calibration) $limit = $machine->vl_calibration_limit;
-        
-        $year = date('Y') - 1;
-        if(date('m') < 7) $year--;
-        $date_str = $year . '-12-31';
-
-        if($test){
-            $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-                ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
-                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-                ->where('datereceived', '>', $date_str)
-                ->when($sampletype, function($query) use ($sampletype){
-                    if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
-                })
-                ->where('site_entry', '!=', 2)
-                ->having('isnull', 0)
-                ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                ->where('input_complete', true)
-                ->whereIn('receivedstatus', [1, 3])
-                ->whereRaw("(result IS NULL OR result='0')")
-                ->orderBy('viralsamples.id', 'asc')
-                ->limit($limit)
-                ->get();
-            $limit -= $repeats->count();
-        }
-
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-            ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->where('datereceived', '>', $date_str)
-            ->when($sampletype, function($query) use ($sampletype){
-                if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
-            })
-            ->where('site_entry', '!=', 2)
-            ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-            ->where('input_complete', true)
-            ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw("(result IS NULL OR result='0')")
-            ->orderBy('isnull', 'asc')
-            ->orderBy('highpriority', 'asc')
-            ->orderBy('datereceived', 'asc')
-            ->orderBy('site_entry', 'asc')
-            ->orderBy('viralsamples.id', 'asc')
-            ->limit($limit)
-            ->get();
-
-
-        if($test) $samples = $repeats->merge($samples);
-        $count = $samples->count();
-
-        if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)){
-
-            $sample_ids = $samples->pluck('id');
-            Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
-            return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
-        }
-        else{
+        if(!$data || !$data['create']){
             $worksheet->delete();
-            session(['toast_message' => "The worksheet could not be created."]);
+            session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
             return back();            
         }
+
+        $sample_ids = $samples->pluck('id');
+        Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+        return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
+
+
+        // $machines = Lookup::get_machines();
+        // $machine = $machines->where('id', $worksheet->machine_type)->first();
+
+        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $user = auth()->user();
+
+        // $limit = $machine->vl_limit;
+        // if($worksheet->calibration) $limit = $machine->vl_calibration_limit;
+        
+        // $year = date('Y') - 1;
+        // if(date('m') < 7) $year--;
+        // $date_str = $year . '-12-31';
+
+        // if($test){
+        //     $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        //         ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+        //         ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+        //         ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+        //         ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+        //         ->where('datereceived', '>', $date_str)
+        //         ->when($sampletype, function($query) use ($sampletype){
+        //             if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+        //             if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+        //         })
+        //         ->where('site_entry', '!=', 2)
+        //         ->having('isnull', 0)
+        //         ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+        //         ->where('input_complete', true)
+        //         ->whereIn('receivedstatus', [1, 3])
+        //         ->whereRaw("(result IS NULL OR result='0')")
+        //         ->orderBy('viralsamples.id', 'asc')
+        //         ->limit($limit)
+        //         ->get();
+        //     $limit -= $repeats->count();
+        // }
+
+        // $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        //     ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+        //     ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+        //     ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+        //     ->where('datereceived', '>', $date_str)
+        //     ->when($sampletype, function($query) use ($sampletype){
+        //         if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+        //         if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+        //     })
+        //     ->where('site_entry', '!=', 2)
+        //     ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+        //     ->where('input_complete', true)
+        //     ->whereIn('receivedstatus', [1, 3])
+        //     ->whereRaw("(result IS NULL OR result='0')")
+        //     ->orderBy('isnull', 'asc')
+        //     ->orderBy('highpriority', 'asc')
+        //     ->orderBy('datereceived', 'asc')
+        //     ->orderBy('site_entry', 'asc')
+        //     ->orderBy('viralsamples.id', 'asc')
+        //     ->limit($limit)
+        //     ->get();
+
+
+        // if($test) $samples = $repeats->merge($samples);
+        // $count = $samples->count();
+
+        // if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)){
+
+        //     $sample_ids = $samples->pluck('id');
+        //     Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+        //     return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
+        // }
+        // else{
+        //     $worksheet->delete();
+        //     session(['toast_message' => "The worksheet could not be created."]);
+        //     return back();            
+        // }
     }
 
     /**
