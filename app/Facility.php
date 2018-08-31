@@ -68,66 +68,34 @@ class Facility extends BaseModel
 
     public function getContactsAttribute()
     {
-        if($this->facility_contact->contacttelephone != '' && $this->facility_contact->contacttelephone2 != ''){
-        	return $this->facility_contact->contacttelephone . ' / ' . $this->facility_contact->contacttelephone2;
-		}
-		else if($this->facility_contact->contacttelephone != '' && $this->facility_contact->contacttelephone2 == ''){
-        	return $this->facility_contact->contacttelephone;
-		}
-		else if($this->facility_contact->contacttelephone == '' && $this->facility_contact->contacttelephone2 != ''){
-        	return $this->facility_contact->contacttelephone2;
-		}
-		else{
-			return null;
-		}
+        $contacttelephone = $this->contacttelephone;
+        $contacttelephone2 = $this->contacttelephone2;
+
+        return $this->concat_contacts($contacttelephone, $contacttelephone2);
     }
 
     public function getFacilityContactsAttribute()
     {
-        if($this->facility_contact->telephone != '' && $this->facility_contact->telephone2 != ''){
-        	return $this->facility_contact->telephone . ' / ' . $this->facility_contact->telephone2;
-		}
-		else if($this->facility_contact->telephone != '' && $this->facility_contact->telephone2 == ''){
-        	return $this->facility_contact->telephone;
-		}
-		else if($this->facility_contact->telephone == '' && $this->facility_contact->telephone2 != ''){
-        	return $this->facility_contact->telephone2;
-		}
-		else{
-			return null;
-		}
+        $telephone = $this->telephone;
+        $telephone2 = $this->telephone2;
+
+        return $this->concat_contacts($telephone, $telephone2);
     }
 
     public function getEmailStringAttribute()
     {
-        if($this->facility_contact->email != '' && $this->facility_contact->ContactEmail != ''){
-            return $this->facility_contact->email . ' / ' . $this->facility_contact->ContactEmail;
-        }
-        else if($this->facility_contact->email != '' && $this->facility_contact->ContactEmail == ''){
-            return $this->facility_contact->email;
-        }
-        else if($this->facility_contact->email == '' && $this->facility_contact->ContactEmail != ''){
-            return $this->facility_contact->ContactEmail;
-        }
-        else{
-            return null;
-        }
+        $email = $this->email;
+        $contact_email = $this->contact_email;
+
+        return $this->concat_contacts($email, $contact_email);
     }
 
     public function getTelephoneStringAttribute()
     {
-        if($this->facility_contact->telephone != '' && $this->facility_contact->contacttelephone != ''){
-            return $this->facility_contact->telephone . ' / ' . $this->facility_contact->contacttelephone;
-        }
-        else if($this->facility_contact->telephone != '' && $this->facility_contact->contacttelephone == ''){
-            return $this->facility_contact->telephone;
-        }
-        else if($this->facility_contact->telephone == '' && $this->facility_contact->contacttelephone != ''){
-            return $this->facility_contact->contacttelephone;
-        }
-        else{
-            return null;
-        }
+        $telephone = $this->telephone;
+        $contacttelephone = $this->contacttelephone;
+
+        return $this->concat_contacts($telephone, $contacttelephone);
     }
 
     public function getEmailArrayAttribute()
@@ -176,5 +144,13 @@ class Facility extends BaseModel
     public function getContactEmailAttribute()
     {
         return $this->facility_contact->ContactEmail ?? $this->ContactEmail ?? null;
+    }
+
+    public function concat_contacts($first, $second)
+    {
+        if($first && !$second) return $first;
+        if(!$first && $second) return $second;
+        if(!$first && !$second) return null;
+        return $first . ' / ' . $second;
     }
 }

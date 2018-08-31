@@ -111,8 +111,6 @@ class Copier
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
-    // 840334
-
 
     public static function copy_vl()
     {

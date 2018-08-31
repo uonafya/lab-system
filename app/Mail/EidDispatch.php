@@ -12,7 +12,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EidDispatch extends Mailable
+class EidDispatch extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -40,6 +40,8 @@ class EidDispatch extends Mailable
 
         $this->individual_path = storage_path('app/batches/eid/individual-' . $batch->id . '.pdf');
         $this->summary_path = storage_path('app/batches/eid/summary-' . $batch->id . '.pdf');
+
+        if(!is_dir(storage_path('app/batches/eid'))) mkdir(storage_path('app/batches/eid/'), 0777, true);
 
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);

@@ -104,15 +104,15 @@
                         <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Taqman(24)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Abbott Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Abbott Calibration Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create C8800 Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype') }}">Create Panther Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
                 <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
@@ -299,8 +299,8 @@
             <li>
                 <a href="#"><span class="nav-label">Download Forms</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
-                    <li><a href="#">EID Form</a></li>
-                    <li><a href="#">VL Form</a></li>
+                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a></li>
+                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a></li>
                 </ul>
             </li>
             <hr />
@@ -315,8 +315,8 @@
             <hr />
         @endif
         @if(Auth()->user()->user_type_id != 2)
-            <li><a href="{{ url('downloads/VL') }}">Download VL Form</a></li>
-            <li><a href="{{ url('downloads/EID') }}">Download EID Form</a></li>
+            <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
+            <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
         <!-- </ul>
         </li>
         <li>

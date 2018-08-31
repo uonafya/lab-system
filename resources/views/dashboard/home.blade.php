@@ -48,7 +48,7 @@
                     @php
                         $year=Date('Y')-$i
                     @endphp
-                    <a href='{{-- url("hei/validate/$year") --}}'>{{ Date('Y')-$i }}</a> |
+                    <a href='{{ url("dashboard/$year") }}'>{{ Date('Y')-$i }}</a> |
                 @endfor
             </div>
             <!-- Year -->
@@ -56,7 +56,7 @@
             <div class="col-md-6">
                 <center><h5>Month Filter</h5></center>
                 @for ($i = 1; $i <= 12; $i++)
-                    <a href='{{-- url("hei/validate/null/$i") --}}'>{{ date("F", mktime(null, null, null, $i)) }}</a> |
+                    <a href='{{ url("dashboard/null/$i") }}'>{{ date("F", mktime(null, null, null, $i)) }}</a> |
                 @endfor
             </div>
             <!-- Month -->
@@ -64,8 +64,8 @@
         <div class="row">
             <div class="col-lg-7">
                 <div class="hpanel">
-                    <div class="panel-heading">
-                        <center>Monthly Test Summary</center>
+                    <div class="alert alert-success">
+                        <center><i class="fa fa-bolt"></i> Monthly Test Summary</center>
                     </div>
                     <div class="panel-body">
                         <div id="highchartsnya"></div>
@@ -83,7 +83,7 @@
 		                	<tbody>
                             @if(session('testingSystem') == 'Viralload')
                                 <tr>
-                                    <td>Received samples in {{ Date('Y') }}</td>
+                                    <td>Received samples in {{ $data->year . $data->month }}</td>
                                     <td>{{ number_format($lab_stats->receivedSamples) }}</td>
                                 </tr>
                                 <tr>
@@ -117,7 +117,7 @@
                                 </tr>
                             @else
 		                		<tr>
-		                			<td>No. of received samples in {{ Date('Y') }}</td>
+		                			<td>No. of received samples in {{ $data->year . $data->month }}</td>
 		                			<td>{{ number_format($lab_stats->receivedSamples) }}</td>
 		                		</tr>
 		                		<tr>
@@ -166,7 +166,7 @@
             </div>
             @if(session('testingSystem') == 'Viralload')
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="alert alert-success">
                         <center>Tests Done</center>
                     </div>
                     <div class="panel-body no-padding">
@@ -183,33 +183,33 @@
                             <tbody>
                                 <tr>
                                     <td>1. Frozen Plasma</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receivedplasma)) ? number_format($lab_stats->sampletypes->receivedplasma) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testedplasma)) ? number_format($lab_stats->sampletypes->testedplasma) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejectedplasma)) ? number_format($lab_stats->sampletypes->rejectedplasma) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>2. Venous Blood (EDTA)</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receivededta)) ? number_format($lab_stats->sampletypes->receivededta) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testededta)) ? number_format($lab_stats->sampletypes->testededta) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejectededta)) ? number_format($lab_stats->sampletypes->rejectededta) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>3. DBS Venous</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receiveddbsv)) ? number_format($lab_stats->sampletypes->receiveddbsv) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testeddbsv)) ? number_format($lab_stats->sampletypes->testeddbsv) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejecteddbsv)) ? number_format($lab_stats->sampletypes->rejecteddbsv) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>4. DBS Capillary (Infants)</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receiveddbsc)) ? number_format($lab_stats->sampletypes->receiveddbsc) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testeddbsc)) ? number_format($lab_stats->sampletypes->testeddbsc) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejecteddbsc)) ? number_format($lab_stats->sampletypes->rejecteddbsc) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>* Not Specified</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->testedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receivednone)) ? number_format($lab_stats->sampletypes->receivednone) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testednone)) ? number_format($lab_stats->sampletypes->testednone) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejectednone)) ? number_format($lab_stats->sampletypes->rejectednone) : 0 }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -221,7 +221,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="alert alert-success">
                         <center>Lab TAT</center>
                     </div>
                     <div class="panel-body">
@@ -346,12 +346,12 @@
                 shared: true
             },
             legend: {
-                layout: 'vertical',
+                layout: 'horizontal',
                 align: 'right',
-                x: -50,
-                verticalAlign: 'top',
-                y: 30,
-                floating: true,
+                x: -70,
+                verticalAlign: 'bottom',
+                y: 5,
+                floating: false,
                 backgroundColor: '#FFFFFF'
             },colors: [
                         '#1BA39C',

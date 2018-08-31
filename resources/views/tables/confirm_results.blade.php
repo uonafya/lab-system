@@ -63,11 +63,17 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td >LPC</td>
+                                    <td >PC</td>
                                     <td >-</td>
                                     <td >-</td>
                                     <td ><small><strong>
-                                        <font color='#FF0000'> {{ $worksheet->pos_control_result }} </font>
+                                        <font color='#FF0000'>
+                                            @if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 7)
+                                                Valid
+                                            @else
+                                                Invalid
+                                            @endif
+                                        </font>
                                          </strong></small>
                                      </td>
                                     <td ><small><strong><font color='#FF0000'> {{ $worksheet->pos_control_interpretation }} </font></strong></small> </td>
@@ -82,7 +88,13 @@
                                     <td >-</td>
                                     <td >-</td>
                                     <td ><small><strong>
-                                        <font color='#339900'> {{ $worksheet->neg_control_result }} </font>
+                                        <font color='#339900'> 
+                                            @if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 7)
+                                                Valid
+                                            @else
+                                                Invalid
+                                            @endif
+                                        </font>
                                          </strong></small>
                                      </td>
                                     <td ><small><strong><font color='#339900'> {{ $worksheet->neg_control_interpretation }} </font></strong></small> </td>

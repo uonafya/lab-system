@@ -3,11 +3,11 @@ DROP TABLE IF EXISTS `age_bands`;
 -- Dumping structure for table apidb.age_bands
 CREATE TABLE IF NOT EXISTS `age_bands` (
   `id`  TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
   `lower` double(10,5) unsigned DEFAULT NULL,
   `upper` double(10,5) unsigned DEFAULT NULL,
-  `age_range_id` int(11) NOT NULL,
-  `age_range` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `age_range_id` TINYINT UNSIGNED NOT NULL,
+  `age_range` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
   `lower_range` double(10,5) unsigned DEFAULT NULL,
   `upper_range` double(10,5) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -31,7 +31,7 @@ INSERT INTO `age_bands` (`id`, `name`, `lower`, `upper`, `age_range_id`, `age_ra
 
 DROP TABLE IF EXISTS `viralworksheetsampletypes`;
 CREATE TABLE  `viralworksheetsampletypes` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
@@ -111,7 +111,7 @@ INSERT INTO `countys` (`id`, `name`, `CountyDHISCode`, `CountyMFLCode`, `CountyC
 DROP TABLE IF EXISTS `districts`;
 -- Dumping structure for table apidb.districts
 CREATE TABLE IF NOT EXISTS `districts` (
-  `id` smallint(5) NOT NULL AUTO_INCREMENT,
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `SubCountyDHISCode` varchar(50) DEFAULT NULL,
   `SubCountyMFLCode` varchar(50) DEFAULT NULL,
@@ -480,9 +480,9 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `hei_categories`;
 -- Dumping structure for table apidb.hei_categories
 CREATE TABLE IF NOT EXISTS `hei_categories` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
-  `active` int(10) DEFAULT '1',
+  `active` TINYINT unsigned DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
@@ -499,7 +499,7 @@ INSERT INTO `hei_categories` (`id`, `name`, `active`) VALUES
 DROP TABLE IF EXISTS `hei_validation`;
 -- Dumping structure for table apidb.hei_validation
 CREATE TABLE IF NOT EXISTS `hei_validation` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `desc` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
@@ -518,7 +518,7 @@ INSERT INTO `hei_validation` (`id`, `name`, `desc`) VALUES
 DROP TABLE IF EXISTS `labs`;
 -- Dumping structure for table apidb.labs
 CREATE TABLE IF NOT EXISTS `labs` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `email` varchar(32) DEFAULT NULL,
   `labname` varchar(50) DEFAULT NULL,
@@ -527,8 +527,8 @@ CREATE TABLE IF NOT EXISTS `labs` (
   `base_url` varchar(70) DEFAULT NULL,
   `labtel1` varchar(32) DEFAULT NULL,
   `labtel2` varchar(32) DEFAULT NULL,
-  `taqman` int(1) DEFAULT '1',
-  `abbott` int(1) DEFAULT '1',
+  `taqman` TINYINT unsigned DEFAULT '1',
+  `abbott` TINYINT unsigned DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
@@ -550,13 +550,13 @@ VALUES (1, 'KEMRI,Nairobi HIV Lab', 'eid-nairobi@googlegroups.com', 'KEMRI Nairo
 DROP TABLE IF EXISTS `partners`;
 -- Dumping structure for table apidb.partners
 CREATE TABLE IF NOT EXISTS `partners` (
-  `id` int(32) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `partnerDHISCode` varchar(100) DEFAULT NULL,
   `partnertype` varchar(100) DEFAULT NULL,
   `logo` varchar(45) DEFAULT NULL,
-  `flag` int(45) DEFAULT NULL,
-  `orderno` int(45) DEFAULT NULL,
+  `flag` TINYINT unsigned DEFAULT NULL,
+  `orderno` TINYINT unsigned DEFAULT NULL,
   `unknown2013` double DEFAULT NULL,
   `unknown2014` double DEFAULT NULL,
   `unknown2015` double DEFAULT NULL,
@@ -646,7 +646,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `platforms`;
 -- Dumping structure for table apidb.platforms
 CREATE TABLE IF NOT EXISTS `platforms` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
@@ -662,12 +662,12 @@ INSERT INTO `platforms` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `prophylaxis`;
 -- Dumping structure for table apidb.prophylaxis
 CREATE TABLE IF NOT EXISTS `prophylaxis` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `alias` varchar(100) DEFAULT NULL,
-  `ptype` int(14) NOT NULL DEFAULT '0',
-  `flag` int(14) NOT NULL DEFAULT '1',
-  `rank` int(14) DEFAULT '0',
+  `ptype` TINYINT unsigned NOT NULL DEFAULT '0',
+  `flag` TINYINT unsigned NOT NULL DEFAULT '1',
+  `rank` TINYINT unsigned DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
 
@@ -706,7 +706,7 @@ INSERT INTO `prophylaxis` (`id`, `name`, `alias`, `ptype`, `flag`, `rank`) VALUE
 DROP TABLE IF EXISTS `prophylaxistypes`;
 -- Dumping structure for table apidb.prophylaxistypes
 CREATE TABLE IF NOT EXISTS `prophylaxistypes` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
@@ -722,7 +722,7 @@ INSERT INTO `prophylaxistypes` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `provinces`;
 -- Dumping structure for table apidb.provinces
 CREATE TABLE IF NOT EXISTS `provinces` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
@@ -743,7 +743,7 @@ INSERT INTO `provinces` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `receivedstatus`;
 -- Dumping structure for table apidb.receivedstatus
 CREATE TABLE IF NOT EXISTS `receivedstatus` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
@@ -759,7 +759,7 @@ INSERT INTO `receivedstatus` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `rejectedreasons`;
 -- Dumping structure for table apidb.rejectedreasons
 CREATE TABLE IF NOT EXISTS `rejectedreasons` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `alias` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -791,7 +791,7 @@ INSERT INTO `rejectedreasons` (`id`, `name`, `alias`) VALUES
 DROP TABLE IF EXISTS `results`;
 -- Dumping structure for table apidb.results
 CREATE TABLE IF NOT EXISTS `results` (
-  `id` int(14) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `alias` varchar(100) NOT NULL,
   `name_colour` varchar(100) NOT NULL,
@@ -811,7 +811,7 @@ INSERT INTO `results` (`id`, `name`, `alias`, `name_colour`) VALUES
 DROP TABLE IF EXISTS `testtype`;
 -- Dumping structure for table apidb.testtype
 CREATE TABLE IF NOT EXISTS `testtype` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
@@ -827,11 +827,11 @@ INSERT INTO `testtype` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `viraljustifications`;
 -- Dumping structure for table apidb.viraljustifications
 CREATE TABLE IF NOT EXISTS `viraljustifications` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `displaylabel` varchar(100) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `flag` int(50) DEFAULT '1',
-  `rank` int(50) DEFAULT NULL,
+  `flag` TINYINT unsigned DEFAULT '1',
+  `rank` TINYINT unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
@@ -854,9 +854,9 @@ INSERT INTO `viraljustifications` (`id`, `displaylabel`, `name`, `flag`, `rank`)
 DROP TABLE IF EXISTS `viralpmtcttype`;
 -- Dumping structure for table apidb.viralpmtcttype
 CREATE TABLE IF NOT EXISTS `viralpmtcttype` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
-  `subID` int(11) DEFAULT NULL,
+  `subID` TINYINT unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
@@ -872,13 +872,13 @@ INSERT INTO `viralpmtcttype` (`id`, `name`, `subID`) VALUES
 DROP TABLE IF EXISTS `viralprophylaxis`;
 -- Dumping structure for table apidb.viralprophylaxis
 CREATE TABLE IF NOT EXISTS `viralprophylaxis` (
-  `id` int(50) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `displaylabel` varchar(50) NOT NULL,
   `name` varchar(200) NOT NULL,
   `description` varchar(100) NOT NULL,
-  `line` int(100) NOT NULL,
-  `ptype` int(14) NOT NULL DEFAULT '2',
-  `category` int(14) NOT NULL DEFAULT '3',
+  `line` TINYINT unsigned NOT NULL,
+  `ptype` TINYINT unsigned NOT NULL DEFAULT '2',
+  `category` TINYINT unsigned NOT NULL DEFAULT '3',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
@@ -910,11 +910,11 @@ INSERT INTO `viralprophylaxis` (`id`, `displaylabel`, `name`, `description`, `li
 DROP TABLE IF EXISTS `viralrejectedreasons`;
 -- Dumping structure for table apidb.viralrejectedreasons
 CREATE TABLE IF NOT EXISTS `viralrejectedreasons` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT NULL,
   `alias` varchar(200) DEFAULT NULL,
   `newid` varchar(200) DEFAULT NULL,
-  `originalid` int(200) DEFAULT '0',
+  `originalid` TINYINT unsigned DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
@@ -946,12 +946,12 @@ INSERT INTO `viralrejectedreasons` (`id`, `name`, `alias`, `newid`, `originalid`
 DROP TABLE IF EXISTS `viralsampletype`;
 -- Dumping structure for table apidb.viralsampletype
 CREATE TABLE IF NOT EXISTS `viralsampletype` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `sampletype` int(14) NOT NULL,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `sampletype` TINYINT unsigned NOT NULL,
   `name` varchar(100) DEFAULT NULL,
   `alias` varchar(100) DEFAULT NULL,
-  `typecode` int(100) DEFAULT NULL,
-  `flag` int(10) DEFAULT '1',
+  `typecode` TINYINT unsigned DEFAULT NULL,
+  `flag` TINYINT unsigned DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
@@ -959,18 +959,18 @@ CREATE TABLE IF NOT EXISTS `viralsampletype` (
 /*!40000 ALTER TABLE `viralsampletype` DISABLE KEYS */;
 INSERT INTO `viralsampletype` (`id`, `sampletype`, `name`, `alias`, `typecode`, `flag`) VALUES
 	(1, 1, 'Frozen Plasma', 'PLASMA', 2, 1),
-	(2, 3, 'Venous Blood  (EDTA )', NULL, 2, 1),
-	(4, 2, 'DBS Venous', 'DBS', 1, 1),
-	(3, 2, 'DBS Capillary ( infants)', NULL, 1, 1);
+	(2, 3, 'Venous Blood  (EDTA )', 'EDTA', 2, 1),
+	(4, 2, 'DBS Venous', 'DBSV', 1, 1),
+	(3, 2, 'DBS Capillary ( infants)', 'DBSC', 1, 1);
 /*!40000 ALTER TABLE `viralsampletype` ENABLE KEYS */;
 
 
 DROP TABLE IF EXISTS `viralsampletypedetails`;
 -- Dumping structure for table apidb.viralsampletypedetails
 CREATE TABLE IF NOT EXISTS `viralsampletypedetails` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
-  `flag` int(10) DEFAULT '1',
+  `flag` TINYINT unsigned DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
@@ -2500,7 +2500,7 @@ DROP TABLE IF EXISTS `machines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `machines` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `machine` varchar(20) DEFAULT NULL,
   `output` varchar(150) DEFAULT NULL,
   `eid_limit` tinyint(4) unsigned  DEFAULT NULL,
@@ -2563,7 +2563,7 @@ DROP TABLE IF EXISTS `amrslocations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `amrslocations` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `identifier` int(10) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -2589,8 +2589,8 @@ DROP TABLE IF EXISTS `gender`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gender` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `gender` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `gender_description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `gender` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `gender_description` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2847,11 +2847,11 @@ INSERT INTO `other_medications` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `lab_equipment_mapping`;
 
 CREATE TABLE IF NOT EXISTS `lab_equipment_mapping` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `type` int(10) DEFAULT '0' COMMENT '1=roche 2-abbott 3-c8800 4-panther',
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `type` TINYINT unsigned DEFAULT '0' COMMENT '1=roche 2-abbott 3-c8800 4-panther',
   `name` varchar(50) DEFAULT NULL,
   `serialno` varchar(10) DEFAULT NULL,
-  `lab` int(10) DEFAULT '0',
+  `lab` TINYINT unsigned DEFAULT '0',
   PRIMARY KEY (`ID`),
   KEY `type` (`type`),
   KEY `serialno` (`serialno`),

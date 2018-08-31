@@ -6,7 +6,7 @@
 	<a href="{{ url('viralworksheet/print/' . $worksheet_id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
 	</a> | 
-	<a href="{{ url('viralworksheet/cancel/' . $worksheet_id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {$worksheet_id}?');">
+	<a href="{{ url('viralworksheet/cancel/' . $worksheet_id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet_id}}?');">
 		
 		Cancel
 	</a> | 

@@ -8,6 +8,7 @@ use App\ViralsampleView;
 use App\Abbotdeliveries;
 use App\Taqmandeliveries;
 use Excel;
+use App\ViewFacility;
 
 class ReportController extends Controller
 {
@@ -110,11 +111,13 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
-        dd($request);
+        return back();
+        // dd($request);
     }
 
     public static function __getDateData($request, &$dateString)
     {
+        $title = '';
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
     		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'viralsamples_view.amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.datetested', 'viralsamples_view.datedispatched', 'viralsamples_view.result')
@@ -146,10 +149,16 @@ class ReportController extends Controller
 
         if ($request->category == 'county') {
             $model = $model->where('view_facilitys.county_id', '=', $request->county);
+            $county = ViewFacility::where('county_id', '=', $request->county)->get()->first();
+            $title .= $county->county;
         } else if ($request->category == 'subcounty') {
             $model = $model->where('view_facilitys.subcounty_id', '=', $request->district);
+            $subc = ViewFacility::where('subcounty_id', '=', $request->district)->get()->first();
+            $title .= $subc->subcounty;
         } else if ($request->category == 'facility') {
             $model = $model->where('view_facilitys.id', '=', $request->facility);
+            $facility = ViewFacility::where('id', '=', $request->facility)->get()->first();
+            $title .= $facility->name;
         }
 
     	if (isset($request->specificDate)) {
@@ -157,7 +166,7 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->specificDate);
     	}else {
             if (!isset($request->period) || $request->period == 'range') {
-                $dateString = date('d-M-Y', strtotime($request->fromDate))." & ".date('d-M-Y', strtotime($request->toDate));
+                $dateString = date('d-M-Y', strtotime($request->fromDate))." - ".date('d-M-Y', strtotime($request->toDate));
                 if ($request->period) { $column = 'datetested'; } 
                 else { $column = 'datereceived'; }
                 $model = $model->whereRaw("$table.$column BETWEEN '".$request->fromDate."' AND '".$request->toDate."'");
@@ -189,16 +198,21 @@ class ReportController extends Controller
             }
     	}
 
+        $report = (session('testingSystem') == 'Viralload') ? 'VL ' : 'EID ';
+
         if ($request->types == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
+            $report .= 'tested outcomes ';
         } else {
             $model = $model->where("$table.receivedstatus", "=", '2');
+            $report .= 'rejected outcomes ';
         }
-
-    	return $model;
+        
+        $dateString = strtoupper($report . $title . ' ' . $dateString);
+        return $model->orderBy('datereceived', 'asc');
     }
 
-    public static function __getExcel($data, $dateString)
+    public static function __getExcel($data, $title)
     {
         $dataArray = []; 
 
@@ -211,14 +225,12 @@ class ReportController extends Controller
                 $dataArray[] = $report->toArray();
             }
             
-            $report = (session('testingSystem') == 'Viralload') ? 'VL '.$dateString : 'EID '.$dateString;
-            
-            Excel::create($report, function($excel) use ($dataArray, $report) {
-                $excel->setTitle($report);
+            Excel::create($title, function($excel) use ($dataArray, $title) {
+                $excel->setTitle($title);
                 $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-                $excel->setDescription('TEST OUTCOME REPORT FOR '.$report);
+                $excel->setDescription($title);
 
-                $excel->sheet($report, function($sheet) use ($dataArray) {
+                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
                     $sheet->fromArray($dataArray, null, 'A1', false, false);
                 });
 

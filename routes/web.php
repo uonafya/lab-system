@@ -134,7 +134,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
 
-	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+	Route::get('dashboard/{year?}/{month?}', 'DashboardController@index')->name('dashboard');
 	Route::post('district/search/', 'DistrictController@search')->name('district.search');
 	
 	Route::get('downloads/{type}', 'HomeController@download')->name('downloads');
@@ -304,7 +304,7 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
 
-			Route::get('set_sampletype/{machine_type?}/{calibration?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
+			Route::get('set_sampletype/{machine_type}/{calibration?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
 			Route::post('set_sampletype', 'ViralworksheetController@set_sampletype')->name('set_sampletype');
 
 			Route::get('create/{sampletype}/{machine_type?}/{calibration?}', 'ViralworksheetController@create')->name('create_any');		
