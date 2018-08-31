@@ -48,7 +48,7 @@
                     @php
                         $year=Date('Y')-$i
                     @endphp
-                    <a href='{{-- url("hei/validate/$year") --}}'>{{ Date('Y')-$i }}</a> |
+                    <a href='{{ url("dashboard/$year") }}'>{{ Date('Y')-$i }}</a> |
                 @endfor
             </div>
             <!-- Year -->
@@ -56,7 +56,7 @@
             <div class="col-md-6">
                 <center><h5>Month Filter</h5></center>
                 @for ($i = 1; $i <= 12; $i++)
-                    <a href='{{-- url("hei/validate/null/$i") --}}'>{{ date("F", mktime(null, null, null, $i)) }}</a> |
+                    <a href='{{ url("dashboard/null/$i") }}'>{{ date("F", mktime(null, null, null, $i)) }}</a> |
                 @endfor
             </div>
             <!-- Month -->
@@ -64,8 +64,8 @@
         <div class="row">
             <div class="col-lg-7">
                 <div class="hpanel">
-                    <div class="panel-heading">
-                        <center>Monthly Test Summary</center>
+                    <div class="alert alert-success">
+                        <center><i class="fa fa-bolt"></i> Monthly Test Summary</center>
                     </div>
                     <div class="panel-body">
                         <div id="highchartsnya"></div>
@@ -166,7 +166,7 @@
             </div>
             @if(session('testingSystem') == 'Viralload')
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="alert alert-success">
                         <center>Tests Done</center>
                     </div>
                     <div class="panel-body no-padding">
@@ -221,7 +221,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="hpanel">
-                    <div class="panel-heading">
+                    <div class="alert alert-success">
                         <center>Lab TAT</center>
                     </div>
                     <div class="panel-body">

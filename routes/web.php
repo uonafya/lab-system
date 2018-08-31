@@ -134,7 +134,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
 
-	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+	Route::get('dashboard/{year?}/{month?}', 'DashboardController@index')->name('dashboard');
 	Route::post('district/search/', 'DistrictController@search')->name('district.search');
 	
 	Route::get('downloads/{type}', 'HomeController@download')->name('downloads');

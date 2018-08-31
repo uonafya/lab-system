@@ -28,6 +28,8 @@
                                     @endif
                                     <th>Date Collected</th>
                                     <th>Date Received</th>
+                                    <th>Received By</th>
+                                    <th>Run #</th>
                                     <th>Received Status</th>
                                     <th>Waiting Time (days)</th>
                                     <th>Task</th>
@@ -53,6 +55,8 @@
                                     @endif
                                     <td>{{ $sample->datecollected }}</td>
                                     <td>{{ $sample->datereceived }}</td>
+                                    <td>{{ ($sample->received_by) ? $sample->batch_received_by($sample->received_by) : '' }}</td>
+                                    <td>{{ $sample->run }}</td>
                                     <td>{{ $sample->receivedstatus }}</td>
                                     <td>{{ $sample->waitingtime }}</td>
                                     @if(Session('testingSystem')=='Viralload')
@@ -70,7 +74,7 @@
                                     @endif
                                 </tr>
                             @empty
-                                <td colspan="12"><center>No Data Available</center></td>
+                                <td colspan="18"><center>No Data Available</center></td>
                             @endforelse
                             </tbody>
                         </table>

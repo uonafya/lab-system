@@ -12,14 +12,33 @@ class DashboardController extends Controller
 {
     //
 
-    public function index()
+    public function index($year = null, $month = null)
     {
-        // dd(session('testingSystem));
+        if ($year==null || $year=='null'){
+            if (session('dashboardYear')==null)
+                session(['dashboardYear' => Date('Y')]);
+        } else {
+            session(['dashboardYear'=>$year]);
+        }
+
+        if ($month==null || $month=='null'){
+            session()->forget('dashboardMonth');
+        } else {
+            session(['dashboardMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
+        }
+        
    		$monthly_test = (object) $this->lab_monthly_tests();
-    	$lab_stats = (object) $this->lab_statistics();
-    	$lab_tat_stats = (object) $this->lab_tat_statistics();
+    	$lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
+    	$lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
     	// dd($lab_tat_stats);
-    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats'))->with('pageTitle', 'Lab Dashboard');
+        $year = session('dashboardYear');
+        $month = session('dashboardMonth');
+        $monthName = "";
+        
+        if (null !== $month) 
+            $monthName = "- ".date("F", mktime(null, null, null, $month));
+
+    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats'))->with('pageTitle', "Lab Dashboard:$year $monthName");
     }
 
     public function lab_monthly_tests()
@@ -117,7 +136,7 @@ class DashboardController extends Controller
                 $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
             }
         }
-        dd($data);
+        // dd($data);
         return $data;
         
     }
@@ -129,7 +148,7 @@ class DashboardController extends Controller
 
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
-                                            ->where('SMS_printer_phoneNo', '<>', 0)
+                                            ->where('smsprinterphoneno', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
                             ->when($current, function($query) use ($current){

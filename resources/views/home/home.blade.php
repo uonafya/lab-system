@@ -171,7 +171,7 @@
 		            		@endif
 		                    <li class="list-group-item" style="{{ $style }}">
 		                        <span class="badge badge-{{ $badge }}">{{ $widgets['samplesForRepeat'] }}</span>
-		                        <a href="#">Invalid/Failed Samples from Previous Runs to be Rerun</a>
+		                        <a href="{{ url('home/repeat') }}">Invalid/Failed Samples from Previous Runs to be Rerun</a>
 		                    </li>
 		            		@if ((int)$widgets['rejectedForDispatch'] > 0)
 		            			@php

@@ -184,7 +184,9 @@ class HomeController extends Controller
                     ->where('datereceived', '>', '2017-12-31')
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
-                    ->where('viralsamples_view.flag', '1')->get();
+                    ->where('viralsamples_view.flag', '1')
+                    ->orderBy('parentid', 'desc')
+                    ->orderBy('waitingtime', 'desc')->get();
         } else {
             $samples = SampleView::selectRaw('samples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -194,7 +196,9 @@ class HomeController extends Controller
                     ->whereIn('receivedstatus', [1, 3])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
-                    ->where('flag', '1')->get();
+                    ->where('flag', '1')
+                    ->orderBy('parentid', 'desc')
+                    ->orderBy('waitingtime', 'desc')->get();
         }
         $noSamples = $samples->count();
         $pageTitle = "Samples awaiting testing [$noSamples]";
@@ -209,10 +213,11 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                         ->whereBetween('sampletype', [1, 5])
-                        // ->where('receivedstatus', 3)
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
+                        // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1')->get();
@@ -221,7 +226,8 @@ class HomeController extends Controller
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                         ->whereNull('worksheet_id')
-                        // ->where('receivedstatus', 3)
+                        ->whereYear('datereceived', '>', '2015')
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
