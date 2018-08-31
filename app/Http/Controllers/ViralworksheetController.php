@@ -821,10 +821,11 @@ class ViralworksheetController extends Controller
                     return $query->where('result', '< LDL copies/ml');
                 }
                 else if ($result == 2) {
-                    return $query->where('result', '!=', 'Failed')->where('result', '!=', '< LDL copies/ml');
+                    return $query->where('result', '!=', 'Failed')
+                    ->where('result', '!=', 'Invalid')->where('result', '!=', '< LDL copies/ml');
                 }
                 else if ($result == 3) {
-                    return $query->where('result', 'Failed');
+                    return $query->whereRaw("(result='Failed' or result='invalid')");
                 }                
             })
             ->groupBy('worksheet_id')
