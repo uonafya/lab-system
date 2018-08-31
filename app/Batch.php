@@ -98,6 +98,9 @@ class Batch extends BaseModel
     public function setDatedispatchedfromfacilityAttribute($value)
     {
         if($value = '0000-00-00') $this->attributes['datedispatchedfromfacility'] = null;
+        else{
+            $this->attributes['datedispatchedfromfacility'] = $value;
+        }
     }
 
     public function scopeExisting($query, $facility, $datereceived, $lab)
