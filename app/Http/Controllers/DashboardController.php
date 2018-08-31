@@ -144,7 +144,7 @@ class DashboardController extends Controller
     {
         $data = [];
         $current = session('testingSystem');
-        // dd($current);
+
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
                             })->count();
@@ -169,7 +169,6 @@ class DashboardController extends Controller
                                             ->whereRaw("YEAR(batches.datereceived) = ".$year);
                                 }
                             })->count();
-        // dd($rejection);
         $received = self::__joinedToBatches()
                             ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
@@ -184,7 +183,7 @@ class DashboardController extends Controller
                                                 })->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
                                 }
                             })->count();
-        // dd($received);
+
         $redraws = (session('testingSystem') == 'Viralload') ? 
                         self::__getsampleResultByType(1) : 
                         self::__getsampleResultByType(3) + self::__getsampleResultByType(5);
