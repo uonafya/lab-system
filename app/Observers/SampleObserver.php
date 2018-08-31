@@ -2,11 +2,11 @@
 
 namespace App\Observers;
 
-use App\OldModels\Patient;
-use App\OldModels\Mother;
-use App\OldModels\Sample as OldSample;
+use \App\OldModels\Patient;
+use \App\OldModels\Mother;
+use \App\OldModels\Sample as OldSample;
 
-use App\Sample;
+use \App\Sample;
 
 
 class SampleObserver

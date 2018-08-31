@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
-use App\OldModels\Viralpatient;
-use App\OldModels\Viralsample as OldSample;
+use \App\OldModels\Viralpatient;
+use \App\OldModels\Viralsample as OldSample;
 
-use App\Viralsample;
+use \App\Viralsample;
 
 
 class ViralsampleObserver
