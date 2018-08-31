@@ -371,13 +371,13 @@ class Misc extends Common
             ->get();
 
         if($test) $samples = $repeats->merge($samples);
-        $count = $samples->count();
+        $count = $samples->count();        
 
         $create = false;
-        if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
+        if($count == $machine->eid_limit) $create = true;
 
         return [
-            'create' => $create, 'machine_type' => $machine_type, 'machine' => $machine,  'samples' => $samples
+            'create' => $create, 'machine_type' => $machine_type, 'machine' => $machine, 'samples' => $samples
         ];
 
     }
