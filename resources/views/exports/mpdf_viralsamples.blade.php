@@ -238,11 +238,16 @@ p.breakhere {page-break-before: always}
 						$vlmessage='Confirm adherence & Routine follow up.';
 					}
 					else{
-						if($no_previous_tests != 1){
+						if(env('APP_LAB') == 1){
 							$vlmessage='Review adherence, provide adherence counselling then Repeat Viral Load in 3 Months.';
 						}
 						else{
-							$vlmessage='If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.';
+							if($no_previous_tests != 1){
+								$vlmessage='Review adherence, provide adherence counselling then Repeat Viral Load in 3 Months.';
+							}
+							else{
+								$vlmessage='If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.';
+							}
 						}
 					}
 				}
