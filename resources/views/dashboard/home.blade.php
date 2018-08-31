@@ -346,12 +346,12 @@
                 shared: true
             },
             legend: {
-                layout: 'vertical',
+                layout: 'horizontal',
                 align: 'right',
-                x: -50,
-                verticalAlign: 'top',
-                y: 30,
-                floating: true,
+                x: -70,
+                verticalAlign: 'bottom',
+                y: 5,
+                floating: false,
                 backgroundColor: '#FFFFFF'
             },colors: [
                         '#1BA39C',
