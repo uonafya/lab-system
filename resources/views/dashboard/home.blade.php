@@ -183,33 +183,33 @@
                             <tbody>
                                 <tr>
                                     <td>1. Frozen Plasma</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receivedplasma)) ? number_format($lab_stats->sampletypes->receivedplasma) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testedplasma)) ? number_format($lab_stats->sampletypes->testedplasma) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejectedplasma)) ? number_format($lab_stats->sampletypes->rejectedplasma) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>2. Venous Blood (EDTA)</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples + $lab_stats->redraws) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receivededta)) ? number_format($lab_stats->sampletypes->receivededta) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testededta)) ? number_format($lab_stats->sampletypes->testededta) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejectededta)) ? number_format($lab_stats->sampletypes->rejectededta) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>3. DBS Venous</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples + $lab_stats->receivedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receiveddbsv)) ? number_format($lab_stats->sampletypes->receiveddbsv) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testeddbsv)) ? number_format($lab_stats->sampletypes->testeddbsv) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejecteddbsv)) ? number_format($lab_stats->sampletypes->rejecteddbsv) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>4. DBS Capillary (Infants)</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receiveddbsc)) ? number_format($lab_stats->sampletypes->receiveddbsc) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testeddbsc)) ? number_format($lab_stats->sampletypes->testeddbsc) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejecteddbsc)) ? number_format($lab_stats->sampletypes->rejecteddbsc) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <td>* Not Specified</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->receivedSamples) }}</td>
-                                    <td>{{ number_format($lab_stats->testedSamples) }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->receivednone)) ? number_format($lab_stats->sampletypes->receivednone) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->testednone)) ? number_format($lab_stats->sampletypes->testednone) : 0 }}</td>
+                                    <td>{{ (isset($lab_stats->sampletypes->rejectednone)) ? number_format($lab_stats->sampletypes->rejectednone) : 0 }}</td>
                                 </tr>
                             </tbody>
                         </table>
