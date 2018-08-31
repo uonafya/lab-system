@@ -3,8 +3,8 @@
 namespace App\Observers;
 
 use GuzzleHttp\Client;
-use App\Facility;
-use App\Synch;
+use \App\Facility;
+use \App\Synch;
 
 class FacilityObserver
 {

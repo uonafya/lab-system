@@ -93,8 +93,6 @@ class ViralworksheetController extends Controller
         if(date('m') < 7) $year --;
         $date_str = $year . '-12-31';
 
-        //noeladhis@gmail.com
-
         if($test){
             $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
                 ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
@@ -204,45 +202,37 @@ class ViralworksheetController extends Controller
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
-
-            dd($repeats);
         }
 
-        if($limit != 0){
+        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+            ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->where('datereceived', '>', $date_str)
+            ->when($sampletype, function($query) use ($sampletype){
+                if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
+                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+            })
+            ->where('site_entry', '!=', 2)
+            ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+            ->where('input_complete', true)
+            ->whereIn('receivedstatus', [1, 3])
+            ->whereRaw("(result IS NULL OR result='0')")
+            ->orderBy('isnull', 'asc')
+            ->orderBy('highpriority', 'asc')
+            ->orderBy('datereceived', 'asc')
+            ->orderBy('site_entry', 'asc')
+            ->orderBy('viralsamples.id', 'asc')
+            ->limit($limit)
+            ->get();
 
-            $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-                ->where('datereceived', '>', $date_str)
-                ->when($sampletype, function($query) use ($sampletype){
-                    if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
-                })
-                ->where('site_entry', '!=', 2)
-                ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                ->where('input_complete', true)
-                ->whereIn('receivedstatus', [1, 3])
-                ->whereRaw("(result IS NULL OR result='0')")
-                ->orderBy('isnull', 'asc')
-                ->orderBy('highpriority', 'asc')
-                ->orderBy('datereceived', 'asc')
-                ->orderBy('site_entry', 'asc')
-                ->orderBy('viralsamples.id', 'asc')
-                ->limit($limit)
-                ->get();
-            $samples = $repeats->merge($samples);
-        }
 
-        if(!isset($samples)){
-            $samples = $repeats;            
-        }
-
+        if($test) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)){
 
-            $sample_ids = $samples->pluck('id')->toArray();
+            $sample_ids = $samples->pluck('id');
             Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
             return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
         }

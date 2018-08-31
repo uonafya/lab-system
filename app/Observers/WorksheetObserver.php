@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\OldModels\Worksheet as OldWorksheet;
-use App\Worksheet;
+use \App\OldModels\Worksheet as OldWorksheet;
+use \App\Worksheet;
 
 class WorksheetObserver
 {
