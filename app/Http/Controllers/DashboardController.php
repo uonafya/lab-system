@@ -30,7 +30,7 @@ class DashboardController extends Controller
    		$monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
     	$lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
     	$lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
-    	
+    	// dd($lab_stats);
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
         $monthName = "";
@@ -190,6 +190,28 @@ class DashboardController extends Controller
 
         
         if (session('testingSystem') == 'Viralload') {
+            $typeData = [];
+            $types = ['received', 'tested', 'rejected'];
+            // $sample_types = DB::table('viralsampletypes')->get();
+            foreach ($types as $key => $value) {
+                $model = self::__joinedToBatches()->join('viralsampletype', 'viralsampletype.id', '=', 'viralsamples.sampletype')->when($value, function($query) use ($value, $year, $month){
+                        if ($value == 'received' || $value == 'rejected'){
+                            $column = 'datereceived';
+                            if ($value == 'rejected')
+                                $query = $query->where('receivedstatus', '=', 2);
+                        }
+                        if ($value == 'tested')
+                            $column = 'datetested';
+                        return $query->whereYear($column, $year)->when($month, function($query) use ($month){
+                                                return $query->whereMonth('datetested', $month);
+                                            });
+                    })->selectRaw('count(*) as `total`, LOWER(`viralsampletype`.`alias`) as `titles`')
+                    ->groupBy('titles')->get();
+                foreach ($model as $modelkey => $modelvalue) {
+                    $typeData[$value.$modelvalue->titles] = $modelvalue->total;
+                }
+            }
+            
             $data = [
                     'testedSamples' => $tests,
                     'rejectedSamples' => $rejection,
@@ -201,7 +223,8 @@ class DashboardController extends Controller
                     'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".$year)
                                             ->when($month, function($query) use ($month){
                                                 return $query->whereMonth('viralsamples.datetested', $month);
-                                            })->count()
+                                            })->count(),
+                    'sampletypes' => (object)$typeData
                 ];
         } else {
             $data = [
@@ -371,7 +394,7 @@ class DashboardController extends Controller
     public static function __getSamples()
     {
         (session('testingSystem') == 'Viralload') ?
-            $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0) :
+            $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
             $model = Sample::with('batch')->where('flag', '=', 1);
 
         return $model;
