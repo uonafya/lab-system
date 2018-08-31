@@ -83,7 +83,7 @@
 		                	<tbody>
                             @if(session('testingSystem') == 'Viralload')
                                 <tr>
-                                    <td>Received samples in {{ Date('Y') }}</td>
+                                    <td>Received samples in {{ $data->year . $data->month }}</td>
                                     <td>{{ number_format($lab_stats->receivedSamples) }}</td>
                                 </tr>
                                 <tr>
@@ -117,7 +117,7 @@
                                 </tr>
                             @else
 		                		<tr>
-		                			<td>No. of received samples in {{ Date('Y') }}</td>
+		                			<td>No. of received samples in {{ $data->year . $data->month }}</td>
 		                			<td>{{ number_format($lab_stats->receivedSamples) }}</td>
 		                		</tr>
 		                		<tr>

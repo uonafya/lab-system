@@ -27,10 +27,10 @@ class DashboardController extends Controller
             session(['dashboardMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
         }
         
-   		$monthly_test = (object) $this->lab_monthly_tests();
+   		$monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
     	$lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
     	$lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
-    	// dd($lab_tat_stats);
+    	
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
         $monthName = "";
@@ -38,13 +38,14 @@ class DashboardController extends Controller
         if (null !== $month) 
             $monthName = "- ".date("F", mktime(null, null, null, $month));
 
-    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats'))->with('pageTitle', "Lab Dashboard:$year $monthName");
+        $data = (object)['year'=>$year,'month'=>$monthName];
+        // dd($data);
+    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard:$year $monthName");
     }
 
-    public function lab_monthly_tests()
+    public function lab_monthly_tests($year = null)
     {
         $currentTestingSystem = session('testingSystem');
-        // dd(session('testingSystem'));
         $result = ($currentTestingSystem == 'Viralload') ? 
                             ['received','tests','rejected','non_suppression'] : 
                             ['tests','positives','negatives','rejected'];
@@ -73,7 +74,7 @@ class DashboardController extends Controller
                                     }                
                                 })
                                 ->where('repeatt', '=', 0)
-                                ->whereYear($table, date('Y'))
+                                ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get() 
                             :
                             DB::table('samples')
@@ -93,13 +94,13 @@ class DashboardController extends Controller
                                     }                
                                 }) 
                                 ->where('repeatt', '=', 0)
-                                ->whereYear($table, date('Y'))
+                                ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get();
         }
         
         $chartData = self::__mergeMonthlyTests($data);
         $data = [];
-
+        
         if ($currentTestingSystem == 'Viralload') {
             $data['testtrends'][0]['name'] = 'Received';
             $data['testtrends'][1]['name'] = 'Tests';
@@ -136,40 +137,50 @@ class DashboardController extends Controller
                 $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
             }
         }
-        // dd($data);
         return $data;
-        
     }
 
-    public function lab_statistics()
+    public function lab_statistics($year = null, $month = null)
     {
         $data = [];
         $current = session('testingSystem');
 
-        $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
+        $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
+                                return $query->whereMonth('datetested', $month);
+                            })->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
                                             ->where('smsprinterphoneno', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
-                            ->when($current, function($query) use ($current){
+                            ->when($current, function($query) use ($current, $year, $month){
                                 if ($current == 'Viralload') {
                                     return $query->where('viralsamples.receivedstatus', '=', '2')
                                             ->where('viralsamples.repeatt', '=', '0')
-                                            ->whereRaw("YEAR(viralbatches.datereceived) = ".Date('Y'));
+                                            ->when($month, function($query) use ($month){
+                                                return $query->whereMonth('viralbatches.datereceived', $month);
+                                            })
+                                            ->whereRaw("YEAR(viralbatches.datereceived) = ".$year);
                                 } else {
                                     return $query->where('samples.receivedstatus', '=', '2')
                                             ->where('samples.repeatt', '=', '0')
-                                            ->whereRaw("YEAR(batches.datereceived) = ".Date('Y'));
+                                            ->when($month, function($query) use ($month){
+                                                return $query->whereMonth('batches.datereceived', $month);
+                                            })
+                                            ->whereRaw("YEAR(batches.datereceived) = ".$year);
                                 }
                             })->count();
         $received = self::__joinedToBatches()
-                            ->when($current, function ($query) use ($current) {
+                            ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
                                     return $query->whereRaw("((viralsamples.parentid=0)||(viralsamples.parentid IS NULL))")
-                                                ->whereRaw("YEAR(viralbatches.datereceived) = ".Date('Y'));
+                                                ->when($month, function($query) use ($month){
+                                                    return $query->whereMonth('viralbatches.datereceived', $month);
+                                                })->whereRaw("YEAR(viralbatches.datereceived) = ".$year);
                                 } else {
-                                    return $query->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
-                                                ->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
+                                    return $query->whereRaw("YEAR(batches.datereceived) = ".$year)
+                                                ->when($month, function($query) use ($month){
+                                                    return $query->whereMonth('batches.datereceived', $month);
+                                                })->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
                                 }
                             })->count();
 
@@ -187,7 +198,10 @@ class DashboardController extends Controller
                     'redraws' => $redraws,
                     'nonsuppressed' => self::__getsampleResultByType(3),
                     'suppressed' => self::__getsampleResultByType(2),
-                    'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".Date('Y'))->count()
+                    'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".$year)
+                                            ->when($month, function($query) use ($month){
+                                                return $query->whereMonth('viralsamples.datetested', $month);
+                                            })->count()
                 ];
         } else {
             $data = [
@@ -206,7 +220,7 @@ class DashboardController extends Controller
     	return $data;
     }
 
-    public function lab_tat_statistics()
+    public function lab_tat_statistics($year=null, $month=null)
     {
         return [
         	'tat1' => self::__getTAT(1),
@@ -332,9 +346,14 @@ class DashboardController extends Controller
             $model = self::__getSamples()
                         ->where('result', '=', $type);
         }
-        
+        $year = session('dashboardYear');
+        $month = session('dashboardMonth');
+
     	return 	$model->where('repeatt', '=', '0')
-                        ->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
+                        ->whereRaw("YEAR(datetested) = ".$year)
+                        ->when($month, function($query) use ($month){
+                            return $query->whereMonth('datetested', $month);
+                        })->count();
     }
 
     public static function __joinedToBatches()
@@ -390,6 +409,9 @@ class DashboardController extends Controller
         } else {
             return 0;
         }
+
+        $year = session('dashboardYear');
+        $month = session('dashboardMonth');
     	
     	return  self::__getActualTATDays(DB::table('samples')
     					->select("$d1 as d1", "$d2 as d2", DB::RAW("TIMESTAMPDIFF(DAY,$d1,$d2) as daysdiff"))
@@ -399,8 +421,10 @@ class DashboardController extends Controller
     					->where($d1, '<>', '0000-00-00')
     					->where($d1, '<>', '1970-01-01')
     					->where($d1, '<=', $d2)
-                        ->whereRaw("YEAR(samples.datetested) = ".Date('Y'))
-    					->where('repeatt', '=', 0)
+                        ->whereRaw("YEAR(samples.datetested) = ".$year)
+                        ->when($month, function($query) use ($month){
+                            return $query->whereMonth('samples.datetested', $month);
+                        })->where('repeatt', '=', 0)
                         ->where('flag', '=', 1)
     					->get());
     }
