@@ -169,7 +169,7 @@ class DashboardController extends Controller
                                             ->whereRaw("YEAR(batches.datereceived) = ".$year);
                                 }
                             })->count();
-        // dd($current);
+        dd($current);
         $received = self::__joinedToBatches()
                             ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
