@@ -12,6 +12,7 @@ use App\ViralsampleView;
 use App\Viralworksheet;
 
 use App\DrPatient;
+use App\Lookup;
 
 class MiscViral extends Common
 {
@@ -637,7 +638,7 @@ class MiscViral extends Common
 
         return [
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
-            'sampletype' => $sampletype, 'samples' => $samples
+            'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];
 
     }
