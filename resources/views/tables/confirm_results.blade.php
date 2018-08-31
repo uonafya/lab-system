@@ -70,6 +70,8 @@
                                         <font color='#FF0000'>
                                             @if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 7)
                                                 Valid
+                                            @else
+                                                Invalid
                                             @endif
                                         </font>
                                          </strong></small>
@@ -89,6 +91,8 @@
                                         <font color='#339900'> 
                                             @if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 7)
                                                 Valid
+                                            @else
+                                                Invalid
                                             @endif
                                         </font>
                                          </strong></small>
