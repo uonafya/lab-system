@@ -39,7 +39,7 @@ class VlDispatch extends Mailable implements ShouldQueue
         $this->individual_path = storage_path('app/batches/vl/individual-' . $batch->id . '.pdf');
         $this->summary_path = storage_path('app/batches/vl/summary-' . $batch->id . '.pdf');
 
-        if(!is_dir(storage_path('app/batches/vl')) mkdir(storage_path('app/batches/vl/'), 0777, true);
+        if(!is_dir(storage_path('app/batches/vl'))) mkdir(storage_path('app/batches/vl/'), 0777, true);
 
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);
