@@ -144,8 +144,7 @@ class DashboardController extends Controller
     {
         $data = [];
         $current = session('testingSystem');
-        dd($current);
-
+        
         $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
                             })->count();
