@@ -168,8 +168,8 @@ class DashboardController extends Controller
                                             })
                                             ->whereRaw("YEAR(batches.datereceived) = ".$year);
                                 }
-                            })->toSql();
-        dd($rejection);
+                            })->count();
+        // dd($rejection);
         $received = self::__joinedToBatches()
                             ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
@@ -183,8 +183,8 @@ class DashboardController extends Controller
                                                     return $query->whereMonth('batches.datereceived', $month);
                                                 })->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
                                 }
-                            })->toSql();
-        dd($received);
+                            })->count();
+        // dd($received);
         $redraws = (session('testingSystem') == 'Viralload') ? 
                         self::__getsampleResultByType(1) : 
                         self::__getsampleResultByType(3) + self::__getsampleResultByType(5);
