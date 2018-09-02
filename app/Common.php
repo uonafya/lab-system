@@ -283,7 +283,7 @@ class Common
         }
 
         else if(get_class($batch) == "App\\Viralbatch"){
-	        Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
+	        Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])->send(new VlDispatch($batch));
 	        $batch->save();
         }
     }
