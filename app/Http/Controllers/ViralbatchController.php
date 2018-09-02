@@ -334,19 +334,19 @@ class ViralbatchController extends Controller
             $batch = Viralbatch::find($value);
             $facility = Facility::find($batch->facility_id);
 
-            if(!$batch->sent_email){ 
+            /*if(!$batch->sent_email){ 
                 $batch->sent_email = true;
                 $batch->dateemailsent = date('Y-m-d');
-            }
+            }*/
             $batch->datedispatched = date('Y-m-d');
             $batch->batch_complete = 1;
             $batch->pre_update();
-            if($facility->email != null || $facility->email != '')
+            /*if($facility->email != null || $facility->email != '')
             {
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
                 if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
                 Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
-            }            
+            }*/            
         }
         Refresh::refresh_cache();
         // Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
@@ -689,20 +689,20 @@ class ViralbatchController extends Controller
 
     public function email(Viralbatch $batch)
     {
-        $facility = Facility::find($batch->facility_id);
-        if($facility->email != null || $facility->email != '')
-        {
-            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
-            Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
-        }
+        // $facility = Facility::find($batch->facility_id);
+        // if($facility->email != null || $facility->email != '')
+        // {
+        //     $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        //     if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        //     Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
+        // }
 
-        if(!$batch->sent_email){
-            $batch->sent_email = true;
-            $batch->dateemailsent = date('Y-m-d');
-            $batch->save();
-        }
-
+        // if(!$batch->sent_email){
+        //     $batch->sent_email = true;
+        //     $batch->dateemailsent = date('Y-m-d');
+        //     $batch->save();
+        // }
+        MiscViral::dispatch_batch($batch);
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();
     }

@@ -44,6 +44,12 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
 })->describe('Compute Vl Tat.');
 
 
+Artisan::command('dispatch:results {type}', function($type){
+    $str = \App\Common::dispatch_results($type);
+    $this->info($str);
+})->describe('Send emails for dispatched batches.');
+
+
 Artisan::command('input-complete {type}', function($type){
     $str = \App\Common::input_complete_batches($type);
     $this->info($str);
