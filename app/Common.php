@@ -278,14 +278,15 @@ class Common
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
-        if(get_class($batch) == "App\\Batch"){
-	        Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
-	        $batch->save();
-        }
+        if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
-        else if(get_class($batch) == "App\\Viralbatch"){
-	        Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])->send(new VlDispatch($batch));
-	        $batch->save();
+        if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
+
+        try {
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])->send(new $mail_class($batch));
+        	$batch->save();
+        } catch (Exception $e) {
+        	
         }
     }
 
