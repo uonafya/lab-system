@@ -14,16 +14,6 @@
 	@endisset
 
 	<br />
-	
-	Please confirm that this email address
-
-	@isset($batch->facility->G4Slocation)
-		and the G4S branch above 
-	@endisset
-
-	 is correct by responding receipt of this email to the following email address: {{ config('mail.from.address') }} 
-
-	<br />
 
 	------------------------------------------------------------------------------------------ 
 
@@ -33,7 +23,7 @@
 
 	<br />
 
-	{{$site_url}} 
+	<a href="https://eiddash.nascop.org"></a> 
 
 	<br />
 
@@ -50,10 +40,12 @@
 	<br />
 
 	Regards, <br />
-	-- <br />
-	KEMRI CIPDCR -Alupe <br />
-	Busia - Malaba Rd, Busia <br />
-	Email: eid-alupe@googlegroups.com <br />
-	Phone:0726156679 <br />
+	{{ $batch->lab->labname }}
+	{{ $batch->lab->name }} 
+	{{ $batch->lab->lablocation }}
+	{{ $batch->lab->labtel1 }} 
+	{{ $batch->lab->labtel2 }} 
+	{{ $batch->lab->email }} 
+
 
 </p>
