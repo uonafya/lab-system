@@ -536,9 +536,9 @@ class BatchController extends Controller
             $batch->pre_update();
         }
 
-        // $summary_path = storage_path('app/batches/eid/summary-' . $batch->id . '.pdf');
-        // if(!is_dir(storage_path('app/batches/eid'))) mkdir(storage_path('app/batches/eid/'), 0777, true);
-        // if(file_exists($summary_path)) unlink($summary_path);
+        $summary_path = storage_path('app/public/batches/eid/summary-' . $batch->id . '.pdf');
+        if(!is_dir(storage_path('app/public/batches/eid'))) mkdir(storage_path('app/public/batches/eid/'), 0777, true);
+        if(file_exists($summary_path)) unlink($summary_path);
 
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
@@ -546,7 +546,9 @@ class BatchController extends Controller
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_samples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output($summary_path, \Mpdf\Output\Destination::FILE);
+        return redirect("storage/batches/eid/summary-{$batch->id}.pdf");
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
         // return response()->download($summary_path);
         
