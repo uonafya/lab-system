@@ -334,12 +334,21 @@
             <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
-        @else
+        @elseif(session('testingSystem') == 'EID')
             <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+        @else
+            <!-- EID Searches -->
+            <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+            <!-- VL Searches -->
+            <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+            <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
         @endif
         @endif
         </ul>

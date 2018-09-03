@@ -40,7 +40,7 @@ class DashboardController extends Controller
 
         $data = (object)['year'=>$year,'month'=>$monthName];
         // dd($data);
-    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard:$year $monthName");
+    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard : $year $monthName");
     }
 
     public function lab_monthly_tests($year = null)
