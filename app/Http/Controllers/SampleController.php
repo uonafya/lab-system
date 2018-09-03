@@ -329,9 +329,38 @@ class SampleController extends Controller
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->patient_id = $patient->id;
-        $sample->pre_update();
 
         session(['toast_message' => 'The sample has been updated.']);
+
+        if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
+            $worksheet = $sample->worksheet;
+            if($worksheet->status_id == 1){
+                $d = Misc::get_worksheet_samples($worksheet->machine_type, 1);
+                $s = $d['samples']->first();
+                if($s){
+                    $sample->worksheet_id = null;
+
+                    $s->worksheet_id = $worksheet->id;
+                    $s->save();
+                    session(['toast_message' => 'The sample has been rejected and it has been replaced in the worksheet.']);
+                }
+                else{
+                    session([
+                        'toast_message' => 'No sample could be found to replace it in the worksheet.',
+                        'toast_error' => 1
+                    ]);
+                }
+            }
+            else{
+                session([
+                    'toast_message' => 'The worksheet has already been run.',
+                    'toast_error' => 1
+                ]);
+            }
+        }
+
+        $sample->pre_update();
+        
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

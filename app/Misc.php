@@ -313,7 +313,7 @@ class Misc extends Common
 		// dd($body);
     }
 
-    public static function get_worksheet_samples($machine_type)
+    public static function get_worksheet_samples($machine_type, $temp_limit=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -323,7 +323,7 @@ class Misc extends Common
 
         if($machine == NULL || $machine->eid_limit == NULL) return false;
 
-        $limit = $machine->eid_limit;
+        $limit = $temp_limit ?? $machine->eid_limit;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;
