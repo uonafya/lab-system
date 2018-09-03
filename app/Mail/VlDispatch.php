@@ -28,6 +28,7 @@ class VlDispatch extends Mailable
      */
     public function __construct(Viralbatch $batch)
     {
+        $this->type = "VL";
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $samples = $batch->sample;
         $this->batch = $batch;

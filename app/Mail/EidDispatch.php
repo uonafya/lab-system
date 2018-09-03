@@ -21,6 +21,7 @@ class EidDispatch extends Mailable
     public $individual_path;
     public $summary_path;
 
+    public $type;
     /**
      * Create a new message instance.
      *
@@ -28,7 +29,7 @@ class EidDispatch extends Mailable
      */
     public function __construct(Batch $batch)
     {
-
+        $this->type = "EID";
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $samples = $batch->sample;
 

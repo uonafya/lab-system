@@ -5,33 +5,27 @@
 	<br />
 	<br />
 
-
-	Batch No {{ $batch->id }} with {{ $batch->sample->count() }} samples that were received on {{ $batch->my_date_format('datereceived') }}  have been processed and results have been dispatched. 
+	Please find attached {{ $type }} Results for Batch No {{ $batch->id }} with {{ $batch->sample->count() }} samples that were received on {{ $batch->my_date_format('datereceived') }}. 
+	
 	<br />
 
-	@isset($batch->facility->G4Slocation )
-		The samples results can be collected at your nearest G4S branch in {{$batch->facility->G4Slocation}}.
-	@endisset
+	Any pending results are still being processed and will be sent to you once they are ready.
 
+	<br />
+
+	You can also access this results and any other results via the link below on NASCOP
+	
 	<br />
 
 	------------------------------------------------------------------------------------------ 
 
 	<br />
 
-	Click this link to access and download the results as well as view your historical batches:
-
-	<br />
-
-	<a href="https://eiddash.nascop.org"></a> 
+	<a href="https://eiddash.nascop.org">NASCOP</a> 
 
 	<br />
 
 	------------------------------------------------------------------------------------------
-
-	<br />
-
-	The Viral Load Test is now available in all EID testing sites. Samples can be collected in DBS form and shipped using the A/C C00339.  Call the official EID lines for more information.
 
 	<br />  
 

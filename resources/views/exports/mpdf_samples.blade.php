@@ -43,6 +43,7 @@ p.breakhere {page-break-before: always}
 <body onLoad="JavaScript:window.print();">
 
 	@foreach($samples as $key => $sample)
+		@continue($sample->repeatt == 1)
 		<table  border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
@@ -268,7 +269,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment">
 						<strong>Date Dispatched:  </strong>
 					</td>
-					<td colspan="6" class="style4 style1 comment">
+					<td colspan="5" class="style4 style1 comment">
 						{{ $sample->batch->my_date_format('datedispatched') }}
 					</td>
 				</tr>

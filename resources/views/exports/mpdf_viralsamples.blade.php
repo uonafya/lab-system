@@ -44,6 +44,7 @@ p.breakhere {page-break-before: always}
 <body onLoad="JavaScript:window.print();">
 
 	@foreach($samples as $key => $sample)
+		@continue($sample->repeatt == 1)
 		<table  border="0" id='table1' align="center">
 			<tr>
 				<td colspan="8" align="center">

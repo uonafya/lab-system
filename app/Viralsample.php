@@ -118,6 +118,7 @@ class Viralsample extends BaseModel
                 })
                 ->where('repeatt', 0)
                 ->whereIn('rcategory', [1, 2, 3, 4])
+                ->orderBy('id', 'desc')
                 ->get();
         $this->previous_tests = $samples;
     }
