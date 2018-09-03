@@ -44,7 +44,7 @@ p.breakhere {page-break-before: always}
 
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
-		<table  style="border: 0px; width: 100%;">
+		<table  id="table1">
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
