@@ -27,6 +27,7 @@
 #table1 {
 border : solid 1px black;
 width:1000px;
+
 }
  /*.style7 {font-size: medium}*/
  .style7 {font-size: 13px}
@@ -44,7 +45,7 @@ p.breakhere {page-break-before: always}
 
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
-		<table  id="table1">
+		<table  id="table1" align="center">
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">

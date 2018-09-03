@@ -43,7 +43,7 @@ p.breakhere {page-break-before: always}
 
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
-		<table id="table1">
+		<table id="table1" align="center">
 
 			<tr>
 				<td colspan="7" align="center">
