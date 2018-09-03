@@ -33,7 +33,7 @@ class VlDispatch extends Mailable
         $samples = $batch->sample;
         $this->batch = $batch;
         $sessionVar = md5('nasc0peId1234561987');
-        $lab = auth()->user()->lab_id;
+        $lab = env('APP_LAB');
         $this->site_url ='http://www.nascop.org/eid/users/facilityresults.php?key='.$sessionVar.'&BatchNo='.$batch->id.'&LabID='.$lab.'&fauto='.$batch->facility->id;
 
         $this->individual_path = storage_path('app/batches/vl/individual-' . $batch->id . '.pdf');
