@@ -563,7 +563,7 @@ class MiscViral extends Common
         }
     }
 
-    public static function get_worksheet_samples($machine_type, $calibration, $sampletype)
+    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -576,6 +576,8 @@ class MiscViral extends Common
 
         $limit = $machine->vl_limit;
         if($calibration) $limit = $machine->vl_calibration_limit;
+
+        if($temp_limit) $limit = $temp_limit;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;

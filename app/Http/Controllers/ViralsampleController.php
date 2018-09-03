@@ -279,9 +279,37 @@ class ViralsampleController extends Controller
         $viralpatient->pre_update();
 
         $viralsample->patient_id = $viralpatient->id;
-        $viralsample->pre_update();
 
         session(['toast_message' => 'The sample has been updated.']);
+
+        if($viralsample->receivedstatus == 2 && $viralsample->getOriginal('receivedstatus') == 1 && $viralsample->worksheet_id){
+            $worksheet = $viralsample->worksheet;
+            if($worksheet->status_id == 1){
+                $d = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, 1);
+                $s = $d['samples']->first();
+                if($s){
+                    $viralsample->worksheet_id = null;
+
+                    $s->worksheet_id = $worksheet->id;
+                    $s->save();
+                    session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
+                }
+                else{
+                    session([
+                        'toast_message' => 'No sample could be found to replace it in the worksheet.',
+                        'toast_error' => 1
+                    ]);
+                }
+            }
+            else{
+                session([
+                    'toast_message' => 'The worksheet has already been run.',
+                    'toast_error' => 1
+                ]);
+            }
+        }
+
+        $viralsample->pre_update();
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
