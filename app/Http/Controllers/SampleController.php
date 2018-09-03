@@ -342,7 +342,7 @@ class SampleController extends Controller
 
                     $s->worksheet_id = $worksheet->id;
                     $s->save();
-                    session(['toast_message' => 'The sample has been rejected and it has been replaced in the worksheet.']);
+                    session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
                 }
                 else{
                     session([
