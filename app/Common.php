@@ -7,6 +7,7 @@ use App\Mail\TestMail;
 use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
 use Carbon\Carbon;
+use Exception;
 
 class Common
 {
