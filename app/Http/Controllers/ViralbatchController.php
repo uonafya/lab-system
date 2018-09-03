@@ -572,7 +572,7 @@ class ViralbatchController extends Controller
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;
             }else if($submit_type == "rejected"){
-                $sample->receivedstatus = 3;
+                $sample->receivedstatus = 2;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
             }
             $sample->save();
