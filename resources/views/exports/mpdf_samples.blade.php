@@ -27,7 +27,6 @@
 #table1 {
 border : solid 1px black;
 width:1000px;
-width:1000px;
 }
  /*.style7 {font-size: medium}*/
  .style7 {font-size: 13px}
@@ -44,7 +43,8 @@ p.breakhere {page-break-before: always}
 
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
-		<table  border="0" id='table1' align="center">
+		<table style="border: 0px; width: 100%;">
+
 			<tr>
 				<td colspan="9" align="center">
 					<strong><img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
@@ -324,7 +324,7 @@ p.breakhere {page-break-before: always}
 				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			@endif
 
-			<b> To Access & Download your current and past results go to : <u> http://eiddash.nascop.org</u> </b>
+			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
 		</span>
 
 		@if($key % 2 == 1)
