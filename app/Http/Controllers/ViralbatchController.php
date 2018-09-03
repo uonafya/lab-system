@@ -578,7 +578,8 @@ class ViralbatchController extends Controller
             $sample->save();
         }
 
-        $batch->received_by = auth()->user()->id;
+        // $batch->received_by = auth()->user()->id;
+        $batch->received_by = $request->input('received_by');
         $batch->datereceived = $request->input('datereceived');
         $batch->save();
         Refresh::refresh_cache();
