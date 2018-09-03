@@ -6,7 +6,7 @@
 	<br />
 
 
-	Batch No {{ $batch->id }} with {{ $batch->sample->count() }} samples that were received on {{ $batch->datereceived }}  have been processed and results have been dispatched. 
+	Batch No {{ $batch->id }} with {{ $batch->sample->count() }} samples that were received on {{ $batch->my_date_format('datereceived') }}  have been processed and results have been dispatched. 
 	<br />
 
 	@isset($batch->facility->G4Slocation )

@@ -283,7 +283,8 @@ class Common
         if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
 
         try {
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])->send(new $mail_class($batch));
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+        	->send(new $mail_class($batch));
         	$batch->save();
         } catch (Exception $e) {
         	
