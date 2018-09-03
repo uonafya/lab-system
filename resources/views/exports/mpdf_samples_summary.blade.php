@@ -35,9 +35,9 @@
 </head>
 <body>
 
-    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
-	<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
-	<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <link rel="stylesheet" href="http://lab-2.test.nascop.org/css/select2/select2.min.css" type="text/css">
+	<script src="http://lab-2.test.nascop.org/vendor/jquery/dist/jquery.min.js"></script>
+	<script src="http://lab-2.test.nascop.org/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	@foreach($batches as $batch)
 

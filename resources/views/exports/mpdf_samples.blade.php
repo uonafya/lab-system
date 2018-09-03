@@ -330,7 +330,7 @@ p.breakhere {page-break-before: always}
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br/> <br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/> 
+			<br/> <br/> <img src="http://lab-2.test.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
 
 
