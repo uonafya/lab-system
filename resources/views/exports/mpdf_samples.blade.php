@@ -46,7 +46,7 @@ p.breakhere {page-break-before: always}
 		<table  border="0" id='table1' align="center">
 			<tr>
 				<td colspan="9" align="center">
-					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
+					<strong><img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
@@ -323,14 +323,14 @@ p.breakhere {page-break-before: always}
 				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			@endif
 
-			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
+			<b> To Access & Download your current and past results go to : <u> http://eiddash.nascop.org</u> </b>
 		</span>
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br/> <br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/> 
+			<br/> <br/> <img src="http://lab-2.test.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
 
 
