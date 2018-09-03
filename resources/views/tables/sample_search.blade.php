@@ -106,10 +106,10 @@
                                     </td>
                                     <td>
                                         @if($samples->batch_complete == 1)
-                                            <a href="{{ url('/samples/print/' . $samples->id ) }} " target='_blank'>Print</a> |
+                                            <a href="{{ url('/sample/print/' . $samples->id ) }} " target='_blank'>Print</a> |
                                         @endif
-                                        <a href="{{ url('/samples/' . $samples->id . '/edit') }} ">View</a> |
-                                        <a href="{{ url('/samples/' . $samples->id . '/edit') }} ">Edit</a> |
+                                        <a href="{{ url('/sample/' . $samples->id . '/edit') }} ">View</a> |
+                                        <a href="{{ url('/sample/' . $samples->id . '/edit') }} ">Edit</a> |
 
                                         {{ Form::open(['url' => 'samples/' . $samples->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following samples?')"]) }}
                                             <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
