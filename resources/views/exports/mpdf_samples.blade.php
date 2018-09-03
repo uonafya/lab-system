@@ -323,7 +323,7 @@ p.breakhere {page-break-before: always}
 				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			@endif
 
-			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
+			<b> To Access & Download your current and past results go to : <u> http://eiddash.nascop.org</u> </b>
 		</span>
 
 		@if($key % 2 == 1)
