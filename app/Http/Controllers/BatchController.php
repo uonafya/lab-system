@@ -536,18 +536,22 @@ class BatchController extends Controller
             $batch->pre_update();
         }
 
+        $summary_path = storage_path('app/batches/eid/summary-' . $batch->id . '.pdf');
+        if(!is_dir(storage_path('app/batches/eid'))) mkdir(storage_path('app/batches/eid/'), 0777, true);
+        if(file_exists($summary_path)) unlink($summary_path);
+
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
         $data['batches'] = [$batch];
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_samples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output($summary_path, \Mpdf\Output\Destination::FILE);
+
+        return response()->download($summary_path);
+
         // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
         // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
-
-        // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
-        // return $pdf->stream('summary.pdf');
     }
 
     public function summaries(Request $request)
