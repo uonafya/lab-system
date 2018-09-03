@@ -542,7 +542,7 @@ class BatchController extends Controller
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_samples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
         // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
         // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
 
