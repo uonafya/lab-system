@@ -10,6 +10,7 @@ use App\Batch;
 use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
+use App\Misc;
 
 use Illuminate\Http\Request;
 
@@ -383,8 +384,8 @@ class SampleController extends Controller
     {
         $sample->fill($request->except(['_token', 'lab_id']));
         $sample->pre_update();
-        \App\Misc::check_batch($sample->batch_id);
-        \App\Common::check_worklist(SampleView::class, $sample->worksheet_id);
+        Misc::check_batch($sample->batch_id);
+        Misc::check_worklist(SampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
@@ -539,7 +540,7 @@ class SampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
-        \App\Misc::check_batch($prev_sample->batch_id);
+        Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
@@ -573,7 +574,7 @@ class SampleController extends Controller
         }
 
         foreach ($batches as $key => $value) {
-            \App\Misc::check_batch($value->batch_id);
+            Misc::check_batch($value->batch_id);
         } 
         return back();
     }
