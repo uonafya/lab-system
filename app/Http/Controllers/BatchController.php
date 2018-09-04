@@ -535,7 +535,7 @@ class BatchController extends Controller
         $data['samples'] = $samples;
         $view_data = view('exports.mpdf_samples', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
     }
 
     /**
