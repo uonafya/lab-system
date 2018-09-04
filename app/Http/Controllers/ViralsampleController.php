@@ -8,6 +8,7 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
+use App\MiscViral;
 
 use Illuminate\Http\Request;
 
@@ -341,8 +342,8 @@ class ViralsampleController extends Controller
         }
 
         $sample->pre_update();
-        \App\MiscViral::check_batch($sample->batch_id);
-        \App\Common::check_worklist(ViralsampleView::class, $sample->worksheet_id);
+        MiscViral::check_batch($sample->batch_id);
+        MiscViral::check_worklist(ViralsampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
@@ -452,7 +453,7 @@ class ViralsampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
-        \App\MiscViral::check_batch($prev_sample->batch_id);
+        MiscViral::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
@@ -489,7 +490,7 @@ class ViralsampleController extends Controller
         }
 
         foreach ($batches as $key => $value) {
-            \App\MiscViral::check_batch($value->batch_id);
+            MiscViral::check_batch($value->batch_id);
         } 
         return back();
     }
