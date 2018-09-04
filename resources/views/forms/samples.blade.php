@@ -624,7 +624,7 @@
                     <center>
 
                         @if (isset($sample))
-                            <div class="col-sm-4 col-sm-offset-4">
+                            <div class="col-sm-8 col-sm-offset-4">
                                 <button class="btn btn-primary" type="submit" name="submit_type" value="add">
                                     @if (isset($site_entry_approval))
                                         Save & Load Next Sample in Batch for Approval
@@ -632,6 +632,12 @@
                                         Update Sample
                                     @endif
                                 </button>
+                                @empty($site_entry_approval)
+                                    <button class="btn btn-primary" type="submit" name="submit_type" value="new_batch">
+                                        Update Sample And Create New Batch
+                                    </button>
+                                @endempty
+
                             </div>
                         @else
                             <div class="col-sm-10 col-sm-offset-1">
