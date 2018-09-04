@@ -12,9 +12,9 @@
 </style>
 <style>
 
- @page{
+ /*@page{
  	size: portrait;
- }
+ }*/
  td
  {
 
