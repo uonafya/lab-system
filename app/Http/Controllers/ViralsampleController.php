@@ -297,7 +297,7 @@ class ViralsampleController extends Controller
                 }
                 else{
                     session([
-                        'toast_message' => 'No sample could be found to replace it in the worksheet.',
+                        'toast_message' => 'The sample has been rejected but no sample could be found to replace it in the worksheet.',
                         'toast_error' => 1
                     ]);
                 }

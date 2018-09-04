@@ -329,7 +329,7 @@ class SampleController extends Controller
         }
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
-        $sample->patient_id = $patient->id;
+        $sample->patient_id = $patient->id; 
 
         session(['toast_message' => 'The sample has been updated.']);
 
@@ -347,7 +347,7 @@ class SampleController extends Controller
                 }
                 else{
                     session([
-                        'toast_message' => 'No sample could be found to replace it in the worksheet.',
+                        'toast_message' => 'The sample has been rejected but no sample could be found to replace it in the worksheet.',
                         'toast_error' => 1
                     ]);
                 }
@@ -360,8 +360,7 @@ class SampleController extends Controller
             }
         }
 
-        $sample->pre_update();
-        
+        $sample->pre_update();        
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

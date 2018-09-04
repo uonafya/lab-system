@@ -321,6 +321,7 @@ class Common
 
 		foreach ($batches as $batch) {
 		 	self::dispatch_batch($batch);
+		 	break;
 		} 
     }
 
