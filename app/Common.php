@@ -276,7 +276,7 @@ class Common
         }
 
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
         if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
@@ -321,6 +321,7 @@ class Common
 
 		foreach ($batches as $batch) {
 		 	self::dispatch_batch($batch);
+		 	break;
 		} 
     }
 

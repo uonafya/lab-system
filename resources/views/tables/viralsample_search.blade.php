@@ -28,7 +28,7 @@
                                 </tr>
                                 <tr>
                                     <th colspan="5">Patient Information</th>
-                                    <th colspan="4">Samples Information</th>
+                                    <th colspan="4">Sample Information</th>
                                     <th colspan="5">History Information</th>
                                 </tr>
                                 <tr>
@@ -37,10 +37,12 @@
                                     <th>Sex</th>
                                     <th>Age</th>
                                     <th>DOB</th>
-                                    <th>samples Type</th>
+
+                                    <th>Sample Type</th>
                                     <th>Collection Date</th>
                                     <th>Received Status</th>
-                                    <th>High Priority</th>
+                                    <th>Worksheet</th>
+
                                     <th>Current Regimen</th>
                                     <th>ART Initiation Date</th>
                                     <th>Justification</th>
@@ -76,7 +78,7 @@
                                             @endif
                                         @endforeach
                                     </td>
-                                    <td></td>
+                                    <td> {{ $samples->worksheet_id }} </td>
                                     <td>
                                         @foreach($prophylaxis as $proph)
                                             @if($samples->prophylaxis == $proph->id)
