@@ -10,6 +10,7 @@ use App\Batch;
 use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
+use App\Misc;
 
 use Illuminate\Http\Request;
 
@@ -328,10 +329,38 @@ class SampleController extends Controller
         }
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
-        $sample->patient_id = $patient->id;
-        $sample->pre_update();
+        $sample->patient_id = $patient->id; 
 
         session(['toast_message' => 'The sample has been updated.']);
+
+        if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
+            $worksheet = $sample->worksheet;
+            if($worksheet->status_id == 1){
+                $d = Misc::get_worksheet_samples($worksheet->machine_type, 1);
+                $s = $d['samples']->first();
+                if($s){
+                    $sample->worksheet_id = null;
+
+                    $s->worksheet_id = $worksheet->id;
+                    $s->save();
+                    session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
+                }
+                else{
+                    session([
+                        'toast_message' => 'The sample has been rejected but no sample could be found to replace it in the worksheet.',
+                        'toast_error' => 1
+                    ]);
+                }
+            }
+            else{
+                session([
+                    'toast_message' => 'The worksheet has already been run.',
+                    'toast_error' => 1
+                ]);
+            }
+        }
+
+        $sample->pre_update();        
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
@@ -354,8 +383,8 @@ class SampleController extends Controller
     {
         $sample->fill($request->except(['_token', 'lab_id']));
         $sample->pre_update();
-        \App\Misc::check_batch($sample->batch_id);
-        \App\Common::check_worklist(SampleView::class, $sample->worksheet_id);
+        Misc::check_batch($sample->batch_id);
+        Misc::check_worklist(SampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
@@ -510,7 +539,7 @@ class SampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
-        \App\Misc::check_batch($prev_sample->batch_id);
+        Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
@@ -544,7 +573,7 @@ class SampleController extends Controller
         }
 
         foreach ($batches as $key => $value) {
-            \App\Misc::check_batch($value->batch_id);
+            Misc::check_batch($value->batch_id);
         } 
         return back();
     }

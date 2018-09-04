@@ -334,19 +334,19 @@ class ViralbatchController extends Controller
             $batch = Viralbatch::find($value);
             $facility = Facility::find($batch->facility_id);
 
-            if(!$batch->sent_email){ 
+            /*if(!$batch->sent_email){ 
                 $batch->sent_email = true;
                 $batch->dateemailsent = date('Y-m-d');
-            }
+            }*/
             $batch->datedispatched = date('Y-m-d');
             $batch->batch_complete = 1;
             $batch->pre_update();
-            if($facility->email != null || $facility->email != '')
+            /*if($facility->email != null || $facility->email != '')
             {
                 $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
                 if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
                 Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
-            }            
+            }*/            
         }
         Refresh::refresh_cache();
         // Viralbatch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
@@ -572,13 +572,14 @@ class ViralbatchController extends Controller
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;
             }else if($submit_type == "rejected"){
-                $sample->receivedstatus = 3;
+                $sample->receivedstatus = 2;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
             }
             $sample->save();
         }
 
-        $batch->received_by = auth()->user()->id;
+        // $batch->received_by = auth()->user()->id;
+        $batch->received_by = $request->input('received_by');
         $batch->datereceived = $request->input('datereceived');
         $batch->save();
         Refresh::refresh_cache();
@@ -627,15 +628,13 @@ class ViralbatchController extends Controller
         $data = Lookup::get_viral_lookups();
         $data['batches'] = [$batch];
 
+        $filename = "summary_results_for_batch_" . $batch->id . ".pdf";
+
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-
-
-        // $pdf = DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape');
-        // return $pdf->stream('summary.pdf');
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
     }
 
     public function summaries(Request $request)
@@ -689,20 +688,20 @@ class ViralbatchController extends Controller
 
     public function email(Viralbatch $batch)
     {
-        $facility = Facility::find($batch->facility_id);
-        if($facility->email != null || $facility->email != '')
-        {
-            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
-            Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
-        }
+        // $facility = Facility::find($batch->facility_id);
+        // if($facility->email != null || $facility->email != '')
+        // {
+        //     $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        //     if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        //     Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new VlDispatch($batch));
+        // }
 
-        if(!$batch->sent_email){
-            $batch->sent_email = true;
-            $batch->dateemailsent = date('Y-m-d');
-            $batch->save();
-        }
-
+        // if(!$batch->sent_email){
+        //     $batch->sent_email = true;
+        //     $batch->dateemailsent = date('Y-m-d');
+        //     $batch->save();
+        // }
+        MiscViral::dispatch_batch($batch);
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();
     }

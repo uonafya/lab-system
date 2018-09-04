@@ -24,6 +24,8 @@
 Route::redirect('/', '/login');
 Route::redirect('/eid', '/login');
 
+Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
+
 // Route::get('/addsample', function () {
 // 	return view('addsample');
 // });

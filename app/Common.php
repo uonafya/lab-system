@@ -4,7 +4,10 @@ namespace App;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use App\Mail\EidDispatch;
+use App\Mail\VlDispatch;
 use Carbon\Carbon;
+use Exception;
 
 class Common
 {
@@ -261,6 +264,65 @@ class Common
             }
             rmdir($path);
         }
+    }
+
+    public static function dispatch_batch($batch)
+    {
+    	$facility = $batch->facility; 
+
+        if(!$batch->sent_email){ 
+            $batch->sent_email = true;
+            $batch->dateemailsent = date('Y-m-d');
+        }
+
+        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+
+        if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
+
+        if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
+
+        try {
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+        	->send(new $mail_class($batch));
+        	$batch->save();
+        } catch (Exception $e) {
+        	
+        }
+    }
+
+    public static function dispatch_results($type = 'eid')
+    {
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+		}
+
+		$batches = $batch_model::where('batch_complete', 1)->where('sent_email', 0)->get();
+
+		foreach ($batches as $batch) {
+		 	self::dispatch_batch($batch);
+		} 
+    }
+
+    public static function dispatch_delayed($type = 'eid')
+    {
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+		}
+
+		$batches = $batch_model::where('batch_complete', 1)
+		->where('datedispatched', '>', '2018-08-27')
+		->where('datedispatched', '<', '2018-09-03')
+		->get();
+
+		foreach ($batches as $batch) {
+		 	self::dispatch_batch($batch);
+		 	break;
+		} 
     }
 
 }

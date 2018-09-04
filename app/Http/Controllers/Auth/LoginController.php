@@ -118,15 +118,11 @@ class LoginController extends Controller
         }
 
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
-        if (auth()->user()->user_type_id == 1)
-        {
-            $tasks = $this->pendingTasks();
-            // dd($tasks);
-
-            if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
-                session(['pendingTasks' => true]);
-                return '/pending';
-            }
+        $tasks = $this->pendingTasks();
+        
+        if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
+            session(['pendingTasks' => true]);
+            return '/pending';
         }
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
 

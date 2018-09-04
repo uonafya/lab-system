@@ -6,7 +6,6 @@ use App\Facility;
 use App\Batch;
 use App\Sample;
 use App\Misc;
-use App\Common;
 use App\Lookup;
 use App\DashboardCacher as Refresh;
 
@@ -320,20 +319,21 @@ class BatchController extends Controller
             $batch = Batch::find($value);
             $facility = Facility::find($batch->facility_id);
 
-            if(!$batch->sent_email){ 
-                $batch->sent_email = true;
-                $batch->dateemailsent = date('Y-m-d');
-            }
+            // if(!$batch->sent_email){ 
+            //     $batch->sent_email = true;
+            //     $batch->dateemailsent = date('Y-m-d');
+            // }
             $batch->datedispatched = date('Y-m-d');
             $batch->batch_complete = 1;
             $batch->pre_update();
 
-            if($facility->email != null || $facility->email != '')
-            {
-                $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-                if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
-                Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
-            }         
+
+            // if($facility->email != null || $facility->email != '')
+            // {
+            //     $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+            //     if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+            //     Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
+            // }         
         }
         Refresh::refresh_cache();
         // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
@@ -485,13 +485,14 @@ class BatchController extends Controller
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;
             }else if($submit_type == "rejected"){
-                $sample->receivedstatus = 3;
+                $sample->receivedstatus = 2;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
             }
             $sample->save();
         }
 
-        $batch->received_by = auth()->user()->id;
+        // $batch->received_by = auth()->user()->id;
+        $batch->received_by = $request->input('received_by');
         $batch->datereceived = $request->input('datereceived');
         $batch->save();
         Refresh::refresh_cache();
@@ -536,17 +537,27 @@ class BatchController extends Controller
             $batch->pre_update();
         }
 
+        $filename = "summary_results_for_batch_" . $batch->id . ".pdf";
+
+        // $summary_path = storage_path('app/public/batches/eid/summary-' . $batch->id . '.pdf');
+        // if(!is_dir(storage_path('app/public/batches/eid'))) mkdir(storage_path('app/public/batches/eid/'), 0777, true);
+        // if(file_exists($summary_path)) unlink($summary_path);
+
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
         $data = Lookup::get_lookups();
         $data['batches'] = [$batch];
         $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_samples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
+        // $mpdf->Output($summary_path, \Mpdf\Output\Destination::FILE);
+        // return redirect("storage/batches/eid/summary-{$batch->id}.pdf");
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
 
-        // $pdf = DOMPDF::loadView('exports.samples_summary', $data)->setPaper('a4', 'landscape');
-        // return $pdf->stream('summary.pdf');
+        // return response()->download($summary_path);
+        
+
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::INLINE);
     }
 
     public function summaries(Request $request)
@@ -600,19 +611,21 @@ class BatchController extends Controller
 
     public function email(Batch $batch)
     {
-        $facility = Facility::find($batch->facility_id);
-        if($facility->email != null || $facility->email != '')
-        {
-            $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
-            Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
-        }
+        // $facility = Facility::find($batch->facility_id);
+        // if($facility->email != null || $facility->email != '')
+        // {
+        //     $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        //     if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        //     Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
+        // }
 
-        if(!$batch->sent_email){
-            $batch->sent_email = true;
-            $batch->dateemailsent = date('Y-m-d');
-            $batch->save();
-        }
+        // if(!$batch->sent_email){
+        //     $batch->sent_email = true;
+        //     $batch->dateemailsent = date('Y-m-d');
+        //     $batch->save();
+        // }
+
+        Misc::dispatch_batch($batch);
 
         session(['toast_message' => "The batch {$batch->id} has had its results sent to the facility."]);
         return back();

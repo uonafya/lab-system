@@ -27,7 +27,6 @@
 #table1 {
 border : solid 1px black;
 width:1000px;
-width:1000px;
 }
  /*.style7 {font-size: medium}*/
  .style7 {font-size: 13px}
@@ -43,10 +42,12 @@ p.breakhere {page-break-before: always}
 <body onLoad="JavaScript:window.print();">
 
 	@foreach($samples as $key => $sample)
-		<table  border="0" id='table1' align="center">
+		@continue($sample->repeatt == 1)
+		<table id="table1" align="center">
+
 			<tr>
-				<td colspan="9" align="center">
-					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
+				<td colspan="7" align="center">
+					<strong><img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
@@ -58,7 +59,7 @@ p.breakhere {page-break-before: always}
 				<td colspan="4" class="comment style1 style4">
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
 				</td>
-				<td colspan="4" class="comment style1 style4" align="right">
+				<td colspan="3" class="comment style1 style4" align="right">
 					<strong>Testing Lab: {{ $sample->batch->lab->name }}</strong>
 				</td>
 			</tr>
@@ -66,7 +67,7 @@ p.breakhere {page-break-before: always}
 			@if(env('APP_LAB') == 1)
 
 				<tr>
-					<td colspan="9" class="style4 style1 comment">
+					<td colspan="7" class="style4 style1 comment">
 						<strong>Contact/Facility Telephone:</strong>
 						{{ $sample->batch->facility->contacts }} &nbsp;&nbsp;
 						{{ $sample->batch->facility->facility_contacts }}
@@ -74,7 +75,7 @@ p.breakhere {page-break-before: always}
 				</tr>			
 
 				<tr>
-					<td colspan="9" class="style4 style1 comment">
+					<td colspan="7" class="style4 style1 comment">
 						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->batch->facility->email_string }}
 					</td>					
 				</tr>
@@ -215,6 +216,7 @@ p.breakhere {page-break-before: always}
 	                    @endforeach
 					</strong>
 				</td>
+				<td colspan="3"></td>
 			</tr>
 
 			@if($sample->worksheet)
@@ -234,7 +236,7 @@ p.breakhere {page-break-before: always}
 				<td colspan="2">
 				  <span class="style4 style1 comment"><strong>Comments:</strong></span>
 				</td>
-				<td colspan="7" class="comment" >
+				<td colspan="5" class="comment" >
 					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}
 						@if($sample->result == 2 && $sample->pcrtype < 4)
 							&nbsp; Initiate on ART, Collect samples for Confirmatory Testing & Baseline Viral Load
@@ -247,17 +249,19 @@ p.breakhere {page-break-before: always}
 			@if(env('APP_LAB') != 1)
 
 				<tr>
-					<td colspan="6" class="style4 style1 comment">
+					<td colspan="7" class="style4 style1 comment">
 						<center>
 							<strong>Result Reviewed By: </strong>
 							&nbsp;&nbsp;
 							<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
 						</center>					
 					</td>
+				</tr>
+				<tr>
 					<td colspan="3" class="style4 style1 comment">
 						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
 					</td>
-					<td colspan="3" class="style4 style1 comment">
+					<td colspan="4" class="style4 style1 comment">
 						<strong>Date Dispatched:  {{ $sample->batch->my_date_format('datedispatched') }}</strong>
 					</td>
 				</tr>
@@ -268,7 +272,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment">
 						<strong>Date Dispatched:  </strong>
 					</td>
-					<td colspan="6" class="style4 style1 comment">
+					<td colspan="5" class="style4 style1 comment">
 						{{ $sample->batch->my_date_format('datedispatched') }}
 					</td>
 				</tr>
@@ -279,8 +283,6 @@ p.breakhere {page-break-before: always}
 
 			@if($sample->previous_tests->count() > 0)
 				@foreach($sample->previous_tests as $prev)
-
-					<br />
 
 					<tr class="evenrow">
 						<td colspan="2"> <span class="style4 style1 comment">Previous EID Results</span></td>
@@ -296,7 +298,7 @@ p.breakhere {page-break-before: always}
 							</strong> 
 						</td>
 						<td colspan="2"> <span class="style4 style1 comment">Date Test Performed</span></td>
-						<td colspan="1" class="comment style1 style5"> {{ $prev->my_date_format('datetested') }} </td>
+						<td colspan="2" class="comment style1 style5"> {{ $prev->my_date_format('datetested') }} </td>
 
 					</tr>
 
@@ -307,7 +309,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2">
 						<span class="style4 style1 comment"><strong>Previous EID Results</strong></span>
 					</td>
-					<td colspan="4" class="style4 style1 comment" ><span class="style5 "> N/A </span></td>
+					<td colspan="5" class="style4 style1 comment" ><span class="style5 "> N/A </span></td>
 				</tr>
 			@endif
 
@@ -323,14 +325,14 @@ p.breakhere {page-break-before: always}
 				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			@endif
 
-			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
+			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
 		</span>
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br/> <br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/> 
+			<br/> <br/> <img src="http://lab-2.test.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
 
 

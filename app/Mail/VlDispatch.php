@@ -12,12 +12,11 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class VlDispatch extends Mailable implements ShouldQueue
+class VlDispatch extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $batch;
-    public $site_url;
 
     public $individual_path;
     public $summary_path;
@@ -29,12 +28,12 @@ class VlDispatch extends Mailable implements ShouldQueue
      */
     public function __construct(Viralbatch $batch)
     {
+        $this->type = "VL";
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $samples = $batch->sample;
         $this->batch = $batch;
         $sessionVar = md5('nasc0peId1234561987');
-        $lab = auth()->user()->lab_id;
-        $this->site_url ='http://www.nascop.org/eid/users/facilityresults.php?key='.$sessionVar.'&BatchNo='.$batch->id.'&LabID='.$lab.'&fauto='.$batch->facility->id;
+        $lab = env('APP_LAB');
 
         $this->individual_path = storage_path('app/batches/vl/individual-' . $batch->id . '.pdf');
         $this->summary_path = storage_path('app/batches/vl/summary-' . $batch->id . '.pdf');

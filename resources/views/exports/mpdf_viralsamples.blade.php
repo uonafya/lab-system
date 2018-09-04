@@ -27,7 +27,7 @@
 #table1 {
 border : solid 1px black;
 width:1000px;
-width:1000px;
+
 }
  /*.style7 {font-size: medium}*/
  .style7 {font-size: 13px}
@@ -44,11 +44,12 @@ p.breakhere {page-break-before: always}
 <body onLoad="JavaScript:window.print();">
 
 	@foreach($samples as $key => $sample)
-		<table  border="0" id='table1' align="center">
+		@continue($sample->repeatt == 1)
+		<table  id="table1" align="center">
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
-						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP" align="absmiddle"></strong> 
+						<strong><img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />
@@ -238,11 +239,16 @@ p.breakhere {page-break-before: always}
 						$vlmessage='Confirm adherence & Routine follow up.';
 					}
 					else{
-						if($no_previous_tests != 1){
+						if(env('APP_LAB') == 1){
 							$vlmessage='Review adherence, provide adherence counselling then Repeat Viral Load in 3 Months.';
 						}
 						else{
-							$vlmessage='If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.';
+							if($no_previous_tests != 1){
+								$vlmessage='Review adherence, provide adherence counselling then Repeat Viral Load in 3 Months.';
+							}
+							else{
+								$vlmessage='If Patient is on 1st Line Switch to 2nd Line, If Patient is on 2nd Line, Continue adherence & continue resistance testing.';
+							}
 						}
 					}
 				}
@@ -359,14 +365,14 @@ p.breakhere {page-break-before: always}
 		<span class="style8" > 
 			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
 			<br> 
-			<b> To Access & Download your current and past results go to : <u> http://eid.nascop.org/login.php</u> </b>
+			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
 		</span>
 
 		@if($key % 2 == 1)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br/><br/> <img src="{{ asset('img/but_cut.gif') }}"> <br/><br/>
+			<br/><br/> <img src="http://lab-2.test.nascop.org/img/but_cut.gif"> <br/><br/>
 		@endif
 
 	@endforeach

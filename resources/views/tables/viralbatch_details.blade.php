@@ -109,7 +109,7 @@
                                     <th>Sample Type</th>
                                     <th>Collection Date</th>
                                     <th>Received Status</th>
-                                    <th>High Priority</th>
+                                    <th>Worksheet</th>
 
                                     <th>Current Regimen</th>
                                     <th>ART Initiation Date</th>
@@ -141,7 +141,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td></td>
+                                        <td>{{ $sample->worksheet_id }} </td>
                                         <td>
                                             @foreach($prophylaxis as $proph)
                                                 @if($sample->prophylaxis == $proph->id)

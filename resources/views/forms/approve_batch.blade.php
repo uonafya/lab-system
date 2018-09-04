@@ -22,6 +22,8 @@
 
                     {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
 
+                        <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
+
                         <div class="alert alert-warning">
                             <center>
                                 Please fill the date received before proceeding. <br />

@@ -25,6 +25,11 @@ class RandomController extends Controller
     	return response()->download($path);
 	}
 
+	public function send_to_login($param = null)
+	{
+		return redirect('/login');
+	}
+
 
 
 	public function sysswitch($sys)

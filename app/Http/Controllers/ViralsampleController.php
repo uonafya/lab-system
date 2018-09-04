@@ -8,6 +8,7 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
+use App\MiscViral;
 
 use Illuminate\Http\Request;
 
@@ -279,9 +280,37 @@ class ViralsampleController extends Controller
         $viralpatient->pre_update();
 
         $viralsample->patient_id = $viralpatient->id;
-        $viralsample->pre_update();
 
         session(['toast_message' => 'The sample has been updated.']);
+
+        if($viralsample->receivedstatus == 2 && $viralsample->getOriginal('receivedstatus') == 1 && $viralsample->worksheet_id){
+            $worksheet = $viralsample->worksheet;
+            if($worksheet->status_id == 1){
+                $d = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, 1);
+                $s = $d['samples']->first();
+                if($s){
+                    $viralsample->worksheet_id = null;
+
+                    $s->worksheet_id = $worksheet->id;
+                    $s->save();
+                    session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
+                }
+                else{
+                    session([
+                        'toast_message' => 'The sample has been rejected but no sample could be found to replace it in the worksheet.',
+                        'toast_error' => 1
+                    ]);
+                }
+            }
+            else{
+                session([
+                    'toast_message' => 'The worksheet has already been run.',
+                    'toast_error' => 1
+                ]);
+            }
+        }
+
+        $viralsample->pre_update();
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
@@ -313,8 +342,8 @@ class ViralsampleController extends Controller
         }
 
         $sample->pre_update();
-        \App\MiscViral::check_batch($sample->batch_id);
-        \App\Common::check_worklist(ViralsampleView::class, $sample->worksheet_id);
+        MiscViral::check_batch($sample->batch_id);
+        MiscViral::check_worklist(ViralsampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
@@ -424,7 +453,7 @@ class ViralsampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
-        \App\MiscViral::check_batch($prev_sample->batch_id);
+        MiscViral::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
@@ -461,7 +490,7 @@ class ViralsampleController extends Controller
         }
 
         foreach ($batches as $key => $value) {
-            \App\MiscViral::check_batch($value->batch_id);
+            MiscViral::check_batch($value->batch_id);
         } 
         return back();
     }

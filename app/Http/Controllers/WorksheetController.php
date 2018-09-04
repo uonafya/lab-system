@@ -44,9 +44,10 @@ class WorksheetController extends Controller
 
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $samples = $this->get_worksheets($worksheet_ids);
+        $reruns = $this->get_reruns($worksheet_ids);
         $data = Lookup::worksheet_lookups();
 
-        $worksheets->transform(function($worksheet, $key) use ($samples, $data){
+        $worksheets->transform(function($worksheet, $key) use ($samples, $reruns, $data){
             $status = $worksheet->status_id;
             $total = $worksheet->sample_count;
 
@@ -56,14 +57,17 @@ class WorksheetController extends Controller
                 $failed = $samples->where('worksheet_id', $worksheet->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $samples->where('worksheet_id', $worksheet->id)->where('result', 5)->first()->totals ?? 0;
                 $noresult = $samples->where('worksheet_id', $worksheet->id)->where('result', 0)->first()->totals ?? 0;
+
+                $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
             }
             else{
-                $neg = $pos = $failed = $redraw = $noresult = 0;
+                $neg = $pos = $failed = $redraw = $noresult = $rerun = 0;
 
                 if($status == 1){
                     $noresult = $worksheet->sample_count;
                 }
             }
+            $worksheet->rerun = $rerun;
             $worksheet->neg = $neg;
             $worksheet->pos = $pos;
             $worksheet->failed = $failed;
@@ -889,10 +893,29 @@ class WorksheetController extends Controller
                 }
                 return $query->where('worksheet_id', $worksheet_id);
             })
-            ->whereNotNull('worksheet_id')
             ->where('receivedstatus', '!=', 2)
             ->where('site_entry', '!=', 2)
             ->groupBy('worksheet_id', 'result')
+            ->get();
+
+        return $samples;
+    }
+
+    public function get_reruns($worksheet_id=NULL)
+    {
+        if(!$worksheet_id) return false;
+        $samples = SampleView::selectRaw("count(*) as totals, worksheet_id")
+            ->whereNotNull('worksheet_id')
+            ->when($worksheet_id, function($query) use ($worksheet_id){                
+                if (is_array($worksheet_id)) {
+                    return $query->whereIn('worksheet_id', $worksheet_id);
+                }
+                return $query->where('worksheet_id', $worksheet_id);
+            })
+            ->where('parentid', '>', 0)
+            ->where('receivedstatus', '!=', 2)
+            ->where('site_entry', '!=', 2)
+            ->groupBy('worksheet_id')
             ->get();
 
         return $samples;

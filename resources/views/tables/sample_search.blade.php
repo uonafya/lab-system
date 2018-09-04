@@ -25,8 +25,8 @@
                                 </tr>
                                 <tr>
                                     <th colspan="5">Patient Information</th>
-                                    <th colspan="2">Mother Information</th>
-                                    <th colspan="4">Samples Information</th>
+                                    <th colspan="3">Mother Information</th>
+                                    <th colspan="5">Samples Information</th>
                                     <th rowspan="2">Task</th>
                                 </tr>
                                 <tr>
@@ -35,12 +35,15 @@
                                     <th>Sex</th>
                                     <th>Age (Months)</th>
                                     <th>Infant Prophylaxis</th>
+
                                     <th>Entry Point</th>
                                     <th>Feeding Type</th>
                                     <th>PMTCT Intervention</th>
+
                                     <th>Date Collected</th>
                                     <th>Status</th>
                                     <th>Spots</th>
+                                    <th>Worksheet</th>
                                     <th>Result</th>
                                 </tr>
                             </thead>
@@ -93,6 +96,7 @@
                                         @endforeach
                                     </td>
                                     <td> {{ $samples->spots }} </td>
+                                    <td> {{ $samples->worksheet_id }} </td>
                                     <td>
                                         @foreach($results as $result)
                                             @if($samples->result == $result->id)
@@ -102,10 +106,10 @@
                                     </td>
                                     <td>
                                         @if($samples->batch_complete == 1)
-                                            <a href="{{ url('/samples/print/' . $samples->id ) }} " target='_blank'>Print</a> |
+                                            <a href="{{ url('/sample/print/' . $samples->id ) }} " target='_blank'>Print</a> |
                                         @endif
-                                        <a href="{{ url('/samples/' . $samples->id . '/edit') }} ">View</a> |
-                                        <a href="{{ url('/samples/' . $samples->id . '/edit') }} ">Edit</a> |
+                                        <a href="{{ url('/sample/' . $samples->id . '/edit') }} ">View</a> |
+                                        <a href="{{ url('/sample/' . $samples->id . '/edit') }} ">Edit</a> |
 
                                         {{ Form::open(['url' => 'samples/' . $samples->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following samples?')"]) }}
                                             <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
