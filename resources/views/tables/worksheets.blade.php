@@ -76,7 +76,7 @@
 
     <div class="row">
         @foreach($status_count as $c)
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <b>{!! $worksheet_statuses->where('id', $c->status_id)->first()->state ?? '' !!}: </b> {{ $c->total }}                
             </div>
         @endforeach        

@@ -50,6 +50,7 @@ class ViralworksheetController extends Controller
         // $machines = collect($this->wmachine());
 
         $data = Lookup::worksheet_lookups();
+        $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('viralworksheet/index/' . $state . '/');
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
