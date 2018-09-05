@@ -70,6 +70,7 @@ class Sample extends BaseModel
     {
         if($this->result == 1){ return "Negative"; }
         else if($this->result == 2){ return "Positive"; }
+        else if($this->result == 3){ return "Failed"; }
         else{ return ""; }
     }
 

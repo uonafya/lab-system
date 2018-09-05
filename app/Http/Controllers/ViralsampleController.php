@@ -208,10 +208,17 @@ class ViralsampleController extends Controller
      */
     public function show(ViralsampleView $viralsample)
     {
+        $s = Viralsample::find($viralsample->id);
+        $samples = Viralsample::runs($s)->get();
+
+        $patient = $s->patient; 
+
         $data = Lookup::get_viral_lookups();
-        $data['samples'] = $viralsample;
+        $data['sample'] = $viralsample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
         
-        return view('tables.viralsample_search', $data)->with('pageTitle', 'Batches');
+        return view('tables.viralsample_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
     /**
@@ -400,7 +407,7 @@ class ViralsampleController extends Controller
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;
-        $samples = Viralsample::runs($sample)->orderBy('run', 'asc')->get();
+        $samples = Viralsample::runs($sample)->get();
         $patient = $sample->patient;
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]);
     }

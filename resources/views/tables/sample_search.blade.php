@@ -164,7 +164,7 @@
                                             <td> {{ $samp->datetested }} </td>
                                             <td> {{ $samp->worksheet_id }} </td>
                                             <td> {{ $samp->interpretation }} </td>
-                                            <td> {{ $samp->result }} </td>
+                                            <td> {{ $samp->result_name }} </td>
                                         </tr>
                                     @endforeach
 

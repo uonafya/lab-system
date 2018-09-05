@@ -525,7 +525,7 @@ class SampleController extends Controller
 
     public function runs(Sample $sample)
     {
-        $samples = Sample::runs($sample)->orderBy('run', 'asc')->get();
+        $samples = Sample::runs($sample)->get();
 
         $patient = $sample->patient; 
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]); 
