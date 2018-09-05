@@ -105,7 +105,7 @@ class Viralsample extends BaseModel
         else if($this->sampletype == 2) return "EDTA";
         else if($this->sampletype == 3) return "DBS Venous";
         else if($this->sampletype == 4) return "DBS Capillary";
-        return null;
+        return "";
     }
 
     public function last_test()
