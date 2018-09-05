@@ -42,7 +42,6 @@ class FacilityObserver
                 $contact->save();                
             }
         }
-
     }
 
     /*public function updated(Facility $facility)

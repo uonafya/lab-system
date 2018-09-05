@@ -227,6 +227,19 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-heading">
+                            <center>Samples</center>
+                        </div>
+                        <div class="panel-body">
+                            @include('shared/samples-partial')
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
         @endif
 
         
