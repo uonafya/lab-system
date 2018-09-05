@@ -201,8 +201,14 @@ class FacilityController extends Controller
         $districts = DB::table('districts')->get();
         $wards = DB::table('wards')->get();
         $partners = DB::table('partners')->get();
+        $data = (object)[
+                'facilitytype' => $facilitytype,
+                'districts' => $districts,
+                'wards' => $wards,
+                'partners' => $partners
+            ];
         
-        return view('forms.facility', compact('facilitytype','districts','wards','partners'))->with('pageTitle', 'Add Facility');
+        return view('forms.facility', compact('data'))->with('pageTitle', 'Add Facility');
     }
 
     /**
@@ -213,7 +219,12 @@ class FacilityController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $facility = new Facility();
+        $facility->fill($request->except(['_token', 'submit_type']));
+        $facility->save();
+
+        session(['toast_message'=>'Facility Created Successfully']);
+        return back();
     }
 
     public function getFacility($id)
