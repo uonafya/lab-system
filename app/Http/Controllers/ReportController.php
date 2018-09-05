@@ -7,12 +7,14 @@ use App\SampleView;
 use App\ViralsampleView;
 use App\Abbotdeliveries;
 use App\Taqmandeliveries;
+use App\Abbotprocurement;
+use App\Taqmanprocurement;
 use Excel;
 use App\ViewFacility;
 
 class ReportController extends Controller
 {
-    //
+    public static $parent = ['ending','wasted','issued','request','pos'];
 
     public function index()
     {
@@ -80,7 +82,7 @@ class ReportController extends Controller
             }
             $kits = $model->get();
             $value = $kits->first();
-            dd($request->all());
+            // dd($request->all());
             if ($value) {
                 $data['kits'] = $kits;
                 if ($platform == 'abbott') {
@@ -111,8 +113,44 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
-        return back();
-        // dd($request);
+        $data = [];
+        $platform = $request->platform;
+        if ($platform == 'abbott') {
+            $model = Abbotprocurement::select('*');
+            $sub = $this->abbottKits;
+        }
+        if ($platform == 'taqman') {
+            $model = Taqmanprocurement::select('*');
+            $sub = $this->taqmanKits;
+        }
+
+
+        if($request->types == 'eid') 
+            $model->where('testtype', '=', 1);
+        if($request->types == 'viralload') 
+            $model->where('testtype', '=', 2);
+
+        $model->where('year', $request->year);
+        $model->where('month', $request->month);
+        $report = $model->get();
+        $data = json_decode(json_encode([
+                    'report' => $report,
+                    'parent' => self::$parent,
+                    'child' => $sub
+                ]));
+        // dd($data);
+        // if(!$report->isEmpty()){
+        //     foreach ($report as $reportkey => $reportvalue) {
+        //         foreach (self::$parent as $parentkey => $parentvalue) {
+        //             foreach ($sub as $subkey => $subvalue) {
+        //                 $column = $parentvalue . $subvalue['alias'];
+        //                 $data[$column] = $reportvalue->$column;
+        //             }
+        //         }
+        //     }
+
+        // }
+        return view('reports.consumptionreport', compact('data'))->with('pageTitle', 'Consumption Report');
     }
 
     public static function __getDateData($request, &$dateString)
