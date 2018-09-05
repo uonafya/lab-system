@@ -33,7 +33,12 @@
 					<td> {{ $sample->spots }} </td>
 					<td> {{ $sample->run }} </td>
 					<td><a href="{{ url('sample/runs/' . $sample->id) }}"> Runs</a> </td>
-					<td> {{ $sample->parentid ?? null }} </td>
+					@if($sample->parentid)
+						<td> {{ $sample->parentid ?? null }} </td>
+					@else
+						<td></td>
+					@endif
+					
 					<td> {{ $sample->datecollected }} </td>
 
 					@if($sample->site_entry == 0)
