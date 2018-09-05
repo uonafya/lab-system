@@ -489,7 +489,7 @@ class WorksheetController extends Controller
                 if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
                 {
                     $result = 1;
-                }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
+                }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00" || $interpretation == "Detected DBS")
                 {
                     $result = 2;
                 }else if($interpretation == "Valid"){
