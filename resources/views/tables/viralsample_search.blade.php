@@ -11,7 +11,7 @@
             <div class="hpanel">
                 <div class="panel-body">
                     <div>
-                        <b>Facility: {{ $samples->facility_id ?? '' }} </b> <br />
+                        <b>Facility: {{ $samples->facility->name ?? '' }} </b> <br />
                         <b>Date Received: {{ date('d-M-Y', strtotime($samples->datereceived)) ?? '' }} </b> <br />
                         <b>Date Entered: {{ date('d-M-Y', strtotime($samples->created_at)) }} </b> <br />
                         @if($samples->high_priority)
