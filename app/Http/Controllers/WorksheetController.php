@@ -85,7 +85,7 @@ class WorksheetController extends Controller
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('worksheet/index/' . $state . '/');
 
-        dd($status_count);
+        dd($data['status_count']);
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
 
