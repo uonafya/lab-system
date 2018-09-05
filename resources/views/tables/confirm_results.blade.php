@@ -68,7 +68,7 @@
                                     <td >-</td>
                                     <td ><small><strong>
                                         <font color='#FF0000'>
-                                            @if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 7)
+                                            @if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 2)
                                                 Valid
                                             @else
                                                 Invalid
@@ -89,7 +89,7 @@
                                     <td >-</td>
                                     <td ><small><strong>
                                         <font color='#339900'> 
-                                            @if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 7)
+                                            @if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 1)
                                                 Valid
                                             @else
                                                 Invalid
