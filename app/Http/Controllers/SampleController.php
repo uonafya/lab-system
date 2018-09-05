@@ -220,10 +220,17 @@ class SampleController extends Controller
         // $data['batch'] = $batch;
         // $data['samples'] = $samples;
 
+        $s = Sample::find($sample->id);
+        $samples = Sample::runs($s)->get();
+
+        $patient = $s->patient; 
+
         $data = Lookup::get_lookups();
-        // dd($sample);
-        $data['samples'] = $sample;
+        $data['sample'] = $sample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
+
     }
 
     /**
