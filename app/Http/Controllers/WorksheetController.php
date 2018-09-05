@@ -479,7 +479,8 @@ class WorksheetController extends Controller
             $handle = fopen($file, "r");
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $interpretation = $data[8];
+                $interpretation = rtrim($data[8]);
+
 
                 $flag = $data[10];
                 if($flag != NULL) $interpretation = $flag;
