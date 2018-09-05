@@ -99,7 +99,7 @@ class Viralsample extends BaseModel
         }
     }
 
-    public function getSampleTypeAttribute()
+    public function getSampleTypeOutputAttribute()
     {
         if($this->sampletype == 1) return "PLASMA";
         else if($this->sampletype == 2) return "EDTA";

@@ -31,7 +31,7 @@
 						<td> Site Entry </td>
 					@endif
 
-					<td> {{ $sample->sample_type }} </td>
+					<td> {{ $sample->sample_type_output }} </td>
 					<td> {{ $sample->run }} </td>
 					<td><a href="{{ url('viralsample/runs/' . $sample->id) }}" target="_blank"> Runs</a> </td>
 					@if($sample->parentid)
