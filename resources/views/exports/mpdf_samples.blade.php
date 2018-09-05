@@ -16,6 +16,9 @@
  {
 
  }
+ /*@page{
+ 	size: portrait;
+ }*/
  .oddrow
  {
  background-color : #CCCCCC;

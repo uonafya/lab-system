@@ -148,71 +148,6 @@ class WorksheetController extends Controller
             return back();
         }
         return view('forms.worksheets', $data)->with('pageTitle', 'Create Worksheet');
-
-        // $machines = Lookup::get_machines();
-        // $machine = $machines->where('id', $machine_type)->first();
-
-        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
-        // // $test = false;
-        // $user = auth()->user();
-
-        // if($machine == NULL || $machine->eid_limit == NULL) return back();
-
-        // $limit = $machine->eid_limit;
-        
-        // $year = date('Y') - 1;
-        // if(date('m') < 7) $year --;
-        // $date_str = $year . '-12-31';
-
-        // if($test){
-        //     $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-        //         ->join('batches', 'samples.batch_id', '=', 'batches.id')
-        //         ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-        //         ->join('patients', 'samples.patient_id', '=', 'patients.id')
-        //         ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-        //         ->where('datereceived', '>', $date_str)
-        //         ->where('site_entry', '!=', 2)
-        //         ->having('isnull', 0)
-        //         ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-        //         ->where('input_complete', true)
-        //         ->whereIn('receivedstatus', [1, 3])
-        //         ->whereRaw('((result IS NULL ) OR (result=0 ))')
-        //         ->orderBy('samples.id', 'asc')
-        //         ->limit($limit)
-        //         ->get();
-        //     $limit -= $repeats->count();
-        // }
-
-        // $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-        //     ->join('batches', 'samples.batch_id', '=', 'batches.id')
-        //     ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-        //     ->join('patients', 'samples.patient_id', '=', 'patients.id')
-        //     ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-        //     ->where('datereceived', '>', $date_str)
-        //     ->when($test, function($query) use ($user){
-        //         return $query->where('received_by', $user->id)->having('isnull', 1);
-        //     })
-        //     ->where('site_entry', '!=', 2)
-        //     ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-        //     ->where('input_complete', true)
-        //     ->whereIn('receivedstatus', [1, 3])
-        //     ->whereRaw('((result IS NULL ) OR (result =0 ))')
-        //     ->orderBy('isnull', 'asc')
-        //     ->orderBy('highpriority', 'desc')
-        //     ->orderBy('datereceived', 'asc')
-        //     ->orderBy('site_entry', 'asc')
-        //     ->orderBy('samples.id', 'asc')
-        //     ->limit($limit)
-        //     ->get();
-
-        // if($test) $samples = $repeats->merge($samples);
-        // $count = $samples->count();
-
-        // if($count == $machine->eid_limit){
-        //     return view('forms.worksheets', ['create' => true, 'machine_type' => $machine_type, 'samples' => $samples, 'machine' => $machine])->with('pageTitle', 'Create Worksheet');
-        // }
-
-        // return view('forms.worksheets', ['create' => false, 'machine_type' => $machine_type, 'count' => $count])->with('pageTitle', 'Create Worksheet');
     }
 
     /**
@@ -242,72 +177,6 @@ class WorksheetController extends Controller
         Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         return redirect()->route('worksheet.print', ['worksheet' => $worksheet->id]);
-
-
-        // $machines = Lookup::get_machines();
-        // $machine = $machines->where('id', $worksheet->machine_type)->first();
-
-        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
-        // // $test=false;
-        // $user = auth()->user();
-
-        // $limit = $machine->eid_limit;
-        
-        // $year = date('Y') - 1;
-        // if(date('m') < 7) $year--;
-        // $date_str = $year . '-12-31';
-
-        // if($test){
-        //     $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-        //         ->join('batches', 'samples.batch_id', '=', 'batches.id')
-        //         ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-        //         ->join('patients', 'samples.patient_id', '=', 'patients.id')
-        //         ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-        //         ->where('datereceived', '>', $date_str)
-        //         ->where('site_entry', '!=', 2)
-        //         ->having('isnull', 0)
-        //         ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-        //         ->where('input_complete', true)
-        //         ->whereIn('receivedstatus', [1, 3])
-        //         ->whereRaw('((result IS NULL ) OR (result =0 ))')
-        //         ->orderBy('samples.id', 'asc')
-        //         ->limit($limit)
-        //         ->get();
-        //     $limit -= $repeats->count();
-        // }
-
-        // $samples = Sample::selectRaw("samples.id, patient_id, samples.parentid, batches.datereceived, batches.highpriority, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-        //     ->join('batches', 'samples.batch_id', '=', 'batches.id')
-        //     ->where('datereceived', '>', $date_str)
-        //     ->when($test, function($query) use ($user){
-        //         return $query->where('received_by', $user->id)->having('isnull', 1);
-        //     })
-        //     ->where('site_entry', '!=', 2)
-        //     ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-        //     ->where('input_complete', true)
-        //     ->whereIn('receivedstatus', [1, 3])
-        //     ->whereRaw('((result IS NULL ) OR (result = 0 ))')
-        //     ->orderBy('isnull', 'asc')
-        //     ->orderBy('highpriority', 'asc')
-        //     ->orderBy('datereceived', 'asc')
-        //     ->orderBy('site_entry', 'asc')
-        //     ->orderBy('samples.id', 'asc')
-        //     ->limit($limit)
-        //     ->get();
-
-        // if($test) $samples = $repeats->merge($samples);
-
-        // if($samples->count() != $machine->eid_limit){
-        //     $worksheet->delete();
-        //     session(['toast_message' => "The worksheet could not be created."]);
-        //     return back();
-        // }
-
-        // $sample_ids = $samples->pluck('id');
-
-        // Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
-
-        // return redirect()->route('worksheet.print', ['worksheet' => $worksheet->id]);
     }
 
     /**
@@ -623,12 +492,24 @@ class WorksheetController extends Controller
                 }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
                 {
                     $result = 2;
-                }else{
+                }else if($interpretation == "Valid"){
+                    $result = 6;
+                }else if($interpretation == "Invalid"){
+                    $result = 7;
+                }
+                else{
                     $result = 3;
                 }
 
-                if($data[5] == "NC") $negative_control = $result;
-                if($data[5] == "LPC" || $data[5] == "PC") $positive_control = $result;
+                if($data[5] == "NC"){
+                    $negative_control = $interpretation;
+                    $neg_result = $result;
+                }
+
+                if($data[5] == "LPC" || $data[5] == "PC"){
+                    $positive_control = $interpretation;
+                    $pos_result = $result;
+                }
 
                 $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $interpretation, 'result' => $result];
 
@@ -643,7 +524,7 @@ class WorksheetController extends Controller
             }
             fclose($handle);
 
-            switch ($negative_control) {
+            /*switch ($negative_control) {
                 case 'Target Not Detected':
                     $neg_result = 1;
                     break;
@@ -659,7 +540,7 @@ class WorksheetController extends Controller
                 default:
                     $neg_result = 3;
                     break;
-            }
+            }*/
 
             if($positive_control == 1 || $positive_control == "1" || $positive_control == ">1" || $positive_control == "> 1 " || $positive_control == "> 1" || $positive_control == "1.00E+00" || $positive_control == ">1.00E+00" || $positive_control == "> 1.00E+00" || $positive_control == "> 1.00E+00 ")
             {
@@ -681,7 +562,6 @@ class WorksheetController extends Controller
             {
                 $pos_result = 3;
             }
-
         }
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();

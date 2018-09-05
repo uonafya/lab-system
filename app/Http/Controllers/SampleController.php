@@ -267,6 +267,8 @@ class SampleController extends Controller
      */
     public function update(Request $request, Sample $sample)
     {
+        $submit_type = $request->input('submit_type');
+
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
@@ -274,7 +276,32 @@ class SampleController extends Controller
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        $batch = Batch::find($sample->batch_id);
+        $new_batch = false;
+
+        if($submit_type == "new_batch" && $sample->facility_id != $sample->getOriginal('facility_id')){
+            $batch = new Batch;
+            $new_batch = true;
+
+            $facility_id = $request->input('facility_id');
+            $facility = Facility::find($facility_id);
+            session(['facility_name' => $facility->name, 'batch_total' => 0]);
+
+            $batch = new Batch;
+            $batch->user_id = auth()->user()->id;
+            $batch->lab_id = auth()->user()->lab_id;
+
+            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+                $batch->received_by = auth()->user()->id;
+                $batch->site_entry = 0;
+            }
+            else{
+                $batch->site_entry = 1;
+            }
+        }
+        else{
+            $batch = Batch::find($sample->batch_id);
+        }
+
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
         $batch->pre_update();
@@ -330,6 +357,7 @@ class SampleController extends Controller
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->patient_id = $patient->id; 
+        $sample->batch_id = $batch->id; 
 
         session(['toast_message' => 'The sample has been updated.']);
 
@@ -360,7 +388,13 @@ class SampleController extends Controller
             }
         }
 
-        $sample->pre_update();        
+        $sample->pre_update();   
+
+        if($new_batch){
+            session(['batch' => $batch, 'batch_total' => 1,
+                'toast_message' => 'The sample has been saved to batch number ' . $batch->id]);
+            return redirect('sample/create');
+        }     
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

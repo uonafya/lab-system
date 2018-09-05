@@ -524,6 +524,20 @@ class BatchController extends Controller
         return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
     }
 
+    public function individual_pdf(Batch $batch)
+    {
+        $filename = "individual_results_for_batch_" . $batch->id . ".pdf";
+
+        $mpdf = new Mpdf();
+        $data = Lookup::get_lookups();
+        $samples = $batch->sample;
+        $samples->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_samples', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
     /**
      * Print the specified resource.
      *
