@@ -43,7 +43,7 @@ class VlDispatch extends Mailable
         if(file_exists($this->individual_path)) unlink($this->individual_path);
         if(file_exists($this->summary_path)) unlink($this->summary_path);
 
-        $mpdf = new Mpdf(['format' => 'A4']);
+        $mpdf = new Mpdf();
         $data = Lookup::get_viral_lookups();
         $samples->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;

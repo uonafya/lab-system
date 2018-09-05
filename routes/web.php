@@ -97,6 +97,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('summary/{batch}', 'BatchController@summary');
 		Route::post('summaries', 'BatchController@summaries');
 		Route::get('individual/{batch}', 'BatchController@individual');
+		Route::get('individual_pdf/{batch}', 'BatchController@individual_pdf');
 		Route::get('envelope/{batch}', 'BatchController@envelope')->name('envelope');
 		Route::get('email/{batch}', 'BatchController@email')->name('email');
 
@@ -127,6 +128,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('summary/{batch}', 'ViralbatchController@summary');
 		Route::post('summaries', 'ViralbatchController@summaries');
 		Route::get('individual/{batch}', 'ViralbatchController@individual');
+		Route::get('individual_pdf/{batch}', 'ViralbatchController@individual_pdf');
 		Route::get('envelope/{batch}', 'ViralbatchController@envelope')->name('envelope');
 		Route::get('email/{batch}', 'ViralbatchController@email')->name('email');
 
