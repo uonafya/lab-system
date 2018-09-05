@@ -73,6 +73,14 @@
 
         </div>
     </div>
+
+    <div class="row">
+        @foreach($status_count as $c)
+            <div class="col-sm-4">
+                <b>{{ $worksheet_statuses->where('id', $c->id)->first()->name ?? '' }}: </b> {{ $c->total }}                
+            </div>
+        @endforeach        
+    </div>
     
     <div class="row">
         <div class="col-lg-12">

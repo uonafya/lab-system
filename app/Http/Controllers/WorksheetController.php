@@ -80,7 +80,12 @@ class WorksheetController extends Controller
             return $worksheet;
         });
 
-        return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
+        $data = Lookup::worksheet_lookups();
+        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('worksheet/index/' . $state . '/');
+
+        return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
 
         // $table_rows = "";
 
