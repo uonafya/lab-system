@@ -7,7 +7,7 @@
 				<th>Patient</th>
 				<th>Facility</th>
 				<th>Entry Type</th>
-				<th>Spots</th>
+				<th>Sample Type</th>
 				<th>Run</th>
 				<th>Previous Runs</th>
 				<th>Original ID</th>
@@ -30,9 +30,10 @@
 					@elseif($sample->site_entry == 1)
 						<td> Site Entry </td>
 					@endif
-					<td> {{ $sample->spots }} </td>
+
+					<td> {{ $sample->sample_type }} </td>
 					<td> {{ $sample->run }} </td>
-					<td><a href="{{ url('viralsample/runs/' . $sample->id) }}"> Runs</a> </td>
+					<td><a href="{{ url('viralsample/runs/' . $sample->id) }}" target="_blank"> Runs</a> </td>
 					@if($sample->parentid)
 						<td> {{ $sample->parentid ?? null }} </td>
 					@else

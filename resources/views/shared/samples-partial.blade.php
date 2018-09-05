@@ -32,7 +32,7 @@
 					@endif
 					<td> {{ $sample->spots }} </td>
 					<td> {{ $sample->run }} </td>
-					<td><a href="{{ url('sample/runs/' . $sample->id) }}"> Runs</a> </td>
+					<td><a href="{{ url('sample/runs/' . $sample->id) }}" target="_blank"> Runs</a> </td>
 					@if($sample->parentid)
 						<td> {{ $sample->parentid ?? null }} </td>
 					@else
