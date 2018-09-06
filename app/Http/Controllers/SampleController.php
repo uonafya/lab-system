@@ -443,7 +443,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->worksheet_id == NULL && $sample->result == NULL){
+        if($sample->result == NULL){
             $sample->delete();
             session(['toast_message' => 'The sample has been deleted.']);
         }  
@@ -453,6 +453,7 @@ class SampleController extends Controller
         }      
         return back();
     }
+
 
     public function new_patient(Request $request)
     {

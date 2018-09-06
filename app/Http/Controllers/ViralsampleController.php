@@ -368,7 +368,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->worksheet_id == NULL && $viralsample->result == NULL){
+        if($viralsample->result == NULL){
             $viralsample->delete();
             session(['toast_message' => 'The sample has been deleted.']);
         }  
