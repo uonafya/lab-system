@@ -89,7 +89,7 @@ class ViralsampleController extends Controller
 
         $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
         if($existing){
-            session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+            session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            
         }
