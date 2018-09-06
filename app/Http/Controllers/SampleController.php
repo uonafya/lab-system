@@ -287,7 +287,7 @@ class SampleController extends Controller
 
         $new_batch = false;
 
-        if($submit_type == "new_batch" && $batch->facility_id != $batch->getOriginal('facility_id')){
+        if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
             $batch = new Batch;
             $new_batch = true;
 
