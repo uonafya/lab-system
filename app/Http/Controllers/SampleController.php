@@ -279,13 +279,15 @@ class SampleController extends Controller
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
+
+        $batch = $sample->batch;
         
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
         $new_batch = false;
 
-        if($submit_type == "new_batch" && $sample->facility_id != $sample->getOriginal('facility_id')){
+        if($submit_type == "new_batch" && $batch->facility_id != $batch->getOriginal('facility_id')){
             $batch = new Batch;
             $new_batch = true;
 
@@ -304,9 +306,6 @@ class SampleController extends Controller
             else{
                 $batch->site_entry = 1;
             }
-        }
-        else{
-            $batch = Batch::find($sample->batch_id);
         }
 
         $data = $request->only($samples_arrays['batch']);
@@ -394,6 +393,7 @@ class SampleController extends Controller
                 ]);
             }
         }
+
 
         $sample->pre_update();   
 
