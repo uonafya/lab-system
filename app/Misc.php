@@ -42,11 +42,21 @@ class Misc extends Common
 				}
 
 				else if($sample->run == 3){
-					$second = self::check_run($sample->id, 2);
+					$second = self::check_run($original->id, 2);
 
-					if( ($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
+					if( ($sample->result == 3 && $second->result == 3 && $original->result == 3) ||
+						($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
 						($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
 						($original->result == 2 && $second->result == 3 && $sample->result == 3) )
+					{
+						$sample->repeatt = 1;
+						$sample->save();
+					}
+				}
+				else if($sample->run == 4){
+					$second = self::check_run($original->id, 2);
+					$third = self::check_run($original->id, 3);
+					if( ($sample->result == 3 && $second->result == 3 && $third->result == 3 && $original->result == 3))
 					{
 						$sample->repeatt = 1;
 						$sample->save();

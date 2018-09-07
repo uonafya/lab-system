@@ -122,6 +122,7 @@ class Common
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
+        ini_set("memory_limit", "-1");
 		$samples = $view_model::where(['batch_complete' => 1])
 		->whereRaw("(synched = 0 or synched = 2)")
 		->when($batch_id, function($query) use ($batch_id){

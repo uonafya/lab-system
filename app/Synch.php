@@ -206,6 +206,7 @@ class Synch
 
 	public static function synch_batches($type)
 	{
+        ini_set("memory_limit", "-1");
 		$classes = self::$synch_arrays[$type];
 
 		$misc_class = $classes['misc_class'];
@@ -225,7 +226,9 @@ class Synch
 		}
 
 		while (true) {
-			$batches = $batch_class::with(['sample.patient:id,national_patient_id'])->where('synched', 0)->limit(10)->get();
+			$batches = $batch_class::with(['sample.patient:id,national_patient_id'])
+			->where('synched', 0)->where('batch_complete', 1)->limit(10)->get();
+			// return ($batches);
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
@@ -654,12 +657,12 @@ class Synch
 			$body = json_decode($response->getBody());
 
 			foreach ($body->patients as $key => $value) {
-				$update_data = get_object_vars($value);
+				// $update_data = get_object_vars($value);
 				$update_data['national_patient_id'] = $value->id;
 				$update_data['synched'] = 1;
 				$update_data['datesynched'] = $today;
-				unset($update_data['id']);
-				unset($update_data['original_patient_id']);
+				// unset($update_data['id']);
+				// unset($update_data['original_patient_id']);
 
 				// $new_update_data['national_patient_id'] = $value->id;
 				// $new_update_data['dob'] = $value->dob;
@@ -675,12 +678,12 @@ class Synch
 			}
 
 			foreach ($body->mothers as $key => $value) {
-				$update_data = get_object_vars($value);
+				// $update_data = get_object_vars($value);
 				$update_data['national_mother_id'] = $value->id;
 				$update_data['synched'] = 1;
 				$update_data['datesynched'] = $today;
-				unset($update_data['id']);
-				unset($update_data['original_mother_id']);
+				// unset($update_data['id']);
+				// unset($update_data['original_mother_id']);
 
 				Mother::where('id', $value->original_mother_id)->update($update_data);
 			}
@@ -719,12 +722,12 @@ class Synch
 			$body = json_decode($response->getBody());
 
 			foreach ($body->patients as $key => $value) {
-				$update_data = get_object_vars($value);
+				// $update_data = get_object_vars($value);
 				$update_data['national_patient_id'] = $value->id;
 				$update_data['synched'] = 1;
 				$update_data['datesynched'] = $today;
-				unset($update_data['id']);
-				unset($update_data['original_patient_id']);
+				// unset($update_data['id']);
+				// unset($update_data['original_patient_id']);
 
 				Viralpatient::where('id', $value->original_patient_id)->update($update_data);
 			}
@@ -784,11 +787,11 @@ class Synch
 
 			foreach ($body->samples as $key => $value) {
 				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
-				if($batch_class == "App\\Viralbatch"){
-					$update_data['age_category'] = $value->age_category;
-					$update_data['justification'] = $value->justification;
-					$update_data['prophylaxis'] = $value->prophylaxis;
-				}
+				// if($batch_class == "App\\Viralbatch"){
+				// 	$update_data['age_category'] = $value->age_category;
+				// 	$update_data['justification'] = $value->justification;
+				// 	$update_data['prophylaxis'] = $value->prophylaxis;
+				// }
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
 
