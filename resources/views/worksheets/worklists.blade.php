@@ -64,7 +64,7 @@ width:1180px;
 				</tr>
 			</thead>
 			<tbody>
-				@foreach($samples as sample)
+				@foreach($samples as $sample)
 					<tr>
 						<td>{{ $sample->id }} </td>
 						<td>
