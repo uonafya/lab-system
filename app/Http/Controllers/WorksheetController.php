@@ -80,7 +80,12 @@ class WorksheetController extends Controller
             return $worksheet;
         });
 
-        return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
+        $data = Lookup::worksheet_lookups();
+        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('worksheet/index/' . $state . '/');
+
+        return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
 
         // $table_rows = "";
 
@@ -309,7 +314,7 @@ class WorksheetController extends Controller
         }
 
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();

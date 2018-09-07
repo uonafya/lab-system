@@ -43,6 +43,39 @@ INSERT INTO `viralworksheetsampletypes` (`id`, `name`) VALUES
 	(2, 'Plasma / EDTA');
 
 
+DROP TABLE IF EXISTS `facilitytype`;
+CREATE TABLE IF NOT EXISTS `facilitytype` (
+  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+
+-- Dumping data for table lab.facilitytype: ~20 rows (approximately)
+/*!40000 ALTER TABLE `facilitytype` DISABLE KEYS */;
+INSERT INTO `facilitytype` (`id`, `name`) VALUES
+	(1, 'National Hospital'),
+	(2, 'Provincial Hospital'),
+	(3, 'District Hospital'),
+	(4, 'Sub District Hospital'),
+	(5, 'Dispensary'),
+	(6, 'Health Care '),
+	(7, 'Medical Clinic '),
+	(8, 'Mission Hospital'),
+	(9, 'Children Home'),
+	(10, 'Medical Center'),
+	(11, 'Nursing Home'),
+	(12, 'Labaratory / Labs'),
+	(13, 'Hospital'),
+	(14, 'Other'),
+	(15, 'VCT'),
+	(16, 'Maternity Home/Unit'),
+	(17, 'Medical Care'),
+	(18, 'Medical Services'),
+	(19, 'Health Center'),
+	(20, 'Health Services');
+/*!40000 ALTER TABLE `facilitytype` ENABLE KEYS */;
+
+
 DROP TABLE IF EXISTS `countys`;
 -- Dumping structure for table apidb.countys
 CREATE TABLE IF NOT EXISTS `countys` (

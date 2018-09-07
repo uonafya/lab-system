@@ -89,7 +89,7 @@ class ViralsampleController extends Controller
 
         $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
         if($existing){
-            session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+            session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            
         }
@@ -208,10 +208,17 @@ class ViralsampleController extends Controller
      */
     public function show(ViralsampleView $viralsample)
     {
+        $s = Viralsample::find($viralsample->id);
+        $samples = Viralsample::runs($s)->get();
+
+        $patient = $s->patient; 
+
         $data = Lookup::get_viral_lookups();
-        $data['samples'] = $viralsample;
+        $data['sample'] = $viralsample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
         
-        return view('tables.viralsample_search', $data)->with('pageTitle', 'Batches');
+        return view('tables.viralsample_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
     /**
@@ -361,7 +368,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->worksheet_id == NULL && $viralsample->result == NULL){
+        if($viralsample->result == NULL){
             $viralsample->delete();
             session(['toast_message' => 'The sample has been deleted.']);
         }  
@@ -400,7 +407,7 @@ class ViralsampleController extends Controller
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;
-        $samples = Viralsample::runs($sample)->orderBy('run', 'asc')->get();
+        $samples = Viralsample::runs($sample)->get();
         $patient = $sample->patient;
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]);
     }

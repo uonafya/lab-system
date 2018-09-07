@@ -53,6 +53,8 @@ class MiscViral extends Common
 	{
 		$samples = Viralsample::where('worksheet_id', $worksheet_id)->get();
 
+        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
+
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {

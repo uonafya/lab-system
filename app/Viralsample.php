@@ -65,10 +65,10 @@ class Viralsample extends BaseModel
     public function scopeRuns($query, $sample)
     {
         if($sample->parentid == 0){
-            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}");
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}")->orderBy('run', 'asc');
         }
         else{
-            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}");
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}")->orderBy('run', 'asc');
         }
     }
 
@@ -103,8 +103,8 @@ class Viralsample extends BaseModel
     {
         if($this->sampletype == 1) return "PLASMA";
         else if($this->sampletype == 2) return "EDTA";
-        else if($this->sampletype == 3) return "DBS Venous";
-        else if($this->sampletype == 4) return "DBS Capillary";
+        else if($this->sampletype == 3) return "DBS Capillary";
+        else if($this->sampletype == 4) return "DBS Venous";
         return "";
     }
 
