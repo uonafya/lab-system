@@ -156,10 +156,10 @@
                         <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
                     </li>
                     <li class="">
-                        <a href="#">VL POC Samples</a>
+                        <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
                     </li>
                     <li class="">
-                        <a href="#">POC Worklists</a>
+                        <a href="{{ url('worklist') }}">POC Worklists</a>
                     </li>
                     <li class="">
                         <a href="#">EID Reports</a>
