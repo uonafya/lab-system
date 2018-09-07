@@ -59,7 +59,7 @@ class WorklistController extends Controller
         $samples = $model::whereNull('worksheet_id')
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
-            ->whereRaw("(facility_id = {$facility_id} or user_id = {$facility_id})")
+            ->whereRaw("(facility_id = {$facility_id} or user_id = {$facility_id} or lab_id = {$facility_id})")
             ->where('input_complete', true)
             ->where('site_entry', 2)
             ->orderBy('created_at', 'asc')
