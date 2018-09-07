@@ -227,6 +227,8 @@ class ReportController extends Controller
 
     public static function __getDateData($request, &$dateString)
     {
+        ini_set("memory_limit", "-1");
+
         $title = '';
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
@@ -330,6 +332,7 @@ class ReportController extends Controller
             ['Lab ID', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date of Receiving', 'Date of Testing', 'Date of Dispatch', 'Viral Load'] :
             ['Lab ID', 'Sample Code', 'Batch No', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date of Receiving', 'Date of Testing', 'Date of Dispatch', 'Test Result'];
         
+        ini_set("memory_limit", "-1");
         if($data->isNotEmpty()) {
             foreach ($data as $report) {
                 $dataArray[] = $report->toArray();
