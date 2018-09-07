@@ -309,7 +309,7 @@ class ViralworksheetController extends Controller
         foreach ($unique as $key => $id) {
             $batch = \App\Viralbatch::find($id);
             $batch->fill($batches_data);
-            $batches->pre_update();
+            $batch->pre_update();
         }
 
     }

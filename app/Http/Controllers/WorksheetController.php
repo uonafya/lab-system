@@ -370,7 +370,7 @@ class WorksheetController extends Controller
         foreach ($unique as $key => $id) {
             $batch = \App\Batch::find($id);
             $batch->fill($batches_data);
-            $batches->pre_update();
+            $batch->pre_update();
         }
 
     }
@@ -479,7 +479,8 @@ class WorksheetController extends Controller
             $handle = fopen($file, "r");
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $interpretation = $data[8];
+                $interpretation = rtrim($data[8]);
+
 
                 $flag = $data[10];
                 if($flag != NULL) $interpretation = $flag;
@@ -489,7 +490,7 @@ class WorksheetController extends Controller
                 if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
                 {
                     $result = 1;
-                }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00")
+                }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00" || $interpretation == "Detected DBS")
                 {
                     $result = 2;
                 }else if($interpretation == "Valid"){
