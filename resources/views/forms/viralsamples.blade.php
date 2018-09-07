@@ -409,7 +409,7 @@
 
                         <div></div>
 
-                        @if(auth()->user()->user_type_id != 5 || isset($poc))
+                        @if(auth()->user()->user_type_id != 5 || isset($poc) || (isset($sample) && $sample->batch->site_entry == 2))
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Received
