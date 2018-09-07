@@ -33,13 +33,16 @@
                         <tbody>
 
                             @foreach($worklists as $key => $worklist)
-                                <td> {{ $worklist->id }} </td>
-                                <td> {{ $worklist->my_date_format('created_at') }} </td>
-                                <td> {{ $worklist->type }} </td>
-                                <td> {{ $worklist->status }} </td>
-                                <td> {{ $worklist->facility->name }} </td>
-                                <td> {{ $worklist->sample_count }} </td>
-                                <td>  </td>
+                                <tr>
+
+                                    <td> {{ $worklist->id }} </td>
+                                    <td> {{ $worklist->my_date_format('created_at') }} </td>
+                                    <td> {{ $worklist->type }} </td>
+                                    <td> {{ $worklist->status }} </td>
+                                    <td> {{ $worklist->facility->name }} </td>
+                                    <td> {{ $worklist->sample_count }} </td>
+                                    <td>  </td>
+                                </tr>
 
                             @endforeach
 
