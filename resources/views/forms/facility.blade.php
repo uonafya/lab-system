@@ -59,19 +59,20 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Ward</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="ward_id" id="ward_id">
+                                    <select class="form-control" name="ward_id" id="ward_id">
                                         <option value="" selected disabled>Select Ward</option>
                                     @foreach ($data->wards as $ward)
                                         <option value="{{ $ward->id }}">{{ $ward->name }}</option>
                                     @endforeach
                                     </select>
                                 </div>
+                                <i>Optional</i>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Districts</label>
+                                <label class="col-sm-4 control-label">Sub County</label>
                                 <div class="col-sm-8">
                                     <select class="form-control" required name="district" id="district">
-                                        <option value="" selected disabled>Select District</option>
+                                        <option value="" selected disabled>Select Sub County</option>
                                     @foreach ($data->districts as $district)
                                         <option value="{{ $district->id }}">{{ $district->name }}</option>
                                     @endforeach
