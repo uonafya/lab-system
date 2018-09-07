@@ -41,7 +41,14 @@
                                     <td> {{ $worklist->status }} </td>
                                     <td> {{ $worklist->facility->name }} </td>
                                     <td> {{ $worklist->sample_count }} </td>
-                                    <td>  </td>
+                                    <td> 
+                                        <a href="{{ url('worklist/print/' . $worklist->id) }}" title="Click to Download Worklist" target='_blank'>
+                                            Print
+                                        </a> | 
+                                        <a href="{{ url('worklist/' . $worklist->id) }}" title="Click to Download Worklist" target='_blank'>
+                                            View
+                                        </a>   
+                                    </td>
                                 </tr>
 
                             @endforeach
