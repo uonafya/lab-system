@@ -30,7 +30,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Facility Name</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="name" id="name" type="text" value="{{ $facility->name ?? '' }}" >
+                                    <input class="form-control" name="name" id="name" type="text" value="{{ $facility->name ?? '' }}" required >
                                 </div>
                             </div>
                             <div class="form-group">
@@ -48,7 +48,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Facility Type</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="ftype" id="ftype">
+                                    <select class="form-control" name="ftype" id="ftype">
                                         <option value="" selected disabled>Select Facility Type</option>
                                     @foreach ($data->facilitytype as $ftype)
                                         <option value="{{ $ftype->name }}">{{ $ftype->name }}</option>
@@ -82,7 +82,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Partners</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="partner" id="partner">
+                                    <select class="form-control" name="partner" id="partner">
                                         <option value="" selected disabled>Select Partner</option>
                                     @foreach ($data->partners as $partner)
                                         <option value="{{ $partner->id }}">{{ $partner->name }}</option>
