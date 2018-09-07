@@ -19,7 +19,7 @@ class WorklistController extends Controller
     public function index($testtype = null)
     {
         $facility_id = auth()->user()->facility_id;
-        $worklists = Worklist::when($testtype, function($query) use ($testtype){
+        $worklists = Worklist::with(['facility'])->when($testtype, function($query) use ($testtype){
             return $query->where('testtype', $testtype);
         })->where('facility_id', $facility_id)->get();
         $samples = $this->get_worklists();

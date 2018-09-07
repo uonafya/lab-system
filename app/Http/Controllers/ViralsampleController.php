@@ -33,8 +33,10 @@ class ViralsampleController extends Controller
 
     public function list_poc()
     {
+        $user = auth()->user();
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         $data = Lookup::get_lookups();
-        $samples = ViralsampleView::with(['facility'])->where(['site_entry' => 2])->get();
+        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
