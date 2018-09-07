@@ -35,9 +35,27 @@
                 		</thead>
                 		<tbody>
                 			@foreach($data->child as $sub)
-	                			<tr>
+                                <tr>
 	                				<td>{{ $sub->name }}</td>
-	                				<td colspan="9">Nothing really</td>
+                                    <td>{{ $viewdata->prevreport['ending'.$sub->alias] }}</td>
+	                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
+                                    <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
+                                    <td>
+                                        @if(isset($sub->factor->EID))
+                                            @if($viewdata->type == 'EID')
+                                                {{ $viewdata->tests*$sub->factor->EID }}
+                                            @elseif($viewdata->type == 'VL')
+                                                {{ $viewdata->tests*$sub->factor->VL }}
+                                            @endif
+                                        @else
+                                            {{ $viewdata->tests*$sub->factor }}
+                                        @endif
+                                    </td>
+                                    <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
+                                    <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>
+                                    <td>{{ $viewdata->reports['issued'.$sub->alias] }}</td>
+                                    <td>{{ $viewdata->reports['ending'.$sub->alias] }}</td>
+                                    <td>{{ $viewdata->reports['request'.$sub->alias] }}</td>
 	                			</tr>
                 			@endforeach
                 		</tbody>
