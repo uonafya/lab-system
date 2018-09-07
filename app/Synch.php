@@ -787,11 +787,11 @@ class Synch
 
 			foreach ($body->samples as $key => $value) {
 				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
-				if($batch_class == "App\\Viralbatch"){
-					$update_data['age_category'] = $value->age_category;
-					$update_data['justification'] = $value->justification;
-					$update_data['prophylaxis'] = $value->prophylaxis;
-				}
+				// if($batch_class == "App\\Viralbatch"){
+				// 	$update_data['age_category'] = $value->age_category;
+				// 	$update_data['justification'] = $value->justification;
+				// 	$update_data['prophylaxis'] = $value->prophylaxis;
+				// }
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
 
