@@ -84,7 +84,7 @@ class SampleController extends Controller
 
         $existing = SampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
         if($existing){
-            session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+            session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
             return back();            
         }     
@@ -220,10 +220,17 @@ class SampleController extends Controller
         // $data['batch'] = $batch;
         // $data['samples'] = $samples;
 
+        $s = Sample::find($sample->id);
+        $samples = Sample::runs($s)->get();
+
+        $patient = $s->patient; 
+
         $data = Lookup::get_lookups();
-        // dd($sample);
-        $data['samples'] = $sample;
+        $data['sample'] = $sample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
+
     }
 
     /**
@@ -272,13 +279,15 @@ class SampleController extends Controller
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
+
+        $batch = $sample->batch;
         
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
         $new_batch = false;
 
-        if($submit_type == "new_batch" && $sample->facility_id != $sample->getOriginal('facility_id')){
+        if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
             $batch = new Batch;
             $new_batch = true;
 
@@ -297,9 +306,6 @@ class SampleController extends Controller
             else{
                 $batch->site_entry = 1;
             }
-        }
-        else{
-            $batch = Batch::find($sample->batch_id);
         }
 
         $data = $request->only($samples_arrays['batch']);
@@ -388,6 +394,7 @@ class SampleController extends Controller
             }
         }
 
+
         $sample->pre_update();   
 
         if($new_batch){
@@ -436,7 +443,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->worksheet_id == NULL && $sample->result == NULL){
+        if($sample->result == NULL){
             $sample->delete();
             session(['toast_message' => 'The sample has been deleted.']);
         }  
@@ -446,6 +453,7 @@ class SampleController extends Controller
         }      
         return back();
     }
+
 
     public function new_patient(Request $request)
     {
@@ -518,7 +526,7 @@ class SampleController extends Controller
 
     public function runs(Sample $sample)
     {
-        $samples = Sample::runs($sample)->orderBy('run', 'asc')->get();
+        $samples = Sample::runs($sample)->get();
 
         $patient = $sample->patient; 
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]); 

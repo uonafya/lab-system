@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use GuzzleHttp\Client;
 use \App\Facility;
+use \App\FacilityContact;
 use \App\Synch;
 
 class FacilityObserver
@@ -23,13 +24,27 @@ class FacilityObserver
 
         $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
 
-        $contact = new \App\FacilityContact();
+        $contact = new FacilityContact();
         $contact->fill($facility->only($contact_array));
         $contact->facility_id = $facility->id;
         $contact->save();
     }
 
-    public function updated(Facility $facility)
+    public function updating(Facility $facility)
+    {
+        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
+
+        $contact = $facility->facility_contact;
+
+        foreach ($contact_array as $key => $value) {
+            if($facility->$value != $facility->getOriginal($value)){
+                $contact->fill($facility->only($contact_array));
+                $contact->save();                
+            }
+        }
+    }
+
+    /*public function updated(Facility $facility)
     {
         $base = Synch::$base;
         $client = new Client(['base_uri' => $base]);
@@ -52,6 +67,6 @@ class FacilityObserver
         $update_data = ['synched' => 1, 'datesynched' => $today,];
         $facility->fill($update_data);
         $facility->save();
-    }
+    }*/
 
 }

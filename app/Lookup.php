@@ -122,8 +122,6 @@ class Lookup
         return Cache::get('facilities');
     }
 
-
-
     public static function worksheet_lookups()
     {
         self::cacher();

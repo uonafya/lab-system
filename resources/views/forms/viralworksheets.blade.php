@@ -34,6 +34,7 @@
                 </div>                
             </div>
 
+
             @if (isset($worksheet))
                 {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
@@ -231,6 +232,19 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-heading">
+                            <center>Viralload Samples</center>
+                        </div>
+                        <div class="panel-body">
+                            @include('shared/viralsamples-partial')
+                        </div>
+                    </div>
+                </div>                
             </div>
 
         @endif

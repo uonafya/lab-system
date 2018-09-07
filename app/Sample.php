@@ -70,6 +70,7 @@ class Sample extends BaseModel
     {
         if($this->result == 1){ return "Negative"; }
         else if($this->result == 2){ return "Positive"; }
+        else if($this->result == 3){ return "Failed"; }
         else{ return ""; }
     }
 
@@ -77,10 +78,10 @@ class Sample extends BaseModel
     public function scopeRuns($query, $sample)
     {
         if($sample->parentid == 0){
-            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}");
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}")->orderBy('run', 'asc');
         }
         else{
-            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}");
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}")->orderBy('run', 'asc');
         }
     }
 

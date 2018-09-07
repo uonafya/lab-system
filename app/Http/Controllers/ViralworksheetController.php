@@ -50,6 +50,7 @@ class ViralworksheetController extends Controller
         // $machines = collect($this->wmachine());
 
         $data = Lookup::worksheet_lookups();
+        $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('viralworksheet/index/' . $state . '/');
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
@@ -248,7 +249,7 @@ class ViralworksheetController extends Controller
         }
 
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null]);
+        Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -309,7 +310,7 @@ class ViralworksheetController extends Controller
         foreach ($unique as $key => $id) {
             $batch = \App\Viralbatch::find($id);
             $batch->fill($batches_data);
-            $batches->pre_update();
+            $batch->pre_update();
         }
 
     }

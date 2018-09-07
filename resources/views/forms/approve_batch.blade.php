@@ -130,7 +130,7 @@
                                             <td> {{ $key+1 }} </td>
                                             <td>
                                                 <div align='center'>
-                                                    <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                                    <input name='samples[]' type='checkbox' class='checks sample_id' value='{{ $sample->id }}' />
                                                 </div>
                                             </td>
 
@@ -180,7 +180,7 @@
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
                                             <td style="width: 1000px;">
-                                                <select class="form-control" name="rejectedreason" id="rejectedreason">
+                                                <select class="form-control" name="rejectedreason" id="rejectedreason{{$sample->id}}">
 
                                                     <option> Select One </option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
@@ -252,6 +252,12 @@
                 $(this).html("Check All");           
             }
         });
+
+        /*$(".checkbox").change(function() {
+            if(this.checked) {
+                //Do stuff
+            }
+        });*/
 
     @endcomponent
 
