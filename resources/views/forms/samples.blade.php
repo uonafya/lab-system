@@ -82,7 +82,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control ampath-only" name="amrs_location">
 
-                                  <option value=""> Select One </option>
+                                  <option> Select One </option>
                                   @foreach ($amrs_locations as $amrs_location)
                                       <option value="{{ $amrs_location->id }}"
 
@@ -109,7 +109,7 @@
                             <label class="col-sm-4 control-label">Sample Type</label>
                             <div class="col-sm-8">
                                 <select class="form-control" name="sample_type">
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     <option value="GAP Sample"> GAP Sample </option>
                                     <option value="Study Sample"> Study Sample </option>
                                 </select>
@@ -184,7 +184,7 @@
                             <div class="col-sm-5">
                                 <select class="form-control requirable" required name="pcrtype" id="pcrtype">
 
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     @foreach ($pcrtypes as $pcrtype)
                                         <option value="{{ $pcrtype->id }}"
 
@@ -205,7 +205,7 @@
 
                         </div>
 
-                        <!-- <input type="hidden" value="" name="pcrtype" id="hidden_pcr"> -->
+                        <!-- <input type="hidden" name="pcrtype" id="hidden_pcr"> -->
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Birth
@@ -225,7 +225,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="sex" id="sex">
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
 
@@ -247,7 +247,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="entry_point" id="entry_point">
 
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     @foreach ($entry_points as $entry_point)
                                         <option value="{{ $entry_point->id }}"
 
@@ -270,7 +270,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="regimen">
 
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     @foreach ($iprophylaxis as $ip)
                                         <option value="{{ $ip->id }}"
 
@@ -293,7 +293,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="feeding">
 
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     @foreach ($feedings as $feeding)
                                         <option value="{{ $feeding->id }}"
 
@@ -379,7 +379,7 @@
                             </label>
                             <div class="col-sm-8"><select class="form-control requirable" required name="mother_prophylaxis">
 
-                                <option value=""> Select One </option>
+                                <option> Select One </option>
                                 @foreach ($interventions as $intervention)
                                     <option value="{{ $intervention->id }}"
 
@@ -421,7 +421,7 @@
                             <div class="col-sm-8">
                                     <select class="form-control lockable" required name="hiv_status" id="hiv_status">
 
-                                    <option value=""> Select One </option>
+                                    <option> Select One </option>
                                     @foreach ($hiv_statuses as $hiv_status)
                                         <option value="{{ $hiv_status->id }}"
 
@@ -531,7 +531,7 @@
                                 <div class="col-sm-8">
                                         <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
-                                        <option value=""> Select One </option>
+                                        <option> Select One </option>
                                         @foreach ($receivedstatuses as $receivedstatus)
                                             <option value="{{ $receivedstatus->id }}"
 
@@ -552,7 +552,7 @@
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                        <option value=""> Select One </option>
+                                        <option> Select One </option>
                                         @foreach ($rejectedreasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
@@ -756,7 +756,7 @@
                 $(".ampath-div").hide();
             @endif 
 
-            @if(env('APP_LAB', 3) != 2)
+            @if(env('APP_LAB', 3))
                 $(".alupe-div").hide();
             @endif  
 
