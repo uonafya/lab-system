@@ -9,7 +9,8 @@
 
         // $(".form-horizontal select").select2({ width: 'resolve' }); 
         $(".form-horizontal select").select2({
-            placeholder: "Select One"
+            placeholder: "Select One",
+            allowClear: true
         }); 
 
         var msg;

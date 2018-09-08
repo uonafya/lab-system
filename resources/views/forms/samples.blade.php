@@ -58,7 +58,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                               </label>
                               <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control requirable" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" required name="facility_id" id="facility_id">
                                     @isset($sample)
                                         <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
                                     @endisset
@@ -80,9 +80,9 @@
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
                             <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control ampath-only" name="amrs_location">
+                                <select class="form-control ampath-only" name="amrs_location">
 
-                                  
+                                  <option> Select One </option>
                                   @foreach ($amrs_locations as $amrs_location)
                                       <option value="{{ $amrs_location->id }}"
 
@@ -108,8 +108,8 @@
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">Sample Type</label>
                             <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control" name="sample_type">
-                                    
+                                <select class="form-control" name="sample_type">
+                                    <option> Select One </option>
                                     <option value="GAP Sample"> GAP Sample </option>
                                     <option value="Study Sample"> Study Sample </option>
                                 </select>
@@ -182,9 +182,9 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-5">
-                                <select placeholder="Select One" class="form-control requirable" required name="pcrtype" id="pcrtype">
+                                <select class="form-control requirable" required name="pcrtype" id="pcrtype">
 
-                                    
+                                    <option> Select One </option>
                                     @foreach ($pcrtypes as $pcrtype)
                                         <option value="{{ $pcrtype->id }}"
 
@@ -224,8 +224,8 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control lockable requirable" required name="sex" id="sex">
-                                    
+                                <select class="form-control lockable requirable" required name="sex" id="sex">
+                                    <option> Select One </option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
 
@@ -245,9 +245,9 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control lockable requirable" required name="entry_point" id="entry_point">
+                                <select class="form-control lockable requirable" required name="entry_point" id="entry_point">
 
-                                    
+                                    <option> Select One </option>
                                     @foreach ($entry_points as $entry_point)
                                         <option value="{{ $entry_point->id }}"
 
@@ -268,9 +268,9 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control requirable" required name="regimen">
+                                <select class="form-control requirable" required name="regimen">
 
-                                    
+                                    <option> Select One </option>
                                     @foreach ($iprophylaxis as $ip)
                                         <option value="{{ $ip->id }}"
 
@@ -291,9 +291,9 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control requirable" required name="feeding">
+                                <select class="form-control requirable" required name="feeding">
 
-                                    
+                                    <option> Select One </option>
                                     @foreach ($feedings as $feeding)
                                         <option value="{{ $feeding->id }}"
 
@@ -377,9 +377,9 @@
                             <label class="col-sm-4 control-label">PMTCT Regimen
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
-                            <div class="col-sm-8"><select placeholder="Select One" class="form-control requirable" required name="mother_prophylaxis">
+                            <div class="col-sm-8"><select class="form-control requirable" required name="mother_prophylaxis">
 
-                                
+                                <option> Select One </option>
                                 @foreach ($interventions as $intervention)
                                     <option value="{{ $intervention->id }}"
 
@@ -419,9 +419,9 @@
                         {{--<!-- <div class="form-group">
                             <label class="col-sm-4 control-label">HIV Status</label>
                             <div class="col-sm-8">
-                                    <select placeholder="Select One" class="form-control lockable" required name="hiv_status" id="hiv_status">
+                                    <select class="form-control lockable" required name="hiv_status" id="hiv_status">
 
-                                    
+                                    <option> Select One </option>
                                     @foreach ($hiv_statuses as $hiv_status)
                                         <option value="{{ $hiv_status->id }}"
 
@@ -464,7 +464,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                               <div class="col-sm-8">
-                                <select placeholder="Select One" class="form-control requirable" required name="lab_id" id="lab_id">
+                                <select class="form-control requirable" required name="lab_id" id="lab_id">
                                     @isset($sample)
                                         <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
                                     @endisset
@@ -529,9 +529,9 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                        <select placeholder="Select One" class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
-                                        
+                                        <option> Select One </option>
                                         @foreach ($receivedstatuses as $receivedstatus)
                                             <option value="{{ $receivedstatus->id }}"
 
@@ -550,9 +550,9 @@
                             <div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>
                                 <div class="col-sm-8">
-                                        <select placeholder="Select One" class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                        
+                                        <option> Select One </option>
                                         @foreach ($rejectedreasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
