@@ -8,7 +8,9 @@
     	$(".form-control").attr('autocomplete', 'off');
 
         // $(".form-horizontal select").select2({ width: 'resolve' }); 
-        $(".form-horizontal select").select2(); 
+        $(".form-horizontal select").select2(
+            placeholder: "Select One"
+        ); 
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }
