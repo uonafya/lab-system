@@ -67,7 +67,7 @@
                           <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
                           <div class="col-sm-8"><select class="form-control ampath-only" name="amrs_location">
 
-                              <option> Select One </option>
+                              <option></option>
                               @foreach ($amrs_locations as $amrs_location)
                                   <option value="{{ $amrs_location->id }}"
 
@@ -176,7 +176,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="sex" id="sex">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
 
@@ -198,7 +198,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" name="pmtct" id="pmtct">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($pmtct_types as $pmtct)
                                         <option value="{{ $pmtct->id }}"
 
@@ -223,7 +223,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="sampletype" id="sampletype">
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($sampletypes as $sampletype)
                                         <option value="{{ $sampletype->id }}"
 
@@ -292,7 +292,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($prophylaxis as $proph)
                                         <option value="{{ $proph->id }}"
 
@@ -323,7 +323,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="regimenline" id="regimenline">
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($regimenlines as $regimenline)
                                         <option value="{{ $regimenline->id }}"
 
@@ -346,7 +346,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="justification" id="justification">
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($justifications as $justification)
                                         <option value="{{ $justification->id }}"
 
@@ -430,7 +430,7 @@
                                 <div class="col-sm-8">
                                         <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
-                                        <option> Select One </option>
+                                        <option></option>
                                         @foreach ($receivedstatuses as $receivedstatus)
                                             <option value="{{ $receivedstatus->id }}"
 
@@ -451,7 +451,7 @@
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                        <option> Select One </option>
+                                        <option></option>
                                         @foreach ($rejectedreasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
