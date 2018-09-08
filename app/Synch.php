@@ -679,6 +679,7 @@ class Synch
 
 			foreach ($body->mothers as $key => $value) {
 				// $update_data = get_object_vars($value);
+				$update_data = [];
 				$update_data['national_mother_id'] = $value->id;
 				$update_data['synched'] = 1;
 				$update_data['datesynched'] = $today;

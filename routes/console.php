@@ -152,7 +152,7 @@ Artisan::command('match:patients {type}', function($type){
 
 
 Artisan::command('match:batches {type}', function($type){
-    $str = \App\Synch::match_batches();
+    $str = \App\Synch::match_batches($type);
     $this->info($str);
 })->describe('Match batches with records on the national database.');
 
