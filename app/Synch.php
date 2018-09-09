@@ -226,7 +226,7 @@ class Synch
 		}
 
 		while (true) {
-			$batches = $batch_class::with(['sample.patient:id,national_patient_id'])
+			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
 			->where('synched', 0)->where('batch_complete', 1)->limit(10)->get();
 			// return ($batches);
 			if($batches->isEmpty()) break;
@@ -640,6 +640,7 @@ class Synch
 				->where('synched', 1)
 				->whereNull('national_patient_id')
 				->limit(200)
+				->offset($done)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -705,6 +706,7 @@ class Synch
 				->where('synched', 1)
 				->whereNull('national_patient_id')
 				->limit(200)
+				->offset($done)
 				->get();
 			if($patients->isEmpty()) break;
 
