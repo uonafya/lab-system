@@ -57,7 +57,11 @@
 					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name ?? ''}} </strong> 
 				</td>
 				<td colspan="3" align="right">
-					<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
+					@if($batch->site_entry == 2)
+						<strong>Testing Facility: {{ $batch->facility_lab->name ?? '' }}</strong>
+					@else
+						<strong>LAB: {{ $batch->lab->name ?? '' }}</strong>
+					@endif
 				</td>
 			</tr>
 			<tr>
