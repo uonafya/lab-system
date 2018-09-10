@@ -26,7 +26,6 @@ border : solid 1px black;
 width:1100px;
 width:1180px;
 }
- .style7 {font-size: medium}
 .style10 {font-size: 16px}
 </style>
 
