@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
+use App\Mail\UrgentCommunication;
 use Carbon\Carbon;
 use Exception;
 
@@ -324,6 +325,21 @@ class Common
 		 	self::dispatch_batch($batch);
 		 	break;
 		} 
+    }
+
+    public static function send_communication()
+    {
+        ini_set("memory_limit", "-1");
+        $facilities = \App\Facility::where('flag', 1)->get();
+
+        foreach ($facilities as $key => $facility) {
+        	// $mail_array = $facility->email_array;
+        	$mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        	$comm = new UrgentCommunication;
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+        	->send($comm);
+        	break;
+        }
     }
 
 }

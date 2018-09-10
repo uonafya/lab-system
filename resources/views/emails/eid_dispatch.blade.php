@@ -34,12 +34,12 @@
 	<br />
 
 	Regards, <br />
-	{{ $batch->lab->labname }}
-	{{ $batch->lab->name }} 
-	{{ $batch->lab->lablocation }}
-	{{ $batch->lab->labtel1 }} 
-	{{ $batch->lab->labtel2 }} 
-	{{ $batch->lab->email }} 
+	{{ $batch->lab->labname }} <br />
+	{{ $batch->lab->name }}  <br />
+	{{ $batch->lab->lablocation }} <br />
+	{{ $batch->lab->labtel1 }}  <br />
+	{{ $batch->lab->labtel2 }}  <br />
+	{{ $batch->lab->email }}  <br />
 
 
 </p>
