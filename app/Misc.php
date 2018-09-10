@@ -342,7 +342,7 @@ class Misc extends Common
         $date_str = $year . '-12-31';        
 
         if($test){
-            $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
                 ->join('batches', 'samples.batch_id', '=', 'batches.id')
                 ->leftJoin('users', 'users.id', '=', 'batches.user_id')
                 ->join('patients', 'samples.patient_id', '=', 'patients.id')
@@ -360,14 +360,14 @@ class Misc extends Common
             $limit -= $repeats->count();
         }
 
-        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
             ->join('batches', 'samples.batch_id', '=', 'batches.id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->join('patients', 'samples.patient_id', '=', 'patients.id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id)->having('isnull', 1);
+                return $query->where('received_by', $user->id)->where('parentid', 0);
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")

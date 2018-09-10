@@ -615,7 +615,7 @@ class MiscViral extends Common
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id)->having('isnull', 1);
+                return $query->where('received_by', $user->id)->where('parentid', 0);
             })
             ->when($sampletype, function($query) use ($sampletype){
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
