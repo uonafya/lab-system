@@ -203,7 +203,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('downloads/POC') }}">POC User Guide</a>
+                <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
             </li>
             <hr />
         @endif
