@@ -145,7 +145,8 @@ class Synch
 		$today = date('Y-m-d');
 
 		while (true) {
-			$patients = Patient::with(['mother'])->where('synched', 0)->limit(20)->get();
+			// $patients = Patient::with(['mother'])->where('synched', 0)->limit(20)->get();
+			$patients = Patient::with(['mother'])->where('synched', 1)->whereNull('national_patient_id')->limit(20)->get();
 			if($patients->isEmpty()) break;
 
 			$response = $client->request('post', 'insert/patients', [
