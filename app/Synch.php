@@ -181,7 +181,8 @@ class Synch
 		$today = date('Y-m-d');
 
 		while (true) {
-			$patients = Viralpatient::where('synched', 0)->limit(30)->get();
+			// $patients = Viralpatient::where('synched', 0)->limit(30)->get();
+			$patients = Viralpatient::where('synched', 1)->whereNull('national_patient_id')->limit(30)->get();
 			if($patients->isEmpty()) break;
 
 			$response = $client->request('post', 'insert/viralpatients', [
