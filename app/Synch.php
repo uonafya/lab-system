@@ -217,7 +217,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 		$my = new $misc_class;
-		$my->save_tat($sampleview_class, $sample_class);
+		// $my->save_tat($sampleview_class, $sample_class);
 
 		if($batch_class == "App\\Batch"){
 			$url = 'insert/batches';
@@ -227,8 +227,8 @@ class Synch
 
 		while (true) {
 			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
-			->where('synched', 0)->where('batch_complete', 1)->limit(50)->get();
-			// return ($batches);
+			->where('synched', 0)->where('batch_complete', 1)->limit(10)->get();
+			dd($batches);
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
