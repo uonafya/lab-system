@@ -633,6 +633,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 		$done = 0;
+		$offset=0;
 
 		while (true) {
 			$patients = Patient::select('id', 'facility_id', 'patient')
@@ -640,7 +641,7 @@ class Synch
 				->where('synched', 1)
 				->whereNull('national_patient_id')
 				->limit(200)
-				->offset($done)
+				->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -678,6 +679,8 @@ class Synch
 				Patient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
+			$offset += (200 - ($key+1));
+
 			foreach ($body->mothers as $key => $value) {
 				// $update_data = get_object_vars($value);
 				$update_data = [];
@@ -700,13 +703,14 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 		$done=0;
+		$offset=0;
 
 		while (true) {
 			$patients = Viralpatient::select('id', 'facility_id', 'patient')
 				->where('synched', 1)
 				->whereNull('national_patient_id')
 				->limit(200)
-				->offset($done)
+				->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -734,6 +738,8 @@ class Synch
 
 				Viralpatient::where('id', $value->original_patient_id)->update($update_data);
 			}
+
+			$offset += (200 - ($key+1));
 
 			$done+=200;
 			echo "Matched {$done} vl patient records at " . date('d/m/Y h:i:s a', time()). "\n";

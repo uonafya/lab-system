@@ -278,7 +278,7 @@ class Common
         }
 
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
         if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
@@ -336,8 +336,12 @@ class Common
         	$mail_array = $facility->email_array;
         	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         	$comm = new UrgentCommunication;
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
-        	->send($comm);
+        	try {
+	        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+	        	->send($comm);
+	        } catch (Exception $e) {
+        	
+	        }
         	// break;
         }
     }
