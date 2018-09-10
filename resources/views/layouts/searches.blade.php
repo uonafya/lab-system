@@ -16,8 +16,8 @@
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
 		set_select("viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet", true);
 
-		set_select("sidebar_worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
-		set_select("sidebar_viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet", true);
+		set_select("sidebar_worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for EID worksheet", true);
+		set_select("sidebar_viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for VL worksheet", true);
 
 		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility", "{{ url('/batch/facility') }}");
 		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/batch/facility') }}");
