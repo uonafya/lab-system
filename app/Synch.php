@@ -245,7 +245,7 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			// dd($body);
+			dd($body);
 
 			foreach ($body->batches as $key => $value) {
 				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
