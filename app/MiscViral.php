@@ -637,7 +637,7 @@ class MiscViral extends Common
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
-        $create = false;
+        $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
 
         return [
