@@ -640,7 +640,7 @@ class Synch
 		while (true) {
 			$patients = Patient::select('id', 'facility_id', 'patient')
 				->with(['mother:id'])
-				->where('synched', 1)
+				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
 				->offset($offset)
@@ -711,7 +711,7 @@ class Synch
 
 		while (true) {
 			$patients = Viralpatient::select('id', 'facility_id', 'patient')
-				->where('synched', 1)
+				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
 				->offset($offset)
@@ -775,7 +775,7 @@ class Synch
 
 		while (true) {
 			$batches = $batch_class::with(['sample:id'])
-				->where('synched', 1)
+				->where('synched', '>', 0)
 				->whereNull('national_batch_id')
 				->limit(200)
 				->get();
