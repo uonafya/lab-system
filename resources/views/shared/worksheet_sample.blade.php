@@ -1,3 +1,4 @@
+{{ dd($sample) }}
 @if($sample->parentid)
 	$parent = "- {$sample->parentid}";
 	$rr = "
