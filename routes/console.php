@@ -158,6 +158,11 @@ Artisan::command('match:batches {type}', function($type){
 
 
 
+Artisan::command('email:urgent', function(){
+    $str = \App\Common::send_communication();
+    $this->info($str);
+})->describe('Send test email.');
+
 Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();
     $this->info($str);
