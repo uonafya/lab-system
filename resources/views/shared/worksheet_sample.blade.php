@@ -1,19 +1,3 @@
-@if($sample->parentid)
-	$parent = "- {$sample->parentid}";
-	$rr = "
-			<div align='right'> 
-				<table>
-					<tr>
-						<td style='background-color:#FAF156'><small>R ({{ $sample->parentid }})</small></td>
-					</tr>
-				</table> 
-			</div>
-			";
-@else
-	$parent = "";
-	$rr = "";
-@endif
-
 <td > 
 	@if($sample->parentid)
 		<div align='right'> 
