@@ -258,15 +258,17 @@
 		
 
 		<div>
-			<table style="display: inline-block;">
-				<th><b>LAB CONTACTS </b> </td>
-				<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
-				<tr><td>{{ $batch->lab->name }} </td></tr>
-				<tr><td>{{ $batch->lab->lablocation }} </td></tr>
-				<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
-				<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
-				<tr><td>{{ $batch->lab->email }} </td></tr>
-			</table>
+			@if($batch->site_entry != 2)
+				<table style="display: inline-block;">
+					<th><b>LAB CONTACTS </b> </td>
+					<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
+					<tr><td>{{ $batch->lab->name }} </td></tr>
+					<tr><td>{{ $batch->lab->lablocation }} </td></tr>
+					<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
+					<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
+					<tr><td>{{ $batch->lab->email }} </td></tr>
+				</table>
+			@endif
 				
 			<table style="display: inline-block;">
 				<tr><b>KEY/CODES</b></tr>

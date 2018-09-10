@@ -249,17 +249,21 @@
 			To Access & Download your current and past results go to : http://nascop.org
 		</p>
 
-		<b>LAB CONTACTS </b>
+		@if($batch->site_entry != 2)
 
-		<table style="display: inline-block;">
-			<th> </td>
-			<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
-			<tr><td>{{ $batch->lab->name }} </td></tr>
-			<tr><td>{{ $batch->lab->lablocation }} </td></tr>
-			<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
-			<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
-			<tr><td>{{ $batch->lab->email }} </td></tr>
-		</table>
+			<b>LAB CONTACTS </b>
+
+			<table style="display: inline-block;">
+				<th> </td>
+				<tr><td><b> {{ $batch->lab->labname }} </b></td></tr>
+				<tr><td>{{ $batch->lab->name }} </td></tr>
+				<tr><td>{{ $batch->lab->lablocation }} </td></tr>
+				<tr><td>{{ $batch->lab->labtel1 }} </td></tr>
+				<tr><td>{{ $batch->lab->labtel2 }} </td></tr>
+				<tr><td>{{ $batch->lab->email }} </td></tr>
+			</table>
+
+		@endif
 
 		@if($loop->last)
 			@break
