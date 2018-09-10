@@ -114,32 +114,7 @@ width:1180px;
 
 				@foreach($samples->where('parentid', '!=', 0) as $sample)
 
-					@php
-						$parent = "- {$sample->parentid}";
-						$rr = "
-								<div align='right'> 
-									<table>
-										<tr>
-											<td style='background-color:#FAF156'><small>R </small></td>
-										</tr>
-									</table> 
-								</div>
-								";
-					@endphp
-
-					<td > 
-						{!! $rr !!} 
-						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
-											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
-											<b>Sample ID:</b> {{ $sample->patient->patient }} <br />
-											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br /> 
-
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
-						<br />
-						{{ $sample->id }}
-
-					</td>
-
+					@include('shared/worksheet_sample', ['sample' => $sample])
 
 					@php $count++; @endphp
 
@@ -151,27 +126,8 @@ width:1180px;
 
 
 				@foreach($samples->where('parentid', 0) as $sample)
-					
 
-					@php
-						$parent = "";
-						$rr = "";
-					@endphp
-
-					<td > 
-						{{ $rr }} 
-						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
-											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
-											<b>Sample ID:</b> {{ $sample->patient->patient }} <br />
-											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br />
-
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100" />
-						<br />
-						{{ $sample->id }}
-
-					</td>
-
-
+					@include('shared/worksheet_sample', ['sample' => $sample])
 
 					@php $count++; @endphp
 
