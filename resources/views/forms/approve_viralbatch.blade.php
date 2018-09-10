@@ -166,7 +166,7 @@
                                             <td>
                                                 <select class="form-control" name="rejectedreason" id="rejectedreason">
 
-                                                    <option> Select One </option>
+                                                    <option></option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}

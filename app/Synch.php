@@ -226,7 +226,7 @@ class Synch
 		}
 
 		while (true) {
-			$batches = $batch_class::with(['sample.patient:id,national_patient_id'])
+			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
 			->where('synched', 0)->where('batch_complete', 1)->limit(10)->get();
 			// return ($batches);
 			if($batches->isEmpty()) break;
@@ -640,6 +640,7 @@ class Synch
 				->where('synched', 1)
 				->whereNull('national_patient_id')
 				->limit(200)
+				->offset($done)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -679,6 +680,7 @@ class Synch
 
 			foreach ($body->mothers as $key => $value) {
 				// $update_data = get_object_vars($value);
+				$update_data = [];
 				$update_data['national_mother_id'] = $value->id;
 				$update_data['synched'] = 1;
 				$update_data['datesynched'] = $today;
@@ -704,6 +706,7 @@ class Synch
 				->where('synched', 1)
 				->whereNull('national_patient_id')
 				->limit(200)
+				->offset($done)
 				->get();
 			if($patients->isEmpty()) break;
 

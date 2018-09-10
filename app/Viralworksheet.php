@@ -56,4 +56,12 @@ class Viralworksheet extends BaseModel
     {
         return $this->belongsTo('App\User', 'reviewedby2');
     }
+
+
+
+    public function getSampleTypeNameAttribute()
+    {
+        if($this->sampletype == 1) return "DBS";
+        if($this->sampletype == 2) return "Plasma / EDTA";
+    }
 }
