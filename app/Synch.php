@@ -145,8 +145,7 @@ class Synch
 		$today = date('Y-m-d');
 
 		while (true) {
-			// $patients = Patient::with(['mother'])->where('synched', 0)->limit(20)->get();
-			$patients = Patient::with(['mother'])->where('synched', 2)->whereNull('national_patient_id')->limit(20)->get();
+			$patients = Patient::with(['mother'])->where('synched', 0)->limit(20)->get();
 			if($patients->isEmpty()) break;
 
 			$response = $client->request('post', 'insert/patients', [
@@ -181,8 +180,7 @@ class Synch
 		$today = date('Y-m-d');
 
 		while (true) {
-			// $patients = Viralpatient::where('synched', 0)->limit(30)->get();
-			$patients = Viralpatient::where('synched', 2)->whereNull('national_patient_id')->limit(30)->get();
+			$patients = Viralpatient::where('synched', 0)->limit(30)->get();
 			if($patients->isEmpty()) break;
 
 			$response = $client->request('post', 'insert/viralpatients', [
