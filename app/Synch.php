@@ -217,7 +217,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 		$my = new $misc_class;
-		// $my->save_tat($sampleview_class, $sample_class);
+		$my->save_tat($sampleview_class, $sample_class);
 
 		if($batch_class == "App\\Batch"){
 			$url = 'insert/batches';
@@ -245,8 +245,6 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			// dd($body);
-
 			foreach ($body->batches as $key => $value) {
 				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
 				$batch_class::where('id', $value->original_id)->update($update_data);
@@ -256,8 +254,6 @@ class Synch
 				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
-			dd($body);
-			break;
 		}
 	}
 
