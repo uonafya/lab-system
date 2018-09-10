@@ -254,6 +254,7 @@ class Synch
 				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
+			break;
 		}
 	}
 
