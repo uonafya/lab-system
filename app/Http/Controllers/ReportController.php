@@ -47,31 +47,31 @@ class ReportController extends Controller
     public function kits(Request $request)
     {
         if($request->method() == 'POST') {
-            $platform = $request->platform;
+            $platform = $request->input('platform');
             if ($platform == 'abbott') 
                 $model = Abbotdeliveries::select('*');
             if ($platform == 'taqman')
                 $model = Taqmandeliveries::select('*');
             
-            if($request->types == 'eid') 
+            if($request->input('types') == 'eid') 
                 $model->where('testtype', '=', 1);
-            if($request->types == 'viralload') 
+            if($request->input('types') == 'viralload') 
                 $model->where('testtype', '=', 2);
             
-            if($request->source == 'scms') 
+            if($request->input('source') == 'scms') 
                 $model->where('source', '=', 1);
-            if($request->source == 'lab') 
+            if($request->input('source') == 'lab') 
                 $model->where('source', '=', 2);
-            if ($request->source == 'kemsa') 
+            if ($request->input('source') == 'kemsa') 
                 $model->where('source', '=', 3);
 
-            $year = $request->year;
+            $year = $request->input('year');
             $model->whereRaw("YEAR(datereceived) = $year");
-            if ($request->period == 'monthly') {
-                $month = $request->month;
+            if ($request->input('period') == 'monthly') {
+                $month = $request->input('month');
                 $model->whereRaw("MONTH(datereceived) = $month");
-            } else if ($request->period == 'quarterly') {
-                $quarter = parent::_getQuarterMonths($request->quarter);
+            } else if ($request->input('period') == 'quarterly') {
+                $quarter = parent::_getQuarterMonths($request->input('quarter'));
                 $in = "in (";
                 foreach ($quarter as $key => $value) {
                     if ($key == 2) {
@@ -89,7 +89,7 @@ class ReportController extends Controller
             if ($value) {
                 $data['kits'] = $kits;
                 if ($platform == 'abbott') {
-                    if ($request->format == 'excel') {
+                    if ($request->input('format') == 'excel') {
                         
                         return back();
                     }
@@ -98,7 +98,7 @@ class ReportController extends Controller
                     return view('reports.abbottkits', compact('data'))->with('pageTitle', '');
                 }
                 if ($platform == 'taqman'){
-                    if ($request->format == 'excel') {
+                    if ($request->input('format') == 'excel') {
                         
                         return back();
                     }
@@ -117,7 +117,7 @@ class ReportController extends Controller
     public function consumption(Request $request)
     {
         $data = [];
-        $platform = $request->platform;
+        $platform = $request->input('platform');
         if ($platform == 'abbott') {
             $model = Abbotprocurement::select('*');
             $kits = Abbotdeliveries::select('*');
@@ -130,7 +130,7 @@ class ReportController extends Controller
         }
 
 
-        if($request->types == 'eid') {
+        if($request->input('types') == 'eid') {
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
             $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")
@@ -142,7 +142,7 @@ class ReportController extends Controller
                         });
             $type = 'EID';
         }
-        if($request->types == 'viralload') {
+        if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
             $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")
@@ -154,16 +154,16 @@ class ReportController extends Controller
                         });
             $type = 'VL';
         }
-        $month = $request->month;
+        $month = $request->input('month');
         $previousMonth = $month -1;
 
-        $model->where('year', $request->year);
+        $model->where('year', $request->input('year'));
         $model->where('month', $month)->orWhere('month', $previousMonth);
-        $tests->whereYear('datetested', $request->year);
+        $tests->whereYear('datetested', $request->input('year'));
         $tests->whereMonth('datetested', $month);
         // $model->where('lab_id', env('APP_LAB'));
 
-        $kits->whereYear('datereceived', $request->year);
+        $kits->whereYear('datereceived', $request->input('year'));
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
 
@@ -257,60 +257,60 @@ class ReportController extends Controller
     				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
     	}
 
-        if ($request->category == 'county') {
-            $model = $model->where('view_facilitys.county_id', '=', $request->county);
-            $county = ViewFacility::where('county_id', '=', $request->county)->get()->first();
+        if ($request->input('category') == 'county') {
+            $model = $model->where('view_facilitys.county_id', '=', $request->input('county'));
+            $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
             $title .= $county->county;
-        } else if ($request->category == 'subcounty') {
-            $model = $model->where('view_facilitys.subcounty_id', '=', $request->district);
-            $subc = ViewFacility::where('subcounty_id', '=', $request->district)->get()->first();
+        } else if ($request->input('category') == 'subcounty') {
+            $model = $model->where('view_facilitys.subcounty_id', '=', $request->input('district'));
+            $subc = ViewFacility::where('subcounty_id', '=', $request->input('district'))->get()->first();
             $title .= $subc->subcounty;
-        } else if ($request->category == 'facility') {
-            $model = $model->where('view_facilitys.id', '=', $request->facility);
-            $facility = ViewFacility::where('id', '=', $request->facility)->get()->first();
+        } else if ($request->input('category') == 'facility') {
+            $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
+            $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
             $title .= $facility->name;
         }
 
-    	if (isset($request->specificDate)) {
-    		$dateString = date('d-M-Y', strtotime($request->specificDate));
-    		$model = $model->where("$table.datereceived", '=', $request->specificDate);
+    	if (isset($request->input('specificDate'))) {
+    		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
+    		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            if (!isset($request->period) || $request->period == 'range') {
-                $dateString = date('d-M-Y', strtotime($request->fromDate))." - ".date('d-M-Y', strtotime($request->toDate));
-                if ($request->period) { $column = 'datetested'; } 
+            if (!isset($request->input('period')) || $request->input('period') == 'range') {
+                $dateString = date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
+                if ($request->input('period')) { $column = 'datetested'; } 
                 else { $column = 'datereceived'; }
-                $model = $model->whereRaw("$table.$column BETWEEN '".$request->fromDate."' AND '".$request->toDate."'");
-            } else if ($request->period == 'monthly') {
-                $dateString = date("F", mktime(null, null, null, $request->month)).' - '.$request->year;
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->year."' AND MONTH($table.datetested) = '".$request->month."'");
-            } else if ($request->period == 'quarterly') {
-                if ($request->quarter == 'Q1') {
+                $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+            } else if ($request->input('period') == 'monthly') {
+                $dateString = date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
+                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) = '".$request->input('month')."'");
+            } else if ($request->input('period') == 'quarterly') {
+                if ($request->input('quarter') == 'Q1') {
                     $startQuarter = 1;
                     $endQuarter = 3;
-                } else if ($request->quarter == 'Q2') {
+                } else if ($request->input('quarter') == 'Q2') {
                     $startQuarter = 4;
                     $endQuarter = 6;
-                } else if ($request->quarter == 'Q3') {
+                } else if ($request->input('quarter') == 'Q3') {
                     $startQuarter = 7;
                     $endQuarter = 9;
-                } else if ($request->quarter == 'Q4') {
+                } else if ($request->input('quarter') == 'Q4') {
                     $startQuarter = 10;
                     $endQuarter = 12;
                 } else {
                     $startQuarter = 0;
                     $endQuarter = 0;
                 }
-                $dateString = $request->quarter.' - '.$request->year;
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->year."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
-            } else if ($request->period == 'annually') {
-                $dateString = $request->year;
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->year."'");
+                $dateString = $request->input('quarter').' - '.$request->input('year');
+                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
+            } else if ($request->input('period') == 'annually') {
+                $dateString = $request->input('year');
+                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."'");
             }
     	}
 
         $report = (session('testingSystem') == 'Viralload') ? 'VL ' : 'EID ';
 
-        if ($request->types == 'tested') {
+        if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
             $report .= 'tested outcomes ';
         } else {
