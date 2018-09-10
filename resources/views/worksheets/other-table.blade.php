@@ -42,6 +42,15 @@ width:1180px;
 	@endisset
 	>
 	<div align="center">
+			@if(get_class($worksheet) == "App\Viralworksheet")
+				<tr class="odd">
+					<td colspan="8">
+						<center>
+							[{{ $worksheet->sample_type_name }}]							
+						</center>						
+					</td>					
+				</tr>
+			@endif
 
 		<table border="0" class="data-table">
 			<tr >

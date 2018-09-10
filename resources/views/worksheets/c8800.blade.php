@@ -26,7 +26,6 @@ border : solid 1px black;
 width:1100px;
 width:1180px;
 }
- .style7 {font-size: medium}
 .style10 {font-size: 16px}
 </style>
 
@@ -44,6 +43,15 @@ width:1180px;
 	<div align="center">
 
 		<table border="0" class="data-table">
+			@if(get_class($worksheet) == "App\Viralworksheet")
+				<tr class="odd">
+					<td colspan="8">
+						<center>
+							[{{ $worksheet->sample_type_name }}]							
+						</center>						
+					</td>					
+				</tr>
+			@endif
 
 			<tr>
 				<td><b>Worksheet No</b></td>
