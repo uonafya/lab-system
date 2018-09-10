@@ -182,7 +182,7 @@
                                             <td style="width: 1000px;">
                                                 <select class="form-control" name="rejectedreason" id="rejectedreason_{{$sample->id}}">
 
-                                                    <option> Select One </option>
+                                                    <option></option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}

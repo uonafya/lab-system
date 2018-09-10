@@ -19,13 +19,20 @@ class WorklistController extends Controller
     public function index($testtype = null)
     {
         $facility_id = auth()->user()->facility_id;
-        $worklists = Worklist::when($testtype, function($query) use ($testtype){
+        $worklists = Worklist::with(['facility'])->when($testtype, function($query) use ($testtype){
             return $query->where('testtype', $testtype);
         })->where('facility_id', $facility_id)->get();
-        $samples = $this->get_worklists();
+        $eid_samples = $this->get_worklists(1);
+        $vl_samples = $this->get_worklists(2);
 
-        $worklists->transform(function($worklist, $key) use ($samples){
-            $worklist->sample_count = $samples->where('worksheet_id', $worklist->id)->first()->totals ?? 0;
+        $worklists->transform(function($worklist, $key) use ($eid_samples, $vl_samples){
+            if($worklist->testtype == 1){
+                $worklist->sample_count = $eid_samples->where('worksheet_id', $worklist->id)->first()->totals ?? 0;
+            }
+            else if($worklist->testtype == 2){
+                $worklist->sample_count = $vl_samples->where('worksheet_id', $worklist->id)->first()->totals ?? 0;
+            }
+            
             return $worklist;
         });
 
@@ -52,7 +59,7 @@ class WorklistController extends Controller
         $samples = $model::whereNull('worksheet_id')
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
-            ->whereRaw("(facility_id = {$facility_id} or user_id = {$facility_id})")
+            ->whereRaw("(facility_id = {$facility_id} or user_id = {$facility_id} or lab_id = {$facility_id})")
             ->where('input_complete', true)
             ->where('site_entry', 2)
             ->orderBy('created_at', 'asc')
@@ -170,9 +177,11 @@ class WorklistController extends Controller
         return view('worksheets.worklists', ['worklist' => $worklist, 'samples' => $samples, 'print' => true]);
     }
 
-    public function get_worklists($worklist_id=NULL)
+    public function get_worklists($type=1, $worklist_id=NULL)
     {
-        $samples = SampleView::selectRaw("count(*) as totals, worksheet_id")
+        $sample_view = ViralsampleView::class;
+        if($type == 1) $sample_view = SampleView::class;
+        $samples = $sample_view::selectRaw("count(*) as totals, worksheet_id")
             ->whereNotNull('worksheet_id')
             ->when($worklist_id, function($query) use ($worklist_id){                
                 if (is_array($worklist_id)) {

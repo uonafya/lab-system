@@ -279,7 +279,7 @@ class FacilityController extends Controller
      */
     public function update(Request $request, $id=null)
     {
-        $id = $request->id;
+        $id = $request->input('id');
         $success = 'Update was sucessfull';
         $failed = 'Updated failed try again later';
         // $this->validate($request, [
@@ -324,15 +324,16 @@ class FacilityController extends Controller
                 }
             }
         } else {//From the single row update views
-            $data = ['facilitycode' => $request->facilitycode, 'name' => $request->name,
-                'PostalAddress' => $request->PostalAddress, 'physicaladdress' => $request->physicaladdress,
-                'telephone' => $request->telephone, 'fax' => $request->fax,
-                'telephone2' => $request->telephone2, 'email' => $request->email,
-                'smsprinterphoneno' => $request->smsprinterphoneno, 'contactperson' => $request->contactperson,
-                'contacttelephone' => $request->contacttelephone, 'ContactEmail' => $request->ContactEmail,
-                'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
-                'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
-                'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
+            // $data = ['facilitycode' => $request->facilitycode, 'name' => $request->name,
+            //     'PostalAddress' => $request->PostalAddress, 'physicaladdress' => $request->physicaladdress,
+            //     'telephone' => $request->telephone, 'fax' => $request->fax,
+            //     'telephone2' => $request->telephone2, 'email' => $request->email,
+            //     'smsprinterphoneno' => $request->smsprinterphoneno, 'contactperson' => $request->contactperson,
+            //     'contacttelephone' => $request->contacttelephone, 'ContactEmail' => $request->ContactEmail,
+            //     'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
+            //     'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
+            //     'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
+            $data = $request->except(['_token', 'id']);
             $update = DB::table('facilitys')
                     ->where('id', $id)
                     ->update($data);
