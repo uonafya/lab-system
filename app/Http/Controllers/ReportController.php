@@ -271,11 +271,11 @@ class ReportController extends Controller
             $title .= $facility->name;
         }
 
-    	if (isset($request->input('specificDate'))) {
+    	if ($request->input('specificDate')) {
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            if (!isset($request->input('period')) || $request->input('period') == 'range') {
+            if (!$request->input('period') || $request->input('period') == 'range') {
                 $dateString = date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
                 if ($request->input('period')) { $column = 'datetested'; } 
                 else { $column = 'datereceived'; }
