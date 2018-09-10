@@ -657,6 +657,7 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+			$i=0;
 
 			foreach ($body->patients as $key => $value) {
 				// $update_data = get_object_vars($value);
@@ -675,11 +676,12 @@ class Synch
 					'synched' => 1,
 					'datesynched' => $today,
 				];
+				$i++;
 
 				Patient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
-			$offset += (200 - ($key+1));
+			$offset += (200 - ($i+1));
 
 			foreach ($body->mothers as $key => $value) {
 				// $update_data = get_object_vars($value);
@@ -727,6 +729,7 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+			$i=0;
 
 			foreach ($body->patients as $key => $value) {
 				// $update_data = get_object_vars($value);
@@ -735,11 +738,12 @@ class Synch
 				$update_data['datesynched'] = $today;
 				// unset($update_data['id']);
 				// unset($update_data['original_patient_id']);
+				$i++;
 
 				Viralpatient::where('id', $value->original_patient_id)->update($update_data);
 			}
 
-			$offset += (200 - ($key+1));
+			$offset += (200 - ($i+1));
 
 			$done+=200;
 			echo "Matched {$done} vl patient records at " . date('d/m/Y h:i:s a', time()). "\n";
