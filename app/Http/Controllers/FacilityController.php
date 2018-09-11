@@ -333,7 +333,7 @@ class FacilityController extends Controller
             //     'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
             //     'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
             //     'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
-            $data = $request->except(['_token', 'id']);
+            $data = $request->except(['_token', 'id', '_method']);
             $update = DB::table('facilitys')
                     ->where('id', $id)
                     ->update($data);
