@@ -291,9 +291,9 @@ class FacilityController extends Controller
         // ]);
         // dd($request->contacttelephone[199]);
 
-        if (gettype($request->id) == "array") {//From the bulk update views
+        if (gettype($id == "array") {//From the bulk update views
             if (isset($request->G4Sbranchname)||isset($request->G4Slocation)) {// update the G4S details
-                foreach ($request->id as $key => $value) {
+                foreach ($id as $key => $value) {
                     $data = ['G4Sbranchname' => $request->G4Sbranchname[$key],'G4Slocation' => $request->G4Slocation[$key]];
 
                     $update = DB::table('facilitys')
@@ -333,10 +333,13 @@ class FacilityController extends Controller
             //     'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
             //     'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
             //     'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
-            $data = $request->except(['_token', 'id']);
-            $update = DB::table('facilitys')
-                    ->where('id', $id)
-                    ->update($data);
+            $data = $request->except(['_token', 'id', '_method']);
+            $fac = \App\Facility::find($id);
+            $fac->fill($data);
+            $fac->save();
+            // $update = DB::table('facilitys')
+            //         ->where('id', $id)
+            //         ->update($data);
             if ($update) {
                 return redirect()->route('facility.index')
                             ->with('success', $success);
