@@ -21,6 +21,12 @@ class VlDispatch extends Mailable
     public $individual_path;
     public $summary_path;
 
+    public $individual_title;
+    public $summary_title;
+    public $title;
+
+    public $type;
+
     /**
      * Create a new message instance.
      *
@@ -58,7 +64,11 @@ class VlDispatch extends Mailable
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->summary_path, \Mpdf\Output\Destination::FILE);
-        // DOMPDF::loadView('exports.viralsamples_summary', $data)->setPaper('a4', 'landscape')->save($this->summary_path);
+
+
+        $this->title = "VL Results for Batch " . $batch->id . " for " . $batch->facility->name . " Received on " . $batch->my_date_format('datereceived');
+        $this->individual_title = "Individual VL Results for Batch " . $batch->id . " for " . $batch->facility->name . " Received on " . $batch->my_date_format('datereceived') . ".pdf";
+        $this->summary_title = "Summary VL Results for Batch " . $batch->id . " for " . $batch->facility->name . " Received on " . $batch->my_date_format('datereceived') . ".pdf";
     }
 
     /**
@@ -78,9 +88,9 @@ class VlDispatch extends Mailable
         //     'mime' => 'application/pdf',
         // ]);
 
-        $this->attach($this->individual_path);
-        $this->attach($this->summary_path);
+        $this->attach($this->individual_path, ['as' => $this->individual_title]);
+        $this->attach($this->summary_path, ['as' => $this->summary_title]);
 
-        return $this->view('emails.eid_dispatch');
+        return $this->subject($this->title)->view('emails.eid_dispatch');
     }
 }
