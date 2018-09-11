@@ -40,7 +40,8 @@
                             <br />
                         @endisset
 
-                        @if(!$batch)    
+
+                        @if(!$batch || isset($viralsample))    
                           <div class="form-group">
                               <label class="col-sm-4 control-label">Facility
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
