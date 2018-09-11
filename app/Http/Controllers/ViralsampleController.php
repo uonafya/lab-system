@@ -231,7 +231,7 @@ class ViralsampleController extends Controller
      */
     public function edit(Viralsample $viralsample)
     {
-        $viralsample->load(['patient', 'batch.facility']);
+        // $viralsample->load(['patient', 'batch.facility']);
         $data = Lookup::viralsample_form();
         $data['viralsample'] = $viralsample;
         // dd($data);
