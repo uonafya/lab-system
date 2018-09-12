@@ -62,6 +62,10 @@ class Misc extends Common
 						$sample->save();
 					}
 				}
+                else{
+                    $sample->result=5;
+                    $sample->save();
+                }
 			}
 		}
 		return true;
