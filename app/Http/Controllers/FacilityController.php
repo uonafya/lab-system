@@ -340,13 +340,13 @@ class FacilityController extends Controller
             // $update = DB::table('facilitys')
             //         ->where('id', $id)
             //         ->update($data);
-            if ($update) {
+            // if ($update) {
                 return redirect()->route('facility.index')
                             ->with('success', $success);
-            } else {
-                return redirect()->route('facility.index')
-                            ->with('failed', $failed);
-            }
+            // } else {
+            //     return redirect()->route('facility.index')
+            //                 ->with('failed', $failed);
+            // }
         }
     }
 
