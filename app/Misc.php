@@ -63,7 +63,7 @@ class Misc extends Common
 					}
 				}
                 else{
-                    $sample->result=5;
+                    if($sample->result == 3) $sample->result=5;
                     $sample->save();
                 }
 			}
