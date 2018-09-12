@@ -227,8 +227,8 @@ class Synch
 
 		while (true) {
 			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
-			->where('synched', 0)->where('batch_complete', 1)->limit(10)->get();
-			// return ($batches);
+			->where('synched', 0)->where('batch_complete', 1)->limit(50)->get();
+			// dd($batches);
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
@@ -633,14 +633,15 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 		$done = 0;
+		$offset=0;
 
 		while (true) {
 			$patients = Patient::select('id', 'facility_id', 'patient')
 				->with(['mother:id'])
-				->where('synched', 1)
+				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
-				->offset($done)
+				->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -656,6 +657,7 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+			$i=0;
 
 			foreach ($body->patients as $key => $value) {
 				// $update_data = get_object_vars($value);
@@ -674,9 +676,12 @@ class Synch
 					'synched' => 1,
 					'datesynched' => $today,
 				];
+				$i++;
 
 				Patient::where('id', $value->original_patient_id)->update($update_data);
 			}
+
+			$offset += (200 - ($i+1));
 
 			foreach ($body->mothers as $key => $value) {
 				// $update_data = get_object_vars($value);
@@ -700,13 +705,14 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 		$done=0;
+		$offset=0;
 
 		while (true) {
 			$patients = Viralpatient::select('id', 'facility_id', 'patient')
-				->where('synched', 1)
+				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
-				->offset($done)
+				->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -723,6 +729,7 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+			$i=0;
 
 			foreach ($body->patients as $key => $value) {
 				// $update_data = get_object_vars($value);
@@ -731,9 +738,12 @@ class Synch
 				$update_data['datesynched'] = $today;
 				// unset($update_data['id']);
 				// unset($update_data['original_patient_id']);
+				$i++;
 
 				Viralpatient::where('id', $value->original_patient_id)->update($update_data);
 			}
+
+			$offset += (200 - ($i+1));
 
 			$done+=200;
 			echo "Matched {$done} vl patient records at " . date('d/m/Y h:i:s a', time()). "\n";
@@ -763,7 +773,7 @@ class Synch
 
 		while (true) {
 			$batches = $batch_class::with(['sample:id'])
-				->where('synched', 1)
+				->where('synched', '>', 0)
 				->whereNull('national_batch_id')
 				->limit(200)
 				->get();

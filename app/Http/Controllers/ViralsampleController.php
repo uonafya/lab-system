@@ -231,9 +231,10 @@ class ViralsampleController extends Controller
      */
     public function edit(Viralsample $viralsample)
     {
-        $viralsample->load(['patient', 'batch.facility']);
+        // $viralsample->load(['patient', 'batch.facility']);
         $data = Lookup::viralsample_form();
         $data['viralsample'] = $viralsample;
+        // dd($data);
         return view('forms.viralsamples', $data)->with('pageTitle', 'Edit Sample');
     }
 
@@ -356,6 +357,10 @@ class ViralsampleController extends Controller
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
+        if($batch->batch_complete == 2){
+            $batch->datedispatched = date('Y-m-d');
+            $batch->batch_complete = 1;
+        }
         $batch->pre_update();
         session(['toast_message' => 'The sample has been updated.']);
 

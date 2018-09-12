@@ -40,7 +40,8 @@
                             <br />
                         @endisset
 
-                        @if(!$batch)    
+
+                        @if(!$batch || isset($viralsample))    
                           <div class="form-group">
                               <label class="col-sm-4 control-label">Facility
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -636,10 +637,12 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                 }
             });
 
