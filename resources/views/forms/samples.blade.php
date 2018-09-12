@@ -729,11 +729,13 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
                     // $("#rejectedreason").prop('disabled', false);
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                     // $("#enrollment_ccc_no").attr("disabled", "disabled");
                     // $("#rejectedreason").prop('disabled', true);
 

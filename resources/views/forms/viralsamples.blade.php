@@ -637,10 +637,12 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                 }
             });
 
