@@ -296,14 +296,12 @@ class Misc extends Common
 			'http_errors' => false,
 			'json' => [
 				'sender' => env('SMS_SENDER_ID'),
-				// 'recipient' => $sample->patient_phone_no,
-				'recipient' => '254725227833',
+				'recipient' => $sample->patient_phone_no,
 				'message' => $message,
 			],
 		]);
 
 		$body = json_decode($response->getBody());
-		return null;
 		if($response->getStatusCode() == 201){
 			$s = Sample::find($sample->id);
 			$s->time_result_sms_sent = date('Y-m-d H:i:s');
