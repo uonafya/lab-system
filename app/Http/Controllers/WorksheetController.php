@@ -457,6 +457,8 @@ class WorksheetController extends Controller
                     $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
                     // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     // Sample::where($search)->update($data_array);
+
+                    $sample_id = (int) $sample_id;
                     $sample = Sample::find($sample_id);
                     if(!$sample) continue;
                     if($sample->worksheet_id != $worksheet->id) continue;
@@ -522,7 +524,8 @@ class WorksheetController extends Controller
 
                 // $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
                 // Sample::where($search)->update($data_array);
-                $sample = Sample::find($data[4]);
+                $sample_id = (int) $data[4];
+                $sample = Sample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
                 $sample->fill($data_array);
