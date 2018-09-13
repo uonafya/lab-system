@@ -404,8 +404,7 @@ class WorksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
         $today = $dateoftest = date("Y-m-d");
-        $positive_control;
-        $negative_control;
+        $positive_control = $negative_control = null;
 
         if($worksheet->machine_type == 2)
         {
@@ -483,10 +482,10 @@ class WorksheetController extends Controller
         else
         {
             $handle = fopen($file, "r");
-            $positive_control = $negative_control = null;
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
                 $interpretation = rtrim($data[8]);
+                $control = rtrim($data[5]);
 
 
                 $flag = $data[10];
@@ -509,12 +508,12 @@ class WorksheetController extends Controller
                     $result = 3;
                 }
 
-                if($data[5] == "NC"){
+                if($control == "NC"){
                     $negative_control = $interpretation;
                     $neg_result = $result;
                 }
 
-                if($data[5] == "LPC" || $data[5] == "PC"){
+                if($control == "LPC" || $control == "PC"){
                     $positive_control = $interpretation;
                     $pos_result = $result;
                 }
