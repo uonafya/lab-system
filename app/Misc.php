@@ -338,6 +338,7 @@ class Misc extends Common
 
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
         $user = auth()->user();
+        \App\Batch::where(['received_by' => $user->id, 'input_complete' => 0])->update(['input_complete' => 1]);
 
         if($machine == NULL || $machine->eid_limit == NULL) return false;
 
