@@ -486,6 +486,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
         $samples = ViralsampleView::whereNotNull('patient_phone_no')
+                    ->where('patient_phone_no', '!=', '')
                     ->whereNull('time_result_sms_sent')
                     ->where('batch_complete', 1)
                     ->where('datereceived', '>', '2018-05-01')
