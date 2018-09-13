@@ -64,4 +64,13 @@ class Viralpatient extends BaseModel
                 ->get()->first();
         $this->recent = $sample;
     }
+
+    public function most_recent()
+    {
+        $sample = \App\Viralsample::where('patient_id', $this->id)
+                ->whereRaw("created_at=
+                    (SELECT max(created_at) FROM viralsamples WHERE patient_id={$this->id})")
+                ->get()->first();
+        $this->most_recent = $sample;
+    }
 }

@@ -694,6 +694,11 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
+                        if(data[3] != 0)
+                        {
+                            set_message(data[3]);
+                        }
+
                         // $(".lockable").attr("disabled", "disabled");
                     }
                     else{

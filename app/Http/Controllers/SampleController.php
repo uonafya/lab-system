@@ -471,6 +471,7 @@ class SampleController extends Controller
         $patient = Patient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
         $data;
         if($patient){
+            $patient->most_recent();
             $mother = $patient->mother;
             $mother->calc_age();
 
@@ -523,6 +524,11 @@ class SampleController extends Controller
             if($age > 24) $error_message = "The patient is over age.";
 
             $data[3] = ['previous_positive' => $previous_positive, 'recommended_pcr' => $recommended_pcr, 'message' => $message, 'error_message' => $error_message];
+
+            $data[4] = 0;
+            if($patient->most_recent){
+                $data[4] = "The date collected for the most recent test of the patient is " . $patient->most_recent->my_date_format('datecollected') . " in batch number " . $patient->most_recent->batch_id;
+            }
         }
         else{
             $data[0] = 1;
