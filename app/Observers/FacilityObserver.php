@@ -36,12 +36,15 @@ class FacilityObserver
 
         $contact = $facility->facility_contact;
 
-        // foreach ($contact_array as $key => $value) {
-        //     if($facility->$value != $facility->getOriginal($value)){
-                $contact->fill($facility->only($contact_array));
-                $contact->save();                
-        //     }
-        // }
+        foreach ($contact_array as $key => $value) {
+            // if($facility->$value != $facility->getOriginal($value)){
+                // $contact->fill($facility->only($contact_array));
+                // $contact->save();                
+            // }
+
+            $contact->$value = $facility->getOriginal($value);
+        }
+        $contact->save();
     }
 
     /*public function updated(Facility $facility)
