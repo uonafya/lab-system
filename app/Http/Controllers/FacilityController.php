@@ -295,8 +295,13 @@ class FacilityController extends Controller
         //     'lab' => 'required',
         // ]);
         // dd($request->contacttelephone[199]);
-
         // if (gettype($id == "array") {//From the bulk update views
+        //     if (isset($request->G4Sbranchname)||isset($request->G4Slocation)) {// update the G4S details
+        //         foreach ($id as $key => $value) {
+        //             $data = ['G4Sbranchname' => $request->G4Sbranchname[$key],'G4Slocation' => $request->G4Slocation[$key]];
+
+
+        // if (gettype($id) == "array") {//From the bulk update views
         //     if (isset($request->G4Sbranchname)||isset($request->G4Slocation)) {// update the G4S details
         //         foreach ($id as $key => $value) {
         //             $data = ['G4Sbranchname' => $request->G4Sbranchname[$key],'G4Slocation' => $request->G4Slocation[$key]];
