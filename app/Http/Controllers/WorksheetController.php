@@ -483,6 +483,7 @@ class WorksheetController extends Controller
         else
         {
             $handle = fopen($file, "r");
+            $positive_control = $negative_control = null;
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
                 $interpretation = rtrim($data[8]);
