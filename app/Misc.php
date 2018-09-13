@@ -297,7 +297,7 @@ class Misc extends Common
 			'json' => [
 				'sender' => env('SMS_SENDER_ID'),
 				// 'recipient' => $sample->patient_phone_no,
-				'recipient' => '254702266217'
+				'recipient' => '254702266217',
 				'message' => $message,
 			],
 		]);
