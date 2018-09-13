@@ -65,6 +65,7 @@ class WorksheetController extends Controller
 
                 if($status == 1){
                     $noresult = $worksheet->sample_count;
+                    $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
                 }
             }
             $worksheet->rerun = $rerun;
