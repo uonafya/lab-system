@@ -277,11 +277,16 @@ class FacilityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id=null)
+    public function update(Request $request, Facility $facility)
     {
-        $id = $request->input('id');
         $success = 'Update was sucessfull';
         $failed = 'Updated failed try again later';
+
+        $data = $request->except(['_token', 'id', '_method']);
+        $facility->fill($data);
+        $facility->save();
+        return redirect()->route('facility.index')->with('success', $success);
+
         // $this->validate($request, [
         //     'facilitycode' => 'required',
         //     'name' => 'required',
@@ -291,63 +296,63 @@ class FacilityController extends Controller
         // ]);
         // dd($request->contacttelephone[199]);
 
-        if (gettype($id == "array") {//From the bulk update views
-            if (isset($request->G4Sbranchname)||isset($request->G4Slocation)) {// update the G4S details
-                foreach ($id as $key => $value) {
-                    $data = ['G4Sbranchname' => $request->G4Sbranchname[$key],'G4Slocation' => $request->G4Slocation[$key]];
+        // if (gettype($id == "array") {//From the bulk update views
+        //     if (isset($request->G4Sbranchname)||isset($request->G4Slocation)) {// update the G4S details
+        //         foreach ($id as $key => $value) {
+        //             $data = ['G4Sbranchname' => $request->G4Sbranchname[$key],'G4Slocation' => $request->G4Slocation[$key]];
 
-                    $update = DB::table('facilitys')
-                        ->where('id', $request->id[$key])
-                        ->update($data);
-                }
-                if ($update) {
-                    return redirect()->route('withoutG4S')
-                                ->with('success', $success);
-                } else {
-                    return redirect()->route('withoutG4S')
-                                ->with('failed', $failed);
-                }
-            } else { //Updating the facilities contact details
-                foreach ($request->id as $key => $value) {
-                    $data = ['email' => $request->email[$key],'contactperson' => $request->contactperson[$key],
-                                'contacttelephone' => $request->contacttelephone[$key],'ContactEmail' => $request->ContactEmail[$key]];
-                    $update = DB::table('facilitys')
-                        ->where('id', $request->id[$key])
-                        ->update($data);
-                }
-                if ($update) {
-                    return redirect()->route('withoutemails')
-                                ->with('success', $success);
-                } else {
-                    return redirect()->route('withoutemails')
-                                ->with('failed', $failed);
-                }
-            }
-        } else {//From the single row update views
-            // $data = ['facilitycode' => $request->facilitycode, 'name' => $request->name,
-            //     'PostalAddress' => $request->PostalAddress, 'physicaladdress' => $request->physicaladdress,
-            //     'telephone' => $request->telephone, 'fax' => $request->fax,
-            //     'telephone2' => $request->telephone2, 'email' => $request->email,
-            //     'smsprinterphoneno' => $request->smsprinterphoneno, 'contactperson' => $request->contactperson,
-            //     'contacttelephone' => $request->contacttelephone, 'ContactEmail' => $request->ContactEmail,
-            //     'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
-            //     'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
-            //     'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
-            $data = $request->except(['_token', 'id', '_method']);
-            $fac = \App\Facility::find($id);
-            $fac->fill($data);
-            $fac->save();
-            // $update = DB::table('facilitys')
-            //         ->where('id', $id)
-            //         ->update($data);
-            // if ($update) {
-                return redirect()->route('facility.index')
-                            ->with('success', $success);
-            // } else {
-            //     return redirect()->route('facility.index')
-            //                 ->with('failed', $failed);
-            // }
-        }
+        //             $update = DB::table('facilitys')
+        //                 ->where('id', $request->id[$key])
+        //                 ->update($data);
+        //         }
+        //         if ($update) {
+        //             return redirect()->route('withoutG4S')
+        //                         ->with('success', $success);
+        //         } else {
+        //             return redirect()->route('withoutG4S')
+        //                         ->with('failed', $failed);
+        //         }
+        //     } else { //Updating the facilities contact details
+        //         foreach ($request->id as $key => $value) {
+        //             $data = ['email' => $request->email[$key],'contactperson' => $request->contactperson[$key],
+        //                         'contacttelephone' => $request->contacttelephone[$key],'ContactEmail' => $request->ContactEmail[$key]];
+        //             $update = DB::table('facilitys')
+        //                 ->where('id', $request->id[$key])
+        //                 ->update($data);
+        //         }
+        //         if ($update) {
+        //             return redirect()->route('withoutemails')
+        //                         ->with('success', $success);
+        //         } else {
+        //             return redirect()->route('withoutemails')
+        //                         ->with('failed', $failed);
+        //         }
+        //     }
+        // } else {//From the single row update views
+        //     // $data = ['facilitycode' => $request->facilitycode, 'name' => $request->name,
+        //     //     'PostalAddress' => $request->PostalAddress, 'physicaladdress' => $request->physicaladdress,
+        //     //     'telephone' => $request->telephone, 'fax' => $request->fax,
+        //     //     'telephone2' => $request->telephone2, 'email' => $request->email,
+        //     //     'smsprinterphoneno' => $request->smsprinterphoneno, 'contactperson' => $request->contactperson,
+        //     //     'contacttelephone' => $request->contacttelephone, 'ContactEmail' => $request->ContactEmail,
+        //     //     'contacttelephone2' => $request->contacttelephone2, 'G4Sbranchname' => $request->G4Sbranchname,
+        //     //     'G4Sphone1' => $request->G4Sphone1, 'G4Sphone3' => $request->G4Sphone3,
+        //     //     'G4Slocation' => $request->G4Slocation, 'G4Sphone2' => $request->G4Sphone2,'G4Sfax' => $request->G4Sfax];
+        //     $data = $request->except(['_token', 'id', '_method']);
+        //     $fac = \App\Facility::find($id);
+        //     $fac->fill($data);
+        //     $fac->save();
+        //     // $update = DB::table('facilitys')
+        //     //         ->where('id', $id)
+        //     //         ->update($data);
+        //     // if ($update) {
+        //         return redirect()->route('facility.index')
+        //                     ->with('success', $success);
+        //     // } else {
+        //     //     return redirect()->route('facility.index')
+        //     //                 ->with('failed', $failed);
+        //     // }
+        // }
     }
 
     /**
