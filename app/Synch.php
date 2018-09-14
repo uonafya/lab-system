@@ -4,7 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
-
+use DB;
 
 use App\Sample;
 use App\Batch;
@@ -632,28 +632,30 @@ class Synch
 		$eid = self::weeklylabactivity('eid');
 		$vl = self::weeklylabactivity('vl');
 
-		$message = 
-		" Hi Tim\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
-		$message .=
-		"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
+		$users = DB::table('musers')->where('weeklyalert', 1)->get();
 
-        $client = new Client(['base_uri' => \App\Common::$sms_url]);
+		foreach ($users as $user) {
 
-		$response = $client->request('post', '', [
-			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-			'debug' => true,
-			'http_errors' => false,
-			'json' => [
-				'sender' => env('SMS_SENDER_ID'),
-				// 'recipient' => '254702266217',
-				'recipient' => '254725227833',
-				'message' => $message,
-			],
+			$message = 
+			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
+			$message .=
+			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
 
-		]);
+	        $client = new Client(['base_uri' => \App\Common::$sms_url]);
 
-		$body = json_decode($response->getBody());
-		echo 'Status code is ' . $response->getStatusCode();
+			$response = $client->request('post', '', [
+				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+				// 'debug' => true,
+				'http_errors' => false,
+				'json' => [
+					'sender' => env('SMS_SENDER_ID'),
+					// 'recipient' => '254702266217',
+					'recipient' => $user->mobile,
+					'message' => $message,
+				],
+			]);
+			$body = json_decode($response->getBody());
+		}
 	}
 
 	public static function weeklylabactivity($type)
