@@ -91,7 +91,7 @@
 
             @foreach($status_count->where('status_id', $worksheet_status->id) as $mach)
                 <div class="col-sm-3">
-                    {!! $machines->where('id', $mach->machine_type)->first()->output !!} : {{ $mach->total }}
+                    {!! $machines->where('id', $mach->machine_type)->first()->machine !!} : {{ $mach->total }}
                 </div>
             @endforeach
         </div>
