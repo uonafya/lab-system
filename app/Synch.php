@@ -633,7 +633,7 @@ class Synch
 		$vl = self::weeklylabactivity('vl');
 
 		$message = 
-		" Hi Joel\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
+		" Hi Tim\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
 		$message .=
 		"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
 
@@ -645,7 +645,8 @@ class Synch
 			'http_errors' => false,
 			'json' => [
 				'sender' => env('SMS_SENDER_ID'),
-				'recipient' => '254702266217',
+				// 'recipient' => '254702266217',
+				'recipient' => '254725227833',
 				'message' => $message,
 			],
 
