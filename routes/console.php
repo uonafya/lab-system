@@ -76,7 +76,7 @@ Artisan::command('send:sms {type}', function($type){
 
 
 Artisan::command('send:weekly', function(){
-    $str = \App\Misc::patient_sms();
+    $str = \App\Synch::send_weekly_activity();
     $this->info($str);
 })->describe('Send out weekly sms alert.');
 
