@@ -639,7 +639,25 @@ class Synch
 			$samples_table = 'viralsamples';
 			$data['testtype'] = 2;
 		}
-		
+
+		$today = date("Y-m-d");
+		$weekstartdate= date ( "Y-m-d", strtotime ('-4 days') );
+
+		$data['numsamplesreceived'] = $sampleview_class::selectRaw('count(id) as totals')
+								->whereBetween('datereceived', [$weekstartdate, $today])
+								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
+								->first()->totals;
+
+		$data['rocheinprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where('machine_type', 1)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
 	}
 
 
