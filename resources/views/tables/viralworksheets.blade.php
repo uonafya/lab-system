@@ -85,7 +85,7 @@
     @foreach($worksheet_statuses as $worksheet_status)
         @continue(!$status_count->where('status_id', $worksheet_status->id)->sum('total'))
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <b>{{ $worksheet_status->state }}:</b> {{ $status_count->where('status_id', $worksheet_status->id)->sum('total') }}
             </div>
 
@@ -95,7 +95,6 @@
                 </div>
             @endforeach
         </div>
-
     @endforeach
         
     <div class="row">

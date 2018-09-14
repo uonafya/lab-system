@@ -82,7 +82,11 @@ class WorksheetController extends Controller
         });
 
         $data = Lookup::worksheet_lookups();
-        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
+        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id, machine_type")
+            ->groupBy('status_id', 'machine_type')
+            ->orderBy('status_id', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('worksheet/index/' . $state . '/');
 
