@@ -125,9 +125,9 @@
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
 
                                     <td> {{ $worksheet->samples_no }} 
-                                        @if($reruns->where('worksheet_id', $worksheet->id)->first()->totals)
+                                        {{--@if($reruns->where('worksheet_id', $worksheet->id)->first()->totals)
                                             <span style="color: #ff0000;"> ({{ $reruns->where('worksheet_id', $worksheet->id)->first()->totals }}) </span>
-                                        @endif
+                                        @endif--}}
                                     </td>
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
