@@ -664,10 +664,10 @@ class Synch
 
 		$smsfoot = 'KEMRI-NAIROBI';
 
-		$samples_table = 'samples';
+		$samples_table = 'samples_view';
 		$data['testtype'] = 1;
 		if($type == 'vl'){
-			$samples_table = 'viralsamples';
+			$samples_table = 'viralsamples_view';
 			$data['testtype'] = 2;
 		}
 
@@ -687,7 +687,7 @@ class Synch
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
 								->first()->totals;
 
-		$data['roche_tested'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+		$data['roche_tested'] = $sampleview_class::selectRaw("count({$samples_table}.id) as totals")
 						->when(true, function($query) use ($type){
 							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
 							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
@@ -697,7 +697,7 @@ class Synch
 						->whereBetween('datetested', [$weekstartdate, $today])
 						->get()->first()->totals;
 
-		$data['abbott_tested'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+		$data['abbott_tested'] = $sampleview_class::selectRaw("count({$samples_table}.id) as totals")
 						->when(true, function($query) use ($type){
 							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
 							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
@@ -707,7 +707,7 @@ class Synch
 						->whereBetween('datetested', [$weekstartdate, $today])
 						->get()->first()->totals;
 
-		$data['pantha_tested'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+		$data['pantha_tested'] = $sampleview_class::selectRaw("count({$samples_table}.id) as totals")
 						->when(true, function($query) use ($type){
 							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
 							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
@@ -719,7 +719,7 @@ class Synch
 
 		$data['tested'] = $data['roche_tested'] + $data['abbott_tested'] + $data['pantha_tested'];
 
-		$data['inprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+		$data['inprocess'] = $sampleview_class::selectRaw("count({$samples_table}.id) as totals")
 						->when(true, function($query) use ($type){
 							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
 							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
