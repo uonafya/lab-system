@@ -239,7 +239,6 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_id;
         $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
@@ -286,7 +285,10 @@ class BatchController extends Controller
         Misc::check_batch($new_id);
 
         session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
-        if($submit_type == "new_facility") redirect('sample/' . $s->id . '/edit');
+        if($submit_type == "new_facility"){
+            session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
+            return redirect('sample/' . $s->id . '/edit');
+        }
         return redirect('batch/' . $new_batch->id);
     }
 

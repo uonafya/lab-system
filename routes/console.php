@@ -75,6 +75,12 @@ Artisan::command('send:sms {type}', function($type){
 })->describe('Send result sms.');
 
 
+Artisan::command('send:weekly', function(){
+    $str = \App\Misc::patient_sms();
+    $this->info($str);
+})->describe('Send out weekly sms alert.');
+
+
 
 Artisan::command('synch:patients {type}', function($type){
     if($type == 'eid') $str = \App\Synch::synch_eid_patients();
