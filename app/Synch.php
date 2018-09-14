@@ -662,7 +662,7 @@ class Synch
 		$sample_class = $classes['sample_class'];
 		$sampleview_class = $classes['sampleview_class'];
 
-		$smsfoot = 'KEMRI-NAIROBI';
+		$data['smsfoot'] = 'KEMRI-NAIROBI';
 
 		$samples_table = 'samples_view';
 		$worksheets_table = 'worksheets';
