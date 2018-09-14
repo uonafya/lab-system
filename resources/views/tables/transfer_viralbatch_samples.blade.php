@@ -169,6 +169,7 @@
                         </div>
 
                         <button class="btn btn-primary" type="submit" name="submit_type" value="add">Transfer Selected Samples to a New Batch</button>
+                    </form>
                 </div>
             </div>
         </div>

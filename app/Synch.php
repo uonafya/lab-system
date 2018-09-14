@@ -658,6 +658,28 @@ class Synch
 						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
 						->get()->first()->totals;
 
+		$data['abbottinprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where('machine_type', 2)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		$data['panthainprocess'] = $sample_class::selectRaw("count({$samples_table}.id) as totals")
+						->when(true, function($query) use ($type){
+							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+						})
+						->where('status_id', 1)
+						->where('machine_type', 4)
+						->where(['{$samples_table}.flag' => 1, '{$samples_table}.lab_id' => env('APP_LAB', null)])
+						->get()->first()->totals;
+
+		
+
 	}
 
 

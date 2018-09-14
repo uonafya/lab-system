@@ -230,6 +230,7 @@ class BatchController extends Controller
     public function transfer_to_new_batch(Request $request, Batch $batch)
     {
         $sample_ids = $request->input('samples');
+        $submit_type = $request->input('submit_type');
 
         if(!$sample_ids){
             session(['toast_message' => "No samples have been selected."]);
@@ -239,16 +240,19 @@ class BatchController extends Controller
 
         $new_batch = new Batch;
         $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
-        $new_batch->id = (int) $batch->id + 0.5;
-        $new_id = $batch->id + 0.5;
-        if($new_batch->id == floor($new_batch->id)){
-            session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
-            session(['toast_error' => 1]);
-            return back();
+        if($submit_type != "new_facility"){
+            $new_batch->id = (int) $batch->id + 0.5;
+            $new_id = $batch->id + 0.5;
+            if($new_batch->id == floor($new_batch->id)){
+                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
+                session(['toast_error' => 1]);
+                return back();
+            }            
         }
         $new_batch->save();
 
         $count = 0;
+        $s_id;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
@@ -256,6 +260,7 @@ class BatchController extends Controller
             if($sample->result) continue;
             $sample->batch_id = $new_id;
             $sample->pre_update();
+            $s_id = $sample->id;
             $count++;
         }
 
@@ -263,6 +268,7 @@ class BatchController extends Controller
         Misc::check_batch($new_id);
 
         session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        if($submit_type == "new_facility") redirect('sample/' . $s_id . '/edit');
         return redirect('batch/' . $new_batch->id);
     }
 
@@ -387,6 +393,7 @@ class BatchController extends Controller
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
+
 
     public function approve_site_entry()
     {
