@@ -449,7 +449,7 @@ class Synch
 								->whereNull('approvedby')
 								->whereNotIn('receivedstatus', [0, 2])
 								->whereRaw("(result is null or result=0)")
-								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->when(($type == 'vl'), function($query){
 									return $query->where('sampletype', '>', 0);
 								})
@@ -461,7 +461,7 @@ class Synch
 								->whereNull('approvedby')
 								->whereIn('receivedstatus', [1, 3])
 								->whereRaw("(result is null or result=0)")
-								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->when(($type == 'vl'), function($query){
 									return $query->where('sampletype', '>', 0);
 								})
@@ -750,7 +750,7 @@ class Synch
 								->whereNull('approvedby')
 								->where('receivedstatus', '!=', 2)
 								->whereRaw("(result is null or result=0)")
-								->where(['flag' => 1, 'inputcomplete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->get()->first()->mindate;
 
 		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
