@@ -254,6 +254,7 @@ class BatchController extends Controller
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 
         $count = 0;
+        $s;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
@@ -272,9 +273,10 @@ class BatchController extends Controller
             if($sample->result && $submit_type == "new_batch") continue;
             $sample->batch_id = $new_id;
             $sample->pre_update();
+            $s = $sample;
             $count++;
         }
-        $s = $new_batch->sample->first();
+        // $s = $new_batch->sample->first();
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
