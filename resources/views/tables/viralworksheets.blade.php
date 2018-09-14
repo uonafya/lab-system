@@ -90,8 +90,8 @@
             </div>
 
             @foreach($status_count->where('status_id', $worksheet_status->id) as $mach)
-                <div class="col-sm-3">
-                    {!! $machines->where('id', $mach->machine_type)->first()->machine !!} : {{ $mach->total }}
+                <div class="col-sm-2">
+                    <b>{!! $machines->where('id', $mach->machine_type)->first()->machine !!}</b> : {{ $mach->total }}
                 </div>
             @endforeach
         </div>
