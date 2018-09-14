@@ -277,6 +277,7 @@ class SampleController extends Controller
     public function update(Request $request, Sample $sample)
     {
         $submit_type = $request->input('submit_type');
+        $user = auth()->user();
 
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
@@ -298,11 +299,11 @@ class SampleController extends Controller
             session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
             $batch = new Batch;
-            $batch->user_id = auth()->user()->id;
-            $batch->lab_id = auth()->user()->lab_id;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
-                $batch->received_by = auth()->user()->id;
+            if($user->user_type_id == 1 || $user->user_type_id == 4){
+                $batch->received_by = $user->id;
                 $batch->site_entry = 0;
             }
             else{
@@ -312,6 +313,7 @@ class SampleController extends Controller
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
+        if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
         $batch->pre_update();
 
         $new_patient = $request->input('new_patient');

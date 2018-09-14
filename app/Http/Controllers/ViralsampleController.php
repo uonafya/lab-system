@@ -266,12 +266,14 @@ class ViralsampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
+        $user = auth()->user();
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
 
         $batch = Viralbatch::find($viralsample->batch_id);
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
+        if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
         $batch->pre_update();
 
         $data = $request->only($viralsamples_arrays['patient']);
@@ -284,6 +286,7 @@ class ViralsampleController extends Controller
         else{
             $viralpatient = new Viralpatient;
         }
+        
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);

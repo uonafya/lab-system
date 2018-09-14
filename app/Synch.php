@@ -627,6 +627,21 @@ class Synch
 
 	}
 
+	public static function weeklylabactivity($type)
+	{
+		$classes = self::$synch_arrays[$type];
+		$sample_class = $classes['sample_class'];
+		$sampleview_class = $classes['sampleview_class'];
+
+		$samples_table = 'samples';
+		$data['testtype'] = 1;
+		if($type == 'vl'){
+			$samples_table = 'viralsamples';
+			$data['testtype'] = 2;
+		}
+		
+	}
+
 
 	public static function match_eid_patients()
 	{

@@ -6,6 +6,11 @@ use App\BaseModel;
 
 class Viralbatch extends BaseModel
 {
+    // use \Venturecraft\Revisionable\RevisionableTrait;
+    // protected $revisionEnabled = true;
+    // protected $revisionCleanup = true; 
+    // protected $historyLimit = 500; 
+    
     // protected $dates = ['datereceived', 'datedispatchedfromfacility', 'datebatchprinted', 'datedispatched', 'dateindividualresultprinted', 'datemodified', 'dateapproved', 'dateapproved2', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'datesynched'];
 
     // protected $withCount = ['sample'];
@@ -21,6 +26,7 @@ class Viralbatch extends BaseModel
             $builder->where('site_entry', '!=', 2);
         });
     }*/
+
 
     public function tat()
     {
