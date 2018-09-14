@@ -48,7 +48,11 @@ class ViralworksheetController extends Controller
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $data['reruns'] = $this->get_reruns($worksheet_ids);
 
-        $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
+        $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id, machine_type")
+            ->groupBy('status_id', 'machine_type')
+            ->orderBy('status_id', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('viralworksheet/index/' . $state . '/');
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
