@@ -254,7 +254,6 @@ class BatchController extends Controller
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 
         $count = 0;
-        $s_id;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
@@ -262,15 +261,15 @@ class BatchController extends Controller
             if($sample->result) continue;
             $sample->batch_id = $new_id ?? $new_batch->id;
             $sample->pre_update();
-            $s_id = $sample->id;
             $count++;
         }
+        $s = $new_batch->sample->first();
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
 
         session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
-        if($submit_type == "new_facility") redirect('sample/' . $s_id . '/edit');
+        if($submit_type == "new_facility") redirect('sample/' . $s->id . '/edit');
         return redirect('batch/' . $new_batch->id);
     }
 
