@@ -258,7 +258,7 @@ class BatchController extends Controller
             $sample = Sample::find($id);
             if($sample->parentid) continue;
             if($sample->result) continue;
-            $sample->batch_id = $new_id;
+            $sample->batch_id = $new_id ?? $new_batch->id;
             $sample->pre_update();
             $s_id = $sample->id;
             $count++;
