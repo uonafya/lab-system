@@ -232,8 +232,6 @@ class BatchController extends Controller
         $sample_ids = $request->input('samples');
         $submit_type = $request->input('submit_type');
 
-        dd($sample_ids);
-
         if(!$sample_ids){
             session(['toast_message' => "No samples have been selected."]);
             session(['toast_error' => 1]);
@@ -259,8 +257,19 @@ class BatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
-            if($sample->parentid) continue;
-            if($sample->result) continue;
+            if($sample->parentid && $submit_type == "new_batch") continue;
+            else{
+                $parent = $sample->parent;
+                $parent->batch_id = $new_id;
+                $parent->pre_update();
+
+                $children = $parent->children;
+                foreach ($children as $child) {
+                    $child->batch_id = $new_id;
+                    $child->pre_update();
+                }
+            }
+            if($sample->result && $submit_type == "new_batch") continue;
             $sample->batch_id = $new_id;
             $sample->pre_update();
             $count++;
