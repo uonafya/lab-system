@@ -239,6 +239,7 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
+        $new_id;
         $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
@@ -258,16 +259,19 @@ class BatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
-            if($sample->parentid && $submit_type == "new_batch") continue;
-            else{
+            if($sample->parentid > 0 && $submit_type == "new_batch"){
+                continue;
+            }else{
                 $parent = $sample->parent;
-                $parent->batch_id = $new_id;
-                $parent->pre_update();
+                if($parent){
+                    $parent->batch_id = $new_id;
+                    $parent->pre_update();
 
-                $children = $parent->children;
-                foreach ($children as $child) {
-                    $child->batch_id = $new_id;
-                    $child->pre_update();
+                    $children = $parent->children;
+                    foreach ($children as $child) {
+                        $child->batch_id = $new_id;
+                        $child->pre_update();
+                    }
                 }
             }
             if($sample->result && $submit_type == "new_batch") continue;
