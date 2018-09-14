@@ -251,6 +251,8 @@ class BatchController extends Controller
         }
         $new_batch->save();
 
+        if($submit_type == "new_facility") $new_id = $new_batch->id;
+
         $count = 0;
         $s_id;
 
