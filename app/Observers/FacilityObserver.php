@@ -34,6 +34,8 @@ class FacilityObserver
     {
         $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
 
+        $fac = $facility::find($facility->id);
+
         $contact = $facility->facility_contact;
 
         foreach ($contact_array as $key => $value) {
@@ -42,7 +44,7 @@ class FacilityObserver
                 // $contact->save();                
             // }
 
-            $contact->$value = $facility->getOriginal($value);
+            $contact->$value = $fac->getOriginal($value);
         }
         $contact->save();
     }
