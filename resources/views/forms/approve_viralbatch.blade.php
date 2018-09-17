@@ -19,7 +19,7 @@
                 </div>
                 <div class="panel-body">
 
-                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
+                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal' ]) }}
 
                         <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
 

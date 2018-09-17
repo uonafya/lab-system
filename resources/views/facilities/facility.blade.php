@@ -7,7 +7,7 @@
 
 <div class="p-lg">
     <div class="content animate-panel" data-child="hpanel">
-    {{ Form::open(['url' => '/facility/update', 'method' => 'put', 'class'=>'form-horizontal']) }}
+    {{ Form::open(['url' => '/facility/' . $facility->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         <input type="hidden" name="id" value="{{ $facility->id }}">
         <div class="row">
             <div class="col-lg-5">

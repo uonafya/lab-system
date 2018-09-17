@@ -75,6 +75,14 @@ Artisan::command('send:sms {type}', function($type){
 })->describe('Send result sms.');
 
 
+Artisan::command('send:weekly', function(){
+    $str = \App\Synch::send_weekly_activity();
+    $this->info($str);
+    $str = \App\Synch::send_weekly_backlog();
+    $this->info($str);
+})->describe('Send out weekly sms alert.');
+
+
 
 Artisan::command('synch:patients {type}', function($type){
     if($type == 'eid') $str = \App\Synch::synch_eid_patients();
@@ -172,7 +180,5 @@ Artisan::command('test:connection', function(){
     $str = \App\Synch::test_connection();
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
-
-
 
 

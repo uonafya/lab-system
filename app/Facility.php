@@ -146,6 +146,17 @@ class Facility extends BaseModel
         return $this->facility_contact->ContactEmail ?? $this->ContactEmail ?? null;
     }
 
+    public function getFaxAttribute()
+    {
+        return $this->facility_contact->fax ?? $this->fax ?? null;
+    }
+
+    public function getPhysicaladdressAttribute()
+    {
+        return $this->facility_contact->physicaladdress ?? $this->physicaladdress ?? null;
+    }
+
+
     public function concat_contacts($first, $second)
     {
         if($first && !$second) return $first;

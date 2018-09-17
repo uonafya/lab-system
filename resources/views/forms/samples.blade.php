@@ -815,6 +815,11 @@
                             class: 'patient_details'
                         }).appendTo("#samples_form");
 
+                        if(data[4] != 0)
+                        {
+                            set_message(data[4]);
+                        }
+
                         // $('<input>').attr({
                         //     type: 'hidden',
                         //     name: 'dob',

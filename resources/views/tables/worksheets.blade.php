@@ -74,13 +74,28 @@
         </div>
     </div>
 
-    <div class="row">
+    {{--<div class="row">
         @foreach($status_count as $c)
             <div class="col-sm-3">
                 <b>{!! $worksheet_statuses->where('id', $c->status_id)->first()->state ?? '' !!}: </b> {{ $c->total }}                
             </div>
         @endforeach        
-    </div>
+    </div>--}}
+
+    @foreach($worksheet_statuses as $worksheet_status)
+        @continue(!$status_count->where('status_id', $worksheet_status->id)->sum('total'))
+        <div class="row">
+            <div class="col-sm-2">
+                <b>{{ $worksheet_status->state }}:</b> {{ $status_count->where('status_id', $worksheet_status->id)->sum('total') }}
+            </div>
+
+            @foreach($status_count->where('status_id', $worksheet_status->id) as $mach)
+                <div class="col-sm-2">
+                    <b>{!! $machines->where('id', $mach->machine_type)->first()->machine !!}</b> : {{ $mach->total }}
+                </div>
+            @endforeach
+        </div>
+    @endforeach
     
     <div class="row">
         <div class="col-lg-12">
@@ -130,7 +145,11 @@
                                     <td> {{ $worksheet->failed }} </td>
                                     <td> {{ $worksheet->redraw }} </td>
                                     <td> {{ $worksheet->noresult }} </td>
-                                    <td> {{ $worksheet->sample_count }} ({{ $worksheet->rerun }})</td>
+                                    <td> {{ $worksheet->sample_count }}
+                                        @if($worksheet->rerun)
+                                            <span style="color: #ff0000;"> ({{ $worksheet->rerun }}) </span>
+                                        @endif
+                                    </td>
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>

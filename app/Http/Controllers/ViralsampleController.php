@@ -182,9 +182,10 @@ class ViralsampleController extends Controller
 
         $submit_type = $request->input('submit_type');
 
-        if($submit_type == "release"){
+        if($submit_type == "release" || $batch->site_entry == 2){
             $this->clear_session();
             $batch->premature();
+            if($batch->site_entry == 2) return back();
             return redirect("viralbatch/{$batch->id}");
         }
 
@@ -266,12 +267,14 @@ class ViralsampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);
+        $user = auth()->user();
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
 
         $batch = Viralbatch::find($viralsample->batch_id);
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
+        if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
         $batch->pre_update();
 
         $data = $request->only($viralsamples_arrays['patient']);
@@ -284,6 +287,7 @@ class ViralsampleController extends Controller
         else{
             $viralpatient = new Viralpatient;
         }
+        
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
@@ -391,9 +395,10 @@ class ViralsampleController extends Controller
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
 
-        $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
+        $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();        
         $data;
         if($viralpatient){
+            $viralpatient->most_recent();
             $data[0] = 0;
             $data[1] = $viralpatient->toArray();
 
@@ -404,6 +409,10 @@ class ViralsampleController extends Controller
             else{
                 $data[2] = ['previous_nonsuppressed' => 0];
             } 
+            $data[3] = 0;
+            if($viralpatient->most_recent){
+                $data[3] = "The date collected for the most recent test of the patient is " . $viralpatient->most_recent->my_date_format('datecollected') . " in batch number " . $viralpatient->most_recent->batch_id;
+            }
         }
         else{
             $data[0] = 1;

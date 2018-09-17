@@ -65,6 +65,7 @@ class WorksheetController extends Controller
 
                 if($status == 1){
                     $noresult = $worksheet->sample_count;
+                    $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
                 }
             }
             $worksheet->rerun = $rerun;
@@ -81,7 +82,11 @@ class WorksheetController extends Controller
         });
 
         $data = Lookup::worksheet_lookups();
-        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
+        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id, machine_type")
+            ->groupBy('status_id', 'machine_type')
+            ->orderBy('status_id', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('worksheet/index/' . $state . '/');
 
@@ -403,8 +408,7 @@ class WorksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
         $today = $dateoftest = date("Y-m-d");
-        $positive_control;
-        $negative_control;
+        $positive_control = $negative_control = null;
 
         if($worksheet->machine_type == 2)
         {
@@ -457,6 +461,8 @@ class WorksheetController extends Controller
                     $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
                     // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     // Sample::where($search)->update($data_array);
+
+                    $sample_id = (int) $sample_id;
                     $sample = Sample::find($sample_id);
                     if(!$sample) continue;
                     if($sample->worksheet_id != $worksheet->id) continue;
@@ -485,6 +491,7 @@ class WorksheetController extends Controller
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
                 $interpretation = rtrim($data[8]);
+                $control = rtrim($data[5]);
 
 
                 $flag = $data[10];
@@ -507,12 +514,12 @@ class WorksheetController extends Controller
                     $result = 3;
                 }
 
-                if($data[5] == "NC"){
+                if($control == "NC"){
                     $negative_control = $interpretation;
                     $neg_result = $result;
                 }
 
-                if($data[5] == "LPC" || $data[5] == "PC"){
+                if($control == "LPC" || $control == "PC"){
                     $positive_control = $interpretation;
                     $pos_result = $result;
                 }
@@ -521,7 +528,8 @@ class WorksheetController extends Controller
 
                 // $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
                 // Sample::where($search)->update($data_array);
-                $sample = Sample::find($data[4]);
+                $sample_id = (int) $data[4];
+                $sample = Sample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
                 $sample->fill($data_array);
