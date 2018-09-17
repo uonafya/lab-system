@@ -75,12 +75,16 @@ Artisan::command('send:sms {type}', function($type){
 })->describe('Send result sms.');
 
 
-Artisan::command('send:weekly', function(){
+Artisan::command('send:weekly-activity', function(){
     $str = \App\Synch::send_weekly_activity();
     $this->info($str);
+})->describe('Send out weekly activity sms alert.');
+
+
+Artisan::command('send:weekly-backlog', function(){
     $str = \App\Synch::send_weekly_backlog();
     $this->info($str);
-})->describe('Send out weekly sms alert.');
+})->describe('Send out weekly backlog sms alert.');
 
 
 
