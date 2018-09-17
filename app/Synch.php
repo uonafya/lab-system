@@ -780,13 +780,12 @@ class Synch
 				'http_errors' => false,
 				'json' => [
 					'sender' => env('SMS_SENDER_ID'),
-					'recipient' => '254702266217',
-					// 'recipient' => $user->mobile,
+					// 'recipient' => '254702266217',
+					'recipient' => $user->mobile,
 					'message' => $message,
 				],
 			]);
 			$body = json_decode($response->getBody());
-			break;
 		}
 	}
 
