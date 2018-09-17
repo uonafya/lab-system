@@ -275,6 +275,7 @@ class Common
         if(!$batch->sent_email){ 
             $batch->sent_email = true;
             $batch->dateemailsent = date('Y-m-d');
+            $batch->save();
         }
 
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
@@ -301,7 +302,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 
-		$min_date = date('Y-m-d', strtotime('-2 years'));
+		$min_date = date('Y-m-d', strtotime('-1 years'));
 
 		$batches = $batch_model::where('batch_complete', 1)
 		->where('sent_email', 0)
