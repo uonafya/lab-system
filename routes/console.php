@@ -173,6 +173,9 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
-
+Artisan::command('send:backlog', function(){
+    $str = \App\Common::send_backlog();
+    $this->info($str);
+})->describe('Send weekly backlog alerts: Monday');
 
 
