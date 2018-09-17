@@ -351,34 +351,4 @@ class Common
         }
     }
 
-    public static function send_backlog() {
-    	$currentdaydisplay =date('d-M-Y');
-    	$lab = \App\Lab::where('id', '=', env('APP_LAB'))->first()->labname;
-    	$recipientname = 'Joshua Bakasa';
-
-    	/**** Total samples run ****/
-    	$totaleidsamplesrun = \App\Sample::selectRaw("count(*) as samples_run")
-    								->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-    								->where('worksheets.status_id', '<', 3)->first()->samples_run;
-    	$totalvlsamplesrun = \App\Viralsample::selectRaw("count(*) as samples_run")
-    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-    								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
-
-    	/**** Samples pending results ****/
-    	$pendingeidsamples = \App\SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
-    								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
-    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result = 0 ))")->where('input_complete', '=', 1)
-    								->where('flag', '=', 1)->first()->pending_samples;
-    	$pendingvlsamples = \App\ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
-    								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
-    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result =0 ) OR (result !='Collect New Sample') )")
-    								->where('input_complete', '=', 1)->where('sampletype', '>', 0)
-    								->where('flag', '=', 1)->first()->pending_samples;
-    	
-    	$message="Hi ".$recipientname."\n"." BACK LOG ALERT AS OF ".$currentdaydisplay." " . $lab."\n". " EID "."\n"." Samples Logged in NOT in Worksheet : ". $pendingeidsamples."\n"." Samples In Process : ".$totaleidsamplesrun."\n"." VL "."\n". " Samples Logged in and NOT in Worksheet :".$pendingvlsamples."\n"." Samples In Process:".$totalvlsamplesrun;
-    	echo $message;
-    }
-
 }

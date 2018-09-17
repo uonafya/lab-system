@@ -760,6 +760,65 @@ class Synch
 		return $data;
 	}
 
+	public static function send_weekly_backlog()
+	{
+		$currentdaydisplay =date('d-M-Y');
+		$lab = \App\Lab::where('id', '=', env('APP_LAB'))->first()->labname;
+		$logs = self::get_backlogs();
+    	
+    	$users = DB::table('musers')->where('weeklyalert', 1)->get();
+
+		foreach ($users as $user) {
+
+			$message = "Hi ".$user->name."\n"." BACK LOG ALERT AS OF ".$currentdaydisplay." " . $lab."\n". " EID "."\n"." Samples Logged in NOT in Worksheet : ". $logs->pendingeidsamples."\n"." Samples In Process : ".$logs->totaleidsamplesrun."\n"." VL "."\n". " Samples Logged in and NOT in Worksheet :".$logs->pendingvlsamples."\n"." Samples In Process:".$logs->totalvlsamplesrun;
+
+	        $client = new Client(['base_uri' => \App\Common::$sms_url]);
+
+			$response = $client->request('post', '', [
+				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+				// 'debug' => true,
+				'http_errors' => false,
+				'json' => [
+					'sender' => env('SMS_SENDER_ID'),
+					// 'recipient' => '254702266217',
+					'recipient' => $user->mobile,
+					'message' => $message,
+				],
+			]);
+			$body = json_decode($response->getBody());
+		}
+	}
+
+	public static function get_backlogs(){    	
+    	/**** Total samples run ****/
+    	$totaleidsamplesrun = \App\Sample::selectRaw("count(*) as samples_run")
+    								->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+    								->where('worksheets.status_id', '<', 3)->first()->samples_run;
+    	$totalvlsamplesrun = \App\Viralsample::selectRaw("count(*) as samples_run")
+    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+    								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
+
+    	/**** Samples pending results ****/
+    	$pendingeidsamples = \App\SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
+    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
+    								->whereRaw("((result IS NULL ) OR (result = 0 ))")->where('input_complete', '=', 1)
+    								->where('flag', '=', 1)->first()->pending_samples;
+    	$pendingvlsamples = \App\ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
+    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
+    								->whereRaw("((result IS NULL ) OR (result =0 ) OR (result !='Collect New Sample') )")
+    								->where('input_complete', '=', 1)->where('sampletype', '>', 0)
+    								->where('flag', '=', 1)->first()->pending_samples;
+
+    	return (object)[
+    					'totaleidsamplesrun' => $totaleidsamplesrun,
+						'totalvlsamplesrun' => $totalvlsamplesrun,
+						'pendingeidsamples' => $pendingeidsamples,
+						'pendingvlsamples' => $pendingvlsamples
+					];
+	}
+
 
 	public static function match_eid_patients()
 	{

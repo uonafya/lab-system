@@ -78,6 +78,8 @@ Artisan::command('send:sms {type}', function($type){
 Artisan::command('send:weekly', function(){
     $str = \App\Synch::send_weekly_activity();
     $this->info($str);
+    $str = \App\Synch::send_weekly_backlog();
+    $this->info($str);
 })->describe('Send out weekly sms alert.');
 
 
@@ -178,10 +180,5 @@ Artisan::command('test:connection', function(){
     $str = \App\Synch::test_connection();
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
-
-Artisan::command('send:backlog', function(){
-    $str = \App\Common::send_backlog();
-    $this->info($str);
-})->describe('Send weekly backlog alerts: Monday');
 
 
