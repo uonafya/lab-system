@@ -126,12 +126,16 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
 
-                                <div class="col-sm-4">
-                                    <label> <input type="radio" class="i-checks" name="result" value="< LDL copies/ml"/> &lt; ldl copies per ml </label>
+                                <div class="col-sm-3">
+                                    <label> <input type="radio" class="i-checks" name="result" value="< LDL copies/ml"/> &lt; LDL copies/ml </label>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label> <input type="radio" class="i-checks" name="result" value="Collect New Sample"/> Collect New Sample </label>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <label> <input type="radio" class="i-checks" name="result" value="< 40 Copies/ mL"/> &lt;40 </label>
                                 </div>
                             </div> 
 

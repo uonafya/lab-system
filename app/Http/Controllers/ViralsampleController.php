@@ -182,9 +182,10 @@ class ViralsampleController extends Controller
 
         $submit_type = $request->input('submit_type');
 
-        if($submit_type == "release"){
+        if($submit_type == "release" || $batch->site_entry == 2){
             $this->clear_session();
             $batch->premature();
+            if($batch->site_entry == 2) return back();
             return redirect("viralbatch/{$batch->id}");
         }
 

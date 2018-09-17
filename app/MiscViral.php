@@ -379,7 +379,7 @@ class MiscViral extends Common
             else if($result > 5000) return ['rcategory' => 4];
         }
         $data = $this->get_rcategory($result);
-        if(!isset($data['rcategory'])) dd($result);
+        // if(!isset($data['rcategory'])) dd($result);
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
