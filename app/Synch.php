@@ -665,7 +665,7 @@ class Synch
 		$sample_class = $classes['sample_class'];
 		$sampleview_class = $classes['sampleview_class'];
 
-		$data['smsfoot'] = 'KEMRI-NAIROBI';
+		$data['smsfoot'] = \App\Lab::find(env('APP_LAB'))->labname ?? '';
 
 		$samples_table = 'samples_view';
 		$worksheets_table = 'worksheets';
@@ -780,31 +780,32 @@ class Synch
 				'http_errors' => false,
 				'json' => [
 					'sender' => env('SMS_SENDER_ID'),
-					// 'recipient' => '254702266217',
-					'recipient' => $user->mobile,
+					'recipient' => '254702266217',
+					// 'recipient' => $user->mobile,
 					'message' => $message,
 				],
 			]);
 			$body = json_decode($response->getBody());
+			break;
 		}
 	}
 
 	public static function get_backlogs(){    	
     	/**** Total samples run ****/
-    	$totaleidsamplesrun = \App\Sample::selectRaw("count(*) as samples_run")
+    	$totaleidsamplesrun = Sample::selectRaw("count(*) as samples_run")
     								->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
     								->where('worksheets.status_id', '<', 3)->first()->samples_run;
-    	$totalvlsamplesrun = \App\Viralsample::selectRaw("count(*) as samples_run")
+    	$totalvlsamplesrun = Viralsample::selectRaw("count(*) as samples_run")
     								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
     								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
 
     	/**** Samples pending results ****/
-    	$pendingeidsamples = \App\SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
     								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
     								->whereRaw("((result IS NULL ) OR (result = 0 ))")->where('input_complete', '=', 1)
     								->where('flag', '=', 1)->first()->pending_samples;
-    	$pendingvlsamples = \App\ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
     								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
     								->whereRaw("((result IS NULL ) OR (result =0 ) OR (result !='Collect New Sample') )")
