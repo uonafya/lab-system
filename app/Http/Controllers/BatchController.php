@@ -230,6 +230,7 @@ class BatchController extends Controller
     public function transfer_to_new_batch(Request $request, Batch $batch)
     {
         $sample_ids = $request->input('samples');
+        $submit_type = $request->input('submit_type');
 
         if(!$sample_ids){
             session(['toast_message' => "No samples have been selected."]);
@@ -239,30 +240,55 @@ class BatchController extends Controller
 
         $new_batch = new Batch;
         $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
-        $new_batch->id = (int) $batch->id + 0.5;
-        $new_id = $batch->id + 0.5;
-        if($new_batch->id == floor($new_batch->id)){
-            session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
-            session(['toast_error' => 1]);
-            return back();
+        if($submit_type != "new_facility"){
+            $new_batch->id = (int) $batch->id + 0.5;
+            $new_id = $batch->id + 0.5;
+            if($new_batch->id == floor($new_batch->id)){
+                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
+                session(['toast_error' => 1]);
+                return back();
+            }            
         }
         $new_batch->save();
 
+        if($submit_type == "new_facility") $new_id = $new_batch->id;
+
         $count = 0;
+        $s;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
-            if($sample->parentid) continue;
-            if($sample->result) continue;
+            if($sample->parentid > 0 && $submit_type == "new_batch"){
+                continue;
+            }else{
+                $parent = $sample->parent;
+                if($parent){
+                    $parent->batch_id = $new_id;
+                    $parent->pre_update();
+
+                    $children = $parent->children;
+                    foreach ($children as $child) {
+                        $child->batch_id = $new_id;
+                        $child->pre_update();
+                    }
+                }
+            }
+            if($sample->result && $submit_type == "new_batch") continue;
             $sample->batch_id = $new_id;
             $sample->pre_update();
+            $s = $sample;
             $count++;
         }
+        // $s = $new_batch->sample->first();
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
 
         session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        if($submit_type == "new_facility"){
+            session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
+            return redirect('sample/' . $s->id . '/edit');
+        }
         return redirect('batch/' . $new_batch->id);
     }
 
@@ -387,6 +413,7 @@ class BatchController extends Controller
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
+
 
     public function approve_site_entry()
     {

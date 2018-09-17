@@ -381,8 +381,8 @@ class Lookup
             // Eid Lookup Data
             $rejected_reasons = DB::table('rejectedreasons')->get();
             $feedings = DB::table('feedings')->get();
-            $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
-            $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->where('rank', '>', 0)->orderBy('rank', 'asc')->get();
+            $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->orderBy('rank', 'asc')->get();
+            $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->orderBy('rank', 'asc')->get();
             $entry_points = DB::table('entry_points')->get();
             $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
             $pcr_types = DB::table('pcrtype')->get();

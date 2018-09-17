@@ -20,7 +20,7 @@
                 <div class="panel-body">
 
 
-                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
+                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put', 'id' => 'approve_batch_form', 'class'=>'form-horizontal', ]) }}
 
                         <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
 
@@ -207,8 +207,8 @@
                             </div>
 
                             <div class="col-sm-10 col-sm-offset-1">
-                                <button class="btn btn-success" type="submit" name="submit_type" value="accepted">Mark Selected Samples As Accepted For Testing</button>
-                                <button class="btn btn-danger" type="submit" name="submit_type" value="rejected">Mark Selected Samples As Rejected [Ensure you selected the rejected reason]</button>
+                                <button class="btn btn-success" type="submit" id="accept_samples" name="submit_type" value="accepted">Mark Selected Samples As Accepted For Testing</button>
+                                <button class="btn btn-danger" type="submit" id="reject_samples" name="submit_type" value="rejected">Mark Selected Samples As Rejected [Ensure you selected the rejected reason]</button>
                             </div>                        
                         </div>
 
@@ -253,19 +253,39 @@
             }
         });
 
-        /*$(".sample_ids").change(function() {
+        /*
+        $(".sample_ids").change(function() {
             if(this.checked) {
                 val = this.value();
                 rej_id = 'rejectedreason_' + val;
                 $(rej_id).attr("required", "required");  
+                $(rej_id).addClass("requirable");  
             }
             else{
                 val = this.value();
                 rej_id = 'rejectedreason_' + val;
-                $(rej_id).removeAttr("required");              
+                $(rej_id).removeAttr("required");  
+                $(rej_id).removeClass("requirable");              
             }
-        });*/
+        });
+
+        $('#approve_batch_form').submit(function( event ){
+            event.preventDefault();
+        });
+
+        $('#accept_samples').submit(function( event ){
+            
+        });
+
+        */
 
     @endcomponent
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            
+        });
+        
+    </script>
 
 @endsection

@@ -301,7 +301,12 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 
-		$batches = $batch_model::where('batch_complete', 1)->where('sent_email', 0)->get();
+		$min_date = date('Y-m-d', strtotime('-2 years'));
+
+		$batches = $batch_model::where('batch_complete', 1)
+		->where('sent_email', 0)
+		->where('datedispatched', '>', $min_date)
+		->get();
 
 		foreach ($batches as $batch) {
 		 	self::dispatch_batch($batch);

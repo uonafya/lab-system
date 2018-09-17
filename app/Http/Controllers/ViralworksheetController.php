@@ -44,13 +44,15 @@ class ViralworksheetController extends Controller
 
         $worksheets->setPath(url()->current());
 
-        // return view('tables.viralworksheets', ['worksheets' => $worksheets, 'statuses' => $statuses, 'machines' => $machines]);
-        
-        // $statuses = collect($this->wstatus());
-        // $machines = collect($this->wmachine());
-
         $data = Lookup::worksheet_lookups();
-        $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id")->groupBy('status_id')->get();
+        $worksheet_ids = $worksheets->pluck(['id'])->toArray();
+        $data['reruns'] = $this->get_reruns($worksheet_ids);
+
+        $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id, machine_type")
+            ->groupBy('status_id', 'machine_type')
+            ->orderBy('status_id', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('viralworksheet/index/' . $state . '/');
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
@@ -422,7 +424,7 @@ class ViralworksheetController extends Controller
                     }
                 }
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
-
+                $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
@@ -466,7 +468,7 @@ class ViralworksheetController extends Controller
                 // Viralsample::where($search)->update($data_array);
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
-
+                $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
@@ -686,6 +688,26 @@ class ViralworksheetController extends Controller
             ->groupBy('worksheet_id')
             ->get();
         
+        return $samples;
+    }
+
+    public function get_reruns($worksheet_id=NULL)
+    {
+        if(!$worksheet_id) return false;
+        $samples = ViralsampleView::selectRaw("count(*) as totals, worksheet_id")
+            ->whereNotNull('worksheet_id')
+            ->when($worksheet_id, function($query) use ($worksheet_id){                
+                if (is_array($worksheet_id)) {
+                    return $query->whereIn('worksheet_id', $worksheet_id);
+                }
+                return $query->where('worksheet_id', $worksheet_id);
+            })
+            ->where('parentid', '>', 0)
+            ->where('receivedstatus', '!=', 2)
+            ->where('site_entry', '!=', 2)
+            ->groupBy('worksheet_id')
+            ->get();
+
         return $samples;
     }
 
