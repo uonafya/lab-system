@@ -176,6 +176,22 @@
                             </tbody>
                         </table>
                     </div>
+
+                    @if($batch->batch_complete == 1)
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a href="{{ url('viralbatch/summary/' . $batch->id) }} ">
+                                    <button class="btn btn-primary">Download Batch Summary</button>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{{ url('viralbatch/individual/' . $batch->id) }} ">
+                                    <button class="btn btn-primary">Print Individual Results</button>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
