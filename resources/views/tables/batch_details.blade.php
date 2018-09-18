@@ -181,12 +181,12 @@
                         <br />
                         <div class="row">
                             <div class="col-md-4">
-                                <a href="{{ url('batch/summary/' . $batch->id) }} ">
+                                <a href="{{ url('batch/summary/' . $batch->id) }}">
                                     <button class="btn btn-primary">Download Batch Summary</button>
                                 </a>
                             </div>
                             <div class="col-md-4">
-                                <a href="{{ url('batch/individual/' . $batch->id) }} ">
+                                <a href="{{ url('batch/individual/' . $batch->id) }}" target="_blank">
                                     <button class="btn btn-primary">Print Individual Results</button>
                                 </a>
                             </div>
