@@ -535,6 +535,7 @@ class ViralsampleController extends Controller
         while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
 
             $facility = Facility::locate($row[3])->get()->first();
+            if(!$facility) continue;
             $datecollected = Lookup::other_date($row[8]);
             $datereceived = Lookup::other_date($row[15]);
             $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
@@ -543,11 +544,12 @@ class ViralsampleController extends Controller
 
             $site_entry = Lookup::get_site_entry($row[14]);
 
-            $batch = Viralbatch::with('sample_count')
+            $batch = Viralbatch::withCount(['sample'])
                                     ->where('received_by', auth()->user()->id)
                                     ->where('datereceived', $datereceived)
                                     ->where('input_complete', 0)
                                     ->where('site_entry', $site_entry)
+                                    ->where('facility_id', $facility->id)
                                     ->get()->first();
 
             if($batch){
@@ -587,6 +589,7 @@ class ViralsampleController extends Controller
             $sample = new Viralsample;
             $sample->batch_id = $batch->id;
             $sample->patient_id = $patient->id;
+            $sample->datecollected = $datecollected;
             $sample->age = $row[6];
             if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
             $sample->prophylaxis = Lookup::viral_regimen($row[10]);
@@ -594,8 +597,8 @@ class ViralsampleController extends Controller
             $sample->justification = Lookup::justification($row[12]);
             $sample->sampletype = $row[7];
             $sample->pmtct = $row[13];
-            $sample->rejectedreason = $row[17];
             $sample->receivedstatus = $row[16];
+            if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
             $sample->save();
             $created_rows++;
         }

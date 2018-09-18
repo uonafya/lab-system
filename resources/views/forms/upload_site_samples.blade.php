@@ -22,9 +22,9 @@
         <div>
 
         @if(isset($type))
-            {{ Form::open(['url'=>'/viralsample/upload', 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
+            {{ Form::open(['url'=>'/viralsample/upload', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
         @else
-            {{ Form::open(['url'=>'/sample/upload', 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
+            {{ Form::open(['url'=>'/sample/upload', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
         @endif
 
         <div class="row">
