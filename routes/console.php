@@ -56,6 +56,12 @@ Artisan::command('input-complete {type}', function($type){
 })->describe('Mark batches as input completed.');
 
 
+Artisan::command('batch-complete {type}', function($type){
+    $str = \App\Common::check_batches($type);
+    $this->info($str);
+})->describe('Check if batch is ready for dispatch.');
+
+
 
 Artisan::command('lablog {type}', function($type){
 	$str = \App\Synch::labactivity($type);
