@@ -186,6 +186,7 @@ class ViralsampleController extends Controller
             $this->clear_session();
             $batch->premature();
             if($batch->site_entry == 2) return back();
+            MiscViral::check_batch($batch->id);
             return redirect("viralbatch/{$batch->id}");
         }
 
@@ -195,6 +196,7 @@ class ViralsampleController extends Controller
         if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
+            MiscViral::check_batch($batch->id);
             session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             return redirect("viralbatch/{$batch->id}");
         }
@@ -325,6 +327,8 @@ class ViralsampleController extends Controller
         }
 
         $viralsample->pre_update();
+
+        MiscViral::check_batch($batch->id);
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

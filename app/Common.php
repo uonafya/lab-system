@@ -250,6 +250,22 @@ class Common
 		return "Batches of {$type} have been marked as input complete";
 	}
 
+	public static function check_batches($type)
+	{
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+			$misc_model = \App\Misc::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+			$misc_model = \App\MiscViral::class;
+		}
+
+		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
+		foreach ($batches as $key => $batch) {
+			$misc_model::check_batch($batch->id);
+		}
+	}
+
     public static function delete_folder($path)
     {
         if(!ends_with($path, '/')) $path .= '/';
