@@ -384,7 +384,13 @@ class ViralsampleController extends Controller
     public function destroy(Viralsample $viralsample)
     {
         if($viralsample->result == NULL){
+            $batch = $viralsample->batch;
             $viralsample->delete();
+            $samples = $batch->sample;
+            if($samples->isEmpty()) $batch->delete();
+            else{
+                MiscViral::check_batch($batch->id);
+            }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
         else{

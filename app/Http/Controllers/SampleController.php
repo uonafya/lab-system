@@ -457,7 +457,13 @@ class SampleController extends Controller
     public function destroy(Sample $sample)
     {
         if($sample->result == NULL){
+            $batch = $sample->batch;
             $sample->delete();
+            $samples = $batch->sample;
+            if($samples->isEmpty()) $batch->delete();
+            else{
+                MiscViral::check_batch($batch->id);
+            }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
         else{
