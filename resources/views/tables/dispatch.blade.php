@@ -84,7 +84,7 @@
                                 </tbody>
                             </table>
 
-                            <input type="submit" name="Proceed to Confirm Selected Dispatch ">
+                            <button class="btn btn-success" type="submit">Proceed to Confirm Selected Dispatch</button>
                         </form>
                     </div>
                 </div>
