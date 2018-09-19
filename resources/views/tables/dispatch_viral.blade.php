@@ -24,7 +24,7 @@
                                 <input type="hidden" name="final_dispatch" value=1>
                             @endif
 
-                            <table class="table table-striped table-bordered table-hover data-table" >
+                            <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
                                         <th id="check_all">Check All</th>

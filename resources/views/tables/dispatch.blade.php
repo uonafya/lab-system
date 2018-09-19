@@ -33,7 +33,7 @@
                             @endif
                             
 
-                            <table class="table table-striped table-bordered table-hover data-table" >
+                            <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
                                         <th id="check_all">Check All</th>
