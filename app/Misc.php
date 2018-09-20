@@ -399,9 +399,4 @@ class Misc extends Common
         ];
 
     }
-    
-    public static function send_to_mlab()
-    {
-    	$batches = \App\Batch::where('sen')
-    }
 }
