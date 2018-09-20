@@ -426,7 +426,8 @@ class Misc extends Common
 					'http_errors' => false,
 					'json' => [
 						'source' => '1',
-						'result_id' => '2',
+						'result_id' => "{$sample->id}",
+						'result_type' => '2',
 						'request_id' => '',
 						'client_id' => $sample->patient->patient,
 						'age' => "{$sample->age}",
