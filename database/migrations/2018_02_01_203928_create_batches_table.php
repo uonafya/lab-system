@@ -32,6 +32,7 @@ class CreateBatchesTable extends Migration
             $table->tinyInteger('site_entry')->unsigned()->default(0)->nullable();
 
             $table->boolean('sent_email')->default(false)->nullable();
+            $table->boolean('sent_to_mlab')->default(false)->nullable();
 
             $table->string('entered_by', 20)->nullable();
             $table->integer('user_id')->unsigned()->nullable()->index();

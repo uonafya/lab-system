@@ -186,6 +186,7 @@ class ViralsampleController extends Controller
             $this->clear_session();
             $batch->premature();
             if($batch->site_entry == 2) return back();
+            MiscViral::check_batch($batch->id);
             return redirect("viralbatch/{$batch->id}");
         }
 
@@ -195,6 +196,7 @@ class ViralsampleController extends Controller
         if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
+            MiscViral::check_batch($batch->id);
             session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             return redirect("viralbatch/{$batch->id}");
         }
@@ -326,6 +328,8 @@ class ViralsampleController extends Controller
 
         $viralsample->pre_update();
 
+        MiscViral::check_batch($batch->id);
+
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){
@@ -380,7 +384,13 @@ class ViralsampleController extends Controller
     public function destroy(Viralsample $viralsample)
     {
         if($viralsample->result == NULL){
+            $batch = $viralsample->batch;
             $viralsample->delete();
+            $samples = $batch->sample;
+            if($samples->isEmpty()) $batch->delete();
+            else{
+                MiscViral::check_batch($batch->id);
+            }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
         else{
@@ -535,6 +545,7 @@ class ViralsampleController extends Controller
         while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
 
             $facility = Facility::locate($row[3])->get()->first();
+            if(!$facility) continue;
             $datecollected = Lookup::other_date($row[8]);
             $datereceived = Lookup::other_date($row[15]);
             $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
@@ -543,11 +554,12 @@ class ViralsampleController extends Controller
 
             $site_entry = Lookup::get_site_entry($row[14]);
 
-            $batch = Viralbatch::with('sample_count')
+            $batch = Viralbatch::withCount(['sample'])
                                     ->where('received_by', auth()->user()->id)
                                     ->where('datereceived', $datereceived)
                                     ->where('input_complete', 0)
                                     ->where('site_entry', $site_entry)
+                                    ->where('facility_id', $facility->id)
                                     ->get()->first();
 
             if($batch){
@@ -561,6 +573,7 @@ class ViralsampleController extends Controller
             if(!$batch){
                 $batch = new Viralbatch;
                 $batch->user_id = $facility->facility_user->id;
+                $batch->facility_id = $facility->id;
                 $batch->received_by = auth()->user()->id;
                 $batch->lab_id = auth()->user()->lab_id;
                 $batch->datereceived = $datereceived;
@@ -581,12 +594,13 @@ class ViralsampleController extends Controller
             $patient->patient = $row[1];
             $patient->sex = Lookup::get_gender($row[4]);
             $patient->initiation_date = Lookup::other_date($row[9]);
-            if(!$patient->dob && $value[6]) $patient->dob = Lookup::calculate_dob($datecollected, $value[6]); 
-            $patient->save();
+            if(!$patient->dob && $row[6]) $patient->dob = Lookup::calculate_dob($datecollected, $row[6]); 
+            $patient->pre_update();
 
             $sample = new Viralsample;
             $sample->batch_id = $batch->id;
             $sample->patient_id = $patient->id;
+            $sample->datecollected = $datecollected;
             $sample->age = $row[6];
             if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
             $sample->prophylaxis = Lookup::viral_regimen($row[10]);
@@ -594,8 +608,8 @@ class ViralsampleController extends Controller
             $sample->justification = Lookup::justification($row[12]);
             $sample->sampletype = $row[7];
             $sample->pmtct = $row[13];
-            $sample->rejectedreason = $row[17];
             $sample->receivedstatus = $row[16];
+            if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
             $sample->save();
             $created_rows++;
         }

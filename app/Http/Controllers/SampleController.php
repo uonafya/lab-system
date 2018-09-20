@@ -193,6 +193,7 @@ class SampleController extends Controller
             $this->clear_session();
             $batch->premature();
             if($batch->site_entry == 2) return back();
+            Misc::check_batch($batch->id); 
             return redirect("batch/{$batch->id}");
         }
 
@@ -202,6 +203,7 @@ class SampleController extends Controller
         if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
+            Misc::check_batch($batch->id); 
             session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             return redirect("batch/{$batch->id}");
         }
@@ -400,7 +402,9 @@ class SampleController extends Controller
         }
 
 
-        $sample->pre_update();   
+        $sample->pre_update(); 
+
+        Misc::check_batch($batch->id);  
 
         if($new_batch){
             session(['batch' => $batch, 'batch_total' => 1,
@@ -453,7 +457,13 @@ class SampleController extends Controller
     public function destroy(Sample $sample)
     {
         if($sample->result == NULL){
+            $batch = $sample->batch;
             $sample->delete();
+            $samples = $batch->sample;
+            if($samples->isEmpty()) $batch->delete();
+            else{
+                MiscViral::check_batch($batch->id);
+            }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
         else{

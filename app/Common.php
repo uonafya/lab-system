@@ -13,6 +13,7 @@ use Exception;
 class Common
 {
 	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
+	public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 
     public static function test_email()
     {
@@ -250,6 +251,22 @@ class Common
 		return "Batches of {$type} have been marked as input complete";
 	}
 
+	public static function check_batches($type)
+	{
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+			$misc_model = \App\Misc::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+			$misc_model = \App\MiscViral::class;
+		}
+
+		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
+		foreach ($batches as $key => $batch) {
+			$misc_model::check_batch($batch->id);
+		}
+	}
+
     public static function delete_folder($path)
     {
         if(!ends_with($path, '/')) $path .= '/';
@@ -275,6 +292,7 @@ class Common
         if(!$batch->sent_email){ 
             $batch->sent_email = true;
             $batch->dateemailsent = date('Y-m-d');
+            $batch->save();
         }
 
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
@@ -295,13 +313,14 @@ class Common
 
     public static function dispatch_results($type = 'eid')
     {
+    	ini_set('memory_limit', "-1");
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 		}else{
 			$batch_model = \App\Viralbatch::class;
 		}
 
-		$min_date = date('Y-m-d', strtotime('-2 years'));
+		$min_date = date('Y-m-d', strtotime('-1 years'));
 
 		$batches = $batch_model::where('batch_complete', 1)
 		->where('sent_email', 0)
