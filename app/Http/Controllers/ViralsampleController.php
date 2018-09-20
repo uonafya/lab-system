@@ -595,7 +595,7 @@ class ViralsampleController extends Controller
             $patient->sex = Lookup::get_gender($row[4]);
             $patient->initiation_date = Lookup::other_date($row[9]);
             if(!$patient->dob && $row[6]) $patient->dob = Lookup::calculate_dob($datecollected, $row[6]); 
-            $patient->save();
+            $patient->pre_update();
 
             $sample = new Viralsample;
             $sample->batch_id = $batch->id;
