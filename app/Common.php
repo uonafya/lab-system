@@ -312,6 +312,7 @@ class Common
 
     public static function dispatch_results($type = 'eid')
     {
+    	ini_set('memory_limit', "-1");
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 		}else{
