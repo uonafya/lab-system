@@ -449,6 +449,7 @@ class Misc extends Common
     		}
     		$batch->sent_to_mlab = 1;
     		$batch->save();
+    		// break;
     	}
     }
 }
