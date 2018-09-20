@@ -143,7 +143,7 @@ class ViralpatientController extends Controller
             $sample->pre_update();
         }
 
-        $patient_array = Viralpatient::whereIn('id', $patients)->update(['synched' => 3]);
+        $patient_array = Viralpatient::whereIn('id', $patients)->where('id', '!=', $patient->id)->update(['synched' => 3]);
 
         session(['toast_message' => "The patient records have been merged. The records will be propagated to the national database and then they will be removed."]);
 

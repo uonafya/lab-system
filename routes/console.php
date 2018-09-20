@@ -56,6 +56,12 @@ Artisan::command('input-complete {type}', function($type){
 })->describe('Mark batches as input completed.');
 
 
+Artisan::command('batch-complete {type}', function($type){
+    $str = \App\Common::check_batches($type);
+    $this->info($str);
+})->describe('Check if batch is ready for dispatch.');
+
+
 
 Artisan::command('lablog {type}', function($type){
 	$str = \App\Synch::labactivity($type);
@@ -73,6 +79,18 @@ Artisan::command('send:sms {type}', function($type){
     else { $str = \App\MiscViral::patient_sms(); }    
     $this->info($str);
 })->describe('Send result sms.');
+
+
+Artisan::command('send:weekly-activity', function(){
+    $str = \App\Synch::send_weekly_activity();
+    $this->info($str);
+})->describe('Send out weekly activity sms alert.');
+
+
+Artisan::command('send:weekly-backlog', function(){
+    $str = \App\Synch::send_weekly_backlog();
+    $this->info($str);
+})->describe('Send out weekly backlog sms alert.');
 
 
 
@@ -152,11 +170,16 @@ Artisan::command('match:patients {type}', function($type){
 
 
 Artisan::command('match:batches {type}', function($type){
-    $str = \App\Synch::match_batches();
+    $str = \App\Synch::match_batches($type);
     $this->info($str);
 })->describe('Match batches with records on the national database.');
 
 
+
+Artisan::command('email:urgent', function(){
+    $str = \App\Common::send_communication();
+    $this->info($str);
+})->describe('Send test email.');
 
 Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();
@@ -167,7 +190,5 @@ Artisan::command('test:connection', function(){
     $str = \App\Synch::test_connection();
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
-
-
 
 

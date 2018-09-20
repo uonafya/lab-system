@@ -62,6 +62,10 @@ class Misc extends Common
 						$sample->save();
 					}
 				}
+                else{
+                    if($sample->result == 3) $sample->result=5;
+                    $sample->save();
+                }
 			}
 		}
 		return true;
@@ -102,9 +106,11 @@ class Misc extends Common
 		->count();
 
 		if($total == $tests){
-			// DB::table('batches')->where('id', $batch_id)->update(['batch_complete' => 2]);
-			\App\Batch::where('id', $batch_id)->update(['batch_complete' => 2]);
-			// self::save_tat(\App\SampleView::class, \App\Sample::class, $batch_id);
+            $b = \App\Batch::find($batch_id);
+            if($b->batch_complete == 0){
+                $b->batch_complete = 2; 
+                $b->save();
+            }
 		}
 	}
 
@@ -235,6 +241,7 @@ class Misc extends Common
     {
         ini_set("memory_limit", "-1");
     	$samples = SampleView::whereNotNull('patient_phone_no')
+    				->where('patient_phone_no', '!=', '')
     				->whereNull('time_result_sms_sent')
     				->where('batch_complete', 1)
     				->where('datereceived', '>', '2018-05-01')
@@ -242,6 +249,7 @@ class Misc extends Common
 
     	foreach ($samples as $key => $sample) {
     		self::send_sms($sample);
+    		break;
     	}
     }
 
@@ -332,6 +340,7 @@ class Misc extends Common
 
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
         $user = auth()->user();
+        \App\Batch::where(['received_by' => $user->id, 'input_complete' => 0])->update(['input_complete' => 1]);
 
         if($machine == NULL || $machine->eid_limit == NULL) return false;
 
@@ -342,32 +351,28 @@ class Misc extends Common
         $date_str = $year . '-12-31';        
 
         if($test){
-            $repeats = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-                ->join('batches', 'samples.batch_id', '=', 'batches.id')
-                ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-                ->join('patients', 'samples.patient_id', '=', 'patients.id')
-                ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            $repeats = SampleView::selectRaw("samples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
+                ->leftJoin('users', 'users.id', '=', 'samples_view.user_id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
                 ->where('datereceived', '>', $date_str)
                 ->where('site_entry', '!=', 2)
-                ->having('isnull', 0)
+                ->where('parentid', '>', 0)
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw('((result IS NULL ) OR (result=0 ))')
-                ->orderBy('samples.id', 'asc')
+                ->orderBy('samples_view.id', 'asc')
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
         }
 
-        $samples = Sample::selectRaw("samples.*, patients.patient, facilitys.name, batches.datereceived, batches.highpriority, batches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-            ->join('batches', 'samples.batch_id', '=', 'batches.id')
-            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-            ->join('patients', 'samples.patient_id', '=', 'patients.id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+        $samples = SampleView::selectRaw("samples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
+            ->leftJoin('users', 'users.id', '=', 'samples_view.user_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
             ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id)->having('isnull', 1);
+                return $query->where('received_by', $user->id)->where('parentid', 0);
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -378,11 +383,11 @@ class Misc extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('samples.id', 'asc')
+            ->orderBy('samples_view.id', 'asc')
             ->limit($limit)
             ->get();
 
-        if($test) $samples = $repeats->merge($samples);
+        if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
 
         $create = false;

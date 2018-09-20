@@ -19,7 +19,7 @@
                 </div>
                 <div class="panel-body">
 
-                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
+                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal' ]) }}
 
                         <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
 
@@ -166,7 +166,7 @@
                                             <td>
                                                 <select class="form-control" name="rejectedreason" id="rejectedreason">
 
-                                                    <option> Select One </option>
+                                                    <option></option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}

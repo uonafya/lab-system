@@ -34,6 +34,7 @@
                                     <th>Date Drawn</th>
                                     <th>Received Status</th>
                                     <th>Date Tested</th>
+                                    <th>Date Dispatched</th>
                                     <th>Result</th>
                                     <th>Action</th>
 
@@ -51,6 +52,7 @@
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
+                                        <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> 
                                             @if($pre == '')
                                                 {{ $results->where('id', $sample->result)->first()->name ?? '' }}

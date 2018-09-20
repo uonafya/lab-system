@@ -82,7 +82,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control ampath-only" name="amrs_location">
 
-                                  <option> Select One </option>
+                                  <option></option>
                                   @foreach ($amrs_locations as $amrs_location)
                                       <option value="{{ $amrs_location->id }}"
 
@@ -109,7 +109,7 @@
                             <label class="col-sm-4 control-label">Sample Type</label>
                             <div class="col-sm-8">
                                 <select class="form-control" name="sample_type">
-                                    <option> Select One </option>
+                                    <option></option>
                                     <option value="GAP Sample"> GAP Sample </option>
                                     <option value="Study Sample"> Study Sample </option>
                                 </select>
@@ -184,7 +184,7 @@
                             <div class="col-sm-5">
                                 <select class="form-control requirable" required name="pcrtype" id="pcrtype">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($pcrtypes as $pcrtype)
                                         <option value="{{ $pcrtype->id }}"
 
@@ -225,7 +225,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="sex" id="sex">
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
 
@@ -247,7 +247,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="entry_point" id="entry_point">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($entry_points as $entry_point)
                                         <option value="{{ $entry_point->id }}"
 
@@ -270,7 +270,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="regimen">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($iprophylaxis as $ip)
                                         <option value="{{ $ip->id }}"
 
@@ -293,7 +293,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="feeding">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($feedings as $feeding)
                                         <option value="{{ $feeding->id }}"
 
@@ -379,7 +379,7 @@
                             </label>
                             <div class="col-sm-8"><select class="form-control requirable" required name="mother_prophylaxis">
 
-                                <option> Select One </option>
+                                <option></option>
                                 @foreach ($interventions as $intervention)
                                     <option value="{{ $intervention->id }}"
 
@@ -421,7 +421,7 @@
                             <div class="col-sm-8">
                                     <select class="form-control lockable" required name="hiv_status" id="hiv_status">
 
-                                    <option> Select One </option>
+                                    <option></option>
                                     @foreach ($hiv_statuses as $hiv_status)
                                         <option value="{{ $hiv_status->id }}"
 
@@ -531,7 +531,7 @@
                                 <div class="col-sm-8">
                                         <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
-                                        <option> Select One </option>
+                                        <option></option>
                                         @foreach ($receivedstatuses as $receivedstatus)
                                             <option value="{{ $receivedstatus->id }}"
 
@@ -552,7 +552,7 @@
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                        <option> Select One </option>
+                                        <option></option>
                                         @foreach ($rejectedreasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
@@ -729,11 +729,13 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
                     // $("#rejectedreason").prop('disabled', false);
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
                     // $("#enrollment_ccc_no").attr("disabled", "disabled");
                     // $("#rejectedreason").prop('disabled', true);
 
@@ -812,6 +814,11 @@
                             id: 'hidden_patient',
                             class: 'patient_details'
                         }).appendTo("#samples_form");
+
+                        if(data[4] != 0)
+                        {
+                            set_message(data[4]);
+                        }
 
                         // $('<input>').attr({
                         //     type: 'hidden',

@@ -46,8 +46,11 @@ p.breakhere {page-break-before: always}
 
 <body onLoad="JavaScript:window.print();">
 
+	<?php $count = 0; ?>
+
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
+		<?php $count++; ?>
 		<table  id="table1" align="center">
 			<tr>
 				<td colspan="8" align="center">
@@ -371,7 +374,7 @@ p.breakhere {page-break-before: always}
 			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
 		</span>
 
-		@if($key % 2 == 1)
+		@if($count % 2 == 0)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else

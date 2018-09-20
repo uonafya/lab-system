@@ -104,8 +104,12 @@ class MiscViral extends Common
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
-			\App\Viralbatch::where('id', $batch_id)->update(['batch_complete' => 2]);
-            return true;
+            $b = \App\Viralbatch::find($batch_id);
+            if($b->batch_complete == 0){
+                $b->batch_complete = 2; 
+                $b->save();
+                return true;
+            }
             // self::save_tat(\App\SampleView::class, \App\Sample::class, $batch_id);
 		}
         else{
@@ -379,7 +383,7 @@ class MiscViral extends Common
             else if($result > 5000) return ['rcategory' => 4];
         }
         $data = $this->get_rcategory($result);
-        if(!isset($data['rcategory'])) dd($result);
+        // if(!isset($data['rcategory'])) dd($result);
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
@@ -486,6 +490,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
         $samples = ViralsampleView::whereNotNull('patient_phone_no')
+                    ->where('patient_phone_no', '!=', '')
                     ->whereNull('time_result_sms_sent')
                     ->where('batch_complete', 1)
                     ->where('datereceived', '>', '2018-05-01')
@@ -572,6 +577,7 @@ class MiscViral extends Common
 
         $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
         $user = auth()->user();
+        \App\Viralbatch::where(['received_by' => $user->id, 'input_complete' => 0])->update(['input_complete' => 1]);
 
         if($machine == NULL || $machine->vl_limit == NULL) return false;
         // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
@@ -586,36 +592,32 @@ class MiscViral extends Common
         $date_str = $year . '-12-31';
 
         if($test){
-            $repeats = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-                ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-                ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
-                ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            $repeats = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
+                ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
+                ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->where('datereceived', '>', $date_str)
                 ->when($sampletype, function($query) use ($sampletype){
                     if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                     if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
                 })
                 ->where('site_entry', '!=', 2)
-                ->having('isnull', 0)
+                ->where('parentid', '>', 0)
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw("(result IS NULL OR result='0')")
-                ->orderBy('viralsamples.id', 'asc')
+                ->orderBy('viralsamples_view.id', 'asc')
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
         }
 
-        $samples = Viralsample::selectRaw("viralsamples.*, viralpatients.patient, facilitys.name, viralbatches.datereceived, viralbatches.highpriority, viralbatches.site_entry, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
-            ->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
-            ->join('viralpatients', 'viralsamples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+            ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
             ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id)->having('isnull', 1);
+                return $query->where('received_by', $user->id)->where('parentid', 0);
             })
             ->when($sampletype, function($query) use ($sampletype){
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
@@ -630,14 +632,14 @@ class MiscViral extends Common
             ->orderBy('highpriority', 'asc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('viralsamples.id', 'asc')
+            ->orderBy('viralsamples_view.id', 'asc')
             ->limit($limit)
             ->get();
 
-        if($test) $samples = $repeats->merge($samples);
+        if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
-        $create = false;
+        $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
 
         return [

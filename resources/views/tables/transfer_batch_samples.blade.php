@@ -40,10 +40,12 @@
                         </div>
                         <div class="col-md-4">
                             <p><strong>Entered By:</strong> 
-                                @if($batch->creator->full_name != ' ')
-                                    {{ $batch->creator->full_name }}
-                                @else
-                                    {{ $batch->creator->facility->name ?? '' }}
+                                @if($batch->creator)
+                                    @if($batch->creator->full_name != ' ')
+                                        {{ $batch->creator->full_name ?? '' }}
+                                    @else
+                                        {{ $batch->creator->facility->name ?? '' }}
+                                    @endif
                                 @endif
                             </p>
                         </div>
@@ -169,7 +171,10 @@
                             </table>
                         </div>
 
-                        <button class="btn btn-primary" type="submit" name="submit_type" value="add">Transfer Selected Samples to a New Batch</button>
+                        <button class="btn btn-primary" type="submit" name="submit_type" value="new_facility">Transfer Selected Samples to a New Facility </button>
+
+                        <button class="btn btn-primary" type="submit" name="submit_type" value="new_batch">Transfer Selected Samples to a New Batch (To enable dispatch) </button>
+                    </form>
                 </div>
             </div>
         </div>

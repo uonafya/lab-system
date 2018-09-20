@@ -189,9 +189,11 @@ class SampleController extends Controller
 
         $submit_type = $request->input('submit_type');
 
-        if($submit_type == "release"){
+        if($submit_type == "release" || $batch->site_entry == 2){
             $this->clear_session();
             $batch->premature();
+            if($batch->site_entry == 2) return back();
+            Misc::check_batch($batch->id); 
             return redirect("batch/{$batch->id}");
         }
 
@@ -201,6 +203,7 @@ class SampleController extends Controller
         if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
+            Misc::check_batch($batch->id); 
             session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             return redirect("batch/{$batch->id}");
         }
@@ -277,6 +280,7 @@ class SampleController extends Controller
     public function update(Request $request, Sample $sample)
     {
         $submit_type = $request->input('submit_type');
+        $user = auth()->user();
 
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
@@ -298,11 +302,11 @@ class SampleController extends Controller
             session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
             $batch = new Batch;
-            $batch->user_id = auth()->user()->id;
-            $batch->lab_id = auth()->user()->lab_id;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
-                $batch->received_by = auth()->user()->id;
+            if($user->user_type_id == 1 || $user->user_type_id == 4){
+                $batch->received_by = $user->id;
                 $batch->site_entry = 0;
             }
             else{
@@ -312,6 +316,7 @@ class SampleController extends Controller
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
+        if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
         $batch->pre_update();
 
         $new_patient = $request->input('new_patient');
@@ -397,7 +402,9 @@ class SampleController extends Controller
         }
 
 
-        $sample->pre_update();   
+        $sample->pre_update(); 
+
+        Misc::check_batch($batch->id);  
 
         if($new_batch){
             session(['batch' => $batch, 'batch_total' => 1,
@@ -431,6 +438,10 @@ class SampleController extends Controller
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
+        if($batch->batch_complete == 2){
+            $batch->datedispatched = date('Y-m-d');
+            $batch->batch_complete = 1;
+        }
         $batch->pre_update();
         session(['toast_message' => 'The sample has been updated.']);
 
@@ -446,7 +457,13 @@ class SampleController extends Controller
     public function destroy(Sample $sample)
     {
         if($sample->result == NULL){
+            $batch = $sample->batch;
             $sample->delete();
+            $samples = $batch->sample;
+            if($samples->isEmpty()) $batch->delete();
+            else{
+                MiscViral::check_batch($batch->id);
+            }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
         else{
@@ -467,6 +484,7 @@ class SampleController extends Controller
         $patient = Patient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
         $data;
         if($patient){
+            $patient->most_recent();
             $mother = $patient->mother;
             $mother->calc_age();
 
@@ -519,6 +537,11 @@ class SampleController extends Controller
             if($age > 24) $error_message = "The patient is over age.";
 
             $data[3] = ['previous_positive' => $previous_positive, 'recommended_pcr' => $recommended_pcr, 'message' => $message, 'error_message' => $error_message];
+
+            $data[4] = 0;
+            if($patient->most_recent){
+                $data[4] = "The date collected for the most recent test of the patient is " . $patient->most_recent->my_date_format('datecollected') . " in batch number " . $patient->most_recent->batch_id;
+            }
         }
         else{
             $data[0] = 1;

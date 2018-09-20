@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
+use App\Mail\UrgentCommunication;
 use Carbon\Carbon;
 use Exception;
 
@@ -249,6 +250,22 @@ class Common
 		return "Batches of {$type} have been marked as input complete";
 	}
 
+	public static function check_batches($type)
+	{
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+			$misc_model = \App\Misc::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+			$misc_model = \App\MiscViral::class;
+		}
+
+		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
+		foreach ($batches as $key => $batch) {
+			$misc_model::check_batch($batch->id);
+		}
+	}
+
     public static function delete_folder($path)
     {
         if(!ends_with($path, '/')) $path .= '/';
@@ -274,10 +291,11 @@ class Common
         if(!$batch->sent_email){ 
             $batch->sent_email = true;
             $batch->dateemailsent = date('Y-m-d');
+            $batch->save();
         }
 
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
         if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
@@ -300,7 +318,12 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 
-		$batches = $batch_model::where('batch_complete', 1)->where('sent_email', 0)->get();
+		$min_date = date('Y-m-d', strtotime('-1 years'));
+
+		$batches = $batch_model::where('batch_complete', 1)
+		->where('sent_email', 0)
+		->where('datedispatched', '>', $min_date)
+		->get();
 
 		foreach ($batches as $batch) {
 		 	self::dispatch_batch($batch);
@@ -324,6 +347,25 @@ class Common
 		 	self::dispatch_batch($batch);
 		 	break;
 		} 
+    }
+
+    public static function send_communication()
+    {
+        ini_set("memory_limit", "-1");
+        $facilities = \App\Facility::where('flag', 1)->get();
+
+        foreach ($facilities as $key => $facility) {
+        	$mail_array = $facility->email_array;
+        	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        	$comm = new UrgentCommunication;
+        	try {
+	        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+	        	->send($comm);
+	        } catch (Exception $e) {
+        	
+	        }
+        	// break;
+        }
     }
 
 }
