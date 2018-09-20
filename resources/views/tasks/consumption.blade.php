@@ -51,7 +51,7 @@
                                 $used = null;
                             @endphp
                             <div class="alert alert-danger">
-                                <center><i class="fa fa-bolt"></i> Please enter {{ $types }} values below.</center>
+                                <center><i class="fa fa-bolt"></i> Please enter {{ $types }} values below. <strong>(Tests:{{ $tests }})</strong></center>
                             </div>
                             <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
                                 <thead>               
@@ -172,7 +172,7 @@
                                 $used = null;
                             @endphp
                             <div class="alert alert-warning">
-                                <center><i class="fa fa-bolt"></i> Please enter {{ $types }} values below.</center>
+                                <center><i class="fa fa-bolt"></i> Please enter {{ $types }} values below.<strong>(Tests:{{ $tests }})</strong></center>
                             </div>
                             <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
                                 <thead>               
