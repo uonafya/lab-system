@@ -317,11 +317,16 @@ class Synch
 			$update_class = $value['class'];
 			$column = self::$column_array[$key];
 
-			$sheet = false;
+			$sheet = $sample = $eid_patient = false;
 			if($key == 'worksheets') $sheet = true;
+			if($key == 'samples') $sample = true;
+			if($key == 'patients' && $type == 'eid') $eid_patient = true;
 
 			while(true){
 				$models = $update_class::where('synched', 2)
+										->when($sample, function($query){
+							                return $query->with(['batch', 'patient']);
+							            })
 										->when($sheet, function($query){
 							                return $query->where('status_id', 3);
 							            })->limit(20)->get();
@@ -1008,7 +1013,7 @@ class Synch
 
 	// No longer necessary
 	// Facilities will be created nationally then synched to all labs
-	/*public static function synch_facilities()
+	public static function synch_facilities()
 	{
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
@@ -1031,10 +1036,10 @@ class Synch
 			$body = json_decode($response->getBody());
 
 			foreach ($body->facilities as $key => $value) {
-				$update_data = ['id' => $value->id, 'synched' => 1, 'datesynched' => $today,];
+				$update_data = ['id' => $value->id, 'synched' => 1,];
 				Facility::where('id', $value->original_id)->update($update_data);
 			}
 		}
-	}*/
+	}
 
 }
