@@ -441,10 +441,10 @@ class Misc extends Common
 						'csr' => '0',
 						'lab_order_date' => $sample->datetested,
 					],
-
 				]);
 				$body = json_decode($response->getBody());
 				print_r($body);
+				if($response->getStatusCode() > 399) die();
     		}
     		$batch->sent_to_mlab = 1;
     		$batch->save();
