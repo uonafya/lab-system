@@ -440,16 +440,15 @@ class Misc extends Common
 						'cst' => '0',
 						'cj' => '0',
 						'csr' => '0',
-						'lab_order_date' => $sample->datetested,
+						'lab_order_date' => $sample->datetested ?? '',
 					],
 				]);
 				$body = json_decode($response->getBody());
-				print_r($body);
+				// print_r($body);
 				if($response->getStatusCode() > 399) return null;
     		}
     		$batch->sent_to_mlab = 1;
     		$batch->save();
-    		break;
     	}
     }
 }
