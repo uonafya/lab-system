@@ -573,6 +573,7 @@ class ViralsampleController extends Controller
             if(!$batch){
                 $batch = new Viralbatch;
                 $batch->user_id = $facility->facility_user->id;
+                $batch->facility_id = $facility->id;
                 $batch->received_by = auth()->user()->id;
                 $batch->lab_id = auth()->user()->lab_id;
                 $batch->datereceived = $datereceived;
