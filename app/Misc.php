@@ -422,19 +422,19 @@ class Misc extends Common
     			$client = new Client(['base_uri' => self::$mlab_url]);
 
 				$response = $client->request('post', '', [
-					'debug' => true,
+					// 'debug' => true,
 					'http_errors' => false,
 					'json' => [
 						'source' => '1',
 						'result_id' => '2',
 						'request_id' => '',
 						'client_id' => $sample->patient->patient,
-						'age' => $sample->age,
+						'age' => "{$sample->age}",
 						'gender' => $sample->patient->gender,
-						'result_content' => $sample->result,
+						'result_content' => "{$sample->result}",
 						'units' => '0',
-						'mfl_code' => $batch->facility->facilitycode,
-						'lab_id' => $batch->lab_id,
+						'mfl_code' => "{$batch->facility->facilitycode}",
+						'lab_id' => "{$batch->lab_id}",
 						'date_collected' => $sample->datecollected,
 						'cst' => '0',
 						'cj' => '0',
