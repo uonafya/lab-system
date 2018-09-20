@@ -399,4 +399,56 @@ class Misc extends Common
         ];
 
     }
+
+    public static function send_to_mlab()
+    {
+    	ini_set('memory_limit', "-1");
+		$min_date = date('Y-m-d', strtotime('-1 years'));
+    	$batches = \App\Batch::join('facility', 'batches.facility_id', '=', 'facility.id')
+    			->select("batches.*")
+    			->with(['facility'])
+    			->where('sent_to_mlab', 0)
+    			->where('smsprinter', 1)
+    			->where('batch_complete', 1)
+				->where('datedispatched', '>', $min_date)
+    			->get();
+
+    	foreach ($batches as $batch) {
+    		$samples = $batch->sample;
+
+    		foreach ($samples as $sample) {
+    			if($sample->repeatt == 1) continue;
+
+    			$client = new Client(['base_uri' => self::$mlab_url]);
+
+				$response = $client->request('post', '', [
+					'debug' => true,
+					'http_errors' => false,
+					'json' => [
+						'source' => '1',
+						'result_id' => '2',
+						'request_id' => '',
+						'client_id' => $sample->patient->patient,
+						'age' => $sample->age,
+						'gender' => $sample->patient->gender,
+						'result_content' => $sample->result,
+						'units' => '0',
+						'mfl_code' => $batch->facility->facilitycode,
+						'lab_id' => $batch->lab_id,
+						'date_collected' => $sample->datecollected,
+						'cst' => '0',
+						'cj' => '0',
+						'csr' => '0',
+						'lab_order_date' => $sample->datetested,
+					],
+
+				]);
+				$body = json_decode($response->getBody());
+				print_r($body);
+    		}
+    		$batch->sent_to_mlab = 1;
+    		$batch->save();
+    		break;
+    	}
+    }
 }
