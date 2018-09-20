@@ -421,26 +421,6 @@ class Misc extends Common
 
     			$client = new Client(['base_uri' => self::$mlab_url]);
 
-    			$str = json_encode([
-						'source' => '1',
-						'result_id' => '2',
-						'request_id' => '',
-						'client_id' => $sample->patient->patient,
-						'age' => $sample->age,
-						'gender' => $sample->patient->gender,
-						'result_content' => $sample->result,
-						'units' => '0',
-						'mfl_code' => $batch->facility->facilitycode,
-						'lab_id' => $batch->lab_id,
-						'date_collected' => $sample->datecollected,
-						'cst' => '0',
-						'cj' => '0',
-						'csr' => '0',
-						'lab_order_date' => $sample->datetested,
-					]);
-
-    			echo $str;die();
-
 				$response = $client->request('post', '', [
 					'debug' => true,
 					'http_errors' => false,
@@ -464,7 +444,7 @@ class Misc extends Common
 				]);
 				$body = json_decode($response->getBody());
 				print_r($body);
-				if($response->getStatusCode() > 399) die();
+				if($response->getStatusCode() > 399) return null;
     		}
     		$batch->sent_to_mlab = 1;
     		$batch->save();
