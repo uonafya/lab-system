@@ -404,7 +404,7 @@ class Misc extends Common
     {
     	ini_set('memory_limit', "-1");
 		$min_date = date('Y-m-d', strtotime('-1 years'));
-    	$batches = \App\Batch::join('facility', 'batches.facility_id', '=', 'facility.id')
+    	$batches = \App\Batch::join('facilitys', 'batches.facility_id', '=', 'facilitys.id')
     			->select("batches.*")
     			->with(['facility'])
     			->where('sent_to_mlab', 0)
