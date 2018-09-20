@@ -42,6 +42,14 @@
                 <!-- TAQMAN DIV -->
                     <div id="taqman" style="display: none;">
                         @foreach($data->testtypes as $types)
+                            @php
+                                $testtype = $types.'teststaq';
+                                $tests = $data->$testtype;
+                                $prevtaqman = 'prevtaqman'.$types;
+                                $taqmandeliveries = 'taqmandeliveries'.$types;
+                                $qualkitused = 0;
+                                $used = null;
+                            @endphp
                             <div class="alert alert-danger">
                                 <center><i class="fa fa-bolt"></i> Please enter {{ $types }} values below.</center>
                             </div>
@@ -66,15 +74,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                        $testtype = $types.'teststaq';
-                                        $tests = $data->$testtype;
-                                        $prevtaqman = 'prevtaqman'.$types;
-                                        $taqmandeliveries = 'taqmandeliveries'.$types;
-                                        $qualkitused = 0;
-                                        $used = null;
-                                    @endphp
-
                                     <input type="hidden" name="taqman{{ $types }}tests" id="taqman{{ $types }}tests" value="{{ $tests }}">
 
                                     @foreach ($data->taqmanKits as $kits)
@@ -164,6 +163,14 @@
                 <!-- ABBOTT DIV -->
                     <div id="abbott" style="display: none;">
                         @foreach($data->testtypes as $types)
+                            @php
+                                $testtype = $types.'testsabbott';
+                                $tests = $data->$testtype;
+                                $prevabbott = 'prevabbott'.$types;
+                                $abbottdeliveries = 'abbottdeliveries'.$types;
+                                $qualkitused = 0;
+                                $used = null;
+                            @endphp
                             <div class="alert alert-warning">
                                 <center><i class="fa fa-bolt"></i> Please enter {{ $types }} values below.</center>
                             </div>
@@ -187,15 +194,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                        $testtype = $types.'testsabbott';
-                                        $tests = $data->$testtype;
-                                        $prevabbott = 'prevabbott'.$types;
-                                        $abbottdeliveries = 'abbottdeliveries'.$types;
-                                        $qualkitused = 0;
-                                        $used = null;
-                                    @endphp
-
                                     <input type="hidden" name="abbott{{ $types }}tests" id="abbott{{ $types }}tests" value="{{ $tests }}">
 
                                     @foreach ($data->abbottKits as $kits)

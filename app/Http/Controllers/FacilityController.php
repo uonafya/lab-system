@@ -279,7 +279,7 @@ class FacilityController extends Controller
      */
     public function update(Request $request, Facility $facility)
     {
-        $success = 'Update was sucessfull';
+        $success = 'Update was successful';
         $failed = 'Updated failed try again later';
 
         $data = $request->except(['_token', 'id', '_method']);

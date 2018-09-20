@@ -17,74 +17,76 @@
                     Batches Awaiting Dispatch
                 </div>
                 <div class="panel-body">
+                    <div class="table-responsive">
                     
-                    <form  method="post" action="{{ url('batch/complete_dispatch') }}" name="worksheetform"
+                        <form  method="post" action="{{ url('batch/complete_dispatch') }}" name="worksheetform"
 
-                        @if($batch_list)
-                            onSubmit="return confirm('Are you sure you want to dispatch the selected batches?');"
-                        @endif
+                            @if($batch_list)
+                                onSubmit="return confirm('Are you sure you want to dispatch the selected batches?');"
+                            @endif
 
-                      >
-                        {{ csrf_field() }}
+                          >
+                            {{ csrf_field() }}
 
-                        @if($batch_list)
-                            <input type="hidden" name="final_dispatch" value=1>
-                        @endif
-                        
+                            @if($batch_list)
+                                <input type="hidden" name="final_dispatch" value=1>
+                            @endif
+                            
 
-                        <table class="table table-striped table-bordered table-hover data-table" >
-                            <thead>
-                                <tr>
-                                    <th id="check_all">Check All</th>
-                                    <th> Batch No </th>
-                                    <th> Facility </th>
-                                    <th> Email Address </th>
-                                    <th> Date Received </th>
-                                    <th> No. of Samples </th>
-                                    <th> Rejected </th>
-                                    <th> Date Tested </th>
-                                    <th> Date Updated </th>
-                                    <th> Positive </th>
-                                    <th> Negative </th>
-                                    <th> Redraw </th>
-                                    <th> Failed </th>
-                                    <th> Delay(days) </th>              
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($batches as $batch)
+                            <table class="table table-striped table-bordered table-hover" >
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <div align='center'>
-                                                <input name='batches[]' type='checkbox' class='checks' value='{{ $batch->id }}' />
-                                            </div>
-                                        </td>
-                                        <td> {{ $batch->id }} </td>
-                                        <td> {{ $batch->name }} </td>
-                                        <td> {{ $batch->email }} </td>
-                                        <td> {{ $batch->my_date_format('datereceived') }} </td>
-                                        <td> {{ $batch->total }} </td>
-                                        <td> {{ $batch->rejected }} </td>
-                                        <td> {{ $batch->my_date_format('date_tested') }} </td>
-                                        <td> {{ $batch->my_date_format('date_modified') }} </td>
-                                        <td> {{ $batch->positives }} </td>
-                                        <td> {{ $batch->negatives }} </td>
-                                        <td> {{ $batch->redraw }} </td>
-                                        <td> {{ $batch->failed }} </td>
-                                        <td> {{ $batch->tat() }} </td>
+                                        <th id="check_all">Check All</th>
+                                        <th> Batch No </th>
+                                        <th> Facility </th>
+                                        <th> Email Address </th>
+                                        <th> Date Received </th>
+                                        <th> No. of Samples </th>
+                                        <th> Rejected </th>
+                                        <th> Date Tested </th>
+                                        <th> Date Updated </th>
+                                        <th> Positive </th>
+                                        <th> Negative </th>
+                                        <th> Redraw </th>
+                                        <th> Failed </th>
+                                        <th> Delay(days) </th>              
                                     </tr>
-                                @endforeach
+                                </thead>
+                                <tbody>
+                                    @foreach($batches as $batch)
+                                        <tr>
+                                            <td>
+                                                <div align='center'>
+                                                    <input name='batches[]' type='checkbox' class='checks' value='{{ $batch->id }}' />
+                                                </div>
+                                            </td>
+                                            <td> {{ $batch->id }} </td>
+                                            <td> {{ $batch->name }} </td>
+                                            <td> {{ $batch->email }} </td>
+                                            <td> {{ $batch->my_date_format('datereceived') }} </td>
+                                            <td> {{ $batch->total }} </td>
+                                            <td> {{ $batch->rejected }} </td>
+                                            <td> {{ $batch->my_date_format('date_tested') }} </td>
+                                            <td> {{ $batch->my_date_format('date_modified') }} </td>
+                                            <td> {{ $batch->positives }} </td>
+                                            <td> {{ $batch->negatives }} </td>
+                                            <td> {{ $batch->redraw }} </td>
+                                            <td> {{ $batch->failed }} </td>
+                                            <td> {{ $batch->tat() }} </td>
+                                        </tr>
+                                    @endforeach
 
 
 
-                                @php
-                                    // echo $rows;
-                                @endphp 
-                            </tbody>
-                        </table>
+                                    @php
+                                        // echo $rows;
+                                    @endphp 
+                                </tbody>
+                            </table>
 
-                        <input type="submit" name="Proceed to Confirm Selected Dispatch ">
-                    </form>
+                            <button class="btn btn-success" type="submit">Proceed to Confirm Selected Dispatch</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
