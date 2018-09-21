@@ -354,7 +354,7 @@ class Synch
 				if($body->errors_array){
 					foreach ($body->errors_array as $row) {
 						$update_data = ['synched' => 1, 'datesynched' => $today,];
-						$update_class::where('id', $row->original_id)->update($update_data);
+						$update_class::where('id', $row->id)->update($update_data);
 					}
 				}
 			}			
