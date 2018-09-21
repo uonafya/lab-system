@@ -50,11 +50,11 @@ class Synch
 				'update_url' => 'update/worksheets',
 				'delete_url' => 'delete/worksheets',
 			],
-			// 'mothers' => [
-			// 	'class' => Mother::class,
-			// 	'update_url' => 'update/mothers',
-			// 	'delete_url' => 'delete/mothers',
-			// ],
+			'mothers' => [
+				'class' => Mother::class,
+				'update_url' => 'update/mothers',
+				'delete_url' => 'delete/mothers',
+			],
 			'patients' => [
 				'class' => Patient::class,
 				'update_url' => 'update/patients',
@@ -349,6 +349,13 @@ class Synch
 				foreach ($body->$key as $row) {
 					$update_data = [$column => $row->$column, 'synched' => 1, 'datesynched' => $today,];
 					$update_class::where('id', $row->original_id)->update($update_data);
+				}
+
+				if($body->errors_array){
+					foreach ($body->errors_array as $row) {
+						$update_data = ['synched' => 1, 'datesynched' => $today,];
+						$update_class::where('id', $row->id)->update($update_data);
+					}
 				}
 			}			
 		}
@@ -1015,6 +1022,7 @@ class Synch
 	// Facilities will be created nationally then synched to all labs
 	public static function synch_facilities()
 	{
+		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
@@ -1038,7 +1046,22 @@ class Synch
 			foreach ($body->facilities as $key => $value) {
 				$update_data = ['id' => $value->id, 'synched' => 1,];
 				Facility::where('id', $value->original_id)->update($update_data);
+				if($value->id != $value->original_id){
+					self::change_facility_id(Batch::class, $value->original_id, $value->id);
+					self::change_facility_id(Viralbatch::class, $value->original_id, $value->id);
+					self::change_facility_id(Patient::class, $value->original_id, $value->id);
+					self::change_facility_id(Viralpatient::class, $value->original_id, $value->id);
+				}
 			}
+		}
+	}
+
+	public static function change_facility_id($class_name, $old_id, $new_id)
+	{
+		$models = $class_name::where('facility_id', $old_id)->get();
+		foreach ($models as $m) {
+			$m->facility_id = $new_id;
+			$m->pre_update();
 		}
 	}
 

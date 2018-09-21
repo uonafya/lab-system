@@ -695,7 +695,10 @@ class MiscViral extends Common
                 ]);
                 $body = json_decode($response->getBody());
                 // print_r($body);
-                if($response->getStatusCode() > 399) return null;
+                if($response->getStatusCode() > 399){
+                    print_r($body);
+                    return null;
+                }
             }
             $batch->sent_to_mlab = 1;
             $batch->save();
