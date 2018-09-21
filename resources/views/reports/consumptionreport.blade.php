@@ -43,7 +43,7 @@
                 				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
                                 <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
                                 <td>
-                                @if($data->platform == 'abbott')
+                                @if($viewdata->platform == 'abbott')
                                     @if($viewdata->type == 'EID')
                                         @if($sub->alias=='qualkit')
                                             @php
@@ -63,7 +63,7 @@
                                             {{ $qualkit*$sub->testFactor->VL }}
                                         @endif
                                     @endif
-                                @elseif($data->platform == 'taqman')
+                                @elseif($viewdata->platform == 'taqman')
                                     @if($viewdata->type == 'EID')
                                         @if($sub->alias=='qualkit')
                                             @php
