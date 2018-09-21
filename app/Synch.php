@@ -1015,6 +1015,7 @@ class Synch
 	// Facilities will be created nationally then synched to all labs
 	public static function synch_facilities()
 	{
+		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
@@ -1039,9 +1040,21 @@ class Synch
 				$update_data = ['id' => $value->id, 'synched' => 1,];
 				Facility::where('id', $value->original_id)->update($update_data);
 				if($value->id != $value->original_id){
-					
+					self::change_facility_id(Batch::class, $value->original_id, $value->id);
+					self::change_facility_id(Viralbatch::class, $value->original_id, $value->id);
+					self::change_facility_id(Patient::class, $value->original_id, $value->id);
+					self::change_facility_id(Viralpatient::class, $value->original_id, $value->id);
 				}
 			}
+		}
+	}
+
+	public static function change_facility_id($class_name, $old_id, $new_id)
+	{
+		$models = $class_name::where('facility_id', $old_id)->get();
+		foreach ($models as $m) {
+			$m->facility_id = $new_id;
+			$m->pre_update();
 		}
 	}
 
