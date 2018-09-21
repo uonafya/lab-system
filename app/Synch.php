@@ -50,11 +50,11 @@ class Synch
 				'update_url' => 'update/worksheets',
 				'delete_url' => 'delete/worksheets',
 			],
-			// 'mothers' => [
-			// 	'class' => Mother::class,
-			// 	'update_url' => 'update/mothers',
-			// 	'delete_url' => 'delete/mothers',
-			// ],
+			'mothers' => [
+				'class' => Mother::class,
+				'update_url' => 'update/mothers',
+				'delete_url' => 'delete/mothers',
+			],
 			'patients' => [
 				'class' => Patient::class,
 				'update_url' => 'update/patients',
@@ -73,7 +73,7 @@ class Synch
 		],
 
 		'vl' => [
-			/*'worksheets' => [
+			'worksheets' => [
 				'class' => Viralworksheet::class,
 				'update_url' => 'update/viralworksheets',
 				'delete_url' => 'delete/viralworksheets',
@@ -87,7 +87,7 @@ class Synch
 				'class' => Viralbatch::class,
 				'update_url' => 'update/viralbatches',
 				'delete_url' => 'delete/viralbatches',
-			],*/
+			],
 			'samples' => [
 				'class' => Viralsample::class,
 				'update_url' => 'update/viralsamples',
