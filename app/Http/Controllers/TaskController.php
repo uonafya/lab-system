@@ -52,6 +52,9 @@ class TaskController extends Controller
 
     public function addKitDeliveries(Request $request)
     {
+        $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+        $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+
         if ($request->saveTaqman) {
             $receivedby = $request->receivedby;
             $datereceived = $request->datereceived;
@@ -92,8 +95,9 @@ class TaskController extends Controller
                         'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
                     ];
             $save = Taqmandeliveries::create($vlData);
-
             session(['toast_message'=>'The KIT delivery has EID/VL Taqman KITS SAVED SUCCESSFULLY.']);
+            if ($abbottdeliveries > 0)
+                return redirect()->route('pending');
         } else if ($request->saveAbbott) {
             // dd($request->all());
             $receivedby = $request->areceivedby;
@@ -156,16 +160,19 @@ class TaskController extends Controller
 
             $save = Abbotdeliveries::create($vlData);
             session(['toast_message'=>'The KIT delivery has EID/VL ABBOTT KITS SAVED SUCCESSFULLY.']);
-        }
-        // $taqdeliveries = Taqmandeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
-        // $abbottdeliveries = Abbotdeliveries::where('quarter', parent::_getMonthQuarter(date('m')))->count();
 
-        // if ($taqdeliveries > 0 && $abbottdeliveries > 0) {
-        //     return redirect()->route('pending');
-        // }
+            if ($taqdeliveries > 0)
+                return redirect()->route('pending');
+        }
 
         $users = User::where('user_type_id', '<', 5)->get();
-        return view('tasks.kitsdeliveries', compact('users'))->with('pageTitle', 'Kit Deliveries');
+        $data = (object)[
+                        'users' => $users,
+                        'taqmandeliveries' => $taqdeliveries,
+                        'abbottdeliveries' => $abbottdeliveries
+                    ];
+                
+        return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
     }
 
     public function consumption (Request $request, $guide=null)
@@ -247,8 +254,8 @@ class TaskController extends Controller
             }
         }
 
-        $taqproc = Taqmanprocurement::where('month', $previousMonth)->where('year', $year)->count();
-        $abbottproc = Abbotprocurement::where('month', $previousMonth)->where('year', $year)->count();
+        $taqproc = Taqmanprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
+        $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0)
             return redirect()->route('pending');
@@ -280,7 +287,8 @@ class TaskController extends Controller
                 $data['abbottdeliveries'.$value] = $value1;
             }
         }
-        
+        $data['taqproc'] = $taqproc;
+        $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
         // dd($data);
