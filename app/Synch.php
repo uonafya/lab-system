@@ -350,6 +350,10 @@ class Synch
 					$update_data = [$column => $row->$column, 'synched' => 1, 'datesynched' => $today,];
 					$update_class::where('id', $row->original_id)->update($update_data);
 				}
+
+				if($body->errors_array){
+					print_r($body->errors_array); die();
+				}
 			}			
 		}
 	}
