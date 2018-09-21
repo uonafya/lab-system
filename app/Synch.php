@@ -1038,6 +1038,9 @@ class Synch
 			foreach ($body->facilities as $key => $value) {
 				$update_data = ['id' => $value->id, 'synched' => 1,];
 				Facility::where('id', $value->original_id)->update($update_data);
+				if($value->id != $value->original_id){
+					
+				}
 			}
 		}
 	}

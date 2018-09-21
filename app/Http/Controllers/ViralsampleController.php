@@ -606,7 +606,7 @@ class ViralsampleController extends Controller
             $sample->prophylaxis = Lookup::viral_regimen($row[10]);
             $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
             $sample->justification = Lookup::justification($row[12]);
-            $sample->sampletype = $row[7];
+            $sample->sampletype = (int) $row[7];
             $sample->pmtct = $row[13];
             $sample->receivedstatus = $row[16];
             if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
