@@ -73,7 +73,7 @@ class Synch
 		],
 
 		'vl' => [
-			'worksheets' => [
+			/*'worksheets' => [
 				'class' => Viralworksheet::class,
 				'update_url' => 'update/viralworksheets',
 				'delete_url' => 'delete/viralworksheets',
@@ -87,7 +87,7 @@ class Synch
 				'class' => Viralbatch::class,
 				'update_url' => 'update/viralbatches',
 				'delete_url' => 'delete/viralbatches',
-			],
+			],*/
 			'samples' => [
 				'class' => Viralsample::class,
 				'update_url' => 'update/viralsamples',
