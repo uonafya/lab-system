@@ -134,11 +134,12 @@ class ReportController extends Controller
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
             $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")
+                        ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("worksheets.machine_type", "=", 2);
                             if ($platform == 'taqman')
-                                return $query->where("worksheets.machine_type", "=", 1);
+                                return $query->whereIn("worksheets.machine_type", [1,3]);
                         });
             $type = 'EID';
         }
@@ -146,11 +147,12 @@ class ReportController extends Controller
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
             $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")
+                        ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("viralworksheets.machine_type", "=", 2);
                             if ($platform == 'taqman')
-                                return $query->where("viralworksheets.machine_type", "=", 1);
+                                return $query->whereIn("viralworksheets.machine_type", [1,3]);
                         });
             $type = 'VL';
         }
@@ -218,7 +220,8 @@ class ReportController extends Controller
                         'prevreport' => $prevnewdata,
                         'kitsreport' => $kitsdata,
                         'tests' => $tests,
-                        'type' => $type
+                        'type' => $type,
+                        'platform' => $platform
                     ];
         // $reports = $newdata;
         // dd($data);
