@@ -687,10 +687,10 @@ class MiscViral extends Common
                         'mfl_code' => "{$batch->facility->facilitycode}",
                         'lab_id' => "{$batch->lab_id}",
                         'date_collected' => $sample->datecollected,
-                        'cst' => '0',
-                        'cj' => '0',
-                        'csr' => '0',
-                        'lab_order_date' => $sample->datetested ?? '',
+                        'cst' => "{$sample->sampletype}",
+                        'cj' => "{$sample->justification}",
+                        'csr' =>  "{$sample->rejectedreason}",
+                        'lab_order_date' => $sample->datetested ?? '0000-00-00',
                     ],
                 ]);
                 $body = json_decode($response->getBody());
