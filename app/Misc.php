@@ -446,6 +446,7 @@ class Misc extends Common
 				$body = json_decode($response->getBody());
 				// print_r($body);
 				if($response->getStatusCode() > 399){
+					print_r($sample);
 					print_r($body);
 					return null;
 				}
