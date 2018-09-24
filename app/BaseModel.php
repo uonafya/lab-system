@@ -45,6 +45,12 @@ class BaseModel extends Model
         return '';
     }
 
+    public function my_string_format($value)
+    {
+        if($this->$value) return (string) $this->$value;
+        return "0";
+    }
+
     public function output_array($value)
     {
         return eval('return ' . $this->value . ';');
