@@ -439,14 +439,14 @@ class Misc extends Common
 						'date_collected' => $sample->datecollected,
 						'cst' => '0',
 						'cj' => '0',
-						'csr' =>  "{$sample->rejectedreason}",
+						'csr' => "{$sample->rejectedreason}",
 						'lab_order_date' => $sample->datetested ?? '0000-00-00',
 					],
 				]);
 				$body = json_decode($response->getBody());
 				// print_r($body);
 				if($response->getStatusCode() > 399){
-					print_r($sample->toJson());
+					print_r(json_decode($sample->toJson()));
 					print_r($body);
 					return null;
 				}
