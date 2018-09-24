@@ -686,7 +686,7 @@ class MiscViral extends Common
                         'units' => $sample->units ?? '',
                         'mfl_code' => "{$batch->facility->facilitycode}",
                         'lab_id' => "{$batch->lab_id}",
-                        'date_collected' => $sample->datecollected,
+                        'date_collected' => $sample->datecollected ?? '0000-00-00',
                         'cst' => "{$sample->sampletype}",
                         'cj' => "{$sample->justification}",
                         'csr' =>  "{$sample->rejectedreason}",

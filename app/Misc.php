@@ -436,7 +436,7 @@ class Misc extends Common
 						'units' => '0',
 						'mfl_code' => "{$batch->facility->facilitycode}",
 						'lab_id' => "{$batch->lab_id}",
-						'date_collected' => $sample->datecollected,
+						'date_collected' => $sample->datecollected ?? '0000-00-00',
 						'cst' => '0',
 						'cj' => '0',
 						'csr' => "{$sample->rejectedreason}",
