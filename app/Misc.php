@@ -446,7 +446,25 @@ class Misc extends Common
 				$body = json_decode($response->getBody());
 				// print_r($body);
 				if($response->getStatusCode() > 399){
-					print_r(json_decode($sample->toJson()));
+					// print_r(json_decode($sample->toJson()));
+					print_r([
+						'source' => '1',
+						'result_id' => "{$sample->id}",
+						'result_type' => '2',
+						'request_id' => '',
+						'client_id' => $sample->patient->patient,
+						'age' => "{$sample->age}",
+						'gender' => $sample->patient->gender,
+						'result_content' => "{$sample->result}",
+						'units' => '0',
+						'mfl_code' => "{$batch->facility->facilitycode}",
+						'lab_id' => "{$batch->lab_id}",
+						'date_collected' => $sample->datecollected,
+						'cst' => '0',
+						'cj' => '0',
+						'csr' => "{$sample->rejectedreason}",
+						'lab_order_date' => $sample->datetested ?? '0000-00-00',
+					]);
 					print_r($body);
 					return null;
 				}
