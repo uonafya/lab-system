@@ -679,7 +679,7 @@ class MiscViral extends Common
                         'client_id' => $sample->patient->patient,
                         'age' => $sample->my_string_format('age'),
                         'gender' => $sample->patient->gender,
-                        'result_content' => "{$sample->result}",
+                        'result_content' => $sample->my_string_format('result'),
                         'units' => $sample->units ?? '',
                         'mfl_code' => "{$batch->facility->facilitycode}",
                         'lab_id' => "{$batch->lab_id}",
