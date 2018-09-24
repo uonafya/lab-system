@@ -45,10 +45,10 @@ class BaseModel extends Model
         return '';
     }
 
-    public function my_string_format($value)
+    public function my_string_format($value, $default='0')
     {
         if($this->$value) return (string) $this->$value;
-        return "0";
+        return $default;
     }
 
     public function output_array($value)

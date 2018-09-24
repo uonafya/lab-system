@@ -421,10 +421,7 @@ class Misc extends Common
 
     			$client = new Client(['base_uri' => self::$mlab_url]);
 
-				$response = $client->request('post', '', [
-					// 'debug' => true,
-					'http_errors' => false,
-					'json' => [
+    			$post_data = [
 						'source' => '1',
 						'result_id' => "{$sample->id}",
 						'result_type' => '2',
@@ -441,30 +438,18 @@ class Misc extends Common
 						'cj' => '0',
 						'csr' => "{$sample->rejectedreason}",
 						'lab_order_date' => $sample->datetested ?? '0000-00-00',
-					],
+					];
+
+				$response = $client->request('post', '', [
+					// 'debug' => true,
+					'http_errors' => false,
+					'json' => $post_data,
 				]);
 				$body = json_decode($response->getBody());
 				// print_r($body);
 				if($response->getStatusCode() > 399){
 					// print_r(json_decode($sample->toJson()));
-					print_r([
-						'source' => '1',
-						'result_id' => "{$sample->id}",
-						'result_type' => '2',
-						'request_id' => '',
-						'client_id' => $sample->patient->patient,
-						'age' => $sample->my_string_format('age'),
-						'gender' => $sample->patient->gender,
-						'result_content' => $sample->my_string_format('result'),
-						'units' => '0',
-						'mfl_code' => "{$batch->facility->facilitycode}",
-						'lab_id' => "{$batch->lab_id}",
-						'date_collected' => $sample->datecollected ?? '0000-00-00',
-						'cst' => '0',
-						'cj' => '0',
-						'csr' => "{$sample->rejectedreason}",
-						'lab_order_date' => $sample->datetested ?? '0000-00-00',
-					]);
+					print_r($post_data);
 					print_r($body);
 					return null;
 				}
