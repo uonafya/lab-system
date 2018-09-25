@@ -19,8 +19,8 @@ class MiscViral extends Common
 
     protected $rcategories = [
         '0' => [],
-        '1' => ['< LDL copies/ml', '< LDL copies', ],
-        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000'],
+        '1' => ['Target Not Detected',  ],
+        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', ],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
@@ -28,12 +28,16 @@ class MiscViral extends Common
 
     protected $compound_categories = [
         [
-            'search_array' =>  ['Target  Not Detected', 'Target N ot Detected', 'Target Not  Detected', 'Target Not Detecetd', 'Target Not Detected', '< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
-            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target  Not Detected']
+            'search_array' =>  ['Target  Not Detected', 'Target N ot Detected', 'Target Not  Detected', 'Target Not Detecetd', 'Target Not Detected'],
+            'update_array' => ['rcategory' => 1, 'result' => 'Target Not Detected', 'interpretation' => 'Target Not Detected']
+        ],
+        [
+            'search_array' =>   ['< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
+            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
         ],
         [
             'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
-            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
+            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
         ],
         [
             'search_array' =>  ['REJECTED'],
@@ -225,21 +229,32 @@ class MiscViral extends Common
 
     public static function sample_result($result, $error)
     {
-        if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
+        $str = strtolower($result);
+
+        // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
+        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '839', '150']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;
             $units="";                        
         }
 
-        else if($result == 'Collect New Sample')
+        else if(str_contains($str, ['not detected']))
+        {
+            $res="Target Not Detected";
+            $interpretation=$result;
+            $units="";
+        }
+
+        // else if($result == 'Collect New Sample')
+        else if(str_contains($str, ['collect', 'new sample']))
         {
             $res= "Collect New Sample";
             $interpretation="Collect New Sample";
             $units="";                         
         }
 
-        else if($result == 'Failed' || $result == '')
+        else if($result == 'Failed' || $result == '' || str_contains($str, ['error']))
         {
             $res= "Failed";
             $interpretation = $error;
@@ -382,6 +397,8 @@ class MiscViral extends Common
             else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
             else if($result > 5000) return ['rcategory' => 4];
         }
+        $str = strtolower($result);
+        if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
         $data = $this->get_rcategory($result);
         // if(!isset($data['rcategory'])) dd($result);
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';

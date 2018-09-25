@@ -195,14 +195,14 @@ p.breakhere {page-break-before: always}
 						$routcome = "<span class='emph'>" . $sample->result . '</span> ' . $sample->units;
 					}
 
-					$resultcomments="";
+					/*$resultcomments="";
 					$vlresultinlog='N/A';
 
 					if ($sample->result == '< LDL copies/ml'){
 						$resultcomments="<small>LDL:Lower Detectable Limit i.e. Below Detectable levels by machine( Roche DBS <400 copies/ml , Abbott DBS  <550 copies/ml )</small> ";
 					}
 
-					if (is_numeric($sample->result) ) $vlresultinlog= round(log10($sample->result), 1);
+					if (is_numeric($sample->result) ) $vlresultinlog= round(log10($sample->result), 1);*/
 				}
 				else{
 					$reason = $viral_rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '';
@@ -283,6 +283,11 @@ p.breakhere {page-break-before: always}
 		 
 						</strong>
 					</span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					{!! $sample->result_comment !!}					
 				</td>
 			</tr>
 
