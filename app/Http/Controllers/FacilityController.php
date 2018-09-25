@@ -284,7 +284,7 @@ class FacilityController extends Controller
 
         $data = $request->except(['_token', 'id', '_method']);
         $facility->fill($data);
-        $facility->save();
+        $facility->pre_update();
         return redirect()->route('facility.index')->with('success', $success);
 
         // $this->validate($request, [

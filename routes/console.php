@@ -49,6 +49,12 @@ Artisan::command('dispatch:results {type}', function($type){
     $this->info($str);
 })->describe('Send emails for dispatched batches.');
 
+Artisan::command('dispatch:mlab', function(){
+    $str = \App\Misc::send_to_mlab();
+    $str .= \App\MiscViral::send_to_mlab();
+    $this->info($str);
+})->describe('Post dispatched results to mlab.');
+
 
 Artisan::command('input-complete {type}', function($type){
     $str = \App\Common::input_complete_batches($type);

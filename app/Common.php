@@ -13,6 +13,7 @@ use Exception;
 class Common
 {
 	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
+	public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 
     public static function test_email()
     {
@@ -312,6 +313,7 @@ class Common
 
     public static function dispatch_results($type = 'eid')
     {
+    	ini_set('memory_limit', "-1");
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 		}else{

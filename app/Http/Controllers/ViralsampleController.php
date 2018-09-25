@@ -595,7 +595,7 @@ class ViralsampleController extends Controller
             $patient->sex = Lookup::get_gender($row[4]);
             $patient->initiation_date = Lookup::other_date($row[9]);
             if(!$patient->dob && $row[6]) $patient->dob = Lookup::calculate_dob($datecollected, $row[6]); 
-            $patient->save();
+            $patient->pre_update();
 
             $sample = new Viralsample;
             $sample->batch_id = $batch->id;
@@ -606,7 +606,7 @@ class ViralsampleController extends Controller
             $sample->prophylaxis = Lookup::viral_regimen($row[10]);
             $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
             $sample->justification = Lookup::justification($row[12]);
-            $sample->sampletype = $row[7];
+            $sample->sampletype = (int) $row[7];
             $sample->pmtct = $row[13];
             $sample->receivedstatus = $row[16];
             if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
