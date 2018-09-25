@@ -149,7 +149,7 @@ class Viralsample extends BaseModel
         $interpretation = $this->interpretation;
         // < ldl
         if(str_contains($result, ['<']) && str_contains($interpretation, ['<'])){
-            $str = "LDL:Lower Detectable Limit i.e. Below Detectable levels by machine";
+            $str = "LDL:Lower Detectable Limit i.e. Below Detectable levels by machine ";
             if(str_contains($interpretation, ['839'])){
                 $str .= "( Abbott DBS  &lt;839 copies/ml )";
             }
