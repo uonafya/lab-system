@@ -22,7 +22,7 @@ $api->version('v1', function (Router $api) {
         $api->get('hello', 'RandomController@hello');
 
 
-        $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
+        // $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
 
             $api->get('protected', 'RandomController@protected_route');
 
@@ -41,7 +41,7 @@ $api->version('v1', function (Router $api) {
 
             $api->resource('facility', 'FacilityController');
         });
-    });
+    // });
 
 
 });
