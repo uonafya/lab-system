@@ -286,7 +286,8 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 			<tr>
-				<td colspan="6">
+				<td colspan="1"></td>
+				<td colspan="5">
 					{!! $sample->result_comment !!}					
 				</td>
 			</tr>
