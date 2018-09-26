@@ -596,6 +596,7 @@ class ViralbatchController extends Controller
             if($sample->batch_id != $batch->id) continue;
 
             $sample->labcomment = $request->input('labcomment');
+            $sample->sample_received_by = $request->input('received_by');
 
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;

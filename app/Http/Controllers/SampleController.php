@@ -282,11 +282,15 @@ class SampleController extends Controller
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
 
+        $batch = $sample->batch;
+
+        if($batch->site_entry == 1 && !$sample->receivedstatus) $sample->sample_received_by = $user->id;
+
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
 
-        $batch = $sample->batch;
+
         
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');

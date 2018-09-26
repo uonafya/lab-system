@@ -273,13 +273,16 @@ class ViralsampleController extends Controller
     public function update(Request $request, Viralsample $viralsample)
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
-        $data = $request->only($viralsamples_arrays['sample']);
-        $viralsample->fill($data);
         $user = auth()->user();
+        
+        $batch = Viralbatch::find($viralsample->batch_id);
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
+        if($batch->site_entry == 1 && !$viralsample->receivedstatus) $viralsample->sample_received_by = $user->id;
 
-        $batch = Viralbatch::find($viralsample->batch_id);
+        $data = $request->only($viralsamples_arrays['sample']);
+        $viralsample->fill($data);
+
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
         if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
