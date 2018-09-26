@@ -381,9 +381,10 @@ class SampleController extends Controller
                 $s = $d['samples']->first();
                 if($s){
                     $sample->worksheet_id = null;
+                    $replacement = Viralsample::find($s->id);
 
-                    $s->worksheet_id = $worksheet->id;
-                    $s->save();
+                    $replacement->worksheet_id = $worksheet->id;
+                    $replacement->save();
                     session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
                 }
                 else{
