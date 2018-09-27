@@ -13,6 +13,10 @@
 					{
 						"key": "Content-Type",
 						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "apikey",
+						"value": "ZXmknmaI9MfE642"
 					}
 				],
 				"body": {
@@ -21,97 +25,81 @@
 						{
 							"key": "mflCode",
 							"value": "10263",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "patient_identifier",
 							"value": "10263-kljsdjj",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "dob",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datecollected",
 							"value": "2018-02-05",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datereceived",
 							"value": "2018-03-09",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "sex",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "feeding",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "pcrtype",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "regimen",
 							"value": "16",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "entry_point",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "mother_prophylaxis",
 							"value": "21",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "mother_last_result",
 							"value": "40",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "spots",
 							"value": "5",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "mother_age",
 							"value": "24",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "ccc_no",
 							"value": "654654",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "lab",
 							"value": "3",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -141,6 +129,10 @@
 					{
 						"key": "Content-Type",
 						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "apikey",
+						"value": "ZXmknmaI9MfE642"
 					}
 				],
 				"body": {
@@ -149,127 +141,106 @@
 						{
 							"key": "mflCode",
 							"value": "10263",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "patient_identifier",
 							"value": "10263-kljkjhaka",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "dob",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datecollected",
 							"value": "2018-02-06",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datereceived",
 							"value": "2018-03-09",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "sex",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "feeding",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "pcrtype",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "regimen",
 							"value": "16",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "entry_point",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "mother_prophylaxis",
 							"value": "21",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "spots",
 							"value": "5",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "mother_last_result",
 							"value": "450",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "mother_age",
 							"value": "24",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "ccc_no",
 							"value": "654654",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "lab",
 							"value": "3",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "receivedstatus",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datetested",
 							"value": "2018-04-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datedispatched",
 							"value": "2018-04-05",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "result",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "specimenlabelID",
 							"value": "89734b5",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -299,6 +270,10 @@
 					{
 						"key": "Content-Type",
 						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "apikey",
+						"value": "ZXmknmaI9MfE642"
 					}
 				],
 				"body": {
@@ -307,67 +282,56 @@
 						{
 							"key": "mflCode",
 							"value": "10263",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "patient_identifier",
 							"value": "10263-kljsd",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "dob",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datecollected",
 							"value": "2018-02-05",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datereceived",
 							"value": "2018-03-09",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "sex",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "prophylaxis",
 							"value": "15",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "regimenline",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "sampletype",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "justification",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "pmtct",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -397,6 +361,10 @@
 					{
 						"key": "Content-Type",
 						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "apikey",
+						"value": "ZXmknmaI9MfE642"
 					}
 				],
 				"body": {
@@ -405,97 +373,81 @@
 						{
 							"key": "mflCode",
 							"value": "10263",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "patient_identifier",
 							"value": "10263-klj",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "dob",
 							"value": "2008-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datecollected",
 							"value": "2018-02-05",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datereceived",
 							"value": "2018-03-09",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "sex",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "prophylaxis",
 							"value": "15",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "regimenline",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "sampletype",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "justification",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "pmtct",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datetested",
 							"value": "2018-05-02",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "datedispatched",
 							"value": "2018-05-05",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "receivedstatus",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "result",
 							"value": "450",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "specimenlabelID",
 							"value": "jfk",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -525,6 +477,10 @@
 					{
 						"key": "Content-Type",
 						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "apikey",
+						"value": "ZXmknmaI9MfE642"
 					}
 				],
 				"body": {
@@ -533,43 +489,36 @@
 						{
 							"key": "test",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "start_date",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "end_date",
 							"value": "2018-06-06",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "date_dispatched_start",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "date_dispatched_end",
 							"value": "2018-06-06",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "patient_id",
 							"value": "10263-kljsd,10263-klj",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "facility_code",
 							"value": "10263",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -599,6 +548,10 @@
 					{
 						"key": "Content-Type",
 						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "apikey",
+						"value": "ZXmknmaI9MfE642"
 					}
 				],
 				"body": {
@@ -607,31 +560,26 @@
 						{
 							"key": "test",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "start_date",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "end_date",
 							"value": "2018-06-06",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "date_dispatched_start",
 							"value": "2018-01-01",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "date_dispatched_end",
 							"value": "2018-06-06",
-							"description": "",
 							"type": "text"
 						}
 					]

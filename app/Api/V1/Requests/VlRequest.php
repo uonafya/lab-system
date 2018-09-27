@@ -14,6 +14,7 @@ class VlRequest extends BaseRequest
         $vl = Config::get('boilerplate.vl'); 
 
         $val = array_merge($base, $vl);
+        return $val;
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
         return $val;
     }
