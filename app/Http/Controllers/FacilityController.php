@@ -374,14 +374,9 @@ class FacilityController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $facility_user = false;
-        $user = auth()->user();
-        if($user->user_type_id == 5) $facility_user=true;
+        
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
-            ->when($facility_user, function($query){
-                return $query->where('id', '!=', 7148);
-            })
             ->paginate(10);
 
         $facilities->setPath(url()->current());

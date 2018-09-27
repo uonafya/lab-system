@@ -297,9 +297,9 @@ class SampleController extends Controller
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        $new_batch = false;
+        // $new_batch = false;
 
-        if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
+        /*if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
             $batch = new Batch;
             $new_batch = true;
 
@@ -318,7 +318,7 @@ class SampleController extends Controller
             else{
                 $batch->site_entry = 1;
             }
-        }
+        }*/
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
@@ -413,11 +413,11 @@ class SampleController extends Controller
 
         Misc::check_batch($batch->id);  
 
-        if($new_batch){
+        /*if($new_batch){
             session(['batch' => $batch, 'batch_total' => 1,
                 'toast_message' => 'The sample has been saved to batch number ' . $batch->id]);
             return redirect('sample/create');
-        }     
+        } */    
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
