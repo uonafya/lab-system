@@ -372,7 +372,9 @@ class Misc extends Common
             ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
             ->where('datereceived', '>', $date_str)
             ->when($test, function($query) use ($user){
-                return $query->where('received_by', $user->id)->where('parentid', 0);
+                // return $query->where('received_by', $user->id)->where('parentid', 0);
+                return $query->where('parentid', 0)
+                	->whereRaw("((received_by={$user->id} && sample_received_by IS NULL) OR  sample_received_by={$user->id})");
             })
             ->where('site_entry', '!=', 2)
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")

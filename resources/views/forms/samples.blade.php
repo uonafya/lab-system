@@ -632,11 +632,13 @@
                                         Update Sample
                                     @endif
                                 </button>
-                                @empty($site_entry_approval)
-                                    <button class="btn btn-primary" type="submit" name="submit_type" value="new_batch">
-                                        Update Sample And Create New Batch
-                                    </button>
-                                @endempty
+                                {{--
+                                    @empty($site_entry_approval)
+                                        <button class="btn btn-primary" type="submit" name="submit_type" value="new_batch">
+                                            Update Sample And Create New Batch
+                                        </button>
+                                    @endempty
+                                --}}
 
                             </div>
                         @else

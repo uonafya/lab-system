@@ -300,7 +300,7 @@ class ViralbatchController extends Controller
         session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
         if($submit_type == "new_facility"){
             session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
-            return redirect('sample/' . $s->id . '/edit');
+            return redirect('viralsample/' . $s->id . '/edit');
         }
         return redirect('viralbatch/' . $new_id);
     }
@@ -596,6 +596,7 @@ class ViralbatchController extends Controller
             if($sample->batch_id != $batch->id) continue;
 
             $sample->labcomment = $request->input('labcomment');
+            $sample->sample_received_by = $request->input('received_by');
 
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;

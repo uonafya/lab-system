@@ -22,13 +22,17 @@ $api->version('v1', function (Router $api) {
         $api->get('hello', 'RandomController@hello');
 
 
-        // $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
-
+        $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
             $api->get('protected', 'RandomController@protected_route');
 
             $api->group(['middleware' => 'jwt.refresh'], function(Router $api) {
                 $api->get('refresh', 'RandomController@refresh_route');
             });
+        });
+
+        
+        // $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
+
 
             $api->post('eid', 'EidController@eid');        
             $api->post('eid_complete', 'EidController@complete_result');  
@@ -40,8 +44,8 @@ $api->version('v1', function (Router $api) {
             $api->post('function', 'FunctionController@api');
 
             $api->resource('facility', 'FacilityController');
-        });
-    // });
+        // });
+    });
 
 
 });
