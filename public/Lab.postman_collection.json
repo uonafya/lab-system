@@ -43,11 +43,6 @@
 							"type": "text"
 						},
 						{
-							"key": "datereceived",
-							"value": "2018-03-09",
-							"type": "text"
-						},
-						{
 							"key": "sex",
 							"value": "1",
 							"type": "text"
@@ -300,13 +295,8 @@
 							"type": "text"
 						},
 						{
-							"key": "datereceived",
-							"value": "2018-03-09",
-							"type": "text"
-						},
-						{
 							"key": "sex",
-							"value": "2",
+							"value": "1",
 							"type": "text"
 						},
 						{
@@ -392,7 +382,7 @@
 						},
 						{
 							"key": "datereceived",
-							"value": "2018-03-09",
+							"value": "2018-03-05",
 							"type": "text"
 						},
 						{
@@ -453,7 +443,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://lab.test.nascop.org/api/vl",
+					"raw": "http://lab.test.nascop.org/api/vl_complete",
 					"protocol": "http",
 					"host": [
 						"lab",
@@ -463,7 +453,7 @@
 					],
 					"path": [
 						"api",
-						"vl"
+						"vl_complete"
 					]
 				}
 			},
