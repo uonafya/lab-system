@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Requests;
 
-use Dingo\Api\Http\FormRequest;
+use App\Api\V1\Requests\BaseRequest;
 
 class TestedRequest extends FormRequest
 {

@@ -109,7 +109,7 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong> Patient CCC No</strong></td>
 				<td colspan="3"> <span class="style5">{{ $sample->patient->patient }}</span></td>
-				<td colspan="2"  class="style4 style1 comment" ><strong> Sample Type </strong></td>
+				<td colspan="1"  class="style4 style1 comment" ><strong> Sample Type </strong></td>
 				<td colspan="2" class="comment" >
 					<span class="style5" > 
 	                    @foreach($sample_types as $sample_type)
@@ -125,8 +125,8 @@ p.breakhere {page-break-before: always}
 				<td colspan="3">
 					<span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </span>
 				</td>
-				<td class="style4 style1 comment" colspan="2" ><strong>Justification </strong></td>
-				<td colspan="1" class="comment">
+				<td class="style4 style1 comment" colspan="1" ><strong>Justification </strong></td>
+				<td colspan="2" class="comment">
 					<span class="style5">
 	                    @foreach($justifications as $justification)
 	                        @if($sample->justification == $justification->id)
@@ -140,8 +140,8 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong>Gender</strong></td>
 				<td colspan="3"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				<td class="style4 style1 comment" colspan="2" ><strong>PMTCT</strong></td>
-				<td colspan="1" class="comment">
+				<td class="style4 style1 comment" colspan="1" ><strong>PMTCT</strong></td>
+				<td colspan="2" class="comment">
 					<span class="style5">
 	                    @foreach($pmtct_types as $pmtct_type)
 	                        @if($sample->pmtct == $pmtct_type->id)
@@ -153,14 +153,14 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr >
-				<td colspan="1" class="style4 style1 comment" ><strong>Dates Collected </strong></td>
+				<td colspan="1" class="style4 style1 comment" ><strong>Date Collected </strong></td>
 				<td  class="comment" colspan="3"> 
 					<span class="style5">{{ $sample->my_date_format('datecollected') }}</span>
 				</td>
-				<td class="style4 style1 comment" colspan="2">
+				<td class="style4 style1 comment" colspan="1">
 					<strong> ART Initiation Date </strong>
 				</td>
-				<td colspan="1">
+				<td colspan="2">
 					<span class="style5">
 						{{ $sample->patient->my_date_format('initiation_date') }}
 					</span>
@@ -171,8 +171,8 @@ p.breakhere {page-break-before: always}
 			<tr >
 				<td colspan="1" class="style4 style1 comment"><strong>Date Received </strong></td>
 				<td colspan="3" class="comment" ><span class="style5"></span><span class="style5">{{ $sample->batch->my_date_format('datereceived') }}</span></td>
-				<td class="style4 style1 comment" colspan="2"><strong>Current ART Regimen	</strong></td>
-				<td colspan="1" class="comment">
+				<td class="style4 style1 comment" colspan="1"><strong>Current ART Regimen	</strong></td>
+				<td colspan="2" class="comment">
 					<span class="style5">
 	                    @foreach($prophylaxis as $proph)
 	                        @if($sample->prophylaxis == $proph->id)
@@ -186,8 +186,8 @@ p.breakhere {page-break-before: always}
 			<tr >
 				<td colspan="1" class="style4 style1 comment" width="220px"><strong>Date Tested </strong></td>
 				<td colspan="3" class="comment" ><span class="style5">{{ $sample->my_date_format('datetested') }}</span></td>
-				<td class="style4 style1 comment" colspan="2" ><strong>Date Initiated on Current Regimen </strong></td>
-				<td colspan="1" class="comment"><span class="style5">{{ $sample->my_date_format('dateinitiatedonregimen') }} </span></td>
+				<td class="style4 style1 comment" colspan="1" ><strong>Date Initiated on Current Regimen </strong></td>
+				<td colspan="2" class="comment"><span class="style5">{{ $sample->my_date_format('dateinitiatedonregimen') }} </span></td>
 			</tr>
 
 			<?php

@@ -3,7 +3,7 @@
 [Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**.
 
 
-All links are **POST** requests.
+All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.
 *Open the link in **POSTMAN** and then set the request to **POST** *
 - Get data by request type [click here](http://lab.test.nascop.org/api/function)
 >Fields
