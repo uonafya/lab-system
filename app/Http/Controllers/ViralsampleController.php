@@ -278,7 +278,9 @@ class ViralsampleController extends Controller
         $batch = Viralbatch::find($viralsample->batch_id);
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
-        if($batch->site_entry == 1 && !$viralsample->receivedstatus) $viralsample->sample_received_by = $user->id;
+        if($batch->site_entry == 1 && !$viralsample->receivedstatus && ($user->user_type_id == 1 || $user->user_type_id == 4)){
+            $viralsample->sample_received_by = $user->id;
+        }
 
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample->fill($data);

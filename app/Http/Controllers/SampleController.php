@@ -284,7 +284,9 @@ class SampleController extends Controller
 
         $batch = $sample->batch;
 
-        if($batch->site_entry == 1 && !$sample->receivedstatus) $sample->sample_received_by = $user->id;
+        if($batch->site_entry == 1 && !$sample->receivedstatus && ($user->user_type_id == 1 || $user->user_type_id == 4)){
+            $sample->sample_received_by = $user->id;
+        }
 
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
