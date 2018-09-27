@@ -510,7 +510,7 @@ class BatchController extends Controller
 
             $sample->spots = $spots_array[$key] ?? 5;
             $sample->labcomment = $request->input('labcomment');
-
+            $sample->sample_received_by = $request->input('received_by');
 
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;

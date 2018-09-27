@@ -72,15 +72,16 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="17"><center> Sample Log</center></th>
+                                    <th colspan="18"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
-                                    <th colspan="6">Patient Information</th>
+                                    <th colspan="7">Patient Information</th>
                                     <th colspan="3">Sample Information</th>
                                     <th colspan="8">Mother Information</th>
                                 </tr>
                                 <tr> 
                                     <th>No</th>
+                                    <th>Lab ID</th>
                                     <th>Patient ID</th>
                                     <th>Sex</th>
                                     <th>DOB</th>
@@ -103,8 +104,10 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
+                                        <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->patient->patient }} </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>

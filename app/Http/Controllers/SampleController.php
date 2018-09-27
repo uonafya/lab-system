@@ -282,18 +282,24 @@ class SampleController extends Controller
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
 
+        $batch = $sample->batch;
+
+        if($batch->site_entry == 1 && !$sample->receivedstatus && ($user->user_type_id == 1 || $user->user_type_id == 4)){
+            $sample->sample_received_by = $user->id;
+        }
+
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
 
-        $batch = $sample->batch;
+
         
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        $new_batch = false;
+        // $new_batch = false;
 
-        if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
+        /*if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
             $batch = new Batch;
             $new_batch = true;
 
@@ -312,7 +318,7 @@ class SampleController extends Controller
             else{
                 $batch->site_entry = 1;
             }
-        }
+        }*/
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
@@ -381,9 +387,10 @@ class SampleController extends Controller
                 $s = $d['samples']->first();
                 if($s){
                     $sample->worksheet_id = null;
+                    $replacement = Viralsample::find($s->id);
 
-                    $s->worksheet_id = $worksheet->id;
-                    $s->save();
+                    $replacement->worksheet_id = $worksheet->id;
+                    $replacement->save();
                     session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
                 }
                 else{
@@ -406,11 +413,11 @@ class SampleController extends Controller
 
         Misc::check_batch($batch->id);  
 
-        if($new_batch){
+        /*if($new_batch){
             session(['batch' => $batch, 'batch_total' => 1,
                 'toast_message' => 'The sample has been saved to batch number ' . $batch->id]);
             return redirect('sample/create');
-        }     
+        } */    
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

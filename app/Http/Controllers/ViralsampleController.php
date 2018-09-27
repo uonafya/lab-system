@@ -88,8 +88,14 @@ class ViralsampleController extends Controller
             return redirect("viralbatch/{$batch->id}");
         }
 
+        $data_existing = $request->only(['facility_id', 'patient', 'datecollected']);
+        if(!isset($data_existing['facility_id'])){
+            session(['toast_message' => "Please set the facility before submitting.", 'toast_error' => 1]);
+            return back();   
+        }
 
-        $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
+
+        $existing = ViralsampleView::existing( $data_existing )->get()->first();
         if($existing){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
@@ -267,13 +273,18 @@ class ViralsampleController extends Controller
     public function update(Request $request, Viralsample $viralsample)
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
-        $data = $request->only($viralsamples_arrays['sample']);
-        $viralsample->fill($data);
         $user = auth()->user();
+        
+        $batch = Viralbatch::find($viralsample->batch_id);
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
+        if($batch->site_entry == 1 && !$viralsample->receivedstatus && ($user->user_type_id == 1 || $user->user_type_id == 4)){
+            $viralsample->sample_received_by = $user->id;
+        }
 
-        $batch = Viralbatch::find($viralsample->batch_id);
+        $data = $request->only($viralsamples_arrays['sample']);
+        $viralsample->fill($data);
+
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
         if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
@@ -307,8 +318,10 @@ class ViralsampleController extends Controller
                 if($s){
                     $viralsample->worksheet_id = null;
 
-                    $s->worksheet_id = $worksheet->id;
-                    $s->save();
+                    $replacement = Viralsample::find($s->id);
+
+                    $replacement->worksheet_id = $worksheet->id;
+                    $replacement->save();
                     session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
                 }
                 else{
