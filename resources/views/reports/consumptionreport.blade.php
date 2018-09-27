@@ -17,7 +17,8 @@
                 	<table class="table table-striped table-bordered table-hover" style="font-size: 10px;margin-top: 1em;">
                 		<thead>
                 			<tr>
-                				<th rowspan="2">DESCRIPTION OF GOODS</th>
+                				<th rowspan="2">#</th>
+                                <th rowspan="2">DESCRIPTION OF GOODS</th>
                 				<th rowspan="2">BEGINING BALANCE</th>
                 				<th colspan="2">QUANTITY RECEIVED FROM CENTRAL WAREHOUSE (KEMSA, SCMS/RDC)</th>
                 				<th rowspan="2">QUANTITY USED</th>
@@ -34,30 +35,72 @@
                 			</tr>
                 		</thead>
                 		<tbody>
-                			@foreach($data->child as $sub)
-                                <tr>
-	                				<td>{{ $sub->name }}</td>
-                                    <td>{{ $viewdata->prevreport['ending'.$sub->alias] }}</td>
-	                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
-                                    <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
-                                    <td>
-                                        @if(isset($sub->factor->EID))
-                                            @if($viewdata->type == 'EID')
-                                                {{ $viewdata->tests*$sub->factor->EID }}
-                                            @elseif($viewdata->type == 'VL')
-                                                {{ $viewdata->tests*$sub->factor->VL }}
-                                            @endif
+            			@foreach($data->child as $key => $sub)
+                            <tr>
+                				<td>{{ $key+1 }}</td>
+                                <td>{{ $sub->name }}</td>
+                                <td>{{ $viewdata->prevreport['ending'.$sub->alias] }}</td>
+                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
+                                <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
+                                <td>
+                                @if($viewdata->platform == 'abbott')
+                                    @if($viewdata->type == 'EID')
+                                        @if($sub->alias=='qualkit')
+                                            @php
+                                                $qualkit = $viewdata->tests/$sub->testFactor->EID;
+                                            @endphp
+                                            {{ $qualkit }}
                                         @else
-                                            {{ $viewdata->tests*$sub->factor }}
+                                            {{ $qualkit*$sub->testFactor->EID }}
                                         @endif
-                                    </td>
-                                    <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
-                                    <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>
-                                    <td>{{ $viewdata->reports['issued'.$sub->alias] }}</td>
-                                    <td>{{ $viewdata->reports['ending'.$sub->alias] }}</td>
-                                    <td>{{ $viewdata->reports['request'.$sub->alias] }}</td>
-	                			</tr>
-                			@endforeach
+                                    @elseif($viewdata->type == 'VL')
+                                        @if($sub->alias=='qualkit')
+                                            @php
+                                                $qualkit = $viewdata->tests/$sub->testFactor->VL;
+                                            @endphp
+                                            {{ $qualkit }}
+                                        @else
+                                            {{ $qualkit*$sub->testFactor->VL }}
+                                        @endif
+                                    @endif
+                                @elseif($viewdata->platform == 'taqman')
+                                    @if($viewdata->type == 'EID')
+                                        @if($sub->alias=='qualkit')
+                                            @php
+                                                $qualkit = $viewdata->tests/$sub->testFactor->EID;
+                                            @endphp
+                                            {{ $qualkit }}
+                                        @else
+                                            {{ $qualkit*$sub->testFactor }}
+                                        @endif
+                                    @elseif($viewdata->type == 'VL')
+                                        @if($sub->alias=='qualkit')
+                                            @php
+                                                $qualkit = $viewdata->tests/$sub->testFactor->VL;
+                                            @endphp
+                                            {{ $qualkit }}
+                                        @else
+                                            {{ $qualkit*$sub->testFactor }}
+                                        @endif
+                                    @endif
+                                @endif
+                                @if(isset($sub->factor->EID))
+                                    @if($viewdata->type == 'EID')
+                                        {{ $viewdata->tests*$sub->factor->EID }}
+                                    @elseif($viewdata->type == 'VL')
+                                        {{ $viewdata->tests*$sub->factor->VL }}
+                                    @endif
+                                @else
+                                    {{ $viewdata->tests*$sub->factor }}
+                                @endif
+                                </td>
+                                <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
+                                <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>
+                                <td>{{ $viewdata->reports['issued'.$sub->alias] }}</td>
+                                <td>{{ $viewdata->reports['ending'.$sub->alias] }}</td>
+                                <td>{{ $viewdata->reports['request'.$sub->alias] }}</td>
+                			</tr>
+            			@endforeach
                 		</tbody>
                 	</table>
                 </div>
