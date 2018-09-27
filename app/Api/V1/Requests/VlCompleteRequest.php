@@ -21,9 +21,4 @@ class VlCompleteRequest extends BaseRequest
         $val['datetested'] = array_merge($val['datetested'], [new BeforeOrEqual($this->input('datedispatched'), 'datedispatched')]);
         return $val;
     }
-
-    public function authorize()
-    {
-        return false;
-    }
 }
