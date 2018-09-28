@@ -3,10 +3,10 @@
 namespace App\Api\V1\Requests;
 
 use Config;
-use Dingo\Api\Http\FormRequest;
+use App\Api\V1\Requests\BaseRequest;
 use App\Rules\BeforeOrEqual;
 
-class EidRequest extends FormRequest
+class EidRequest extends BaseRequest
 {
     public function rules()
     {
@@ -16,17 +16,5 @@ class EidRequest extends FormRequest
         $val = array_merge($base, $eid);
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
         return $val;
-    }
-
-    public function authorize()
-    {
-    	return true;        
-    }
-
-    public function messages()
-    {
-        return [
-            'before_or_equal' => 'The :attribute field must be before or equal to today.'
-        ];
     }
 }
