@@ -288,13 +288,7 @@ class Common
     public static function dispatch_batch($batch)
     {
     	$facility = $batch->facility; 
-
-        // if(!$batch->sent_email ){ 
-            $batch->sent_email = true;
-            $batch->dateemailsent = date('Y-m-d');
-            $batch->save();
-        // }
-
+    	
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
@@ -328,6 +322,11 @@ class Common
 		->get();
 
 		foreach ($batches as $batch) {
+
+            $batch->sent_email = true;
+            $batch->dateemailsent = date('Y-m-d');
+            $batch->save();
+
 		 	self::dispatch_batch($batch);
 		} 
     }
