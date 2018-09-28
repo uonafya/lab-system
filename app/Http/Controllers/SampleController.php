@@ -84,7 +84,13 @@ class SampleController extends Controller
             return redirect("batch/{$batch->id}");
         }   
 
-        $existing = SampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
+        $data_existing = $request->only(['facility_id', 'patient', 'datecollected']);
+        if(!isset($data_existing['facility_id'])){
+            session(['toast_message' => "Please set the facility before submitting.", 'toast_error' => 1]);
+            return back();   
+        }
+
+        $existing = SampleView::existing( $data_existing )->get()->first();
         if($existing){
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
