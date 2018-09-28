@@ -289,11 +289,11 @@ class Common
     {
     	$facility = $batch->facility; 
 
-        if(!$batch->sent_email){ 
+        // if(!$batch->sent_email ){ 
             $batch->sent_email = true;
             $batch->dateemailsent = date('Y-m-d');
             $batch->save();
-        }
+        // }
 
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
@@ -305,7 +305,7 @@ class Common
         try {
         	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
         	->send(new $mail_class($batch));
-        	$batch->save();
+        	// $batch->save();
         } catch (Exception $e) {
         	
         }
