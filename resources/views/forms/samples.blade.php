@@ -698,16 +698,6 @@
             format: "yyyy-mm-dd"
         });
 
-        $(".date_future").datepicker({
-            startView: 0,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            endDate: "+5d",
-            format: "yyyy-mm-dd"
-        });
-
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
