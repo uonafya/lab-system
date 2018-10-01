@@ -493,7 +493,7 @@ class SampleController extends Controller
             $samples = $batch->sample;
             if($samples->isEmpty()) $batch->delete();
             else{
-                MiscViral::check_batch($batch->id);
+                Misc::check_batch($batch->id);
             }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
