@@ -341,7 +341,20 @@ class ViralsampleController extends Controller
 
         $viralsample->pre_update();
 
-        MiscViral::check_batch($batch->id);
+        MiscViral::check_batch($batch->id); 
+
+        if($sample->receivedstatus == 1){            
+            $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);
+            $work_samples_edta = MiscViral::get_worksheet_samples(2, false, 2);
+
+            $str = '';
+
+            if($work_samples_dbs['count'] > 92) $str .= 'You now have ' . $work_samples_dbs['count'] . ' DBS samples that are eligible for testing.<br />']);
+
+            if($work_samples_edta['count'] > 20) session(['toast_message' => 'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.']);
+
+            if($str != '') session(['toast_message' => $str]);
+        }
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

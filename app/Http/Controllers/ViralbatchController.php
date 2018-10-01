@@ -613,6 +613,19 @@ class ViralbatchController extends Controller
         Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
 
+        if($submit_type == "accepted"){            
+            $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);
+            $work_samples_edta = MiscViral::get_worksheet_samples(2, false, 2);
+
+            $str = '';
+
+            if($work_samples_dbs['count'] > 92) $str .= 'You now have ' . $work_samples_dbs['count'] . ' DBS samples that are eligible for testing.<br />']);
+
+            if($work_samples_edta['count'] > 20) session(['toast_message' => 'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.']);
+
+            if($str != '') session(['toast_message' => $str]);
+        }
+
         $sample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
         if($sample) return back();
         return redirect('viralbatch/site_approval');        

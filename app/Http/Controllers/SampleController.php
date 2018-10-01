@@ -298,7 +298,6 @@ class SampleController extends Controller
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
 
-
         
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
@@ -393,7 +392,7 @@ class SampleController extends Controller
                 $s = $d['samples']->first();
                 if($s){
                     $sample->worksheet_id = null;
-                    $replacement = Viralsample::find($s->id);
+                    $replacement = Sample::find($s->id);
 
                     $replacement->worksheet_id = $worksheet->id;
                     $replacement->save();
@@ -418,6 +417,11 @@ class SampleController extends Controller
         $sample->pre_update(); 
 
         Misc::check_batch($batch->id);  
+
+        if($sample->receivedstatus == 1){            
+            $work_samples = Misc::get_worksheet_samples(2);
+            if($work_samples['count'] > 21) session(['toast_message' => 'The sample have been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+        }
 
         /*if($new_batch){
             session(['batch' => $batch, 'batch_total' => 1,
