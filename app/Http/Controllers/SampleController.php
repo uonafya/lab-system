@@ -74,6 +74,7 @@ class SampleController extends Controller
     {
         $samples_arrays = Lookup::samples_arrays();
         $submit_type = $request->input('submit_type');
+        $user = auth()->user();
 
         $batch = session('batch');
 
@@ -102,12 +103,14 @@ class SampleController extends Controller
             $facility = Facility::find($facility_id);
             session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
-            $batch = new Batch;
-            $batch->user_id = auth()->user()->id;
-            $batch->lab_id = auth()->user()->lab_id;
+            $batch = Batch::eligible($facility_id, $request->input('datereceived'))->first();
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
-                $batch->received_by = auth()->user()->id;
+            if(!$batch) $batch = new Batch;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
+
+            if($user->is_lab_user()){
+                $batch->received_by = $user->id;
                 $batch->site_entry = 0;
             }
             else{
@@ -195,24 +198,35 @@ class SampleController extends Controller
 
         $submit_type = $request->input('submit_type');
 
-        if($submit_type == "release" || $batch->site_entry == 2){
+        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
+        session(['batch_total' => $sample_count]);
+
+        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count == 10){
             $this->clear_session();
-            $batch->premature();
+            if($submit_type == "release" || $batch->site_entry == 2) $batch->premature();
+            else{
+                $batch->full_batch();
+                session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
+            }
             if($batch->site_entry == 2) return back();
             Misc::check_batch($batch->id); 
+
+            if($user->is_lab_user()){
+
+                $work_samples = Misc::get_worksheet_samples(2);
+                if($work_samples['count'] > 21) session(['toast_message' => 'You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+
+            }
+
             return redirect("batch/{$batch->id}");
         }
 
-        $sample_count = session('batch_total') + 1;
-        session(['batch_total' => $sample_count]);
-
-        if($sample_count == 10){
+        /*if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
             Misc::check_batch($batch->id); 
-            session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             return redirect("batch/{$batch->id}");
-        }
+        }*/
 
         return back();
     }
@@ -290,7 +304,7 @@ class SampleController extends Controller
 
         $batch = $sample->batch;
 
-        if($batch->site_entry == 1 && !$sample->receivedstatus && ($user->user_type_id == 1 || $user->user_type_id == 4)){
+        if($batch->site_entry == 1 && !$sample->receivedstatus && $user->is_lab_user()){
             $sample->sample_received_by = $user->id;
         }
 
@@ -327,7 +341,7 @@ class SampleController extends Controller
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
         $batch->pre_update();
 
         $new_patient = $request->input('new_patient');
@@ -418,7 +432,7 @@ class SampleController extends Controller
 
         Misc::check_batch($batch->id);  
 
-        if($sample->receivedstatus == 1){            
+        if($sample->receivedstatus == 1 && $user->is_lab_user()){            
             $work_samples = Misc::get_worksheet_samples(2);
             if($work_samples['count'] > 21) session(['toast_message' => 'The sample have been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
         }

@@ -94,4 +94,10 @@ class User extends Authenticatable implements JWTSubject
         $this->last_access = date('Y-m-d H:i:s');
         $this->save();
     }
+
+    public function is_lab_user()
+    {
+        if($this->user_type_id == 1 || $this->user_type_id == 4) return true;
+        return false;
+    }
 }
