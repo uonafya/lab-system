@@ -171,7 +171,7 @@ class Viralsample extends BaseModel
                 $str .= "( &lt;{$n} copies/ml )";
             }
         }
-        else if(str_contains($result, ['<']) && str_contains($lower_interpretation, ['not deteced'])){
+        else if(str_contains($result, ['<']) && str_contains($lower_interpretation, ['not detected'])){
             $str = "No circulating virus ie. level of HIV in blood is below the threshold needed for detection by this test. Doesn’t mean client Is Negative";
         }
         else if($result == "Target Not Detected"){
