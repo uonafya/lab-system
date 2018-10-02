@@ -611,6 +611,7 @@ class BatchController extends Controller
     public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
+        if(!$batch_ids) return back();
         if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
         if($request->input('print_type') == "envelope") return $this->envelopes($batch_ids);
         $batches = Batch::whereIn('id', $batch_ids)->with(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator'])->get();

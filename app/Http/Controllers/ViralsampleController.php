@@ -364,7 +364,7 @@ class ViralsampleController extends Controller
 
         MiscViral::check_batch($batch->id); 
 
-        if($sample->receivedstatus == 1 && $user->is_lab_user()){            
+        if($viralsample->receivedstatus == 1 && $user->is_lab_user()){            
             $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);
             $work_samples_edta = MiscViral::get_worksheet_samples(2, false, 2);
 
