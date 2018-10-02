@@ -111,7 +111,11 @@ class Batch extends BaseModel
     public function scopeEligible($query, $facility, $datereceived)
     {
         $user = auth()->user();
-        if(!$datereceived) return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0]);
+        $today = date('Y-m-d');
+        if(!$datereceived){
+            return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0])
+                    ->whereDate('created_at', $today);
+        }
         return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user->id, 'batch_full' => 0]);
     }
 
