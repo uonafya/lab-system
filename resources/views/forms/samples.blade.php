@@ -501,7 +501,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
+                                <div class="input-group date date_future">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datedispatched" class="form-control" value="{{ $sample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
                                 </div>
@@ -688,13 +688,23 @@
             }
         @endslot
 
-        $(".date").datepicker({
+        $(".date:not(#datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
             endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#datedispatched").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: "+7d",
             format: "yyyy-mm-dd"
         });
 

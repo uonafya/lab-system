@@ -527,6 +527,11 @@ class BatchController extends Controller
         Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
 
+        if($submit_type == "accepted"){
+            $work_samples = Misc::get_worksheet_samples(2);
+            if($work_samples['count'] > 21) session(['toast_message' => 'The selected samples have been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+        }
+
         $sample = Sample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
         if($sample) return back();
         return redirect('batch/site_approval');        
@@ -606,6 +611,7 @@ class BatchController extends Controller
     public function summaries(Request $request)
     {
         $batch_ids = $request->input('batch_ids');
+        if(!$batch_ids) return back();
         if($request->input('print_type') == "individual") return $this->individuals($batch_ids);
         if($request->input('print_type') == "envelope") return $this->envelopes($batch_ids);
         $batches = Batch::whereIn('id', $batch_ids)->with(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator'])->get();
