@@ -168,6 +168,8 @@ class ViralsampleController extends Controller
             }
 
             $viralpatient = Viralpatient::find($patient_id);
+            if(!$viralpatient) $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$viralpatient) $viralpatient = new Viralpatient;
         }
         else{
             $viralpatient = new Viralpatient;
@@ -175,7 +177,7 @@ class ViralsampleController extends Controller
 
         $data = $request->only($viralsamples_arrays['patient']);
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
-        if(!$viralpatient) $viralpatient = new Viralpatient;
+        // if(!$viralpatient) $viralpatient = new Viralpatient;
         $viralpatient->fill($data);
         $viralpatient->save();
 
