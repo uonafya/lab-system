@@ -171,7 +171,7 @@ class TaskController extends Controller
                         'taqmandeliveries' => $taqdeliveries,
                         'abbottdeliveries' => $abbottdeliveries
                     ];
-        dd($data); 
+        // dd($data); 
         return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
     }
 
