@@ -2,10 +2,10 @@
 
 namespace App\Api\V1\Requests;
 
-use Dingo\Api\Http\FormRequest;
+use App\Api\V1\Requests\BaseRequest;
 use App\Rules\BeforeOrEqual;
 
-class BlankRequest extends FormRequest
+class BlankRequest extends BaseRequest
 {
     public function rules()
     {
@@ -17,17 +17,5 @@ class BlankRequest extends FormRequest
             'date_dispatched_end' => 'date_format:Y-m-d',
             
         ];
-    }
-
-    public function authorize()
-    {
-    	$apikey = $this->headers->get('apikey');
-    	// if($apikey == 'u57x5e3aw'){
-    	// 	return true;
-    	// }
-    	// else{
-    		// return false;
-    	// }
-    	return true;        
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Api\V1\Requests;
 
 use Config;
-use Dingo\Api\Http\FormRequest;
+use App\Api\V1\Requests\BaseRequest;
 use App\Rules\BeforeOrEqual;
 
-class VlCompleteRequest extends FormRequest
+class VlCompleteRequest extends BaseRequest
 {
     public function rules()
     {
@@ -17,20 +17,9 @@ class VlCompleteRequest extends FormRequest
         $semi = array_merge($base, $vl);
         $val = array_merge($semi, $complete);
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
+        $val['datecollected'] = array_merge($val['datecollected'], [new BeforeOrEqual($this->input('datereceived'), 'datereceived')]);
         $val['datereceived'] = array_merge($val['datereceived'], [new BeforeOrEqual($this->input('datetested'), 'datetested')]);
         $val['datetested'] = array_merge($val['datetested'], [new BeforeOrEqual($this->input('datedispatched'), 'datedispatched')]);
         return $val;
-    }
-
-    public function authorize()
-    {
-    	return true;        
-    }
-
-    public function messages()
-    {
-        return [
-            'before_or_equal' => 'The :attribute field must be before or equal to today.'
-        ];
     }
 }

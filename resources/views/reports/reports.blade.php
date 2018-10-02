@@ -160,18 +160,18 @@
                                             <tr>
                                                 <th>Select Year and Month </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year">
+                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 6; $i >= 0; $i--)
+                                                        @for ($i = 0; $i <= 6; $i++)
                                                             @php
-                                                                $year=Date('Y')-$i
+                                                                $year=gmdate('Y')-$i
                                                             @endphp
                                                         <option value="{{ $year }}">{{ $year }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control" id="month" name="month">
+                                                    <select class="form-control" id="month" name="month" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Month</option>
                                                         @for ($i = 1; $i <= 12; $i++)
                                                             <option value="{{ $i }}">{{ date("F", mktime(null, null, null, $i)) }}</option>
@@ -188,18 +188,18 @@
                                             <tr>
                                                 <th>Select Year and Quarter </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year">
+                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 6; $i >= 0; $i--)
+                                                        @for ($i = 0; $i <= 6; $i++)
                                                             @php
-                                                                $year=Date('Y')-$i
+                                                                $year=gmdate('Y')-$i
                                                             @endphp
                                                         <option value="{{ $year }}">{{ $year }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control" id="quarter" name="quarter">
+                                                    <select class="form-control" id="quarter" name="quarter" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Quarter</option>
                                                         @for ($i = 1; $i <= 4; $i++)
                                                             <option value="Q{{ $i }}">Q{{ $i }}</option>
@@ -216,11 +216,11 @@
                                             <tr>
                                                 <th>Select Year </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year">
+                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 6; $i >= 0; $i--)
+                                                       @for ($i = 0; $i <= 6; $i++)
                                                             @php
-                                                                $year=Date('Y')-$i
+                                                                $year=gmdate('Y')-$i
                                                             @endphp
                                                         <option value="{{ $year }}">{{ $year }}</option>
                                                         @endfor

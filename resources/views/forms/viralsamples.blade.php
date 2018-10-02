@@ -581,14 +581,23 @@
         @endslot
 
 
-
-        $(".date").datepicker({
+        $(".date:not(#datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
             endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#datedispatched").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: "+7d",
             format: "yyyy-mm-dd"
         });
 

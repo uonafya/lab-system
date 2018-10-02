@@ -78,6 +78,7 @@ class ViralsampleController extends Controller
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $submit_type = $request->input('submit_type');
+        $user = auth()->user();
 
         $batch = session('viral_batch');
 
@@ -88,8 +89,14 @@ class ViralsampleController extends Controller
             return redirect("viralbatch/{$batch->id}");
         }
 
+        $data_existing = $request->only(['facility_id', 'patient', 'datecollected']);
+        if(!isset($data_existing['facility_id'])){
+            session(['toast_message' => "Please set the facility before submitting.", 'toast_error' => 1]);
+            return back();   
+        }
 
-        $existing = ViralsampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
+
+        $existing = ViralsampleView::existing( $data_existing )->get()->first();
         if($existing){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
@@ -101,15 +108,15 @@ class ViralsampleController extends Controller
         if($highpriority == 1)
         {
             $batch = new Viralbatch;
-            $batch->user_id = auth()->user()->id;
-            $batch->lab_id = auth()->user()->lab_id;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+            if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
                 $batch->site_entry = 0;
             }
 
-            if(auth()->user()->user_type_id == 5) $batch->site_entry = 1;
+            if($user->user_type_id == 5) $batch->site_entry = 1;
 
             $data = $request->only($viralsamples_arrays['batch']);
             $batch->fill($data);
@@ -125,16 +132,18 @@ class ViralsampleController extends Controller
             $facility = Facility::find($facility_id);
             session(['viral_facility_name' => $facility->name, 'viral_batch_total' => 0]);
 
-            $batch = new Viralbatch;
-            $batch->user_id = auth()->user()->id;
-            $batch->lab_id = auth()->user()->lab_id;
+            $batch = Viralbatch::eligible($facility_id, $request->input('datereceived'))->first();
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
+            if(!$batch) $batch = new Viralbatch;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
+
+            if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
                 $batch->site_entry = 0;
             }
 
-            if(auth()->user()->user_type_id == 5){
+            if($user->user_type_id == 5){
                 $batch->site_entry = 1;
             }
         }
@@ -182,16 +191,34 @@ class ViralsampleController extends Controller
 
         $submit_type = $request->input('submit_type');
 
-        if($submit_type == "release" || $batch->site_entry == 2){
+        $sample_count = Viralsample::where('batch_id', $batch->id)->get()->count();
+        session(['viral_batch_total' => $sample_count]);
+
+        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count == 10){
             $this->clear_session();
-            $batch->premature();
+            if($submit_type == "release" || $batch->site_entry == 2) $batch->premature();
+            else{
+                $batch->full_batch();
+                session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
+            }
             if($batch->site_entry == 2) return back();
             MiscViral::check_batch($batch->id);
+
+            if($user->is_lab_user()){           
+                $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);
+                $work_samples_edta = MiscViral::get_worksheet_samples(2, false, 2);
+
+                $str = '';
+
+                if($work_samples_dbs['count'] > 92) $str .= 'You now have ' . $work_samples_dbs['count'] . ' DBS samples that are eligible for testing.<br />';
+
+                if($work_samples_edta['count'] > 20) $str .= 'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.';
+
+                if($str != '') session(['toast_message' => $str]);                
+            }
+
             return redirect("viralbatch/{$batch->id}");
         }
-
-        $sample_count = session('viral_batch_total') + 1;
-        session(['viral_batch_total' => $sample_count]);
 
         if($sample_count == 10){
             $this->clear_session();
@@ -267,16 +294,21 @@ class ViralsampleController extends Controller
     public function update(Request $request, Viralsample $viralsample)
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
-        $data = $request->only($viralsamples_arrays['sample']);
-        $viralsample->fill($data);
         $user = auth()->user();
+        
+        $batch = Viralbatch::find($viralsample->batch_id);
 
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
+        if($batch->site_entry == 1 && !$viralsample->receivedstatus && $user->is_lab_user()){
+            $viralsample->sample_received_by = $user->id;
+        }
 
-        $batch = Viralbatch::find($viralsample->batch_id);
+        $data = $request->only($viralsamples_arrays['sample']);
+        $viralsample->fill($data);
+
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && ($user->user_type_id == 1 || $user->user_type_id == 4)) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
         $batch->pre_update();
 
         $data = $request->only($viralsamples_arrays['patient']);
@@ -307,8 +339,10 @@ class ViralsampleController extends Controller
                 if($s){
                     $viralsample->worksheet_id = null;
 
-                    $s->worksheet_id = $worksheet->id;
-                    $s->save();
+                    $replacement = Viralsample::find($s->id);
+
+                    $replacement->worksheet_id = $worksheet->id;
+                    $replacement->save();
                     session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
                 }
                 else{
@@ -328,7 +362,20 @@ class ViralsampleController extends Controller
 
         $viralsample->pre_update();
 
-        MiscViral::check_batch($batch->id);
+        MiscViral::check_batch($batch->id); 
+
+        if($viralsample->receivedstatus == 1 && $user->is_lab_user()){            
+            $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);
+            $work_samples_edta = MiscViral::get_worksheet_samples(2, false, 2);
+
+            $str = '';
+
+            if($work_samples_dbs['count'] > 92) $str .= 'You now have ' . $work_samples_dbs['count'] . ' DBS samples that are eligible for testing.<br />';
+
+            if($work_samples_edta['count'] > 20) $str .=  'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.';
+
+            if($str != '') session(['toast_message' => $str]);
+        }
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

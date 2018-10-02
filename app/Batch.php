@@ -108,6 +108,13 @@ class Batch extends BaseModel
         return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab, 'batch_full' => 0]);
     }
 
+    public function scopeEligible($query, $facility, $datereceived)
+    {
+        $user = auth()->user();
+        if(!$datereceived) return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0]);
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user->id, 'batch_full' => 0]);
+    }
+
     public function scopeEditing($query)
     {
         return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0]);

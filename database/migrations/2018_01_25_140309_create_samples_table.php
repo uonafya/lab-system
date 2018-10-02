@@ -30,6 +30,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('mother_last_rcategory')->unsigned()->nullable();
 
             $table->tinyInteger('receivedstatus')->unsigned()->nullable();
+            $table->integer('sample_received_by')->unsigned()->nullable();
             $table->float('age', 7, 4)->unsigned()->nullable();
 
             $table->boolean('redraw')->default(false)->nullable();

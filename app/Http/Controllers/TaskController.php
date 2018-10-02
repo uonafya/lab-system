@@ -52,8 +52,8 @@ class TaskController extends Controller
 
     public function addKitDeliveries(Request $request)
     {
-        $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
-        $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+        $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->where('year', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+        $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->where('year', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
 
         if ($request->saveTaqman) {
             $receivedby = $request->receivedby;
@@ -171,7 +171,7 @@ class TaskController extends Controller
                         'taqmandeliveries' => $taqdeliveries,
                         'abbottdeliveries' => $abbottdeliveries
                     ];
-                
+        dd($data); 
         return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
     }
 

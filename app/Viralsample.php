@@ -73,40 +73,6 @@ class Viralsample extends BaseModel
     }
 
 
-    
-
-    /**
-     * Get the sample's coloured result name
-     *
-     * @return string
-     */
-
-    public function getColouredResultAttribute()
-    {
-        if(is_numeric($this->result)){
-            if($this->result < 1000){
-                return "<strong><div style='color: #00ff00;'>{$this->result} </div></strong>";
-            }
-            else{
-                return "<strong><div style='color: #ff0000;'>{$this->result} </div></strong>";             
-            }
-        }
-        else if($this->result == "< LDL copies/ml"){
-            return "<strong><div style='color: #00ff00;'>&lt; LDL copies/ml</div></strong>";
-        }
-        else{
-            return "<strong><div style='color: #cccc00;'>{$this->result} </div></strong>";
-        }
-    }
-
-    public function getSampleTypeOutputAttribute()
-    {
-        if($this->sampletype == 1) return "PLASMA";
-        else if($this->sampletype == 2) return "EDTA";
-        else if($this->sampletype == 3) return "DBS Capillary";
-        else if($this->sampletype == 4) return "DBS Venous";
-        return "";
-    }
 
     public function last_test()
     {
@@ -131,5 +97,89 @@ class Viralsample extends BaseModel
                 ->get();
         $this->previous_tests = $samples;
     }
+    
+
+    /**
+     * Get the sample's coloured result name
+     *
+     * @return string
+     */
+
+    public function getColouredResultAttribute()
+    {
+        if(is_numeric($this->result)){
+            if($this->result < 1000){
+                return "<strong><div style='color: #00ff00;'>{$this->result} </div></strong>";
+            }
+            else{
+                return "<strong><div style='color: #ff0000;'>{$this->result} </div></strong>";             
+            }
+        }
+        else if($this->result == "< LDL copies/ml" || $this->result == "Target Not Detected"){
+            return "<strong><div style='color: #00ff00;'>&lt; LDL copies/ml</div></strong>";
+        }
+        else{
+            return "<strong><div style='color: #cccc00;'>{$this->result} </div></strong>";
+        }
+    }
+
+    /**
+     * Get the sample's Sample Type
+     *
+     * @return string
+     */
+    public function getSampleTypeOutputAttribute()
+    {
+        if($this->sampletype == 1) return "PLASMA";
+        else if($this->sampletype == 2) return "EDTA";
+        else if($this->sampletype == 3) return "DBS Capillary";
+        else if($this->sampletype == 4) return "DBS Venous";
+        return "";
+    }
+
+    /**
+     * Get the sample's result comment
+     *
+     * @return string
+     */
+    public function getResultCommentAttribute()
+    {
+        $str = '';
+        $result = $this->result;
+        $interpretation = $this->interpretation;
+        // < ldl
+        if(str_contains($result, ['<']) && str_contains($interpretation, ['<'])){
+            $str = "LDL:Lower Detectable Limit i.e. Below Detectable levels by machine ";
+            if(str_contains($interpretation, ['839'])){
+                $str .= "( Abbott DBS  &lt;839 copies/ml )";
+            }
+            else if(str_contains($interpretation, ['40'])){
+                $str .= "( Abbott Plasma  &lt;40 copies/ml )";
+            }
+            else if(str_contains($interpretation, ['150'])){
+                $str .= "( Abbott Plasma  &lt;150 copies/ml )";
+            }
+            else if(str_contains($interpretation, ['20'])){
+                $str .= "( Roche Plasma  &lt;20 copies/ml )";
+            }
+            else if(str_contains($interpretation, ['30'])){
+                $str .= "( Pantha Plasma  &lt;30 copies/ml )";
+            }
+            else{
+                $n = preg_replace("/[^<0-9]/", "", $interpretation);
+                $str .= "( &lt;{$n} copies/ml )";
+            }
+        }
+        else if($result == "Target Not Detected"){
+            $str = "No circulating virus ie. level of HIV in blood is below the threshold needed for detection by this test. Doesn’t mean client Is Negative";
+        }
+        else if($result == "Collect New Sample" || $result == "Failed"){
+            $str = "Sample failed during processing due to sample deterioration or equipment malfunction.  Redraw another sample and send to lab as soon as possible";
+        }
+        else{}
+        return "<small>{$str}</small>";
+    }
+
+
     
 }

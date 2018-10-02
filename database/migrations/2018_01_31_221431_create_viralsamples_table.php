@@ -23,7 +23,8 @@ class CreateViralsamplesTable extends Migration
             $table->string('provider_identifier', 50)->nullable();
             $table->string('order_no', 30)->nullable();
             $table->tinyInteger('vl_test_request_no')->nullable();
-            $table->tinyInteger('receivedstatus')->unsigned()->nullable();            
+            $table->tinyInteger('receivedstatus')->unsigned()->nullable(); 
+            $table->integer('sample_received_by')->unsigned()->nullable();           
 
             // This will be used instead
             $table->float('age', 6, 3)->unsigned()->nullable()->index();
