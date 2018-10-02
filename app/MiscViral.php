@@ -241,7 +241,8 @@ class MiscViral extends Common
 
         else if(str_contains($str, ['not detected']))
         {
-            $res="Target Not Detected";
+            // $res="Target Not Detected";
+            $res= "< LDL copies/ml";
             $interpretation=$result;
             $units="";
         }
