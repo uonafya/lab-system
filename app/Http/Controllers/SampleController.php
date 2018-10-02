@@ -142,10 +142,10 @@ class SampleController extends Controller
             if(!$patient) $patient = new Patient;
             $data = $request->only($samples_arrays['patient']);
             $patient->fill($data);
-            $patient->pre_update();
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
+            if(!$mother) $mother = new Mother;
             $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
             $mother->fill($data);
 
@@ -153,6 +153,9 @@ class SampleController extends Controller
             if($viralpatient) $mother->patient_id = $viralpatient->id;
 
             $mother->pre_update();
+
+            $patient->mother_id = $mother->id;
+            $patient->pre_update();
         }
 
         else{
