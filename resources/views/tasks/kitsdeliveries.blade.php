@@ -18,7 +18,7 @@
 	</style>
 @endsection
 
-{{ $data }}
+{{ dd($data) }}
 
 @section('content')
 <div class="row">
