@@ -201,7 +201,8 @@ class SampleController extends Controller
         $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
         session(['batch_total' => $sample_count]);
 
-        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count == 10){
+        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
+            if($sample_count > 9) $batch->full_batch(); 
             $this->clear_session();
             if($submit_type == "release" || $batch->site_entry == 2) $batch->premature();
             else{
