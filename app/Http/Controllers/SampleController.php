@@ -138,6 +138,8 @@ class SampleController extends Controller
             }
 
             $patient = Patient::find($patient_id);
+            if(!$patient) $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$patient) $patient = new Patient;
             $data = $request->only($samples_arrays['patient']);
             $patient->fill($data);
             $patient->pre_update();
