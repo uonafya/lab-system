@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
 
         // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
 
-        if(env('APP_PORT')) \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_PORT'));
+        if(env('APP_SECURE_PORT')) \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_SECURE_PORT'));
 
 
 

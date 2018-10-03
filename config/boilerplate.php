@@ -61,6 +61,7 @@ return [
         'mflCode' => 'required|integer|digits:5|exists:facilitys,facilitycode', 
         'sex' => 'required|integer|max:3', 
         'lab' => 'integer',
+        'amrs_location' => 'integer',
     ],
 
     'complete_result' => [

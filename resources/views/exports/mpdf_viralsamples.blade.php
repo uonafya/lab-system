@@ -67,10 +67,10 @@ p.breakhere {page-break-before: always}
 			</tr>
 			<tr>
 				<td colspan="3" class="comment style1 style4">
-					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->batch->lab->name }}</strong>
+					<strong>Testing Lab: {{ $sample->batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 
@@ -294,7 +294,7 @@ p.breakhere {page-break-before: always}
 					{!! $sample->result_comment !!}					
 				</td>
 			</tr>
-
+			{{--
 			@if($sample->worksheet)
 				<tr>
 					<td colspan="2"></td>
@@ -311,6 +311,7 @@ p.breakhere {page-break-before: always}
 					</td>					
 				</tr>
 			@endif
+			--}}
 
 
 			<tr>

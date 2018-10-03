@@ -40,6 +40,8 @@ The following fields are common to complete requests
 >- datetested *required if received status is 1*  *(greater than or equal to **datereceived**)*
 >- result *required if received status is 1*
 >- datedispatched *required if received status is 1*  *(greater than or equal to **datetested**)*
+>- amrs_location *the amrs location of the sample*
+>- provider_identifier *the provider identifier of the sample*
 >- specimenlabelID *for use by the lab*
 >- editted *indicates whether the record is an update of an existing record*
 ` Editted may be removed so that editted records are sent to another route`
@@ -54,6 +56,7 @@ The following fields are common to eid requests
 > - mother_age **integer**
 > - ccc_no *(The ccc number of the mother)*
 > - mother_last_result *(The most recent vl of the mother)*
+> - hiv_status *The HIV status of the mother. It was removed from the form but the system still supports it.* **integer**
 > - pcrtype  **required**  *(**integer between 1 and 5**)*
 > - redraw *(Fill with any non zero integer if the sample is a redraw)*
 > - enrollment_ccc_no *(ccc number of the infant if he/she is already enrolled)*
