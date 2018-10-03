@@ -42,6 +42,7 @@ The following fields are common to complete requests
 >- datedispatched *required if received status is 1*  *(greater than or equal to **datetested**)*
 >- amrs_location *the amrs location of the sample*
 >- provider_identifier *the provider identifier of the sample*
+>- patient_name *The name of the patient.*
 >- specimenlabelID *for use by the lab*
 >- editted *indicates whether the record is an update of an existing record*
 ` Editted may be removed so that editted records are sent to another route`
@@ -51,8 +52,8 @@ The following fields are common to eid requests
 > - entry_point **required**
 > - feeding **required**
 > - spots **integer**
-> - regimen **required**
-> - mother_prophylaxis **required**
+> - regimen **required** *The infant prophylaxis*
+> - mother_prophylaxis **required** *The pmtct intervention*
 > - mother_age **integer**
 > - ccc_no *(The ccc number of the mother)*
 > - mother_last_result *(The most recent vl of the mother)*
@@ -64,6 +65,7 @@ The following fields are common to eid requests
 ---
 The following fields are common to vl requests
 > - initiation_date *(date inititated on treatment)*
+> - dateinitiatedonregimen *(date inititated on current regimen)*
 > - prophylaxis **Required**
 > - regimenline **Required**
 > - sampletype **Required**
