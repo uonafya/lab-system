@@ -603,6 +603,7 @@ class ViralsampleController extends Controller
             if(!$facility) continue;
             $datecollected = Lookup::other_date($row[8]);
             $datereceived = Lookup::other_date($row[15]);
+            if(!$datereceived) $datereceived = date('Y-m-d');
             $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
 
             if($existing) continue;
