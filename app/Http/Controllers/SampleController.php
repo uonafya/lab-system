@@ -138,12 +138,14 @@ class SampleController extends Controller
             }
 
             $patient = Patient::find($patient_id);
+            if(!$patient) $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$patient) $patient = new Patient;
             $data = $request->only($samples_arrays['patient']);
             $patient->fill($data);
-            $patient->pre_update();
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
+            if(!$mother) $mother = new Mother;
             $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
             $mother->fill($data);
 
@@ -151,6 +153,9 @@ class SampleController extends Controller
             if($viralpatient) $mother->patient_id = $viralpatient->id;
 
             $mother->pre_update();
+
+            $patient->mother_id = $mother->id;
+            $patient->pre_update();
         }
 
         else{
@@ -201,7 +206,8 @@ class SampleController extends Controller
         $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
         session(['batch_total' => $sample_count]);
 
-        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count == 10){
+        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
+            if($sample_count > 9) $batch->full_batch(); 
             $this->clear_session();
             if($submit_type == "release" || $batch->site_entry == 2) $batch->premature();
             else{

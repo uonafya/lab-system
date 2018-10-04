@@ -61,6 +61,7 @@ return [
         'mflCode' => 'required|integer|digits:5|exists:facilitys,facilitycode', 
         'sex' => 'required|integer|max:3', 
         'lab' => 'integer',
+        'amrs_location' => 'integer',
     ],
 
     'complete_result' => [
@@ -90,6 +91,7 @@ return [
 
     'vl' => [
         'initiation_date' => ['date_format:Y-m-d', 'before_or_equal:today',],
+        'dateinitiatedonregimen' => ['date_format:Y-m-d', 'before_or_equal:today',],
         'prophylaxis' => 'required|integer|max:30',
         'regimenline' => 'required|integer|max:10',
         'sampletype' => 'required|integer|max:10',

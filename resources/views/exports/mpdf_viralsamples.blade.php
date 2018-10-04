@@ -294,7 +294,7 @@ p.breakhere {page-break-before: always}
 					{!! $sample->result_comment !!}					
 				</td>
 			</tr>
-
+			{{--
 			@if($sample->worksheet)
 				<tr>
 					<td colspan="2"></td>
@@ -311,6 +311,7 @@ p.breakhere {page-break-before: always}
 					</td>					
 				</tr>
 			@endif
+			--}}
 
 
 			<tr>

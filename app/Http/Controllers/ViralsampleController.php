@@ -168,14 +168,16 @@ class ViralsampleController extends Controller
             }
 
             $viralpatient = Viralpatient::find($patient_id);
+            if(!$viralpatient) $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$viralpatient) $viralpatient = new Viralpatient;
         }
         else{
-            $data = $request->only($viralsamples_arrays['patient']);
             $viralpatient = new Viralpatient;
         }
 
         $data = $request->only($viralsamples_arrays['patient']);
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        // if(!$viralpatient) $viralpatient = new Viralpatient;
         $viralpatient->fill($data);
         $viralpatient->save();
 
@@ -194,7 +196,8 @@ class ViralsampleController extends Controller
         $sample_count = Viralsample::where('batch_id', $batch->id)->get()->count();
         session(['viral_batch_total' => $sample_count]);
 
-        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count == 10){
+        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
+            if($sample_count > 9) $batch->full_batch(); 
             $this->clear_session();
             if($submit_type == "release" || $batch->site_entry == 2) $batch->premature();
             else{
