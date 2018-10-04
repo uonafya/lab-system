@@ -267,9 +267,11 @@ class BatchController extends Controller
                     $parent->pre_update();
 
                     $children = $parent->children;
-                    foreach ($children as $child) {
-                        $child->batch_id = $new_id;
-                        $child->pre_update();
+                    if($children){
+                        foreach ($children as $child) {
+                            $child->batch_id = $new_id;
+                            $child->pre_update();
+                        }                        
                     }
                 }
             }
