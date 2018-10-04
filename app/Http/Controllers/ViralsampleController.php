@@ -159,24 +159,24 @@ class ViralsampleController extends Controller
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$viralpatient) $viralpatient = new Viralpatient;
 
-        // if($new_patient == 0){
+        /*if($new_patient == 0){
 
-        //     $patient_id = $request->input('patient_id');
-        //     $repeat_test = Viralsample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
+            $patient_id = $request->input('patient_id');
+            $repeat_test = Viralsample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
 
-        //     if($repeat_test){
-        //         session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
-        //         session(['toast_error' => 1]);
-        //         return redirect()->route('viralsample.create');
-        //     }
+            if($repeat_test){
+                session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+                session(['toast_error' => 1]);
+                return redirect()->route('viralsample.create');
+            }
 
-        //     $viralpatient = Viralpatient::find($patient_id);
-        //     if(!$viralpatient) $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
-        //     if(!$viralpatient) $viralpatient = new Viralpatient;
-        // }
-        // else{
-        //     $viralpatient = new Viralpatient;
-        // }
+            $viralpatient = Viralpatient::find($patient_id);
+            if(!$viralpatient) $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$viralpatient) $viralpatient = new Viralpatient;
+        }
+        else{
+            $viralpatient = new Viralpatient;
+        }*/
 
         $data = $request->only($viralsamples_arrays['patient']);
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
