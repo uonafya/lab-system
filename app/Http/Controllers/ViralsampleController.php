@@ -155,8 +155,11 @@ class ViralsampleController extends Controller
         session(['viral_batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
+        $patient_string = trim($request->input('patient'));
+        $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
+        if(!$viralpatient) $viralpatient = new Viralpatient;
 
-        if($new_patient == 0){
+        /*if($new_patient == 0){
 
             $patient_id = $request->input('patient_id');
             $repeat_test = Viralsample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
@@ -173,11 +176,10 @@ class ViralsampleController extends Controller
         }
         else{
             $viralpatient = new Viralpatient;
-        }
+        }*/
 
         $data = $request->only($viralsamples_arrays['patient']);
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
-        // if(!$viralpatient) $viralpatient = new Viralpatient;
         $viralpatient->fill($data);
         $viralpatient->save();
 
@@ -361,6 +363,9 @@ class ViralsampleController extends Controller
                     'toast_error' => 1
                 ]);
             }
+            $viralsample->worksheet_id = null;
+            $viralsample->result = null;
+            $viralsample->interpretation = null;
         }
 
         $viralsample->pre_update();
@@ -598,6 +603,7 @@ class ViralsampleController extends Controller
             if(!$facility) continue;
             $datecollected = Lookup::other_date($row[8]);
             $datereceived = Lookup::other_date($row[15]);
+            if(!$datereceived) $datereceived = date('Y-m-d');
             $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
 
             if($existing) continue;
