@@ -127,7 +127,27 @@ class SampleController extends Controller
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        if($new_patient == 0){
+        $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+        if(!$patient) $patient = new Patient;
+        $data = $request->only($samples_arrays['patient']);
+        $patient->fill($data);
+
+        $mother = $patient->mother;
+        if(!$mother) $mother = new Mother;
+        $data = $request->only($samples_arrays['mother']);
+        $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
+        $mother->fill($data);
+
+        $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->first();
+        if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        $mother->pre_update();
+
+        $patient->mother_id = $mother->id;
+        $patient->pre_update();
+
+
+        /*if($new_patient == 0){
             $patient_id = $request->input('patient_id');
             $repeat_test = Sample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
 
@@ -177,7 +197,7 @@ class SampleController extends Controller
             $patient->fill($data);
             $patient->mother_id = $mother->id;
             $patient->save();
-        }
+        }*/
 
         $data = $request->only($samples_arrays['sample']);
         $sample = new Sample;
@@ -431,6 +451,9 @@ class SampleController extends Controller
                     'toast_error' => 1
                 ]);
             }
+            $sample->worksheet_id = null;
+            $sample->result = null;
+            $sample->interpretation = null;
         }
 
 
