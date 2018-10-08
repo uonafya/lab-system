@@ -65,9 +65,9 @@
                                     @if($viewdata->type == 'EID')
                                         @if($sub->alias == 'qualkit')
                                             @php
-                                                $qualkit = round((int) $viewdata->tests / 94);
+                                                $qualkit = (int) $viewdata->tests;
                                             @endphp
-                                            <strong>({{ $viewdata->tests }}, {{ $sub->testFactor->EID }})</strong>{{ $qualkit }}
+                                            {{ $qualkit }}
                                         @else
                                             {{ $qualkit*$sub->testFactor->EID }}
                                         @endif
