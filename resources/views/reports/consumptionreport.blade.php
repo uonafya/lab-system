@@ -67,7 +67,7 @@
                                             @php
                                                 $qualkit = $viewdata->tests/$sub->testFactor->EID;
                                             @endphp
-                                            {{ $qualkit }}
+                                            <strong>({{ $viewdata->tests }}, {{ $sub->testFactor->EID }})</strong>{{ $qualkit }}
                                         @else
                                             {{ $qualkit*$sub->testFactor->EID }}
                                         @endif
