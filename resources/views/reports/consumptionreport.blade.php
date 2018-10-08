@@ -70,9 +70,9 @@
                                                 @php
                                                     $eidAbbotqualkit = @((int) $tests/ (int) $sub->testFactor->EID);
                                                 @endphp
-                                                {{ $sub->testFactor->EID }}<strong>({{ $eidAbbotqualkit }})</strong>
+                                                {{ $eidAbbotqualkit }}
                                             @else
-
+                                                {{ $eidAbbotqualkit*$sub->testFactor->EID }}
                                             @endif
                                         @endif
                                     @elseif($viewdata->platform == 'taqman')
