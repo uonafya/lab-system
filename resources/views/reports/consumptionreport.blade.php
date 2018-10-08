@@ -63,7 +63,11 @@
                                 <td>
                                     @if($viewdata->platform == 'abbott')
                                         @if($viewdata->type == 'EID')
-                                            ({{ $sub->alias }}){{ $viewdata->tests }}
+                                            @if($sub->alias == 'qualkit')
+                                                ({{ $sub->alias }}){{ $viewdata->tests }}
+                                            @else
+
+                                            @endif
                                         @endif
                                     @elseif($viewdata->platform == 'taqman')
 
