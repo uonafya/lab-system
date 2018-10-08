@@ -11,6 +11,24 @@
 </style>
 <div class="content">
     <div class="row">
+        <div class="col-md-6 alert alert-warning">
+            <center>
+                {{ $viewdata->month }}, {{ $viewdata->year }} <br>
+                {{ strtoupper($viewdata->platform) }}
+            </center>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Test Type</th>
+                    <th>Total No. of tests Done</th>
+                </tr>
+                <tr>
+                    <td>{{ $viewdata->type }}</td>
+                    <td>{{ $viewdata->tests }}</td>
+                </tr>
+            </table>
+        </div>
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
