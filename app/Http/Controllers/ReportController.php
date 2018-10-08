@@ -174,6 +174,7 @@ class ReportController extends Controller
         // $kits->where('lab_id', env('APP_LAB'));
 
         $report = $model->get();
+        dd($report);
         $kits = $kits->get();
         $tests = $tests->first()->tests;
         $data = json_decode(json_encode([
