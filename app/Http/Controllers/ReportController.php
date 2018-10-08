@@ -160,8 +160,7 @@ class ReportController extends Controller
         $month = $request->input('month');
         $previousMonth = $month -1;
         
-        $dateObj   = DateTime::createFromFormat('!m', $month);
-        $monthName = $dateObj->format('F');
+        $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
 
         $model->where('year', $request->input('year'));

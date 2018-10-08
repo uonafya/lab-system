@@ -12,7 +12,10 @@
 <div class="content">
     <div class="row">
         <div class="col-md-6 alert alert-warning">
-            
+            <center>
+                {{ $viewdata->month }}, {{ $viewdata->year }} <br>
+                {{ strtoupper($viewdata->platform) }}
+            </center>
         </div>
         <div class="col-md-6">
             <table class="table table-striped table-bordered">
