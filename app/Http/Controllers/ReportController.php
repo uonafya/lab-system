@@ -162,18 +162,18 @@ class ReportController extends Controller
         
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
-
-        $model->where('year', $request->input('year'));
+        dd($year);
+        $model->where('year', $year);
         $model->where('month', $month)->orWhere('month', $previousMonth);
-        $tests->whereYear('datetested', $request->input('year'));
+        $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
         // $model->where('lab_id', env('APP_LAB'));
 
-        $kits->whereYear('datereceived', $request->input('year'));
+        $kits->whereYear('datereceived', $year);
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
 
-        $report = $model->toSql();
+        $report = $model->get();
         dd($report);
         $kits = $kits->get();
         $tests = $tests->first()->tests;
