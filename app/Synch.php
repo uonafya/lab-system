@@ -788,18 +788,18 @@ class Synch
 
 			$response = $client->request('post', '', [
 				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-				'debug' => true,
+				// 'debug' => true,
 				'http_errors' => false,
 				'json' => [
 					'sender' => env('SMS_SENDER_ID'),
-					'recipient' => '254702266217',
-					// 'recipient' => $user->mobile,
+					// 'recipient' => '254702266217',
+					'recipient' => $user->mobile,
 					'message' => $message,
 				],
 			]);
 			$body = json_decode($response->getBody());
 			// print_r($body);
-			break;
+			// break;
 		}
 	}
 
