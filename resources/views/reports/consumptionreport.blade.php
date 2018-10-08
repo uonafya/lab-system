@@ -68,11 +68,20 @@
                                         @if($viewdata->type == 'EID')
                                             @if($sub->alias == 'qualkit')
                                                 @php
-                                                    $eidAbbotqualkit = round(@((int) $tests/ (int) $sub->testFactor->EID));
+                                                    $eidAbbotqualkit = round(@((int) $tests / (int) $sub->testFactor->EID));
                                                 @endphp
                                                 {{ $eidAbbotqualkit }}
                                             @else
                                                 {{ round($eidAbbotqualkit*$sub->testFactor->EID) }}
+                                            @endif
+                                        @elseif($viewdata->type == 'VL')
+                                            @if($sub->alias=='qualkit')
+                                                @php
+                                                    $vlAbbotqualkit = round(@((int) $tests / (int) $sub->testFactor->VL));
+                                                @endphp
+                                                {{ $vlAbbotqualkit }}
+                                            @else
+                                                {{ round($vlAbbotqualkit*$sub->testFactor->VL) }}
                                             @endif
                                         @endif
                                     @elseif($viewdata->platform == 'taqman')
