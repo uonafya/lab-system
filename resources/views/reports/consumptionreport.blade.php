@@ -63,9 +63,9 @@
                                 <td>
                                 @if($viewdata->platform == 'abbott')
                                     @if($viewdata->type == 'EID')
-                                        @if($sub->alias=='qualkit')
+                                        @if($sub->alias == 'qualkit')
                                             @php
-                                                $qualkit = round((int) $viewdata->tests / (int) $sub->testFactor->EID);
+                                                $qualkit = round((int) $viewdata->tests / 94);
                                             @endphp
                                             <strong>({{ $viewdata->tests }}, {{ $sub->testFactor->EID }})</strong>{{ $qualkit }}
                                         @else
