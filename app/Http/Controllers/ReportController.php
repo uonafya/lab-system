@@ -116,6 +116,7 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
+        // dd($request->all());
         $data = [];
         $platform = $request->input('platform');
         if ($platform == 'abbott') {
@@ -158,6 +159,10 @@ class ReportController extends Controller
         }
         $month = $request->input('month');
         $previousMonth = $month -1;
+        
+        $dateObj   = DateTime::createFromFormat('!m', $month);
+        $monthName = $dateObj->format('F');
+        $year = $request->input('year');
 
         $model->where('year', $request->input('year'));
         $model->where('month', $month)->orWhere('month', $previousMonth);
@@ -221,10 +226,12 @@ class ReportController extends Controller
                         'kitsreport' => $kitsdata,
                         'tests' => $tests,
                         'type' => $type,
-                        'platform' => $platform
+                        'platform' => $platform,
+                        'month' => $monthName,
+                        'year' => $year
                     ];
         // $reports = $newdata;
-        // dd($data);
+        // dd($viewdata);
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
