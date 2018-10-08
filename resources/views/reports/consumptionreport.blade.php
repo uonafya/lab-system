@@ -9,6 +9,9 @@
         margin-top: 15px;
     }
 </style>
+@php
+    $tests = $viewdata->tests;
+@endphp
 <div class="content">
     <div class="row">
         <div class="col-md-6 alert alert-warning">
@@ -25,7 +28,7 @@
                 </tr>
                 <tr>
                     <td>{{ $viewdata->type }}</td>
-                    <td>{{ $viewdata->tests }}</td>
+                    <td>{{ $tests }}</td>
                 </tr>
             </table>
         </div>
@@ -64,7 +67,10 @@
                                     @if($viewdata->platform == 'abbott')
                                         @if($viewdata->type == 'EID')
                                             @if($sub->alias == 'qualkit')
-                                                ({{ $sub->alias }}){{ $viewdata->tests }}
+                                                @php
+                                                    $eidAbbotqualkit = @((int) $tests);
+                                                @endphp
+                                                {{ $sub->testFactor->EID }}<strong>({{ $eidAbbotqualkit }})</strong>
                                             @else
 
                                             @endif
