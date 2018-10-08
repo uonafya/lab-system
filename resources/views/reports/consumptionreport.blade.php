@@ -61,7 +61,7 @@
                 				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
                                 <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
                                 <td>
-                                    {{ $viewdata->tests }}
+                                    {{ $viewdata->tests/$sub->EID->testFactor }}
                                 </td>
                                 <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
                                 <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>

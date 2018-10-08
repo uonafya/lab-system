@@ -230,7 +230,7 @@ class ReportController extends Controller
                         'year' => $year
                     ];
         // $reports = $newdata;
-        // dd($viewdata);
+        dd($data);
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
