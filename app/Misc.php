@@ -308,7 +308,7 @@ class Misc extends Common
 		if($response->getStatusCode() == 201){
 			$s = Sample::find($sample->id);
 			$s->time_result_sms_sent = date('Y-m-d H:i:s');
-			$s->pre_update();
+			$s->save();
 		}
     }
 
