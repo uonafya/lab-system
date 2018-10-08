@@ -164,7 +164,7 @@ class ReportController extends Controller
         $year = $request->input('year');
 
         $model->where('year', $year);
-        $model->whereRaw("`month` = $month or `month` = $previousMonth");
+        $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
         $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
         // $model->where('lab_id', env('APP_LAB'));
