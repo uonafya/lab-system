@@ -85,7 +85,25 @@
                                             @endif
                                         @endif
                                     @elseif($viewdata->platform == 'taqman')
-
+                                        @if($viewdata->type == 'EID')
+                                            @if($sub->alias=='qualkit')
+                                                @php
+                                                    $eidTaqqualkit = round(@((int) $tests / (int) $sub->testFactor->EID));
+                                                @endphp
+                                                {{ $eidTaqqualkit }}
+                                            @else
+                                                {{ round($eidTaqqualkit*$sub->testFactor) }}
+                                            @endif
+                                        @elseif($viewdata->type == 'VL')
+                                            @if($sub->alias=='qualkit')
+                                                @php
+                                                    $vlTaqqualkit = round(@((int) $tests / (int) $sub->testFactor->VL));
+                                                @endphp
+                                                {{ $vlTaqqualkit }}
+                                            @else
+                                                {{ round($vlTaqqualkit*$sub->testFactor) }}
+                                            @endif
+                                        @endif
                                     @endif
                                 </td>
                                 <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
