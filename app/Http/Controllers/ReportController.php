@@ -173,7 +173,7 @@ class ReportController extends Controller
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
 
-        $report = $model->toSql();
+        $report = $model->get();
         dd($report);
         $kits = $kits->get();
         $tests = $tests->first()->tests;
