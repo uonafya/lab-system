@@ -162,7 +162,7 @@ class ReportController extends Controller
         
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
-        dd($year);
+        
         $model->where('year', $year);
         $model->where('month', $month)->orWhere('month', $previousMonth);
         $tests->whereYear('datetested', $year);
