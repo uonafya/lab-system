@@ -163,13 +163,13 @@ class ReportController extends Controller
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
 
-        $model->where('year', $request->input('year'));
-        $model->where('month', $month)->orWhere('month', $previousMonth);
-        $tests->whereYear('datetested', $request->input('year'));
+        $model->where('year', $year);
+        $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
+        $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
         // $model->where('lab_id', env('APP_LAB'));
 
-        $kits->whereYear('datereceived', $request->input('year'));
+        $kits->whereYear('datereceived', $year);
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
 
@@ -230,7 +230,7 @@ class ReportController extends Controller
                         'year' => $year
                     ];
         // $reports = $newdata;
-        // dd($viewdata);
+        
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
