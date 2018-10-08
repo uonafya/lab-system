@@ -228,7 +228,7 @@ p.breakhere {page-break-before: always}
 				<td colspan="3"></td>
 			</tr>
 
-			{{--
+			
 			@if($sample->worksheet)
 				<tr>
 					<td colspan="2"></td>
@@ -241,7 +241,7 @@ p.breakhere {page-break-before: always}
 					</td>				
 				</tr>
 			@endif
-			--}}
+			
 
 			<tr>
 				<td colspan="2">
