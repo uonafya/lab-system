@@ -61,56 +61,7 @@
                 				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
                                 <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
                                 <td>
-                                @if($viewdata->platform == 'abbott')
-                                    @if($viewdata->type == 'EID')
-                                        @if($sub->alias == 'qualkit')
-                                            @php
-                                                $qualkit = (int) $viewdata->tests;
-                                            @endphp
-                                            {{ $qualkit }}
-                                        @else
-                                            {{ $qualkit*$sub->testFactor->EID }}
-                                        @endif
-                                    @elseif($viewdata->type == 'VL')
-                                        @if($sub->alias=='qualkit')
-                                            @php
-                                                $qualkit = $viewdata->tests/$sub->testFactor->VL;
-                                            @endphp
-                                            {{ $qualkit }}
-                                        @else
-                                            {{ $qualkit*$sub->testFactor->VL }}
-                                        @endif
-                                    @endif
-                                @elseif($viewdata->platform == 'taqman')
-                                    @if($viewdata->type == 'EID')
-                                        @if($sub->alias=='qualkit')
-                                            @php
-                                                $qualkit = $viewdata->tests/$sub->testFactor->EID;
-                                            @endphp
-                                            {{ $qualkit }}
-                                        @else
-                                            {{ $qualkit*$sub->testFactor }}
-                                        @endif
-                                    @elseif($viewdata->type == 'VL')
-                                        @if($sub->alias=='qualkit')
-                                            @php
-                                                $qualkit = $viewdata->tests/$sub->testFactor->VL;
-                                            @endphp
-                                            {{ $qualkit }}
-                                        @else
-                                            {{ $qualkit*$sub->testFactor }}
-                                        @endif
-                                    @endif
-                                @endif
-                                @if(isset($sub->factor->EID))
-                                    @if($viewdata->type == 'EID')
-                                        {{ $viewdata->tests*$sub->factor->EID }}
-                                    @elseif($viewdata->type == 'VL')
-                                        {{ $viewdata->tests*$sub->factor->VL }}
-                                    @endif
-                                @else
-                                    {{ $viewdata->tests*$sub->factor }}
-                                @endif
+                                    {{ $viewdata->tests }}
                                 </td>
                                 <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
                                 <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>
