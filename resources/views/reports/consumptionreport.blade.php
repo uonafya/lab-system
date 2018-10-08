@@ -61,7 +61,13 @@
                 				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
                                 <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
                                 <td>
-                                    {{ @$viewdata->tests/$sub->testFactor->EID }}
+                                    @if($viewdata->platform == 'abbott')
+                                        @if($viewdata->type == 'EID')
+                                            {{ $viewdata->tests }}
+                                        @endif
+                                    @elseif($viewdata->platform == 'taqman')
+
+                                    @endif
                                 </td>
                                 <td>{{ $viewdata->reports['wasted'.$sub->alias] }}</td>
                                 <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>
