@@ -341,7 +341,7 @@ class ViralworksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/vl');
         $today = $dateoftest = date("Y-m-d");
-        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = NULL;
+        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
 
         $my = new MiscViral;
 
