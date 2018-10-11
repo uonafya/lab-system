@@ -568,6 +568,7 @@ class MiscViral extends Common
 
         if(!$message){
             print_r($sample);
+            die();
             return;
         }
 
