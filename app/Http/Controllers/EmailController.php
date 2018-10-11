@@ -35,7 +35,11 @@ class EmailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $email = new Email($request->except(['_token', 'email_text']));
+        $email->save();
+        $data = $request->getContent();
+        $email->save_raw($data->email_text);
+        return redirect('email');
     }
 
     /**
@@ -69,7 +73,10 @@ class EmailController extends Controller
      */
     public function update(Request $request, Email $email)
     {
-        //
+        $email->fill($request->except(['_token', '_method', 'email_text']));
+        $email->save();
+        $data = $request->getContent();
+        $email->save_raw($data->email_text);
     }
 
     /**
