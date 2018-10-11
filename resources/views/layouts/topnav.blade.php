@@ -79,7 +79,10 @@
                             <a href="{{ url('users') }}">Users</a>
                         </li>
                         <li>
-                            <a href="{{ url('facilities') }}">Facilities</a>
+                            <a href="{{ url('facility') }}">Facilities</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                         </li>
                     @else
                         @if(!Session('pendingTasks'))
@@ -111,6 +114,9 @@
                             </li>
                             <li class="">
                                 <a href="{{ url('facility') }}">Facilities</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                             </li>
                             <li class="">
                                 <a href="{{ route('reports') }}">Reports</a>
@@ -177,6 +183,9 @@
                         <li>
                             <a href="{{ url('facility') }}">Facilities</a>
                         </li>
+                        <li>
+                            <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                        </li>
                 @else
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
@@ -217,6 +226,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('facility') }}">Facilities</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                     </li>
                     <li class="">
                         <a href="{{ route('reports') }}">Reports</a>
