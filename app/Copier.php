@@ -259,7 +259,7 @@ class Copier
         foreach ($old_worklists as $key => $o) {
             $w = new Worklist;
             $w->id = $o->id;
-            $w->created_at = $o->datecreated;
+            $w->created_at = $o->datecreated . " 00:00:00";
             $w->testtype = $o->testtype;
             $w->status_id = $o->status ?? null;
             $w->facility_id = $o->facility;
