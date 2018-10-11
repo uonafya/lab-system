@@ -52,7 +52,7 @@ class FacilityController extends Controller
 
     public function filled_contacts()
     {
-        $facilities = ViewFacility::whereRaw("email is not null or telephone is not null or telephone2 is not null")->get();
+        $facilities = ViewFacility::whereRaw("((email is not null and email!='') or (telephone is not null and telephone!='') or (telephone2 is not null and telephone2!=''))")->get();
         $table = '';
         foreach ($facilities as $key => $value) {
             $table .= '<tr>';
