@@ -173,6 +173,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('facility/served', 'FacilityController@served');
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+	Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
 	Route::get('facility/add', 'FacilityController@create')->name('facility.add');
 	Route::resource('facility', 'FacilityController');
 
