@@ -516,6 +516,7 @@ class MiscViral extends Common
 
         foreach ($samples as $key => $sample) {
             if($sample->receivedstatus == 1 && !$sample->rcategory) continue;
+            self::send_sms($sample);
         }
     }
 
@@ -566,7 +567,11 @@ class MiscViral extends Common
             }             
         }
 
-        if(!$message) return;
+        if(!$message){
+            print_r($sample);
+            die();
+            return;
+        }
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
@@ -584,7 +589,7 @@ class MiscViral extends Common
         if($response->getStatusCode() == 201){
             $s = Viralsample::find($sample->id);
             $s->time_result_sms_sent = date('Y-m-d H:i:s');
-            $s->pre_update();
+            $s->save();
         }
     }
 

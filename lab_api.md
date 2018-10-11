@@ -14,7 +14,7 @@ All links are **POST** requests. All post requests are validated using a header 
 > - date_dispatched_end  *(greater than or equal to **date_dispatched_start**)*
 > - patient_id *Either a single patient_id or a comma separated list of patient ids with no spaces. Patient id is hei number for eid and ccc number for vl*
 > - facility_code *The five digit MFL code*
-> - order_numbers *Either a single order number or a comma separated list of order numbers with no spaces.*
+> - order_numbers *Either a single mrs order number or a comma separated list of mrs order numbers with no spaces.*
 > - location *AMRS location*
 > This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 
@@ -42,6 +42,8 @@ The following fields are common to complete requests
 >- datedispatched *required if received status is 1*  *(greater than or equal to **datetested**)*
 >- amrs_location *the amrs location of the sample*
 >- provider_identifier *the provider identifier of the sample*
+>- order_no *this is the order number from mrs*
+>- patient_name *The name of the patient.*
 >- specimenlabelID *for use by the lab*
 >- editted *indicates whether the record is an update of an existing record*
 ` Editted may be removed so that editted records are sent to another route`
@@ -51,8 +53,8 @@ The following fields are common to eid requests
 > - entry_point **required**
 > - feeding **required**
 > - spots **integer**
-> - regimen **required**
-> - mother_prophylaxis **required**
+> - regimen **required** *The infant prophylaxis*
+> - mother_prophylaxis **required** *The pmtct intervention*
 > - mother_age **integer**
 > - ccc_no *(The ccc number of the mother)*
 > - mother_last_result *(The most recent vl of the mother)*
@@ -64,6 +66,7 @@ The following fields are common to eid requests
 ---
 The following fields are common to vl requests
 > - initiation_date *(date inititated on treatment)*
+> - dateinitiatedonregimen *(date inititated on current regimen)*
 > - prophylaxis **Required**
 > - regimenline **Required**
 > - sampletype **Required**

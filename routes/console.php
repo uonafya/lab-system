@@ -80,9 +80,9 @@ Artisan::command('lablog {type}', function($type){
 // })->describe('Synch vl patients to the national database.');
 
 
-Artisan::command('send:sms {type}', function($type){
-    if($type == 'eid') $str = \App\Misc::patient_sms();
-    else { $str = \App\MiscViral::patient_sms(); }    
+Artisan::command('send:sms', function(){
+    $str = \App\Misc::patient_sms();
+    $str .= \App\MiscViral::patient_sms();
     $this->info($str);
 })->describe('Send result sms.');
 
@@ -148,6 +148,11 @@ Artisan::command('copy:worksheet', function(){
 	$str = \App\Copier::copy_worksheet();
     $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
+
+Artisan::command('copy:worklist', function(){
+    $str = \App\Copier::copy_worklist();
+    $this->info($str);
+})->describe('Copy worklist data from old database to new database.');
 
 Artisan::command('copy:deliveries', function(){
     $str = \App\Copier::copy_deliveries();

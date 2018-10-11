@@ -249,7 +249,7 @@ class Misc extends Common
 
     	foreach ($samples as $key => $sample) {
     		self::send_sms($sample);
-    		break;
+    		// break;
     	}
     }
 
@@ -290,7 +290,10 @@ class Misc extends Common
 			}    			
 		}
 
-		if(!$message) return;
+		if(!$message){
+			print_r($sample);
+			return;
+		}
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
@@ -308,7 +311,7 @@ class Misc extends Common
 		if($response->getStatusCode() == 201){
 			$s = Sample::find($sample->id);
 			$s->time_result_sms_sent = date('Y-m-d H:i:s');
-			$s->pre_update();
+			$s->save();
 		}
     }
 

@@ -18,7 +18,7 @@
 				unset($sample->batch);
 			}
 		?>
-		{{ $sample->batch->facility->name }} <br />
+		{{ $sample->batch->facility->name ??  $sample->batch->facility_id }} <br />
 		{{ $sample->patient->patient }} - {{ $sample->my_date_format('datecollected') }} 
 	</span>
 

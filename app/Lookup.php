@@ -31,9 +31,15 @@ class Lookup
         if(!$value) return null;
 
         try {
-            $d = Carbon::createFromFormat('m/d/y', $value);
+            $d = Carbon::createFromFormat('m/d/Y', $value);
             return $d->toDateString();
         } catch (Exception $e) {
+            try {
+                $d = Carbon::createFromFormat('m/d/y', $value);
+                return $d->toDateString();                
+            } catch (Exception $ee) {
+                return null;
+            }
             return null;
         }        
     }
