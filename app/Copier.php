@@ -123,7 +123,7 @@ class Copier
         $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
         $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
         $offset_value = 0;
-        $sample_class = FormerViralsampleView::class;
+        $sample_class = ViralsampleView::class;
         $new_batch_id = ViralsampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
 
         while(true)
