@@ -11,6 +11,7 @@ use App\OldModels\FormerViralsampleView;
 
 use App\OldModels\WorksheetView;
 use App\OldModels\ViralworksheetView;
+use App\OldModels\PocWorklist;
 
 use App\Mother;
 use App\Worksheet;
@@ -18,6 +19,7 @@ use App\Patient;
 use App\Batch;
 use App\Sample;
 
+use App\Worklist;
 use App\Viralworksheet;
 use App\Viralpatient;
 use App\Viralbatch;
@@ -246,6 +248,22 @@ class Copier
                 $offset_value += self::$limit;
                 echo "Completed {$key} worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
             }
+        }
+    }
+
+    public static function copy_worklist()
+    {
+        ini_set("memory_limit", "-1");
+        $old_worklists = PocWorklist::all();
+
+        foreach ($old_worklists as $key => $o) {
+            $w = new Worklist;
+            $w->id = $o->id;
+            $w->created_at = $o->datecreated;
+            $w->testtype = $o->testtype;
+            $w->status_id = $o->status ?? null;
+            $w->facility_id = $o->facility;
+            $w->save();
         }
     }
 
