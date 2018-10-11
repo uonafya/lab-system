@@ -566,7 +566,11 @@ class MiscViral extends Common
             }             
         }
 
-        if(!$message) return;
+        if(!$message){
+            print_r($sample);
+            die();
+            return;
+        }
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
