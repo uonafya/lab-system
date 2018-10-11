@@ -516,6 +516,7 @@ class MiscViral extends Common
 
         foreach ($samples as $key => $sample) {
             if($sample->receivedstatus == 1 && !$sample->rcategory) continue;
+            self::send_sms($sample);
         }
     }
 
