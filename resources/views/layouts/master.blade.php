@@ -107,12 +107,14 @@
                             </button>
                         </div>
                     </div>
-                        @if(Auth()->user()->user_type_id < 2)
-                        <div class="col-md-1">
-                            <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
-                                Switch to DR
-                            </button>
-                        </div>
+                        @if(env('APP_LAB') == 1)
+                            @if(Auth()->user()->user_type_id < 2)
+                            <div class="col-md-1">
+                                <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
+                                    Switch to DR
+                                </button>
+                            </div>
+                            @endif
                         @endif
                     @endif
                 </div>
