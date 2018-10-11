@@ -37,6 +37,15 @@ class Email extends BaseModel
     	file_put_contents($filename, $email_string);
     }
 
+    public function get_raw()
+    {
+    	if(!is_dir(storage_path('app/emails'))) mkdir(storage_path('app/emails'), 0777, true);
+
+    	$filename = storage_path('app/emails') . '/' . $this->id . '.txt';
+    	if(!file_exists($filename)) return null;
+    	return file_get_contents($filename);
+    }
+
     public function save_blade()
     {
     	$filename = storage_path('app/emails') . '/' . $this->id . '.txt';

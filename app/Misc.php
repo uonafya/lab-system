@@ -249,7 +249,7 @@ class Misc extends Common
 
     	foreach ($samples as $key => $sample) {
     		self::send_sms($sample);
-    		break;
+    		// break;
     	}
     }
 
@@ -290,7 +290,10 @@ class Misc extends Common
 			}    			
 		}
 
-		if(!$message) return;
+		if(!$message){
+			print_r($sample);
+			return;
+		}
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
