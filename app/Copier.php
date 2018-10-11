@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use DB;
+use Exception;
 
 use App\OldModels\SampleView;
 use App\OldModels\ViralsampleView;
