@@ -25,7 +25,6 @@
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
-
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
