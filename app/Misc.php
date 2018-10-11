@@ -249,7 +249,7 @@ class Misc extends Common
 
     	foreach ($samples as $key => $sample) {
     		self::send_sms($sample);
-    		break;
+    		// break;
     	}
     }
 
