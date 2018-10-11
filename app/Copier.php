@@ -40,6 +40,7 @@ class Copier
         $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
         $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
         $offset_value = 0;
+        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
         while(true)
         {
             $samples = SampleView::when($start, function($query) use ($start){
@@ -69,9 +70,8 @@ class Copier
 
                 $value->original_batch_id = self::set_batch_id($value->original_batch_id);
                 $batch = null;
-                if($value->original_batch_id != 0){
-                    $batch = Batch::find($value->original_batch_id);
-                }
+                if($value->original_batch_id != 0) $batch = Batch::find($value->original_batch_id);
+
 
                 if(!$batch){
                     $batch = new Batch($value->only($fields['batch']));
@@ -80,6 +80,7 @@ class Copier
                         if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
                     }
                     $batch->id = $value->original_batch_id;
+                    if($value->original_batch_id == 0) $batch->id = ++$new_batch_id;
                     if($batch->site_entry == 0 && !$batch->received_by) $batch->received_by = $value->user_id;
                     $batch->entered_by = $value->user_id;
                     $batch->save();
@@ -90,7 +91,7 @@ class Copier
                     $sample->$date_field = self::clean_date($value->$date_field);
                     if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
-                $sample->batch_id = $value->original_batch_id;
+                $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
                 $sample->patient_id = $patient->id;
 
                 if(!$sample->age && $batch->datecollected && $patient->dob){
@@ -121,6 +122,7 @@ class Copier
         $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
         $offset_value = 0;
         $sample_class = FormerViralsampleView::class;
+        $new_batch_id = Viralsample::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
 
         while(true)
         {
@@ -159,9 +161,7 @@ class Copier
 
                 $value->original_batch_id = self::set_batch_id($value->original_batch_id);
                 $batch = null;
-                if($value->original_batch_id != 0){
-                    $batch = Viralbatch::find($value->original_batch_id);
-                }
+                if($value->original_batch_id != 0) $batch = Viralbatch::find($value->original_batch_id);
 
                 if(!$batch){
                     $batch = new Viralbatch($value->only($fields['batch']));
@@ -170,6 +170,7 @@ class Copier
                         if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
                     }
                     $batch->id = $value->original_batch_id;
+                    if($value->original_batch_id == 0) $batch->id = ++$new_batch_id;
                     if($batch->site_entry == 0 && !$batch->received_by) $batch->received_by = $value->user_id;
                     $batch->entered_by = $value->user_id;
                     $batch->save();
@@ -180,7 +181,7 @@ class Copier
                     $sample->$date_field = self::clean_date($value->$date_field);
                     if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
-                $sample->batch_id = $value->original_batch_id;
+                $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
                 $sample->patient_id = $patient->id;
 
                 if(!$sample->age && $batch->datecollected && $patient->dob){
