@@ -227,9 +227,6 @@
                     <li class="">
                         <a href="{{ url('facility') }}">Facilities</a>
                     </li>
-                    <li>
-                        <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
-                    </li>
                     <li class="">
                         <a href="{{ route('reports') }}">Reports</a>
                     </li>
