@@ -84,6 +84,11 @@ margin-top: 0px;
 			$labaddress="AMPATH LAB, AMPATH";
 			$labtelno="";
 		}
+		elseif ( $labss ==6  ) //cpgh
+		{
+			$labaddress="CPGH Molecular Lab";
+			$labtelno="0722207868 Ext. Lab";
+		}
 
 	?>
 
