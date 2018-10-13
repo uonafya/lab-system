@@ -237,6 +237,14 @@
                         <a href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="">
+                        <a href="
+                            @if(session('testingSystem') == 'Viralload')
+                                {{ 'https://viralload.nascop.org/labs' }}
+                            @else
+                                {{ 'https://eid.nascop.org/labPerformance' }}
+                            @endif">Nascop Dashboard</a>
+                    </li>
+                    <li class="">
                         <a href="{{ url('reports/kits') }}">Kits</a>
                     </li>
                 @endif
