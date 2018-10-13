@@ -9,10 +9,32 @@ use App\Mail\CustomMail;
 class Email extends BaseModel
 {
 
+    /**
+     * Get the user's full name
+     *
+     * @return string
+     */
+    public function getContentAttribute()
+    {
+        return $this->get_raw();
+    }
+
+
     public function dispatch()
     {
         ini_set("memory_limit", "-1");
         $facilities = \App\Facility::where('flag', 1)->get();
+
+        $cc_array = [];
+        $bcc_array = [];
+
+        if($email->cc_list){
+            $a = explode(',', $email->cc_list);
+
+            foreach ($a as $key => $value) {
+                $cc_array[] = $value;
+            }
+        }
 
         foreach ($facilities as $key => $facility) {
         	$mail_array = $facility->email_array;
@@ -60,5 +82,11 @@ class Email extends BaseModel
     {
     	$blade = base_path('resources/views/emails') . '/' . $this->id . '.txt';
     	unlink($blade);
+    }
+
+    public function delete_raw()
+    {
+        $filename = storage_path('app/emails') . '/' . $this->id . '.txt';
+        if(file_exists($filename)) unlink($filename);
     }
 }
