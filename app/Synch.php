@@ -842,7 +842,7 @@ class Synch
 		$offset=0;
 
 		while (true) {
-			$patients = Patient::with(['mother:id'])
+			$patients = Patient::with(['mother'])
 				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
