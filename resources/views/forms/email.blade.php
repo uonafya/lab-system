@@ -23,7 +23,7 @@
         @if (isset($email))
             {{ Form::open(['url' => '/email/' . $email->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
-            {{ Form::open(['url'=>'/email', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+            {{ Form::open(['url'=>'/email', 'method' => 'post', 'class'=>'form-horizontal']) }}
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
         @endif
 
@@ -40,7 +40,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" name="name" value="{{ $email->name ?? '' }}">
+                                <input class="form-control" required type="text" name="name" value="{{ $email->name ?? null }}">
                             </div>
                         </div> 
 
@@ -49,14 +49,14 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" name="subject" value="{{ $email->subject ?? '' }}">
+                                <input class="form-control" required type="text" name="subject" value="{{ $email->subject ?? null }}">
                             </div>
                         </div> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">From Name</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="from_name" value="{{ $email->from_name ?? '' }}">
+                                <input class="form-control" type="text" name="from_name" value="{{ $email->from_name ?? null }}">
                             </div>
                         </div> 
 
@@ -74,16 +74,60 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
+                            <label class="col-sm-4 control-label">Day to Send Email</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" value="{{ $email->sending_day ?? null }}" name="sending_day">
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Time to Send Email</label>
+                            <div class="col-sm-8">
+                                <select class="form-control requirable" name="sending_hour">
+
+                                    <option></option>
+                                    @for($i=1; $i<13; $i++)
+                                        <option value="{{ $i }}"
+
+                                        @if (isset($email) && $email->sending_hour == $i)
+                                            selected
+                                        @endif
+
+                                        > {{ $i }} A.M.
+                                        </option>
+                                    @endfor
+
+                                    @for($i=1; $i<13; $i++)
+                                        <option value="{{ $i+12 }}"
+
+                                        @if (isset($email) && $email->sending_hour == ($i + 12))
+                                            selected
+                                        @endif
+
+                                        > {{ $i }} P.M.
+                                        </option>
+                                    @endfor
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">CC List (Coma Separated)</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="cc_list" value="{{ $email->cc_list ?? '' }}">
+                                <input class="form-control" type="text" name="cc_list" value="{{ $email->cc_list ?? null }}">
                             </div>
                         </div> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">BCC List (Coma Separated)</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="bcc_list" value="{{ $email->bcc_list ?? '' }}">
+                                <input class="form-control" type="text" name="bcc_list" value="{{ $email->bcc_list ?? null }}">
                             </div>
                         </div> 
 
@@ -92,8 +136,8 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Email Content</label>
                             <div class="col-sm-8">
-                                <textarea name="email_content" value="{{ $email->content ?? '' }}" id="email_content">
-                                    
+                                <textarea name="email_content" id="email_content">
+                                    {{ $email->content ?? null }}
                                 </textarea>
                             </div>
                         </div> 
@@ -135,6 +179,17 @@
         @endslot
 
         $('#email_content').summernote();
+
+        $(".date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
     @endcomponent
 
 @endsection

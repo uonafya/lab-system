@@ -170,6 +170,15 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('dr_worksheet', 'DrWorksheetController');
 	});
 
+	Route::group(['middleware' => ['only_utype:2']], function () {
+		Route::prefix('email')->name('email.')->group(function () {
+			Route::get('preview/{email}', 'EmailController@demo')->name('demo');
+			Route::post('preview/{email}', 'EmailController@demo_email')->name('demo_email');
+		});
+		Route::resource('email', 'EmailController');
+	});
+	
+
 	Route::get('facility/served', 'FacilityController@served');
 	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
@@ -246,10 +255,16 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('sample', 'SampleController');
 
-	Route::get('users', 'UserController@index')->name('users');
-	Route::get('user/add', 'UserController@create')->name('user.add');
 	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
-	Route::resource('user', 'UserController');
+
+	// Route::group(['middleware' => ['only_utype:2']], function () {
+
+		Route::get('users', 'UserController@index')->name('users');
+		Route::get('user/add', 'UserController@create')->name('user.add');
+		Route::resource('user', 'UserController');	
+	// });
+
+		
 
 
 	Route::prefix('viralsample')->name('viralsample.')->group(function () {
