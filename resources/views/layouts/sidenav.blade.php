@@ -110,10 +110,12 @@
                 <hr />
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
-                <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
-                <hr />
+                @if(env('APP_LAB') != 6)
+                    <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
+                    <hr />
+                    <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
+                    <hr />
+                @endif
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
