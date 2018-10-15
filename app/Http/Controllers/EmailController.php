@@ -42,7 +42,8 @@ class EmailController extends Controller
         if($sending_day) $email->time_to_be_sent = $sending_day . ' ' . $sending_hour . ':00:00';
         $email->save();
         $email->save_raw($request->input('email_content'));
-        return redirect('email');
+        session(['toast_message' => 'The email has been created.']);
+        return back();
     }
 
     /**
@@ -83,7 +84,8 @@ class EmailController extends Controller
         if($email->time_to_be_sent != $email->getOriginal('time_to_be_sent') && $email->sent) $email->sent = false;
         $email->save();
         $email->save_raw($request->input('email_content'));
-        return back();
+        session(['toast_message' => 'The email has been updated.']);
+        return redirect('email');
     }
 
     /**
