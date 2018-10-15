@@ -136,8 +136,8 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Email Content</label>
                             <div class="col-sm-8">
-                                <textarea name="email_content" value="{{ $email->content ?? null }}" id="email_content">
-                                    
+                                <textarea name="email_content" id="email_content">
+                                    {{ $email->content ?? null }}
                                 </textarea>
                             </div>
                         </div> 
