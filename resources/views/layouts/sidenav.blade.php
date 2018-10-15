@@ -266,6 +266,16 @@
                 <a href="{{ url('facility/add') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
+            @if(env('APP_LAB') == 1)
+                <li>
+                    <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
+                </li>
+                <hr />
+            @endif
         @endif
         <!-- Admin Side Bar -->
 
