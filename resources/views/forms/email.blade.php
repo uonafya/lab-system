@@ -74,9 +74,7 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Day to Send Email
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
+                            <label class="col-sm-4 control-label">Day to Send Email</label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -88,7 +86,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Time to Send Email</label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" required name="sending_hour">
+                                <select class="form-control requirable" name="sending_hour">
 
                                     <option></option>
                                     @for($i=1; $i<13; $i++)

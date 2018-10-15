@@ -36,6 +36,7 @@ class EmailController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         $email = new Email($request->except(['_token', 'email_content', 'sending_day', 'sending_hour']));
         $sending_day = $request->input('sending_day');
         $sending_hour = $request->input('sending_hour', 10);
