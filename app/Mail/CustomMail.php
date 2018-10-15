@@ -38,7 +38,7 @@ class CustomMail extends Mailable
     {
         $view_name = 'emails.' . $this->email->id;
         $from = env('MAIL_FROM_NAME');
-        if($this->email->from_name == '') $from = $this->email->from_name
+        if($this->email->from_name != '') $from = $this->email->from_name
         return $this->subject($this->email->subject)->from(env('MAIL_FROM_ADDRESS'), $from)->view($view_name);
     }
 }
