@@ -134,7 +134,7 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
-                            <label class="col-sm-12 control-label">Email Content</label>
+                            <label class="col-sm-4 control-label">Email Content</label><div class="col-sm-8"></div>
                         </div> 
 
                         <div class="col-sm-12">
