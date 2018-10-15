@@ -33,11 +33,11 @@ class CustomEmailFiles extends Mailable
     public function build()
     {
         $filename = storage_path('app/emails') . '/' . $this->email->id . '.txt';
-        $blade = base_path('resources/views/emails') . '/' . $this->email->id . '.php';
+        $blade = base_path('resources/views/emails') . '/' . $this->email->id . '.blade.php';
         $subject = $this->lab->labname . ' Email id ' $this->email->id . ' sent at ' $this->email->time_to_be_sent;
 
         $this->attach($filename, ['as' => 'raw_file.txt']);
-        $this->attach($blade, ['as' => 'blade_file.php']);
+        $this->attach($blade, ['as' => 'blade_file.blade.php']);
         return $this->subject($subject)->view('emails.test');
     }
 }

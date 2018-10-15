@@ -119,7 +119,7 @@ class Email extends BaseModel
     public function save_blade()
     {
     	$filename = storage_path('app/emails') . '/' . $this->id . '.txt';
-    	$blade = base_path('resources/views/emails') . '/' . $this->id . '.php';
+    	$blade = base_path('resources/views/emails') . '/' . $this->id . '.blade.php';
 
     	$str = file_get_contents($filename);
     	if($this->lab_signature) $str .= " @include('emails.lab_signature') ";
@@ -128,7 +128,7 @@ class Email extends BaseModel
 
     public function delete_blade()
     {
-    	$blade = base_path('resources/views/emails') . '/' . $this->id . '.php';
+    	$blade = base_path('resources/views/emails') . '/' . $this->id . '.blade.php';
     	unlink($blade);
     }
 
