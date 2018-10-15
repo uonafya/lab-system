@@ -83,8 +83,10 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
-                <hr />
+                @if(env('APP_LAB') == 1)
+                    <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                 @if(env('APP_LAB') == 4)
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
@@ -110,10 +112,12 @@
                 <hr />
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
-                <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
-                <hr />
+                @if(env('APP_LAB') != 6)
+                    <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
+                    <hr />
+                    <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
+                    <hr />
+                @endif
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -315,8 +319,6 @@
             <hr />
         @endif
         @if(Auth()->user()->user_type_id != 2)
-            <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
-            <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
         <!-- </ul>
         </li>
         <li>
@@ -329,12 +331,14 @@
             </ul>
         </li> -->
         @if(session('testingSystem') == 'Viralload')
+            <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
         @elseif(session('testingSystem') == 'EID')
+            <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
             <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
             <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>

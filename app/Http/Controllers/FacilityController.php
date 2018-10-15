@@ -50,6 +50,33 @@ class FacilityController extends Controller
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities');
     }
 
+    public function filled_contacts()
+    {
+        $facilities = ViewFacility::whereRaw("((email is not null and email!='') or (telephone is not null and telephone!='') or (telephone2 is not null and telephone2!=''))")->get();
+        $table = '';
+        foreach ($facilities as $key => $value) {
+            $table .= '<tr>';
+            $table .= '<td>'.$value->facilitycode.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
+            $table .= '<td>'.$value->county.'</td>';
+            $table .= '<td>'.$value->subcounty.'</td>';
+            $table .= '<td>'.$value->telephone.'</td>';
+            $table .= '<td>'.$value->telephone2.'</td>';
+            $table .= '<td>'.$value->email.'</td>';
+            $table .= '<td>'.$value->sms_printer_phoneno.'</td>';
+            $table .= '<td>'.$value->contactperson.'</td>';
+            $table .= '<td>'.$value->contacttelephone.'</td>';
+            $table .= '<td>'.$value->contacttelephone2.'</td>';
+            $table .= '<td>'.$value->ContactEmail.'</td>';
+            $table .= '<td>'.$value->G4Sbranchname.'</td>';
+            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
+            $table .= '</tr>';
+        }
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email','Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task']);
+        
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities With Contacts');
+    }
+
     public function served()
     {
         /*$facilities = DB::table('facilitys')
