@@ -40,7 +40,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" name="name" value="{{ $email->name ?? '' }}">
+                                <input class="form-control" required type="text" name="name" value="{{ $email->name ?? null }}">
                             </div>
                         </div> 
 
@@ -49,14 +49,14 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" required type="text" name="subject" value="{{ $email->subject ?? '' }}">
+                                <input class="form-control" required type="text" name="subject" value="{{ $email->subject ?? null }}">
                             </div>
                         </div> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">From Name</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="from_name" value="{{ $email->from_name ?? '' }}">
+                                <input class="form-control" type="text" name="from_name" value="{{ $email->from_name ?? null }}">
                             </div>
                         </div> 
 
@@ -78,7 +78,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" value="{{ $email->sending_day ?? '' }}" name="sending_day">
+                                    <input type="text" class="form-control" value="{{ $email->sending_day ?? null }}" name="sending_day">
                                 </div>
                             </div>                            
                         </div>
@@ -120,14 +120,14 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">CC List (Coma Separated)</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="cc_list" value="{{ $email->cc_list ?? '' }}">
+                                <input class="form-control" type="text" name="cc_list" value="{{ $email->cc_list ?? null }}">
                             </div>
                         </div> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">BCC List (Coma Separated)</label>
                             <div class="col-sm-8">
-                                <input class="form-control" type="text" name="bcc_list" value="{{ $email->bcc_list ?? '' }}">
+                                <input class="form-control" type="text" name="bcc_list" value="{{ $email->bcc_list ?? null }}">
                             </div>
                         </div> 
 
@@ -136,7 +136,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Email Content</label>
                             <div class="col-sm-8">
-                                <textarea name="email_content" value="{{ $email->content ?? '' }}" id="email_content">
+                                <textarea name="email_content" value="{{ $email->content ?? null }}" id="email_content">
                                     
                                 </textarea>
                             </div>
