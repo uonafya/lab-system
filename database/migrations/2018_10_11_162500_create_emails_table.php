@@ -25,6 +25,7 @@ class CreateEmailsTable extends Migration
             $table->boolean('sent')->default(false);
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

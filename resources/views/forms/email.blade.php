@@ -23,7 +23,7 @@
         @if (isset($email))
             {{ Form::open(['url' => '/email/' . $email->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
-            {{ Form::open(['url'=>'/email', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+            {{ Form::open(['url'=>'/email', 'method' => 'post', 'class'=>'form-horizontal']) }}
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
         @endif
 
@@ -70,6 +70,52 @@
                                 > Tick if yes
                             </div>
                         </div> 
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Day to Send Email
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" value="{{ $email->sending_day ?? '' }}" name="sending_day">
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Time to Send Email</label>
+                            <div class="col-sm-8">
+                                <select class="form-control requirable" required name="sending_hour">
+
+                                    <option></option>
+                                    @for($i=1; $i<13; $i++)
+                                        <option value="{{ $i }}"
+
+                                        @if (isset($email) && $email->sending_hour == $i)
+                                            selected
+                                        @endif
+
+                                        > {{ $i }} A.M.
+                                        </option>
+                                    @endfor
+
+                                    @for($i=1; $i<13; $i++)
+                                        <option value="{{ $i+12 }}"
+
+                                        @if (isset($email) && $email->sending_hour == ($i + 12))
+                                            selected
+                                        @endif
+
+                                        > {{ $i }} P.M.
+                                        </option>
+                                    @endfor
+
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="hr-line-dashed"></div>
 
@@ -135,6 +181,17 @@
         @endslot
 
         $('#email_content').summernote();
+
+        $(".date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
     @endcomponent
 
 @endsection
