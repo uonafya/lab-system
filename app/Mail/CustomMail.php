@@ -38,6 +38,7 @@ class CustomMail extends Mailable
     {
         $view_name = 'emails.' . $this->email->id;
         $from = $this->email->from_name ?? env('MAIL_FROM_NAME');
-        return $this->subject($this->email->subject)->from(env('MAIL_FROM_ADDRESS'), $from)->view($view_name);
+        // return $this->subject($this->email->subject)->from(env('MAIL_FROM_ADDRESS'), $from)->view($view_name);
+        return $this->subject($this->email->subject)->view($view_name);
     }
 }
