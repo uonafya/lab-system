@@ -111,4 +111,5 @@ class EmailController extends Controller
         session(['toast_message' => 'The email was successful']);
         return back();
     }
+    
 }
