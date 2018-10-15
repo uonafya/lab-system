@@ -36,8 +36,10 @@ class EmailController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->except(['_token', 'email_content', 'sending_day', 'sending_hour']));
-        $email = new Email($request->except(['_token', 'email_content', 'sending_day', 'sending_hour']));
+        $data = $request->getContent();
+        dd($data);
+        // dd($request->except(['_token', 'email_content', 'sending_day', 'sending_hour']));
+        $email = new Email($request->except(['_token', 'files', 'email_content', 'sending_day', 'sending_hour']));
         $sending_day = $request->input('sending_day');
         $sending_hour = $request->input('sending_hour', 10);
         if($sending_day) $email->time_to_be_sent = $sending_day . ' ' . $sending_hour . ':00:00';
@@ -78,7 +80,7 @@ class EmailController extends Controller
      */
     public function update(Request $request, Email $email)
     {
-        $email->fill($request->except(['_token', '_method', 'email_content', 'sending_day', 'sending_hour']));
+        $email->fill($request->except(['_token', 'files', '_method', 'email_content', 'sending_day', 'sending_hour']));
         $sending_day = $request->input('sending_day');
         $sending_hour = $request->input('sending_hour', 10);
         if($sending_day) $email->time_to_be_sent = $sending_day . ' ' . $sending_hour . ':00:00';
