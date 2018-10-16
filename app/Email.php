@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Mail\CustomMail;
 use App\Mail\CustomEmailFiles;
+use Exception;
 
 class Email extends BaseModel
 {
@@ -20,13 +21,6 @@ class Email extends BaseModel
     public function getContentAttribute()
     {
         return $this->get_raw();
-    }
-
-    public function my_date_format_two($value)
-    {
-        if($this->$value) return date('Y-m-d', strtotime($this->$value));
-
-        return '';
     }
 
     public function getSendingHourAttribute()
@@ -56,24 +50,8 @@ class Email extends BaseModel
         ini_set("memory_limit", "-1");
         $facilities = \App\Facility::where('flag', 1)->get();
 
-        $cc_array = [];
-        $bcc_array = [];
-
-        if($email->cc_list){
-            $a = explode(',', $email->cc_list);
-
-            foreach ($a as $key => $value) {
-                if(str_contains($value, '@'))$cc_array[] = $value;
-            }
-        }
-
-        if($email->bcc_list){
-            $a = explode(',', $email->bcc_list);
-
-            foreach ($a as $key => $value) {
-                if(str_contains($value, '@'))$bcc_array[] = $value;
-            }
-        }
+        $cc_array = $this->comma_array($this->cc_list);
+        $bcc_array = $this->comma_array($this->bcc_list);
         $bcc_array = array_merge($bcc_array, ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com']);
 
         foreach ($facilities as $key => $facility) {
@@ -136,5 +114,18 @@ class Email extends BaseModel
     {
         $filename = storage_path('app/emails') . '/' . $this->id . '.txt';
         if(file_exists($filename)) unlink($filename);
+    }
+
+    public function comma_array($str)
+    {
+        if(!$str || $str == '') return [];
+        $emails = explode(',', $str);
+
+        $mail_array = [];
+
+        foreach ($emails as $key => $value) {
+            if(str_contains($value, '@')) $mail_array[] = trim($value);
+        }
+        return $mail_array;
     }
 }

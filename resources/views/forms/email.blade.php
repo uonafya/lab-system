@@ -28,7 +28,7 @@
         @endif
 
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
+            <div class="col-lg-10 col-lg-offset-1">
                 <div class="hpanel">
                     <div class="panel-heading">
                         <center> </center>
@@ -134,14 +134,14 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Email Content</label>
-                            <div class="col-sm-8">
-                                <textarea name="email_content" id="email_content">
-                                    {{ $email->content ?? null }}
-                                </textarea>
-                            </div>
+                            <label class="col-sm-4 control-label">Email Content</label><div class="col-sm-8"></div>
                         </div> 
 
+                        <div class="col-sm-12">
+                            <textarea name="email_content" id="email_content">
+                                {{ $email->content ?? null }}
+                            </textarea>
+                        </div>
 
                         <div class="hr-line-dashed"></div>
 
