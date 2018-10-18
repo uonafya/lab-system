@@ -16,6 +16,11 @@
 <aside id="menu">
     <div id="navigation">
         <ul class="nav" id="side-menu" style=" padding-top: 12px;padding-left: 8px;">
+        @if(Session('testingSystem') != 'CD4')
+            @if(env('APP_LAB') == 5)
+                <li class="label label-success"><a href="#" id="cd4Switch">Switch to CD4</a></li>
+            @endif
+        @endif
             <!-- <li class="active">
                 <a href="#"><span class="nav-label">MENU</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level"> -->
@@ -308,14 +313,6 @@
         @if (auth()->user()->user_type_id != 2)
             <li>
                 <a href="#"> <span class="nav-label">User Manual</span></a>
-            </li>
-            <hr />
-            <li>
-                <a href="#"><span class="nav-label">Download Forms</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a></li>
-                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a></li>
-                </ul>
             </li>
             <hr />
         @endif
