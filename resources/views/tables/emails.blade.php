@@ -37,12 +37,12 @@
                                         <td> {{ $email->cc_list ?? '' }} </td>
                                         <td> {{ $email->bcc_list ?? '' }} </td>
                                         <td> {{ $email->lab_signature ?? '' }} </td>
+                                        <td> {{ $email->my_date_format('time_to_be_sent', 'd/m/Y h:i:s a') }} </td>
                                         @if($email->sent)
                                             <td>True</td>
                                         @else
                                             <td>False</td>
                                         @endif
-                                        <td> {{ $email->my_date_format('time_to_be_sent', 'd/m/Y h:i:s a') }} </td>
                                         <td>
                                             <a href="{{ url('/email/preview/' . $email->id ) }} " target='_blank'>Preview</a>
                                         </td>

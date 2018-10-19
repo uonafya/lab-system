@@ -21,7 +21,7 @@ class CreateSamplesTable extends Migration
             $table->double('batch_id', 14, 2)->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
-            $table->string('order_no', 30)->nullable();
+            $table->string('order_no', 30)->nullable()->index();
             $table->string('sample_type', 30)->nullable();
 
 
