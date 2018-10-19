@@ -289,7 +289,7 @@ class MiscViral extends Common
         $batches = [];
 
         foreach ($samples as $sample) {
-            $result_array = self::sample_result($sample->interpretation);
+            $result_array = self::sample_result($sample->interpretation, null);
             $result = $result_array['result'];
             $sample->result = $result;
             $sample->pre_update();
