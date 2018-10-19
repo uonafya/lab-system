@@ -166,6 +166,11 @@ class Viralsample extends BaseModel
             else if(str_contains($interpretation, ['30'])){
                 $str .= "( Pantha Plasma  &lt;30 copies/ml )";
             }
+            else if(str_contains($interpretation, ['log']) && str_contains($interpretation, ['<'])){
+                $x = preg_replace("/[^<0-9.]/", "", $interpretation);
+                $n = round(pow(10, $x));
+                $str .= "( &lt;{$n} copies/ml )";
+            }
             else{
                 $n = preg_replace("/[^<0-9]/", "", $interpretation);
                 $str .= "( &lt;{$n} copies/ml )";
