@@ -237,6 +237,17 @@ class Misc extends Common
         return $samples;
     }
 
+    public static function clean_dob()
+    {
+    	$samples = Sample::where('age', '>', 36)->with(['patient'])->get();
+
+    	foreach ($samples as $sample) {
+    		$patient = $sample->patient;
+    		$patient->dob = null;
+    		$patient->pre_update();
+    	}
+    }
+
     public static function patient_sms()
     {
         ini_set("memory_limit", "-1");

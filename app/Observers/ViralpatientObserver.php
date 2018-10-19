@@ -22,6 +22,10 @@ class ViralpatientObserver
             $samples = Viralsample::where('patient_id', $viralpatient->id)->get();
 
             foreach ($samples as $key => $sample) {
+                if(!$viralpatient->dob){
+                    $sample->age = 0;
+                    $sample->pre_update();
+                }
                 $age = Lookup::calculate_viralage($sample->datecollected, $viralpatient->dob);
                 $sample->age = $age;
                 $sample->pre_update();
