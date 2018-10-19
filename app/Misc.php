@@ -242,9 +242,12 @@ class Misc extends Common
     	$samples = Sample::where('age', '>', 36)->with(['patient'])->get();
 
     	foreach ($samples as $sample) {
-    		$patient = $sample->patient;
-    		$patient->dob = null;
-    		$patient->pre_update();
+    		// $patient = $sample->patient;
+    		// $patient->dob = null;
+    		// $patient->pre_update();
+
+    		$sample->age=0;
+    		$sample->pre_update();
     	}
     }
 
