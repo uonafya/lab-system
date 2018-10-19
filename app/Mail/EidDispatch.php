@@ -31,7 +31,7 @@ class EidDispatch extends Mailable
      *
      * @return void
      */
-    public function __construct(Batch $batch)
+    public function __construct(Batch $batch, $view_name=null)
     {
         $this->type = "EID";
         $batch->load(['sample.patient.mother', 'facility', 'lab', 'receiver', 'creator']);
