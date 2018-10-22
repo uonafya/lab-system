@@ -45,9 +45,6 @@ class Email extends BaseModel
 
     public function dispatch()
     {
-        $this->sent = true;
-        $this->save();
-        
         $this->save_blade();
         ini_set("memory_limit", "-1");
         $facilities = \App\Facility::where('flag', 1)->get();
@@ -67,7 +64,9 @@ class Email extends BaseModel
 	        }
         	// break;
         }
-
+        $this->sent = true;
+        $this->save();
+        
         $this->send_files();
         $this->delete_blade();
     }
