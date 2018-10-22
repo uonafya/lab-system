@@ -92,7 +92,7 @@ width:1180px;
 				<td> {{ $worksheet->runner->full_name ?? '' }} </td>
 			</tr>
 		</table>
-		<table>
+		<table style="border: 0px; width: 100%;">
 					@php
 						$class = get_class($worksheet);
 
