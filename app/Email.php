@@ -43,7 +43,6 @@ class Email extends BaseModel
         $this->delete_blade();
     }
 
-
     public function dispatch()
     {
         $this->save_blade();
@@ -65,6 +64,9 @@ class Email extends BaseModel
 	        }
         	// break;
         }
+        $this->sent = true;
+        $this->save();
+        
         $this->send_files();
         $this->delete_blade();
     }
