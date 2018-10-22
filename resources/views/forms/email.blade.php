@@ -118,14 +118,14 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">CC List (Coma Separated)</label>
+                            <label class="col-sm-4 control-label">CC List (Comma Separated Email Addresses)</label>
                             <div class="col-sm-8">
                                 <input class="form-control" type="text" name="cc_list" value="{{ $email->cc_list ?? null }}">
                             </div>
                         </div> 
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">BCC List (Coma Separated)</label>
+                            <label class="col-sm-4 control-label">BCC List (Comma Separated Email Addresses)</label>
                             <div class="col-sm-8">
                                 <input class="form-control" type="text" name="bcc_list" value="{{ $email->bcc_list ?? null }}">
                             </div>
