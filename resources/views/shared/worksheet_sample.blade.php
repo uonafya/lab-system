@@ -21,6 +21,7 @@
 		{{ $sample->batch->facility->name ??  $sample->batch->facility_id }} <br />
 		{{ $sample->patient->patient }} - {{ $sample->my_date_format('datecollected') }} 
 	</span>
+	<br />
 
 
 	&nbsp;&nbsp;&nbsp;<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
