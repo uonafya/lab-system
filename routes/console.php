@@ -80,6 +80,12 @@ Artisan::command('lablog {type}', function($type){
 // })->describe('Synch vl patients to the national database.');
 
 
+Artisan::command('send:communication', function(){
+    $str = \App\Common::send_communication();
+    $this->info($str);
+})->describe('Send any pending emails.');
+
+
 Artisan::command('send:sms', function(){
     $str = \App\Misc::patient_sms();
     $str .= \App\MiscViral::patient_sms();

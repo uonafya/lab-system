@@ -133,12 +133,12 @@ class ViralworksheetController extends Controller
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples];
 
-        if($Viralworksheet->machine_type == 1 || $Viralworksheet->machine_type == 3){
+        if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
         }
-        // else if($Viralworksheet->machine_type == 3){
-        //     return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
-        // }
+        else if($Viralworksheet->machine_type == 3){
+            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
+        }
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
@@ -195,12 +195,12 @@ class ViralworksheetController extends Controller
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
 
-        if($worksheet->machine_type == 1 || $worksheet->machine_type == 3){
+        if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
         }
-        // else if($worksheet->machine_type == 3){
-        //     return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
-        // }
+        else if($worksheet->machine_type == 3){
+            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
+        }
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
         }
