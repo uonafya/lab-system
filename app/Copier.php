@@ -229,6 +229,7 @@ class Copier
             $samples = $sample_class::when($start, function($query) use ($start){
                 return $query->where('id', '>', $start);
             })->limit(self::$limit)->offset($offset_value)->get();
+            if($samples->isEmpty()) break;
 
             foreach ($samples as $key => $value) {
 
@@ -285,7 +286,7 @@ class Copier
             'vl' => ['model' => Viralworksheet::class, 'view' => ViralworksheetView::class],
         ];
 
-        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'created_at'];
+        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'dateuploaded', 'created_at'];
 
         ini_set("memory_limit", "-1");
 
@@ -316,6 +317,38 @@ class Copier
                 $offset_value += self::$limit;
                 echo "Completed {$key} worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
             }
+        }
+    }
+
+    public static function copy_cd4_worksheet()
+    {
+       
+        $date_array = ['daterun', 'datereviewed', 'datereviewed2', 'datecancelled', 'dateuploaded', 'created_at'];
+
+        ini_set("memory_limit", "-1");
+
+        $start = Cd4Worksheet::max('id');              
+
+        $offset_value = 0;
+        while(true)
+        {
+            $worksheets = Cd4WorksheetView::when($start, function($query) use ($start){
+                return $query->where('id', '>', $start);
+            })->limit(self::$limit)->offset($offset_value)->get();
+            if($worksheets->isEmpty()) break;
+
+            foreach ($worksheets as $worksheet_key => $worksheet) {
+                $duplicate = $worksheet->replicate();
+                $work = new Cd4Worksheet;                    
+                $work->fill($duplicate->toArray());
+                foreach ($date_array as $date_field) {
+                    $work->$date_field = self::clean_date($worksheet->$date_field);
+                }
+                $work->id = $worksheet->id;
+                $work->save();
+            }
+            $offset_value += self::$limit;
+            echo "Completed cd4 worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
     }
 
