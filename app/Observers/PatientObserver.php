@@ -22,6 +22,10 @@ class PatientObserver
             $samples = Sample::where('patient_id', $patient->id)->get();
 
             foreach ($samples as $key => $sample) {
+                if(!$patient->dob){
+                    $sample->age = 0;
+                    $sample->pre_update();
+                }
                 $age = Lookup::calculate_age($sample->datecollected, $patient->dob);
                 $sample->age = $age;
                 $sample->pre_update();

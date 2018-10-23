@@ -26,15 +26,17 @@ class VlDispatch extends Mailable
     public $title;
 
     public $type;
+    public $view_name;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Viralbatch $batch)
+    public function __construct(Viralbatch $batch, $view_name='emails.eid_dispatch')
     {
         $this->type = "VL";
+        $this->view_name = $view_name;
         $batch->load(['sample.patient', 'facility', 'lab', 'receiver', 'creator']);
         $samples = $batch->sample;
         $this->batch = $batch;
@@ -91,6 +93,6 @@ class VlDispatch extends Mailable
         $this->attach($this->individual_path, ['as' => $this->individual_title]);
         $this->attach($this->summary_path, ['as' => $this->summary_title]);
 
-        return $this->subject($this->title)->view('emails.eid_dispatch');
+        return $this->subject($this->title)->view($this->view_name);
     }
 }

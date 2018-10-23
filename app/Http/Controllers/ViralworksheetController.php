@@ -137,7 +137,7 @@ class ViralworksheetController extends Controller
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
         }
         else if($Viralworksheet->machine_type == 3){
-            return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
+            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
         }
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
@@ -199,7 +199,7 @@ class ViralworksheetController extends Controller
             return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
         }
         else if($worksheet->machine_type == 3){
-            return view('worksheets.c8800', $data)->with('pageTitle', 'C8800 Worksheets');
+            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
         }
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
@@ -401,6 +401,7 @@ class ViralworksheetController extends Controller
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
+                if(!isset($value[1])) break;
                 $sample_id = $value[1];
                 $result = $value[6];
                 $result_array = MiscViral::exponential_result($result);
