@@ -232,11 +232,17 @@ class Copier
 
             foreach ($samples as $key => $value) {
 
-                $patient = new Cd4Patient($value->only($fields['patient']));
-                if($patient->dob) $patient->dob = self::clean_date($patient->dob);
-                $patient->sex = self::resolve_gender($value->gender);
-                $patient->id = $value->original_patient_id;
-                $patient->save();
+                $patient = Cd4Patient::find($value->original_patient_id);
+
+                if(!$patient){
+
+                    $patient = new Cd4Patient($value->only($fields['patient']));
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+                    $patient->sex = self::resolve_gender($value->gender);
+                    $patient->id = $value->original_patient_id;
+                    $patient->save();
+                    
+                }
 
                 $sample = new Cd4Sample($value->only($fields['sample']));
                 foreach ($sample_date_array as $date_field) {
