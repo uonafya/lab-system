@@ -43,12 +43,14 @@ class Email extends BaseModel
         $this->delete_blade();
     }
 
-
     public function dispatch()
     {
         $this->save_blade();
         ini_set("memory_limit", "-1");
         $facilities = \App\Facility::where('flag', 1)->get();
+        
+        $this->sent = true;
+        $this->save();
 
         $cc_array = $this->comma_array($this->cc_list);
         $bcc_array = $this->comma_array($this->bcc_list);
@@ -56,15 +58,17 @@ class Email extends BaseModel
 
         foreach ($facilities as $key => $facility) {
         	$mail_array = $facility->email_array;
+            if(!$mail_array) continue;
         	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         	$comm = new CustomMail($this, $facility);
         	try {
-	        	Mail::to($mail_array)->cc_array($cc_array)->bcc($bcc_array)->send($comm);
+	        	Mail::to($mail_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
 	        } catch (Exception $e) {
         	
 	        }
         	// break;
         }
+        
         $this->send_files();
         $this->delete_blade();
     }
@@ -100,6 +104,8 @@ class Email extends BaseModel
     	$blade = base_path('resources/views/emails') . '/' . $this->id . '.blade.php';
 
     	$str = file_get_contents($filename);
+        $fac_name = '{{ $facility->name ?? ' . "'Facility Name Here'"  . ' }}';
+        $str = str_replace(':facilityname', $fac_name, $str);
     	if($this->lab_signature) $str .= " @include('emails.lab_signature') ";
     	file_put_contents($blade, $str);
     }

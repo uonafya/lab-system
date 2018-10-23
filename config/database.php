@@ -80,6 +80,20 @@ return [
             'engine' => null,
         ],
 
+        'cd4' => [
+            'driver' => 'mysql',
+            'host' => env('OLD_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('CD4_DATABASE', 'forge'),
+            'username' => env('OLD_USERNAME', 'forge'),
+            'password' => env('OLD_PASSWORD', ''),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),

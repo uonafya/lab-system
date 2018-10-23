@@ -627,7 +627,17 @@
                 else{
                     $('.requirable').attr("required", "required");
                 }
-            }); 
+            });  
+
+            $("#sampletype").change(function(){
+                var val = $(this).val();
+                if(val == 3 || val == 4){
+                    $("#dateseparated").attr("disabled", "disabled");
+                }
+                else{
+                    $("#dateseparated").removeAttr("disabled");
+                }
+            });
 
             $("#sex").change(function(){
                 var val = $(this).val();
