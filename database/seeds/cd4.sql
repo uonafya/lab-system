@@ -37,7 +37,7 @@ INSERT INTO `samplestatus` (`id`, `name`, `active`, `forapproval`) VALUES
 
 DROP TABLE IF EXISTS `cd4worksheets`;
 CREATE TABLE IF NOT EXISTS `cd4worksheets` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status_id` TINYINTEGER UNSIGNED DEFAULT NULL,
   `lab_id` tinyint(3) unsigned NOT NULL DEFAULT '5',
 
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `cd4worksheets` (
 
 DROP TABLE IF EXISTS `cd4patients`;
 CREATE TABLE IF NOT EXISTS `cd4patients` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `patient_name` varchar(50) DEFAULT NULL,
   `medicalrecordno` varchar(100) DEFAULT NULL,
   `dob` date DEFAULT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `cd4patients` (
 
 DROP TABLE IF EXISTS `cd4samples`;
 CREATE TABLE IF NOT EXISTS `cd4samples` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `patient_id` int(10) unsigned NOT NULL,
   `worksheet_id` int(10) unsigned NOT NULL,
   `facility_id` int(10) unsigned NOT NULL,
