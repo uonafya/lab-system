@@ -210,13 +210,11 @@
                 <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
             </li>
             <li>
-                <a href="#"><span class="nav-label">Download Forms</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a></li>
-                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a></li>
-                </ul>
+                <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
             </li>
-            <hr />
+            <li>
+                <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
+            </li>
             <hr />
         @endif
             <!-- <li>
