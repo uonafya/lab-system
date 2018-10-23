@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS `cd4worksheets`;
 CREATE TABLE IF NOT EXISTS `cd4worksheets` (
   `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
   `status_id` TINYINTEGER UNSIGNED DEFAULT NULL,
-  `lab_id` tinyint(3) unsigned NOT NULL,
+  `lab_id` tinyint(3) unsigned NOT NULL DEFAULT '5',
 
   `createdby` int(10) unsigned DEFAULT NULL,
   `uploadedby` int(10) unsigned DEFAULT NULL,
@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `cd4worksheets` (
   `datecancelled` date DEFAULT NULL,
 
   `dumped` tinyint(3) unsigned NOT NULL,
+  `flag` tinyint(3) unsigned NOT NULL,
 
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -67,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `cd4worksheets` (
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `cd4patients`;
-CREATE TABLE IF NOT EXISTS `cd4samples` (
+CREATE TABLE IF NOT EXISTS `cd4patients` (
   `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
   `patient_name` varchar(50) DEFAULT NULL,
   `medicalrecordno` varchar(100) DEFAULT NULL,
@@ -136,6 +137,11 @@ CREATE TABLE IF NOT EXISTS `cd4samples` (
   `dateapproved2` date DEFAULT NULL,
   `datedispatched` date DEFAULT NULL,
   `dateresultprinted` date DEFAULT NULL,
+
+  `tat1` tinyint(3) unsigned DEFAULT '0',
+  `tat2` tinyint(3) unsigned DEFAULT '0',
+  `tat3` tinyint(3) unsigned DEFAULT '0',
+  `tat4` tinyint(3) unsigned DEFAULT '0',
 
   `flag` tinyint(3) unsigned DEFAULT '1',
 
