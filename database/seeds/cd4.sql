@@ -153,6 +153,5 @@ CREATE TABLE IF NOT EXISTS `cd4samples` (
   KEY `worksheet_id` (`worksheet_id`),
   KEY `patient_id` (`patient_id`),
   KEY `facility_id` (`facility_id`),
-  KEY `parentid` (`parentid`),
-  KEY `facility_id` (`facility_id`)
+  KEY `parentid` (`parentid`)
 ) ENGINE=InnoDB;
