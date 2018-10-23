@@ -142,3 +142,41 @@ CREATE OR REPLACE VIEW old_viralworksheets_view AS
 
     FROM viralworksheets
 );
+
+CREATE OR REPLACE VIEW old_cd4_samples_view AS
+(
+    SELECT s.id, s.worksheet as worksheet_id, s.facility as facility_id, s.labtestedin as lab_id, s.parentid,
+    s.AMRSlocation as amrs_location, p.providerid as provider_identifier, s.serialno as serial_no,
+    p.age, s.status as status_id, s.orderno as order_no, s.run, s.action as repeatt, s.receivedstatus, s.rejectedreason,
+    s.labcomment, s.THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
+    s.AVGCD3CD8percentLymph, s.AVGCD3CD8AbsCnt, s.AVGCD3CD4CD8percentLymph, s.AVGCD3CD4CD8AbsCnt, s.CD45AbsCnt, s.result,
+    s.approvedby, s.approved2by as approvedby2, s.registeredby as user_id, s.printedby, s.SentEmail as sent_email,
+    s.datecollected, s.datereceived, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2, 
+    s.dateresultprinted, s.datedispatched,  
+    s.flag, s.dateregistered as created_at,
+
+
+    p.AutoID as original_patient_id, p.names as patient_name, p.medicalrecordno, p.dob
+
+    FROM samples s
+    LEFT JOIN patients p
+);
+
+CREATE OR REPLACE VIEW old_cd4_worksheets_view AS
+(
+    SELECT s.id, s.worksheet as worksheet_id, s.facility as facility_id, s.labtestedin as lab_id, s.parentid,
+    s.AMRSlocation as amrs_location, p.providerid as provider_identifier, s.serialno as serial_no,
+    p.age, s.status as status_id, s.orderno as order_no, s.run, s.action as repeatt, s.receivedstatus, s.rejectedreason,
+    s.labcomment, s.THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
+    s.AVGCD3CD8percentLymph, s.AVGCD3CD8AbsCnt, s.AVGCD3CD4CD8percentLymph, s.AVGCD3CD4CD8AbsCnt, s.CD45AbsCnt, s.result,
+    s.approvedby, s.approved2by as approvedby2, s.registeredby as user_id, s.printedby, s.SentEmail as sent_email,
+    s.datecollected, s.datereceived, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2, 
+    s.dateresultprinted, s.datedispatched,  
+    s.flag, s.dateregistered as created_at,
+
+
+    p.AutoID as original_patient_id, p.names as patient_name, p.medicalrecordno, p.dob
+
+    FROM samples s
+    LEFT JOIN patients p
+);

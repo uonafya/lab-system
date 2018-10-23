@@ -632,10 +632,10 @@
             $("#sampletype").change(function(){
                 var val = $(this).val();
                 if(val == 3 || val == 4){
-                    $("#dateseparated").removeAttr("disabled");
+                    $("#dateseparated").attr("disabled", "disabled");
                 }
                 else{
-                    $("#dateseparated").attr("disabled", "disabled");
+                    $("#dateseparated").removeAttr("disabled");
                 }
             });
 
