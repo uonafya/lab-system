@@ -38,7 +38,7 @@ INSERT INTO `samplestatus` (`id`, `name`, `active`, `forapproval`) VALUES
 DROP TABLE IF EXISTS `cd4worksheets`;
 CREATE TABLE IF NOT EXISTS `cd4worksheets` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `status_id` TINYINTEGER UNSIGNED DEFAULT NULL,
+  `status_id` tinyint(3) UNSIGNED DEFAULT NULL,
   `lab_id` tinyint(3) unsigned NOT NULL DEFAULT '5',
 
   `createdby` int(10) unsigned DEFAULT NULL,
