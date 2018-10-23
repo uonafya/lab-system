@@ -322,13 +322,10 @@ class Copier
 
     public static function copy_cd4_worksheet()
     {
-       
         $date_array = ['daterun', 'datereviewed', 'datereviewed2', 'datecancelled', 'dateuploaded', 'created_at'];
 
         ini_set("memory_limit", "-1");
-
-        $start = Cd4Worksheet::max('id');              
-
+        $start = Cd4Worksheet::max('id');
         $offset_value = 0;
         while(true)
         {
