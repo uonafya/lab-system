@@ -326,8 +326,10 @@
             <hr />
         @endif
         --}}
-        <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
-        <hr />
+        @if (auth()->user()->user_type_id != 5)
+            <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
+            <hr />
+        @endif
         @if (auth()->user()->user_type_id == 1)
             <li>
                 <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <!--<span class="label label-success pull-right">Special</span>--></a>
