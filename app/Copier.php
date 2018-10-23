@@ -241,7 +241,7 @@ class Copier
                     $patient->sex = self::resolve_gender($value->gender);
                     $patient->id = $value->original_patient_id;
                     $patient->save();
-                    
+
                 }
 
                 $sample = new Cd4Sample($value->only($fields['sample']));
@@ -501,6 +501,7 @@ class Copier
         }
 
         else{
+            if(!$class_name) return 3;
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
                         ->whereRaw("(gender = 'M' or gender = 'F')")->get()->first();
             if($row) return self::resolve_gender($row->gender);
