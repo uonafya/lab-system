@@ -401,6 +401,7 @@ class ViralworksheetController extends Controller
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
+                if(!isset($value)) break;
                 $sample_id = $value[1];
                 $result = $value[6];
                 $result_array = MiscViral::exponential_result($result);
