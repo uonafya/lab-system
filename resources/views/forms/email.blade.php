@@ -137,6 +137,10 @@
                             <label class="col-sm-4 control-label">Email Content</label><div class="col-sm-8"></div>
                         </div> 
 
+                        <p>
+                            If you want to have the facility name in the email content, add <b>:facilityname</b>. It will be replaced by the name of the facility in the email.
+                        </p>
+
                         <div class="col-sm-12">
                             <textarea name="email_content" id="email_content">
                                 {{ $email->content ?? null }}

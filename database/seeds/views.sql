@@ -148,7 +148,7 @@ CREATE OR REPLACE VIEW old_cd4_samples_view AS
     SELECT s.id, s.worksheet as worksheet_id, s.facility as facility_id, s.labtestedin as lab_id, s.parentid,
     s.AMRSlocation as amrs_location, p.providerid as provider_identifier, s.serialno as serial_no,
     p.age, s.status as status_id, s.orderno as order_no, s.run, s.action as repeatt, s.receivedstatus, s.rejectedreason,
-    s.labcomment, s.THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
+    s.labcomment, `s`.`THelperSuppressor Ratio` AS THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
     s.AVGCD3CD8percentLymph, s.AVGCD3CD8AbsCnt, s.AVGCD3CD4CD8percentLymph, s.AVGCD3CD4CD8AbsCnt, s.CD45AbsCnt, s.result,
     s.approvedby, s.approved2by as approvedby2, s.registeredby as user_id, s.printedby, s.SentEmail as sent_email,
     s.datecollected, s.datereceived, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2, 
@@ -156,27 +156,18 @@ CREATE OR REPLACE VIEW old_cd4_samples_view AS
     s.flag, s.dateregistered as created_at,
 
 
-    p.AutoID as original_patient_id, p.names as patient_name, p.medicalrecordno, p.dob
+    p.AutoID as original_patient_id, p.names as patient_name, p.medicalrecordno, p.dob, p.gender
 
     FROM samples s
-    LEFT JOIN patients p
+    LEFT JOIN patients p  ON p.AutoID=s.patient
 );
 
 CREATE OR REPLACE VIEW old_cd4_worksheets_view AS
 (
-    SELECT s.id, s.worksheet as worksheet_id, s.facility as facility_id, s.labtestedin as lab_id, s.parentid,
-    s.AMRSlocation as amrs_location, p.providerid as provider_identifier, s.serialno as serial_no,
-    p.age, s.status as status_id, s.orderno as order_no, s.run, s.action as repeatt, s.receivedstatus, s.rejectedreason,
-    s.labcomment, s.THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
-    s.AVGCD3CD8percentLymph, s.AVGCD3CD8AbsCnt, s.AVGCD3CD4CD8percentLymph, s.AVGCD3CD4CD8AbsCnt, s.CD45AbsCnt, s.result,
-    s.approvedby, s.approved2by as approvedby2, s.registeredby as user_id, s.printedby, s.SentEmail as sent_email,
-    s.datecollected, s.datereceived, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2, 
-    s.dateresultprinted, s.datedispatched,  
-    s.flag, s.dateregistered as created_at,
+    SELECT id, status as status_id, lab as lab_id,
+    createdby, Updatedby as uploadedby, reviewedby, review2by as reviewedby2, cancelledby,
+    TruCountLotno, AntibodyLotno, MulticheckLowLotno, MulticheckNormalLotno,
+    daterun, dateupdated as dateuploaded, datereviewed, review2date as datereviewed2, datecancelled, dumped, flag
 
-
-    p.AutoID as original_patient_id, p.names as patient_name, p.medicalrecordno, p.dob
-
-    FROM samples s
-    LEFT JOIN patients p
+    FROM worksheets 
 );
