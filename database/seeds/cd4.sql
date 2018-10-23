@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `cd4rejectedreasons`;
 CREATE TABLE IF NOT EXISTS `cd4rejectedreasons` (
-  `id` tinyint(3) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `active` int(50) DEFAULT '1',
   PRIMARY KEY (`id`)
@@ -16,7 +16,7 @@ INSERT INTO `cd4rejectedreasons` (`id`, `name`, `active`) VALUES
 
 DROP TABLE IF EXISTS `samplestatus`;
 CREATE TABLE IF NOT EXISTS `samplestatus` (
-  `id` tinyint(3) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `active` int(10) DEFAULT '1',
   `forapproval` int(10) DEFAULT '0',
