@@ -86,7 +86,7 @@ DROP TABLE IF EXISTS `cd4samples`;
 CREATE TABLE IF NOT EXISTS `cd4samples` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `patient_id` int(10) unsigned NOT NULL,
-  `worksheet_id` int(10) unsigned NOT NULL,
+  `worksheet_id` int(10) unsigned NULL  DEFAULT NULL,
   `facility_id` int(10) unsigned NOT NULL,
   `lab_id` int(10) unsigned NOT NULL DEFAULT '5',
   `parentid` int(10) unsigned DEFAULT '0',
