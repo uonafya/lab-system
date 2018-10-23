@@ -62,8 +62,15 @@
                         <li class="">
                             <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
                         </li>
+
                         <li class="">
                             <a href="{{ url('worklist') }}">POC Worklists</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
                         </li>
                         <li class="">
                             <a href="#">EID Reports</a>
@@ -166,6 +173,12 @@
                     </li>
                     <li class="">
                         <a href="{{ url('worklist') }}">POC Worklists</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
                     </li>
                     <li class="">
                         <a href="#">EID Reports</a>
