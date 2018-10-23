@@ -58,7 +58,7 @@ class Email extends BaseModel
         	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         	$comm = new CustomMail($this, $facility);
         	try {
-	        	Mail::to($mail_array)->cc_array($cc_array)->bcc($bcc_array)->send($comm);
+	        	Mail::to($mail_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
 	        } catch (Exception $e) {
         	
 	        }
