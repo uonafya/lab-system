@@ -64,7 +64,7 @@ class UserController extends Controller
         } else {
             $user = factory(User::class, 1)->create([
                         'user_type_id' => $request->user_type,
-                        'lab_id' => Auth()->user()->lab_id,
+                        'lab_id' => auth()->user()->lab_id,
                         'surname' => $request->surname,
                         'oname' => $request->oname,
                         'email' => $request->email,
@@ -137,6 +137,10 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function activity($user_id = null) {
+
     }
 
     public function passwordreset($id = null)

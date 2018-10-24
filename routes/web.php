@@ -257,12 +257,12 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 
-	// Route::group(['middleware' => ['only_utype:2']], function () {
-
+	Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::get('users', 'UserController@index')->name('users');
 		Route::get('user/add', 'UserController@create')->name('user.add');
+		Route::get('user/activity', 'UserController@activity')->name('user.activity');
 		Route::resource('user', 'UserController');	
-	// });
+	});
 
 		
 
