@@ -86,7 +86,7 @@ DROP TABLE IF EXISTS `cd4samples`;
 CREATE TABLE IF NOT EXISTS `cd4samples` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `patient_id` int(10) unsigned NOT NULL,
-  `worksheet_id` int(10) unsigned NOT NULL,
+  `worksheet_id` int(10) unsigned NULL  DEFAULT NULL,
   `facility_id` int(10) unsigned NOT NULL,
   `lab_id` int(10) unsigned NOT NULL DEFAULT '5',
   `parentid` int(10) unsigned DEFAULT '0',
@@ -155,3 +155,15 @@ CREATE TABLE IF NOT EXISTS `cd4samples` (
   KEY `facility_id` (`facility_id`),
   KEY `parentid` (`parentid`)
 ) ENGINE=InnoDB;
+
+CREATE OR REPLACE VIEW cd4_samples_view AS
+(
+  SELECT s.*, f.facilitycode, p.sex, p.dob, p.medicalrecordno, p.patient_name 
+
+  FROM cd4samples s
+  JOIN cd4patients p ON p.id=s.patient_id
+  LEFT JOIN facilitys f ON f.id=s.facility_id
+
+
+);
+
