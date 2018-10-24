@@ -323,7 +323,7 @@ class MiscViral extends Common
             $a = explode('e+', $result);
             $u = explode(' ', $a[1]);
             $power = (int) $u[0];
-            $res = (int) $a[0] * (10**$power);
+            $res = $a[0] * (10**$power);
             $interpretation = $result;
             $units = $u[1] ?? 'cp/mL';
         }
