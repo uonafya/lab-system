@@ -154,7 +154,10 @@ class LoginController extends Controller
                 return '/viralsample/create';
             }
         }
-        if($facility) return '/sample/create';
+        if($facility){
+            session(['toast_message' => 'Please make sure that your contacts are up to date.']);
+            return "/facility/{$user->facility_id}/edit";
+        }
         return '/home';        
     }
 }
