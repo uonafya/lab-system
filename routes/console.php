@@ -150,10 +150,12 @@ Artisan::command('copy:vl', function(){
     $this->info($str);
 })->describe('Copy vl data from old database to new database.');
 
+
 Artisan::command('copy:worksheet', function(){
 	$str = \App\Copier::copy_worksheet();
     $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
+
 
 Artisan::command('copy:worklist', function(){
     $str = \App\Copier::copy_worklist();
@@ -169,6 +171,17 @@ Artisan::command('copy:facility-contacts', function(){
     $str = \App\Copier::copy_facility_contacts();
     $this->info($str);
 })->describe('Copy facility contacts from old database to new database.');
+
+Artisan::command('copy:cd4', function(){
+    $str = \App\Copier::copy_cd4();
+    $this->info($str);
+})->describe('Copy cd4 data from old database to new database.');
+
+
+Artisan::command('copy:cd4-worksheet', function(){
+    $str = \App\Copier::copy_cd4_worksheet();
+    $this->info($str);
+})->describe('Copy cd4 worksheet data from old database to new database.');
 
 
 

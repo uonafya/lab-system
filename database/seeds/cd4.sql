@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS `cd4rejectedreasons`;
 CREATE TABLE IF NOT EXISTS `cd4rejectedreasons` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `active` int(50) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15;
+) ENGINE=InnoDB;
 
 INSERT INTO `cd4rejectedreasons` (`id`, `name`, `active`) VALUES
 	(1, 'Incomplete/Missing Requisition  Form', 1),
@@ -16,7 +16,7 @@ INSERT INTO `cd4rejectedreasons` (`id`, `name`, `active`) VALUES
 
 DROP TABLE IF EXISTS `samplestatus`;
 CREATE TABLE IF NOT EXISTS `samplestatus` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `active` int(10) DEFAULT '1',
   `forapproval` int(10) DEFAULT '0',
@@ -37,8 +37,8 @@ INSERT INTO `samplestatus` (`id`, `name`, `active`, `forapproval`) VALUES
 
 DROP TABLE IF EXISTS `cd4worksheets`;
 CREATE TABLE IF NOT EXISTS `cd4worksheets` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
-  `status_id` TINYINTEGER UNSIGNED DEFAULT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `status_id` tinyint(3) UNSIGNED DEFAULT NULL,
   `lab_id` tinyint(3) unsigned NOT NULL DEFAULT '5',
 
   `createdby` int(10) unsigned DEFAULT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `cd4worksheets` (
 
 DROP TABLE IF EXISTS `cd4patients`;
 CREATE TABLE IF NOT EXISTS `cd4patients` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `patient_name` varchar(50) DEFAULT NULL,
   `medicalrecordno` varchar(100) DEFAULT NULL,
   `dob` date DEFAULT NULL,
@@ -84,9 +84,9 @@ CREATE TABLE IF NOT EXISTS `cd4patients` (
 
 DROP TABLE IF EXISTS `cd4samples`;
 CREATE TABLE IF NOT EXISTS `cd4samples` (
-  `id` int(10) NOT NULL UNSIGNED AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `patient_id` int(10) unsigned NOT NULL,
-  `worksheet_id` int(10) unsigned NOT NULL,
+  `worksheet_id` int(10) unsigned NULL  DEFAULT NULL,
   `facility_id` int(10) unsigned NOT NULL,
   `lab_id` int(10) unsigned NOT NULL DEFAULT '5',
   `parentid` int(10) unsigned DEFAULT '0',
@@ -153,6 +153,17 @@ CREATE TABLE IF NOT EXISTS `cd4samples` (
   KEY `worksheet_id` (`worksheet_id`),
   KEY `patient_id` (`patient_id`),
   KEY `facility_id` (`facility_id`),
-  KEY `parentid` (`parentid`),
-  KEY `facility_id` (`facility_id`)
+  KEY `parentid` (`parentid`)
 ) ENGINE=InnoDB;
+
+CREATE OR REPLACE VIEW cd4_samples_view AS
+(
+  SELECT s.*, f.facilitycode, p.sex, p.dob, p.medicalrecordno, p.patient_name 
+
+  FROM cd4samples s
+  JOIN cd4patients p ON p.id=s.patient_id
+  LEFT JOIN facilitys f ON f.id=s.facility_id
+
+
+);
+
