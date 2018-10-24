@@ -155,3 +155,15 @@ CREATE TABLE IF NOT EXISTS `cd4samples` (
   KEY `facility_id` (`facility_id`),
   KEY `parentid` (`parentid`)
 ) ENGINE=InnoDB;
+
+CREATE OR REPLACE VIEW cd4_samples_view AS
+(
+  SELECT s.*, f.facilitycode, p.sex, p.dob, p.medicalrecordno, p.patient_name 
+
+  FROM cd4samples s
+  JOIN cd4patients p ON p.id=s.patient_id
+  LEFT JOIN facilitys f ON f.id=s.facility_id
+
+
+);
+
