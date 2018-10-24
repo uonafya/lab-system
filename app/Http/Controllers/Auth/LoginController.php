@@ -155,7 +155,7 @@ class LoginController extends Controller
             }
         }
         if($facility){
-            session(['toast_message' => 'Please make sure that your contacts are up to date.']);
+            session(['toast_message' => 'Please make sure that your contact information is up to date.']);
             return "/facility/{$user->facility_id}/edit";
         }
         return '/home';        
