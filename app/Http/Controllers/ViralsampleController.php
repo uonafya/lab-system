@@ -336,7 +336,7 @@ class ViralsampleController extends Controller
 
         session(['toast_message' => 'The sample has been updated.']);
 
-        if($viralsample->receivedstatus == 2 && $viralsample->getOriginal('receivedstatus') == 1 && $viralsample->worksheet_id){
+        /*if($viralsample->receivedstatus == 2 && $viralsample->getOriginal('receivedstatus') == 1 && $viralsample->worksheet_id){
             $worksheet = $viralsample->worksheet;
             if($worksheet->status_id == 1){
                 $d = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, 1);
@@ -366,7 +366,7 @@ class ViralsampleController extends Controller
             $viralsample->worksheet_id = null;
             $viralsample->result = null;
             $viralsample->interpretation = null;
-        }
+        }*/
 
         $viralsample->pre_update();
 
