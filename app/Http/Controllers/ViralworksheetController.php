@@ -469,8 +469,8 @@ class ViralworksheetController extends Controller
                 // Viralsample::where($search)->update($data_array);
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
-                // $sample_id = (int) $sample_id;
-                $sample_id = substr($sample_id, 0, -1);
+                $sample_id = (int) $sample_id;
+                if(env('APP_LAB') == 1) $sample_id = substr($sample_id, 0, -1);
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
