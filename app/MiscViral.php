@@ -80,6 +80,9 @@ class MiscViral extends Common
         $sample->fill($original->only($fields['sample_rerun']));
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
+
+        $s = Viralsample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
         
 		$sample->save();
 		return $sample;
@@ -333,6 +336,17 @@ class MiscViral extends Common
         }
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+    }
+
+    public static function correct_exponential($worksheet_id)
+    {
+        $samples = Viralsample::where('worksheet_id', $worksheet_id)->where('result', '>', 1)->get();
+        foreach ($samples as $key => $sample) {
+            dd($sample);
+            $r = self::exponential_result($sample->interpretation);
+            $sample->result = $r['result'];
+            $sample->pre_update();
+        }
     }
 
     
