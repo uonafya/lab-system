@@ -342,7 +342,6 @@ class MiscViral extends Common
     {
         $samples = Viralsample::where('worksheet_id', $worksheet_id)->where('result', '>', 1)->get();
         foreach ($samples as $key => $sample) {
-            dd($sample);
             $r = self::exponential_result($sample->interpretation);
             $sample->result = $r['result'];
             $sample->pre_update();
