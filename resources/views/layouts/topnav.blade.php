@@ -83,7 +83,7 @@
                             <a href="{{ url('home') }}">Home</a>
                         </li>
                         <li>
-                            <a href="{{ url('users') }}">Users</a>
+                            <a href="{{ url('user') }}">Users</a>
                         </li>
                         <li>
                             <a href="{{ url('facility') }}">Facilities</a>
@@ -191,7 +191,7 @@
                             <a href="{{ url('home') }}">Home</a>
                         </li>
                         <li>
-                            <a href="{{ url('users') }}">Users</a>
+                            <a href="{{ url('user') }}">Users</a>
                         </li>
                         <li>
                             <a href="{{ url('facility') }}">Facilities</a>

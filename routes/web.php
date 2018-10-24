@@ -178,12 +178,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('email', 'EmailController');
 	});
 	
-
-	Route::get('facility/served', 'FacilityController@served');
-	Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
-	Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
-	Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
-	Route::get('facility/add', 'FacilityController@create')->name('facility.add');
+	Route::group(['middleware' => ['utype:4']], function () {
+		Route::get('facility/served', 'FacilityController@served');
+		Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
+		Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+		Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
+	});		
 	Route::resource('facility', 'FacilityController');
 
 	Route::get('/home', 'HomeController@index')->name('home');
@@ -258,9 +258,6 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 
 	// Route::group(['middleware' => ['only_utype:2']], function () {
-
-		Route::get('users', 'UserController@index')->name('users');
-		Route::get('user/add', 'UserController@create')->name('user.add');
 		Route::resource('user', 'UserController');	
 	// });
 
