@@ -16,14 +16,15 @@
                                 <tr>
                                     <th rowspan="2">#</th>
                                     <th rowspan="2">Full Names</th>
-                                    <th colspan="2"><center>Uploaded Worksheets</center></th>
-                                    <th colspan="2"><center>Reviewed Worksheets</center></th>
+                                    <th colspan="2"><center>Uploaded Worksheets (Today)</center></th>
+                                    <th colspan="2"><center>Reviewed Worksheets (Today)</center></th>
+                                    <th rowspan="2">Action</th>
                                 </tr>
                                 <tr>
-                                    <th>EID</th>
-                                    <th>VL</th>
-                                    <th>EID</th>
-                                    <th>VL</th>
+                                    <th><center>EID</center></th>
+                                    <th><center>VL</center></th>
+                                    <th><center>EID</center></th>
+                                    <th><center>VL</center></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,6 +36,7 @@
                                     <td>{{ $user->uploaded(gmdate("Y-m-d"))->vl }}</td>
                                     <td>{{ $user->reviewed(gmdate("Y-m-d"))->eid }}</td>
                                     <td>{{ $user->reviewed(gmdate("Y-m-d"))->vl }}</td>
+                                    <td><a href='{{ url("users/activity/$user->id") }}'>View Log</a></td>
                                 </tr>
                             @endforeach
                             </tbody>

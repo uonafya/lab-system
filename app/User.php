@@ -149,4 +149,9 @@ class User extends Authenticatable implements JWTSubject
         return (object)['eid' => $eid_worksheets, 'vl' => $vl_worksheets];
     }
 
+    public function samples_recevied($from_date, $to_date = null){
+        $user = $this->id;
+        $eid_sampels = \App\Sample::
+    }
+
 }

@@ -256,11 +256,12 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('sample', 'SampleController');
 
 	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
+	Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');
 
 	Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::get('users', 'UserController@index')->name('users');
 		Route::get('user/add', 'UserController@create')->name('user.add');
-		Route::get('users/activity', 'UserController@activity')->name('user.activity');
+		Route::get('users/activity/{user?}', 'UserController@activity')->name('user.activity');
 	});
 	Route::resource('user', 'UserController');	
 
