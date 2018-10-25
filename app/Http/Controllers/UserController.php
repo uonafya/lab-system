@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\UserType;
 use App\User;
 
@@ -137,6 +138,14 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function switch_user($id)
+    {
+        $this->auth_user(0);
+        $user = User::findOrFail($id);
+        Auth::logout();
+        Auth::login($user);
     }
 
     public function passwordreset($id = null)
