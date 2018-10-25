@@ -276,7 +276,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('user/activity') }}"><span class="nav-label">User Activity</span></a>
+                <a href="{{ url('users/activity') }}"><span class="nav-label">Users Activity</span></a>
             </li>
             <hr />
             <li>

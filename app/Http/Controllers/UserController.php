@@ -27,10 +27,10 @@ class UserController extends Controller
             $delete = url("user/delete/$id");
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
-            $row .= '<td>'.$value->getFullNameAttribute().'</td>';
+            $row .= '<td>'.$value->full_name.'</td>';
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
-            $row .= '<td>'.$value->created_at.'</td>';
+            $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
             $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Deactivate</a> | <a href="'.$delete.'">Delete</a></td>';
             $row .= '</tr>';
         }
@@ -140,7 +140,9 @@ class UserController extends Controller
     }
 
     public function activity($user_id = null) {
+        $users = User::whereNotIn('user_type_id', [2,5,6])->get();
 
+        return view('tables.users-activity', compact('users'))->with('pageTitle', 'Users Activity');
     }
 
     public function passwordreset($id = null)

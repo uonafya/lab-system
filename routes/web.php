@@ -260,7 +260,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::get('users', 'UserController@index')->name('users');
 		Route::get('user/add', 'UserController@create')->name('user.add');
-		Route::get('user/activity', 'UserController@activity')->name('user.activity');
+		Route::get('users/activity', 'UserController@activity')->name('user.activity');
 		Route::resource('user', 'UserController');	
 	});
 
