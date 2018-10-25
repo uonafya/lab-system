@@ -797,7 +797,7 @@ class ViralbatchController extends Controller
             ->orderBy('batch_id', 'desc')
             ->get();
 
-        $data;
+        $data = [];
 
         foreach ($samples as $key => $sample) {
             $data[$key]['#'] = $key+1;

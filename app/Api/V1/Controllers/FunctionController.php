@@ -8,8 +8,10 @@ use App\Api\V1\Requests\BlankRequest;
 use DB;
 
 use App\Lookup;
-use App\Sample;
-use App\Viralsample;
+
+use App\SampleView;
+use App\ViralsampleView;
+use App\Cd4SampleView;
 
 class FunctionController extends Controller
 {
@@ -30,8 +32,8 @@ class FunctionController extends Controller
 
     }
 
-    public function api(BlankRequest $request)
-     {
+    /*public function api(BlankRequest $request)
+    {
         $test = $request->input('test');
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
@@ -137,9 +139,117 @@ class FunctionController extends Controller
             ];
         });
 
-        return $result;
+        return $result; 
+    }*/
+
+    public function api(BlankRequest $request)
+    {     
+        $test = $request->input('test');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+        $date_dispatched_start = $request->input('date_dispatched_start');
+        $date_dispatched_end = $request->input('date_dispatched_end');
+        $patients = $request->input('patient_id');
+        $facility = $request->input('facility_code');
+        $orders = $request->input('order_numbers');
+        $location = $request->input('location');   
+
+        if($test == 1) $class = SampleView::class;
+        else if($test == 2) $class = ViralsampleView::class;
+        else if($test == 3) $class = Cd4SampleView::class;
+
+        if($patients){
+            $patients = str_replace(' ', '', $patients);
+            $patients = explode(',', $patients);
+        }
+        if($orders){
+            $orders = str_replace(' ', '', $orders);
+            $orders = explode(',', $orders);
+        } 
  
-     }
+        $result = $class::when($facility, function($query) use($facility){
+                return $query->where('facilitycode', $facility);
+            })
+            ->when($patients, function($query) use($patients){
+                return $query->whereIn('patient', $patients);
+            })
+            ->when($orders, function($query) use($orders){
+                return $query->whereIn('order_no', $orders);
+            })
+            ->when($location, function($query) use($location){
+                return $query->where('amrs_location', $location);
+            })
+            ->when(($start_date && $end_date), function($query) use($start_date, $end_date){
+                return $query->whereBetween('datecollected', [$start_date, $end_date]);
+            })
+            ->when(($date_dispatched_start && $date_dispatched_end), function($query) use($date_dispatched_start, $date_dispatched_end){
+                return $query->whereBetween('datedispatched', [$date_dispatched_start, $date_dispatched_end]);
+            })
+            ->paginate(20);
+
+        $result->transform(function ($sample, $key) use ($test){
+            // return ['patient age' => $item->age];
+
+            if($sample->receivedstatus == 2){
+                $sample->sample_status = "Rejected";
+            }
+            else{
+                if($test == 1){
+                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                        $sample->sample_status = "Complete";
+                    }
+                    else{
+                        $sample->sample_status = "Incomplete";
+                    }
+                }
+                if($test == 2){
+                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                        $sample->sample_status = "Complete";
+                    }
+                    else{
+                        $sample->sample_status = "Incomplete";
+                    }
+                }
+            }
+            $approved = false;
+            if($sample->approvedby) $approved = true;
+
+            $r = [
+                'id' => $sample->id,
+                'order_number' => $sample->order_no,                
+                'provider_identifier' => $sample->provider_identifier,
+                'facility_code' => $sample->facilitycode,
+                'AMRs_location' => $sample->amrs_location,
+                'full_names' => $sample->patient_name,
+                'date_collected' => Lookup::my_date_format($sample->datecollected),
+                'date_received' => Lookup::my_date_format($sample->datereceived),
+                'date_tested' => Lookup::my_date_format($sample->datetested),
+                'interpretation' => $sample->interpretation,
+                'result' => $sample->result,
+                'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
+                'sample_status' => $sample->sample_status
+            ];
+
+            if($sample->patient) $r = array_merge($r, ['patient' => $sample->patient]);
+            if($sample->THelperSuppressorRatio){
+                $r = array_merge($r, [
+                    'THelperSuppressorRatio' => $THelperSuppressorRatio,
+                    'AVGCD3percentLymph' => $AVGCD3percentLymph,
+                    'AVGCD3AbsCnt' => $AVGCD3AbsCnt,
+                    'AVGCD3CD4percentLymph' => $AVGCD3CD4percentLymph,
+                    'AVGCD3CD4AbsCnt' => $AVGCD3CD4AbsCnt,
+                    'AVGCD3CD8percentLymph' => $AVGCD3CD8percentLymph,
+                    'AVGCD3CD8AbsCnt' => $AVGCD3CD8AbsCnt,
+                    'AVGCD3CD4CD8percentLymph' => $AVGCD3CD4CD8percentLymph,
+                    'AVGCD3CD4CD8AbsCnt' => $AVGCD3CD4CD8AbsCnt,
+                    'CD45AbsCnt' => $CD45AbsCnt,
+                ]);
+            }
+            return $r;
+        });
+
+        return $result;
+    }
 
 
 

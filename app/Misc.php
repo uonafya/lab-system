@@ -81,6 +81,9 @@ class Misc extends Common
 		$sample->fill($original->only($fields['sample_rerun']));
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
+
+        $s = Sample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
 		
 		$sample->save();
 		return $sample;

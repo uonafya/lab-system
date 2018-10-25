@@ -100,4 +100,53 @@ class User extends Authenticatable implements JWTSubject
         if($this->user_type_id == 0 || $this->user_type_id == 1 || $this->user_type_id == 4) return true;
         return false;
     }
+
+    public function uploaded($from_date, $to_date = null) {
+        $user = $this->id;
+        $eid_worksheets = \App\Worksheet::selectRaw("COUNT(*) AS worksheets")
+                            ->where('uploadedby', $user)
+                            ->when(true, function($query) use ($from_date, $to_date){
+                                if (isset($to_date)) {
+                                    $query->whereBetween('dateuploaded', [$from_date, $to_date]);
+                                } else {
+                                    $query->where('dateuploaded', $from_date);
+                                }                                
+                            })->first()->worksheets;
+
+        $vl_worksheets = \App\Viralworksheet::selectRaw("COUNT(*) AS worksheets")
+                            ->where('uploadedby', $user)
+                            ->when(true, function($query) use ($from_date, $to_date){
+                                if (isset($to_date)) {
+                                    $query->whereBetween('dateuploaded', [$from_date, $to_date]);
+                                } else {
+                                    $query->where('dateuploaded', $from_date);
+                                }                                
+                            })->first()->worksheets;
+        return (object)['eid' => $eid_worksheets, 'vl' => $vl_worksheets];
+    }
+
+    public function reviewed($from_date, $to_date = null) {
+        $user = $this->id;
+        $eid_worksheets = \App\Worksheet::selectRaw("COUNT(*) AS worksheets")
+                            ->where('reviewedby', $user)->orWhere('reviewedby2', $user)
+                            ->when(true, function($query) use ($from_date, $to_date){
+                                if (isset($to_date)) {
+                                    $query->whereBetween('dateuploaded', [$from_date, $to_date]);
+                                } else {
+                                    $query->where('dateuploaded', $from_date);
+                                }                                
+                            })->first()->worksheets;
+
+        $vl_worksheets = \App\Viralworksheet::selectRaw("COUNT(*) AS worksheets")
+                            ->where('reviewedby', $user)->orWhere('reviewedby2', $user)
+                            ->when(true, function($query) use ($from_date, $to_date){
+                                if (isset($to_date)) {
+                                    $query->whereBetween('datereviewed', [$from_date, $to_date])->orWhereBetween('datereviewed', [$from_date, $to_date]);
+                                } else {
+                                    $query->where('datereviewed', $from_date)->orWhere('datereviewed', $from_date);
+                                }                                
+                            })->first()->worksheets;
+        return (object)['eid' => $eid_worksheets, 'vl' => $vl_worksheets];
+    }
+
 }

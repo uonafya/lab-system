@@ -54,7 +54,8 @@ class Email extends BaseModel
 
         $cc_array = $this->comma_array($this->cc_list);
         $bcc_array = $this->comma_array($this->bcc_list);
-        $bcc_array = array_merge($bcc_array, ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com']);
+        $bcc_array = array_merge($bcc_array, ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke']);
+        // $bcc_array = array_merge($bcc_array, ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com']);
 
         foreach ($facilities as $key => $facility) {
         	$mail_array = $facility->email_array;
@@ -104,7 +105,7 @@ class Email extends BaseModel
     	$blade = base_path('resources/views/emails') . '/' . $this->id . '.blade.php';
 
     	$str = file_get_contents($filename);
-        $fac_name = '{{ $facility->name ?? ' . "'Facility Name Here'"  . ' }}';
+        $fac_name = '{{ $facility->name ?? ' . "'(Facility Name Here)'"  . ' }}';
         $str = str_replace(':facilityname', $fac_name, $str);
     	if($this->lab_signature) $str .= " @include('emails.lab_signature') ";
     	file_put_contents($blade, $str);
