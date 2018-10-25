@@ -59,14 +59,14 @@ class Email extends BaseModel
         foreach ($facilities as $key => $facility) {
         	$mail_array = $facility->email_array;
             if(!$mail_array) continue;
-        	$mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         	$comm = new CustomMail($this, $facility);
         	try {
 	        	Mail::to($mail_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
 	        } catch (Exception $e) {
         	
 	        }
-        	break;
+        	// break;
         }
         
         $this->send_files();
