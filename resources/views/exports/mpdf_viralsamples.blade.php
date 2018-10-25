@@ -378,11 +378,19 @@ p.breakhere {page-break-before: always}
 
 		</table>
 
-		<span class="style8" > 
-			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
-			<br> 
-			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
-		</span>
+		@if($sample->batch->site_entry != 2)
+
+			<span class="style8" > 
+				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
+				<br> 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@else
+			<span class="style8" > 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+		@endif
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>
