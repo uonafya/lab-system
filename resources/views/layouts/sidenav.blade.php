@@ -272,7 +272,7 @@
         <!-- Admin Side Bar -->
         @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 0)
             <li>
-                <a href="{{ url('user/add') }}"><span class="nav-label">Add Users</span></a>
+                <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
             </li>
             <hr />
             <li>
@@ -280,7 +280,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('facility/add') }}"><span class="nav-label">Add Facilty</span></a>
+                <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
             @if(env('APP_LAB') == 1)
