@@ -102,7 +102,7 @@ class Facility extends BaseModel
     {
         $emails = [];
         if($this->email && $this->email != '') $emails[] = $this->email;
-        if($this->contact_email && $this->$contact_email != '') $emails[] = $this->contact_email;
+        if($this->contact_email && $this->contact_email != '') $emails[] = $this->contact_email;
         $f = ['dmltemail', 'dtlcemail', 'subcountyemail', 'countyemail', 'partneremail', 'partnerlabmail', 'partnerpointmail'];
 
         foreach ($f as $val) {
