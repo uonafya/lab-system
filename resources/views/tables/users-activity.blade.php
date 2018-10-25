@@ -33,6 +33,8 @@
                                     <td>{{ $user->full_name }}</td>
                                     <td>{{ $user->uploaded(gmdate("Y-m-d"))->eid }}</td>
                                     <td>{{ $user->uploaded(gmdate("Y-m-d"))->vl }}</td>
+                                    <td>{{ $user->reviewed(gmdate("Y-m-d"))->eid }}</td>
+                                    <td>{{ $user->reviewed(gmdate("Y-m-d"))->vl }}</td>
                                 </tr>
                             @endforeach
                             </tbody>
