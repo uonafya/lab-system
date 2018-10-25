@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\UserType;
 use App\User;
 
@@ -147,6 +148,14 @@ class UserController extends Controller
             $users = User::whereNotIn('user_type_id', [2,5,6])->get();
             return view('tables.users-activity', compact('users'))->with('pageTitle', 'Users Activity');
         }
+    }
+
+    public function switch_user($id)
+    {
+        $this->auth_user(0);
+        $user = User::findOrFail($id);
+        Auth::logout();
+        Auth::login($user);
     }
 
     public function passwordreset($id = null)
