@@ -55,19 +55,18 @@ class Email extends BaseModel
         $cc_array = $this->comma_array($this->cc_list);
         $bcc_array = $this->comma_array($this->bcc_list);
         $bcc_array = array_merge($bcc_array, ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke']);
-        // $bcc_array = array_merge($bcc_array, ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com']);
 
         foreach ($facilities as $key => $facility) {
         	$mail_array = $facility->email_array;
             if(!$mail_array) continue;
-        	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        	$mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         	$comm = new CustomMail($this, $facility);
         	try {
 	        	Mail::to($mail_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
 	        } catch (Exception $e) {
         	
 	        }
-        	// break;
+        	break;
         }
         
         $this->send_files();
