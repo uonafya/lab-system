@@ -256,6 +256,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('sample', 'SampleController');
 
 	Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
+	Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');
 
 	// Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::resource('user', 'UserController');	
