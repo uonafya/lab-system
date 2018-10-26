@@ -6,6 +6,15 @@ use Carbon\Carbon;
 use DB;
 use Exception;
 
+
+use App\OldModels\Cd4SampleView;
+use App\OldModels\Cd4WorksheetView;
+
+use App\Cd4Worksheet;
+use App\Cd4Patient;
+use App\Cd4Sample;
+
+
 use App\OldModels\SampleView;
 use App\OldModels\ViralsampleView;
 use App\OldModels\FormerViralsampleView;
@@ -205,6 +214,65 @@ class Copier
         echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
+
+    public static function copy_cd4()
+    {
+        $start = Cd4Sample::max('id');
+        ini_set("memory_limit", "-1");
+        $fields = self::cd4_arrays();  
+        $sample_date_array = ['datecollected', 'datereceived', 'datedispatched', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'dateresultprinted', 'created_at'];
+        $offset_value = 0;
+        $sample_class = Cd4SampleView::class;
+
+        while(true)
+        {
+            $samples = $sample_class::when($start, function($query) use ($start){
+                return $query->where('id', '>', $start);
+            })->limit(self::$limit)->offset($offset_value)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $value) {
+
+                $patient = Cd4Patient::find($value->original_patient_id);
+
+                if(!$patient){
+
+                    $patient = new Cd4Patient($value->only($fields['patient']));
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+                    $patient->sex = self::resolve_gender($value->gender);
+                    $patient->id = $value->original_patient_id;
+                    $patient->save();
+
+                }
+
+                $sample = new Cd4Sample($value->only($fields['sample']));
+                foreach ($sample_date_array as $date_field) {
+                    $sample->$date_field = self::clean_date($value->$date_field);
+                    // if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
+                }
+                $sample->patient_id = $patient->id;
+
+                if(!$sample->age && $sample->datecollected && $patient->dob){
+                    $sample->age = Lookup::calculate_viralage($sample->datecollected, $patient->dob);
+                }
+                if($sample->worksheet_id == 0) $sample->worksheet_id = null;
+                if($sample->receivedstatus == 0) $sample->receivedstatus = null;
+                if($sample->result == '') $sample->result = null;
+
+                if(!is_numeric($sample->user_id)) $sample->user_id = 0;
+
+                $sample->save();
+            }
+            $offset_value += self::$limit;
+            echo "Completed cd4 {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+        }
+
+        // $my = new MiscViral;
+        // $my->compute_tat(\App\ViralsampleView::class, Viralsample::class);
+        // echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
+    }
+
+
     private static function set_batch_id($batch_id)
     {
         if($batch_id == floor($batch_id)) return $batch_id;
@@ -218,7 +286,7 @@ class Copier
             'vl' => ['model' => Viralworksheet::class, 'view' => ViralworksheetView::class],
         ];
 
-        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'created_at'];
+        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'dateuploaded', 'created_at'];
 
         ini_set("memory_limit", "-1");
 
@@ -249,6 +317,35 @@ class Copier
                 $offset_value += self::$limit;
                 echo "Completed {$key} worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
             }
+        }
+    }
+
+    public static function copy_cd4_worksheet()
+    {
+        $date_array = ['daterun', 'datereviewed', 'datereviewed2', 'datecancelled', 'dateuploaded', 'created_at'];
+
+        ini_set("memory_limit", "-1");
+        $start = Cd4Worksheet::max('id');
+        $offset_value = 0;
+        while(true)
+        {
+            $worksheets = Cd4WorksheetView::when($start, function($query) use ($start){
+                return $query->where('id', '>', $start);
+            })->limit(self::$limit)->offset($offset_value)->get();
+            if($worksheets->isEmpty()) break;
+
+            foreach ($worksheets as $worksheet_key => $worksheet) {
+                $duplicate = $worksheet->replicate();
+                $work = new Cd4Worksheet;                    
+                $work->fill($duplicate->toArray());
+                foreach ($date_array as $date_field) {
+                    $work->$date_field = self::clean_date($worksheet->$date_field);
+                }
+                $work->id = $worksheet->id;
+                $work->save();
+            }
+            $offset_value += self::$limit;
+            echo "Completed cd4 worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
         }
     }
 
@@ -434,6 +531,7 @@ class Copier
         }
 
         else{
+            if(!$class_name) return 3;
             $row = $class_name::where(['patient' => $patient, 'facility_id' => $facility_id])
                         ->whereRaw("(gender = 'M' or gender = 'F')")->get()->first();
             if($row) return self::resolve_gender($row->gender);
@@ -465,6 +563,19 @@ class Copier
             'patient' => ['patient', 'sex', 'patient_name', 'facility_id', 'patient', 'dob', 'initiation_date', 'caregiver_phone', 'patient_phone_no', 'preferred_language', 'synched', 'datesynched' ],
 
             'sample' => ['id', 'amrs_location', 'provider_identifier', 'order_no', 'vl_test_request_no', 'receivedstatus', 'age', 'age_category', 'justification', 'other_justification', 'sampletype', 'prophylaxis', 'regimenline', 'pmtct', 'dilutionfactor', 'dilutiontype', 'comments', 'labcomment', 'parentid', 'rejectedreason', 'reason_for_repeat', 'interpretation', 'result', 'rcategory', 'units', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'tat1', 'tat2', 'tat3', 'tat4', 'synched', 'datesynched', 'time_result_sms_sent' ],
+            
+        ];
+    }
+
+    public static function cd4_arrays()
+    {
+        return [
+
+            'patient' => ['medicalrecordno', 'sex', 'patient_name', 'dob', ],
+
+            'sample' => ['id', 'facility_id', 'amrs_location', 'provider_identifier', 'order_no', 'receivedstatus', 'age', 'labcomment', 'parentid', 'rejectedreason', 'result', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'datereceived', 'dateresultprinted', 'datedispatched', 'sent_email', 'tat1', 'tat2', 'tat3', 'tat4', 
+                'THelperSuppressorRatio', 'AVGCD3percentLymph', 'AVGCD3AbsCnt', 'AVGCD3CD4percentLymph', 'AVGCD3CD4AbsCnt',
+                    'AVGCD3CD8percentLymph', 'AVGCD3CD8AbsCnt', 'AVGCD3CD4CD8percentLymph', 'AVGCD3CD4CD8AbsCnt', 'CD45AbsCnt', ],
             
         ];
     }

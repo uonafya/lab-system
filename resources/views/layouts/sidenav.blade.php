@@ -209,6 +209,12 @@
             <li>
                 <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
             </li>
+            <li>
+                <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
+            </li>
+            <li>
+                <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
+            </li>
             <hr />
         @endif
             <!-- <li>
@@ -259,11 +265,11 @@
         <!-- Admin Side Bar -->
         @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 0)
             <li>
-                <a href="{{ url('user/add') }}"><span class="nav-label">Add Users</span></a>
+                <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
             </li>
             <hr />
             <li>
-                <a href="{{ url('facility/add') }}"><span class="nav-label">Add Facilty</span></a>
+                <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
             @if(env('APP_LAB') == 1)
@@ -320,8 +326,10 @@
             <hr />
         @endif
         --}}
-        <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
-        <hr />
+        @if (auth()->user()->user_type_id != 5)
+            <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
+            <hr />
+        @endif
         @if (auth()->user()->user_type_id == 1)
             <li>
                 <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <!--<span class="label label-success pull-right">Special</span>--></a>

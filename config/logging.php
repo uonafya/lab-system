@@ -32,7 +32,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => [env('APP_LOG', 'single')],
+            'channels' => [env('APP_LOG', 'daily')],
         ],
 
         'single' => [
