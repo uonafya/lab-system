@@ -529,10 +529,10 @@ class WorksheetController extends Controller
                 // $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
                 // Sample::where($search)->update($data_array);
 
-                if(env('APP_LAB') == 1) $sample_id = substr($data[4], 0, -1);
-                else{
+                // if(env('APP_LAB') == 1) $sample_id = substr($data[4], 0, -1);
+                // else{
                     $sample_id = (int) $data[4];                    
-                }
+                // }
                 $sample = Sample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
