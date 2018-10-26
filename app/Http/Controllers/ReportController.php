@@ -116,6 +116,7 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
+        // dd($request->all());
         $data = [];
         $platform = $request->input('platform');
         if ($platform == 'abbott') {
@@ -158,14 +159,17 @@ class ReportController extends Controller
         }
         $month = $request->input('month');
         $previousMonth = $month -1;
+        
+        $monthName = date('F', mktime(0, 0, 0, $month, 10));
+        $year = $request->input('year');
 
-        $model->where('year', $request->input('year'));
-        $model->where('month', $month)->orWhere('month', $previousMonth);
-        $tests->whereYear('datetested', $request->input('year'));
+        $model->where('year', $year);
+        $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
+        $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
         // $model->where('lab_id', env('APP_LAB'));
 
-        $kits->whereYear('datereceived', $request->input('year'));
+        $kits->whereYear('datereceived', $year);
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
 
@@ -221,10 +225,12 @@ class ReportController extends Controller
                         'kitsreport' => $kitsdata,
                         'tests' => $tests,
                         'type' => $type,
-                        'platform' => $platform
+                        'platform' => $platform,
+                        'month' => $monthName,
+                        'year' => $year
                     ];
         // $reports = $newdata;
-        // dd($data);
+        
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 

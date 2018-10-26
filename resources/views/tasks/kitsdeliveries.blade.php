@@ -920,6 +920,12 @@
         ********************************/ 
         $("#rqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#kitlotno").removeAttr('required');
+                $("#expirydate").removeAttr('required');
+                $("#receivedby").removeAttr('required');
+                $("#datereceived").removeAttr('required');
+            }
             $("#rspexagent").val(Math.round(val* 0.15)); 
             $("#rampinput").val(Math.round(val * 0.2)); 
             $("#rampflapless").val(Math.round(val * 0.2)); 
@@ -960,6 +966,12 @@
 
         $("#vrqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#vkitlotno").removeAttr('required');
+                $("#vexpirydate").removeAttr('required');
+                $("#vreceivedby").removeAttr('required');
+                $("#vdatereceived").removeAttr('required');
+            }
             $("#vrspexagent").val(Math.round(val* 0.15)); 
             $("#vrampinput").val(Math.round(val * 0.2)); 
             $("#vrampflapless").val(Math.round(val * 0.2)); 
@@ -1003,6 +1015,18 @@
         ********************************/ 
         $("#arqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#aqualkitlotno").removeAttr('required');
+                $("#aqualkitexpiry").removeAttr('required');
+                $("#acontrollotno").removeAttr('required');
+                $("#acontrolexpiry").removeAttr('required');
+                $("#abufferlotno").removeAttr('required');
+                $("#abufferexpiry").removeAttr('required');
+                $("#apreparationlotno").removeAttr('required');
+                $("#apreparationexpiry").removeAttr('required');
+                $("#areceivedby").removeAttr('required');
+                $("#adatereceived").removeAttr('required');
+            }
             $("#arcontrol").val(Math.round((val * 2)*(2/24)));
             $("#arbuffer").val(Math.round(val * 1));
             $("#arpreparation").val(Math.round(val * 1));
@@ -1068,6 +1092,18 @@
 
         $("#varqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#vaqualkitlotno").removeAttr('required');
+                $("#vaqualkitexpiry").removeAttr('required');
+                $("#vacontrollotno").removeAttr('required');
+                $("#vacontrolexpiry").removeAttr('required');
+                $("#vabufferlotno").removeAttr('required');
+                $("#vabufferexpiry").removeAttr('required');
+                $("#vapreparationlotno").removeAttr('required');
+                $("#vapreparationexpiry").removeAttr('required');
+                $("#vareceivedby").removeAttr('required');
+                $("#vadatereceived").removeAttr('required');
+            }
             $("#varcontrol").val(Math.round((val * 2)*(2/24)));
             $("#varbuffer").val(Math.round(val * 1));
             $("#varpreparation").val(Math.round(val * 1));
