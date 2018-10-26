@@ -146,6 +146,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         Auth::logout();
         Auth::login($user);
+        return back();
     }
 
     public function passwordreset($id = null)
