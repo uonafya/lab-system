@@ -285,27 +285,26 @@ class Common
         }
     }
 
-    public static function dispatch_batch($batch)
+    public static function dispatch_batch($batch, $view_name=null)
     {
     	$facility = $batch->facility; 
-
-        if(!$batch->sent_email){ 
-            $batch->sent_email = true;
-            $batch->dateemailsent = date('Y-m-d');
-            $batch->save();
-        }
-
+    	
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(!$mail_array) return null;
 
         if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
         if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
 
         try {
+        	if($view_name) $new_mail = new $mail_class($batch, $view_name);
+        	else{
+        		$new_mail = new $mail_class($batch);
+        	}
         	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
-        	->send(new $mail_class($batch));
-        	$batch->save();
+        	->send($new_mail);
+        	// $batch->save();
         } catch (Exception $e) {
         	
         }
@@ -328,6 +327,11 @@ class Common
 		->get();
 
 		foreach ($batches as $batch) {
+
+            $batch->sent_email = true;
+            $batch->dateemailsent = date('Y-m-d');
+            $batch->save();
+
 		 	self::dispatch_batch($batch);
 		} 
     }
@@ -351,23 +355,34 @@ class Common
 		} 
     }
 
+    // public static function send_communication()
+    // {
+    //     ini_set("memory_limit", "-1");
+    //     $facilities = \App\Facility::where('flag', 1)->get();
+
+    //     foreach ($facilities as $key => $facility) {
+    //     	$mail_array = $facility->email_array;
+    //     	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+    //     	$comm = new UrgentCommunication;
+    //     	try {
+	   //      	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+	   //      	->send($comm);
+	   //      } catch (Exception $e) {
+        	
+	   //      }
+    //     	// break;
+    //     }
+    // }
+
     public static function send_communication()
     {
-        ini_set("memory_limit", "-1");
-        $facilities = \App\Facility::where('flag', 1)->get();
+        $emails = \App\Email::where('sent', false)->where('time_to_be_sent', '<', date('Y-m-d H:i:s'))->get();
 
-        foreach ($facilities as $key => $facility) {
-        	$mail_array = $facility->email_array;
-        	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        	$comm = new UrgentCommunication;
-        	try {
-	        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
-	        	->send($comm);
-	        } catch (Exception $e) {
-        	
-	        }
-        	// break;
+        foreach ($emails as $email) {
+        	$email->dispatch();
         }
     }
+
+
 
 }

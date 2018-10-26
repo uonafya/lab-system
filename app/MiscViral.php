@@ -80,6 +80,9 @@ class MiscViral extends Common
         $sample->fill($original->only($fields['sample_rerun']));
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
+
+        $s = Viralsample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
         
 		$sample->save();
 		return $sample;
@@ -230,20 +233,20 @@ class MiscViral extends Common
     public static function sample_result($result, $error)
     {
         $str = strtolower($result);
+        $units="";
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
         if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '839', '150']))
         {
             $res= "< LDL copies/ml";
-            $interpretation= $result;
-            $units="";                        
+            $interpretation= $result;       
         }
 
         else if(str_contains($str, ['not detected']))
         {
-            $res="Target Not Detected";
+            // $res="Target Not Detected";
+            $res= "< LDL copies/ml";
             $interpretation=$result;
-            $units="";
         }
 
         // else if($result == 'Collect New Sample')
@@ -251,14 +254,25 @@ class MiscViral extends Common
         {
             $res= "Collect New Sample";
             $interpretation="Collect New Sample";
-            $units="";                         
         }
 
         else if($result == 'Failed' || $result == '' || str_contains($str, ['error']))
         {
             $res= "Failed";
-            $interpretation = $error;
-            $units="";                         
+            $interpretation = $error;       
+        }
+
+        else if (str_contains($str, ['log'])) 
+        {
+            $interpretation = $result;
+            if(str_contains($str, ['<'])){
+                $res= "< LDL copies/ml";
+            }
+            else{
+                $x = preg_replace("/[^<0-9.]/", "", $result);
+                $res = round(pow(10, $x));
+                $units="cp/mL";                 
+            }           
         }
 
         else{
@@ -270,28 +284,69 @@ class MiscViral extends Common
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
 
+    public static function correct_logs()
+    {
+        ini_set('memory_limit', -1);
+
+        $samples = Viralsample::where('interpretation', 'like', '%log%')->get();
+        $batches = [];
+
+        foreach ($samples as $sample) {
+            $result_array = self::sample_result($sample->interpretation, null);
+            $result = $result_array['result'];
+            $sample->result = $result;
+            $sample->pre_update();
+
+            if(!in_array($sample->batch_id, $batches)) $batches[] = $sample->batch_id;
+        }
+
+        foreach ($batches as $id) {
+            $batch = Viralbatch::find($id);
+            if($batch->batch_complete != 1) continue;
+
+            $datedispatched = Carbon::parse($batch->datedispatched);
+            $months = Carbon::now()->diffInMonths($datedispatched);
+
+            if($months < 5) self::dispatch_batch($batch, 'emails.eid_resend');
+        }
+    }
+
     public static function exponential_result($result)
     {
+        $units="";              
         if($result == 'Invalid'){
             $res= "Collect New Sample";
             $interpretation="Invalid";
-            $units="";              
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
             $res= "< LDL copies/ml";
             $interpretation= $result;
-            $units="";            
         }
-        else{
+        else if(str_contains($result, 'e+')){
             $a = explode('e+', $result);
             $u = explode(' ', $a[1]);
             $power = (int) $u[0];
-            $res = (int) $a[0] * (10**$power);
+            $res = $a[0] * (10**$power);
+            $res = (int) $res;
             $interpretation = $result;
             $units = $u[1] ?? 'cp/mL';
         }
+        else{
+            $res= "Failed";
+            $interpretation = $result;                
+        }
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+    }
+
+    public static function correct_exponential($worksheet_id)
+    {
+        $samples = Viralsample::where('worksheet_id', $worksheet_id)->where('result', '>', 1)->get();
+        foreach ($samples as $key => $sample) {
+            $r = self::exponential_result($sample->interpretation);
+            $sample->result = $r['result'];
+            $sample->pre_update();
+        }
     }
 
     
@@ -515,6 +570,7 @@ class MiscViral extends Common
 
         foreach ($samples as $key => $sample) {
             if($sample->receivedstatus == 1 && !$sample->rcategory) continue;
+            self::send_sms($sample);
         }
     }
 
@@ -565,7 +621,11 @@ class MiscViral extends Common
             }             
         }
 
-        if(!$message) return;
+        if(!$message){
+            print_r($sample);
+            die();
+            return;
+        }
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
@@ -583,7 +643,7 @@ class MiscViral extends Common
         if($response->getStatusCode() == 201){
             $s = Viralsample::find($sample->id);
             $s->time_result_sms_sent = date('Y-m-d H:i:s');
-            $s->pre_update();
+            $s->save();
         }
     }
 

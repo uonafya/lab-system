@@ -81,6 +81,9 @@ class Misc extends Common
 		$sample->fill($original->only($fields['sample_rerun']));
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
+
+        $s = Sample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
 		
 		$sample->save();
 		return $sample;
@@ -237,6 +240,20 @@ class Misc extends Common
         return $samples;
     }
 
+    public static function clean_dob()
+    {
+    	$samples = Sample::where('age', '>', 36)->with(['patient'])->get();
+
+    	foreach ($samples as $sample) {
+    		// $patient = $sample->patient;
+    		// $patient->dob = null;
+    		// $patient->pre_update();
+
+    		$sample->age=0;
+    		$sample->pre_update();
+    	}
+    }
+
     public static function patient_sms()
     {
         ini_set("memory_limit", "-1");
@@ -249,7 +266,7 @@ class Misc extends Common
 
     	foreach ($samples as $key => $sample) {
     		self::send_sms($sample);
-    		break;
+    		// break;
     	}
     }
 
@@ -290,7 +307,10 @@ class Misc extends Common
 			}    			
 		}
 
-		if(!$message) return;
+		if(!$message){
+			print_r($sample);
+			return;
+		}
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
@@ -308,7 +328,7 @@ class Misc extends Common
 		if($response->getStatusCode() == 201){
 			$s = Sample::find($sample->id);
 			$s->time_result_sms_sent = date('Y-m-d H:i:s');
-			$s->pre_update();
+			$s->save();
 		}
     }
 

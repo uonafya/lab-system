@@ -66,10 +66,10 @@ p.breakhere {page-break-before: always}
 			</tr>
 			<tr>
 				<td colspan="4" class="comment style1 style4">
-					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="3" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->batch->lab->name }}</strong>
+					<strong>Testing Lab: {{ $sample->batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 
@@ -228,6 +228,7 @@ p.breakhere {page-break-before: always}
 				<td colspan="3"></td>
 			</tr>
 
+			
 			@if($sample->worksheet)
 				<tr>
 					<td colspan="2"></td>
@@ -240,6 +241,7 @@ p.breakhere {page-break-before: always}
 					</td>				
 				</tr>
 			@endif
+			
 
 			<tr>
 				<td colspan="2">
@@ -324,18 +326,27 @@ p.breakhere {page-break-before: always}
 
 		</table>
 
-		<span class="style8" > 
+		@if($sample->batch->site_entry != 2)
 
-			@if(env('APP_LAB') == 1)
-				If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
-			@elseif(env('APP_LAB') == 3)
-				If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
-			@else
-				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
-			@endif
+			<span class="style8" > 
 
-			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
-		</span>
+				@if(env('APP_LAB') == 1)
+					If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
+				@elseif(env('APP_LAB') == 3)
+					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
+				@else
+					If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
+				@endif
+
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@else
+			<span class="style8" > 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@endif
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>

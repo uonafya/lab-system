@@ -67,10 +67,10 @@ p.breakhere {page-break-before: always}
 			</tr>
 			<tr>
 				<td colspan="3" class="comment style1 style4">
-					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->batch->lab->name }}</strong>
+					<strong>Testing Lab: {{ $sample->batch->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 
@@ -294,7 +294,7 @@ p.breakhere {page-break-before: always}
 					{!! $sample->result_comment !!}					
 				</td>
 			</tr>
-
+			
 			@if($sample->worksheet)
 				<tr>
 					<td colspan="2"></td>
@@ -311,6 +311,7 @@ p.breakhere {page-break-before: always}
 					</td>					
 				</tr>
 			@endif
+			
 
 
 			<tr>
@@ -377,11 +378,19 @@ p.breakhere {page-break-before: always}
 
 		</table>
 
-		<span class="style8" > 
-			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
-			<br> 
-			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
-		</span>
+		@if($sample->batch->site_entry != 2)
+
+			<span class="style8" > 
+				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
+				<br> 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@else
+			<span class="style8" > 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+		@endif
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>

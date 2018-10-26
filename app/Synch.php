@@ -798,6 +798,8 @@ class Synch
 				],
 			]);
 			$body = json_decode($response->getBody());
+			// print_r($body);
+			// break;
 		}
 	}
 
@@ -840,12 +842,11 @@ class Synch
 		$offset=0;
 
 		while (true) {
-			$patients = Patient::select('id', 'facility_id', 'patient')
-				->with(['mother:id'])
+			$patients = Patient::with(['mother'])
 				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
-				->offset($offset)
+				// ->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -912,11 +913,10 @@ class Synch
 		$offset=0;
 
 		while (true) {
-			$patients = Viralpatient::select('id', 'facility_id', 'patient')
-				->where('synched', '>', 0)
+			$patients = Viralpatient::where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
-				->offset($offset)
+				// ->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 

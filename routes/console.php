@@ -80,9 +80,15 @@ Artisan::command('lablog {type}', function($type){
 // })->describe('Synch vl patients to the national database.');
 
 
-Artisan::command('send:sms {type}', function($type){
-    if($type == 'eid') $str = \App\Misc::patient_sms();
-    else { $str = \App\MiscViral::patient_sms(); }    
+Artisan::command('send:communication', function(){
+    $str = \App\Common::send_communication();
+    $this->info($str);
+})->describe('Send any pending emails.');
+
+
+Artisan::command('send:sms', function(){
+    $str = \App\Misc::patient_sms();
+    $str .= \App\MiscViral::patient_sms();
     $this->info($str);
 })->describe('Send result sms.');
 
@@ -144,10 +150,17 @@ Artisan::command('copy:vl', function(){
     $this->info($str);
 })->describe('Copy vl data from old database to new database.');
 
+
 Artisan::command('copy:worksheet', function(){
 	$str = \App\Copier::copy_worksheet();
     $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
+
+
+Artisan::command('copy:worklist', function(){
+    $str = \App\Copier::copy_worklist();
+    $this->info($str);
+})->describe('Copy worklist data from old database to new database.');
 
 Artisan::command('copy:deliveries', function(){
     $str = \App\Copier::copy_deliveries();
@@ -158,6 +171,17 @@ Artisan::command('copy:facility-contacts', function(){
     $str = \App\Copier::copy_facility_contacts();
     $this->info($str);
 })->describe('Copy facility contacts from old database to new database.');
+
+Artisan::command('copy:cd4', function(){
+    $str = \App\Copier::copy_cd4();
+    $this->info($str);
+})->describe('Copy cd4 data from old database to new database.');
+
+
+Artisan::command('copy:cd4-worksheet', function(){
+    $str = \App\Copier::copy_cd4_worksheet();
+    $this->info($str);
+})->describe('Copy cd4 worksheet data from old database to new database.');
 
 
 

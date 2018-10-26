@@ -581,14 +581,23 @@
         @endslot
 
 
-
-        $(".date").datepicker({
+        $(".date:not(#datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
             endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#datedispatched").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: "+7d",
             format: "yyyy-mm-dd"
         });
 
@@ -618,7 +627,17 @@
                 else{
                     $('.requirable').attr("required", "required");
                 }
-            }); 
+            });  
+
+            $("#sampletype").change(function(){
+                var val = $(this).val();
+                if(val == 3 || val == 4){
+                    $("#dateseparated").attr("disabled", "disabled");
+                }
+                else{
+                    $("#dateseparated").removeAttr("disabled");
+                }
+            });
 
             $("#sex").change(function(){
                 var val = $(this).val();

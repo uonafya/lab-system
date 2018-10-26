@@ -62,8 +62,15 @@
                         <li class="">
                             <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
                         </li>
+
                         <li class="">
                             <a href="{{ url('worklist') }}">POC Worklists</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
                         </li>
                         <li class="">
                             <a href="#">EID Reports</a>
@@ -76,10 +83,13 @@
                             <a href="{{ url('home') }}">Home</a>
                         </li>
                         <li>
-                            <a href="{{ url('users') }}">Users</a>
+                            <a href="{{ url('user') }}">Users</a>
                         </li>
                         <li>
-                            <a href="{{ url('facilities') }}">Facilities</a>
+                            <a href="{{ url('facility') }}">Facilities</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                         </li>
                     @else
                         @if(!Session('pendingTasks'))
@@ -111,6 +121,9 @@
                             </li>
                             <li class="">
                                 <a href="{{ url('facility') }}">Facilities</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                             </li>
                             <li class="">
                                 <a href="{{ route('reports') }}">Reports</a>
@@ -162,6 +175,12 @@
                         <a href="{{ url('worklist') }}">POC Worklists</a>
                     </li>
                     <li class="">
+                        <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
+                    </li>
+                    <li class="">
                         <a href="#">EID Reports</a>
                     </li>
                     <li class="">
@@ -172,10 +191,13 @@
                             <a href="{{ url('home') }}">Home</a>
                         </li>
                         <li>
-                            <a href="{{ url('users') }}">Users</a>
+                            <a href="{{ url('user') }}">Users</a>
                         </li>
                         <li>
                             <a href="{{ url('facility') }}">Facilities</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                         </li>
                 @else
                     <li class="">
@@ -223,6 +245,14 @@
                     </li>
                     <li class="">
                         <a href="{{ route('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="">
+                        <a href="
+                            @if(session('testingSystem') == 'Viralload')
+                                {{ 'https://viralload.nascop.org/labs' }}
+                            @else
+                                {{ 'https://eid.nascop.org/labPerformance' }}
+                            @endif">Nascop Dashboard</a>
                     </li>
                     <li class="">
                         <a href="{{ url('reports/kits') }}">Kits</a>

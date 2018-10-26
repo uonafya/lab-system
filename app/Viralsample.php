@@ -147,8 +147,9 @@ class Viralsample extends BaseModel
         $str = '';
         $result = $this->result;
         $interpretation = $this->interpretation;
+        $lower_interpretation = strtolower($interpretation);
         // < ldl
-        if(str_contains($result, ['<']) && str_contains($interpretation, ['<'])){
+        if(str_contains($interpretation, ['<'])){
             $str = "LDL:Lower Detectable Limit i.e. Below Detectable levels by machine ";
             if(str_contains($interpretation, ['839'])){
                 $str .= "( Abbott DBS  &lt;839 copies/ml )";
@@ -165,10 +166,18 @@ class Viralsample extends BaseModel
             else if(str_contains($interpretation, ['30'])){
                 $str .= "( Pantha Plasma  &lt;30 copies/ml )";
             }
+            else if(str_contains($interpretation, ['log']) && str_contains($interpretation, ['<'])){
+                $x = preg_replace("/[^<0-9.]/", "", $interpretation);
+                $n = round(pow(10, $x));
+                $str .= "( &lt;{$n} copies/ml )";
+            }
             else{
                 $n = preg_replace("/[^<0-9]/", "", $interpretation);
                 $str .= "( &lt;{$n} copies/ml )";
             }
+        }
+        else if(str_contains($result, ['<']) && str_contains($lower_interpretation, ['not detected'])){
+            $str = "No circulating virus ie. level of HIV in blood is below the threshold needed for detection by this test. Doesn’t mean client Is Negative";
         }
         else if($result == "Target Not Detected"){
             $str = "No circulating virus ie. level of HIV in blood is below the threshold needed for detection by this test. Doesn’t mean client Is Negative";
