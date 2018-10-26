@@ -568,7 +568,7 @@ class ViralworksheetController extends Controller
             $data['repeatt'] = $actions[$key];
             $data['dilutionfactor'] = $dilutions[$key];
 
-            if(is_int($results[$key])){
+            if(is_numeric($results[$key])){
                 $data['result'] = $results[$key] * $dilutions[$key];
             }
             else{
