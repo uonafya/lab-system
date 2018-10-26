@@ -27,7 +27,7 @@
     <nav role="navigation">
         <div class="header-link hide-menu"><i class="fa fa-bars"></i></div>
         <div class="small-logo">
-            <span class="text-primary">EID - VL</span>
+            <span class="text-primary">@if(Session('testingSystem') == 'CD4') CD4 @else EID - VL @endif</span>
         </div>
         @if(Session('pendingTasks'))
             <form role="search" class="navbar-form-custom" style="width: 400px;">
@@ -42,104 +42,108 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                @if(!Session('pendingTasks'))
-                    @if (Auth()->user()->user_type_id == 5)
-                        <li class="">
-                            <a href="{{ url('batch') }}">EID Samples</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('batch/index/1') }}">EID Results</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('viralbatch') }}">VL Samples</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                        </li>
+                @if(Session('testingSystem') == 'CD4')
 
-                        <li class="">
-                            <a href="{{ url('worklist') }}">POC Worklists</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
-                        </li>
-                        <li class="">
-                            <a href="#">EID Reports</a>
-                        </li>
-                        <li class="">
-                            <a href="#">VL Reports</a>
-                        </li>
-                    @elseif(Auth()->user()->user_type_id == 2)
-                        <li>
-                            <a href="{{ url('home') }}">Home</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('user') }}">Users</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('facility') }}">Facilities</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
-                        </li>
-                    @else
-                        @if(!Session('pendingTasks'))
+                @else
+                    @if(!Session('pendingTasks'))
+                        @if (Auth::user()->user_type_id == 5)
                             <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralbatch') }}
-                                    @else
-                                        {{ url('batch') }}
-                                    @endif">Samples</a>
-                            </li>
-                            
-                            
-                            <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralworksheet') }}
-                                    @else
-                                        {{ url('worksheet') }}
-                                    @endif">Worksheets</a>
+                                <a href="{{ url('batch') }}">EID Samples</a>
                             </li>
                             <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralbatch/index/4/1') }}
-                                    @else
-                                        {{ url('batch/index/4/1') }}
-                                    @endif">Dispatched Results</a>
+                                <a href="{{ url('batch/index/1') }}">EID Results</a>
                             </li>
                             <li class="">
+                                <a href="{{ url('viralbatch') }}">VL Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
+                            </li>
+
+                            <li class="">
+                                <a href="{{ url('worklist') }}">POC Worklists</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
+                            </li>
+                            <li class="">
+                                <a href="#">EID Reports</a>
+                            </li>
+                            <li class="">
+                                <a href="#">VL Reports</a>
+                            </li>
+                        @elseif(Auth::user()->user_type_id == 2)
+                            <li>
+                                <a href="{{ url('home') }}">Home</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('user') }}">Users</a>
+                            </li>
+                            <li>
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
                             <li>
                                 <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                             </li>
-                            <li class="">
-                                <a href="{{ route('reports') }}">Reports</a>
-                            </li>
-                            <li class="">
-                                <a href="{{ route('dashboard') }}">Dashboard</a>
-                            </li>
-                            <li class="">
-                                <a href="#">Kits</a>
-                            </li>
+                        @else
+                            @if(!Session('pendingTasks'))
+                                <li class="">
+                                    <a href="
+                                        @if(session('testingSystem') == 'Viralload')
+                                            {{ url('viralbatch') }}
+                                        @else
+                                            {{ url('batch') }}
+                                        @endif">Samples</a>
+                                </li>
+                                
+                                
+                                <li class="">
+                                    <a href="
+                                        @if(session('testingSystem') == 'Viralload')
+                                            {{ url('viralworksheet') }}
+                                        @else
+                                            {{ url('worksheet') }}
+                                        @endif">Worksheets</a>
+                                </li>
+                                <li class="">
+                                    <a href="
+                                        @if(session('testingSystem') == 'Viralload')
+                                            {{ url('viralbatch/index/4/1') }}
+                                        @else
+                                            {{ url('batch/index/4/1') }}
+                                        @endif">Dispatched Results</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('facility') }}">Facilities</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ route('reports') }}">Reports</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                                </li>
+                                <li class="">
+                                    <a href="#">Kits</a>
+                                </li>
+                            @endif
                         @endif
+                    @else
+                        <li class="">
+                            <a href="{{ url('pending') }}">Pending Tasks</a>
+                        </li>
                     @endif
-                @else
-                    <li class="">
-                        <a href="{{ url('pending') }}">Pending Tasks</a>
-                    </li>
                 @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
@@ -152,7 +156,7 @@
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
             @if(!Session('pendingTasks'))
-                @if (Auth()->user()->user_type_id == 5)
+                @if (Auth::user()->user_type_id == 5)
                     <li class="">
                         <a href="{{ url('batch') }}">EID Samples</a>
                     </li>
@@ -186,7 +190,7 @@
                     <li class="">
                         <a href="#">VL Reports</a>
                     </li>
-                @elseif(Auth()->user()->user_type_id == 2)
+                @elseif(Auth::user()->user_type_id == 2)
                         <li>
                             <a href="{{ url('home') }}">Home</a>
                         </li>
