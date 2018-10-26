@@ -469,10 +469,10 @@ class ViralworksheetController extends Controller
                 // Viralsample::where($search)->update($data_array);
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
-                if(env('APP_LAB') == 1) $sample_id = substr($sample_id, 0, -1);
-                else{
+                // if(env('APP_LAB') == 1) $sample_id = substr($sample_id, 0, -1);
+                // else{
                     $sample_id = (int) $sample_id;                    
-                }
+                // }
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
@@ -568,8 +568,8 @@ class ViralworksheetController extends Controller
             $data['repeatt'] = $actions[$key];
             $data['dilutionfactor'] = $dilutions[$key];
 
-            if(is_int($results[$key])){
-                $data['result'] = $results[$key] * $dilutions[$key];
+            if(is_numeric($results[$key])){
+                $data['result'] = (int) $results[$key] * $dilutions[$key];
             }
             else{
                 $data['result'] = $results[$key];
