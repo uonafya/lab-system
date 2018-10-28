@@ -609,7 +609,7 @@
             forceParse: true,
             autoclose: true,
             startDate: '-24y',
-            //endDate: new Date(),
+            endDate: new Date(),
             format: "yyyy-mm-dd"
         });
 
