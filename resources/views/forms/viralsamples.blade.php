@@ -608,8 +608,8 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: '-24Y',
-            endDate: new Date(),
+            startDate: '24 years',
+            //endDate: new Date(),
             format: "yyyy-mm-dd"
         });
 
