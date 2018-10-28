@@ -607,7 +607,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: '1995-01-01',
+            startDate: '-24 years',
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
