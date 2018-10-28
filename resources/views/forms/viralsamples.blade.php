@@ -601,7 +601,8 @@
             format: "yyyy-mm-dd"
         });
 
-        $("#dateinitiatedontreatment").datepicker({
+        // $("#dateinitiatedontreatment").datepicker({
+        $("#initiation_date").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
