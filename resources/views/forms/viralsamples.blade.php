@@ -581,7 +581,7 @@
         @endslot
 
 
-        $(".date:not(#datedispatched)").datepicker({
+        $(".date:not(#datedispatched, #dateinitiatedontreatment)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -598,6 +598,17 @@
             forceParse: true,
             autoclose: true,
             endDate: "+7d",
+            format: "yyyy-mm-dd"
+        });
+
+        $("#dateinitiatedontreatment").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: '1995-01-01',
+            endDate: new Date(),
             format: "yyyy-mm-dd"
         });
 
