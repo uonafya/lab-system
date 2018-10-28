@@ -7988,7 +7988,6 @@ INSERT INTO `facilitys` (`id`, `facilitycode`, `district`, `ward_id`, `name`, `l
 
 
 UPDATE facilitys set synched=1 where synched=0;
-ALTER TABLE facilitys DROP COLUMN `districtname`;
 
 DROP TABLE IF EXISTS `facility_contacts`;
 CREATE TABLE `facility_contacts` (
