@@ -608,7 +608,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: '-24 years',
+            startDate: '-24Y',
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
