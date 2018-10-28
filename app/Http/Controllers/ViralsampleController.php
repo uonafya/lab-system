@@ -156,6 +156,10 @@ class ViralsampleController extends Controller
 
         $new_patient = $request->input('new_patient');
         $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($batch->facility_id);
+            $patient_string = $fac->facilitycode . '/' . $patient_string;
+        }
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$viralpatient) $viralpatient = new Viralpatient;
 
@@ -459,6 +463,12 @@ class ViralsampleController extends Controller
     {
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
+
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($facility_id);
+            $str = $fac->facilitycode . '/';
+            if(!str_contains($patient, $str)) $patient = $str . $patient;
+        }
 
         $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();        
         $data;
