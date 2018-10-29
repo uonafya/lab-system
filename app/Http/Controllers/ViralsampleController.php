@@ -334,12 +334,14 @@ class ViralsampleController extends Controller
 
         $new_patient = $request->input('new_patient');
 
-        if($new_patient == 0){            
-            $viralpatient = Viralpatient::find($viralsample->patient_id);
-        }
-        else{
-            $viralpatient = new Viralpatient;
-        }
+        // if($new_patient == 0){            
+        //     $viralpatient = Viralpatient::find($viralsample->patient_id);
+        // }
+        // else{
+        //     $viralpatient = new Viralpatient;
+        // }
+
+        $viralpatient = $viralsample->patient;
         
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
