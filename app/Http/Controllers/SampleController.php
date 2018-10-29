@@ -127,7 +127,13 @@ class SampleController extends Controller
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+        $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($batch->facility_id);
+            $patient_string = $fac->facilitycode . '/' . $patient_string;
+        }
+
+        $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$patient) $patient = new Patient;
         $data = $request->only($samples_arrays['patient']);
         $patient->fill($data);
@@ -137,6 +143,8 @@ class SampleController extends Controller
         $data = $request->only($samples_arrays['mother']);
         $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
         $mother->fill($data);
+
+        if(env('APP_LAB') == 4) $mother->ccc_no = $fac->facilitycode . '/' . $mother->ccc_no;
 
         $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->first();
         if($viralpatient) $mother->patient_id = $viralpatient->id;
@@ -539,9 +547,16 @@ class SampleController extends Controller
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
 
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($facility_id);
+            $str = $fac->facilitycode . '/';
+            if(!str_contains($patient, $str)) $patient = $str . $patient;
+        }
+
         // Add check for in process sample
 
         $patient = Patient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
+
         $data;
         if($patient){
             $patient->most_recent();
