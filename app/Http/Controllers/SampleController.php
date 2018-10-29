@@ -130,7 +130,16 @@ class SampleController extends Controller
         $patient_string = trim($request->input('patient'));
         if(env('APP_LAB') == 4){
             $fac = Facility::find($batch->facility_id);
-            $patient_string = $fac->facilitycode . '/' . $patient_string;
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
         }
 
         $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
