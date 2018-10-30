@@ -262,11 +262,11 @@ class Misc extends Common
     					->having('mycount', 0)
     					->get();
 
-    	return $batches->count();
+    	// return $batches->count();
 
-    	// foreach ($batches as $key => $batch) {
-    	// 	$batch->delete();
-    	// }
+    	foreach ($batches as $key => $batch) {
+    		$batch->delete();
+    	}
     }
 
     public static function patient_sms()
