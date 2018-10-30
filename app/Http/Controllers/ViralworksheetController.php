@@ -353,6 +353,8 @@ class ViralworksheetController extends Controller
                 $reader->toArray();
             })->get();
 
+            dd($data);
+
             $bool = false;
 
             foreach ($data as $key => $value) {
