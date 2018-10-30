@@ -230,7 +230,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" disabled type="text" value="{{ $sampletypes->where('id', $viralsample->sampletype)->first()->name ?? '' }}">
+                                    <input class="form-control" disabled type="text" value="{{ $sampletypes->where('id', $form_sample_type)->first()->name ?? '' }}">
                                 </div>
                             </div>
 
