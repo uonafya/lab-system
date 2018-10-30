@@ -254,6 +254,21 @@ class Misc extends Common
     	}
     }
 
+    public static function delete_empty_batches()
+    {
+    	$batches = \App\Batch::selectRaw("batches.id, count(samples.id) as mycount")
+    					->leftJoin('samples', 'samples.batch_id', '=', 'batches.id')
+    					->groupBy('batches.id')
+    					->having('mycount', 0)
+    					->get();
+
+    	return $batches->count();
+
+    	// foreach ($batches as $key => $batch) {
+    	// 	$batch->delete();
+    	// }
+    }
+
     public static function patient_sms()
     {
         ini_set("memory_limit", "-1");
