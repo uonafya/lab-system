@@ -146,6 +146,7 @@ class SampleController extends Controller
         if(!$patient) $patient = new Patient;
         $data = $request->only($samples_arrays['patient']);
         $patient->fill($data);
+        $patient->patient = $patient_string;
 
         $mother = $patient->mother;
         if(!$mother) $mother = new Mother;

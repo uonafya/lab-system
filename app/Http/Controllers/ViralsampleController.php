@@ -195,6 +195,7 @@ class ViralsampleController extends Controller
         $data = $request->only($viralsamples_arrays['patient']);
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
+        $viralpatient->patient = $patient_string;
         $viralpatient->save();
 
         $data = $request->only($viralsamples_arrays['sample']);
