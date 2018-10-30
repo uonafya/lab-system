@@ -295,6 +295,7 @@
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
                                     @foreach ($prophylaxis as $proph)
+                                        @continue($proph->id == 16 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $proph->id }}"
 
                                         @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
@@ -349,6 +350,7 @@
                                 <select class="form-control requirable" required name="justification" id="justification">
                                     <option></option>
                                     @foreach ($justifications as $justification)
+                                        @continue($justification->id == 8 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $justification->id }}"
 
                                         @if (isset($viralsample) && $viralsample->justification == $justification->id)
@@ -581,7 +583,7 @@
         @endslot
 
 
-        $(".date:not(#datedispatched)").datepicker({
+        $(".date:not(#datedispatched, #dateinitiatedontreatment)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -598,6 +600,18 @@
             forceParse: true,
             autoclose: true,
             endDate: "+7d",
+            format: "yyyy-mm-dd"
+        });
+
+        // $("#dateinitiatedontreatment").datepicker({
+        $("#initiation_date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: '-24y',
+            endDate: new Date(),
             format: "yyyy-mm-dd"
         });
 
