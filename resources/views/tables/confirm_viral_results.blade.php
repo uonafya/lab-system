@@ -133,7 +133,8 @@
                                         if(in_array(env('APP_LAB'), $double_approval)  && $editable){
                                             
                                             if($sample->repeatt == 1){
-                                                $class = 'noneditable';
+                                                // $class = 'noneditable';
+                                                $class = 'editable';
                                             }
                                             else{
                                                 $class = 'editable';
