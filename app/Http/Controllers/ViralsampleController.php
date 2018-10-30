@@ -55,9 +55,10 @@ class ViralsampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($sampletype=false)
     {
         $data = Lookup::viralsample_form();
+        $data['form_sample_type'] = $sampletype;
         return view('forms.viralsamples', $data)->with('pageTitle', 'Add Sample');
     }
 
@@ -156,6 +157,20 @@ class ViralsampleController extends Controller
 
         $new_patient = $request->input('new_patient');
         $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($batch->facility_id);
+            // $patient_string = $fac->facilitycode . '/' . $patient_string;
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
+        }
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$viralpatient) $viralpatient = new Viralpatient;
 
@@ -181,6 +196,7 @@ class ViralsampleController extends Controller
         $data = $request->only($viralsamples_arrays['patient']);
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
+        $viralpatient->patient = $patient_string;
         $viralpatient->save();
 
         $data = $request->only($viralsamples_arrays['sample']);
@@ -234,6 +250,11 @@ class ViralsampleController extends Controller
         }
 
         session(['toast_message' => 'The sample has been created.']);
+
+        $stype = $request->input('form_sample_type');
+
+        if($stype) return redirect('viralsample/create/' . $stype);
+
         return redirect()->route('viralsample.create');
     }
 
@@ -320,12 +341,14 @@ class ViralsampleController extends Controller
 
         $new_patient = $request->input('new_patient');
 
-        if($new_patient == 0){            
-            $viralpatient = Viralpatient::find($viralsample->patient_id);
-        }
-        else{
-            $viralpatient = new Viralpatient;
-        }
+        // if($new_patient == 0){            
+        //     $viralpatient = Viralpatient::find($viralsample->patient_id);
+        // }
+        // else{
+        //     $viralpatient = new Viralpatient;
+        // }
+
+        $viralpatient = $viralsample->patient;
         
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
@@ -459,6 +482,12 @@ class ViralsampleController extends Controller
     {
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
+
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($facility_id);
+            $str = $fac->facilitycode . '/';
+            if(!str_contains($patient, $str)) $patient = $str . $patient;
+        }
 
         $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();        
         $data;

@@ -32,7 +32,7 @@ class UserController extends Controller
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Deactivate</a> | <a href="'.$delete.'">Delete</a></td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a></td>';
             $row .= '</tr>';
         }
 
@@ -138,6 +138,14 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function delete($id) {
+        $user = self::__unHashUser($id);
+        $user->delete();
+
+        return back();
     }
 
     public function activity($user_id = null) {
