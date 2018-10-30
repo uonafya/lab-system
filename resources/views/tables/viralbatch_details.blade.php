@@ -80,10 +80,10 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
-                            @if(!$batch->datereceived)
+                            @if(!$batch->datereceived && $batch->site_entry == 1)
                                 <div class="col-md-4">
                                     <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
-                                        <button class="btn btn-primary">Transfer Samples To Another Batch</button>
+                                        <button class="btn btn-primary">Approve Site Entry</button>
                                     </a>
                                 </div>
                             @endif
