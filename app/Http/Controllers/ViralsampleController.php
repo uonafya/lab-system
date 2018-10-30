@@ -55,9 +55,10 @@ class ViralsampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($sampletype=false)
     {
         $data = Lookup::viralsample_form();
+        $data['form_sample_type'] = $sampletype;
         return view('forms.viralsamples', $data)->with('pageTitle', 'Add Sample');
     }
 
@@ -249,6 +250,11 @@ class ViralsampleController extends Controller
         }
 
         session(['toast_message' => 'The sample has been created.']);
+
+        $stype = $request->input('form_sample_type');
+
+        if($stype) return redirect('viralsample/create/' . $stype);
+
         return redirect()->route('viralsample.create');
     }
 

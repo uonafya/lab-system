@@ -53,7 +53,7 @@
 			</tr>
 			<tr>
 				<td colspan="5">
-					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="4">
 					@if($batch->site_entry == 2)
@@ -78,7 +78,7 @@
 				<td colspan='3'>Date Samples Were Dispatched From Facility :  {{ $batch->my_date_format('datedispatchedfromfacility')  }}</td>				
 			</tr>
 			<tr>
-				<td>Facility Name: {{ $batch->facility->name }} </td>
+				<td>Facility Name: {{ $batch->facility->name ?? '' }} </td>
 				<td>Contact: {{ $batch->facility->contactperson ?? '' }} </td>
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>

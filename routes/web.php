@@ -86,7 +86,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('site_approval_group/{batch}', 'BatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
 
-		Route::group(['middleware' => ['only_utype:1']], function () {
+		Route::group(['middleware' => ['only_utype:1,4']], function () {
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 
@@ -116,7 +116,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
 
-		Route::group(['middleware' => ['only_utype:1']], function () {
+		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
@@ -268,6 +268,8 @@ Route::middleware(['auth'])->group(function(){
 
 
 	Route::prefix('viralsample')->name('viralsample.')->group(function () {
+
+		Route::get('create/{sampletype?}', 'ViralsampleController@create');
 
 		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
 		Route::post('nhrl', 'ViralsampleController@approve_nhrl');

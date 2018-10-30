@@ -35,7 +35,11 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
-                                        <td> {{ $sample->batch_id ?? '' }} </td>
+                                        <td>
+                                            <a href="{{ url('/viralbatch/' . $sample->batch_id ) }}">
+                                                {{ $sample->batch_id ?? '' }}
+                                            </a>
+                                         </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
