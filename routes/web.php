@@ -268,6 +268,8 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('viralsample')->name('viralsample.')->group(function () {
 
+		Route::get('create/{sampletype?}', 'ViralsampleController@create');
+
 		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
 		Route::post('nhrl', 'ViralsampleController@approve_nhrl');
 

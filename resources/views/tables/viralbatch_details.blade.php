@@ -80,6 +80,13 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
+                            @if(!$batch->datereceived)
+                                <div class="col-md-4">
+                                    <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Transfer Samples To Another Batch</button>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('viralbatch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
