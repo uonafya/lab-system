@@ -21,7 +21,7 @@ class ReportController extends Controller
 
     public function index()
     {
-    	return view('reports.reports')->with('pageTitle', 'Lab Reports');
+       return view('reports.reports')->with('pageTitle', 'Lab Reports');
     }
 
     public function dateselect(Request $request)
