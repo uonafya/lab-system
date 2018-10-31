@@ -206,7 +206,7 @@ class ViralworksheetController extends Controller
         }
     }
 
-    public function convert_worksheet($machine_type, Viralworksheet $worksheet)
+    public function convert_worksheet(Viralworksheet $worksheet, $machine_type)
     {
         if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
             session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
@@ -215,6 +215,7 @@ class ViralworksheetController extends Controller
         }
         $worksheet->machine_type = $machine_type;
         $worksheet->save();
+        // return back();
         return redirect('viralworksheet/' . $worksheet->id . '/edit');
     }
 

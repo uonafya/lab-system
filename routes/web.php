@@ -332,7 +332,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
-			Route::get('convert/{machine_type}/{worksheet}', 'ViralworksheetController@convert_worksheet')->name('convert');
+			Route::get('convert/{worksheet}/{machine_type}/', 'ViralworksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
