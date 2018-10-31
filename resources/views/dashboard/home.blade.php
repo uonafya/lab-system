@@ -56,7 +56,7 @@
             <div class="col-md-6">
                 <center><h5>Month Filter</h5></center>
                 @for ($i = 1; $i <= 12; $i++)
-                    <a href='{{ url("dashboard/null/$i") }}'>{{ date("F", mktime(null, null, null, $i)) }}</a> |
+                    <a href='{{ url("dashboard/null/$i") }}'>{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</a> |
                 @endfor
             </div>
             <!-- Month -->
