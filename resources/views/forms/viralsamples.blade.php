@@ -40,6 +40,11 @@
                             <br />
                         @endisset
 
+                        @if(isset($form_sample_type) && $form_sample_type)
+                            <input type="hidden" name="form_sample_type" value="{{$form_sample_type}}">
+                            <input type="hidden" name="sampletype" value="{{$form_sample_type}}">
+                        @endif
+
 
                         @if(!$batch || isset($viralsample))    
                           <div class="form-group">
@@ -218,26 +223,41 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Sample Type
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <select class="form-control requirable" required name="sampletype" id="sampletype">
-                                    <option></option>
-                                    @foreach ($sampletypes as $sampletype)
-                                        <option value="{{ $sampletype->id }}"
+                        @if(isset($form_sample_type) && $form_sample_type)
 
-                                        @if (isset($viralsample) && $viralsample->sampletype == $sampletype->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $sampletype->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Sample Type
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" disabled type="text" value="{{ $sampletypes->where('id', $form_sample_type)->first()->name ?? '' }}">
+                                </div>
                             </div>
-                        </div> 
+
+                        @else
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Sample Type
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <select class="form-control requirable" required name="sampletype" id="sampletype">
+                                        <option></option>
+                                        @foreach ($sampletypes as $sampletype)
+                                            <option value="{{ $sampletype->id }}"
+
+                                            @if (isset($viralsample) && $viralsample->sampletype == $sampletype->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $sampletype->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div> 
+
+                        @endif
 
                         <div class="hr-line-dashed"></div>                      
 
@@ -295,6 +315,7 @@
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
                                     @foreach ($prophylaxis as $proph)
+                                        @continue($proph->id == 16 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $proph->id }}"
 
                                         @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
@@ -349,6 +370,7 @@
                                 <select class="form-control requirable" required name="justification" id="justification">
                                     <option></option>
                                     @foreach ($justifications as $justification)
+                                        @continue($justification->id == 8 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $justification->id }}"
 
                                         @if (isset($viralsample) && $viralsample->justification == $justification->id)
