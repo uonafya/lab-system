@@ -36,7 +36,11 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
-                                        <td> {{ $sample->batch_id ?? '' }} </td>
+                                        <td>  
+                                            <a href="{{ url('/batch/' . $sample->batch_id ) }}">
+                                                {{ $sample->batch_id ?? '' }}  
+                                            </a>
+                                        </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
@@ -61,7 +65,7 @@
                                         </td>
                                         <td>
                                             @if($sample->batch->batch_complete == 1)
-                                                <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                                <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a>
                                             @endif
                                         </td>
                                     </tr>

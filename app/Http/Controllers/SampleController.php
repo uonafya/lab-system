@@ -130,13 +130,23 @@ class SampleController extends Controller
         $patient_string = trim($request->input('patient'));
         if(env('APP_LAB') == 4){
             $fac = Facility::find($batch->facility_id);
-            $patient_string = $fac->facilitycode . '/' . $patient_string;
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
         }
 
         $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$patient) $patient = new Patient;
         $data = $request->only($samples_arrays['patient']);
         $patient->fill($data);
+        $patient->patient = $patient_string;
 
         $mother = $patient->mother;
         if(!$mother) $mother = new Mother;
@@ -378,43 +388,57 @@ class SampleController extends Controller
         if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
         $batch->pre_update();
 
-        $new_patient = $request->input('new_patient');
+        $patient = $sample->patient;
+        $data = $request->only($samples_arrays['patient']);
+        $patient->pre_update();
 
-        if($new_patient == 0){
+        $mother = $patient->mother;
+        $data = $request->only($samples_arrays['mother']);
+        $mother->fill($data);
+
+        $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        $mother->pre_update();
+
+
+        // $new_patient = $request->input('new_patient');
+
+        // if($new_patient == 0){
         
-            $data = $request->only($samples_arrays['patient']);
-            $patient = Patient::find($sample->patient_id);
-            $patient->fill($data);
-            $patient->pre_update();
+        //     $data = $request->only($samples_arrays['patient']);
+        //     $patient = Patient::find($sample->patient_id);
+        //     $patient->fill($data);
+        //     $patient->pre_update();
 
-            $data = $request->only($samples_arrays['mother']);
-            $mother = Mother::find($patient->mother_id);
-            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
-            $mother->fill($data);
+        //     $data = $request->only($samples_arrays['mother']);
+        //     $mother = Mother::find($patient->mother_id);
+        //     $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
+        //     $mother->fill($data);
 
-            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
-            if($viralpatient) $mother->patient_id = $viralpatient->id;
+        //     $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        //     if($viralpatient) $mother->patient_id = $viralpatient->id;
 
-            $mother->pre_update();
-        }
-        else
-        {
-            $data = $request->only($samples_arrays['mother']);
-            $mother = new Mother;
-            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
-            $mother->fill($data);
+        //     $mother->pre_update();
+        // }
+        // else
+        // {
+        //     $data = $request->only($samples_arrays['mother']);
+        //     $mother = new Mother;
+        //     $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
+        //     $mother->fill($data);
 
-            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
-            if($viralpatient) $mother->patient_id = $viralpatient->id;
+        //     $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        //     if($viralpatient) $mother->patient_id = $viralpatient->id;
 
-            $mother->pre_update();
+        //     $mother->pre_update();
             
-            $data = $request->only($samples_arrays['patient']);
-            $patient = new Patient;
-            $patient->fill($data);
-            $patient->mother_id = $mother->id;
-            $patient->pre_update();
-        }
+        //     $data = $request->only($samples_arrays['patient']);
+        //     $patient = new Patient;
+        //     $patient->fill($data);
+        //     $patient->mother_id = $mother->id;
+        //     $patient->pre_update();
+        // }
         
         if($last_result){
             $sample->mother_last_result = $last_result;

@@ -71,6 +71,14 @@ Artisan::command('batch-complete', function(){
 })->describe('Check if batch is ready for dispatch.');
 
 
+Artisan::command('delete-pdfs', function(){
+    $str = \App\Common::delete_folder(storage_path('app/batches'));
+    $this->info($str);
+})->describe('Delete pdfs from hard drive.');
+
+
+
+
 
 Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');

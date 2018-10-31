@@ -130,14 +130,22 @@
 
                                     @php
 
-                                        if(in_array(env('APP_LAB'), $double_approval)  && $editable){
-                                            
-                                            if($sample->repeatt == 1){
+                                        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->status_id == 2){
+
+                                            if($sample->has_rerun){
                                                 $class = 'noneditable';
                                             }
                                             else{
                                                 $class = 'editable';
                                             }
+                                            
+                                            /*if($sample->repeatt == 1){
+                                                // $class = 'noneditable';
+                                                $class = 'editable';
+                                            }
+                                            else{
+                                                $class = 'editable';
+                                            }*/
                                         }
                                     @endphp
 
