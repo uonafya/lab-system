@@ -71,6 +71,13 @@ Artisan::command('batch-complete', function(){
 })->describe('Check if batch is ready for dispatch.');
 
 
+Artisan::command('fix:noage', function(){
+    $str = \App\Common::fix_no_age('eid');
+    $str = \App\Common::fix_no_age('vl');
+    $this->info($str);
+})->describe('Send emails for dispatched batches.');
+
+
 Artisan::command('delete-pdfs', function(){
     $str = \App\Common::delete_folder(storage_path('app/batches'));
     $this->info($str);
