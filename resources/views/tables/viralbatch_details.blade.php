@@ -80,6 +80,13 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
+                            @if(!$batch->datereceived && $batch->site_entry == 1)
+                                <div class="col-md-4">
+                                    <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Approve Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('viralbatch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
@@ -126,7 +133,11 @@
                                     <tr>
                                         <td> {{ $i++ }} </td>
                                         <td> {{ $sample->id }} </td>
-                                        <td> {{ $sample->patient->patient }} </td>
+                                        <td>  
+                                            <a href="{{ url('patient/' . $sample->patient_id) }}">
+                                                {{ $sample->patient->patient }}
+                                            </a>
+                                        </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>

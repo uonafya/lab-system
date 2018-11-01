@@ -94,8 +94,17 @@
                     <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
-                @if(env('APP_LAB') == 4)
+                @if(env('APP_LAB') == 4 && auth()->user()->user_type_id != 5)
+                    <li><a href="{{ url('viralsample/create/1') }}">Add Plasma Samples</a></li>
+                    <li><a href="{{ url('viralsample/create/2') }}">Add EDTA Samples</a></li>
+                    <li><a href="{{ url('viralsample/create/3') }}">Add DBS Capillary Samples</a></li>
+                    <li><a href="{{ url('viralsample/create/4') }}">Add DBS Venous Samples</a></li>
+                    <hr />
+                @else
+                    <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
+                    <hr />
+                @endif
+                @if(env('APP_LAB') == 2)
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                     <hr />
                 @endif
