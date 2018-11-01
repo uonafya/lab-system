@@ -97,6 +97,18 @@ class Viralsample extends BaseModel
                 ->get();
         $this->previous_tests = $samples;
     }
+
+    public function remove_reruns()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete;
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
     
 
     /**

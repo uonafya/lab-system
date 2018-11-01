@@ -493,7 +493,8 @@ class MiscViral extends Common
 
         foreach ($samples as $sample) {
             $data = $sample->only(['patient_id', 'datereceived', 'result', 'rcategory']);
-            if($sample->age < 19){
+            if($sample->age < 10) continue;
+            else if($sample->age < 19){
                 $pat = new DrPatient;
                 $pat->fill($data);
                 $pat->dr_reason_id = 2;

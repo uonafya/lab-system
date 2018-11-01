@@ -49,7 +49,7 @@ class DrSampleController extends Controller
         if($facility->email != null || $facility->email != '')
         {
             $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
-            if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
+            // if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
             Mail::to($mail_array)->send(new DrugResistance($sample));
         }         
 
