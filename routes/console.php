@@ -75,7 +75,7 @@ Artisan::command('fix:noage', function(){
     $str = \App\Common::fix_no_age('eid');
     $str = \App\Common::fix_no_age('vl');
     $this->info($str);
-})->describe('Send emails for dispatched batches.');
+})->describe('Fix no age.');
 
 
 Artisan::command('delete-pdfs', function(){
