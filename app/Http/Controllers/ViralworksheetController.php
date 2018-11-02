@@ -471,8 +471,8 @@ class ViralworksheetController extends Controller
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
 
-                $sample_id = substr($sample_id, 0, -1);
-                // $sample_id = (int) $sample_id;
+                // $sample_id = substr($sample_id, 0, -1);
+                $sample_id = (int) $sample_id;
 
 
                 $sample = Viralsample::find($sample_id);
