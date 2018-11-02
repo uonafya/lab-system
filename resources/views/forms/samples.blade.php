@@ -853,7 +853,7 @@
                     else{
                         localStorage.setItem("new_patient", 1);
                         // $(".lockable").removeAttr("disabled");
-                        $(".lockable").val('').change();
+                        // $(".lockable").val('').change();
                         $('#pcrtype option[value=1]').attr('selected','selected').change();
                         // $("#hidden_pcr").val(1);
 
