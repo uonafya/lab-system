@@ -312,7 +312,7 @@ class WorksheetController extends Controller
             return back();
         }
 
-        if($worksheet->uploadedby != auth()->user()->id || auth()->user()->user_type_id != 0){
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
             session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();
