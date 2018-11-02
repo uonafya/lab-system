@@ -765,7 +765,7 @@
                     else{
                         localStorage.setItem("new_patient", 1);
                         // $(".lockable").removeAttr("disabled");
-                        $(".lockable").val('').change();
+                        // $(".lockable").val('').change();
 
                         $('.patient_details').remove();
                     }
