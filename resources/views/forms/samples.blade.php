@@ -717,13 +717,19 @@
         $(document).ready(function(){
             $("#rejection").hide();
 
-            @empty($sample)
+            @if(isset($sample))                
+                @if($sample->receivedstatus == 2)
+                    $("#rejection").show();
+                    $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
+                @endif
+            @else
                 $("#patient").blur(function(){
                     var patient = $(this).val();
                     var facility = $("#facility_id").val();
                     check_new_patient(patient, facility);
                 });
-            @endempty
+            @endif
 
             $("#facility_id").change(function(){
                 var val = $(this).val();
