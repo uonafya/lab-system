@@ -716,11 +716,14 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#rejection").hide();
-            $("#patient").blur(function(){
-                var patient = $(this).val();
-                var facility = $("#facility_id").val();
-                check_new_patient(patient, facility);
-            });
+
+            @empty($sample)
+                $("#patient").blur(function(){
+                    var patient = $(this).val();
+                    var facility = $("#facility_id").val();
+                    check_new_patient(patient, facility);
+                });
+            @endempty
 
             $("#facility_id").change(function(){
                 var val = $(this).val();
