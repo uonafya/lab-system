@@ -105,6 +105,9 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::prefix('cd4')->name('cd4.')->group(function(){
+
+	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
@@ -261,6 +264,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::get('users', 'UserController@index')->name('users');
 		Route::get('user/add', 'UserController@create')->name('user.add');
+		Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 		Route::get('users/activity/{user?}', 'UserController@activity')->name('user.activity');
 	});
 	Route::resource('user', 'UserController');	

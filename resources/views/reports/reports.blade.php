@@ -173,8 +173,8 @@
                                                 <td>
                                                     <select class="form-control" id="month" name="month" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Month</option>
-                                                        @for ($i = 1; $i <= 12; $i++)
-                                                            <option value="{{ $i }}">{{ date("F", mktime(null, null, null, $i)) }}</option>
+                                                        @for($i = 1; $i <= 12; ++$i)
+                                                            <option value="{{ $i }}">{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
