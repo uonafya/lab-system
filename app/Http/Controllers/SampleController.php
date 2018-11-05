@@ -390,6 +390,7 @@ class SampleController extends Controller
 
         $patient = $sample->patient;
         $data = $request->only($samples_arrays['patient']);
+        $patient->fill($data);
         $patient->pre_update();
 
         $mother = $patient->mother;
