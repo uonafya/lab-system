@@ -167,6 +167,9 @@
                                         <th rowspan="1">Date</th>
                                         <th rowspan="1">TAT</th>
                                         <th rowspan="2">Email</th>                                        
+                                        <th rowspan="2">Individual Printed</th>                                        
+                                        <th rowspan="2">Summary Printed</th>                                        
+                                        <th rowspan="2">Email</th>                                        
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
@@ -215,6 +218,20 @@
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 
+
+                                            @if($batch->dateindividualresultprinted)
+                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                            @else
+                                                <td><strong><div style='color: #ff0000;'>N</div></strong></td>
+                                            @endif 
+
+
+                                            @if($batch->datebatchprinted)
+                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                            @else
+                                                <td><strong><div style='color: #ff0000;'>N</div></strong></td>
+                                            @endif 
+
 
                                             <td> 
                                                 <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
