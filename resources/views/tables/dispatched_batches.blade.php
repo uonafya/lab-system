@@ -59,6 +59,7 @@
                         <label class="col-sm-3 control-label">Select Facility</label>
                         <div class="col-sm-9">
                             <select class="form-control" name="facility_id" id="facility_id">
+                                <option></option>
                                 @if(isset($facility) && $facility)
                                     <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
                                 @endif
@@ -71,6 +72,7 @@
                         <label class="col-sm-3 control-label">Select Subcounty</label>
                         <div class="col-sm-9">
                             <select class="form-control" name="subcounty_id" id="subcounty_id">
+                                <option></option>
                                 @foreach ($subcounties as $subcounty)
                                     <option value="{{ $subcounty->id }}"
 
@@ -90,6 +92,7 @@
                         <label class="col-sm-3 control-label">Select Partner</label>
                         <div class="col-sm-9">
                             <select class="form-control" name="partner_id" id="partner_id">
+                                <option></option>
                                 @foreach ($partners as $partner)
                                     <option value="{{ $partner->id }}"
 
@@ -172,9 +175,9 @@
                                         <th colspan="4">Test Outcomes</th>
                                         <th rowspan="1">Date</th>
                                         <th rowspan="1">TAT</th>
-                                        <th rowspan="2">Email</th>                                        
-                                        <th rowspan="2">Individual Printed</th>                                        
-                                        <th rowspan="2">Summary Printed</th>                                        
+                                        <th rowspan="2">Email</th>
+                                        <th rowspan="2">Individual Printed</th>
+                                        <th rowspan="2">Summary Printed</th>
                                         <th rowspan="2">Email</th>                                        
                                         <th rowspan="2">Task</th>
                                     </tr>
@@ -298,6 +301,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
+
             $(".my_form select").select2({
                 placeholder: "Select One",
                 allowClear: true
