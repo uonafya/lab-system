@@ -390,6 +390,7 @@ class SampleController extends Controller
 
         $patient = $sample->patient;
         $data = $request->only($samples_arrays['patient']);
+        $patient->fill($data);
         $patient->pre_update();
 
         $mother = $patient->mother;
@@ -570,6 +571,8 @@ class SampleController extends Controller
     {
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
+
+        if(!$facility_id || $facility_id == '') return null;
 
         if(env('APP_LAB') == 4){
             $fac = Facility::find($facility_id);
