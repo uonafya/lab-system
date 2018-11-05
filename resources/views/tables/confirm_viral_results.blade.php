@@ -138,6 +138,8 @@
                                             else{
                                                 $class = 'editable';
                                             }
+
+
                                             
                                             /*if($sample->repeatt == 1){
                                                 // $class = 'noneditable';
@@ -147,6 +149,7 @@
                                                 $class = 'editable';
                                             }*/
                                         }
+
                                     @endphp
 
                                     <tr>

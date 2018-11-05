@@ -134,7 +134,7 @@
                                         <td> {{ $i++ }} </td>
                                         <td> {{ $sample->id }} </td>
                                         <td>  
-                                            <a href="{{ url('patient/' . $sample->patient_id) }}">
+                                            <a href="{{ url('viralpatient/' . $sample->patient_id) }}">
                                                 {{ $sample->patient->patient }}
                                             </a>
                                         </td>
@@ -172,7 +172,11 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td> {{ $sample->result }} </td>
+                                        <td> {{ $sample->result }}  
+                                            @if(is_numeric($sample->result))
+                                                {{ $sample->units }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
