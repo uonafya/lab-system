@@ -260,7 +260,7 @@ class BatchController extends Controller
         if($facility_id) $fac = Facility::find($facility_id);
         return view('tables.dispatched_batches', [
             'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
-            'batch_complete' => 1, 
+            'batch_complete' => 1, 'to_print' => true, 
             'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
             'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
                 ->with('pageTitle', 'Samples by Batch');
@@ -275,6 +275,7 @@ class BatchController extends Controller
     public function batch_search(Request $request)
     {
         $submit_type = $request->input('submit_type');
+        $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
         $date_end = $request->input('to_date', 0);
@@ -287,6 +288,8 @@ class BatchController extends Controller
         $facility_id = $request->input('facility_id', 0);
 
         if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+
+        if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
         return redirect("batch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
