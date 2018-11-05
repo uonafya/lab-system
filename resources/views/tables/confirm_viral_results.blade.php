@@ -150,7 +150,7 @@
                                             }*/
                                         }
 
-                                            if($sample->dateapproved && $sample->dateapproved2){
+                                            if($sample->dateapproved){
                                                 $class = 'noneditable';
                                             }
                                     @endphp
