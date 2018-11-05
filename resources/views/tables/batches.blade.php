@@ -142,7 +142,11 @@
 
                                     @foreach($batches as $batch)
                                         <tr>
-                                            <td> {{ $batch->id }} </td>
+                                            <td>
+                                                <a href="{{ url($pre . 'batch/$batch->id' . ) }} ">
+                                                    {{ $batch->id }}
+                                                </a>
+                                            </td>
 
                                             @if(isset($batch_complete) && $batch_complete == 1)
                                                 <td> 
