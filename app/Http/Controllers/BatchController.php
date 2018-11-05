@@ -260,7 +260,7 @@ class BatchController extends Controller
         if($facility_id) $fac = Facility::find($facility_id);
         return view('tables.dispatched_batches', [
             'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
-            'batch_complete' => $batch_complete, 
+            'batch_complete' => 1, 
             'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
             'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
                 ->with('pageTitle', 'Samples by Batch');
