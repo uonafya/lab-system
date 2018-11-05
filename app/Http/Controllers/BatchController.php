@@ -150,6 +150,121 @@ class BatchController extends Controller
 
         return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
+    
+    public function to_print($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    {
+        $user = auth()->user();
+        $facility_user = false;
+        $date_column = "batches.datedispatched";
+        if($user->user_type_id == 5) $facility_user=true;
+
+        $s_facility_id = session()->pull('facility_search');
+        if($s_facility_id){ 
+            $myurl = url("batch/facility/{$facility_id}/{$batch_complete}"); 
+            $myurl2 = url("batch/facility/{$facility_id}"); 
+        }
+        else{ 
+            $myurl = $myurl2 =  url('batch/to_print/'); 
+        }
+
+        $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
+
+        $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->where('batch_complete', 1)
+            ->whereRaw('(datebatchprinted is null or dateindividualresultprinted is null)')
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('batches.facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
+            ->when(true, function($query) use ($facility_user){
+                if(!$facility_user) return $query->where('site_entry', '!=', 2);
+            })
+            ->orderBy('batches.datedispatched', 'desc')
+            ->paginate();
+
+        $batches->setPath(url()->current());
+
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        if($batch_ids){
+            $subtotals = Misc::get_subtotals($batch_ids, false);
+            $rejected = Misc::get_rejected($batch_ids, false);
+            $date_modified = Misc::get_maxdatemodified($batch_ids, false);
+            $date_tested = Misc::get_maxdatetested($batch_ids, false);
+        }else{
+            $subtotals = $rejected = $date_modified = $date_tested = false;
+        }
+
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
+
+            if(!$subtotals && !$rejected){
+                $total = $rej = $result = $noresult = $pos + $neg + $redraw + $failed = 0;
+            }
+            else{
+                $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+                $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+                $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+                $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+                $n = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
+                $noresult += $n;
+
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
+
+                $result = $pos + $neg + $redraw + $failed;
+            }
+
+            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+            $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->datedispatched = $batch->my_date_format('datedispatched');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = $result;
+            $batch->noresult = $noresult;
+
+            $batch->pos = $pos;
+            $batch->neg = $neg;
+            $batch->redraw = $redraw;
+            $batch->failed = $failed;
+
+            $batch->status = $batch->batch_complete;
+            $batch->approval = false;
+            return $batch;
+        });
+
+        $p = Lookup::get_partners();
+        $fac = false;
+        if($facility_id) $fac = Facility::find($facility_id);
+        return view('tables.dispatched_batches', [
+            'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
+            'batch_complete' => 1, 'to_print' => true, 
+            'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+            'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
+                ->with('pageTitle', 'Samples by Batch');
+    }
 
     public function facility_batches($facility_id, $batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
@@ -160,6 +275,7 @@ class BatchController extends Controller
     public function batch_search(Request $request)
     {
         $submit_type = $request->input('submit_type');
+        $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
         $date_end = $request->input('to_date', 0);
@@ -172,6 +288,8 @@ class BatchController extends Controller
         $facility_id = $request->input('facility_id', 0);
 
         if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+
+        if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
         return redirect("batch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }

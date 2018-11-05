@@ -79,6 +79,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::prefix('batch')->name('batch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'BatchController@index');
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@index');
+		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@facility_batches');
 		Route::post('index', 'BatchController@batch_search');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
@@ -112,6 +113,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@index');
+		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@facility_batches');
 		Route::post('index', 'ViralbatchController@batch_search');
 		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
