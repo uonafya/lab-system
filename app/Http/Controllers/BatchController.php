@@ -155,8 +155,7 @@ class BatchController extends Controller
     {
         $user = auth()->user();
         $facility_user = false;
-        $date_column = "batches.datereceived";
-        if($batch_complete == 1) $date_column = "batches.datedispatched";
+        $date_column = "batches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
         $s_facility_id = session()->pull('facility_search');
