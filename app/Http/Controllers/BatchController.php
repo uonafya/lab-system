@@ -194,9 +194,6 @@ class BatchController extends Controller
             ->when($partner_id, function($query) use ($partner_id){
                 return $query->where('facilitys.partner', $partner_id);
             })
-            ->when(true, function($query) use ($batch_complete){
-                if($batch_complete < 4) return $query;
-            })
             ->when(true, function($query) use ($facility_user){
                 if(!$facility_user) return $query->where('site_entry', '!=', 2);
             })
