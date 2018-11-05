@@ -248,18 +248,11 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
-                        <div class="form-group"><label class="col-sm-4 control-label">Comments (from facility)</label>
-                            <div class="col-sm-8">
-                                <textarea  class="form-control" name="comments">{{ $sample->comments ?? '' }}</textarea>
-                            </div>
+                        <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
+                            <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
+                                {{ $sample->labcomment ?? '' }}
+                            </textarea></div>
                         </div>
-                        @if(auth()->user()->user_type_id != 5)
-                            <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                                <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
-                                    {{ $sample->labcomment ?? '' }}
-                                </textarea></div>
-                            </div>
-                        @endif
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
