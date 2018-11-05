@@ -172,6 +172,7 @@ class ViralbatchController extends Controller
         $subtotals = $date_modified = $date_tested = null;
         $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
+        $batch_complete = 1;
 
         $s_facility_id = session()->pull('facility_search');
         if($s_facility_id){ 
@@ -290,7 +291,7 @@ class ViralbatchController extends Controller
 
         return view('tables.dispatched_viralbatches', [
             'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 
-            'batch_complete' => $batch_complete, 'to_print' => true,  
+            'batch_complete' => 1, 'to_print' => true,  
             'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
             'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])->with('pageTitle', 'Samples by Batch');
 
