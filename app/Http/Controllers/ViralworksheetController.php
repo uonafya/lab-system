@@ -245,7 +245,7 @@ class ViralworksheetController extends Controller
             return back();
         }
 
-        if($worksheet->uploadedby != auth()->user()->id){
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
             session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();
@@ -441,7 +441,7 @@ class ViralworksheetController extends Controller
             {
                 $dateoftest=date("Y-m-d", strtotime($value[3]));
 
-                $sample_id = $value[4];
+                $sample_id = trim($value[4]);
                 $result = $value[8];
                 $error = $value[10];
 
@@ -470,10 +470,11 @@ class ViralworksheetController extends Controller
                 // Viralsample::where($search)->update($data_array);
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
-                // if(env('APP_LAB') == 1) $sample_id = substr($sample_id, 0, -1);
-                // else{
-                    $sample_id = (int) $sample_id;                    
-                // }
+
+                // $sample_id = substr($sample_id, 0, -1);
+                $sample_id = (int) $sample_id;
+
+
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
