@@ -150,9 +150,6 @@
                                             }*/
                                         }
 
-                                            if($sample->dateapproved){
-                                                $class = 'noneditable';
-                                            }
                                     @endphp
 
                                     <tr>
