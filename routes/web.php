@@ -105,6 +105,9 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::prefix('cd4')->name('cd4.')->group(function(){
+
+	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
