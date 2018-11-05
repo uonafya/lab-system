@@ -318,7 +318,7 @@
         @endif
         @if(Session('testingSystem') == 'CD4')
             <li>
-                <a href="#"><span class="nav-label">Add Sample</span></a>
+                <a href="{{ url('cd4/sample/create') }}"><span class="nav-label">Add Sample</span></a>
             </li>
             <hr />
             <li>

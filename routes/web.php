@@ -107,7 +107,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('batch', 'BatchController');
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
-
+		Route::resource('sample', 'Cd4SampleController');
 	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
