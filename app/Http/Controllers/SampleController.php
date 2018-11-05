@@ -571,6 +571,8 @@ class SampleController extends Controller
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
 
+        if(!$facility_id || $facility_id == '') return null;
+
         if(env('APP_LAB') == 4){
             $fac = Facility::find($facility_id);
             $str = $fac->facilitycode . '/';
