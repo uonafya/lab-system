@@ -173,7 +173,7 @@ class BatchController extends Controller
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->where('batch_complete', 1)
-            ->whereRaw('{datebatchprinted is null or dateindividualresultprinted is null}')
+            ->whereRaw('(datebatchprinted is null or dateindividualresultprinted is null)')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
