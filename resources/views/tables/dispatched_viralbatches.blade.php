@@ -277,7 +277,10 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
-            $(".my_form select").select2(); 
+            $(".my_form select").select2({
+                placeholder: "Select One",
+                allowClear: true
+            }); 
 
             set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
