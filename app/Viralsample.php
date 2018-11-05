@@ -103,7 +103,7 @@ class Viralsample extends BaseModel
         $children = $this->child;
 
         foreach ($children as $s) {
-            $s->delete;
+            $s->delete();
         }
 
         $this->repeatt=0;
@@ -116,7 +116,7 @@ class Viralsample extends BaseModel
         $children = $parent->child;
 
         foreach ($children as $s) {
-            if($s->run > $this->run) $s->delete;            
+            if($s->run > $this->run) $s->delete();            
         }
 
         $this->repeatt=0;
