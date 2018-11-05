@@ -138,6 +138,12 @@
                                             else{
                                                 $class = 'editable';
                                             }
+
+                                            if($sample->dateapproved && $sample->dateapproved2){
+                                                $class = 'noneditable';
+                                            }
+
+
                                             
                                             /*if($sample->repeatt == 1){
                                                 // $class = 'noneditable';
