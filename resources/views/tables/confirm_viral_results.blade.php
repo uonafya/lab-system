@@ -139,10 +139,6 @@
                                                 $class = 'editable';
                                             }
 
-                                            if($sample->dateapproved && $sample->dateapproved2){
-                                                $class = 'noneditable';
-                                            }
-
 
                                             
                                             /*if($sample->repeatt == 1){
@@ -153,6 +149,10 @@
                                                 $class = 'editable';
                                             }*/
                                         }
+
+                                            if($sample->dateapproved && $sample->dateapproved2){
+                                                $class = 'noneditable';
+                                            }
                                     @endphp
 
                                     <tr>
