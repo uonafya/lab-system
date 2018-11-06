@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cd4Sample;
 use Illuminate\Http\Request;
+use App\Lookup;
 
 class Cd4SampleController extends Controller
 {
@@ -24,7 +25,8 @@ class Cd4SampleController extends Controller
      */
     public function create()
     {
-        //
+        $data = Lookup::cd4sample_form();
+        return view('forms.cd4samples', $data)->with('pageTitle', 'Add CD4 Sample');
     }
 
     /**
@@ -35,7 +37,7 @@ class Cd4SampleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**
