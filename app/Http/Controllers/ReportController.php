@@ -27,9 +27,9 @@ class ReportController extends Controller
     public function dateselect(Request $request)
     {
     	$dateString = '';
-
+        
 	    $data = self::__getDateData($request, $dateString)->get();
-    	$this->__getExcel($data, $dateString);
+        $this->__getExcel($data, $dateString);
     	
     	return back();
     }
@@ -324,12 +324,13 @@ class ReportController extends Controller
         if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
             $report .= 'tested outcomes ';
-        } else {
+        } else if ($request->input('types') == 'rejected') {
             $model = $model->where("$table.receivedstatus", "=", '2');
             $report .= 'rejected outcomes ';
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
+
         return $model->orderBy('datereceived', 'asc');
     }
 
