@@ -433,9 +433,11 @@ class Lookup
             $arv_toxicities = DB::table('arv_toxicities')->get();
             $other_medications = DB::table('other_medications')->get();
 
-            // CD4 Lookup Data
-            $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
-
+            if(env('APP_LAB') == 5) {
+                // CD4 Lookup Data
+                $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
+            }
+            
 
             $partners = DB::table('partners')->get();
             $subcounties = DB::table('districts')->get();
@@ -480,8 +482,11 @@ class Lookup
             Cache::put('arv_toxicities', $arv_toxicities, 60);
             Cache::put('other_medications', $other_medications, 60);
 
-            Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
-
+            if(env('APP_LAB') == 5) {
+                // CD4 Lookup Data
+                Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
+            }
+            
             Cache::put('partners', $partners, 60);
             Cache::put('subcounties', $subcounties, 60);
         }		
@@ -525,6 +530,11 @@ class Lookup
         Cache::forget('clinical_indications');
         Cache::forget('arv_toxicities');
         Cache::forget('other_medications');
+
+        if(env('APP_LAB') == 5) {
+            // CD4 Lookup Data
+            Cache::forget('cd4rejected_reasons');
+        }
 
         Cache::forget('partners');
         Cache::forget('subcounties');
