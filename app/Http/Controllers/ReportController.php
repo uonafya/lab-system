@@ -331,7 +331,7 @@ class ReportController extends Controller
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
 
-        return $model->orderBy('datereceived', 'asc');
+        return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
     }
 
     public static function __getExcel($data, $title)
