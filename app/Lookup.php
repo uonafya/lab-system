@@ -434,7 +434,7 @@ class Lookup
             $other_medications = DB::table('other_medications')->get();
 
             // CD4 Lookup Data
-            $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
+            // $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
 
 
             $partners = DB::table('partners')->get();
@@ -480,7 +480,7 @@ class Lookup
             Cache::put('arv_toxicities', $arv_toxicities, 60);
             Cache::put('other_medications', $other_medications, 60);
 
-            Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
+            // Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
 
             Cache::put('partners', $partners, 60);
             Cache::put('subcounties', $subcounties, 60);
