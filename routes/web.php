@@ -108,6 +108,10 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::resource('sample', 'Cd4SampleController');
+		Route::prefix('patient')->name('patient.')->group(function(){
+			Route::post('new', 'CD4PatientController@new_patient')->name('new');
+			Route::resource('/', 'CD4PatientController');
+		});
 	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
