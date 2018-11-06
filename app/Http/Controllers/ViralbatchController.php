@@ -318,6 +318,10 @@ class ViralbatchController extends Controller
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
+        if($partner_id == '') $partner_id = 0;
+        if($subcounty_id == '') $subcounty_id = 0;
+        if($facility_id == '') $facility_id = 0;
+
         if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
