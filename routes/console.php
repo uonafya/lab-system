@@ -81,7 +81,6 @@ Artisan::command('fix:noage', function(){
 Artisan::command('delete:empty-batches', function(){
     \App\Misc::delete_empty_batches();
     \App\MiscViral::delete_empty_batches();
-    $this->info($str);
 })->describe('Delete empty batches.');
 
 

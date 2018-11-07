@@ -263,7 +263,8 @@ class Common
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
-			$misc_model::check_batch($batch->id);
+			$str = $misc_model::check_batch($batch->id);
+			if($str) echo $str . "\n";
 		}
 	}
 

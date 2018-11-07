@@ -115,6 +115,10 @@ class Misc extends Common
                 $b->save();
             }
 		}
+
+        if($total < $tests){
+            return "Eid batch no " . $b->id;
+        }
 	}
 
 	public static function check_original($sample_id)
