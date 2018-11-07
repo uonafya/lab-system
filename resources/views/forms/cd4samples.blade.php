@@ -22,7 +22,7 @@
         <div>
 
         @if (isset($sample))
-            {{ Form::open(['url' => '/cd4/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+            {{ Form::open(['url' => '/cd4/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
         @else
             {{ Form::open(['url'=>'/cd4/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
         @endif
@@ -87,7 +87,7 @@
                         </div>
                         
                         <div class="form-group ampath-div">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
+                            <label class="col-sm-4 control-label">AMRS Provider Identifier</label>
                             <div class="col-sm-8">
                                 <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}">
                             </div>
@@ -111,13 +111,6 @@
                             </label>
                             <div class="col-sm-8">
                                 <input class="form-control requirable" required name="medicalrecordno" type="text" value="{{ $sample->patient->patient ?? '' }}" id="medicalrecordno">
-                            </div>
-                        </div>
-
-                        <div class="form-group ampath-div">
-                            <label class="col-sm-4 control-label">AMRS Provider Identifier</label>
-                            <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}">
                             </div>
                         </div>
 
@@ -337,10 +330,11 @@
                     $('.requirable').removeAttr("required");
                 @endif
             @else
-                $("#patient").blur(function(){
+                $("#medicalrecordno").change(function(){
                     var patient = $(this).val();
-                    var facility = $("#facility_id").val();
-                    check_new_patient(patient, facility);
+                    // console.log(patient);
+                    // var facility = $("#facility_id").val();
+                    check_new_patient(patient);
                 });
             @endif
 
@@ -387,48 +381,26 @@
 
         });
 
-        function check_new_patient(patient, facility_id){
+        function check_new_patient(patient){
             $.ajax({
                type: "POST",
                data: {
-                patient : patient,
-                facility_id : facility_id
+                patient : patient
                },
-               url: "{{ url('/sample/new_patient') }}",
+               url: "{{ url('/cd4/patient/new') }}",
 
 
-               success: function(data){
-
-                    console.log(data);
-
-                    $("#new_patient").val(data[0]);
-
-                    if(data[0] == 0){
-                        localStorage.setItem("new_patient", 0);
-                        var patient = data[1];
-                        var mother = data[2];
-                        var prev = data[3];
-
-                        console.log(patient.dob);
-
-                        $("#dob").val(patient.dob);
-                        // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
-
-                        $("#patient_name").val(patient.patient_name);
-                        $("#sex").val(patient.sex).change();
-                        $("#entry_point").val(patient.entry_point).change();
-                        $("#mother_age").val(mother.age);
-                        // $("#hiv_status").val(mother.hiv_status).change();
-                        $("#ccc_no").val(mother.ccc_no).change();
-                        $("#pcrtype").val(prev.recommended_pcr).change();
-
-                        // $('#pcrtype option[value=' + prev.recommended_pcr + ']').attr('selected','selected').change();
-                        // $("#hidden_pcr").val(2);
-
-                        // if(prev.previous_positive == 1){
-                        //     $('#pcrtype option[value=4]').attr('selected','selected').change();
-                        //     // $("#hidden_pcr").val(3); 
-                        // }
+                success: function(data){
+                    data = JSON.parse(data);
+                    if(data == null) {
+                        ("#patient_name").val();
+                        ("#dob").val();
+                        ("#sex").val();
+                        ("#hidden_patient").val();
+                    } else {
+                        $("#patient_name").val(data.patient_name);
+                        $("#dob").val(data.dob);
+                        $("#sex").val(data.sex).change();
                         $('<input>').attr({
                             type: 'hidden',
                             name: 'patient_id',
@@ -436,42 +408,9 @@
                             id: 'hidden_patient',
                             class: 'patient_details'
                         }).appendTo("#samples_form");
-
-                        if(data[4] != 0)
-                        {
-                            set_message(data[4]);
-                        }
-
-                        // $('<input>').attr({
-                        //     type: 'hidden',
-                        //     name: 'dob',
-                        //     value: patient.dob,
-                        //     class: 'patient_details'
-                        // }).appendTo("#samples_form");
-
-
-                        // $(".lockable").attr("disabled", "disabled");
                     }
-                    else{
-                        localStorage.setItem("new_patient", 1);
-                        // $(".lockable").removeAttr("disabled");
-                        // $(".lockable").val('').change();
-                        $('#pcrtype option[value=1]').attr('selected','selected').change();
-                        // $("#hidden_pcr").val(1);
-
-                        $('.patient_details').remove();
-                    }
-
                 }
             });
-
-
-
-            /*$('<input>').attr({
-                type: 'hidden',
-                id: 'foo',
-                name: 'bar'
-            }).appendTo('form');*/
 
         }
     </script>

@@ -77,6 +77,33 @@ class FacilityController extends Controller
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities With Contacts');
     }
 
+    public function lab()
+    {
+        $facilities = ViewFacility::join('batches', 'batches.facility_id', '=', 'view_facilitys.id')
+                                    ->join('viralbatches', 'viralbatches.facility_id', '=', 'view_facilitys.id')
+                                    ->selectRaw("distinct view_facilitys.id, view_facilitys.name, view_facilitys.facilitycode, view_facilitys.county, view_facilitys.subcounty, view_facilitys.email, view_facilitys.telephone, view_facilitys.telephone2")->get();
+        $table = '';
+        foreach ($facilities as $key => $facility) {
+            if ((!isset($facility->email) || $facility->email == '') || (!isset($facility->telephone) || $facility->telephone == '') || (!isset($facility->telephone2) || $facility->telephone2 == '')){
+                $contact = "<span class='label label-danger'>NO</span>";
+            } else {
+                $contact = "<span class='label label-success'>YES</span>";
+            }
+            $table .= '<tr>';
+            $table .= '<td>'.$value->facilitycode.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
+            $table .= '<td>'.$value->county.'</td>';
+            $table .= '<td>'.$value->subcounty.'</td>';
+            $table .= '<td>'.$value->email.'</td>';
+            $table .= '<td>'.$value->telephone.'</td>';
+            $table .= '<td>'.$value->telephone2.'</td>';
+            $table .= '<td>'.$contact.'</td>';
+            $table .= '</tr>';
+        }
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available']);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilites Sending Samples');
+    }
+
     public function served()
     {
         /*$facilities = DB::table('facilitys')

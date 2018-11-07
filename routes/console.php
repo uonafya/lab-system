@@ -78,7 +78,13 @@ Artisan::command('fix:noage', function(){
 })->describe('Fix no age.');
 
 
-Artisan::command('delete-pdfs', function(){
+Artisan::command('delete:empty-batches', function(){
+    \App\Misc::delete_empty_batches();
+    \App\MiscViral::delete_empty_batches();
+})->describe('Delete empty batches.');
+
+
+Artisan::command('delete:pdfs', function(){
     $str = \App\Common::delete_folder(storage_path('app/batches'));
     $this->info($str);
 })->describe('Delete pdfs from hard drive.');

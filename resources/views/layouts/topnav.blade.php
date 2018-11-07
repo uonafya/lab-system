@@ -96,6 +96,9 @@
                             <li>
                                 <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
                             </li>
+                            <li>
+                                <a href="{{ url('facility/lab') }}">Lab Facilities</a>
+                            </li>
                         @else
                             @if(!Session('pendingTasks'))
                                 <li class="">
@@ -227,6 +230,9 @@
                             </li>
                             <li>
                                 <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                     @else
                         <li class="">
