@@ -15,6 +15,7 @@ class CreateEmailsTable extends Migration
     {
         Schema::create('emails', function (Blueprint $table) {
             $table->increments('id');
+            $table->tinyInteger('county_id')->unsigned()->nullable();
             $table->string('name', 25);
             $table->string('subject', 100);
             $table->string('from_name', 50)->nullable();
