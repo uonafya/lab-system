@@ -90,13 +90,13 @@ class FacilityController extends Controller
                 $contact = "<span class='label label-success'>YES</span>";
             }
             $table .= '<tr>';
-            $table .= '<td>'.$value->facilitycode.'</td>';
-            $table .= '<td>'.$value->name.'</td>';
-            $table .= '<td>'.$value->county.'</td>';
-            $table .= '<td>'.$value->subcounty.'</td>';
-            $table .= '<td>'.$value->email.'</td>';
-            $table .= '<td>'.$value->telephone.'</td>';
-            $table .= '<td>'.$value->telephone2.'</td>';
+            $table .= '<td>'.$facility->facilitycode.'</td>';
+            $table .= '<td>'.$facility->name.'</td>';
+            $table .= '<td>'.$facility->county.'</td>';
+            $table .= '<td>'.$facility->subcounty.'</td>';
+            $table .= '<td>'.$facility->email.'</td>';
+            $table .= '<td>'.$facility->telephone.'</td>';
+            $table .= '<td>'.$facility->telephone2.'</td>';
             $table .= '<td>'.$contact.'</td>';
             $table .= '</tr>';
         }
