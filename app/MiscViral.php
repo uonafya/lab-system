@@ -420,6 +420,21 @@ class MiscViral extends Common
         return $samples;
     }
 
+    public static function delete_empty_batches()
+    {
+        $batches = \App\Viralbatch::selectRaw("viralbatches.id, count(viralsamples.id) as mycount")
+                        ->leftJoin('viralsamples', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                        ->groupBy('viralbatches.id')
+                        ->having('mycount', 0)
+                        ->get();
+
+        // return $batches->count(); 
+
+        foreach ($batches as $key => $batch) {
+            $batch->delete();
+        }
+    }
+
 
 
     public function set_justification($justification = null)
