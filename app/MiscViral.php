@@ -99,10 +99,10 @@ class MiscViral extends Common
 
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
         }
 
 
@@ -114,6 +114,7 @@ class MiscViral extends Common
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
+            Viralsample::where('batch_id', $batch_id)->whereNull('repeatt')->update(['repeatt' => 0]);
             $b = \App\Viralbatch::find($batch_id);
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
@@ -418,6 +419,21 @@ class MiscViral extends Common
             ->get();
 
         return $samples;
+    }
+
+    public static function delete_empty_batches()
+    {
+        $batches = \App\Viralbatch::selectRaw("viralbatches.id, count(viralsamples.id) as mycount")
+                        ->leftJoin('viralsamples', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                        ->groupBy('viralbatches.id')
+                        ->having('mycount', 0)
+                        ->get();
+
+        // return $batches->count(); 
+
+        foreach ($batches as $key => $batch) {
+            $batch->delete();
+        }
     }
 
 

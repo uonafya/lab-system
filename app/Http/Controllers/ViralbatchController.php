@@ -863,7 +863,7 @@ class ViralbatchController extends Controller
 
     public function individuals($batch_ids)
     {
-        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->get();
+        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->orderBy('batch_id')->get();
         $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
