@@ -42,6 +42,7 @@ margin-top: 0px;
 }
  .style7 {font-size: medium}
 .style10 {font-size: 16px}
+p.breakhere {page-break-before: always}
 </style>
 
 
@@ -251,6 +252,10 @@ margin-top: 0px;
 	</tr>
 
 </table>
+
+@if (!$loop->last)
+	<p class="breakhere"></p>
+@endif
 
 @endforeach
 
