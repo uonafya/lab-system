@@ -87,7 +87,7 @@ class FacilityController extends Controller
             if ((!isset($facility->email) || $facility->email == '') || (!isset($facility->telephone) || $facility->telephone == '') || (!isset($facility->telephone2) || $facility->telephone2 == '')){
                 $contact = "<span class='label label-danger'>Unavailable</span>";
             } else {
-                $contact = "<span class='label label-success'>Available</span>";
+                $contact = "<span class='label label-success'>Contact</span>";
             }
             $table .= '<tr>';
             $table .= '<td>'.$facility->facilitycode.'</td>';
