@@ -85,9 +85,9 @@ class FacilityController extends Controller
         $table = '';
         foreach ($facilities as $key => $facility) {
             if ((!isset($facility->email) || $facility->email == '') || (!isset($facility->telephone) || $facility->telephone == '') || (!isset($facility->telephone2) || $facility->telephone2 == '')){
-                $contact = "<span class='label label-danger'>NO</span>";
+                $contact = "<span class='label label-danger'>Unavailable</span>";
             } else {
-                $contact = "<span class='label label-success'>YES</span>";
+                $contact = "<span class='label label-success'>Available</span>";
             }
             $table .= '<tr>';
             $table .= '<td>'.$facility->facilitycode.'</td>';
