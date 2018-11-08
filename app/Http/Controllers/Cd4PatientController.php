@@ -82,4 +82,10 @@ class Cd4PatientController extends Controller
     {
         //
     }
+
+
+    public function new_patient(Request $request)
+    {
+        echo json_encode(Cd4Patient::where('medicalrecordno', '=', $request->input('patient'))->first());
+    }
 }

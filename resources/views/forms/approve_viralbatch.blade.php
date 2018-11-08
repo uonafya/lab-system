@@ -130,7 +130,8 @@
                                                     <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
                                                 </div>
                                             </td>
-                                            <td> {{ $sample->patient->patient }} </td>
+
+                                            <td> {!! $sample->patient->hyperlink !!} </td>
                                             <td> {{ $sample->patient->gender }} </td>
                                             <td> {{ $sample->age }} </td>
                                             <td> {{ $sample->patient->my_date_format('dob') }} </td>
