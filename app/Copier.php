@@ -62,6 +62,7 @@ class Copier
             unset($facility->ID);
             unset($facility->wardid);
             unset($facility->districtname);
+            unset($facility->ANC);
             $facility->save();
         }
     }
