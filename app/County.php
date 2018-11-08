@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class County extends Model
 {
 	protected $table = 'countys';
-	protected $timestamps = false;
+	public $timestamps = false;
 }
