@@ -25,6 +25,7 @@ class BaseModel extends Model
 
     public function getHyperlinkAttribute()
     {
+        $user = auth()->user();
         $c = get_class($this);
         $c = strtolower($c);
         $c = str_replace_first('app\\', '', $c);
@@ -32,6 +33,8 @@ class BaseModel extends Model
         $url = url($c . '/' . $this->id);
         if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
         if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
+
+        if(str_contains($c, 'worksheet') && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
 
         $text = $this->id;
 

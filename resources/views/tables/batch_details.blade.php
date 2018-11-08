@@ -116,11 +116,7 @@
                                     <tr>
                                         <td> {{ $i++ }} </td>
                                         <td> {{ $sample->id }} </td>
-                                        <td>  
-                                            <a href="{{ url('patient/' . $sample->patient_id) }}">
-                                                {{ $sample->patient->patient }}
-                                            </a>
-                                        </td>
+                                        <td> {!! $sample->patient->hyperlink !!} </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td> {{ $sample->age }} </td>
