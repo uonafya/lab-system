@@ -272,12 +272,13 @@
 
 		@if($loop->last)
 			@break
+		@else
+			<pagebreak sheet-size='A4-L'>
 		@endif
 
 		<!-- <div class="page-break"></div> -->
 
 		<!-- <pagebreak orientation='L' sheet-size='A4-L'> -->
-		<pagebreak sheet-size='A4-L'>
 
 	@endforeach
 
