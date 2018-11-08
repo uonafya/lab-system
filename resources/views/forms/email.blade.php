@@ -42,6 +42,7 @@
                                 <select class="form-control" name="county_id">
 
                                   <option></option>
+                                  <option value="0">All Counties</option>
                                   @foreach ($counties as $county)
                                       <option value="{{ $county->id }}"
 
