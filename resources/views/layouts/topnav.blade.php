@@ -94,7 +94,7 @@
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
                             <li>
-                                <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                                <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                         @else
                             @if(!Session('pendingTasks'))
@@ -128,7 +128,7 @@
                                     <a href="{{ url('facility') }}">Facilities</a>
                                 </li>
                                 <li>
-                                    <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                                    <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
                                 <li class="">
                                     <a href="{{ route('reports') }}">Reports</a>
@@ -226,7 +226,7 @@
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
                             <li>
-                                <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                                <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                     @else
                         <li class="">
@@ -268,6 +268,9 @@
                         </li>
                         <li class="">
                             <a href="{{ url('facility') }}">Facilities</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                         </li>
                         <li class="">
                             <a href="{{ route('reports') }}">Reports</a>

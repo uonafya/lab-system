@@ -97,10 +97,10 @@ class Misc extends Common
 		}
 		$double_approval = \App\Lookup::$double_approval; 
 		if(in_array(env('APP_LAB'), $double_approval)){
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
 		}
 		else{
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
 		}
 		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
 		$tests = Sample::where('batch_id', $batch_id)
@@ -109,6 +109,7 @@ class Misc extends Common
 		->count();
 
 		if($total == $tests){
+            Sample::where('batch_id', $batch_id)->whereNull('repeatt')->update(['repeatt' => 0]);
             $b = \App\Batch::find($batch_id);
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 

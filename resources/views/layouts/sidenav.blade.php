@@ -81,6 +81,12 @@
                     </a>
                 </li>
                 <hr />
+                @if(env('APP_LAB') == 4)
+                    <li><a href=" {{ url('batch/to_print') }}">Batches Due For Printing</span>
+                        </a>
+                    </li>
+                    <hr />
+                @endif
             @endif
             @if (session('testingSystem') == 'Viralload')
                 <!-- <li>
@@ -151,6 +157,12 @@
                     <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
                 </li>
                 <hr />
+                @if(env('APP_LAB') == 4)
+                    <li><a href=" {{ url('viralbatch/to_print') }}">Batches Due For Printing</span>
+                        </a>
+                    </li>
+                    <hr />
+                @endif
             @endif
             @if (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
@@ -306,7 +318,7 @@
         @endif
         @if(Session('testingSystem') == 'CD4')
             <li>
-                <a href="#"><span class="nav-label">Add Sample</span></a>
+                <a href="{{ url('cd4/sample/create') }}"><span class="nav-label">Add Sample</span></a>
             </li>
             <hr />
             <li>
