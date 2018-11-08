@@ -63,6 +63,7 @@ class Copier
             unset($facility->wardid);
             unset($facility->districtname);
             unset($facility->ANC);
+            unset($facility->{'Column 33'});
             $facility->save();
         }
     }
