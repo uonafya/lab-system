@@ -124,6 +124,7 @@
 				<th><b>Test Result </b></th>
 				<th><b>TAT</b></th>
 			</tr>
+			<?php $i=1; ?>
 			@foreach($batch->sample as $key => $sample)
 				@if($sample->receivedstatus == 2)
 					@php  
@@ -133,7 +134,7 @@
 				@endif
 				@continue($sample->repeatt == 1)
 				<tr>
-					<td>{{ ($key+1) }} </td>
+					<td>{{ ($i++) }} </td>
 					<td>{{ $sample->patient->patient ?? '' }} </td>
 					<td>{{ $sample->patient->my_date_format('dob') }} &nbsp; ({{ $sample->age }})</td>
 					<td>{{ $sample->patient->gender ?? '' }} </td>
