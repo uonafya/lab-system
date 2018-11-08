@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Email;
+use App\County;
 use Illuminate\Http\Request;
 
 class EmailController extends Controller
@@ -14,7 +15,7 @@ class EmailController extends Controller
      */
     public function index()
     {
-        $emails = Email::all();
+        $emails = Email::with(['county'])->get();
         return view('tables.emails', ['emails' => $emails]);
     }
 
@@ -25,7 +26,8 @@ class EmailController extends Controller
      */
     public function create()
     {
-        return view('forms.email');
+        $counties = \App\County::all();
+        return view('forms.email', ['counties' => $counties]);
     }
 
     /**
@@ -65,7 +67,8 @@ class EmailController extends Controller
      */
     public function edit(Email $email)
     {
-        return view('forms.email', ['email' => $email]);
+        $counties = \App\County::all();
+        return view('forms.email', ['email' => $email, 'counties' => $counties]);
     }
 
     /**

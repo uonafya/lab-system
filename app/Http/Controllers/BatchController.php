@@ -706,6 +706,7 @@ class BatchController extends Controller
     {
         if(!$batch->datebatchprinted){
             $batch->datebatchprinted = date('Y-m-d');
+            $batch->printedby = auth()->user()->id;
             $batch->pre_update();
         }
 
@@ -743,6 +744,7 @@ class BatchController extends Controller
         foreach ($batches as $key => $batch) {
             if(!$batch->datebatchprinted){
                 $batch->datebatchprinted = date('Y-m-d');
+                $batch->printedby = auth()->user()->id;
                 $batch->pre_update();
             }
         }
@@ -765,6 +767,8 @@ class BatchController extends Controller
         $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_lookups();
         $data['samples'] = $samples;
+
+        Batch::whereIn('id', $batch_ids)->update(['dateindividualresultprinted' => date('Y-m-d')]);
 
         return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
     }
