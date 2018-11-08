@@ -53,7 +53,8 @@ class Copier
         $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         foreach ($facilities as $key => $value) {
-            // $fac = Facility::find($value->ID);
+            $fac = Facility::find($value->ID);
+            if($fac) continue;
 
             $facility = new Facility;
             $facility->fill(get_object_vars($value));
