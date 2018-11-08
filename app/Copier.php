@@ -58,7 +58,6 @@ class Copier
             $facility = new Facility;
             $facility->fill(get_object_vars($value));
             $facility->id = $value->ID;
-            $facility->ward_id = $value->wardid;
             $facility->synched=0;
             unset($facility->ID);
             unset($facility->wardid);
