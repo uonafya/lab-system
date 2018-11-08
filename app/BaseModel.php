@@ -22,6 +22,25 @@ class BaseModel extends Model
         //     $builder->where('synched', '!=', 3);
         // });
     }
+
+    public function getHyperlinkAttribute()
+    {
+        $c = get_class($this);
+        $c = strtolower($c);
+        $c = str_replace_first('app\\', '', $c);
+
+        $url = url($c . '/' . $this->id);
+        if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
+        if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
+
+        $text = $this->id;
+
+        if(str_contains($c, 'patient')) $text = $this->patient;
+
+        $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
+
+        return $full_link;
+    }
     
 
     protected function date_modifier($value)
