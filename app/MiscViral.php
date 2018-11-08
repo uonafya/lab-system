@@ -19,8 +19,8 @@ class MiscViral extends Common
 
     protected $rcategories = [
         '0' => [],
-        '1' => ['Target Not Detected',  ],
-        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', ],
+        '1' => [],
+        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
@@ -33,11 +33,11 @@ class MiscViral extends Common
         ],
         [
             'search_array' =>   ['< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
         ],
         [
             'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
         ],
         [
             'search_array' =>  ['REJECTED'],
