@@ -13,6 +13,16 @@ class Email extends BaseModel
 {
     use SoftDeletes;
 
+    public function county()
+    {
+        return $this->belongsTo('App\County');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     /**
      * Get the user's full name
      *

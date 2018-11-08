@@ -335,10 +335,9 @@
 
 		@if($loop->last)
 			@break
-		@endif
-
-
-		<pagebreak sheet-size='A4-L'>
+		@else
+			<pagebreak sheet-size='A4-L'>
+		@endif		
 
 	@endforeach
 
