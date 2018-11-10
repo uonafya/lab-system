@@ -371,7 +371,7 @@ class Common
 
 		$samples = $view_model::select('id', 'dob', 'datecollected')
 								->whereNotNull('dob')
-								->whereNull('age')
+								->whereRaw("(age is null or age=0)")
 								->get();
 
 		foreach ($samples as $sample) {
