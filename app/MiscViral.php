@@ -245,6 +245,11 @@ class MiscViral extends Common
             $res= "< LDL copies/ml";
             $interpretation= $result;       
         }
+        else if(str_contains($result, ['<']))
+        {
+            $res= "< LDL copies/ml";
+            $interpretation= $result;       
+        }
 
         else if(str_contains($str, ['not detected']))
         {
