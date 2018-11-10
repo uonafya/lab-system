@@ -240,7 +240,7 @@ class MiscViral extends Common
         $units="";
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '839', '150']))
+        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;       
