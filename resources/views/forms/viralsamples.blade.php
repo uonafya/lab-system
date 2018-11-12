@@ -63,9 +63,7 @@
                         
                         @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">High Priority
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
+                                <label class="col-sm-4 control-label">High Priority</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="highpriority" value="1"
                                     @if(isset($viralsample) && $viralsample->batch->highpriority)
