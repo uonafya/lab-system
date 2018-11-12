@@ -21,7 +21,7 @@
    <div class="content">
         <div>
 
-        @if(isset($type))
+        @if(isset($type) && $type == 'viralload')
             {{ Form::open(['url'=>'/viralsample/upload', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
         @else
             {{ Form::open(['url'=>'/sample/upload', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
