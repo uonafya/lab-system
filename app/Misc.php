@@ -361,12 +361,31 @@ class Misc extends Common
 				'recipient' => '254702266217',
 				'message' => 'This is a successful test.',
 			],
-
 		]);
 
 		$body = json_decode($response->getBody());
 		echo 'Status code is ' . $response->getStatusCode();
 		// dd($body);
+    }
+
+    public static function sms_random($number, $message)
+    {
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'debug' => true,
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $number,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        echo 'Status code is ' . $response->getStatusCode();
+        // dd($body);
     }
 
     public static function get_worksheet_samples($machine_type, $temp_limit=null)
