@@ -48,6 +48,10 @@ class Email extends BaseModel
         $this->save_blade();
         ini_set("memory_limit", "-1");
         $facilities = \App\Facility::where('flag', 1)->get();
+
+        if($this->county_id){
+            $facilities = \App\Facility::where('flag', 1)->whereRaw("id IN (select id from view_facilitys where county_id = {$this->county_id})")->get();
+        }
         
         $this->sent = true;
         $this->save();
