@@ -198,7 +198,7 @@ class BatchController extends Controller
                 if(!$facility_user) return $query->where('site_entry', '!=', 2);
             })
             ->orderBy('batches.datedispatched', 'desc')
-            ->paginate();
+            ->paginate(50);
 
         $batches->setPath(url()->current());
 

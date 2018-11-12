@@ -62,6 +62,14 @@
                 </li> -->
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
                 <hr />
+                @if(env('APP_LAB') == 8 || env('APP_LAB') == 9)
+                    <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
+                    <hr />
+                    <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
+                    <hr />
+                    <li><a href="{{ url('worksheet/create/2/70') }}">Create Abbott Worksheet(72)</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
                 <!-- <li>
@@ -130,11 +138,19 @@
                 </li> -->
                 <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
                 <hr />
+                @if(in_array(env('APP_LAB'), [8, 9]))
+                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/21') }}">Create Abbott Worksheet(24)</a></li>
+                    <hr />
+                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>
+                    <hr />
+                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/69') }}">Create Abbott Worksheet(72)</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('viralworksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
                 <hr />
-                @if(env('APP_LAB') != 6)
+                @if(!in_array(env('APP_LAB'), [6, 8, 9]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
