@@ -55,12 +55,12 @@
                             <div class="col-sm-8">
                                 <select class="form-control input-sm" required name="platform" id="platform">
                                     <option value="" selected>Select Platform</option>
-                                    @if($data->taqmandeliveries == 0)
+                                    {{-- @if($data->taqmandeliveries == 0) --}}
                                     <option value="1">COBAS/TAQMAN</option>
-                                    @endif
-                                    @if($data->abbottdeliveries == 0)
+                                    {{-- @endif
+                                    @if($data->abbottdeliveries == 0) --}}
                                     <option value="2">ABBOTT</option>
-                                    @endif
+                                    {{-- @endif --}}
                                 </select>
                             </div>
                         </div>
