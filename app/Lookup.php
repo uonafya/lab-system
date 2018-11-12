@@ -262,9 +262,10 @@ class Lookup
     public static function eid_intervention($val)
     {
         self::cacher();       
-        $my_array = Cache::get('interventions');       
-        return $my_array->where('rank', $val)->first()->id ?? 7;
-    }  
+        $my_array = Cache::get('interventions');   
+        if(is_numeric($val)) return $my_array->where('rank', $val)->first()->id ?? 7;   
+        return $my_array->where('alias', $val)->first()->id ?? 7;
+    } 
 
     public static function samples_arrays()
     {

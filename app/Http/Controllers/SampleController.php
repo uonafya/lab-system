@@ -765,10 +765,10 @@ class SampleController extends Controller
 
             $facility = Facility::locate($row[5])->get()->first();
             if(!$facility) continue;
-            $datecollected = Lookup::normal_date($row[2]);
+            $datecollected = Lookup::normal_date($row[1]);
             $datereceived = Lookup::normal_date($row[20]);
             if(!$datereceived) $datereceived = date('Y-m-d');
-            $existing = SampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+            $existing = SampleView::existing(['facility_id' => $facility->id, 'patient' => $row[3], 'datecollected' => $datecollected])->get()->first();
 
             if($existing) continue;
 
@@ -834,10 +834,10 @@ class SampleController extends Controller
             $sample->age = Lookup::calculate_age($datecollected, $patient->dob);
             $sample->redraw = $row[7];
             $sample->pcrtype = $row[6];
-            $sample->regimen = $row[11];
+            $sample->regimen = Lookup::eid_regimen($row[11]);
             $sample->feeding = $row[12];
             $sample->mother_age = $row[14];
-            $sample->mother_prophylaxis = $row[16];
+            $sample->mother_prophylaxis = Lookup::eid_intervention($row[16]);
             $sample->mother_last_result = $row[17];
 
             $my = new \App\MiscViral;
