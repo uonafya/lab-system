@@ -44,6 +44,24 @@ class Lookup
         }        
     }
 
+    public static function normal_date($value)
+    {
+        if(!$value) return null;
+
+        try {
+            $d = Carbon::parse($value);
+            return $d->toDateString();
+        } catch (Exception $e) {
+            try {
+                $d = Carbon::createFromFormat('m/d/y', $value);
+                return $d->toDateString();                
+            } catch (Exception $ee) {
+                return null;
+            }
+            return null;
+        }        
+    }
+
     public static function get_gender($value)
     {
         $value = trim($value);

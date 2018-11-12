@@ -253,6 +253,9 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('print/{sample}', 'SampleController@individual');
 		Route::get('runs/{sample}', 'SampleController@runs');
 
+		Route::get('upload', 'SampleController@site_sample_page');
+		Route::post('upload', 'SampleController@upload_site_samples');
+
 		Route::get('sms_log', 'SampleController@list_sms');
 		Route::get('sms/{sample}', 'SampleController@send_sms');
 

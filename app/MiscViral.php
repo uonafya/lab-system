@@ -478,6 +478,7 @@ class MiscViral extends Common
         }
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
+        if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
