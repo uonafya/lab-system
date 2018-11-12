@@ -60,6 +60,22 @@
                               </div>
                           </div>
                         @else
+                        
+                        @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">High Priority
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                    @if(isset($viralsample) && $viralsample->batch->highpriority)
+                                        checked
+                                    @endif
+
+                                 />
+                                </div>
+                            </div>
+                        @endif
 
                             <div class="alert alert-success">
                                 <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
@@ -497,11 +513,10 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
-
 
                     </div>
                 </div>

@@ -44,6 +44,24 @@ class Lookup
         }        
     }
 
+    public static function normal_date($value)
+    {
+        if(!$value) return null;
+
+        try {
+            $d = Carbon::parse($value);
+            return $d->toDateString();
+        } catch (Exception $e) {
+            try {
+                $d = Carbon::createFromFormat('m/d/y', $value);
+                return $d->toDateString();                
+            } catch (Exception $ee) {
+                return null;
+            }
+            return null;
+        }        
+    }
+
     public static function get_gender($value)
     {
         $value = trim($value);
@@ -244,9 +262,10 @@ class Lookup
     public static function eid_intervention($val)
     {
         self::cacher();       
-        $my_array = Cache::get('interventions');       
-        return $my_array->where('rank', $val)->first()->id ?? 7;
-    }  
+        $my_array = Cache::get('interventions');   
+        if(is_numeric($val)) return $my_array->where('rank', $val)->first()->id ?? 7;   
+        return $my_array->where('alias', $val)->first()->id ?? 7;
+    } 
 
     public static function samples_arrays()
     {

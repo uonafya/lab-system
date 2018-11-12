@@ -199,7 +199,12 @@
                             </div>
 
                             <div class="col-sm-3">
-                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Tick only if sample redraw </label>
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1
+                                    @if(isset($sample) && $sample->redraw == 1)
+                                        checked
+                                    @endif
+
+                                 > Tick only if sample redraw </label>
                             </div>
 
                         </div>

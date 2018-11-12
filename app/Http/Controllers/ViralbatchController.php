@@ -214,7 +214,7 @@ class ViralbatchController extends Controller
                 if(!$facility_user) return $query->where('site_entry', '!=', 2);
             })
             ->orderBy('viralbatches.datedispatched', 'desc')
-            ->paginate();
+            ->paginate(50);
 
         $batches->setPath(url()->current());
 
