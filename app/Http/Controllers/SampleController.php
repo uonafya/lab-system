@@ -770,7 +770,7 @@ class SampleController extends Controller
             if(!$datereceived) $datereceived = date('Y-m-d');
             $existing = SampleView::existing(['facility_id' => $facility->id, 'patient' => $row[3], 'datecollected' => $datecollected])->get()->first();
 
-            if($existing) continue;
+            // if($existing) continue;
 
             $site_entry = Lookup::get_site_entry($row[19]);
 
