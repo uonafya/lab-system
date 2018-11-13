@@ -25,6 +25,12 @@
             <a href="{{ url('viralworksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
             </a>
+            @if(env('APP_LAB') == 9)
+                |
+                <a href="{{ url('viralworksheet/index/11') }}" title="EMR (IQCare) Worksheets">
+                    EMR (IQCare) Worksheets
+                </a>
+            @endif
         </div>
     </div>
 
