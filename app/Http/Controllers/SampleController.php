@@ -747,6 +747,114 @@ class SampleController extends Controller
         return back();
     }
 
+    public function site_sample_page()
+    {
+        return view('forms.upload_site_samples', ['type' => 'eid'])->with('pageTitle', 'Upload Facility Samples');
+    }
+
+    public function upload_site_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/eid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+
+            $facility = Facility::locate($row[5])->get()->first();
+            if(!$facility) continue;
+            $datecollected = Lookup::other_date($row[1]);
+            $datereceived = Lookup::other_date($row[20]);
+            if(!$datereceived) $datereceived = date('Y-m-d');
+            $existing = SampleView::existing(['facility_id' => $facility->id, 'patient' => $row[3], 'datecollected' => $datecollected])->get()->first();
+
+            // if($existing) continue;
+
+            $site_entry = Lookup::get_site_entry($row[19]);
+
+            $batch = Batch::withCount(['sample'])
+                                    ->where('received_by', auth()->user()->id)
+                                    ->where('datereceived', $datereceived)
+                                    ->where('input_complete', 0)
+                                    ->where('site_entry', $site_entry)
+                                    ->where('facility_id', $facility->id)
+                                    ->get()->first();
+
+            if($batch){
+                if($batch->sample_count > 9){
+                    unset($batch->sample_count);
+                    $batch->full_batch();
+                    $batch = null;
+                }
+            }
+
+            if(!$batch){
+                $batch = new Batch;
+                $batch->user_id = $facility->facility_user->id;
+                $batch->facility_id = $facility->id;
+                $batch->received_by = auth()->user()->id;
+                $batch->lab_id = auth()->user()->lab_id;
+                $batch->datereceived = $datereceived;
+                $batch->site_entry = $site_entry;
+                $batch->save();
+            }
+
+            $patient = Patient::existing($facility->id, $row[3])->get()->first();
+            if(!$patient){
+                $patient = new Patient;
+                $mother = new Mother;
+            }
+            else{
+                $mother = $patient->mother;
+            }
+            $dob = Lookup::other_date($row[8]);
+            if (!$dob && strlen($row[8]) == 4) $dob = $row[8] . '-01-01';
+
+            $mother->facility_id = $facility->id;
+            $mother->ccc_no = $row[15];
+            $mother->mother_dob = Lookup::calculate_dob($datecollected, $row[14]);
+            $mother->save();
+
+            if($dob) $patient->dob = $dob;            
+            $patient->facility_id = $facility->id;
+            $patient->mother_id = $mother->id;
+            $patient->patient = $row[3];
+            $patient->patient_name = $row[2];
+            $patient->entry_point = $row[10];
+            $patient->sex = $row[9];
+            $patient->ccc_no = $row[13];
+            $patient->pre_update();
+
+            $sample = new Sample;
+            $sample->batch_id = $batch->id;
+            $sample->patient_id = $patient->id;
+            $sample->datecollected = $datecollected;
+            $sample->age = Lookup::calculate_age($datecollected, $patient->dob);
+            $sample->redraw = $row[7];
+            $sample->pcrtype = $row[6];
+            $sample->regimen = Lookup::eid_regimen($row[11]);
+            $sample->feeding = $row[12];
+            $sample->mother_age = $row[14];
+            $sample->mother_prophylaxis = Lookup::eid_intervention($row[16]);
+            $sample->mother_last_result = $row[17];
+
+            $my = new \App\MiscViral;
+            $res = $my->set_rcategory($sample->mother_last_result);
+            $sample->mother_last_rcategory = $res['rcategory'] ?? null;
+
+            $sample->spots = $row[18];
+
+            $sample->receivedstatus = $row[21];
+            if(is_numeric($row[22])) $sample->rejectedreason = $row[22];
+            $sample->save();
+            $created_rows++;
+        }
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
+    }
+
     public function search(Request $request)
     {
         $user = auth()->user();

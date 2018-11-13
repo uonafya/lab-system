@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Excel;
 
 use App\Common;
 use App\Viralsample;
@@ -478,8 +479,9 @@ class MiscViral extends Common
         }
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
+        if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
         $data = $this->get_rcategory($result);
-        // if(!isset($data['rcategory'])) dd($result);
+        if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
@@ -685,9 +687,11 @@ class MiscViral extends Common
         // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
 
         $limit = $machine->vl_limit;
-        if($calibration) $limit = $machine->vl_calibration_limit;
 
         if($temp_limit) $limit = $temp_limit;
+
+        // if($calibration) $limit = $machine->vl_calibration_limit;
+        // if($calibration) $limit = $temp_limit - 11;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;
@@ -745,9 +749,10 @@ class MiscViral extends Common
 
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
+        if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-            'count' => $count,
+            'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];
@@ -811,6 +816,58 @@ class MiscViral extends Common
             $batch->save();
             // break;
         }
+    }
+
+    public static function dump_worksheet($worksheet_id)
+    {
+        $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
+
+        $data = [];
+        $failed = [];
+
+        foreach ($samples as $key => $sample) {
+            $res = strtolower($sample->result);
+            if(str_contains($res, ['ldl', 'target'])) $res = 0.01;
+            $row = [
+                'Specimen Lab ID' => $sample->id,
+                'IP Code' => $sample->patient,
+                'Name' => $sample->facilityname,
+                'Facility Code' => $sample->facilitycode,
+                'Gender' => $sample->gender,
+                'DOB' => $sample->dob,
+                'Age' => $sample->age,
+                'Sample Type' => $sample->sampletype,
+                'Date Collected' => $sample->datecollected,
+                'Prophylaxis' => $sample->prophylaxis,
+                'Current ART Start Date' => $sample->dateinitiatedonregimen,
+                'Initiation Date' => $sample->initiation_date,
+                'Justification' => $sample->justification,
+                'Date Received' => $sample->datereceived,
+                'Date Run' => $sample->datetested,
+                'Result' => $sample->interpretation,
+                'Interpretation (Final Result)' => $sample->result,
+                'Final Result (for IQC Upload)' => $res,
+            ];
+            if(str_contains($res, ['failed', 'collect'])){
+                $failed[] = $row;
+                continue;
+            }
+            $data[] = $row;
+        }
+
+        foreach ($failed as $row) {
+            $data[] = $row;
+        }
+
+        $filename = $worksheet_id . '.csv';
+
+        if(file_exists($filename)) unlink($filename);
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
     }
     
 }

@@ -77,12 +77,12 @@
                             <li class="">
                                 <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
                             </li>
-                            <li class="">
+                            <!-- <li class="">
                                 <a href="#">EID Reports</a>
                             </li>
                             <li class="">
                                 <a href="#">VL Reports</a>
-                            </li>
+                            </li> -->
                         @elseif(Auth::user()->user_type_id == 2)
                             <li>
                                 <a href="{{ url('home') }}">Home</a>
@@ -209,12 +209,12 @@
                         <li class="">
                             <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
                         </li>
-                        <li class="">
+                        <!-- <li class="">
                             <a href="#">EID Reports</a>
                         </li>
                         <li class="">
                             <a href="#">VL Reports</a>
-                        </li>
+                        </li> -->
                     @elseif(Auth::user()->user_type_id == 2)
                             <li>
                                 <a href="{{ url('home') }}">Home</a>

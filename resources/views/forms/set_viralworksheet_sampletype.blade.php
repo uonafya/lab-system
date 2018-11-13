@@ -28,15 +28,33 @@
                     </div>
                     <div class="panel-body">
                         <input type="hidden" name="machine_type" value="{{ $machine_type }}">
+                        @if($limit)
+                            <input type="hidden" name="limit" value="{{ $limit }}">
+                        @endif
+
                         @if($calibration)
                             <input type="hidden" name="calibration" value="{{ $calibration }}">
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Calibration Sample Number</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control lockable" required name="limit" id="limit">
+                                        <option></option>
+                                        <option value="13">24</option>
+                                        <option value="37">48</option>
+                                        <option value="61">72</option>
+                                        <option value="85">96</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         @endif
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Worksheet Sample Type</label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable" required name="sampletype" id="sampletype">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($worksheet_sampletypes as $worksheet_sampletype)
                                         <option value="{{ $worksheet_sampletype->id }}"> {{ $worksheet_sampletype->name }} </option>
                                     @endforeach
