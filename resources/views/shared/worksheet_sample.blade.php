@@ -33,7 +33,7 @@
 	{{ $sample->id }}
 
 	@if(env('APP_LAB') == 9)
-		{{ ++$i }}
+		{{ $i }}
 	@endif
 
 
