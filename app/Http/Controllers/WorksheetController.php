@@ -169,12 +169,12 @@ class WorksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Worksheet;
-        $worksheet->fill($request->except('_token'));
+        $worksheet->fill($request->except('_token', 'limit'));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $data = Misc::get_worksheet_samples($worksheet->machine_type);
+        $data = Misc::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
         if(!$data || !$data['create']){
             $worksheet->delete();
@@ -201,7 +201,7 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples];
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
@@ -264,7 +264,7 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');

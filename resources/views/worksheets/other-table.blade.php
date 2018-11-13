@@ -113,7 +113,7 @@ width:1180px;
 
 				@foreach($samples->where('parentid', '!=', 0) as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample])
+					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@php $count++; @endphp
 
@@ -126,7 +126,7 @@ width:1180px;
 
 				@foreach($samples->where('parentid', 0) as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample])
+					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@php $count++; @endphp
 
