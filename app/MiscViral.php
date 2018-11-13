@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Excel;
 
 use App\Common;
 use App\Viralsample;
@@ -813,6 +814,47 @@ class MiscViral extends Common
             $batch->save();
             // break;
         }
+    }
+
+    public static function dump_worksheet($worksheet_id)
+    {
+        $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
+
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $row = [
+                'Specimen Lab ID' => $sample->id,
+                'IP Code' => $sample->patient,
+                'Name' => $sample->facilityname,
+                'Facility Code' => $sample->facilitycode,
+                'Gender' => $sample->gender,
+                'DOB' => $sample->dob,
+                'Age' => $sample->age,
+                'Sample Type' => $sample->sampletype,
+                'Date Collected' => $sample->datecollected,
+                'Prophylaxis' => $sample->prophylaxis,
+                'Current ART Start Date' => $sample->dateinitiatedonregimen,
+                'Initiation Date' => $sample->initiation_date,
+                'Justification' => $sample->justification,
+                'Date Received' => $sample->datereceived,
+                'Date Run' => $sample->datetested,
+                'Result' => $sample->interpretation,
+                'Interpretation (Final Result)' => $sample->result,
+                'Final Result (for IQC Upload)' => $sample->result,
+            ];
+            $data[] = $row;
+        }
+
+        $filename = $worksheet_id . '.csv';
+
+        if(file_exists($filename)) unlink($filename);
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->store('csv');
     }
     
 }

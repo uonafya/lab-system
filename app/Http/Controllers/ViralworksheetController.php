@@ -110,6 +110,7 @@ class ViralworksheetController extends Controller
         $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype);
 
         if(!$data || !$data['create']){
+            dd($data);
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
             return back();            
@@ -595,6 +596,9 @@ class ViralworksheetController extends Controller
 
             if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
         }
+
+        // if(env('APP_LAB') == 9) MiscViral::dump_worksheet($worksheet->id);
+        // $random_var = true;
 
         if(in_array(env('APP_LAB'), $double_approval)){
             if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
