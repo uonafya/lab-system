@@ -25,6 +25,12 @@
             <a href="{{ url('viralworksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
             </a>
+            @if(env('APP_LAB') == 9)
+                |
+                <a href="{{ url('viralworksheet/index/11') }}" title="EMR (IQCare) Worksheets">
+                    EMR (IQCare) Worksheets
+                </a>
+            @endif
         </div>
     </div>
 
@@ -148,7 +154,7 @@
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
-                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id, 'machine_type' => $worksheet->machine_type])
+                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id, 'machine_type' => $worksheet->machine_type, 'worksheet' => $worksheet])
                                     </td>
                                 </tr>
                             @endforeach

@@ -35,6 +35,10 @@
 
 @elseif($worksheet_status == 3)
 
+	@if(env('APP_LAB') == 9)
+		{!! $worksheet->dump_link !!}
+	@endif
+
 	<a href="{{ url('viralworksheet/approve/' . $worksheet_id) }}" title="Click to view Samples in this Worksheet" target='_blank'>
 		View Results
 	</a> | 

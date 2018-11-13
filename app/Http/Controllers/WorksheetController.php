@@ -169,12 +169,12 @@ class WorksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Worksheet;
-        $worksheet->fill($request->except('_token'));
+        $worksheet->fill($request->except('_token', 'limit'));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $data = Misc::get_worksheet_samples($worksheet->machine_type);
+        $data = Misc::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
         if(!$data || !$data['create']){
             $worksheet->delete();
