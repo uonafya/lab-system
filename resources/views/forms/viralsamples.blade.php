@@ -168,7 +168,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth
+                            <label class="col-sm-4 control-label">Date Of Birth
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
@@ -616,9 +616,18 @@
         @endslot
 
 
-        $(".date:not(#datedispatched, #dateinitiatedontreatment)").datepicker({
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
             startView: 0,
             todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#dob").datepicker({
+            startView: 2,
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,

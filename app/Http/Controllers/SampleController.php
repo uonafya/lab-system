@@ -765,8 +765,8 @@ class SampleController extends Controller
 
             $facility = Facility::locate($row[5])->get()->first();
             if(!$facility) continue;
-            $datecollected = Lookup::normal_date($row[1]);
-            $datereceived = Lookup::normal_date($row[20]);
+            $datecollected = Lookup::other_date($row[1]);
+            $datereceived = Lookup::other_date($row[20]);
             if(!$datereceived) $datereceived = date('Y-m-d');
             $existing = SampleView::existing(['facility_id' => $facility->id, 'patient' => $row[3], 'datecollected' => $datecollected])->get()->first();
 

@@ -64,4 +64,15 @@ class Viralworksheet extends BaseModel
         if($this->sampletype == 1) return "DBS";
         if($this->sampletype == 2) return "Plasma / EDTA";
     }
+
+    public function getDumpLinkAttribute()
+    {
+        if(env('APP_LAB') == 9){
+            $s = \App\ViralsampleView::where('worksheet_id', $this->id)->whereIn('facility_id', [50001, 3475])->first();
+            if(!$s) return '';
+            $url = url('viralworksheet/download_dump/' . $this->id);
+            return "<a href='{$url}'> Download For EMR (IQCare) </a> |";
+        }
+        return '';
+    }
 }

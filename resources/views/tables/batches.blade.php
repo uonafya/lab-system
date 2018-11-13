@@ -177,9 +177,9 @@
                                             <td> {{ $batch->tat() }} </td>
                                             <td> 
                                                 @if($batch->batch_complete)
-                                                    Complete
+                                                    <strong><div style='color: #00ff00;'>Complete</div></strong>
                                                 @else
-                                                    In-Process
+                                                    <strong><div style='color: #ff0000;'>In-Process</div></strong>
                                                 @endif
                                             </td>
 
