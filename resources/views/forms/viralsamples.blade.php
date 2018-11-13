@@ -615,10 +615,8 @@
             }
         @endslot
 
-
-        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
-            startView: 0,
-            todayBtn: "linked",
+        $("#dob").datepicker({
+            startView: 3,
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
@@ -626,8 +624,9 @@
             format: "yyyy-mm-dd"
         });
 
-        $("#dob").datepicker({
-            startView: 3,
+
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
+            startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
