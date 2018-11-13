@@ -58,11 +58,13 @@ class ViralworksheetController extends Controller
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
-    public function set_sampletype_form($machine_type, $calibration=false)
+    public function set_sampletype_form($machine_type, $calibration=false, $limit=false)
     {
         $data = Lookup::worksheet_lookups();
         $data['machine_type'] = $machine_type;
         $data['calibration'] = $calibration;
+        $data['limit'] = $limit;
+
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
     }
 
@@ -70,8 +72,9 @@ class ViralworksheetController extends Controller
     {
         $sampletype = $request->input('sampletype');
         $machine_type = $request->input('machine_type');
-        $calibration = $request->input('calibration');
-        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}");
+        $calibration = $request->input('calibration', 0);
+        $limit = $request->input('limit');
+        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}");
     }
 
     /**
@@ -79,9 +82,9 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($sampletype, $machine_type=2, $calibration=false)
+    public function create($sampletype, $machine_type=2, $calibration=false, $limit=false)
     {
-        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype);
+        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype, $limit);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
