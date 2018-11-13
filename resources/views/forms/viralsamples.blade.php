@@ -625,7 +625,7 @@
         });
 
 
-        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
+        /*$(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -633,7 +633,7 @@
             autoclose: true,
             endDate: new Date(),
             format: "yyyy-mm-dd"
-        });
+        });*/
 
         $("#datedispatched").datepicker({
             startView: 0,
