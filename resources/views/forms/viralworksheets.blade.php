@@ -48,6 +48,10 @@
                 <input type="hidden" value="1" name="calibration" >
             @endif
 
+            @if($limit)
+                <input type="hidden" value="{{ $limit }}" name="limit" >
+            @endif
+
             <div class="row">
                 <div class="col-lg-9 col-lg-offset-1">
                     <div class="hpanel">

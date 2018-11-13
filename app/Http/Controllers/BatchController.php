@@ -104,9 +104,9 @@ class BatchController extends Controller
                 $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
                 $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
-                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
-                $n = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
-                $noresult += $n;
+                // $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
+                // $noresult += $n;
 
                 $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
                 $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
@@ -198,7 +198,7 @@ class BatchController extends Controller
                 if(!$facility_user) return $query->where('site_entry', '!=', 2);
             })
             ->orderBy('batches.datedispatched', 'desc')
-            ->paginate();
+            ->paginate(50);
 
         $batches->setPath(url()->current());
 
@@ -223,9 +223,7 @@ class BatchController extends Controller
                 $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
                 $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
-                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
-                $n = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
-                $noresult += $n;
+                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
 
                 $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
                 $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
@@ -706,6 +704,7 @@ class BatchController extends Controller
     {
         if(!$batch->datebatchprinted){
             $batch->datebatchprinted = date('Y-m-d');
+            $batch->printedby = auth()->user()->id;
             $batch->pre_update();
         }
 
@@ -743,6 +742,7 @@ class BatchController extends Controller
         foreach ($batches as $key => $batch) {
             if(!$batch->datebatchprinted){
                 $batch->datebatchprinted = date('Y-m-d');
+                $batch->printedby = auth()->user()->id;
                 $batch->pre_update();
             }
         }
@@ -765,6 +765,8 @@ class BatchController extends Controller
         $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_lookups();
         $data['samples'] = $samples;
+
+        Batch::whereIn('id', $batch_ids)->update(['dateindividualresultprinted' => date('Y-m-d')]);
 
         return view('exports.mpdf_samples', $data)->with('pageTitle', 'Individual Batch');
     }

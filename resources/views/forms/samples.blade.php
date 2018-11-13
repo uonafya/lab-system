@@ -74,6 +74,20 @@
 
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
+                        
+                        @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">High Priority</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                    @if(isset($sample) && $sample->batch->highpriority)
+                                        checked
+                                    @endif
+
+                                 />
+                                </div>
+                            </div>
+                        @endif
 
                         
                         <div class="form-group ampath-div">
@@ -199,7 +213,12 @@
                             </div>
 
                             <div class="col-sm-3">
-                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Tick only if sample redraw </label>
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1
+                                    @if(isset($sample) && $sample->redraw == 1)
+                                        checked
+                                    @endif
+
+                                 > Tick only if sample redraw </label>
                             </div>
 
                         </div>

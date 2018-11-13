@@ -160,7 +160,7 @@ class Common
 	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
-        $offset_value = 0;
+        $offset_value = 50000;
         while(true){
 
 			$samples = $view_model::where(['batch_complete' => 1])
@@ -371,7 +371,7 @@ class Common
 
 		$samples = $view_model::select('id', 'dob', 'datecollected')
 								->whereNotNull('dob')
-								->whereNull('age')
+								->whereRaw("(age is null or age=0)")
 								->get();
 
 		foreach ($samples as $sample) {

@@ -58,11 +58,13 @@ class ViralworksheetController extends Controller
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
-    public function set_sampletype_form($machine_type, $calibration=false)
+    public function set_sampletype_form($machine_type, $calibration=false, $limit=false)
     {
         $data = Lookup::worksheet_lookups();
         $data['machine_type'] = $machine_type;
         $data['calibration'] = $calibration;
+        $data['limit'] = $limit;
+
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
     }
 
@@ -70,8 +72,9 @@ class ViralworksheetController extends Controller
     {
         $sampletype = $request->input('sampletype');
         $machine_type = $request->input('machine_type');
-        $calibration = $request->input('calibration');
-        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}");
+        $calibration = $request->input('calibration', 0);
+        $limit = $request->input('limit');
+        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}");
     }
 
     /**
@@ -79,9 +82,9 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($sampletype, $machine_type=2, $calibration=false)
+    public function create($sampletype, $machine_type=2, $calibration=false, $limit=false)
     {
-        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype);
+        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype, $limit);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
@@ -98,15 +101,16 @@ class ViralworksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Viralworksheet;
-        $worksheet->fill($request->except('_token'));
+        $worksheet->fill($request->except('_token', 'limit'));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
         $sampletype = $worksheet->sampletype;
 
-        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype);
+        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'));
 
         if(!$data || !$data['create']){
+            dd($data);
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
             return back();            
@@ -592,6 +596,9 @@ class ViralworksheetController extends Controller
 
             if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
         }
+
+        // if(env('APP_LAB') == 9) MiscViral::dump_worksheet($worksheet->id);
+        // $random_var = true;
 
         if(in_array(env('APP_LAB'), $double_approval)){
             if($worksheet->reviewedby && $worksheet->reviewedby != $approver){

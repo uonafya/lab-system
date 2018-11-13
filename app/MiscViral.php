@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Excel;
 
 use App\Common;
 use App\Viralsample;
@@ -19,8 +20,8 @@ class MiscViral extends Common
 
     protected $rcategories = [
         '0' => [],
-        '1' => ['Target Not Detected',  ],
-        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', ],
+        '1' => [],
+        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
@@ -33,11 +34,11 @@ class MiscViral extends Common
         ],
         [
             'search_array' =>   ['< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
         ],
         [
             'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
         ],
         [
             'search_array' =>  ['REJECTED'],
@@ -240,7 +241,12 @@ class MiscViral extends Common
         $units="";
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '839', '150']))
+        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
+        {
+            $res= "< LDL copies/ml";
+            $interpretation= $result;       
+        }
+        else if(str_contains($result, ['<']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;       
@@ -473,8 +479,9 @@ class MiscViral extends Common
         }
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
+        if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
         $data = $this->get_rcategory($result);
-        // if(!isset($data['rcategory'])) dd($result);
+        if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
@@ -740,9 +747,10 @@ class MiscViral extends Common
 
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
+        if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-            'count' => $count,
+            'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];
@@ -806,6 +814,47 @@ class MiscViral extends Common
             $batch->save();
             // break;
         }
+    }
+
+    public static function dump_worksheet($worksheet_id)
+    {
+        $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
+
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $row = [
+                'Specimen Lab ID' => $sample->id,
+                'IP Code' => $sample->patient,
+                'Name' => $sample->facilityname,
+                'Facility Code' => $sample->facilitycode,
+                'Gender' => $sample->gender,
+                'DOB' => $sample->dob,
+                'Age' => $sample->age,
+                'Sample Type' => $sample->sampletype,
+                'Date Collected' => $sample->datecollected,
+                'Prophylaxis' => $sample->prophylaxis,
+                'Current ART Start Date' => $sample->dateinitiatedonregimen,
+                'Initiation Date' => $sample->initiation_date,
+                'Justification' => $sample->justification,
+                'Date Received' => $sample->datereceived,
+                'Date Run' => $sample->datetested,
+                'Result' => $sample->interpretation,
+                'Interpretation (Final Result)' => $sample->result,
+                'Final Result (for IQC Upload)' => $sample->result,
+            ];
+            $data[] = $row;
+        }
+
+        $filename = $worksheet_id . '.csv';
+
+        if(file_exists($filename)) unlink($filename);
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->store('csv');
     }
     
 }
