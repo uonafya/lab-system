@@ -823,8 +823,10 @@ class MiscViral extends Common
         $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
 
         $data = [];
+        $failed = [];
 
         foreach ($samples as $key => $sample) {
+            if($sample->result == '< LDL copies/ml' || )
             $row = [
                 'Specimen Lab ID' => $sample->id,
                 'IP Code' => $sample->patient,

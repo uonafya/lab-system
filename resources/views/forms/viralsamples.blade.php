@@ -626,6 +626,16 @@
             format: "yyyy-mm-dd"
         });
 
+        $("#dob").datepicker({
+            startView: 4,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
         $("#datedispatched").datepicker({
             startView: 0,
             todayBtn: "linked",
