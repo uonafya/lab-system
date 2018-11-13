@@ -94,9 +94,6 @@
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
                             <li>
-                                <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
-                            </li>
-                            <li>
                                 <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                         @else
@@ -131,7 +128,7 @@
                                     <a href="{{ url('facility') }}">Facilities</a>
                                 </li>
                                 <li>
-                                    <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
+                                    <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
                                 <li class="">
                                     <a href="{{ route('reports') }}">Reports</a>
@@ -229,9 +226,6 @@
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
                             <li>
-                                <a href="{{ url('facility/contacts') }}">Facility Contacts</a>
-                            </li>
-                            <li>
                                 <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                     @else
@@ -274,6 +268,9 @@
                         </li>
                         <li class="">
                             <a href="{{ url('facility') }}">Facilities</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                         </li>
                         <li class="">
                             <a href="{{ route('reports') }}">Reports</a>

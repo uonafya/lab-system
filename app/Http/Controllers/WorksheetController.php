@@ -150,9 +150,9 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2)
+    public function create($machine_type=2, $limit=null)
     {
-        $data = Misc::get_worksheet_samples($machine_type);
+        $data = Misc::get_worksheet_samples($machine_type, $limit);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();

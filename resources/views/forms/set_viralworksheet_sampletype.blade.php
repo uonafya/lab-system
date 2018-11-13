@@ -31,6 +31,9 @@
                         @if($calibration)
                             <input type="hidden" name="calibration" value="{{ $calibration }}">
                         @endif
+                        @if($limit)
+                            <input type="hidden" name="limit" value="{{ $limit }}">
+                        @endif
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Worksheet Sample Type</label>

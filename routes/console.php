@@ -203,6 +203,11 @@ Artisan::command('copy:facility-contacts', function(){
     $this->info($str);
 })->describe('Copy facility contacts from old database to new database.');
 
+Artisan::command('copy:facility-missing', function(){
+    $str = \App\Copier::copy_missing_facilities();
+    $this->info($str);
+})->describe('Copy missing facilities from old database to new database.');
+
 Artisan::command('copy:cd4', function(){
     $str = \App\Copier::copy_cd4();
     $this->info($str);
