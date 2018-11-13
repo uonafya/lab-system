@@ -616,7 +616,7 @@
         @endslot
 
         $("#dob").datepicker({
-            startView: 3,
+            startView: 'decade',
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
