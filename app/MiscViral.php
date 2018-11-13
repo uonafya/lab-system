@@ -687,9 +687,11 @@ class MiscViral extends Common
         // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
 
         $limit = $machine->vl_limit;
-        if($calibration) $limit = $machine->vl_calibration_limit;
 
         if($temp_limit) $limit = $temp_limit;
+
+        // if($calibration) $limit = $machine->vl_calibration_limit;
+        // if($calibration) $limit = $temp_limit - 11;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;
@@ -821,8 +823,11 @@ class MiscViral extends Common
         $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
 
         $data = [];
+        $failed = [];
 
         foreach ($samples as $key => $sample) {
+            $res = strtolower($sample->result);
+            if(str_contains($res, ['ldl', 'target'])) $res = 0.01;
             $row = [
                 'Specimen Lab ID' => $sample->id,
                 'IP Code' => $sample->patient,
@@ -841,8 +846,16 @@ class MiscViral extends Common
                 'Date Run' => $sample->datetested,
                 'Result' => $sample->interpretation,
                 'Interpretation (Final Result)' => $sample->result,
-                'Final Result (for IQC Upload)' => $sample->result,
+                'Final Result (for IQC Upload)' => $res,
             ];
+            if(str_contains($res, ['failed', 'collect'])){
+                $failed[] = $row;
+                continue;
+            }
+            $data[] = $row;
+        }
+
+        foreach ($failed as $row) {
             $data[] = $row;
         }
 
@@ -854,7 +867,7 @@ class MiscViral extends Common
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $sheet->fromArray($data);
             });
-        })->store('csv');
+        })->download('csv');
     }
     
 }

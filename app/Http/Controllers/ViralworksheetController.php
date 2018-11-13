@@ -28,7 +28,14 @@ class ViralworksheetController extends Controller
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
-                return $query->where('status_id', $state);
+                if($state == 11 && env('APP_LAB') == 9){
+                    return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
+                        SELECT DISTINCT worksheet_id
+                        FROM viralsamples_view
+                        WHERE facility_id IN (50001, 3475)
+                    )");
+                }
+                return $query->where('status_id', $state);                
             })
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
@@ -644,6 +651,11 @@ class ViralworksheetController extends Controller
 
             return redirect('/viralbatch/dispatch');            
         }
+    }
+
+    public function download_dump(Viralworksheet $worksheet)
+    {
+        return MiscViral::dump_worksheet($worksheet->id);
     }
 
 
