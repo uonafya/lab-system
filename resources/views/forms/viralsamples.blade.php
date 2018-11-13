@@ -168,7 +168,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth
+                            <label class="col-sm-4 control-label">Date Of Birth
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
