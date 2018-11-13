@@ -615,8 +615,10 @@
             }
         @endslot
 
-        $("#dob").datepicker({
-            startView: 'decade',
+
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
+            startView: 0,
+            todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
@@ -624,10 +626,8 @@
             format: "yyyy-mm-dd"
         });
 
-
-        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
-            startView: 0,
-            todayBtn: "linked",
+        $("#dob").datepicker({
+            startView: 2,
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
