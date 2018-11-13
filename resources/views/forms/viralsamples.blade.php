@@ -615,6 +615,17 @@
             }
         @endslot
 
+
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
         $("#dob").datepicker({
             startView: 2,
             keyboardNavigation: false,
@@ -623,17 +634,6 @@
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
-
-
-        /*$(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
-            startView: 0,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            endDate: new Date(),
-            format: "yyyy-mm-dd"
-        });*/
 
         $("#datedispatched").datepicker({
             startView: 0,
