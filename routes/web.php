@@ -251,7 +251,10 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('new_patient', 'SampleController@new_patient');
 		Route::get('release/{sample}', 'SampleController@release_redraw');
 		Route::get('print/{sample}', 'SampleController@individual');
-		Route::get('runs/{sample}', 'SampleController@runs');
+		
+		Route::group(['middleware' => ['utype:4']], function () {
+			Route::get('runs/{sample}', 'SampleController@runs');		
+		});
 
 		Route::get('upload', 'SampleController@site_sample_page');
 		Route::post('upload', 'SampleController@upload_site_samples');
@@ -296,7 +299,10 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('new_patient', 'ViralsampleController@new_patient');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
-		Route::get('runs/{sample}', 'ViralsampleController@runs');
+
+		Route::group(['middleware' => ['utype:4']], function () {
+			Route::get('runs/{sample}', 'ViralsampleController@runs');		
+		});
 
 		Route::get('create_poc', 'ViralsampleController@create_poc');
 		Route::get('list_poc', 'ViralsampleController@list_poc');

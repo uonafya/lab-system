@@ -34,7 +34,7 @@ class BaseModel extends Model
         if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
         if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
 
-        if(str_contains($c, 'worksheet') && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
+        if(str_contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
 
         $text = $this->id;
 
@@ -45,22 +45,29 @@ class BaseModel extends Model
         return $full_link;
     }
 
-    public function get_link($value)
+    public function get_link($attr)
     {
         $user = auth()->user();
         $c = get_class($this);
         $c = strtolower($c);
         $c = str_replace_first('app\\', '', $c);
 
-        $url = url($c . '/' . $this->id);
-        if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
-        if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
+        $pre = '';
+        if(str_contains($c, 'viral')) $pre = 'viral';
+        $user = auth()->user();
 
-        if(str_contains($c, 'worksheet') && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
+        if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
+        else if(str_contains($attr, 'sample')) $url = url($pre . 'sample/runs/' . $this->$attr);
+        else{
+            $a = explode('_', $attr);
+            $url = url($pre . $a[0] . '/' . $this->$attr);
+        }
 
-        $text = $this->id;
+        if(str_contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
 
-        if(str_contains($c, 'patient')) $text = $this->patient;
+        $text = $this->$attr;
+
+        // if(str_contains($c, 'patient')) $text = $this->patient;
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 
