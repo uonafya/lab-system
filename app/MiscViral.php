@@ -826,7 +826,8 @@ class MiscViral extends Common
         $failed = [];
 
         foreach ($samples as $key => $sample) {
-            // if($sample->result == '< LDL copies/ml' || )
+            $res = strtolower($sample->result);
+            if(str_contains($res, ['ldl', 'target'])) $res = 0.01;
             $row = [
                 'Specimen Lab ID' => $sample->id,
                 'IP Code' => $sample->patient,
@@ -845,8 +846,16 @@ class MiscViral extends Common
                 'Date Run' => $sample->datetested,
                 'Result' => $sample->interpretation,
                 'Interpretation (Final Result)' => $sample->result,
-                'Final Result (for IQC Upload)' => $sample->result,
+                'Final Result (for IQC Upload)' => $res,
             ];
+            if(str_contains($res, ['failed', 'collect'])){
+                $failed[] = $row;
+                continue;
+            }
+            $data[] = $row;
+        }
+
+        foreach ($failed as $row) {
             $data[] = $row;
         }
 
@@ -858,7 +867,7 @@ class MiscViral extends Common
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $sheet->fromArray($data);
             });
-        })->store('csv');
+        })->download('csv');
     }
     
 }

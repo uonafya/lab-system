@@ -355,6 +355,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('convert/{worksheet}/{machine_type}/', 'ViralworksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
+				Route::get('download_dump/{worksheet}', 'ViralworksheetController@download_dump')->name('download_dump');
 				Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
 				Route::get('reverse_upload/{worksheet}', 'ViralworksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');

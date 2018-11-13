@@ -646,6 +646,11 @@ class ViralworksheetController extends Controller
         }
     }
 
+    public function download_dump(Viralworksheet $worksheet)
+    {
+        return MiscViral::dump_worksheet($worksheet->id);
+    }
+
 
 
 
