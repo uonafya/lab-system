@@ -750,7 +750,7 @@ class MiscViral extends Common
         if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-            'count' => $count,
+            'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];
