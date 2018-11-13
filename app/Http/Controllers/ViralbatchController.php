@@ -324,7 +324,7 @@ class ViralbatchController extends Controller
 
         if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
-        if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        if($to_print) return redirect("viralbatch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
         return redirect("viralbatch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
