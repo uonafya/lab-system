@@ -152,7 +152,7 @@
                 @endif
                 <li><a href="{{ url('viralworksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet</a></li>
                 <hr />
                 @if(!in_array(env('APP_LAB'), [6, 8, 9]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>

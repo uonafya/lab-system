@@ -687,9 +687,11 @@ class MiscViral extends Common
         // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
 
         $limit = $machine->vl_limit;
-        if($calibration) $limit = $machine->vl_calibration_limit;
 
         if($temp_limit) $limit = $temp_limit;
+
+        // if($calibration) $limit = $machine->vl_calibration_limit;
+        // if($calibration) $limit = $temp_limit - 11;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;
