@@ -826,7 +826,7 @@ class MiscViral extends Common
         $failed = [];
 
         foreach ($samples as $key => $sample) {
-            if($sample->result == '< LDL copies/ml' || )
+            // if($sample->result == '< LDL copies/ml' || )
             $row = [
                 'Specimen Lab ID' => $sample->id,
                 'IP Code' => $sample->patient,
