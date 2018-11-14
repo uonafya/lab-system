@@ -102,6 +102,20 @@
                           </select></div>
                       </div>
 
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Specimen Label ID </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Area Name </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -615,8 +629,10 @@
             }
         @endslot
 
-        $("#dob").datepicker({
-            startView: 'decade',
+
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
+            startView: 0,
+            todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
@@ -624,10 +640,8 @@
             format: "yyyy-mm-dd"
         });
 
-
-        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
-            startView: 0,
-            todayBtn: "linked",
+        $("#dob").datepicker({
+            startView: 2,
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,

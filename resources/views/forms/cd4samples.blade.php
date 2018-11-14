@@ -56,9 +56,9 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" required name="facility_id" id="facility_id" required>
                                     @isset($sample)
-                                        <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
+                                        <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} - {{ $sample->facility->name }}</option>
                                     @endisset
                                 </select>
                             </div>
@@ -110,7 +110,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control requirable" required name="medicalrecordno" type="text" value="{{ $sample->patient->patient ?? '' }}" id="medicalrecordno">
+                                <input class="form-control requirable" required name="medicalrecordno" type="text" value="{{ $sample->patient->medicalrecordno ?? '' }}" id="medicalrecordno">
                             </div>
                         </div>
 
@@ -183,7 +183,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? '' }}" name="datereceived">
                                 </div>
                             </div>                            
                         </div>
@@ -242,20 +242,26 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
                         <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
-                                {{ $sample->labcomment ?? '' }}
-                            </textarea></div>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" name="labcomment">{{ $sample->labcomment ?? '' }}</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
                     <center>
+                    @if(isset($sample))
+                        <div class="col-sm-10 col-sm-offset-1">
+                            <button class="btn btn-success" type="submit" name="submit_type" value="release">Update sample</button>
+                        </div>
+                    @else
                         <div class="col-sm-10 col-sm-offset-1">
                             <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
                             <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
                             <button class="btn btn-danger" type="submit" formnovalidate name="submit_type" value="cancel">Cancel & Release</button>
                         </div>
+                    @endif
                     </center>
                 </div>
             </div>

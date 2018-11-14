@@ -142,7 +142,7 @@ class ViralworksheetController extends Controller
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples];
+        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
 
         if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
@@ -204,7 +204,7 @@ class ViralworksheetController extends Controller
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
