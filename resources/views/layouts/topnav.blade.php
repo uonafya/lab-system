@@ -165,7 +165,7 @@
                     </a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Samples</a>
+                    <a href="{{ url('cd4/sample') }}">Samples</a>
                 </li>
                 <li class="">
                     <a href="{{ url('cd4/') }}">Worksheets</a>
