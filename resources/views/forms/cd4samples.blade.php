@@ -183,7 +183,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? '' }}" name="datereceived">
                                 </div>
                             </div>                            
                         </div>
@@ -251,7 +251,7 @@
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
                     <center>
-                    @if($sample)
+                    @if(isset($sample))
                         <div class="col-sm-10 col-sm-offset-1">
                             <button class="btn btn-success" type="submit" name="submit_type" value="release">Update sample</button>
                         </div>
