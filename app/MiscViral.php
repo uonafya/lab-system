@@ -885,7 +885,7 @@ class MiscViral extends Common
         foreach ($samples as $sample) {
             $data = self::sample_result($sample->interpretation);
             $sample->fill($data);
-            if($sample->result != '' || $sample->result != 'Failed' || $sample->result != 'Collect New Sample'){
+            if($sample->result != '' || $sample->result != 'Invalid' || $sample->result != 'Failed' || $sample->result != 'Collect New Sample'){
                 $sample->repeatt = 0;
                 $sample->save();
             }
@@ -921,12 +921,10 @@ class MiscViral extends Common
             $sample = Viralsample::find($s->id);
             if($sample->has_rerun) continue;
 
-            return $sample->interpretation;
-
-            // $sample->result = "Collect New Sample";
-            // $sample->labcomment = "Failed Test";
-            // $sample->repeatt = 0;
-            // $sample->save();
+            $sample->result = "Collect New Sample";
+            $sample->labcomment = "Failed Test";
+            $sample->repeatt = 0;
+            $sample->save();
         }
     } 
     

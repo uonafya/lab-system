@@ -122,6 +122,10 @@
                                     <th> Created By </th>
                                     <th> Type </th>
                                     <th> Status </th>
+                                    <th> # Detected </th>
+                                    <th> # Undetected </th>
+                                    <th> # Failed </th>
+                                    <th> # No Result </th>
                                     <th> # Samples </th>
                                     <th> Date Run </th>
                                     <th> Date Updated </th>
@@ -144,6 +148,11 @@
 
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
+
+                                    <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
+                                    <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
+                                    <td> {{ $failed->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
+                                    <td> {{ $noresult->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
 
                                     <td> {{ $worksheet->samples_no }} 
                                         @if($reruns->where('worksheet_id', $worksheet->id)->first())
