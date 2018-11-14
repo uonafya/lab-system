@@ -907,41 +907,7 @@ class MiscViral extends Common
                 }
             }
         }
-    } 
-
-    public static function find_no_result()
-    {
-        ini_set("memory_limit", "-1");
-        $samples = Viralsample::whereNotNull('interpretation')->whereRaw("(result is null or result = '')")->get();
-
-        $cutoff = Carbon::parse('2018-11-01');
-
-        foreach ($samples as $sample) {
-            $data = self::sample_result($sample->interpretation);
-            $sample->fill($data);
-            if($sample->result != '' || $sample->result != 'Failed' || $sample->result != 'Collect New Sample'){
-                $sample->repeatt = 0;
-                $sample->save();
-            }
-            else{
-                $datetested = Carbon::parse($sample->datetested);
-
-                if($cutoff->greaterThan($datetested)){
-
-                    $sample->result = "Collect New Sample";
-                    $sample->labcomment = "Failed Test";
-                    $sample->repeatt = 0;
-                    $sample->save();
-
-                }
-                else{
-                    $sample->repeatt = 1;
-                    $sample->save();
-                    self::save_repeat($sample->id);   
-                }
-            }
-        }
-    } 
+    }
 
     public static function find_no_reruns()
     {
