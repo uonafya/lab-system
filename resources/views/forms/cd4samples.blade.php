@@ -56,7 +56,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" required name="facility_id" id="facility_id" required>
                                     @isset($sample)
                                         <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
                                     @endisset
@@ -242,9 +242,9 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
                         <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
-                            <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
-                                {{ $sample->labcomment ?? '' }}
-                            </textarea></div>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" name="labcomment">{{ $sample->labcomment ?? '' }}</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>

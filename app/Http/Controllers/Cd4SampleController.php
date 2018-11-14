@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cd4Sample;
+use App\Cd4Patient;
 use Illuminate\Http\Request;
 use App\Lookup;
 
@@ -15,7 +16,7 @@ class Cd4SampleController extends Controller
      */
     public function index()
     {
-        //
+        return view('tables.cd4-samples')->with('pageTitle', 'Samples Summary');
     }
 
     /**
@@ -37,7 +38,30 @@ class Cd4SampleController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        $checknew = $request->input('new_patient');
+        $sampleData = $request->except(['_token','medicalrecordno','patient_name','dob','sex','submit_type','new_patient']);
+        $sample = new Cd4Sample();
+        if ($checknew == 0) {
+            $patientData = $request->only(['medicalrecordno','patient_name','dob','sex']);
+            $patient = new Cd4Patient();
+            $patient->fill($patientData);
+            $patient->save();
+            $sampleData['patient_id'] = $patient->id;
+        }
+        
+        $sample->fill($sampleData);
+        $sample->save();
+        if ($sample) {
+            session(['toast_message'=>'Sample Created Successfully']);
+        } else {
+            session(['toast_message'=>'Sample creation failed', 'toast_error' => 1]);
+        }
+        
+        if ($request->input('add')) {
+            return back();
+        } else {
+            return redirect('cd4/sample');
+        }
     }
 
     /**
