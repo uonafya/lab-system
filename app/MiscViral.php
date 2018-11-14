@@ -235,7 +235,7 @@ class MiscViral extends Common
         return $samples;
     }
 
-    public static function sample_result($result, $error)
+    public static function sample_result($result, $error=null)
     {
         $str = strtolower($result);
         $units="";
@@ -848,6 +848,11 @@ class MiscViral extends Common
                 'Interpretation (Final Result)' => $sample->result,
                 'Final Result (for IQC Upload)' => $res,
             ];
+
+            if(env('APP_LAB') == 8){
+                $row['Specimen Lab ID'] = $sample->label_id;
+            }
+
             if(str_contains($res, ['failed', 'collect'])){
                 $failed[] = $row;
                 continue;
@@ -869,5 +874,18 @@ class MiscViral extends Common
             });
         })->download('csv');
     }
+
+    public static function find_no_reruns()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::whereNotNull('interpretation')->whereRaw("(result is null or result = '')")->get();
+
+        foreach ($samples as $sample) {
+            $data = self::sample_result($sample->interpretation);
+            $sample->fill($data);
+
+            
+        }
+    } 
     
 }

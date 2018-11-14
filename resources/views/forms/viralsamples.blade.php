@@ -102,19 +102,23 @@
                           </select></div>
                       </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Specimen Label ID </label>
-                            <div class="col-sm-8">
-                                <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
-                            </div>
-                        </div>
+                      @if(env('APP_LAB') == 8)
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Area Name </label>
-                            <div class="col-sm-8">
-                                <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Specimen Label ID </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Area Name </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                                </div>
+                            </div>
+
+                        @endif
 
                     </div>
                 </div>
