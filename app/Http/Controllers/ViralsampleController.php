@@ -202,6 +202,10 @@ class ViralsampleController extends Controller
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample = new Viralsample;
         $viralsample->fill($data);
+        if(env('APP_LAB') == 8){
+            $viralsample->areaname = $request->input('areaname');
+            $viralsample->label_id = $request->input('label_id');
+        }
         $viralsample->patient_id = $viralpatient->id;
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
         $viralsample->batch_id = $batch->id;
@@ -390,6 +394,10 @@ class ViralsampleController extends Controller
             $viralsample->result = null;
             $viralsample->interpretation = null;
         }*/
+        if(env('APP_LAB') == 8){
+            $viralsample->areaname = $request->input('areaname');
+            $viralsample->label_id = $request->input('label_id');
+        }
 
         $viralsample->pre_update();
 
