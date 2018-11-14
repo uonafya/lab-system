@@ -152,7 +152,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td>{{ $sample->worksheet_id }} </td>
+                                        <td>{!! $sample->get_link('worksheet_id') !!} </td>
                                         <td>
                                             @foreach($prophylaxis as $proph)
                                                 @if($sample->prophylaxis == $proph->id)

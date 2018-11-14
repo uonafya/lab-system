@@ -859,7 +859,7 @@ class MiscViral extends Common
             $data[] = $row;
         }
 
-        $filename = $worksheet_id . '.csv';
+        $filename = $worksheet_id;
 
         if(file_exists($filename)) unlink($filename);
 

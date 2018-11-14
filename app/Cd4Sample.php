@@ -14,4 +14,8 @@ class Cd4Sample extends BaseModel
     {
         return $this->belongsTo('App\Facility');
     }
+
+    public function patient(){
+    	return $this->belongsTo('App\Cd4Patient', 'patient_id');
+    }
 }
