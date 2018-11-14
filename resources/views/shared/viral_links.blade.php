@@ -35,7 +35,7 @@
 
 @elseif($worksheet_status == 3)
 
-	@if(env('APP_LAB') == 9)
+	@if(env('APP_LAB') == 9 || env('APP_LAB') == 8)
 		{!! $worksheet->dump_link !!}
 	@endif
 
