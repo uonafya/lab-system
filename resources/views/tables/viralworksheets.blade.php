@@ -149,10 +149,10 @@
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
 
-                                    <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
-                                    <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
-                                    <td> {{ $failed->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
-                                    <td> {{ $noresult->where('worksheet_id', $worksheet->id)->first()->totals }} </td>
+                                    <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $failed->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $noresult->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
 
                                     <td> {{ $worksheet->samples_no }} 
                                         @if($reruns->where('worksheet_id', $worksheet->id)->first())
