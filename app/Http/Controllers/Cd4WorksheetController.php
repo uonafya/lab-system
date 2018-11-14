@@ -15,7 +15,8 @@ class Cd4WorksheetController extends Controller
      */
     public function index()
     {
-        //
+        $worksheet = Cd4Worksheet::get();
+        dd($worksheet);
     }
 
     /**
@@ -60,14 +61,13 @@ class Cd4WorksheetController extends Controller
         $worksheet->save();
 
         $samples = $this->get_samples_for_run($request->input('limit'));
-        $sampleData = ['worksheet_id' => $worksheet->id, 'status_id' => 3]
+        $sampleData = ['worksheet_id' => $worksheet->id, 'status_id' => 3];
         foreach ($samples as $key => $sample) {
             $sample->fill($sampleData);
             $sample->save();
         }
 
         return redirect()->route('cd4.worksheet.print', ['worksheet' => $worksheet->id]);
-        return redirect()->route();
     }
 
     /**
@@ -117,6 +117,7 @@ class Cd4WorksheetController extends Controller
 
     public function print(Cd4Worksheet $worksheet) {
         
+        return view('worksheets.cd4', compact('worksheet'))->with('pageTitle', 'Worksheets');
     }
 
     public function get_samples_for_rerun(){
