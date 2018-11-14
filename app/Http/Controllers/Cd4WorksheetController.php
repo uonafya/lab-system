@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cd4Worksheet;
+use App\Cd4Sample;
 use Illuminate\Http\Request;
 
 class Cd4WorksheetController extends Controller
@@ -22,9 +23,24 @@ class Cd4WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($limit)
     {
-        //
+        $rerunsamples = $this->get_samples_for_rerun();
+        if ($rerunsamples == 0) { // No rerun samples are available
+            $samples = $this->get_samples_for_run($limit);
+            $sampleCount = $samples->count();
+            if($sampleCount > 0){
+                $worksheetCount = Cd4Worksheet::max('id')+1;
+                $data['samples'] = $samples;
+                $data['worksheet'] = $worksheetCount;
+                $data['limit'] = $limit;
+                $data = (object) $data;
+
+                return view('forms.cd4worksheet', compact('data'))->with('pageTitle', "Create Worksheet ($limit)");
+            }
+        } else {
+            
+        }
     }
 
     /**
@@ -35,7 +51,23 @@ class Cd4WorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->except(['_token', 'limit']);
+        $data['lab_id'] = env('APP_LAB');
+        $data['createdby'] = auth()->user()->id;
+        $data['status_id'] = 1;
+        $worksheet = new Cd4Worksheet();
+        $worksheet->fill($data);
+        $worksheet->save();
+
+        $samples = $this->get_samples_for_run($request->input('limit'));
+        $sampleData = ['worksheet_id' => $worksheet->id, 'status_id' => 3]
+        foreach ($samples as $key => $sample) {
+            $sample->fill($sampleData);
+            $sample->save();
+        }
+
+        return redirect()->route('cd4.worksheet.print', ['worksheet' => $worksheet->id]);
+        return redirect()->route();
     }
 
     /**
@@ -81,5 +113,25 @@ class Cd4WorksheetController extends Controller
     public function destroy(Cd4Worksheet $cd4Worksheet)
     {
         //
+    }
+
+    public function print(Cd4Worksheet $worksheet) {
+        
+    }
+
+    public function get_samples_for_rerun(){
+        return Cd4Sample::selectRaw("COUNT(*) as reruns")
+                            ->whereNull('worksheet_id')
+                            ->where('receivedstatus', '<>', 2)
+                            ->where('status_id', '=', 1)
+                            ->where('run', '>', 1)
+                            ->where('parentid', '>', 0)->first()->reruns;
+
+    }
+
+    public function get_samples_for_run($limit){
+        return Cd4Sample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->where('status_id', '=', 1)
+                                    ->orderBy('datereceived', 'asc')->orderBy('parentid', 'asc')->orderBy('id', 'asc')
+                                    ->limit($limit)->get();
     }
 }

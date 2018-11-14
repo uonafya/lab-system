@@ -114,6 +114,10 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('new', 'CD4PatientController@new_patient')->name('new');
 			Route::resource('/', 'CD4PatientController');
 		});
+		Route::prefix('worksheet')->name('worksheet.')->group(function(){
+			Route::get('create/{limit}', 'Cd4WorksheetController@create');
+			Route::resource('/', 'Cd4WorksheetController');
+		});
 	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
