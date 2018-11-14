@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cd4Worksheet;
 use App\Cd4Sample;
+use App\Lookup;
 use Illuminate\Http\Request;
 
 class Cd4WorksheetController extends Controller
@@ -15,8 +16,11 @@ class Cd4WorksheetController extends Controller
      */
     public function index()
     {
-        $worksheet = Cd4Worksheet::get();
-        dd($worksheet);
+        $data = Lookup::worksheet_lookups();
+        $data['worksheets'] = Cd4Worksheet::orderBy('id', 'desc')->get();
+        $data = (object) $data;
+        // dd($data);
+        return view('tables.cd4-worksheets', compact('data'))->with('pageTitle', 'Worksheets');
     }
 
     /**
@@ -76,9 +80,14 @@ class Cd4WorksheetController extends Controller
      * @param  \App\Cd4Worksheet  $cd4Worksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(Cd4Worksheet $cd4Worksheet)
+    public function show(Cd4Worksheet $Worksheet)
     {
-        //
+        $data['worksheet'] = $Worksheet;
+        $data['samples'] = $Worksheet->samples;
+        $data['view'] = true;
+        $data = (object)$data;
+        
+        return view('forms.cd4worksheet', compact('data'))->with('pageTitle', "Worksheet No. $Worksheet->id Details");
     }
 
     /**
@@ -87,7 +96,7 @@ class Cd4WorksheetController extends Controller
      * @param  \App\Cd4Worksheet  $cd4Worksheet
      * @return \Illuminate\Http\Response
      */
-    public function edit(Cd4Worksheet $cd4Worksheet)
+    public function edit(Cd4Worksheet $Worksheet)
     {
         //
     }
@@ -99,7 +108,7 @@ class Cd4WorksheetController extends Controller
      * @param  \App\Cd4Worksheet  $cd4Worksheet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cd4Worksheet $cd4Worksheet)
+    public function update(Request $request, Cd4Worksheet $Worksheet)
     {
         //
     }
@@ -110,7 +119,7 @@ class Cd4WorksheetController extends Controller
      * @param  \App\Cd4Worksheet  $cd4Worksheet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cd4Worksheet $cd4Worksheet)
+    public function destroy(Cd4Worksheet $Worksheet)
     {
         //
     }
