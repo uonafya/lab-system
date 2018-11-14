@@ -921,10 +921,13 @@ class MiscViral extends Common
             $sample = Viralsample::find($s->id);
             if($sample->has_rerun) continue;
 
-            $sample->result = "Collect New Sample";
-            $sample->labcomment = "Failed Test";
-            $sample->repeatt = 0;
-            $sample->save();
+            if($sample->result == 'Failed' || $sample->result == 'Invalid'){
+                $sample->interpretation = $sample->result;
+                $sample->result = "Collect New Sample";
+                $sample->labcomment = "Failed Test";
+                $sample->repeatt = 0;
+                $sample->save();
+            }
         }
     } 
     
