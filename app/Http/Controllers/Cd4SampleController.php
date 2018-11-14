@@ -66,7 +66,7 @@ class Cd4SampleController extends Controller
             session(['toast_message'=>'Sample creation failed', 'toast_error' => 1]);
         }
         
-        if ($request->input('add')) {
+        if ($request->input('submit_type') == 'add') {
             return back();
         } else {
             return redirect('cd4/sample');
@@ -94,7 +94,7 @@ class Cd4SampleController extends Controller
     {
         $data = Lookup::cd4sample_form();
         $data['sample'] = $cd4Sample->first();
-
+        
         return view('forms.cd4samples', $data)->with('pageTitle', 'Edit CD4 Sample');
     }
 
@@ -107,7 +107,6 @@ class Cd4SampleController extends Controller
      */
     public function update(Request $request, Cd4Sample $cd4Sample)
     {
-        dd($request->all());
         $sample = $cd4Sample->first(); // Get the sample collection
 
         //Differentiating the data sets
@@ -127,6 +126,11 @@ class Cd4SampleController extends Controller
 
         if ($request->input('receivedstatus') == 2) { //If rejected set status to rejected also
             $sampleData['status_id'] = $request->input('receivedstatus');
+        } else { //If accepted, check if previously rejected
+            if($sample->receivedstatus == 2){
+                $sampleData['status_id'] = 1;
+                $sampleData['rejectedreason'] = null;
+            }
         }
         
         //Update sample data
