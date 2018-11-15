@@ -930,5 +930,40 @@ class MiscViral extends Common
             }
         }
     } 
+
+    public static function find_not()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::where(['worksheet_id' => 148])->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->result = "Collect New Sample";
+            $sample->labcomment = "Failed Test";
+            $sample->repeatt = 0;
+            $sample->save();
+        }
+    }
+
+    public static function find_not_dispatched()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = ViralsampleView::where(['worksheet_id' => 148])->whereNull('datedispatched')
+                        ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
+                        ->get();
+
+        foreach ($samples as $s) {
+
+            $sample = Viralsample::find($s->id);
+            if($sample->has_rerun) continue;
+
+            if($sample->result == 'Failed' || $sample->result == 'Invalid'){
+                $sample->interpretation = $sample->result;
+                $sample->result = "Collect New Sample";
+                $sample->labcomment = "Failed Test";
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+        }
+    } 
     
 }
