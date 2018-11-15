@@ -779,7 +779,7 @@ class ViralsampleController extends Controller
             }
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
-        return redirect('/home');        
+        return redirect('/viralbatch');        
     }
 
     public function search(Request $request)
