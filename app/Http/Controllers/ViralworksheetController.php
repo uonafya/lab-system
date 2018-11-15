@@ -123,7 +123,7 @@ class ViralworksheetController extends Controller
 
         $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'));
 
-        if(!$data || !$data['create']){
+        if(!$data || (!$data['create']) && env('APP_LAB') != 8){
             dd($data);
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
