@@ -112,8 +112,14 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){
 			Route::post('new', 'CD4PatientController@new_patient')->name('new');
-			Route::resource('/', 'CD4PatientController');
 		});
+		Route::resource('patients', 'CD4PatientController');
+		
+		Route::prefix('worksheet')->name('worksheet.')->group(function(){
+			Route::get('create/{limit}', 'Cd4WorksheetController@create');
+			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
+		});
+		Route::resource('worksheet', 'Cd4WorksheetController');
 	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
