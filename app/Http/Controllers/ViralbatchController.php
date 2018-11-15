@@ -165,6 +165,138 @@ class ViralbatchController extends Controller
         return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
 
+    public function to_print($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    {
+        $user = auth()->user();
+        $facility_user = false;
+        $subtotals = $date_modified = $date_tested = null;
+        $date_column = "viralbatches.datedispatched";
+        if($user->user_type_id == 5) $facility_user=true;
+        $batch_complete = 1;
+
+        $s_facility_id = session()->pull('facility_search');
+        if($s_facility_id){ 
+            $myurl = url("viralbatch/facility/{$facility_id}/{$batch_complete}"); 
+            $myurl2 = url("viralbatch/facility/{$facility_id}"); 
+        }
+        else{  
+            $myurl = $myurl2 = url('viralbatch/to_print'); 
+        }
+
+        $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
+
+        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+            ->where('batch_complete', 1)
+            ->whereRaw('(datebatchprinted is null or dateindividualresultprinted is null)')
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('viralbatches.facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
+            ->when(true, function($query) use ($facility_user){
+                if(!$facility_user) return $query->where('site_entry', '!=', 2);
+            })
+            ->orderBy('viralbatches.datedispatched', 'desc')
+            ->paginate(50);
+
+        $batches->setPath(url()->current());
+
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        if($batch_ids){
+            $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
+            $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
+            $failed_a = MiscViral::get_totals(3, $batch_ids, false);
+            $detected_a = MiscViral::get_totals(2, $batch_ids, false);
+            $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
+            
+            $date_modified = MiscViral::get_maxdatemodified($batch_ids, false);
+            $date_tested = MiscViral::get_maxdatetested($batch_ids, false);
+
+            $rejected = MiscViral::get_rejected($batch_ids, false);
+
+            if($batch_complete == 1) $subtotals = MiscViral::get_subtotals($batch_ids, false);
+        }
+        else{
+            $noresult_a = $redraw_a = $failed_a = $detected_a = $undetected_a = $rejected = false;
+        }
+
+        $batches->transform(function($batch, $key) use ($batch_complete, $undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected, $subtotals, $date_modified, $date_tested){
+
+            if(!$noresult_a && !$redraw_a && !$failed_a && !$detected_a && !$undetected_a && !$rejected){
+                $total = $rej = $result = $noresult = 0;
+            }else{
+                $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
+
+                $result = $detected + $undetected + $redraw + $failed;
+            }
+
+            if($batch_complete == 1){
+                $und = $subtotals->where('batch_id', $batch->id)->where('rcategory', 1)->first()->totals ?? 0;
+                $under1000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 2)->first()->totals ?? 0;
+                $under5000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 3)->first()->totals ?? 0;
+                $over5000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 4)->first()->totals ?? 0;
+                $unknown = $subtotals->where('batch_id', $batch->id)->where('rcategory', 0)->first()->totals ?? 0;
+                $f = $subtotals->where('batch_id', $batch->id)->where('rcategory', 5)->first()->totals ?? 0;
+
+                $batch->suppressed = $und + $under1000;
+                $batch->nonsuppressed = $under5000 + $over5000;
+                $batch->failures = $unknown + $f;
+            }
+
+            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+
+            $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->datedispatched = $batch->my_date_format('datedispatched');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = $result;
+            $batch->noresult = $noresult;
+            $batch->status = $batch->batch_complete;
+            $batch->approval = false;
+            return $batch;
+        });
+
+        $p = Lookup::get_partners();
+        $fac = false;
+        if($facility_id) $fac = Facility::find($facility_id);
+
+        return view('tables.dispatched_viralbatches', [
+            'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 
+            'batch_complete' => 1, 'to_print' => true,  
+            'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+            'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])->with('pageTitle', 'Samples by Batch');
+
+    }
+
     public function facility_batches($facility_id, $batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
         session(['facility_search' => $facility_id]);
@@ -174,6 +306,7 @@ class ViralbatchController extends Controller
     public function batch_search(Request $request)
     {
         $submit_type = $request->input('submit_type');
+        $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
         $date_end = $request->input('to_date', 0);
@@ -185,7 +318,13 @@ class ViralbatchController extends Controller
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
+        if($partner_id == '') $partner_id = 0;
+        if($subcounty_id == '') $subcounty_id = 0;
+        if($facility_id == '') $facility_id = 0;
+
         if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+
+        if($to_print) return redirect("viralbatch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
         return redirect("viralbatch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
@@ -679,6 +818,7 @@ class ViralbatchController extends Controller
     {
         if(!$batch->datebatchprinted){
             $batch->datebatchprinted = date('Y-m-d');
+            $batch->printedby = auth()->user()->id;
             $batch->pre_update();
         }
 
@@ -706,6 +846,7 @@ class ViralbatchController extends Controller
         foreach ($batches as $key => $batch) {
             if(!$batch->datebatchprinted){
                 $batch->datebatchprinted = date('Y-m-d');
+                $batch->printedby = auth()->user()->id;
                 $batch->pre_update();
             }
         }
@@ -724,10 +865,12 @@ class ViralbatchController extends Controller
 
     public function individuals($batch_ids)
     {
-        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->get();
+        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->orderBy('batch_id')->get();
         $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
+
+        Viralbatch::whereIn('id', $batch_ids)->update(['dateindividualresultprinted' => date('Y-m-d')]);
 
         return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
     }

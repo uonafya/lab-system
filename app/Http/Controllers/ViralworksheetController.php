@@ -28,7 +28,14 @@ class ViralworksheetController extends Controller
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
-                return $query->where('status_id', $state);
+                if($state == 11 && env('APP_LAB') == 9){
+                    return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
+                        SELECT DISTINCT worksheet_id
+                        FROM viralsamples_view
+                        WHERE facility_id IN (50001, 3475)
+                    )");
+                }
+                return $query->where('status_id', $state);                
             })
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
@@ -45,8 +52,15 @@ class ViralworksheetController extends Controller
         $worksheets->setPath(url()->current());
 
         $data = Lookup::worksheet_lookups();
-        $worksheet_ids = $worksheets->pluck(['id'])->toArray();
-        $data['reruns'] = $this->get_reruns($worksheet_ids);
+
+        $ids = $worksheets->pluck(['id'])->toArray();
+
+        $data['noresult'] = $this->get_worksheet_results(0, $ids);
+        $data['failed'] = $this->get_worksheet_results(3, $ids);
+        $data['detected'] = $this->get_worksheet_results(2, $ids);
+        $data['undetected'] = $this->get_worksheet_results(1, $ids);
+        
+        $data['reruns'] = $this->get_reruns($ids);
 
         $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id, machine_type")
             ->groupBy('status_id', 'machine_type')
@@ -58,11 +72,13 @@ class ViralworksheetController extends Controller
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
-    public function set_sampletype_form($machine_type, $calibration=false)
+    public function set_sampletype_form($machine_type, $calibration=false, $limit=false)
     {
         $data = Lookup::worksheet_lookups();
         $data['machine_type'] = $machine_type;
         $data['calibration'] = $calibration;
+        $data['limit'] = $limit;
+
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
     }
 
@@ -70,8 +86,9 @@ class ViralworksheetController extends Controller
     {
         $sampletype = $request->input('sampletype');
         $machine_type = $request->input('machine_type');
-        $calibration = $request->input('calibration');
-        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}");
+        $calibration = $request->input('calibration', 0);
+        $limit = $request->input('limit');
+        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}");
     }
 
     /**
@@ -79,9 +96,9 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($sampletype, $machine_type=2, $calibration=false)
+    public function create($sampletype, $machine_type=2, $calibration=false, $limit=false)
     {
-        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype);
+        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype, $limit);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
@@ -98,15 +115,16 @@ class ViralworksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Viralworksheet;
-        $worksheet->fill($request->except('_token'));
+        $worksheet->fill($request->except('_token', 'limit'));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
         $sampletype = $worksheet->sampletype;
 
-        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype);
+        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'));
 
-        if(!$data || !$data['create']){
+        if(!$data || (!$data['create']) && env('APP_LAB') != 8){
+            dd($data);
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
             return back();            
@@ -131,7 +149,7 @@ class ViralworksheetController extends Controller
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples];
+        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
 
         if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
@@ -193,7 +211,7 @@ class ViralworksheetController extends Controller
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
@@ -206,7 +224,7 @@ class ViralworksheetController extends Controller
         }
     }
 
-    public function convert_worksheet($machine_type, Viralworksheet $worksheet)
+    public function convert_worksheet(Viralworksheet $worksheet, $machine_type)
     {
         if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
             session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
@@ -215,6 +233,7 @@ class ViralworksheetController extends Controller
         }
         $worksheet->machine_type = $machine_type;
         $worksheet->save();
+        // return back();
         return redirect('viralworksheet/' . $worksheet->id . '/edit');
     }
 
@@ -244,7 +263,7 @@ class ViralworksheetController extends Controller
             return back();
         }
 
-        if($worksheet->uploadedby != auth()->user()->id){
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
             session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();
@@ -440,7 +459,7 @@ class ViralworksheetController extends Controller
             {
                 $dateoftest=date("Y-m-d", strtotime($value[3]));
 
-                $sample_id = $value[4];
+                $sample_id = trim($value[4]);
                 $result = $value[8];
                 $error = $value[10];
 
@@ -469,10 +488,11 @@ class ViralworksheetController extends Controller
                 // Viralsample::where($search)->update($data_array);
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
-                // if(env('APP_LAB') == 1) $sample_id = substr($sample_id, 0, -1);
-                // else{
-                    $sample_id = (int) $sample_id;                    
-                // }
+
+                // $sample_id = substr($sample_id, 0, -1);
+                $sample_id = (int) $sample_id;
+
+
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
@@ -591,6 +611,9 @@ class ViralworksheetController extends Controller
             if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
         }
 
+        // if(env('APP_LAB') == 9) MiscViral::dump_worksheet($worksheet->id);
+        // $random_var = true;
+
         if(in_array(env('APP_LAB'), $double_approval)){
             if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
                 $batch = collect($batches);
@@ -637,6 +660,11 @@ class ViralworksheetController extends Controller
         }
     }
 
+    public function download_dump(Viralworksheet $worksheet)
+    {
+        return MiscViral::dump_worksheet($worksheet->id);
+    }
+
 
 
 
@@ -669,6 +697,7 @@ class ViralworksheetController extends Controller
         $samples = ViralsampleView::selectRaw("count(*) as totals, worksheet_id")
             ->whereNotNull('worksheet_id')
             ->when($worksheet_id, function($query) use ($worksheet_id){
+                if(is_array($worksheet_id)) return $query->whereIn('worksheet_id', $worksheet_id);
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->whereNotNull('worksheet_id')

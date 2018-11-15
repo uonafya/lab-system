@@ -97,6 +97,31 @@ class Viralsample extends BaseModel
                 ->get();
         $this->previous_tests = $samples;
     }
+
+    public function remove_reruns()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete();
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function remove_after_reruns()
+    {
+        $parent = $this->parent;
+        $children = $parent->child;
+
+        foreach ($children as $s) {
+            if($s->run > $this->run) $s->delete();            
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
     
 
     /**
@@ -136,6 +161,26 @@ class Viralsample extends BaseModel
         else if($this->sampletype == 4) return "DBS Venous";
         return "";
     }
+
+    /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\Viralsample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
+    }
+
 
     /**
      * Get the sample's result comment

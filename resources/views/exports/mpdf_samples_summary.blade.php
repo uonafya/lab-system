@@ -53,7 +53,7 @@
 			</tr>
 			<tr>
 				<td colspan="5">
-					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name }} </strong> 
+					<strong> Batch No.: {{ $batch->id }} &nbsp;&nbsp; {{ $batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="4">
 					@if($batch->site_entry == 2)
@@ -78,7 +78,7 @@
 				<td colspan='3'>Date Samples Were Dispatched From Facility :  {{ $batch->my_date_format('datedispatchedfromfacility')  }}</td>				
 			</tr>
 			<tr>
-				<td>Facility Name: {{ $batch->facility->name }} </td>
+				<td>Facility Name: {{ $batch->facility->name ?? '' }} </td>
 				<td>Contact: {{ $batch->facility->contactperson ?? '' }} </td>
 				<td>Tel(personal): {{ $batch->facility->contacttelephone ?? '' }} </td>
 			</tr>
@@ -129,7 +129,7 @@
 				<th><b> Test Result</b></td>
 				<th><b> TAT</b></td>
 			</tr>
-
+			<?php $i=1; ?>
 			@foreach($batch->sample as $key => $sample)
 				@if($sample->receivedstatus == 2)
 					@php  
@@ -139,7 +139,7 @@
 				@endif
 				@continue($sample->repeatt == 1)
 				<tr>
-					<td>{{ ($key+1) }} </td>
+					<td>{{ ($i++) }} </td>
 					<td>{{ $sample->patient->patient }} </td>
 					{{--<td>{{ $sample->patient->my_date_format('dob') }} </td>--}}
 					<td>{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }}) </td>
@@ -335,10 +335,9 @@
 
 		@if($loop->last)
 			@break
-		@endif
-
-
-		<pagebreak sheet-size='A4-L'>
+		@else
+			<pagebreak sheet-size='A4-L'>
+		@endif		
 
 	@endforeach
 

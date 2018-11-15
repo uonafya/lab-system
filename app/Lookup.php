@@ -31,7 +31,32 @@ class Lookup
         if(!$value) return null;
 
         try {
+            $d = date('Y-m-d', strtotime($value));
+            return $d;
+        } catch (Exception $e) {
+            
+        }
+
+        try {
             $d = Carbon::createFromFormat('m/d/Y', $value);
+            return $d->toDateString();
+        } catch (Exception $e) {
+            try {
+                $d = Carbon::createFromFormat('m/d/y', $value);
+                return $d->toDateString();                
+            } catch (Exception $ee) {
+                return null;
+            }
+            return null;
+        }        
+    }
+
+    public static function normal_date($value)
+    {
+        if(!$value) return null;
+
+        try {
+            $d = Carbon::parse($value);
             return $d->toDateString();
         } catch (Exception $e) {
             try {
@@ -48,11 +73,11 @@ class Lookup
     {
         $value = trim($value);
         $value = strtolower($value);
-        if(str_contains($value, ['m', '1'])){
-            return 1;
-        }
-        else if(str_contains($value, ['f', '2'])){
+        if(str_contains($value, ['f', '2'])){
             return 2;
+        }
+        else if(str_contains($value, ['m', '1'])){
+            return 1;
         }
         else{
             return 3;
@@ -194,6 +219,18 @@ class Lookup
         ];
 	}
 
+    public static function cd4sample_form()
+    {
+        self::cacher();
+
+        return [
+                'rejectedreasons' => Cache::get('cd4rejected_reasons'),
+                'receivedstatuses' => Cache::get('received_statuses'),
+                'amrs_locations' => Cache::get('amrs_locations'),
+                'genders' => Cache::get('genders')
+            ];
+    }
+
     public static function calculate_age($date_collected, $dob)
     {
         // $patient_age = $request->input('sample_months') + ( $request->input('sample_weeks') / 4 );
@@ -232,9 +269,10 @@ class Lookup
     public static function eid_intervention($val)
     {
         self::cacher();       
-        $my_array = Cache::get('interventions');       
-        return $my_array->where('rank', $val)->first()->id ?? 7;
-    }  
+        $my_array = Cache::get('interventions');   
+        if(is_numeric($val)) return $my_array->where('rank', $val)->first()->id ?? 7;   
+        return $my_array->where('alias', $val)->first()->id ?? 7;
+    } 
 
     public static function samples_arrays()
     {
@@ -421,6 +459,11 @@ class Lookup
             $arv_toxicities = DB::table('arv_toxicities')->get();
             $other_medications = DB::table('other_medications')->get();
 
+            if(env('APP_LAB') == 5) {
+                // CD4 Lookup Data
+                $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
+            }
+            
 
             $partners = DB::table('partners')->get();
             $subcounties = DB::table('districts')->get();
@@ -465,7 +508,11 @@ class Lookup
             Cache::put('arv_toxicities', $arv_toxicities, 60);
             Cache::put('other_medications', $other_medications, 60);
 
-
+            if(env('APP_LAB') == 5) {
+                // CD4 Lookup Data
+                Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
+            }
+            
             Cache::put('partners', $partners, 60);
             Cache::put('subcounties', $subcounties, 60);
         }		
@@ -509,6 +556,11 @@ class Lookup
         Cache::forget('clinical_indications');
         Cache::forget('arv_toxicities');
         Cache::forget('other_medications');
+
+        if(env('APP_LAB') == 5) {
+            // CD4 Lookup Data
+            Cache::forget('cd4rejected_reasons');
+        }
 
         Cache::forget('partners');
         Cache::forget('subcounties');

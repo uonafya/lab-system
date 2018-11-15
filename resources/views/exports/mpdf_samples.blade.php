@@ -50,7 +50,12 @@ p.breakhere {page-break-before: always}
 		@continue($sample->repeatt == 1)
 		<?php 
 			$count++;
+			if(!isset($current_batch)) $current_batch = $sample->batch_id;
 			if(!$sample->batch) unset($sample->batch);
+			if($sample->batch_id != $current_batch){
+				echo "<p class='breakhere'></p> <pagebreak sheet-size='A4'>";
+				$current_batch = $sample->batch_id;
+			}
 		 ?>
 		<table id="table1" align="center">
 

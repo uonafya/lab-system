@@ -16,10 +16,17 @@
 <aside id="menu">
     <div id="navigation">
         <ul class="nav" id="side-menu" style=" padding-top: 12px;padding-left: 8px;">
+        @if(Session('testingSystem') != 'CD4')
+            @if(env('APP_LAB') == 5)
+                @if(Auth::user()->user_type_id == 1)
+                <li class="label label-success"><a href="#" id="cd4Switch">Switch to CD4</a></li>
+                @endif
+            @endif
+        @endif
             <!-- <li class="active">
                 <a href="#"><span class="nav-label">MENU</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level"> -->
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
+        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4)
            {{--<!--  <li class="active">
                 <a href="{{!! url('home') !!}}"> <span class="nav-label">Tasks</span> 
                     <span class="label label-success pull-right">
@@ -29,7 +36,7 @@
             </li> -->--}}
         @endif
         
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4  || auth()->user()->user_type_id == 0)
+        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -39,6 +46,10 @@
                         <li><a href="{{ url('batch') }}">View</a></li>
                     </ul>
                 </li> -->
+                @if(in_array(env('APP_LAB'), [1, 8, 9]))
+                    <li><a href="{{ url('sample/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li>
@@ -55,6 +66,14 @@
                 </li> -->
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
                 <hr />
+                @if(env('APP_LAB') == 8 || env('APP_LAB') == 9)
+                    <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
+                    <hr />
+                    <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
+                    <hr />
+                    <li><a href="{{ url('worksheet/create/2/70') }}">Create Abbott Worksheet(72)</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
                 <!-- <li>
@@ -74,6 +93,12 @@
                     </a>
                 </li>
                 <hr />
+                @if(env('APP_LAB') == 4)
+                    <li><a href=" {{ url('batch/to_print') }}">Batches Due For Printing</span>
+                        </a>
+                    </li>
+                    <hr />
+                @endif
             @endif
             @if (session('testingSystem') == 'Viralload')
                 <!-- <li>
@@ -83,12 +108,21 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
-                @if(env('APP_LAB') == 1)
+                @if(in_array(env('APP_LAB'), [1, 8, 9]))
                     <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
-                @if(env('APP_LAB') == 4)
+                @if(env('APP_LAB') == 4 && Auth::user()->user_type_id != 5)
+                    <li><a href="{{ url('viralsample/create/1') }}">Add Plasma Samples</a></li>
+                    <li><a href="{{ url('viralsample/create/2') }}">Add EDTA Samples</a></li>
+                    <li><a href="{{ url('viralsample/create/3') }}">Add DBS Capillary Samples</a></li>
+                    <li><a href="{{ url('viralsample/create/4') }}">Add DBS Venous Samples</a></li>
+                    <hr />
+                @else
+                    <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
+                    <hr />
+                @endif
+                @if(env('APP_LAB') == 2)
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                     <hr />
                 @endif
@@ -106,13 +140,23 @@
                         <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
-                <hr />
+                @if(env('APP_LAB') != 8)
+                    <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
+                    <hr />
+                @endif
+                @if(in_array(env('APP_LAB'), [8, 9]))
+                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/21') }}">Create Abbott Worksheet(24)</a></li>
+                    <hr />
+                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>
+                    <hr />
+                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/69') }}">Create Abbott Worksheet(72)</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('viralworksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet(96)</a></li>
+                <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet</a></li>
                 <hr />
-                @if(env('APP_LAB') != 6)
+                @if(!in_array(env('APP_LAB'), [6, 8, 9]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
@@ -135,6 +179,12 @@
                     <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
                 </li>
                 <hr />
+                @if(env('APP_LAB') == 4)
+                    <li><a href=" {{ url('viralbatch/to_print') }}">Batches Due For Printing</span>
+                        </a>
+                    </li>
+                    <hr />
+                @endif
             @endif
             @if (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
@@ -165,7 +215,7 @@
                 </a>
             </li> -->
         @endif
-        @if (auth()->user()->user_type_id == 5)
+        @if (Auth::user()->user_type_id == 5)
             <li>
                 <a href="{{ url('patient') }}">EID Patient List</a>
             </li>
@@ -221,7 +271,7 @@
                 <a href="#"> <span class="nav-label">Search</span></a>
             </li> -->
         {{--
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 0)
+        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 0)
             <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
@@ -243,55 +293,82 @@
             </li>
             <hr />
         @endif
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4 || auth()->user()->user_type_id == 0)
+        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 0)
             <li>
                 <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
             </li>
             <hr />
         @endif
         --}}
-
-        @if (auth()->user()->user_type_id == 7 || auth()->user()->user_type_id == 0)
-            <li>
-                <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
-            </li>
-            <hr />
-        @endif
-        
-        <!-- Admin Side Bar -->
-        @if (auth()->user()->user_type_id == 2 || auth()->user()->user_type_id == 0)
-            <li>
-                <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
-            </li>
-            <hr />
-            @if(env('APP_LAB') == 1)
+        @if(Session('testingSystem') != 'CD4')
+            @if (Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 0)
                 <li>
-                    <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
+                    <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
+                    <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
                 </li>
                 <hr />
             @endif
+            
+            <!-- Admin Side Bar -->
+            @if (Auth::user()->user_type_id == 2 || Auth::user()->user_type_id == 0)
+                <li>
+                    <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('users/activity') }}"><span class="nav-label">Users Activity</span></a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
+                </li>
+                <hr />
+                @if(env('APP_LAB') == 1)
+                    <li>
+                        <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
+                    </li>
+                    <hr />
+                    <li>
+                        <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
+                    </li>
+                    <hr />
+                @endif
+            @endif
+        @endif
+        @if(Session('testingSystem') == 'CD4')
+            <li>
+                <a href="{{ url('cd4/sample/create') }}"><span class="nav-label">Add Sample</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="#"><span class="nav-label">Create Worksheet (38)</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="#"><span class="nav-label">Create Worksheet (40)</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="#"><span class="nav-label">Update Results</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="#"><span class="nav-label">Dispatch Results</span></a>
+            </li>
+            <hr />
         @endif
         <!-- Admin Side Bar -->
 
         {{--
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4)
+        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4)
             <li>
                 <a href="#"> <span class="nav-label">KITS</span></a>
             </li>
         @endif
-        @if (auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 2)
+        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 2)
             <li>
                 <a href="#"><span class="nav-label">SMS Printer</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
@@ -305,73 +382,62 @@
                 <a href="https://eid.nascop.org"> <span class="nav-label">NASCOP</span><span class="label label-success pull-right">National</span></a>
             </li>
             <hr />
-        @if (auth()->user()->user_type_id != 5)
+        @if (Auth::user()->user_type_id != 5)
             <li>
                 <a href="#"> <span class="nav-label">Change Password</span></a>
             </li>
             <hr />
         @endif
-        @if (auth()->user()->user_type_id != 2)
+        @if (Auth::user()->user_type_id != 2)
             <li>
                 <a href="#"> <span class="nav-label">User Manual</span></a>
             </li>
             <hr />
-            <li>
-                <a href="#"><span class="nav-label">Download Forms</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a></li>
-                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a></li>
-                </ul>
-            </li>
-            <hr />
         @endif
         --}}
-        @if (auth()->user()->user_type_id != 5)
+        @if (Auth::user()->user_type_id != 5)
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if (auth()->user()->user_type_id == 1)
+        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5))
             <li>
-                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span> <!--<span class="label label-success pull-right">Special</span>--></a>
+            @if(env('APP_LAB') == 4)
+                @if(Auth::user()->user_type_id != 4)
+                    <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
+                @endif
+            @else
+                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
+            @endif
             </li>
             <hr />
         @endif
-        @if(Auth()->user()->user_type_id != 2)
-        <!-- </ul>
-        </li>
-        <li>
-            <a href="#"><span class="nav-label">SEARCH</span><span class="fa arrow"></span> </a>
-            <ul class="nav nav-second-level">
-                <li><a href="#"><select class="select2" id="sampleSearch"></select></a></li>
-                <li><a href="#"><select class="select2"></select></a></li>
-                <li><a href="#"><select class="select2"></select></a></li>
-                <li><a href="#"><select class="select2"></select></a></li>
-            </ul>
-        </li> -->
-        @if(session('testingSystem') == 'Viralload')
-            <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
-        @elseif(session('testingSystem') == 'EID')
-            <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
-        @else
-            <!-- EID Searches -->
-            <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
-            <!-- VL Searches -->
-            <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
-            <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
-        @endif
+        @if(Auth::user()->user_type_id != 2)
+            @if(session('testingSystem') == 'Viralload')
+                <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @elseif(session('testingSystem') == 'EID')
+                <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+            @elseif(Session('testingSystem') == 'CD4')
+                <li><a href="#"></a></li>
+            @else
+                <!-- EID Searches -->
+                <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+                <!-- VL Searches -->
+                <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @endif
         @endif
         </ul>
     </div>

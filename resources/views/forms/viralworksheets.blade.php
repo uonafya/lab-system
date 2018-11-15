@@ -19,7 +19,7 @@
 
    <div class="content">
             
-        @if($create)
+        @if($create || env('APP_LAB') == 8)
 
             <div class="row">
                 <div class="col-lg-12">
@@ -46,6 +46,10 @@
 
             @if($calibration)
                 <input type="hidden" value="1" name="calibration" >
+            @endif
+
+            @if($limit)
+                <input type="hidden" value="{{ $limit }}" name="limit" >
             @endif
 
             <div class="row">

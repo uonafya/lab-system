@@ -40,6 +40,11 @@
                             <br />
                         @endisset
 
+                        @if(isset($form_sample_type) && $form_sample_type)
+                            <input type="hidden" name="form_sample_type" value="{{$form_sample_type}}">
+                            <input type="hidden" name="sampletype" value="{{$form_sample_type}}">
+                        @endif
+
 
                         @if(!$batch || isset($viralsample))    
                           <div class="form-group">
@@ -63,6 +68,20 @@
                             
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
+                        
+                        @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">High Priority</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                    @if(isset($viralsample) && $viralsample->batch->highpriority)
+                                        checked
+                                    @endif
+
+                                 />
+                                </div>
+                            </div>
+                        @endif
 
                       <div class="form-group ampath-div">
                           <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
@@ -82,6 +101,24 @@
 
                           </select></div>
                       </div>
+
+                      @if(env('APP_LAB') == 8)
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Specimen Label ID </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Area Name </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                                </div>
+                            </div>
+
+                        @endif
 
                     </div>
                 </div>
@@ -149,7 +186,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth
+                            <label class="col-sm-4 control-label">Date Of Birth
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
@@ -218,26 +255,41 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Sample Type
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <select class="form-control requirable" required name="sampletype" id="sampletype">
-                                    <option></option>
-                                    @foreach ($sampletypes as $sampletype)
-                                        <option value="{{ $sampletype->id }}"
+                        @if(isset($form_sample_type) && $form_sample_type)
 
-                                        @if (isset($viralsample) && $viralsample->sampletype == $sampletype->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $sampletype->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Sample Type
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" disabled type="text" value="{{ $sampletypes->where('id', $form_sample_type)->first()->name ?? '' }}">
+                                </div>
                             </div>
-                        </div> 
+
+                        @else
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Sample Type
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <select class="form-control requirable" required name="sampletype" id="sampletype">
+                                        <option></option>
+                                        @foreach ($sampletypes as $sampletype)
+                                            <option value="{{ $sampletype->id }}"
+
+                                            @if (isset($viralsample) && $viralsample->sampletype == $sampletype->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $sampletype->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div> 
+
+                        @endif
 
                         <div class="hr-line-dashed"></div>                      
 
@@ -295,6 +347,7 @@
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
                                     @foreach ($prophylaxis as $proph)
+                                        @continue($proph->id == 16 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $proph->id }}"
 
                                         @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
@@ -349,6 +402,7 @@
                                 <select class="form-control requirable" required name="justification" id="justification">
                                     <option></option>
                                     @foreach ($justifications as $justification)
+                                        @continue($justification->id == 8 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $justification->id }}"
 
                                         @if (isset($viralsample) && $viralsample->justification == $justification->id)
@@ -475,11 +529,10 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
-
 
                     </div>
                 </div>
@@ -581,9 +634,18 @@
         @endslot
 
 
-        $(".date:not(#datedispatched)").datepicker({
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
             startView: 0,
             todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#dob").datepicker({
+            startView: 2,
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
@@ -601,6 +663,18 @@
             format: "yyyy-mm-dd"
         });
 
+        // $("#dateinitiatedontreatment").datepicker({
+        $("#initiation_date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: '-24y',
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
@@ -612,11 +686,19 @@
 
             $("#rejection").hide();
 
-            $("#patient").blur(function(){
-                var patient = $(this).val();
-                var facility = $("#facility_id").val();
-                check_new_patient(patient, facility);
-            });
+            @if(isset($viralsample))                
+                @if($viralsample->receivedstatus == 2)
+                    $("#rejection").show();
+                    $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
+                @endif
+            @else
+                $("#patient").blur(function(){
+                    var patient = $(this).val();
+                    var facility = $("#facility_id").val();
+                    check_new_patient(patient, facility);
+                });
+            @endif
 
             $("#facility_id").change(function(){
                 var val = $(this).val();
@@ -723,7 +805,7 @@
                     else{
                         localStorage.setItem("new_patient", 1);
                         // $(".lockable").removeAttr("disabled");
-                        $(".lockable").val('').change();
+                        // $(".lockable").val('').change();
 
                         $('.patient_details').remove();
                     }

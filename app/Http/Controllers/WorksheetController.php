@@ -150,9 +150,9 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2)
+    public function create($machine_type=2, $limit=null)
     {
-        $data = Misc::get_worksheet_samples($machine_type);
+        $data = Misc::get_worksheet_samples($machine_type, $limit);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
@@ -169,12 +169,12 @@ class WorksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Worksheet;
-        $worksheet->fill($request->except('_token'));
+        $worksheet->fill($request->except('_token', 'limit'));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $data = Misc::get_worksheet_samples($worksheet->machine_type);
+        $data = Misc::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
         if(!$data || !$data['create']){
             $worksheet->delete();
@@ -201,7 +201,7 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples];
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
@@ -264,7 +264,7 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true];
+        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
@@ -312,7 +312,7 @@ class WorksheetController extends Controller
             return back();
         }
 
-        if($worksheet->uploadedby != auth()->user()->id){
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
             session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();
@@ -528,11 +528,9 @@ class WorksheetController extends Controller
 
                 // $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
                 // Sample::where($search)->update($data_array);
-
-                // if(env('APP_LAB') == 1) $sample_id = substr($data[4], 0, -1);
-                // else{
-                    $sample_id = (int) $data[4];                    
-                // }
+                
+                $sample_id = (int) trim($data[4]);                  
+                // $sample_id = substr($sample_id, 0, -1);
                 $sample = Sample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;

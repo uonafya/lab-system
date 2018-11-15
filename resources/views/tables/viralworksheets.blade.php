@@ -25,6 +25,12 @@
             <a href="{{ url('viralworksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
             </a>
+            @if(env('APP_LAB') == 9)
+                |
+                <a href="{{ url('viralworksheet/index/11') }}" title="EMR (IQCare) Worksheets">
+                    EMR (IQCare) Worksheets
+                </a>
+            @endif
         </div>
     </div>
 
@@ -116,6 +122,10 @@
                                     <th> Created By </th>
                                     <th> Type </th>
                                     <th> Status </th>
+                                    <th> # Detected </th>
+                                    <th> # Undetected </th>
+                                    <th> # Failed </th>
+                                    <th> # No Result </th>
                                     <th> # Samples </th>
                                     <th> Date Run </th>
                                     <th> Date Updated </th>
@@ -139,6 +149,11 @@
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
 
+                                    <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $failed->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $noresult->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+
                                     <td> {{ $worksheet->samples_no }} 
                                         @if($reruns->where('worksheet_id', $worksheet->id)->first())
                                             <span style="color: #ff0000;"> ({{ $reruns->where('worksheet_id', $worksheet->id)->first()->totals }}) </span>
@@ -148,7 +163,7 @@
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
-                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
+                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id, 'machine_type' => $worksheet->machine_type, 'worksheet' => $worksheet])
                                     </td>
                                 </tr>
                             @endforeach

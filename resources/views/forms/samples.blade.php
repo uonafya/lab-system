@@ -25,7 +25,6 @@
             {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         @else
             {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
-
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
@@ -74,6 +73,20 @@
                             <br />
 
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
+                        @endif
+                        
+                        @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">High Priority</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                    @if(isset($sample) && $sample->batch->highpriority)
+                                        checked
+                                    @endif
+
+                                 />
+                                </div>
+                            </div>
                         @endif
 
                         
@@ -200,7 +213,12 @@
                             </div>
 
                             <div class="col-sm-3">
-                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1> Tick only if sample redraw </label>
+                                <label> <input type="checkbox" class="i-checks" name="redraw" value=1
+                                    @if(isset($sample) && $sample->redraw == 1)
+                                        checked
+                                    @endif
+
+                                 > Tick only if sample redraw </label>
                             </div>
 
                         </div>
@@ -717,11 +735,20 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#rejection").hide();
-            $("#patient").blur(function(){
-                var patient = $(this).val();
-                var facility = $("#facility_id").val();
-                check_new_patient(patient, facility);
-            });
+
+            @if(isset($sample))                
+                @if($sample->receivedstatus == 2)
+                    $("#rejection").show();
+                    $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
+                @endif
+            @else
+                $("#patient").blur(function(){
+                    var patient = $(this).val();
+                    var facility = $("#facility_id").val();
+                    check_new_patient(patient, facility);
+                });
+            @endif
 
             $("#facility_id").change(function(){
                 var val = $(this).val();
@@ -845,7 +872,7 @@
                     else{
                         localStorage.setItem("new_patient", 1);
                         // $(".lockable").removeAttr("disabled");
-                        $(".lockable").val('').change();
+                        // $(".lockable").val('').change();
                         $('#pcrtype option[value=1]').attr('selected','selected').change();
                         // $("#hidden_pcr").val(1);
 

@@ -13,6 +13,16 @@ class Email extends BaseModel
 {
     use SoftDeletes;
 
+    public function county()
+    {
+        return $this->belongsTo('App\County');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     /**
      * Get the user's full name
      *
@@ -48,6 +58,10 @@ class Email extends BaseModel
         $this->save_blade();
         ini_set("memory_limit", "-1");
         $facilities = \App\Facility::where('flag', 1)->get();
+
+        if($this->county_id){
+            $facilities = \App\Facility::where('flag', 1)->whereRaw("id IN (select id from view_facilitys where county_id = {$this->county_id})")->get();
+        }
         
         $this->sent = true;
         $this->save();

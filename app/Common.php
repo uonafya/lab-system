@@ -160,7 +160,7 @@ class Common
 	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
-        $offset_value = 0;
+        $offset_value = 50000;
         while(true){
 
 			$samples = $view_model::where(['batch_complete' => 1])
@@ -263,7 +263,8 @@ class Common
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
-			$misc_model::check_batch($batch->id);
+			$str = $misc_model::check_batch($batch->id);
+			// if($str) echo $str . "\n";
 		}
 	}
 
@@ -354,6 +355,31 @@ class Common
 		 	break;
 		} 
     }
+
+	public static function fix_no_age($type)
+	{
+    	ini_set('memory_limit', "-1");
+		if($type == 'eid'){
+			$sample_model = \App\Sample::class;
+			$view_model = \App\SampleView::class;
+			$func_name = 'calculate_age';
+		}else{
+			$sample_model = \App\Viralsample::class;
+			$view_model = \App\ViralsampleView::class;
+			$func_name = 'calculate_viralage';
+		}
+
+		$samples = $view_model::select('id', 'dob', 'datecollected')
+								->whereNotNull('dob')
+								->whereRaw("(age is null or age=0)")
+								->get();
+
+		foreach ($samples as $sample) {
+			$s = $sample_model::find($sample->id);
+			$s->age = \App\Lookup::$func_name($sample->datecollected, $sample->dob);
+			$s->pre_update();
+		}
+	}
 
     // public static function send_communication()
     // {

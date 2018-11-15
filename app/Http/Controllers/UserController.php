@@ -28,11 +28,11 @@ class UserController extends Controller
             $delete = url("user/delete/$id");
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
-            $row .= '<td>'.$value->getFullNameAttribute().'</td>';
+            $row .= '<td>'.$value->full_name.'</td>';
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
-            $row .= '<td>'.$value->created_at.'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Deactivate</a> | <a href="'.$delete.'">Delete</a></td>';
+            $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a></td>';
             $row .= '</tr>';
         }
 
@@ -65,7 +65,7 @@ class UserController extends Controller
         } else {
             $user = factory(User::class, 1)->create([
                         'user_type_id' => $request->user_type,
-                        'lab_id' => Auth()->user()->lab_id,
+                        'lab_id' => auth()->user()->lab_id,
                         'surname' => $request->surname,
                         'oname' => $request->oname,
                         'email' => $request->email,
@@ -138,6 +138,24 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function delete($id) {
+        $user = self::__unHashUser($id);
+        $user->delete();
+
+        return back();
+    }
+
+    public function activity($user_id = null) {
+        if (isset($user_id)) {
+            $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+            return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
+        } else {
+            $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+            return view('tables.users-activity', compact('users'))->with('pageTitle', 'Users Activity');
+        }
     }
 
     public function switch_user($id)

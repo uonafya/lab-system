@@ -40,12 +40,12 @@
                                 <input class="form-control" required name="county" type="text" value="{{ $facility->county }}" id="county" disabled="true">
                             </div>
                         </div>
-                        <div class="form-group">
+                        {{--<div class="form-group">
                             <label class="col-sm-4 control-label">Laboratory</label>
                             <div class="col-sm-8">
                                 <input class="form-control" required name="lab" type="text" value="{{ $facility->lab }}" id="lab" disabled="true">
                             </div>
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
             </div>

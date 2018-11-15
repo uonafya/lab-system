@@ -36,6 +36,29 @@
                     <div class="panel-body">
 
                         <div class="form-group">
+                            <label class="col-sm-4 control-label">County </label>
+                            <div class="col-sm-8">
+
+                                <select class="form-control" name="county_id">
+
+                                  <option></option>
+                                  <option value="0">All Counties</option>
+                                  @foreach ($counties as $county)
+                                      <option value="{{ $county->id }}"
+
+                                      @if (isset($email) && $email->county_id == $county->id)
+                                          selected
+                                      @endif
+
+                                      > {{ $county->name }}
+                                      </option>
+                                  @endforeach
+
+                                </select>
+                            </div>
+                        </div> 
+
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Name
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
