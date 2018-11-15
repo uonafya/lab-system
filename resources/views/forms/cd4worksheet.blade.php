@@ -102,7 +102,13 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td>No Samples available yet</td>
+                                    <td colspan="10">
+                                    	<center>
+                                    		<div class="alert alert-warning">
+                                    			All the samples that were in this worksheet have been released back into the queue for selection in next worksheet.
+                                    		</div>
+                                    	</center>
+                                    </td>
                                 </tr>
                             @endforelse
                             </tbody>
@@ -111,11 +117,13 @@
 		                <div class="form-group">
 		                    <center>
 		                        <div class="col-sm-10 col-sm-offset-1">
+		                        @if($data->worksheet->status_id != 4)
 		                        	@if(isset($data->view))
 		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
 		                            @else
 		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
 		                            @endif
+		                        @endif
 		                        </div>
 		                    </center>
 		                </div>

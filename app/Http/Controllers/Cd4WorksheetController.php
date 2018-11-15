@@ -134,7 +134,7 @@ class Cd4WorksheetController extends Controller
             return back();
         }
         $sample_array = Cd4Sample::select('id')->where('worksheet_id', $worksheet->id)->get()->pluck('id')->toArray();
-        Cd4Sample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null, 'status' => 1]);
+        Cd4Sample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null, 'status_id' => 1]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;

@@ -67,10 +67,14 @@
                                             {{ gmdate('d-M-Y', strtotime($worksheet->datereviewed2)) }} 
                                         @endif</td>
                                     <td>
+                                    @if($worksheet->status_id == 4)
+                                        <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">View cancelled worksheet details</a>
+                                    @else
                                         <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">Details</a> | 
                                         <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}">Print</a> | 
                                         <a href="{{ URL::to('cd4/worksheet/cancel/'.$worksheet->id) }}">Cancel</a> | 
                                         <a href="#">Update Results</a>
+                                    @endif
                                     </td>
                                 </tr>
                             @empty
