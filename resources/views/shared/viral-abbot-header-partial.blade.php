@@ -55,7 +55,7 @@
 	</tr>
 	<tr class="even">
 		<td><strong>Created By	</strong>    </td>
-		<td> {{ $worksheet->creator->full_name }} </td>
+		<td> {{ $worksheet->creator->full_name ?? '' }} </td>
 		<td><strong>Expiry Dates</strong>	</td>
 
 		<td> {{ $worksheet->my_date_format('sampleprepexpirydate') }} </td>
@@ -68,21 +68,21 @@
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
-		<td> {{ $worksheet->sorter->full_name or '' }}</td>
+		<td> {{ $worksheet->sorter->full_name ?? '' }}</td>
 		<td><strong>Bulked By	</strong>    </td>
-		<td> {{ $worksheet->bulker->full_name or '' }} </td>
+		<td> {{ $worksheet->bulker->full_name ?? '' }} </td>
 		<td><strong>Run By	</strong>    </td>
-		<td> {{ $worksheet->runner->full_name or '' }}</td>
+		<td> {{ $worksheet->runner->full_name ?? '' }}</td>
 		<td></td>
 		<td></td>
 	</tr>
 	<tr class="even">
 		<td><strong>Updated By	</strong>    </td>
-		<td> {{ $worksheet->uploader->full_name or '' }} </td>
+		<td> {{ $worksheet->uploader->full_name ?? '' }} </td>
 		<td><strong>Date Updated	</strong>    </td>
 		<td> {{ $worksheet->my_date_format('dateuploaded') }}</td>
 		<td><strong>Reviewed By	</strong>    </td>
-		<td> {{ $worksheet->reviewer->full_name or '' }}</td>
+		<td> {{ $worksheet->reviewer->full_name ?? '' }}</td>
 		<td><strong>Date Reviewed	</strong>    </td>
 		<td> {{ $worksheet->my_date_format('datereviewed') }}</td>
 	</tr>

@@ -69,6 +69,21 @@ class Copier
         }
     }
 
+    public static function copy_areaname()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::get();
+
+        foreach ($samples as $sample) {
+            $s = ViralsampleView::find($sample->id);
+            if(!$s) continue;
+
+            $sample->areaname = $s->areaname;
+            $sample->label_id = $s->label_id;
+            $sample->save();
+        }
+    }
+
     public static function copy_eid()
     {
         $start = Sample::max('id');
