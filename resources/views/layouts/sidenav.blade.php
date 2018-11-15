@@ -346,7 +346,7 @@
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Create Worksheet (40)</span></a>
+                <a href="{{ url('cd4/worksheet/create/40') }}"><span class="nav-label">Create Worksheet (40)</span></a>
             </li>
             <hr />
             <li>

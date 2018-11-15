@@ -22,8 +22,8 @@
                                     <th rowspan="2">Created By</th>
                                     <th rowspan="2">Status</th>
                                     <th rowspan="2"># Samples</th>
-                                    <th colspan="4">Date</th>
-                                    <th rowspan="2">Task</th>
+                                    <th colspan="4"><center>Date</center></th>
+                                    <th rowspan="2"><center>Task</center></th>
                                 </tr>
                                 <tr>
                                     <th>Run</th>
@@ -67,13 +67,10 @@
                                             {{ gmdate('d-M-Y', strtotime($worksheet->datereviewed2)) }} 
                                         @endif</td>
                                     <td>
-                                        <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">Details</a> |
-                                        @if($worksheet->status_id > 1)
-                                            <a href="#">Print</a> |
-                                        @endif
-                                        @if($worksheet->status_id == 1 ||$worksheet->status_id == 2)
-                                            <a href="{{ url('cd4/sample/'.$worksheet->id.'/edit') }}">Edit</a> | <a href="#">Delete</a>
-                                        @endif
+                                        <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">Details</a> | 
+                                        <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}">Print</a> | 
+                                        <a href="{{ URL::to('cd4/worksheet/cancel/'.$worksheet->id) }}">Cancel</a> | 
+                                        <a href="#">Update Results</a>
                                     </td>
                                 </tr>
                             @empty

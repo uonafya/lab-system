@@ -118,6 +118,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('worksheet')->name('worksheet.')->group(function(){
 			Route::get('create/{limit}', 'Cd4WorksheetController@create');
 			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
+			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
 		});
 		Route::resource('worksheet', 'Cd4WorksheetController');
 	});

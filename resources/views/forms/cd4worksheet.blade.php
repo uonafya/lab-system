@@ -24,24 +24,33 @@
                     @if(!isset($data->view))
                     	{{ Form::open(['url' => '/cd4/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheet_form']) }}
                     @endif
+                   	@if(!isset($data->view) && $data->samples->count() == 0)
+                   		<center><div class="alert alert-warning">No samples availabe to run a worksheet</div></center>
+                   	@else
                     	<table class="table table-striped table-bordered table-hover">
                     		<tr>
                     			<th rowspan="2"><br>Worksheet No</th>
-                    			<td rowspan="2"><br>{{ $data->worksheet->id }}</td>
+                    			<td rowspan="2"><br>
+                    				@if(!isset($data->view))
+                    					{{ $data->worksheet }}
+                    				@else
+                    					{{ $data->worksheet->id }}
+                    				@endif
+                    			</td>
                     			<th>Created By</th>
-                    			<td>{{ $data->worksheet->creator->full_name }}</td>
+                    			<td>{{ $data->worksheet->creator->full_name ?? Auth::user()->full_name }}</td>
                     			<th>Tru Count Lot #</th>
-                    			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Normal Lot #	</th>
-                    			<td><input type="text" name="MulticheckNormalLotno" class="form-control" value="{{ $data->worksheet->MulticheckNormalLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="MulticheckNormalLotno" class="form-control" value="{{ $data->worksheet->MulticheckNormalLotno ?? '' }}" required {{ $disabled }}></td>
                     		</tr>
                     		<tr>
                     			<th>Date Created</th>
                     			<td>{{ gmdate('d-M-Y') }}</td>
                     			<th>Antibody Lot #</th>
-                    			<td><input type="text" name="AntibodyLotno" class="form-control" value="{{ $data->worksheet->AntibodyLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="AntibodyLotno" class="form-control" value="{{ $data->worksheet->AntibodyLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Low Lot #</th>
-                    			<td><input type="text" name="MulticheckLowLotno" class="form-control" value="{{ $data->worksheet->MulticheckLowLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="MulticheckLowLotno" class="form-control" value="{{ $data->worksheet->MulticheckLowLotno ?? '' }}" required {{ $disabled }}></td>
                     		</tr>
                     	</table>
                     	<center><h5>{{ $data->samples->count() }} WORKSHEET SAMPLES [2 Controls]</h5></center>
@@ -71,12 +80,12 @@
                                     <td>
                                     	<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
                                     </td>
-                                    <td>{{ $sample->medicalrecordno ?? '' }}</td>
+                                    <td>{{ $sample->medicalrecordno ?? $sample->patient->medicalrecordno ?? '' }}</td>
                                     <td>{{ __(' ') }}</td>
                                     <td>
-                                    	{{ $sample->patient_name ?? '' }} 
-                                    	/ {{ $sample->age ?? '' }} 
-                                    	/ {{ $sample->gender ?? '' }}
+                                    	{{ $sample->patient_name ?? $sample->patient->patient_name ?? '' }} 
+                                    	/ {{ $sample->age ?? $sample->patient->age ?? '' }} 
+                                    	/ {{ $sample->gender ?? $sample->patient->gender ?? '' }}
                                     </td>
                                     <td>
                                         @if($sample->datereceived) 
@@ -110,6 +119,7 @@
 		                        </div>
 		                    </center>
 		                </div>
+		            @endif
 		            @if(!isset($data->view))
 	                    {{ Form::close() }}
 	                @endif

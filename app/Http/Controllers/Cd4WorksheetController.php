@@ -31,18 +31,17 @@ class Cd4WorksheetController extends Controller
     public function create($limit)
     {
         $rerunsamples = $this->get_samples_for_rerun();
+
         if ($rerunsamples == 0) { // No rerun samples are available
             $samples = $this->get_samples_for_run($limit);
             $sampleCount = $samples->count();
-            if($sampleCount > 0){
-                $worksheetCount = Cd4Worksheet::max('id')+1;
-                $data['samples'] = $samples;
-                $data['worksheet'] = $worksheetCount;
-                $data['limit'] = $limit;
-                $data = (object) $data;
-
-                return view('forms.cd4worksheet', compact('data'))->with('pageTitle', "Create Worksheet ($limit)");
-            }
+            $worksheetCount = Cd4Worksheet::max('id')+1;
+            $data['samples'] = $samples;
+            $data['worksheet'] = $worksheetCount;
+            $data['limit'] = $limit;
+            $data = (object) $data;
+            // dd($data->samples->first()->patient->patient_name);
+            return view('forms.cd4worksheet', compact('data'))->with('pageTitle', "Create Worksheet ($limit)");
         } else {
             
         }
@@ -125,8 +124,24 @@ class Cd4WorksheetController extends Controller
     }
 
     public function print(Cd4Worksheet $worksheet) {
-        
         return view('worksheets.cd4', compact('worksheet'))->with('pageTitle', 'Worksheets');
+    }
+
+    public function cancel(Cd4Worksheet $worksheet){
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        $sample_array = Cd4Sample::select('id')->where('worksheet_id', $worksheet->id)->get()->pluck('id')->toArray();
+        Cd4Sample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null, 'status' => 1]);
+        $worksheet->status_id = 4;
+        $worksheet->datecancelled = date("Y-m-d");
+        $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->save();
+
+        session(['toast_message' => 'The worksheet has been cancelled.']);
+        return redirect("/cd4/worksheet");
     }
 
     public function get_samples_for_rerun(){
