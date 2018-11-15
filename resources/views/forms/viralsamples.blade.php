@@ -60,6 +60,14 @@
                               </div>
                           </div>
                         @else
+
+                            <div class="alert alert-success">
+                                <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
+                            </div>
+                            <br />
+                            
+                            <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
+                        @endif
                         
                         @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
                             <div class="form-group">
@@ -73,14 +81,6 @@
                                  />
                                 </div>
                             </div>
-                        @endif
-
-                            <div class="alert alert-success">
-                                <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
-                            </div>
-                            <br />
-                            
-                            <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
 
                       <div class="form-group ampath-div">
@@ -102,19 +102,23 @@
                           </select></div>
                       </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Specimen Label ID </label>
-                            <div class="col-sm-8">
-                                <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
-                            </div>
-                        </div>
+                      @if(env('APP_LAB') == 8)
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Area Name </label>
-                            <div class="col-sm-8">
-                                <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Specimen Label ID </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Area Name </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                                </div>
+                            </div>
+
+                        @endif
 
                     </div>
                 </div>

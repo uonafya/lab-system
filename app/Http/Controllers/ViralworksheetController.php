@@ -52,8 +52,15 @@ class ViralworksheetController extends Controller
         $worksheets->setPath(url()->current());
 
         $data = Lookup::worksheet_lookups();
-        $worksheet_ids = $worksheets->pluck(['id'])->toArray();
-        $data['reruns'] = $this->get_reruns($worksheet_ids);
+
+        $ids = $worksheets->pluck(['id'])->toArray();
+
+        $data['noresult'] = $this->get_worksheet_results(0, $ids);
+        $data['failed'] = $this->get_worksheet_results(3, $ids);
+        $data['detected'] = $this->get_worksheet_results(2, $ids);
+        $data['undetected'] = $this->get_worksheet_results(1, $ids);
+        
+        $data['reruns'] = $this->get_reruns($ids);
 
         $data['status_count'] = Viralworksheet::selectRaw("count(*) AS total, status_id, machine_type")
             ->groupBy('status_id', 'machine_type')
@@ -690,6 +697,7 @@ class ViralworksheetController extends Controller
         $samples = ViralsampleView::selectRaw("count(*) as totals, worksheet_id")
             ->whereNotNull('worksheet_id')
             ->when($worksheet_id, function($query) use ($worksheet_id){
+                if(is_array($worksheet_id)) return $query->whereIn('worksheet_id', $worksheet_id);
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->whereNotNull('worksheet_id')
