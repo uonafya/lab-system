@@ -19,7 +19,7 @@
 
    <div class="content">
             
-        @if($create)
+        @if($create || env('APP_LAB') == 8)
 
             <div class="row">
                 <div class="col-lg-12">
