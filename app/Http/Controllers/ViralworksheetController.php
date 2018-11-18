@@ -123,7 +123,7 @@ class ViralworksheetController extends Controller
 
         $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'));
 
-        if(!$data || !$data['create']){
+        if(!$data || (!$data['create']) && env('APP_LAB') != 8){
             dd($data);
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
@@ -445,6 +445,24 @@ class ViralworksheetController extends Controller
                 }
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
                 $sample_id = (int) $sample_id;
+                $sample = Viralsample::find($sample_id);
+                if(!$sample) continue;
+                if($sample->worksheet_id != $worksheet->id) continue;
+                $sample->fill($data_array);
+                $sample->save();
+            }
+        }
+        else if($worksheet->machine_type == 4){
+            $handle = fopen($file, "r");
+            while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                $sample_id = (int) trim($value[0]);
+
+                $result = $value[4];
+
+                $result_array = MiscViral::sample_result($result);
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
+
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
                 if($sample->worksheet_id != $worksheet->id) continue;
