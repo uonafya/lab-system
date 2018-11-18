@@ -212,12 +212,12 @@ class Cd4WorksheetController extends Controller
     }
 
     public function confirm_upload(Cd4Worksheet $worksheet){
-        dd($worksheet->uploader);
-        $data['worksheet'] = $Worksheet;
-        $data['samples'] = $Worksheet->samples;
+        // dd($worksheet->uploader);
+        $data['worksheet'] = $worksheet;
+        $data['samples'] = $worksheet->samples;
         $data = (object)$data;
         
-        return view('forms.confirm-cd4worksheet', compact('data'))->with('pageTitle', "Worksheet No. $Worksheet->id Details");
+        return view('forms.confirm-cd4worksheet', compact('data'))->with('pageTitle', "RESULTS REVIEW (1st) FOR WORKSHEET NO $worksheet->id");
     }
 
     public function print(Cd4Worksheet $worksheet) {

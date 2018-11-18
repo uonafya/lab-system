@@ -42,9 +42,9 @@
                     			<th>Date Created</th>
                     			<td>{{ gmdate('d-M-Y', strtotime($data->worksheet->created_at)) }}</td>
                     			<th>Antibody Lot #</th>
-                    			<td><input type="text" name="AntibodyLotno" class="form-control" value="{{ $data->worksheet->AntibodyLotno ?? '' }}" required {{ $disabled }}></td>
+                    			<td>{{ $data->worksheet->AntibodyLotno ?? '' }}</td>
                     			<th>Multicheck Low Lot #</th>
-                    			<td><input type="text" name="MulticheckLowLotno" class="form-control" value="{{ $data->worksheet->MulticheckLowLotno ?? '' }}" required {{ $disabled }}></td>
+                    			<td>{{ $data->worksheet->MulticheckLowLotno ?? '' }}</td>
                     		</tr>
                             <tr>
                                 <th>Date Run</th>
@@ -82,62 +82,80 @@
                                    <th> Lymphocytes </th>
                                    <th> Action </th>
                                    <th> Reviewed (1st) </th>
-
                                    <th> Date Reviewed (1st) </th>
                                    <th> Reviewed By (1st) </th>
                                    <th> Reviewed (2nd) </th>
-
-                                   
                                    <th> Date Reviewed (2nd) </th>
                                    <th> Reviewed By (2nd) </th>
                                    <th> Task </th>
                                 </tr>
                             </thead>
                             <tbody> 
-                            @if(!isset($data->view))
-                            <input type="hidden" name="limit" value="{{ $data->limit }}">
-                            @endif
                             @forelse($data->samples as $key => $sample)
                                 <tr>
                                     <td>{{ $sample->serial_no ?? '' }}</td>
+                                    <td>{{ $sample->id ?? '' }}</td>
+                                    <td>{{ $sample->patient->medicalrecordno ?? '' }}</td>
+                                    <td>{{ $sample->patient->patient_name ?? '' }}</td>
+                                    <td>{{ $sample->run ?? '' }}</td>
                                     <td>
-                                        {{ $sample->id ?? '' }}
-                                        @if($sample->parentid > 0)
-                                            <div align='right'>
-                                                <table>
-                                                    <tr>
-                                                        <td style='background-color:#FAF156'><small> R </small></td>
-                                                    </tr>
-                                                </table>
-                                            </div>
+                                        <input type="text" name="AVGCD3percentLymph[]" class="form-control" value="{{ $sample->AVGCD3percentLymph ?? '' }}" style="min-width: 60px;">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="AVGCD3AbsCnt[]" class="form-control" value="{{ $sample->AVGCD3AbsCnt ?? '' }}" style="min-width: 60px;">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="AVGCD3CD4percentLymph[]" class="form-control" value="{{ $sample->AVGCD3CD4percentLymph ?? '' }}" style="min-width: 60px;">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="AVGCD3CD4AbsCnt[]" class="form-control" value="{{ $sample->AVGCD3CD4AbsCnt ?? '' }}" style="min-width: 60px;">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="CD45AbsCnt[]" class="form-control" value="{{ $sample->CD45AbsCnt ?? '' }}" style="min-width: 60px;">
+                                    </td>
+                                    <td>
+                                    @if(!isset($sample->dateapproved))
+                                        <select name="repeatt[]" class="form-control" style="width: 104px;">
+                                            <option value='0' selected style='color:#339900'>Dispatch</option>
+                                            <option value='1' style='color:#FFD324'>Rerun</option>
+                                        </select>
+                                    @else
+                                        @if($sample->repeatt == 0)
+                                            <strong><font color='#FFD324'> Dispatch </font></strong>
+                                        @elseif($sample->repeatt == 1)
+                                            <strong><font color='#339900'> Rerun </font></strong>
                                         @endif
+                                    @endif
                                     </td>
                                     <td>
-                                    	<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
-                                    </td>
-                                    <td>{{ $sample->medicalrecordno ?? $sample->patient->medicalrecordno ?? '' }}</td>
-                                    <td>{{ __(' ') }}</td>
-                                    <td>
-                                    	{{ $sample->patient_name ?? $sample->patient->patient_name ?? '' }} 
-                                    	/ {{ $sample->age ?? $sample->patient->age ?? '' }} 
-                                    	/ {{ $sample->gender ?? $sample->patient->gender ?? '' }}
+                                    @if($sample->dateapproved)
+                                        <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" checked disabled style="width: 16px;height: 16px;" /></center>
+                                    @else
+                                        <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" value="{{ $key }}" checked style="width: 16px;height: 16px;" /></center>
+                                    @endif
                                     </td>
                                     <td>
-                                        @if($sample->datereceived) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->datereceived)) }} 
-                                        @endif
+                                    @isset($sample->dateapproved)
+                                        {{ gmdate('d-M-Y', $sample->dateapproved) }}
+                                    @endisset
                                     </td>
-                                    <td>{{ gmdate('d-M-Y', strtotime($sample->created_at)) }}</td>
+                                    <td>{{ $sample->first_approver->full_name ?? '' }}</td>
+                                    <td></td>
                                     <td>
-                                        @if($sample->datetested) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->datetested)) }} 
-                                        @endif
+                                    @isset($sample->dateapproved2)
+                                        {{ gmdate('d-M-Y', $sample->dateapproved2) }}
+                                    @endisset
                                     </td>
-                                    <td>{{ __('CD3/CD4') }}</td>
+                                    <td>{{ $sample->second_approver->full_name ?? '' }}</td>
+                                    <td>
+                                        <a href="#">Details</a> | 
+                                        <a href="#">Runs</a> | 
+                                        <a href="#">Release as Redraw</a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10">
+                                    <td colspan="18">
                                     	<center>
                                     		<div class="alert alert-warning">
                                     			All the samples that were in this worksheet have been released back into the queue for selection in next worksheet.
@@ -152,13 +170,7 @@
 		                <div class="form-group">
 		                    <center>
 		                        <div class="col-sm-10 col-sm-offset-1">
-		                        @if($data->worksheet->status_id != 4)
-		                        	@if(isset($data->view))
-		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
-		                            @else
-		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
-		                            @endif
-		                        @endif
+		                          	<button class="btn btn-success" type="submit"> Confirm & Approve Results</button>
 		                        </div>
 		                    </center>
 		                </div>
