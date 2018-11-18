@@ -14,12 +14,14 @@ class Cd4WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=null)
     {
         $data = Lookup::worksheet_lookups();
-        $data['worksheets'] = Cd4Worksheet::orderBy('id', 'desc')->get();
+        $data['worksheets'] = Cd4Worksheet::when($state, function($query) use ($state){
+                                            return $query->where('status_id', '=', $state);
+                                        })->orderBy('id', 'desc')->get();
         $data = (object) $data;
-        // dd($data);
+        
         return view('tables.cd4-worksheets', compact('data'))->with('pageTitle', 'Worksheets');
     }
 
@@ -121,6 +123,14 @@ class Cd4WorksheetController extends Controller
     public function destroy(Cd4Worksheet $Worksheet)
     {
         //
+    }
+
+    public function upload(Request $request, Cd4Worksheet $worksheet){
+        if ($request->method() == "POST") {
+            dd($request->all());
+        } else {
+            return view('forms.cd4upload_results', compact('worksheet'))->with('pageTitle', "UPDATE TEST RESULTS FOR WORKSHEET NO $worksheet->id");    
+        }
     }
 
     public function print(Cd4Worksheet $worksheet) {

@@ -14,6 +14,7 @@ use App\SampleView;
 use App\ViralsampleView;
 use App\Worksheet;
 use App\Viralworksheet;
+use App\Cd4Worksheet;
 
 class DashboardCacher
 {
@@ -81,8 +82,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
         	];
-        }
-        else{
+        } else if (session('testingSystem') == 'EID'){
             return [
                 'pendingSamples' => Cache::get('eid_pendingSamples'),
                 'pendingSamplesOverTen' => Cache::get('eid_pendingSamplesOverTen'),
@@ -95,7 +95,10 @@ class DashboardCacher
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
             ];
-
+        } else {
+            return [
+                'CD4resultsForUpdate' => Cache::get('CD4resultsForUpdate')
+            ];
         }
     }
 
@@ -255,11 +258,13 @@ class DashboardCacher
     {
         if ($testingSystem == 'Viralload') {
             $model = Viralworksheet::with(['creator']);
-        } else {
+        } else if ($testingSystem == 'Eid') {
             $model = Worksheet::with(['creator']);
+        } else {
+            $model = Cd4Worksheet::with(['creator']);
         }
 
-        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
+        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->first()->total ?? 0;
     }
 
     public static function overdue($level = 'testing',$testingSystem = 'Viralload') {
@@ -312,6 +317,8 @@ class DashboardCacher
         $overduetesting2 = self::overdue('testing','Eid');
         $overduedispatched2 = self::overdue('dispatched','Eid');
 
+        $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
+
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
@@ -323,8 +330,7 @@ class DashboardCacher
         Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
         Cache::put('vl_overduetesting', $overduetesting, $minutes);
         Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
-
-        
+        // EID cache 
         Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
         Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
         Cache::put('eid_batchesForApproval', $batchesForApproval2, $minutes);
@@ -335,6 +341,8 @@ class DashboardCacher
         Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
         Cache::put('eid_overduetesting', $overduetesting2, $minutes);
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
+        //CD4 Cache
+        Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
     }
 
     public static function clear_cache()

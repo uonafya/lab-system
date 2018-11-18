@@ -116,9 +116,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('patients', 'CD4PatientController');
 		
 		Route::prefix('worksheet')->name('worksheet.')->group(function(){
-			Route::get('create/{limit}', 'Cd4WorksheetController@create');
-			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+			Route::get('create/{limit}', 'Cd4WorksheetController@create');
+			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
+			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
+			Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
+			Route::post('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
 		});
 		Route::resource('worksheet', 'Cd4WorksheetController');
 	});
