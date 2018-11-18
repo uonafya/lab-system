@@ -452,6 +452,24 @@ class ViralworksheetController extends Controller
                 $sample->save();
             }
         }
+        else if($worksheet->machine_type == 4){
+            $handle = fopen($file, "r");
+            while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                $sample_id = (int) trim($value[0]);
+
+                $result = $value[4];
+
+                $result_array = MiscViral::sample_result($result);
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
+
+                $sample = Viralsample::find($sample_id);
+                if(!$sample) continue;
+                if($sample->worksheet_id != $worksheet->id) continue;
+                $sample->fill($data_array);
+                $sample->save();
+            }
+        }
         else
         {
             $handle = fopen($file, "r");
