@@ -121,7 +121,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
 			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
 			Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
-			Route::post('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
 		});
 		Route::resource('worksheet', 'Cd4WorksheetController');
 	});

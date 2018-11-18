@@ -20,7 +20,7 @@
 
    <div class="content">
         <div>
-        {{ Form::open(['url'=>'/cd4/worksheet/upload/' . $worksheet->id, 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
+        {{ Form::open(['url'=>'/cd4/worksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
 
         <input type="hidden" value="{{ auth()->user()->id }}" name="uploadedby">
         <input type="hidden" value="{{ date('Y-m-d') }}" name="dateuploaded">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Cd4Worksheet;
 use App\Cd4Sample;
 use App\Lookup;
+use Excel;
 use Illuminate\Http\Request;
 
 class Cd4WorksheetController extends Controller
@@ -126,8 +127,14 @@ class Cd4WorksheetController extends Controller
     }
 
     public function upload(Request $request, Cd4Worksheet $worksheet){
-        if ($request->method() == "POST") {
-            dd($request->all());
+        if ($request->method() == "PUT") {
+            $file = $request->upload->path();
+            // $path = $request->upload->store('public/results/cd4'); 
+            $data = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+            dd($data);
+            
         } else {
             return view('forms.cd4upload_results', compact('worksheet'))->with('pageTitle', "UPDATE TEST RESULTS FOR WORKSHEET NO $worksheet->id");    
         }
