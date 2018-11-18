@@ -460,6 +460,28 @@ class ViralworksheetController extends Controller
 
                 $result = $value[4];
 
+                if($value[19] == "Control"){
+                    $name = strtolower($value[20]);
+                    $result_array = MiscViral::sample_result($result);
+
+                    if(str_contains($name, 'low')){
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
+                        $lpc_units = $result_array['units'];
+                    }
+                    else if(str_contains($name, 'high')){
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
+                        $hpc_units = $result_array['units'];
+                    }
+                    else if(str_contains($name, 'negative')){
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
+                        $nc_units = $result_array['units'];
+                    }
+                    continue;
+                }
+
                 $result_array = MiscViral::sample_result($result);
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
 
