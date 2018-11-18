@@ -30,43 +30,67 @@
                     	<table class="table table-striped table-bordered table-hover">
                     		<tr>
                     			<th rowspan="2"><br>Worksheet No</th>
-                    			<td rowspan="2"><br>
-                    				@if(!isset($data->view))
-                    					{{ $data->worksheet }}
-                    				@else
-                    					{{ $data->worksheet->id }}
-                    				@endif
-                    			</td>
+                    			<td rowspan="2"><br>{{ $data->worksheet->id }}</td>
                     			<th>Created By</th>
-                    			<td>{{ $data->worksheet->creator->full_name ?? Auth::user()->full_name }}</td>
+                    			<td>{{ $data->worksheet->creator->full_name ?? '' }}</td>
                     			<th>Tru Count Lot #</th>
-                    			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno ?? '' }}" required {{ $disabled }}></td>
+                    			<td>{{ $data->worksheet->TruCountLotno ?? '' }}</td>
                     			<th>Multicheck Normal Lot #	</th>
-                    			<td><input type="text" name="MulticheckNormalLotno" class="form-control" value="{{ $data->worksheet->MulticheckNormalLotno ?? '' }}" required {{ $disabled }}></td>
+                    			<td>{{ $data->worksheet->MulticheckNormalLotno ?? '' }}</td>
                     		</tr>
                     		<tr>
                     			<th>Date Created</th>
-                    			<td>{{ gmdate('d-M-Y') }}</td>
+                    			<td>{{ gmdate('d-M-Y', strtotime($data->worksheet->created_at)) }}</td>
                     			<th>Antibody Lot #</th>
                     			<td><input type="text" name="AntibodyLotno" class="form-control" value="{{ $data->worksheet->AntibodyLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Low Lot #</th>
                     			<td><input type="text" name="MulticheckLowLotno" class="form-control" value="{{ $data->worksheet->MulticheckLowLotno ?? '' }}" required {{ $disabled }}></td>
                     		</tr>
+                            <tr>
+                                <th>Date Run</th>
+                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->daterun)) }}</td>
+                                <th>Date Updated</th>
+                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->dateuploaded)) }}</td>
+                                <th>Date Reviewed (1st)</th>
+                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed)) }}</td>
+                                <th>Date Reviewed (2nd)</th>
+                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed2)) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td></td>
+                                <th>Updated By</th>
+                                <td>{{ $data->worksheet->uploader->full_name ?? '' }}</td>
+                                <th>Reveiwed By (1st)</th>
+                                <td>{{ $data->worksheet->first_reviewer->full_name ?? '' }}</td>
+                                <th>Reviewed By (2nd)</th>
+                                <td>{{ $data->worksheet->second_reviewer->full_name ?? '' }}</td>
+                            </tr>
                     	</table>
-                    	<center><h5>{{ $data->samples->count() }} WORKSHEET SAMPLES [2 Controls]</h5></center>
-                        <table class="table table-striped table-bordered table-hover" >
+                    	<table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr> 
-                                   <th> SR.No</th>
-                                   <th> Acc.No </th>
-                                   <th> Acc.No Bar Code</th>
-                                   <th> Ampath No </th>
-                                   <th> Study No </th>
+                                   <th> Serial #</th>
+                                   <th> Lab ID </th>
+                                   <th> Ampath #</th>
                                    <th> Patient Names </th>
-                                   <th> Received Dt. </th>
-                                   <th> Reg Dt. </th>
-                                   <th> Sampl Dt. </th>
-                                   <th> Tests </th>
+                                   <th> Run </th>
+                                   <th> CD3+ %Lymph </th>
+                                   <th> CD3+ Abs Cnt </th>
+                                   <th> CD3+CD4+ %Lymph </th>
+                                   <th> CD3+CD4+ Abs Cnt </th>                                   
+                                   <th> Lymphocytes </th>
+                                   <th> Action </th>
+                                   <th> Reviewed (1st) </th>
+
+                                   <th> Date Reviewed (1st) </th>
+                                   <th> Reviewed By (1st) </th>
+                                   <th> Reviewed (2nd) </th>
+
+                                   
+                                   <th> Date Reviewed (2nd) </th>
+                                   <th> Reviewed By (2nd) </th>
+                                   <th> Task </th>
                                 </tr>
                             </thead>
                             <tbody> 

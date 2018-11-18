@@ -6,6 +6,7 @@ use App\Cd4Worksheet;
 use App\Cd4Sample;
 use App\Lookup;
 use Excel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class Cd4WorksheetController extends Controller
@@ -129,15 +130,94 @@ class Cd4WorksheetController extends Controller
     public function upload(Request $request, Cd4Worksheet $worksheet){
         if ($request->method() == "PUT") {
             $file = $request->upload->path();
-            // $path = $request->upload->store('public/results/cd4'); 
+            $path = $request->upload->store('public/results/cd4'); 
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
             })->get();
-            dd($data);
+
+            foreach ($data as $key => $value) {
+                try {
+                    $daterun = Carbon::parse($value[23]);
+                    $daterun = $daterun->toDateString();                
+                } catch (Exception $e) {
+                    $daterun = null;
+                }
+                
+                $sample = Cd4Sample::find($value[4]);
+                if($sample) {
+                    if ($value[9] != "") { 
+                        $repeatt=2;
+                    } else { 
+                        $repeatt=1;
+                    }
+
+                    if ($value[10] != "") { 
+                        $repeatt=2;
+                    } else { 
+                        $repeatt=1;
+                    }
+
+                    if ($value[11] != "") { 
+                        $repeatt=2;
+                    } else { 
+                        $repeatt=1;
+                    }
+                
+                    if ($value[12] != "") { 
+                        $repeatt=2;
+                    } else { 
+                        $repeatt=1;
+                    }
+               
+                    if ($value[21] != "") { 
+                        $repeatt=2;
+                    } else { 
+                        $repeatt=1;
+                    }
+
+                    $sample->THelperSuppressorRatio = $value[8];
+                    $sample->AVGCD3percentLymph = $value[9];
+                    $sample->AVGCD3AbsCnt = $value[10];
+                    $sample->AVGCD3CD4percentLymph = $value[11];
+                    $sample->AVGCD3CD4AbsCnt = $value[12];
+                    $sample->AVGCD3CD8percentLymph = $value[13];
+                    $sample->AVGCD3CD8AbsCnt = $value[14];
+                    $sample->AVGCD3CD4CD8percentLymph = $value[15];
+                    $sample->AVGCD3CD4CD8AbsCnt = $value[16];
+                    $sample->CD45AbsCnt = $value[21];
+                    $sample->datemodified = gmdate('Y-m-d');
+                    $sample->datetested = $daterun;
+                    $sample->status_id = 4;
+                    $sample->repeatt = $repeatt;
+                    $sample->save();
+                }
+            }
+
+            $worksheet->uploadedby = auth()->user()->id;
+            $worksheet->daterun = gmdate('Y-m-d');
+            $worksheet->dateuploaded = gmdate('Y-m-d');
+            $worksheet->status_id = 2;
+            $worksheet->save();
             
+            if ($worksheet) {
+                session(['toast_message' => 'Import done, Results Updated successfully, Please Confirm and Approve the updated results below']);
+                return redirect('cd4/worksheet/confirm/'.$worksheet->id);
+            } else {
+                session(['toast_message' => 'An error occured while trying to update results, please try again later', 'toast_error' => 1]);
+                return back();
+            }
         } else {
             return view('forms.cd4upload_results', compact('worksheet'))->with('pageTitle', "UPDATE TEST RESULTS FOR WORKSHEET NO $worksheet->id");    
         }
+    }
+
+    public function confirm_upload(Cd4Worksheet $worksheet){
+        dd($worksheet->uploader);
+        $data['worksheet'] = $Worksheet;
+        $data['samples'] = $Worksheet->samples;
+        $data = (object)$data;
+        
+        return view('forms.confirm-cd4worksheet', compact('data'))->with('pageTitle', "Worksheet No. $Worksheet->id Details");
     }
 
     public function print(Cd4Worksheet $worksheet) {
