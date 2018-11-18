@@ -118,11 +118,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('worksheet')->name('worksheet.')->group(function(){
 			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
 			Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
+			Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
 			Route::get('create/{limit}', 'Cd4WorksheetController@create');
 			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
 			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
 			Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
-			Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
 		});
 		Route::resource('worksheet', 'Cd4WorksheetController');
 	});

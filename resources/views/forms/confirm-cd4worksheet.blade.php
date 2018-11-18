@@ -22,7 +22,7 @@
                     </div>
                     <div class="table-responsive">
                     @if(!isset($data->view))
-                    	{{ Form::open(['url' => '/cd4/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheet_form']) }}
+                    	{{ Form::open(['url' => '/cd4/worksheet/save/'.$data->worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'id' => 'worksheet_form']) }}
                     @endif
                    	@if(!isset($data->view) && $data->samples->count() == 0)
                    		<center><div class="alert alert-warning">No samples availabe to run a worksheet</div></center>
@@ -48,17 +48,41 @@
                     		</tr>
                             <tr>
                                 <th>Date Run</th>
-                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->daterun)) }}</td>
+                                <td>
+                                    @isset($data->worksheet->daterun)
+                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->daterun)) }}
+                                    @endisset
+                                </td>
                                 <th>Date Updated</th>
-                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->dateuploaded)) }}</td>
+                                <td>
+                                    @isset($data->worksheet->dateuploaded)
+                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->dateuploaded)) }}
+                                    @endisset
+                                </td>
                                 <th>Date Reviewed (1st)</th>
-                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed)) }}</td>
+                                <td>
+                                    @isset($data->worksheet->datereviewed)
+                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed)) }}
+                                    @endisset
+                                </td>
                                 <th>Date Reviewed (2nd)</th>
-                                <td>{{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed2)) }}</td>
+                                <td>
+                                    @isset($data->worksheet->datereviewed2)
+                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed2)) }}
+                                    @endisset
+                                </td>
                             </tr>
                             <tr>
                                 <th>Status</th>
-                                <td></td>
+                                <td>
+                                    @foreach($data->worksheet_statuses as $worksheetstatus)
+                                        @if($worksheetstatus->id == $data->worksheet->status_id)
+                                            @php
+                                                echo $worksheetstatus->output;
+                                            @endphp
+                                        @endif
+                                    @endforeach
+                                </td>
                                 <th>Updated By</th>
                                 <td>{{ $data->worksheet->uploader->full_name ?? '' }}</td>
                                 <th>Reveiwed By (1st)</th>
@@ -95,9 +119,10 @@
                                 <tr>
                                     <td>{{ $sample->serial_no ?? '' }}</td>
                                     <td>{{ $sample->id ?? '' }}</td>
-                                    <td>{{ $sample->patient->medicalrecordno ?? '' }}</td>
-                                    <td>{{ $sample->patient->patient_name ?? '' }}</td>
+                                    <td>{{ $sample->medicalrecordno ?? '' }}</td>
+                                    <td>{{ $sample->patient_name ?? '' }}</td>
                                     <td>{{ $sample->run ?? '' }}</td>
+                                    <input type="hidden" name="id[]" value="{{ $sample->id }}">
                                     <td>
                                         <input type="text" name="AVGCD3percentLymph[]" class="form-control" value="{{ $sample->AVGCD3percentLymph ?? '' }}" style="min-width: 60px;">
                                     </td>
@@ -114,16 +139,16 @@
                                         <input type="text" name="CD45AbsCnt[]" class="form-control" value="{{ $sample->CD45AbsCnt ?? '' }}" style="min-width: 60px;">
                                     </td>
                                     <td>
-                                    @if(!isset($sample->dateapproved))
+                                    @if(!isset($sample->dateapproved) || ($data->worksheet->reviewedby != Auth::user()->id))
                                         <select name="repeatt[]" class="form-control" style="width: 104px;">
                                             <option value='0' selected style='color:#339900'>Dispatch</option>
                                             <option value='1' style='color:#FFD324'>Rerun</option>
                                         </select>
                                     @else
                                         @if($sample->repeatt == 0)
-                                            <strong><font color='#FFD324'> Dispatch </font></strong>
+                                            <strong><font color='#339900'> Dispatch </font></strong>
                                         @elseif($sample->repeatt == 1)
-                                            <strong><font color='#339900'> Rerun </font></strong>
+                                            <strong><font color='#FFD324'> Rerun </font></strong>
                                         @endif
                                     @endif
                                     </td>
@@ -136,19 +161,25 @@
                                     </td>
                                     <td>
                                     @isset($sample->dateapproved)
-                                        {{ gmdate('d-M-Y', $sample->dateapproved) }}
+                                        {{ gmdate('d-M-Y', strtotime($sample->dateapproved)) }}
                                     @endisset
                                     </td>
                                     <td>{{ $sample->first_approver->full_name ?? '' }}</td>
-                                    <td></td>
+                                    <td>
+                                    @if($sample->dateapproved2)
+                                        <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" checked disabled style="width: 16px;height: 16px;" /></center>
+                                    @else
+                                        <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" value="{{ $key }}" checked style="width: 16px;height: 16px;" /></center>
+                                    @endif
+                                    </td>
                                     <td>
                                     @isset($sample->dateapproved2)
-                                        {{ gmdate('d-M-Y', $sample->dateapproved2) }}
+                                        {{ gmdate('d-M-Y', strtotime($sample->dateapproved2)) }}
                                     @endisset
                                     </td>
                                     <td>{{ $sample->second_approver->full_name ?? '' }}</td>
                                     <td>
-                                        <a href="#">Details</a> | 
+                                        <a href="{{ URL::to('cd4/sample/'.$sample->id) }}" title='Click to view Details' target='_blank'>Details</a> | 
                                         <a href="#">Runs</a> | 
                                         <a href="#">Release as Redraw</a>
                                     </td>
@@ -169,9 +200,11 @@
                         <div class="hr-line-dashed"></div>
 		                <div class="form-group">
 		                    <center>
+                            @if($data->worksheet->reviewedby != Auth::user()->id)
 		                        <div class="col-sm-10 col-sm-offset-1">
 		                          	<button class="btn btn-success" type="submit"> Confirm & Approve Results</button>
 		                        </div>
+                            @endif
 		                    </center>
 		                </div>
 		            @endif

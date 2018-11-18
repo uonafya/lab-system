@@ -79,9 +79,13 @@ class Cd4SampleController extends Controller
      * @param  \App\Cd4Sample  $cd4Sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Cd4Sample $cd4Sample)
+    public function show(Cd4Sample $sample)
     {
-        //
+        $data = Lookup::cd4sample_form();
+        $data['sample'] = $sample;
+        $data['view'] = true;
+        
+        return view('forms.cd4samples', $data)->with('pageTitle', 'View CD4 Sample');
     }
 
     /**

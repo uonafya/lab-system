@@ -212,12 +212,77 @@ class Cd4WorksheetController extends Controller
     }
 
     public function confirm_upload(Cd4Worksheet $worksheet){
-        // dd($worksheet->uploader);
+        $data = Lookup::worksheet_lookups();
         $data['worksheet'] = $worksheet;
         $data['samples'] = $worksheet->samples;
         $data = (object)$data;
-        
+        // dd($data);
         return view('forms.confirm-cd4worksheet', compact('data'))->with('pageTitle', "RESULTS REVIEW (1st) FOR WORKSHEET NO $worksheet->id");
+    }
+
+    public function save_upload(Request $request, Cd4Worksheet $worksheet){
+        $formData = $request->except(['_method','_token']);
+        $id = $formData["id"];
+        $AVGCD3percentLymph = $formData["AVGCD3percentLymph"];
+        $AVGCD3AbsCnt = $formData["AVGCD3AbsCnt"];
+        $AVGCD3CD4percentLymph = $formData["AVGCD3CD4percentLymph"];
+        $AVGCD3CD4AbsCnt = $formData["AVGCD3CD4AbsCnt"];
+        $CD45AbsCnt = $formData["CD45AbsCnt"];
+        $repeatt = $formData["repeatt"];
+        $checkbox = $formData["checkbox"];
+
+        foreach ($checkbox as $key => $value) {
+            $sample = Cd4Sample::find($id[$value]);
+            if($sample->approvedby){
+                $sample->approvedby2 = auth()->user()->id;
+                $sample->dateapproved2 = gmdate('Y-m-d');
+            } else {
+                $sample->approvedby = auth()->user()->id;
+                $sample->dateapproved = gmdate('Y-m-d');
+            }
+            $sample->AVGCD3percentLymph = $AVGCD3percentLymph[$value];
+            $sample->AVGCD3AbsCnt = $AVGCD3AbsCnt[$value];
+            $sample->AVGCD3CD4percentLymph = $AVGCD3CD4percentLymph[$value];
+            $sample->AVGCD3CD4AbsCnt = $AVGCD3CD4AbsCnt[$value];
+            $sample->CD45AbsCnt = $CD45AbsCnt[$value];
+            $sample->status_id = 5;
+            if($repeatt[$value] == 0){
+                $sample->repeatt = $repeatt[$value];
+            } else {
+                $sample->repeatt = $repeatt[$value];
+            }
+            $sample->save();
+            if($sample->repeatt = 1){
+                $repeatSamples = Cd4Sample::where('parentid', '=', $sample->id)->count();
+                if($repeatSamples > 0){
+                    $sample = new Cd4Sample();
+                    $repeatSample->parentid = $sample->id;
+                    $repeatSample->patient_id = $sample->patient_id;
+                    $repeatSample->facility_id = $sample->facility_id;
+                    $repeatSample->lab_id = $sample->lab_id;
+                    $repeatSample->serial_no = $sample->serial_no;
+                    $repeatSample->amrs_location = $sample->amrs_location;
+                    $repeatSample->provider_identifier = $sample->provider_identifier;
+                    $repeatSample->order_no = $sample->order_no;
+                    $repeatSample->save();
+                }
+            }
+        }
+
+        if($worksheet->reviewedby){
+            $worksheet->reviewedby2 = auth()->user()->id;    
+            $worksheet->datereviewed2 = gmdate('Y-m-d');
+            $worksheet->status_id = 3;
+        } else {
+            $worksheet->reviewedby = auth()->user()->id;    
+            $worksheet->datereviewed = gmdate('Y-m-d');
+        }
+        $worksheet->save();
+
+        if($worksheet->status_id == 3)
+            return redirect('cd4/worksheet');
+
+        return redirect('cd4/worksheet/confirm/'.$worksheet->id);
     }
 
     public function print(Cd4Worksheet $worksheet) {
