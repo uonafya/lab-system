@@ -15,6 +15,8 @@ class EidRequest extends BaseRequest
 
         $val = array_merge($base, $eid);
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
+
+        if($this->input('editted')) return [];
         return $val;
     }
 }
