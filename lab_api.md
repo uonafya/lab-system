@@ -16,6 +16,7 @@ All links are **POST** requests. All post requests are validated using a header 
 > - facility_code *The five digit MFL code*
 > - order_numbers *Either a single mrs order number or a comma separated list of mrs order numbers with no spaces.*
 > - location *AMRS location*
+> - dispatched *Boolean* When true, only samples that have been dispatched will be returned.
 
 > This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 

@@ -153,7 +153,8 @@ class FunctionController extends Controller
         $facility = $request->input('facility_code');
         $orders = $request->input('order_numbers');
         $sample_status = $request->input('sample_status');
-        $location = $request->input('location');   
+        $location = $request->input('location'); 
+        $dispatched = $request->input('dispatched');   
 
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
@@ -170,6 +171,9 @@ class FunctionController extends Controller
  
         $result = $class::when($facility, function($query) use($facility){
                 return $query->where('facilitycode', $facility);
+            })
+            ->when($dispatched, function($query){
+                return $query->whereNotNull('datedispatched');
             })
             ->when(($sample_status && $test == 3), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
@@ -189,6 +193,7 @@ class FunctionController extends Controller
             ->when(($date_dispatched_start && $date_dispatched_end), function($query) use($date_dispatched_start, $date_dispatched_end){
                 return $query->whereBetween('datedispatched', [$date_dispatched_start, $date_dispatched_end]);
             })
+            ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         $result->transform(function ($sample, $key) use ($test){
