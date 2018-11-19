@@ -613,7 +613,7 @@ class Copier
 
             'patient' => ['medicalrecordno', 'sex', 'patient_name', 'dob', ],
 
-            'sample' => ['id', 'facility_id', 'amrs_location', 'provider_identifier', 'order_no', 'receivedstatus', 'age', 'labcomment', 'parentid', 'rejectedreason', 'result', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'datereceived', 'dateresultprinted', 'datedispatched', 'sent_email', 'tat1', 'tat2', 'tat3', 'tat4', 
+            'sample' => ['id', 'facility_id', 'amrs_location', 'provider_identifier', 'order_no', 'receivedstatus', 'age', 'labcomment', 'parentid', 'status_id', 'rejectedreason', 'result', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'datereceived', 'dateresultprinted', 'datedispatched', 'sent_email', 'tat1', 'tat2', 'tat3', 'tat4', 
                 'THelperSuppressorRatio', 'AVGCD3percentLymph', 'AVGCD3AbsCnt', 'AVGCD3CD4percentLymph', 'AVGCD3CD4AbsCnt',
                     'AVGCD3CD8percentLymph', 'AVGCD3CD8AbsCnt', 'AVGCD3CD4CD8percentLymph', 'AVGCD3CD4CD8AbsCnt', 'CD45AbsCnt', ],
             

@@ -984,11 +984,14 @@ class MiscViral extends Common
                 $viralsamples = $worksheet->sample;
 
                 foreach ($viralsamples as $sample) {
+                    $sample->datetested = $sample->dateapproved = $worksheet->daterun;
+                    $sample->pre_update();
 
+                    $batch = $sample->batch;
+                    $batch->datedispatched = $worksheet->daterun;
+                    $batch->pre_update();
                 }
-
             }
-
         }
     }
     

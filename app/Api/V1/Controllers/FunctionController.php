@@ -171,7 +171,7 @@ class FunctionController extends Controller
         $result = $class::when($facility, function($query) use($facility){
                 return $query->where('facilitycode', $facility);
             })
-            ->when($sample_status, function($query) use($sample_status){
+            ->when(($sample_status && $test == 3), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
             })
             ->when($patients, function($query) use($patients){
