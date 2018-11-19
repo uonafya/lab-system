@@ -164,6 +164,14 @@ class Lookup
         return Cache::get('facilities');
     }
 
+    public static function get_result($res)
+    {
+        self::cacher();
+        $results = Cache::get('results');
+
+        return $results->where('id', $res)->first()->name ?? '';
+    }
+
     public static function worksheet_lookups()
     {
         self::cacher();

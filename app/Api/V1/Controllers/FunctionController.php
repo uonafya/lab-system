@@ -239,6 +239,8 @@ class FunctionController extends Controller
                 'sample_status' => $sample->sample_status
             ];
 
+            if($test == 1) $r['result'] = Lookup::get_result($sample->result);
+
             if($sample->receivedstatus == 2){
                 $r['rejected_reason'] = Lookup::get_rejected_reason($test, $sample->rejectedreason);
             }
