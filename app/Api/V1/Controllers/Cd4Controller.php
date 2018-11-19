@@ -48,8 +48,8 @@ class Cd4Controller extends BaseController
         $patient->save();
 
         $sample = new Cd4Sample;
-        $sample->patient_id = $patient->id;
-        $sample->facility_id = $facility->id;
+        $sample->patient_id = $patient->id ?? 0;
+        $sample->facility_id = $facility->id ?? 0;
         $sample->lab_id = $lab;
         $sample->order_no = $order_no;
         $sample->age = $age;
