@@ -102,6 +102,38 @@ class EidController extends BaseController
 
         $sample = new Sample;
         $sample->fill($request->only($fields['sample']));
+
+        if(!$sample->pcrtype){
+
+            $prev_samples = Sample::where(['patient_id' => $patient->id, 'repeatt' => 0])->orderBy('datetested', 'asc')->get();
+            $previous_positive = 0;
+            $recommended_pcr = 1;
+
+            if($prev_samples->count() > 0){
+                $pos_sample = $prev_samples->where('result', 2)->first();
+                if($pos_sample){
+                    $previous_positive = 1;
+                    $recommended_pcr = 4;
+
+                    $bool = false;
+                    foreach ($prev_samples as $key => $sample) {
+                        if($sample->result == 2) $bool = true;
+                        if($bool && $sample->result == 1) $recommended_pcr = 5;
+                    }
+                }
+                else{
+                    if($age < 12){
+                        $recommended_pcr = 2;
+                    }
+                    else{
+                        $recommended_pcr = 3;
+                    }
+                }                
+            }
+
+            $sample->pcrtype = $recommended_pcr;
+        }
+
         $sample->regimen = Lookup::eid_regimen($sample->regimen);
         $sample->mother_prophylaxis = Lookup::eid_intervention($sample->mother_prophylaxis);
         $sample->batch_id = $batch->id;
