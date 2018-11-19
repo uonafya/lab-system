@@ -324,9 +324,10 @@ class DashboardCacher
         $overduetesting2 = self::overdue('testing','Eid');
         $overduedispatched2 = self::overdue('dispatched','Eid');
 
-        $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
-        $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
-
+        if(env('APP_LAB') == 5){
+            $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
+            $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
+        }
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
@@ -350,8 +351,11 @@ class DashboardCacher
         Cache::put('eid_overduetesting', $overduetesting2, $minutes);
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
         //CD4 Cache
-        Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
-        Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
+        if(env('APP_LAB') == 5){
+            Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
+            Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
+        }
+        
     }
 
     public static function clear_cache()
