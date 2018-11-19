@@ -73,11 +73,11 @@ class Lookup
     {
         $value = trim($value);
         $value = strtolower($value);
-        if(str_contains($value, ['m', '1'])){
-            return 1;
-        }
-        else if(str_contains($value, ['f', '2'])){
+        if(str_contains($value, ['f', '2'])){
             return 2;
+        }
+        else if(str_contains($value, ['m', '1'])){
+            return 1;
         }
         else{
             return 3;
@@ -237,7 +237,8 @@ class Lookup
                 'rejectedreasons' => Cache::get('cd4rejected_reasons'),
                 'receivedstatuses' => Cache::get('received_statuses'),
                 'amrs_locations' => Cache::get('amrs_locations'),
-                'genders' => Cache::get('genders')
+                'genders' => Cache::get('genders'),
+                'samplestatus' => Cache::get('cd4sample_statuses')
             ];
     }
 

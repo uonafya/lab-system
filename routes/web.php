@@ -109,15 +109,24 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('batch', 'BatchController');
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
+		Route::prefix('sample')->name('sample.')->group(function(){
+			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
+		});
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){
-			Route::post('new', 'CD4PatientController@new_patient')->name('new');
+			Route::post('new', 'Cd4PatientController@new_patient')->name('new');
 		});
-		Route::resource('patients', 'CD4PatientController');
+		Route::resource('patients', 'Cd4PatientController');
 		
 		Route::prefix('worksheet')->name('worksheet.')->group(function(){
+			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+			Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
+			Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
 			Route::get('create/{limit}', 'Cd4WorksheetController@create');
+			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
 			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
+			Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
 		});
 		Route::resource('worksheet', 'Cd4WorksheetController');
 	});

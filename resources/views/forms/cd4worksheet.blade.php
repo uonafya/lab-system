@@ -24,24 +24,33 @@
                     @if(!isset($data->view))
                     	{{ Form::open(['url' => '/cd4/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheet_form']) }}
                     @endif
+                   	@if(!isset($data->view) && $data->samples->count() == 0)
+                   		<center><div class="alert alert-warning">No samples availabe to run a worksheet</div></center>
+                   	@else
                     	<table class="table table-striped table-bordered table-hover">
                     		<tr>
                     			<th rowspan="2"><br>Worksheet No</th>
-                    			<td rowspan="2"><br>{{ $data->worksheet->id }}</td>
+                    			<td rowspan="2"><br>
+                    				@if(!isset($data->view))
+                    					{{ $data->worksheet }}
+                    				@else
+                    					{{ $data->worksheet->id }}
+                    				@endif
+                    			</td>
                     			<th>Created By</th>
-                    			<td>{{ $data->worksheet->creator->full_name }}</td>
+                    			<td>{{ $data->worksheet->creator->full_name ?? Auth::user()->full_name }}</td>
                     			<th>Tru Count Lot #</th>
-                    			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Normal Lot #	</th>
-                    			<td><input type="text" name="MulticheckNormalLotno" class="form-control" value="{{ $data->worksheet->MulticheckNormalLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="MulticheckNormalLotno" class="form-control" value="{{ $data->worksheet->MulticheckNormalLotno ?? '' }}" required {{ $disabled }}></td>
                     		</tr>
                     		<tr>
                     			<th>Date Created</th>
                     			<td>{{ gmdate('d-M-Y') }}</td>
                     			<th>Antibody Lot #</th>
-                    			<td><input type="text" name="AntibodyLotno" class="form-control" value="{{ $data->worksheet->AntibodyLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="AntibodyLotno" class="form-control" value="{{ $data->worksheet->AntibodyLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Low Lot #</th>
-                    			<td><input type="text" name="MulticheckLowLotno" class="form-control" value="{{ $data->worksheet->MulticheckLowLotno }}" required {{ $disabled }}></td>
+                    			<td><input type="text" name="MulticheckLowLotno" class="form-control" value="{{ $data->worksheet->MulticheckLowLotno ?? '' }}" required {{ $disabled }}></td>
                     		</tr>
                     	</table>
                     	<center><h5>{{ $data->samples->count() }} WORKSHEET SAMPLES [2 Controls]</h5></center>
@@ -67,16 +76,27 @@
                             @forelse($data->samples as $key => $sample)
                                 <tr>
                                     <td>{{ $sample->serial_no ?? '' }}</td>
-                                    <td>{{ $sample->id ?? '' }}</td>
+                                    <td>
+                                        {{ $sample->id ?? '' }}
+                                        @if($sample->parentid > 0)
+                                            <div align='right'>
+                                                <table>
+                                                    <tr>
+                                                        <td style='background-color:#FAF156'><small> R </small></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td>
                                     	<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
                                     </td>
-                                    <td>{{ $sample->medicalrecordno ?? '' }}</td>
+                                    <td>{{ $sample->medicalrecordno ?? $sample->patient->medicalrecordno ?? '' }}</td>
                                     <td>{{ __(' ') }}</td>
                                     <td>
-                                    	{{ $sample->patient_name ?? '' }} 
-                                    	/ {{ $sample->age ?? '' }} 
-                                    	/ {{ $sample->gender ?? '' }}
+                                    	{{ $sample->patient_name ?? $sample->patient->patient_name ?? '' }} 
+                                    	/ {{ $sample->age ?? $sample->patient->age ?? '' }} 
+                                    	/ {{ $sample->gender ?? $sample->patient->gender ?? '' }}
                                     </td>
                                     <td>
                                         @if($sample->datereceived) 
@@ -93,7 +113,13 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td>No Samples available yet</td>
+                                    <td colspan="10">
+                                    	<center>
+                                    		<div class="alert alert-warning">
+                                    			All the samples that were in this worksheet have been released back into the queue for selection in next worksheet.
+                                    		</div>
+                                    	</center>
+                                    </td>
                                 </tr>
                             @endforelse
                             </tbody>
@@ -102,14 +128,17 @@
 		                <div class="form-group">
 		                    <center>
 		                        <div class="col-sm-10 col-sm-offset-1">
+		                        @if($data->worksheet->status_id != 4)
 		                        	@if(isset($data->view))
 		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
 		                            @else
 		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
 		                            @endif
+		                        @endif
 		                        </div>
 		                    </center>
 		                </div>
+		            @endif
 		            @if(!isset($data->view))
 	                    {{ Form::close() }}
 	                @endif

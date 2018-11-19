@@ -79,9 +79,13 @@ class Cd4SampleController extends Controller
      * @param  \App\Cd4Sample  $cd4Sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Cd4Sample $cd4Sample)
+    public function show(Cd4Sample $sample)
     {
-        //
+        $data = Lookup::cd4sample_form();
+        $data['sample'] = $sample;
+        $data['view'] = true;
+        
+        return view('forms.cd4samples', $data)->with('pageTitle', 'View CD4 Sample');
     }
 
     /**
@@ -155,5 +159,16 @@ class Cd4SampleController extends Controller
     public function destroy(Cd4Sample $cd4Sample)
     {
         //
+    }
+
+    public function dispatch($state=null){
+        $data = Lookup::cd4_lookups();
+        $data['samples'] = Cd4Sample::when($state, function($query) use ($state) {
+                            if($state == 1)
+                                return $query->where('status_id', '=', 5);
+                        })->where('repeatt', '=', 0)->get();
+        $data = (object) $data;
+        // dd($data);
+        return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
     }
 }
