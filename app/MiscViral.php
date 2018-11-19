@@ -1004,7 +1004,7 @@ class MiscViral extends Common
         foreach ($batches as $key => $batch) {
             $dt = $batch->sample->max('datetested');
             $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +2days'));
-            $batch->save();
+            $batch->pre_update();
         }
     }
     
