@@ -187,7 +187,7 @@ class FunctionController extends Controller
             })
             ->paginate(20);
 
-        $result->transform(function ($sample, $key) use ($test, $rejections){
+        $result->transform(function ($sample, $key) use ($test){
             // return ['patient age' => $item->age];
 
             if($sample->receivedstatus == 2){
