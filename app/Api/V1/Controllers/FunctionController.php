@@ -187,7 +187,7 @@ class FunctionController extends Controller
             })
             ->paginate(20);
 
-        $result->transform(function ($sample, $key) use ($test){
+        $result->transform(function ($sample, $key) use ($test, $rejections){
             // return ['patient age' => $item->age];
 
             if($sample->receivedstatus == 2){
@@ -229,6 +229,10 @@ class FunctionController extends Controller
                 'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
                 'sample_status' => $sample->sample_status
             ];
+
+            if($sample->receivedstatus == 2){
+                $r['rejected_reason'] = Lookup::get_rejected_reason($test, $sample->rejectedreason);
+            }
 
             if($sample->patient) $r = array_merge($r, ['patient' => $sample->patient]);
             if($sample->THelperSuppressorRatio){
