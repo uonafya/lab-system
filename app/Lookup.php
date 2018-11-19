@@ -193,6 +193,16 @@ class Lookup
         ];
     }
 
+    public static function cd4_lookups()
+    {
+        self::cacher();
+        return [
+                'rejected_reasons' => Cache::get('cd4rejected_reasons'),
+                'sample_statuses' => Cache::get('cd4sample_statuses'),
+                'received_statuses' => Cache::get('received_statuses'),
+            ];
+    }
+
 	public static function samples_form()
 	{
         self::cacher();
@@ -227,7 +237,8 @@ class Lookup
                 'rejectedreasons' => Cache::get('cd4rejected_reasons'),
                 'receivedstatuses' => Cache::get('received_statuses'),
                 'amrs_locations' => Cache::get('amrs_locations'),
-                'genders' => Cache::get('genders')
+                'genders' => Cache::get('genders'),
+                'samplestatus' => Cache::get('cd4sample_statuses')
             ];
     }
 
@@ -462,6 +473,7 @@ class Lookup
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
                 $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
+                $cd4sample_statuses = DB::table('samplestatus')->get();
             }
             
 
@@ -511,6 +523,7 @@ class Lookup
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
                 Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
+                Cache::put('cd4sample_statuses', $cd4sample_statuses, 60);
             }
             
             Cache::put('partners', $partners, 60);

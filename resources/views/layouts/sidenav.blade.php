@@ -165,9 +165,9 @@
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
-                        <li><a href=" {{ url('viralbatch') }}">View</a></li>
-                        <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
-                        <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
+                        <li><a href=" {{-- url('viralbatch') --}}">View</a></li>
+                        <li><a href=" {{-- url('viralbatch/site_approval') --}}">Approve Site Entry</a></li>
+                        <li><a href=" {{-- url('viralbatch/dispatch') --}}">Dispatch</a></li>
                     </ul>
                 </li> -->
                 <li><a href=" {{ url('viralworksheet/index/1') }}">Update Results
@@ -200,18 +200,18 @@
                 
             @endif
             <!-- <li>
-                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
+                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="{{ url('batch/dispatch') }}">Dispatch Results
-                            <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                        <a href="{{-- url('batch/dispatch') --}}">Dispatch Results
+                            <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                         </a>
                     </li>
                 </ul>
             </li> -->
             <!-- <li>
-                <a href="{{ url('batch/dispatch') }}">Dispatch Results
-                    <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <a href="{{-- url('batch/dispatch') --}}">Dispatch Results
+                    <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                 </a>
             </li> -->
         @endif
@@ -344,19 +344,19 @@
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Create Worksheet (38)</span></a>
+                <a href="{{ url('cd4/worksheet/create/38') }}"><span class="nav-label">Create Worksheet (38)</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Create Worksheet (40)</span></a>
+                <a href="{{ url('cd4/worksheet/create/40') }}"><span class="nav-label">Create Worksheet (40)</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Update Results</span></a>
+                <a href="{{ url('cd4/worksheet/index/1') }}"><span class="nav-label">Update Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForUpdate'] }}</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Dispatch Results</span></a>
+                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] }}</span></a>
             </li>
             <hr />
         @endif
