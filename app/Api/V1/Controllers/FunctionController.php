@@ -239,7 +239,8 @@ class FunctionController extends Controller
             }
 
             if($sample->patient) $r = array_merge($r, ['patient' => $sample->patient]);
-            if($sample->THelperSuppressorRatio){
+            // if($sample->THelperSuppressorRatio){
+            if($test == 3){
                 $r = array_merge($r, [
                     'THelperSuppressorRatio' => $THelperSuppressorRatio,
                     'AVGCD3percentLymph' => $AVGCD3percentLymph,
