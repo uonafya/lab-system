@@ -214,7 +214,7 @@ class FunctionController extends Controller
                         $sample->sample_status = "Incomplete";
                     }
                 }
-                if($test == 2){
+                else if($test == 2){
                     if(($sample->approvedby || $sample->dateapproved) && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
                         $sample->sample_status = "Complete";
                     }
@@ -222,6 +222,7 @@ class FunctionController extends Controller
                         $sample->sample_status = "Incomplete";
                     }
                 }
+                else if($test == 3) $sample->sample_status = Lookup::get_cd4_status($sample->status_id);
             }
             $approved = false;
             if($sample->approvedby) $approved = true;
