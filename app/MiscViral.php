@@ -970,10 +970,11 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $samples = ViralsampleView::where('datedispatched', '2018-11-14')->get();
+        $samples = ViralsampleView::where(['datedispatched' => '2018-11-14', 'datetested' => '2018-11-14'])->get();
 
         foreach ($samples as $key => $s) {
-            
+            $sample = Viralsample::find($s->id);
+            $worksheet = $sample->worksheet;            
         }
     }
     

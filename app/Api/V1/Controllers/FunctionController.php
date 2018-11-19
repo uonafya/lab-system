@@ -230,6 +230,10 @@ class FunctionController extends Controller
                 'sample_status' => $sample->sample_status
             ];
 
+            if($sample->receivedstatus == 2){
+                $r['rejected_reason'] = Lookup::get_rejected_reason($test, $sample->rejectedreason);
+            }
+
             if($sample->patient) $r = array_merge($r, ['patient' => $sample->patient]);
             if($sample->THelperSuppressorRatio){
                 $r = array_merge($r, [
