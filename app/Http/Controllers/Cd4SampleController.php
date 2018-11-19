@@ -166,6 +166,8 @@ class Cd4SampleController extends Controller
         $data['samples'] = Cd4Sample::when($state, function($query) use ($state) {
                             if($state == 1)
                                 return $query->where('status_id', '=', 5);
+                            if($state == 2)
+                                return $query->where('status_id', '=', 6);
                         })->where('repeatt', '=', 0)->get();
         $data = (object) $data;
         // dd($data);
