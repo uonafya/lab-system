@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Excel;
 
 use App\Common;
 use App\Viralsample;
@@ -19,8 +20,8 @@ class MiscViral extends Common
 
     protected $rcategories = [
         '0' => [],
-        '1' => ['Target Not Detected',  ],
-        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', ],
+        '1' => [],
+        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
@@ -33,11 +34,11 @@ class MiscViral extends Common
         ],
         [
             'search_array' =>   ['< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
         ],
         [
             'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
         ],
         [
             'search_array' =>  ['REJECTED'],
@@ -99,10 +100,10 @@ class MiscViral extends Common
 
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
         }
 
 
@@ -114,6 +115,7 @@ class MiscViral extends Common
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
+            Viralsample::where('batch_id', $batch_id)->whereNull('repeatt')->update(['repeatt' => 0]);
             $b = \App\Viralbatch::find($batch_id);
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
@@ -233,13 +235,18 @@ class MiscViral extends Common
         return $samples;
     }
 
-    public static function sample_result($result, $error)
+    public static function sample_result($result, $error=null)
     {
         $str = strtolower($result);
         $units="";
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '839', '150']))
+        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
+        {
+            $res= "< LDL copies/ml";
+            $interpretation= $result;       
+        }
+        else if(str_contains($result, ['<']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;       
@@ -420,6 +427,21 @@ class MiscViral extends Common
         return $samples;
     }
 
+    public static function delete_empty_batches()
+    {
+        $batches = \App\Viralbatch::selectRaw("viralbatches.id, count(viralsamples.id) as mycount")
+                        ->leftJoin('viralsamples', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                        ->groupBy('viralbatches.id')
+                        ->having('mycount', 0)
+                        ->get();
+
+        // return $batches->count(); 
+
+        foreach ($batches as $key => $batch) {
+            $batch->delete();
+        }
+    }
+
 
 
     public function set_justification($justification = null)
@@ -457,8 +479,9 @@ class MiscViral extends Common
         }
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
+        if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
         $data = $this->get_rcategory($result);
-        // if(!isset($data['rcategory'])) dd($result);
+        if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
@@ -664,9 +687,11 @@ class MiscViral extends Common
         // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
 
         $limit = $machine->vl_limit;
-        if($calibration) $limit = $machine->vl_calibration_limit;
 
         if($temp_limit) $limit = $temp_limit;
+
+        // if($calibration) $limit = $machine->vl_calibration_limit;
+        // if($calibration) $limit = $temp_limit - 11;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;
@@ -724,9 +749,10 @@ class MiscViral extends Common
 
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
+        if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-            'count' => $count,
+            'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];
@@ -791,5 +817,153 @@ class MiscViral extends Common
             // break;
         }
     }
+
+    public static function dump_worksheet($worksheet_id)
+    {
+        $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
+
+        $data = [];
+        $failed = [];
+
+        foreach ($samples as $key => $sample) {
+            $res = strtolower($sample->result);
+            if(str_contains($res, ['ldl', 'target'])) $res = 0.01;
+            $row = [
+                'Specimen Lab ID' => $sample->id,
+                'IP Code' => $sample->patient,
+                'Name' => $sample->facilityname,
+                'Facility Code' => $sample->facilitycode,
+                'Gender' => $sample->gender,
+                'DOB' => $sample->dob,
+                'Age' => $sample->age,
+                'Sample Type' => $sample->sampletype,
+                'Date Collected' => $sample->datecollected,
+                'Prophylaxis' => $sample->prophylaxis,
+                'Current ART Start Date' => $sample->dateinitiatedonregimen,
+                'Initiation Date' => $sample->initiation_date,
+                'Justification' => $sample->justification,
+                'Date Received' => $sample->datereceived,
+                'Date Run' => $sample->datetested,
+                'Result' => $sample->interpretation,
+                'Interpretation (Final Result)' => $sample->result,
+                'Final Result (for IQC Upload)' => $res,
+            ];
+
+            if(env('APP_LAB') == 8){
+                $row['Specimen Lab ID'] = $sample->label_id;
+            }
+
+            if(str_contains($res, ['failed', 'collect'])){
+                $failed[] = $row;
+                continue;
+            }
+            $data[] = $row;
+        }
+
+        foreach ($failed as $row) {
+            $data[] = $row;
+        }
+
+        $filename = $worksheet_id;
+
+        if(file_exists($filename)) unlink($filename);
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
+    }
+
+    public static function find_no_result()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::whereNotNull('interpretation')->whereRaw("(result is null or result = '')")->get();
+
+        $cutoff = Carbon::parse('2018-11-01');
+
+        foreach ($samples as $sample) {
+            $data = self::sample_result($sample->interpretation);
+            $sample->fill($data);
+            if($sample->result != '' || $sample->result != 'Invalid' || $sample->result != 'Failed' || $sample->result != 'Collect New Sample'){
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+            else{
+                $datetested = Carbon::parse($sample->datetested);
+
+                if($cutoff->greaterThan($datetested)){
+
+                    $sample->result = "Collect New Sample";
+                    $sample->labcomment = "Failed Test";
+                    $sample->repeatt = 0;
+                    $sample->save();
+
+                }
+                else{
+                    $sample->repeatt = 1;
+                    $sample->save();
+                    self::save_repeat($sample->id);   
+                }
+            }
+        }
+    }
+
+    public static function find_no_reruns()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = ViralsampleView::where(['repeatt' => 1])->whereNull('datedispatched')
+                        ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
+                        ->get();
+
+        foreach ($samples as $s) {
+
+            $sample = Viralsample::find($s->id);
+            if($sample->has_rerun) continue;
+
+            if($sample->result == 'Failed' || $sample->result == 'Invalid'){
+                $sample->interpretation = $sample->result;
+                $sample->result = "Collect New Sample";
+                $sample->labcomment = "Failed Test";
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+        }
+    } 
+
+    public static function find_not()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::where(['worksheet_id' => 148])->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->result = "Collect New Sample";
+            $sample->labcomment = "Failed Test";
+            $sample->repeatt = 0;
+            $sample->save();
+        }
+    }
+
+    public static function find_not_dispatched()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = ViralsampleView::where(['worksheet_id' => 148])->whereNull('datedispatched')
+                        ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
+                        ->get();
+
+        foreach ($samples as $s) {
+
+            $sample = Viralsample::find($s->id);
+            if($sample->has_rerun) continue;
+
+            if($sample->result == 'Failed' || $sample->result == 'Invalid'){
+                $sample->interpretation = $sample->result;
+                $sample->result = "Collect New Sample";
+                $sample->labcomment = "Failed Test";
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+        }
+    } 
     
 }

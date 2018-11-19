@@ -214,7 +214,7 @@ class ViralbatchController extends Controller
                 if(!$facility_user) return $query->where('site_entry', '!=', 2);
             })
             ->orderBy('viralbatches.datedispatched', 'desc')
-            ->paginate();
+            ->paginate(50);
 
         $batches->setPath(url()->current());
 
@@ -318,9 +318,13 @@ class ViralbatchController extends Controller
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
+        if($partner_id == '') $partner_id = 0;
+        if($subcounty_id == '') $subcounty_id = 0;
+        if($facility_id == '') $facility_id = 0;
+
         if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
-        if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        if($to_print) return redirect("viralbatch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
         return redirect("viralbatch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
@@ -814,6 +818,7 @@ class ViralbatchController extends Controller
     {
         if(!$batch->datebatchprinted){
             $batch->datebatchprinted = date('Y-m-d');
+            $batch->printedby = auth()->user()->id;
             $batch->pre_update();
         }
 
@@ -841,6 +846,7 @@ class ViralbatchController extends Controller
         foreach ($batches as $key => $batch) {
             if(!$batch->datebatchprinted){
                 $batch->datebatchprinted = date('Y-m-d');
+                $batch->printedby = auth()->user()->id;
                 $batch->pre_update();
             }
         }
@@ -859,10 +865,12 @@ class ViralbatchController extends Controller
 
     public function individuals($batch_ids)
     {
-        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->get();
+        $samples = Viralsample::whereIn('batch_id', $batch_ids)->with(['patient', 'approver'])->orderBy('batch_id')->get();
         $samples->load(['batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
+
+        Viralbatch::whereIn('id', $batch_ids)->update(['dateindividualresultprinted' => date('Y-m-d')]);
 
         return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
     }

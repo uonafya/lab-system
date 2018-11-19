@@ -8,4 +8,5 @@ class ViewFacility extends Model
 {
     //
     protected $table = "view_facilitys";
+
 }

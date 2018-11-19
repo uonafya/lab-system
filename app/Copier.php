@@ -15,6 +15,9 @@ use App\Cd4Patient;
 use App\Cd4Sample;
 
 
+use App\Facility;
+
+
 use App\OldModels\SampleView;
 use App\OldModels\ViralsampleView;
 use App\OldModels\FormerViralsampleView;
@@ -43,6 +46,43 @@ use App\MiscViral;
 class Copier
 {
     private static $limit = 5000;
+
+    public static function copy_missing_facilities()
+    {
+        $db_name = env('DB_DATABASE');
+        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+
+        foreach ($facilities as $key => $value) {
+            $fac = Facility::find($value->ID);
+            if($fac) continue;
+
+            $facility = new Facility;
+            $facility->fill(get_object_vars($value));
+            $facility->id = $value->ID;
+            $facility->synched=0;
+            unset($facility->ID);
+            unset($facility->wardid);
+            unset($facility->districtname);
+            unset($facility->ANC);
+            unset($facility->{'Column 33'});
+            $facility->save();
+        }
+    }
+
+    public static function copy_areaname()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::get();
+
+        foreach ($samples as $sample) {
+            $s = ViralsampleView::find($sample->id);
+            if(!$s) continue;
+
+            $sample->areaname = $s->areaname;
+            $sample->label_id = $s->label_id;
+            $sample->save();
+        }
+    }
 
     public static function copy_eid()
     {

@@ -78,7 +78,13 @@ Artisan::command('fix:noage', function(){
 })->describe('Fix no age.');
 
 
-Artisan::command('delete-pdfs', function(){
+Artisan::command('delete:empty-batches', function(){
+    \App\Misc::delete_empty_batches();
+    \App\MiscViral::delete_empty_batches();
+})->describe('Delete empty batches.');
+
+
+Artisan::command('delete:pdfs', function(){
     $str = \App\Common::delete_folder(storage_path('app/batches'));
     $this->info($str);
 })->describe('Delete pdfs from hard drive.');
@@ -196,6 +202,11 @@ Artisan::command('copy:facility-contacts', function(){
     $str = \App\Copier::copy_facility_contacts();
     $this->info($str);
 })->describe('Copy facility contacts from old database to new database.');
+
+Artisan::command('copy:facility-missing', function(){
+    $str = \App\Copier::copy_missing_facilities();
+    $this->info($str);
+})->describe('Copy missing facilities from old database to new database.');
 
 Artisan::command('copy:cd4', function(){
     $str = \App\Copier::copy_cd4();

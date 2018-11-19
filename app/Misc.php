@@ -97,10 +97,10 @@ class Misc extends Common
 		}
 		$double_approval = \App\Lookup::$double_approval; 
 		if(in_array(env('APP_LAB'), $double_approval)){
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
 		}
 		else{
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
 		}
 		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
 		$tests = Sample::where('batch_id', $batch_id)
@@ -109,6 +109,7 @@ class Misc extends Common
 		->count();
 
 		if($total == $tests){
+            Sample::where('batch_id', $batch_id)->whereNull('repeatt')->update(['repeatt' => 0]);
             $b = \App\Batch::find($batch_id);
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
@@ -360,12 +361,31 @@ class Misc extends Common
 				'recipient' => '254702266217',
 				'message' => 'This is a successful test.',
 			],
-
 		]);
 
 		$body = json_decode($response->getBody());
 		echo 'Status code is ' . $response->getStatusCode();
 		// dd($body);
+    }
+
+    public static function sms_random($number, $message)
+    {
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'debug' => true,
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $number,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        echo 'Status code is ' . $response->getStatusCode();
+        // dd($body);
     }
 
     public static function get_worksheet_samples($machine_type, $temp_limit=null)
@@ -429,9 +449,10 @@ class Misc extends Common
 
         $create = false;
         if($count == $machine->eid_limit) $create = true;
+        if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-        	'count' => $count,
+        	'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'machine' => $machine, 'samples' => $samples
         ];
 

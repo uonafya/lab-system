@@ -16,6 +16,7 @@
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Subject</th>
+                                    <th>County</th>
                                     <th>From Name</th>
                                     <th>CC List</th>
                                     <th>BCC List</th>
@@ -33,6 +34,7 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $email->name ?? '' }} </td>
                                         <td> {{ $email->subject ?? '' }} </td>
+                                        <td> {{ $email->county->name ?? '' }} </td>
                                         <td> {{ $email->from_name ?? env('MAIL_FROM_NAME') }} </td>
                                         <td> {{ $email->cc_list ?? '' }} </td>
                                         <td> {{ $email->bcc_list ?? '' }} </td>

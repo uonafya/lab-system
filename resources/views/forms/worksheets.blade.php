@@ -31,6 +31,10 @@
 
             <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
+            @if($limit)
+                <input type="hidden" value="{{ $limit }}" name="limit" >
+            @endif
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="hpanel">

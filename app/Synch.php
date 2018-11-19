@@ -748,7 +748,7 @@ class Synch
 		foreach ($samples as $sample) {
 			$tat += \App\Common::get_days($sample->datereceived, $sample->datedispatched);
 		}
-		$data['tat'] = round(($tat / $sample_count), 1);
+		$data['tat'] = round(@($tat / $sample_count), 1);
 
 		$data['dispatched'] = $sample_count;
 

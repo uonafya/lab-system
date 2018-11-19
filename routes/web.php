@@ -23,6 +23,8 @@
 
 Route::redirect('/', '/login');
 Route::redirect('/eid', '/login');
+Route::redirect('/knh', '/login');
+Route::redirect('/nyumbani', '/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
 
@@ -106,6 +108,28 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::prefix('cd4')->name('cd4.')->group(function(){
+		Route::prefix('sample')->name('sample.')->group(function(){
+			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
+		});
+		Route::resource('sample', 'Cd4SampleController');
+		Route::prefix('patient')->name('patient.')->group(function(){
+			Route::post('new', 'Cd4PatientController@new_patient')->name('new');
+		});
+		Route::resource('patients', 'Cd4PatientController');
+		
+		Route::prefix('worksheet')->name('worksheet.')->group(function(){
+			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+			Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
+			Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
+			Route::get('create/{limit}', 'Cd4WorksheetController@create');
+			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
+			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
+			Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
+		});
+		Route::resource('worksheet', 'Cd4WorksheetController');
+	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
 		// Route::get('index/{batch_complete?}/{page?}/{date_start?}/{date_end?}', 'ViralbatchController@index');
@@ -185,6 +209,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
 		Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
 		Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
+		Route::get('facility/lab', 'FacilityController@lab')->name('facility.lab');
 	});		
 	Route::resource('facility', 'FacilityController');
 
@@ -243,7 +268,13 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('new_patient', 'SampleController@new_patient');
 		Route::get('release/{sample}', 'SampleController@release_redraw');
 		Route::get('print/{sample}', 'SampleController@individual');
-		Route::get('runs/{sample}', 'SampleController@runs');
+		
+		Route::group(['middleware' => ['utype:4']], function () {
+			Route::get('runs/{sample}', 'SampleController@runs');		
+		});
+
+		Route::get('upload', 'SampleController@site_sample_page');
+		Route::post('upload', 'SampleController@upload_site_samples');
 
 		Route::get('sms_log', 'SampleController@list_sms');
 		Route::get('sms/{sample}', 'SampleController@send_sms');
@@ -263,6 +294,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::get('users', 'UserController@index')->name('users');
 		Route::get('user/add', 'UserController@create')->name('user.add');
+		Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 		Route::get('users/activity/{user?}', 'UserController@activity')->name('user.activity');
 	});
 	Route::resource('user', 'UserController');	
@@ -284,7 +316,10 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('new_patient', 'ViralsampleController@new_patient');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
-		Route::get('runs/{sample}', 'ViralsampleController@runs');
+
+		Route::group(['middleware' => ['utype:4']], function () {
+			Route::get('runs/{sample}', 'ViralsampleController@runs');		
+		});
 
 		Route::get('create_poc', 'ViralsampleController@create_poc');
 		Route::get('list_poc', 'ViralsampleController@list_poc');
@@ -301,7 +336,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('worksheet')->name('worksheet.')->group(function () {
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
-			Route::get('create/{machine_type}', 'WorksheetController@create')->name('create_any');
+			Route::get('create/{machine_type}/{limit?}', 'WorksheetController@create')->name('create_any');
 			Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
@@ -327,16 +362,17 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
 
-			Route::get('set_sampletype/{machine_type}/{calibration?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
+			Route::get('set_sampletype/{machine_type}/{calibration?}/{limit?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
 			Route::post('set_sampletype', 'ViralworksheetController@set_sampletype')->name('set_sampletype');
 
-			Route::get('create/{sampletype}/{machine_type?}/{calibration?}', 'ViralworksheetController@create')->name('create_any');		
+			Route::get('create/{sampletype}/{machine_type?}/{calibration?}/{limit?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
 			Route::get('convert/{worksheet}/{machine_type}/', 'ViralworksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
+				Route::get('download_dump/{worksheet}', 'ViralworksheetController@download_dump')->name('download_dump');
 				Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
 				Route::get('reverse_upload/{worksheet}', 'ViralworksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');

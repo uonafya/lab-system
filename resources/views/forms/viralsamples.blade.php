@@ -68,6 +68,20 @@
                             
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
+                        
+                        @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">High Priority</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                    @if(isset($viralsample) && $viralsample->batch->highpriority)
+                                        checked
+                                    @endif
+
+                                 />
+                                </div>
+                            </div>
+                        @endif
 
                       <div class="form-group ampath-div">
                           <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
@@ -87,6 +101,24 @@
 
                           </select></div>
                       </div>
+
+                      @if(env('APP_LAB') == 8)
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Specimen Label ID </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Area Name </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                                </div>
+                            </div>
+
+                        @endif
 
                     </div>
                 </div>
@@ -154,7 +186,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth
+                            <label class="col-sm-4 control-label">Date Of Birth
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
@@ -497,11 +529,10 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
-
 
                     </div>
                 </div>
@@ -603,9 +634,18 @@
         @endslot
 
 
-        $(".date:not(#datedispatched, #dateinitiatedontreatment)").datepicker({
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
             startView: 0,
             todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#dob").datepicker({
+            startView: 2,
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
