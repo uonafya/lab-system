@@ -152,6 +152,7 @@ class FunctionController extends Controller
         $patients = $request->input('patient_id');
         $facility = $request->input('facility_code');
         $orders = $request->input('order_numbers');
+        $sample_status = $request->input('sample_status');
         $location = $request->input('location');   
 
         if($test == 1) $class = SampleView::class;
@@ -169,6 +170,9 @@ class FunctionController extends Controller
  
         $result = $class::when($facility, function($query) use($facility){
                 return $query->where('facilitycode', $facility);
+            })
+            ->when($sample_status, function($query) use($sample_status){
+                return $query->where('status_id', $sample_status);
             })
             ->when($patients, function($query) use($patients){
                 return $query->whereIn('patient', $patients);
