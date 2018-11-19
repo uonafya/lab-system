@@ -123,6 +123,17 @@ class Lookup
         ];
     }
 
+    public static function get_rejected_reason($test, $rejectedreason)
+    {
+        self::cacher();
+
+        if($test == 1) $reasons = Cache::get('rejected_reasons');
+        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+
+        return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
+    }
+
     public static function facility_mfl($mfl)
     {
         // self::cacher(); 
