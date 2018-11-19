@@ -27,7 +27,7 @@ class Cd4Patient extends BaseModel
      */
     public function getAgeAttribute()
     {
-        return \App\Lookup::calculate_age(date('Y-m-d'), $this->dob);
+        return \App\Lookup::calculate_viralage(date('Y-m-d'), $this->dob);
     }
 
 }
