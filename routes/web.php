@@ -119,6 +119,12 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('new', 'Cd4PatientController@new_patient')->name('new');
 		});
 		Route::resource('patients', 'Cd4PatientController');
+
+		Route::prefix('reports')->name('reports.')->group(function(){
+			Route::get('/', 'ReportController@cd4reports')->name('cd4reports');
+			Route::post('dateselect', 'ReportController@dateselect')->name('dateselect');
+			Route::post('generate', 'ReportController@generate')->name('generate');
+		});
 		
 		Route::prefix('worksheet')->name('worksheet.')->group(function(){
 			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');

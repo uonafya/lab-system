@@ -43,9 +43,9 @@
                                     <td>{{ $sample->patient->patient_name ?? '' }}</td>
                                     <td>{{ $sample->patient->age ?? '' }}</td>
                                     <td>{{ $sample->facility->name ?? '' }}</td>
-                                    <td>{{ gmdate('d-M-Y', strtotime($sample->datecollected)) }}</td>
+                                    <td>{{ date('d-M-Y', strtotime($sample->datecollected)) }}</td>
                                     <td>@if($sample->datereceived) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->datereceived)) }} 
+                                            {{ date('d-M-Y', strtotime($sample->datereceived)) }} 
                                         @endif</td>
                                     <td>
                                     @foreach($data->received_statuses as $received_status)
@@ -68,13 +68,13 @@
                                     <td>{{ $sample->worksheet_id ?? '' }}</td>
                                     <td>
                                         @if($sample->datetested) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->datetested)) }} 
+                                            {{ date('d-M-Y', strtotime($sample->datetested)) }} 
                                         @endif
                                     </td>
                                     <td>{{ $sample->AVGCD3CD4AbsCnt ?? '' }}</td>
                                     <td>
                                         @if($sample->dateresultprinted) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->dateresultprinted)) }} 
+                                            {{ date('d-M-Y', strtotime($sample->dateresultprinted)) }} 
                                         @endif
                                     </td>
                                     <td>
