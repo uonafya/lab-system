@@ -207,7 +207,7 @@ class FunctionController extends Controller
             }
             else{
                 if($test == 1){
-                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                    if(($sample->approvedby || $sample->dateapproved) && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
                         $sample->sample_status = "Complete";
                     }
                     else{
@@ -215,7 +215,7 @@ class FunctionController extends Controller
                     }
                 }
                 if($test == 2){
-                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                    if(($sample->approvedby || $sample->dateapproved) && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
                         $sample->sample_status = "Complete";
                     }
                     else{
