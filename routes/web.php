@@ -111,6 +111,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
 			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
+			Route::get('print/{sample}', 'Cd4SampleController@print')->name('print');
+			Route::get('printresult/{sample}', 'Cd4SampleController@printresult')->name('printresult');
 		});
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){

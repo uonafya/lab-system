@@ -78,12 +78,12 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ URL::to('cd4/sample/'.$sample->id) }}">Details</a> |
+                                        <a href="{{ URL::to('cd4/sample/'.$sample->id) }}" target="blank">Details</a> |
                                         @if($sample->status_id > 1)
-                                            <a href="#">Print</a> |
+                                            <a href="{{ URL::to('cd4/sample/print/'.$sample->id) }}" target="blank">Print</a> |
                                         @endif
                                         @if($sample->status_id == 1 ||$sample->status_id == 2)
-                                            <a href="{{ url('cd4/sample/'.$sample->id.'/edit') }}">Edit</a> | <a href="#">Delete</a>
+                                            <a href="{{ url('cd4/sample/'.$sample->id.'/edit') }}" target="blank">Edit</a> | <a href="#">Delete</a>
                                         @endif
                                     </td>
                                 </tr>

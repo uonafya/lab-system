@@ -55,7 +55,7 @@
                         <a href="{{ url('cd4/worksheet') }}">Worksheets</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('cd4/') }}">Results List</a>
+                        <a href="{{ url('cd4/sample/dispatch/2') }}">Results List</a>
                     </li>
                     <li class="">
                         <a href="{{ url('cd4/') }}">Reports</a>
@@ -188,7 +188,7 @@
                     <a href="{{ url('cd4/worksheet') }}">Worksheets</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Results List</a>
+                    <a href="{{ url('cd4/sample/dispatch/2') }}">Results List</a>
                 </li>
                 <li class="">
                     <a href="{{ url('cd4/') }}">Reports</a>
