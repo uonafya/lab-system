@@ -51,13 +51,13 @@ class Cd4Controller extends BaseController
         $sample->patient_id = $patient->id;
         $sample->facility_id = $facility->id;
         $sample->lab_id = $lab;
+        $sample->order_no = $order_no;
         $sample->age = $age;
         $sample->status_id = 1;
         $sample->datecollected = $datecollected;
-        $sample->serial_no = $request->input('serial_no');
+        $sample->serial_no = $request->input('serial_no', 0);
         $sample->amrs_location = $request->input('amrs_location');
         $sample->provider_identifier = $request->input('provider_identifier');
-        $sample->amrs_location = $request->input('amrs_location');
         $sample->save();
         $sample->load(['patient']);
         return $sample;
