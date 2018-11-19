@@ -242,16 +242,16 @@ class FunctionController extends Controller
             // if($sample->THelperSuppressorRatio){
             if($test == 3){
                 $r = array_merge($r, [
-                    'THelperSuppressorRatio' => $THelperSuppressorRatio,
-                    'AVGCD3percentLymph' => $AVGCD3percentLymph,
-                    'AVGCD3AbsCnt' => $AVGCD3AbsCnt,
-                    'AVGCD3CD4percentLymph' => $AVGCD3CD4percentLymph,
-                    'AVGCD3CD4AbsCnt' => $AVGCD3CD4AbsCnt,
-                    'AVGCD3CD8percentLymph' => $AVGCD3CD8percentLymph,
-                    'AVGCD3CD8AbsCnt' => $AVGCD3CD8AbsCnt,
-                    'AVGCD3CD4CD8percentLymph' => $AVGCD3CD4CD8percentLymph,
-                    'AVGCD3CD4CD8AbsCnt' => $AVGCD3CD4CD8AbsCnt,
-                    'CD45AbsCnt' => $CD45AbsCnt,
+                    'THelperSuppressorRatio' => $sample->THelperSuppressorRatio,
+                    'AVGCD3percentLymph' => $sample->AVGCD3percentLymph,
+                    'AVGCD3AbsCnt' => $sample->AVGCD3AbsCnt,
+                    'AVGCD3CD4percentLymph' => $sample->AVGCD3CD4percentLymph,
+                    'AVGCD3CD4AbsCnt' => $sample->AVGCD3CD4AbsCnt,
+                    'AVGCD3CD8percentLymph' => $sample->AVGCD3CD8percentLymph,
+                    'AVGCD3CD8AbsCnt' => $sample->AVGCD3CD8AbsCnt,
+                    'AVGCD3CD4CD8percentLymph' => $sample->AVGCD3CD4CD8percentLymph,
+                    'AVGCD3CD4CD8AbsCnt' => $sample->AVGCD3CD4CD8AbsCnt,
+                    'CD45AbsCnt' => $sample->CD45AbsCnt,
                 ]);
             }
             return $r;
