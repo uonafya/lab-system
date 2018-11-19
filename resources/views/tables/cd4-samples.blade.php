@@ -78,7 +78,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="#">Details</a> |
+                                        <a href="{{ URL::to('cd4/sample/'.$sample->id) }}">Details</a> |
                                         @if($sample->status_id > 1)
                                             <a href="#">Print</a> |
                                         @endif

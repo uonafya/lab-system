@@ -237,7 +237,8 @@ class Lookup
                 'rejectedreasons' => Cache::get('cd4rejected_reasons'),
                 'receivedstatuses' => Cache::get('received_statuses'),
                 'amrs_locations' => Cache::get('amrs_locations'),
-                'genders' => Cache::get('genders')
+                'genders' => Cache::get('genders'),
+                'samplestatus' => Cache::get('cd4sample_statuses')
             ];
     }
 

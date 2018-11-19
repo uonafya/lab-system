@@ -17,23 +17,29 @@
 @endsection
 
 @section('content')
-
+    @php
+        $disabled = '';
+        if($view)
+            $disabled = "disabled";
+    @endphp
     <div class="content">
         <div>
-
-        @if (isset($sample))
-            {{ Form::open(['url' => '/cd4/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
-        @else
-            {{ Form::open(['url'=>'/cd4/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+        @if(!isset($view))
+            @if (isset($sample))
+                {{ Form::open(['url' => '/cd4/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+            @else
+                {{ Form::open(['url'=>'/cd4/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+            @endif
         @endif
-
+        @if(!isset($view))
         <input type="hidden" value=0 name="new_patient" id="new_patient">
+        @endif
 
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
-
+                    @if(!isset($view))
                         <div class="alert alert-warning">
                             <center>
                                 Please fill the form correctly. <br />
@@ -50,13 +56,23 @@
                             </div>
                             <br />
                         @endisset
-
+                    @else
+                        <div class="alert alert-warning">
+                            <center>
+                            @foreach($samplestatus as $samplestatus)
+                                @if($samplestatus->id == $sample->status_id)
+                                    Sample Status: <strong>{{ $samplestatus->name }}</strong>
+                                @endif
+                            @endforeach
+                            </center>
+                        </div>
+                    @endif
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility 
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" required name="facility_id" id="facility_id" required>
+                                <select class="form-control requirable" required name="facility_id" id="facility_id" {{ $disabled }} required>
                                     @isset($sample)
                                         <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} - {{ $sample->facility->name }}</option>
                                     @endisset
@@ -68,7 +84,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">AMRS Location</label>
                             <div class="col-sm-8">
-                                <select class="form-control ampath-only" name="amrs_location">
+                                <select class="form-control ampath-only" name="amrs_location" {{ $disabled }}>
 
                                   <option></option>
                                   @foreach ($amrs_locations as $amrs_location)
@@ -89,7 +105,7 @@
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">AMRS Provider Identifier</label>
                             <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}">
+                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}" {{ $disabled }}>
                             </div>
                         </div>
                     </div>
@@ -110,14 +126,14 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control requirable" required name="medicalrecordno" type="text" value="{{ $sample->patient->medicalrecordno ?? '' }}" id="medicalrecordno">
+                                <input class="form-control requirable" required name="medicalrecordno" type="text" value="{{ $sample->patient->medicalrecordno ?? '' }}" id="medicalrecordno" {{ $disabled }}>
                             </div>
                         </div>
 
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">Patient Name</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="patient_name" id="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
+                                <input class="form-control" name="patient_name" id="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}" {{ $disabled }}>
                             </div>
                         </div>
 
@@ -128,7 +144,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
+                                    <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $sample->patient->dob ?? '' }}" name="dob" {{ $disabled }}>
                                 </div>
                             </div>                            
                         </div>
@@ -138,7 +154,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control lockable requirable" required name="sex" id="sex">
+                                <select class="form-control lockable requirable" required name="sex" id="sex" {{ $disabled }}>
                                     <option></option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
@@ -172,7 +188,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
+                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected" {{ $disabled }}>
                                 </div>
                             </div>                            
                         </div> 
@@ -183,7 +199,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? '' }}" name="datereceived">
+                                    <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? '' }}" name="datereceived" {{ $disabled }}>
                                 </div>
                             </div>                            
                         </div>
@@ -193,7 +209,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                    <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+                                    <select class="form-control requirable" required name="receivedstatus" id="receivedstatus" {{ $disabled }}>
 
                                     <option></option>
                                     @foreach ($receivedstatuses as $receivedstatus)
@@ -214,7 +230,7 @@
                         <div class="form-group" id="rejection" >
                             <label class="col-sm-4 control-label">Rejected Reason</label>
                             <div class="col-sm-8">
-                                    <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+                                    <select class="form-control" required name="rejectedreason" id="rejectedreason" {{ $disabled }} disabled>
 
                                     <option></option>
                                     @foreach ($rejectedreasons as $rejectedreason)
@@ -243,11 +259,12 @@
                     <div class="panel-body" style="padding-bottom: 6px;">
                         <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" name="labcomment">{{ $sample->labcomment ?? '' }}</textarea>
+                                <textarea class="form-control" name="labcomment" {{ $disabled }}>{{ $sample->labcomment ?? '' }}</textarea>
                             </div>
                         </div>
                     </div>
                 </div>
+                @if(!isset($view))
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
                     <center>
@@ -264,11 +281,146 @@
                     @endif
                     </center>
                 </div>
+                @endif
             </div>
         </div>
 
-        {{ Form::close() }}
+        @isset($view)
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
+                        <center>Test Information</center>
+                    </div>
+                    <div class="panel-body" style="padding-bottom: 6px;">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Worksheet
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control requirable" value="{{ $sample->worksheet_id ?? '' }}" name="worksheet_id" {{ $disabled }}>
+                            </div>                            
+                        </div> 
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Tested
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text"  class="form-control requirable" value="{{ $sample->datetested ?? '' }}" name="datetested" {{ $disabled }}>
+                                </div>
+                            </div>                            
+                        </div>
 
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CD3 %
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->AVGCD3percentLymph ?? '' }}%" name="AVGCD3percentLymph" {{ $disabled }}>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CD3 Abs
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->AVGCD3AbsCnt ?? '' }}cells/ul" name="AVGCD3AbsCnt" {{ $disabled }}>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CD4 %
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->AVGCD3CD4percentLymph ?? '' }}%" name="AVGCD3CD4percentLymph" {{ $disabled }}>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">CD4 Abs
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->AVGCD3CD4AbsCnt ?? '' }}cells/ul" name="AVGCD3CD4AbsCnt" {{ $disabled }}>
+                            </div>                            
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Total Lymphocytes
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->CD45AbsCnt ?? '' }}%" name="CD45AbsCnt" {{ $disabled }}>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">T HELPER/SUPPRESSOR RATIO
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->THelperSuppressorRatio ?? '' }}cells/ul" name="THelperSuppressorRatio" {{ $disabled }}>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Approved (1st)
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text"  class="form-control requirable" value="{{ $sample->dateapproved ?? '' }}" name="dateapproved" {{ $disabled }}>
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Approved (2nd)
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text"  class="form-control requirable" value="{{ $sample->dateapproved2 ?? '' }}" name="dateapproved2" {{ $disabled }}>
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Result Printed
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text"  class="form-control requirable" value="{{ $sample->dateprinted ?? '' }}" name="dateprinted" {{ $disabled }}>
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Printed By
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text"  class="form-control requirable" value="{{ $sample->printer->full_name ?? '' }}" name="printedby" {{ $disabled }}>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endisset
+
+        @if(!isset($view))
+        {{ Form::close() }}
+        @endif
       </div>
     </div>
 

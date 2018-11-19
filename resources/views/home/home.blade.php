@@ -204,7 +204,7 @@
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
-		            	@else
+		            	@elseif(session('testingSystem') == 'EID')
 		            		@if ((int)$widgets['overduetesting'] > 0)
 		            			@php
 		            				$style = 'background-color: #FDE3A7';
@@ -328,6 +328,8 @@
 		                    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
+		                @else
+		                	
 		            	@endif
 		            	</ul>
 		            </div>
