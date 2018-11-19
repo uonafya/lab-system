@@ -171,4 +171,24 @@ class Cd4SampleController extends Controller
         // dd($data);
         return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
     }
+
+    /**
+     * Print the specified resource from storage.
+     *
+     * @param  \App\Cd4Sample  $sample
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Cd4Sample $sample){
+        $sample->dateresultprinted = gmdate('Y-m-d');
+        $sample->printedby = auth()->user()->id;
+        $sample->status_id = 6;
+        $sample->save();
+
+        return redirect('cd4/sample/printresult/'.$sample->id);
+    }
+
+    public function printresult(Cd4Sample $sample){
+        // dd($sample);
+        return view('exports.cd4_sample', compact('sample'));
+    }
 }
