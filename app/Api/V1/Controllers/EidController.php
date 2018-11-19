@@ -130,7 +130,6 @@ class EidController extends BaseController
                     }
                 }                
             }
-
             $sample->pcrtype = $recommended_pcr;
         }
 
