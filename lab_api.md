@@ -19,6 +19,8 @@ All links are **POST** requests. All post requests are validated using a header 
 
 > This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 
+
+For the links below, if the order number exists, it will not save it again.
 - Post incomplete eid request (EID order) [eid](http://lab.test.nascop.org/api/eid)
 - Post complete eid request [eid](http://lab.test.nascop.org/api/eid_complete)
 - Post incomplete vl request (Viralload order) [vl](http://lab.test.nascop.org/api/vl)
