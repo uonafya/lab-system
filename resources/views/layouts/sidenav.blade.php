@@ -53,7 +53,7 @@
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li>
-                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
+                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <!-- <li>
@@ -127,7 +127,7 @@
                     <hr />
                 @endif
                 <li>
-                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
+                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <!-- <li>
