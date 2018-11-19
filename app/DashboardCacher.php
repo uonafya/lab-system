@@ -96,10 +96,12 @@ class DashboardCacher
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
             ];
-        } else {
+        } else if (session('testingSystem') == 'CD4') {
             return [
+                'CD4samplesInQueue' => Cache::get('CD4samplesInQueue'),
                 'CD4resultsForUpdate' => Cache::get('CD4resultsForUpdate'),
-                'CD4resultsForDispatch' => Cache::get('CD4resultsForDispatch')
+                'CD4resultsForDispatch' => Cache::get('CD4resultsForDispatch'),
+                'CD4worksheetFor2ndApproval' => Cache::get('CD4worksheetFor2ndApproval')
             ];
         }
     }
@@ -150,6 +152,10 @@ class DashboardCacher
         return $model;
 	}
 
+    public static function CD4pendingSamplesAwaitingTesting(){
+        return Cd4Sample::selectRaw("COUNT(*) as total")->where('status_id', '=', 1)->where('repeatt', '=', 0)->first()->total;
+    }
+
 	public static function siteBatchesAwaitingApproval($testingSystem = 'Viralload')
 	{
         if ($testingSystem == 'Viralload') {
@@ -187,6 +193,11 @@ class DashboardCacher
     public static function cd4samplesAwaitingDispatch(){
         return Cd4Sample::selectRaw("COUNT(*) as total")->where('lab_id', '=', env('APP_LAB'))
                             ->where('status_id', '=', 5)->where('repeatt', '=', 0)->first()->total;
+    }
+
+    public static function cd4worksheetFor2ndApproval() {
+        return Cd4Worksheet::selectRaw("COUNT(*) as total")->whereNotNull('reviewedby')->whereNull('reviewedby2')
+                            ->where('status_id', '<>', 2)->first()->total;
     }
 
 	public static function samplesAwaitingRepeat($testingSystem = 'Viralload')
@@ -325,8 +336,10 @@ class DashboardCacher
         $overduedispatched2 = self::overdue('dispatched','Eid');
 
         if(env('APP_LAB') == 5){
+            $CD4samplesInQueue = self::CD4pendingSamplesAwaitingTesting();
             $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
             $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
+            $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
         }
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
@@ -352,8 +365,10 @@ class DashboardCacher
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
         //CD4 Cache
         if(env('APP_LAB') == 5){
+            Cache::put('CD4samplesInQueue', $CD4samplesInQueue, $minutes);
             Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
             Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
+            Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
         }
         
     }

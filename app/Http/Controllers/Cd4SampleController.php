@@ -168,6 +168,8 @@ class Cd4SampleController extends Controller
                                 return $query->where('status_id', '=', 5);
                             if($state == 2)
                                 return $query->where('status_id', '=', 6);
+                            if($state == 3)
+                                return $query->where('status_id', '=', 1);
                         })->where('repeatt', '=', 0)->get();
         $data = (object) $data;
         // dd($data);
