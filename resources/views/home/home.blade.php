@@ -372,7 +372,7 @@
 		            		@endif
 		                    <li class="list-group-item" style="{{ $style }}">
 		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4worksheetFor2ndApproval'] }}</span>
-		                        <a href="{{ url('') }}">Worksheets Awaiting 2nd Review.</a>
+		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
 		            	@endif
 		            	</ul>

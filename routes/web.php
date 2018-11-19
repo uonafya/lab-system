@@ -130,6 +130,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
 			Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
 			Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
+			Route::get('state/{state}', 'Cd4WorksheetController@state')->name('state');
 			Route::get('create/{limit}', 'Cd4WorksheetController@create');
 			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
 			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
