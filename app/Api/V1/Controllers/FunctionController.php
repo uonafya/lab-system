@@ -193,6 +193,9 @@ class FunctionController extends Controller
             ->when(($date_dispatched_start && $date_dispatched_end), function($query) use($date_dispatched_start, $date_dispatched_end){
                 return $query->whereBetween('datedispatched', [$date_dispatched_start, $date_dispatched_end]);
             })
+            ->when(true, function($query) use ($test){
+                if($test < 3) return $query->where(['repeatt' => 0]);
+            })            
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
