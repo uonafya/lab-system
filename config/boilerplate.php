@@ -85,7 +85,8 @@ return [
         'regimen' => 'required|integer|max:30',
         'mother_prophylaxis' => 'required|integer|max:30',
         'mother_age' => 'integer|between:10,70',
-        'pcrtype' => 'required|integer|between:1,5', 
+        // 'pcrtype' => 'required|integer|between:1,5', 
+        'pcrtype' => 'integer|between:1,5', 
         'redraw' => 'integer', 
     ],
 

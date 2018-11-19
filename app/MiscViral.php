@@ -973,8 +973,38 @@ class MiscViral extends Common
         $samples = ViralsampleView::where(['datedispatched' => '2018-11-14', 'datetested' => '2018-11-14'])->get();
 
         foreach ($samples as $key => $s) {
-            $sample = Viralsample::find($s->id);
-            $worksheet = $sample->worksheet;            
+            // $sample = Viralsample::find($s->id);
+            // $worksheet = $sample->worksheet;
+            $worksheet = Viralworksheet::find($s->worksheet_id);
+
+            if(strtotime($worksheet->created_at) < strtotime('2018-11-12') && $worksheet->dateuploaded == '2018-11-14'){
+                $worksheet->datereviewed = $worksheet->daterun = date('Y-m-d', strtotime($worksheet->created_at . ' +1day'));
+                $worksheet->save();
+
+                $viralsamples = $worksheet->sample;
+
+                foreach ($viralsamples as $sample) {
+                    $sample->datetested = $sample->dateapproved = $worksheet->daterun;
+                    $sample->pre_update();
+
+                    $batch = $sample->batch;
+                    $batch->datedispatched = $worksheet->daterun;
+                    $batch->pre_update();
+                }
+            }
+        }
+    }
+
+    public static function nyumba()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-14'])->where('datereceived', '<', '2018-11-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +2days'));
+            $batch->pre_update();
         }
     }
     

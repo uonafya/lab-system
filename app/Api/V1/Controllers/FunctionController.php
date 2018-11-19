@@ -152,7 +152,9 @@ class FunctionController extends Controller
         $patients = $request->input('patient_id');
         $facility = $request->input('facility_code');
         $orders = $request->input('order_numbers');
-        $location = $request->input('location');   
+        $sample_status = $request->input('sample_status');
+        $location = $request->input('location'); 
+        $dispatched = $request->input('dispatched');   
 
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
@@ -170,6 +172,12 @@ class FunctionController extends Controller
         $result = $class::when($facility, function($query) use($facility){
                 return $query->where('facilitycode', $facility);
             })
+            ->when($dispatched, function($query){
+                return $query->whereNotNull('datedispatched');
+            })
+            ->when(($sample_status && $test == 3), function($query) use($sample_status){
+                return $query->where('status_id', $sample_status);
+            })
             ->when($patients, function($query) use($patients){
                 return $query->whereIn('patient', $patients);
             })
@@ -185,6 +193,10 @@ class FunctionController extends Controller
             ->when(($date_dispatched_start && $date_dispatched_end), function($query) use($date_dispatched_start, $date_dispatched_end){
                 return $query->whereBetween('datedispatched', [$date_dispatched_start, $date_dispatched_end]);
             })
+            ->when(true, function($query) use ($test){
+                if($test < 3) return $query->where(['repeatt' => 0]);
+            })            
+            ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         $result->transform(function ($sample, $key) use ($test){
@@ -195,21 +207,22 @@ class FunctionController extends Controller
             }
             else{
                 if($test == 1){
-                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                    if(($sample->approvedby || $sample->dateapproved) && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
                         $sample->sample_status = "Complete";
                     }
                     else{
                         $sample->sample_status = "Incomplete";
                     }
                 }
-                if($test == 2){
-                    if($sample->approvedby && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
+                else if($test == 2){
+                    if(($sample->approvedby || $sample->dateapproved) && ($sample->result > 0 || $sample->result) && $sample->repeatt == 0){
                         $sample->sample_status = "Complete";
                     }
                     else{
                         $sample->sample_status = "Incomplete";
                     }
                 }
+                else if($test == 3) $sample->sample_status = Lookup::get_cd4_status($sample->status_id);
             }
             $approved = false;
             if($sample->approvedby) $approved = true;
@@ -230,23 +243,26 @@ class FunctionController extends Controller
                 'sample_status' => $sample->sample_status
             ];
 
+            if($test == 1) $r['result'] = Lookup::get_result($sample->result);
+
             if($sample->receivedstatus == 2){
                 $r['rejected_reason'] = Lookup::get_rejected_reason($test, $sample->rejectedreason);
             }
 
             if($sample->patient) $r = array_merge($r, ['patient' => $sample->patient]);
-            if($sample->THelperSuppressorRatio){
+            // if($sample->THelperSuppressorRatio){
+            if($test == 3){
                 $r = array_merge($r, [
-                    'THelperSuppressorRatio' => $THelperSuppressorRatio,
-                    'AVGCD3percentLymph' => $AVGCD3percentLymph,
-                    'AVGCD3AbsCnt' => $AVGCD3AbsCnt,
-                    'AVGCD3CD4percentLymph' => $AVGCD3CD4percentLymph,
-                    'AVGCD3CD4AbsCnt' => $AVGCD3CD4AbsCnt,
-                    'AVGCD3CD8percentLymph' => $AVGCD3CD8percentLymph,
-                    'AVGCD3CD8AbsCnt' => $AVGCD3CD8AbsCnt,
-                    'AVGCD3CD4CD8percentLymph' => $AVGCD3CD4CD8percentLymph,
-                    'AVGCD3CD4CD8AbsCnt' => $AVGCD3CD4CD8AbsCnt,
-                    'CD45AbsCnt' => $CD45AbsCnt,
+                    'THelperSuppressorRatio' => $sample->THelperSuppressorRatio,
+                    'AVGCD3percentLymph' => $sample->AVGCD3percentLymph,
+                    'AVGCD3AbsCnt' => $sample->AVGCD3AbsCnt,
+                    'AVGCD3CD4percentLymph' => $sample->AVGCD3CD4percentLymph,
+                    'AVGCD3CD4AbsCnt' => $sample->AVGCD3CD4AbsCnt,
+                    'AVGCD3CD8percentLymph' => $sample->AVGCD3CD8percentLymph,
+                    'AVGCD3CD8AbsCnt' => $sample->AVGCD3CD8AbsCnt,
+                    'AVGCD3CD4CD8percentLymph' => $sample->AVGCD3CD4CD8percentLymph,
+                    'AVGCD3CD4CD8AbsCnt' => $sample->AVGCD3CD4CD8AbsCnt,
+                    'CD45AbsCnt' => $sample->CD45AbsCnt,
                 ]);
             }
             return $r;

@@ -164,6 +164,22 @@ class Lookup
         return Cache::get('facilities');
     }
 
+    public static function get_result($res)
+    {
+        self::cacher();
+        $results = Cache::get('results');
+
+        return $results->where('id', $res)->first()->name ?? '';
+    }
+
+    public static function get_cd4_status($id)
+    {
+        self::cacher();
+        $statuses = Cache::get('cd4sample_statuses');
+
+        return $statuses->where('id', $id)->first()->name ?? '';
+    }
+
     public static function worksheet_lookups()
     {
         self::cacher();
