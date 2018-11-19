@@ -974,7 +974,20 @@ class MiscViral extends Common
 
         foreach ($samples as $key => $s) {
             $sample = Viralsample::find($s->id);
-            $worksheet = $sample->worksheet;            
+            $worksheet = $sample->worksheet;
+
+            if(strtotime($worksheet->created_at) < strtotime('2018-11-12') && $worksheet->dateuploaded == '2018-11-14'){
+                $worksheet->datereviewed = $worksheet->daterun = date('Y-m-d', strtotime($worksheet->created_at . ' +1day'));
+                $worksheet->save();
+
+                $viralsamples = $worksheet->sample;
+
+                foreach ($viralsamples as $sample) {
+                    # code...
+                }
+
+            }
+
         }
     }
     
