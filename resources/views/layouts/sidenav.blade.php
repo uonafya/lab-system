@@ -89,7 +89,7 @@
                     </a>
                 </li>
                 <hr />
-                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
