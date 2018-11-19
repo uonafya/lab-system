@@ -160,4 +160,15 @@ class Cd4SampleController extends Controller
     {
         //
     }
+
+    public function dispatch($state=null){
+        $data = Lookup::cd4_lookups();
+        $data['samples'] = Cd4Sample::when($state, function($query) use ($state) {
+                            if($state == 1)
+                                return $query->where('status_id', '=', 5);
+                        })->where('repeatt', '=', 0)->get();
+        $data = (object) $data;
+        // dd($data);
+        return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
+    }
 }

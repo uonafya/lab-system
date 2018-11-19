@@ -180,8 +180,10 @@
                                     <td>{{ $sample->second_approver->full_name ?? '' }}</td>
                                     <td>
                                         <a href="{{ URL::to('cd4/sample/'.$sample->id) }}" title='Click to view Details' target='_blank'>Details</a> | 
-                                        <a href="#">Runs</a> | 
-                                        <a href="#">Release as Redraw</a>
+                                        <a href="#">Runs</a> 
+                                    @if($sample->status_id != 5)
+                                        | <a href="#">Release as Redraw</a>
+                                    @endif
                                     </td>
                                 </tr>
                             @empty
