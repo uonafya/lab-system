@@ -973,8 +973,22 @@ class MiscViral extends Common
         $samples = ViralsampleView::where(['datedispatched' => '2018-11-14', 'datetested' => '2018-11-14'])->get();
 
         foreach ($samples as $key => $s) {
-            $sample = Viralsample::find($s->id);
-            $worksheet = $sample->worksheet;            
+            // $sample = Viralsample::find($s->id);
+            // $worksheet = $sample->worksheet;
+            $worksheet = Viralworksheet::find($s->worksheet_id);
+
+            if(strtotime($worksheet->created_at) < strtotime('2018-11-12') && $worksheet->dateuploaded == '2018-11-14'){
+                $worksheet->datereviewed = $worksheet->daterun = date('Y-m-d', strtotime($worksheet->created_at . ' +1day'));
+                $worksheet->save();
+
+                $viralsamples = $worksheet->sample;
+
+                foreach ($viralsamples as $sample) {
+
+                }
+
+            }
+
         }
     }
     
