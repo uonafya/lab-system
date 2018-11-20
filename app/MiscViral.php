@@ -741,9 +741,9 @@ class MiscViral extends Common
 
         $body = json_decode($response->getBody());
         if($response->getStatusCode() == 201){
-            $s = Viralsample::find($sample->id);
-            $s->time_result_sms_sent = date('Y-m-d H:i:s');
-            $s->save();
+            // $s = Viralsample::find($sample->id);
+            // $s->time_result_sms_sent = date('Y-m-d H:i:s');
+            // $s->save();
         }
     }
 
