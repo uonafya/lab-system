@@ -835,7 +835,7 @@ class MiscViral extends Common
     public static function send_to_mlab()
     {
         ini_set('memory_limit', "-1");
-        $min_date = date('Y-m-d', strtotime('-1 years'));
+        $min_date = date('Y-m-d', strtotime('-1 month'));
         $batches = \App\Viralbatch::join('facilitys', 'viralbatches.facility_id', '=', 'facilitys.id')
                 ->select("viralbatches.*")
                 ->with(['facility'])
