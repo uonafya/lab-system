@@ -794,7 +794,7 @@ class ViralsampleController extends Controller
 
         if($existing_rows){
 
-            Excel::create("existing_rows", function($excel) use($existing_rows) {
+            Excel::create("samples_that_were_already_existing", function($excel) use($existing_rows) {
                 $excel->sheet('Sheetname', function($sheet) use($existing_rows) {
                     $sheet->fromArray($existing_rows);
                 });
