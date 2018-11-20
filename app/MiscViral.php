@@ -1007,5 +1007,18 @@ class MiscViral extends Common
             $batch->pre_update();
         }
     }
+
+    public static function nyumba2()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-21'])->get();
+
+        foreach ($batches as $key => $batch) {
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +6days'));
+            $batch->pre_update();
+        }
+    }
     
 }
