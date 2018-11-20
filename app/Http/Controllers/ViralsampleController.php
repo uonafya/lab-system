@@ -635,6 +635,8 @@ class ViralsampleController extends Controller
         $problem_rows = 0;
         $created_rows = 0;
 
+        $existing_rows = [];
+
         $handle = fopen($file, "r");
 
         if(env('APP_LAB') == 8){
@@ -647,6 +649,11 @@ class ViralsampleController extends Controller
                 if(!$datereceived) $datereceived = date('Y-m-d');
                 $patient_string = $row[2];
                 $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
+
+                if($existing){
+                    $existing_rows[] = $existing->toArray();
+                    continue;
+                }
 
                 $batch = Viralbatch::withCount(['sample'])
                                         ->where('received_by', auth()->user()->id)
@@ -714,7 +721,10 @@ class ViralsampleController extends Controller
                 if(!$datereceived) $datereceived = date('Y-m-d');
                 $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
 
-                if($existing) continue;
+                if($existing){
+                    $existing_rows[] = $existing->toArray();
+                    continue;
+                }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
 
