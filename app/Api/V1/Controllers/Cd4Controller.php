@@ -55,7 +55,7 @@ class Cd4Controller extends BaseController
         $sample->age = $age;
         $sample->status_id = 1;
         $sample->datecollected = $datecollected;
-        $sample->serial_no = $request->input('serial_no', 0);
+        // $sample->serial_no = $request->input('serial_no', 0);
         $sample->amrs_location = $request->input('amrs_location');
         $sample->provider_identifier = $request->input('provider_identifier');
         $sample->save();
@@ -82,28 +82,42 @@ class Cd4Controller extends BaseController
 
         if($sample_exists && !$editted) return $this->response->errorBadRequest("This sample already exists.");
 
-        $patient = new Cd4Patient;
-        $patient->patient_name = $request->input('patient_name');
-        $patient->medicalrecordno = $request->input('medicalrecordno');
-        $patient->dob = $request->input('dob');
-        $patient->sex = $request->input('sex');
-        $patient->save();
+        $a = true;
 
-        $sample = new Cd4Sample;
+        if($editted){
+            $sample = Cd4Sample::where(['order_no' => $order_no])->first();
 
-        if($editted) $sample = Cd4Sample::where(['order_no' => $order_no])->first();
+            $patient = $sample->patient;
+            $patient->fill($request->only['patient_name', 'medicalrecordno', 'dob']);
+            $patient->save();
 
-        $sample->patient_id = $patient->id;
-        $sample->facility_id = $facility;
-        $sample->lab_id = $lab;
-        $sample->order_no = $order_no;
-        $sample->age = $age;
-        $sample->status_id = 1;
-        $sample->datecollected = $datecollected;
-        $sample->serial_no = $request->input('serial_no', 0);
-        $sample->amrs_location = $request->input('amrs_location');
-        $sample->provider_identifier = $request->input('provider_identifier');
-        $sample->datedispatched = $request->input('datedispatched');
+            $sample->fill($request->only(['datedispatched', 'amrs_location', 'provider_identifier', ]));
+        }
+
+        else{
+
+            $patient = new Cd4Patient;
+            $patient->patient_name = $request->input('patient_name');
+            $patient->medicalrecordno = $request->input('medicalrecordno');
+            $patient->dob = $request->input('dob');
+            $patient->sex = $request->input('sex');
+            $patient->save();
+
+            $sample = new Cd4Sample;
+
+            $sample->patient_id = $patient->id;
+            $sample->facility_id = $facility;
+            $sample->lab_id = $lab;
+            $sample->order_no = $order_no;
+            $sample->age = $age;
+            $sample->status_id = 1;
+            $sample->datecollected = $datecollected;
+            // $sample->serial_no = $request->input('serial_no', 0);
+            $sample->amrs_location = $request->input('amrs_location');
+            $sample->provider_identifier = $request->input('provider_identifier');
+            $sample->datedispatched = $request->input('datedispatched');
+
+        }
 
         if($sample->datedispatched){
             $sample->status_id = 6; 
