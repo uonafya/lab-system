@@ -53,7 +53,7 @@
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li>
-                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
+                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <!-- <li>
@@ -85,11 +85,11 @@
                     </ul>
                 </li> -->
                 <!-- <li><a href=" {{ url('batch') }}">View Batches</a></li> -->
-                <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
-                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
@@ -127,7 +127,7 @@
                     <hr />
                 @endif
                 <li>
-                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
+                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <!-- <li>
@@ -171,12 +171,12 @@
                     </ul>
                 </li> -->
                 <li><a href=" {{ url('viralworksheet/index/1') }}">Update Results
-                    <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                    <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
                 <li>
-                    <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
+                    <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 @if(env('APP_LAB') == 4)
@@ -271,34 +271,34 @@
                 <a href="#"> <span class="nav-label">Search</span></a>
             </li> -->
         {{--
-        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 0)
-            <li>
-                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#">Update Results</a></li>
-                    <li>
-                        <a href="{{ url('batch/dispatch') }}">Dispatch Results
-                            <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <hr />
-            <li>
-                <a href="#"><span class="nav-label">Requisitions</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#">Make Requisition</a></li>
-                    <li><a href="#">Requisition List</a></li>
-                </ul>
-            </li>
-            <hr />
-        @endif
-        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 0)
-            <li>
-                <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
-            </li>
-            <hr />
-        @endif
+            @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 0)
+                <li>
+                    <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="#">Update Results</a></li>
+                        <li>
+                            <a href="{{ url('batch/dispatch') }}">Dispatch Results
+                                <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <hr />
+                <li>
+                    <a href="#"><span class="nav-label">Requisitions</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="#">Make Requisition</a></li>
+                        <li><a href="#">Requisition List</a></li>
+                    </ul>
+                </li>
+                <hr />
+            @endif
+            @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 0)
+                <li>
+                    <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
+                </li>
+                <hr />
+            @endif
         --}}
         @if(Session('testingSystem') != 'CD4')
             @if (Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 0)
@@ -326,7 +326,7 @@
                     <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
                 </li>
                 <hr />
-                @if(env('APP_LAB') == 1)
+                @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
                     <li>
                         <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                     </li>
@@ -352,11 +352,11 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/worksheet/index/1') }}"><span class="nav-label">Update Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForUpdate'] }}</span></a>
+                <a href="{{ url('cd4/worksheet/index/1') }}"><span class="nav-label">Update Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForUpdate'] ?? 0 }}</span></a>
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] }}</span></a>
+                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
             </li>
             <hr />
         @endif

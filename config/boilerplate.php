@@ -85,7 +85,8 @@ return [
         'regimen' => 'required|integer|max:30',
         'mother_prophylaxis' => 'required|integer|max:30',
         'mother_age' => 'integer|between:10,70',
-        'pcrtype' => 'required|integer|between:1,5', 
+        // 'pcrtype' => 'required|integer|between:1,5', 
+        'pcrtype' => 'integer|between:1,5', 
         'redraw' => 'integer', 
     ],
 
@@ -97,6 +98,16 @@ return [
         'sampletype' => 'required|integer|max:10',
         'justification' => 'required|integer|max:15',
         'pmtct' => 'integer|between:1,3|required_if:sex,==,2',
+    ],
+
+    'cd4' => [
+        // 'dob' => ['date_format:Y-m-d', 'required', new BeforeOrEqual($this->input('datecollected'), 'datecollected')],
+        'dob' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'mflCode' => 'required|integer|digits:5|exists:facilitys,facilitycode', 
+        'sex' => 'required|integer|max:3', 
+        'lab' => 'integer',
+        'amrs_location' => 'integer',
     ],
 
 

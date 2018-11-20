@@ -101,6 +101,9 @@ class Copier
             if($samples->isEmpty()) break;
 
             foreach ($samples as $key => $value) {
+                $s = \App\Sample::find($value->id);
+                if($s) continue;
+
                 $patient = Patient::existing($value->facility_id, $value->patient)->get()->first();
 
                 if(!$patient){
@@ -152,6 +155,7 @@ class Copier
                 if($sample->worksheet_id == 0) $sample->worksheet_id = null;
                 if($sample->receivedstatus == 0) $sample->receivedstatus = null;
                 if($sample->result == '') $sample->result = null;
+                if(!$sample->eqa) $sample->eqa = 0;
 
                 $sample->save();
             }
@@ -409,7 +413,8 @@ class Copier
     {
         ini_set("memory_limit", "-1");
         $deliveries = self::deliveries();
-        $unset_array = ['synchronized', 'datesynchronized', 'submitted', 'emailsent', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid', 'disposable1000received', 'disposable1000damaged', 'disposable200received', 'disposable200damaged'];
+        $unset_array = ['synchronized', 'datesynchronized', 'submitted', 'emailsent', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid', 'disposable1000received', 'disposable1000damaged', 'disposable200received', 'disposable200damaged', 'approved_date'];
+            // 'allocatequalkit', 'allocatespexagent', 'allocateampinput', 'allocateampflapless', 'allocateampktips', 'allocateampwash', 'allocatektubes', 'allocateconsumables', 'allocatecalibration', 'allocatecontrol', 'allocatebuffer'
 
         foreach ($deliveries as $key => $value) {
             $offset_value = 0;
@@ -429,6 +434,11 @@ class Copier
                     $del->fill(get_object_vars($row));
                     foreach ($unset_array as $u) {
                         unset($del->$u);
+                    }
+
+                    foreach (get_object_vars($row) as $attr => $attr_val) {
+                        if(starts_with($attr, 'allocate')) unset($del->$attr);
+                        // if(starts_with($attr, 'allocate')) return $attr;
                     }
                     $del->lab_id = $row->lab;
 
@@ -613,7 +623,7 @@ class Copier
 
             'patient' => ['medicalrecordno', 'sex', 'patient_name', 'dob', ],
 
-            'sample' => ['id', 'facility_id', 'amrs_location', 'provider_identifier', 'order_no', 'receivedstatus', 'age', 'labcomment', 'parentid', 'rejectedreason', 'result', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'datereceived', 'dateresultprinted', 'datedispatched', 'sent_email', 'tat1', 'tat2', 'tat3', 'tat4', 
+            'sample' => ['id', 'facility_id', 'amrs_location', 'provider_identifier', 'order_no', 'receivedstatus', 'age', 'labcomment', 'parentid', 'status_id', 'rejectedreason', 'result', 'worksheet_id', 'flag', 'run', 'repeatt', 'approvedby', 'approvedby2', 'datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'datereceived', 'dateresultprinted', 'datedispatched', 'sent_email', 'tat1', 'tat2', 'tat3', 'tat4', 
                 'THelperSuppressorRatio', 'AVGCD3percentLymph', 'AVGCD3AbsCnt', 'AVGCD3CD4percentLymph', 'AVGCD3CD4AbsCnt',
                     'AVGCD3CD8percentLymph', 'AVGCD3CD8AbsCnt', 'AVGCD3CD4CD8percentLymph', 'AVGCD3CD4CD8AbsCnt', 'CD45AbsCnt', ],
             

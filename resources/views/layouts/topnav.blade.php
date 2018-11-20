@@ -250,11 +250,13 @@
                             <a class="label-menu-corner" href="{{ url('home') }}">
                             <i class="pe-7s-home" style="font-size: 25px;"></i>
                                 <span class="label label-danger">
-                                @if(session('testingSystem') == 'Viralload')
-                                    {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
-                                @else
-                                    {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
-                                @endif
+                                @isset($widgets['pendingSamples'])
+                                    @if(session('testingSystem') == 'Viralload')
+                                        {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                                    @else
+                                        {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                                    @endif
+                                @endisset
                                 </span>
                             </a>
                         </li>

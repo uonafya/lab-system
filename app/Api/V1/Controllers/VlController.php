@@ -37,6 +37,13 @@ class VlController extends BaseController
         $age = Lookup::calculate_viralage($datecollected, $dob);
         // $sex = Lookup::get_gender($gender);
 
+        $order_no = $request->input('order_no');
+
+        if($order_no){
+            $sample_exists = ViralsampleView::where(['order_no' => $order_no])->first();
+            if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
+        }
+
         $sample_exists = ViralsampleView::sample($facility, $ccc_number, $datecollected)->first();
         $fields = Lookup::viralsamples_arrays();
 
@@ -108,6 +115,13 @@ class VlController extends BaseController
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);
 
+        $order_no = $request->input('order_no');
+
+        if($order_no){
+            $sample_exists = ViralsampleView::where(['order_no' => $order_no])->first();
+            if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
+        }
+
         $sample_exists = ViralsampleView::sample($facility, $patient_identifier, $datecollected)->first();
         $fields = Lookup::viralsamples_arrays();
 
@@ -153,6 +167,15 @@ class VlController extends BaseController
 
         if($editted){
             $sample = Viralsample::find($sample_exists->id);
+
+            $batch = $sample->batch;
+            $batch->facility_id = $facility;
+            $batch->datereceived = $datereceived;
+            $batch->datedispatched = $datedispatched;
+            $batch->site_entry = 0;
+            $batch->synched = 5;
+            $batch->save();
+            
         }
         else{
             $sample = new Viralsample;

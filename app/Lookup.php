@@ -32,7 +32,14 @@ class Lookup
 
         try {
             $d = date('Y-m-d', strtotime($value));
-            return $d;
+            if($d != '1970-01-01') return $d;
+        } catch (Exception $e) {
+            
+        }
+
+        try {
+            $d = Carbon::createFromFormat('d/m/Y', $value);
+            return $d->toDateString();            
         } catch (Exception $e) {
             
         }
@@ -123,6 +130,17 @@ class Lookup
         ];
     }
 
+    public static function get_rejected_reason($test, $rejectedreason)
+    {
+        self::cacher();
+
+        if($test == 1) $reasons = Cache::get('rejected_reasons');
+        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+
+        return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
+    }
+
     public static function facility_mfl($mfl)
     {
         // self::cacher(); 
@@ -151,6 +169,22 @@ class Lookup
     {
         self::cacher();
         return Cache::get('facilities');
+    }
+
+    public static function get_result($res)
+    {
+        self::cacher();
+        $results = Cache::get('results');
+
+        return $results->where('id', $res)->first()->name ?? '';
+    }
+
+    public static function get_cd4_status($id)
+    {
+        self::cacher();
+        $statuses = Cache::get('cd4sample_statuses');
+
+        return $statuses->where('id', $id)->first()->name ?? '';
     }
 
     public static function worksheet_lookups()

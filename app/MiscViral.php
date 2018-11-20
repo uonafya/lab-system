@@ -674,6 +674,79 @@ class MiscViral extends Common
         }
     }
 
+    public static function send_sms_person($sample, $tel)
+    {
+        // English
+        if($sample->preferred_language == 1){
+            if($sample->rcategory == 1 || $sample->rcategory == 2){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
+                }
+            }
+            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Your VL results are ready. Please visit the health facility as soon as you can.";                        
+                }
+            }
+            else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you.";
+            }
+        }
+        // Kiswahili
+        else{
+            if($sample->rcategory == 1 || $sample->rcategory == 2){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
+                }
+            }
+            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                }
+            }
+            else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+            }             
+        }
+
+        if(!$message){
+            print_r($sample);
+            die();
+            return;
+        }
+
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $tel,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        if($response->getStatusCode() == 201){
+            $s = Viralsample::find($sample->id);
+            $s->time_result_sms_sent = date('Y-m-d H:i:s');
+            $s->save();
+        }
+    }
+
     public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null)
     {
         $machines = Lookup::get_machines();
@@ -965,5 +1038,60 @@ class MiscViral extends Common
             }
         }
     } 
+
+    public static function nyumbani()
+    {
+        ini_set("memory_limit", "-1");
+
+        $samples = ViralsampleView::where(['datedispatched' => '2018-11-14', 'datetested' => '2018-11-14'])->get();
+
+        foreach ($samples as $key => $s) {
+            // $sample = Viralsample::find($s->id);
+            // $worksheet = $sample->worksheet;
+            $worksheet = Viralworksheet::find($s->worksheet_id);
+
+            if(strtotime($worksheet->created_at) < strtotime('2018-11-12') && $worksheet->dateuploaded == '2018-11-14'){
+                $worksheet->datereviewed = $worksheet->daterun = date('Y-m-d', strtotime($worksheet->created_at . ' +1day'));
+                $worksheet->save();
+
+                $viralsamples = $worksheet->sample;
+
+                foreach ($viralsamples as $sample) {
+                    $sample->datetested = $sample->dateapproved = $worksheet->daterun;
+                    $sample->pre_update();
+
+                    $batch = $sample->batch;
+                    $batch->datedispatched = $worksheet->daterun;
+                    $batch->pre_update();
+                }
+            }
+        }
+    }
+
+    public static function nyumba()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-14'])->where('datereceived', '<', '2018-11-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +2days'));
+            $batch->pre_update();
+        }
+    }
+
+    public static function nyumba2()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-21'])->get();
+
+        foreach ($batches as $key => $batch) {
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +6days'));
+            $batch->pre_update();
+        }
+    }
     
 }
