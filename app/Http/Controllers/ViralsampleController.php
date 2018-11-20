@@ -642,13 +642,13 @@ class ViralsampleController extends Controller
         if(env('APP_LAB') == 8){
             while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
                 $facility = Facility::locate($row[4])->get()->first();
-                if(!$facility) continue;
+                if(!$facility || !is_numeric($row[4])) continue;
 
                 $datecollected = Lookup::other_date($row[9]);
                 $datereceived = Lookup::other_date($row[13]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
                 $patient_string = $row[2];
-                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
 
                 if($existing){
                     $existing_rows[] = $existing->toArray();
@@ -719,7 +719,7 @@ class ViralsampleController extends Controller
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
-                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
 
                 if($existing){
                     $existing_rows[] = $existing->toArray();
@@ -797,7 +797,7 @@ class ViralsampleController extends Controller
                     $sheet->fromArray($existing_rows);
                 });
             })->download('csv');
-            
+
         }
 
         return redirect('/viralbatch');        
