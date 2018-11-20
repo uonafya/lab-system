@@ -434,7 +434,7 @@ class Copier
 
                     foreach (get_object_vars($row) as $attr => $attr_val) {
                         if(starts_with($attr, 'allocate')) unset($del->$attr);
-                        if(starts_with($attr, 'allocate')) return $attr;
+                        // if(starts_with($attr, 'allocate')) return $attr;
                     }
                     $del->lab_id = $row->lab;
 
