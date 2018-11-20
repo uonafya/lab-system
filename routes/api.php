@@ -41,6 +41,7 @@ $api->version('v1', function (Router $api) {
             $api->post('vl_complete', 'VlController@complete_result');
 
             $api->post('cd4', 'Cd4Controller@partial');
+            $api->post('cd4_complete', 'Cd4Controller@complete_result');
 
             $api->post('function', 'FunctionController@api');
 
