@@ -119,7 +119,7 @@ class VlController extends BaseController
 
         if($order_no){
             $sample_exists = ViralsampleView::where(['order_no' => $order_no])->first();
-            if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
+            if($sample_exists && !$editted) return $this->response->errorBadRequest("This sample already exists.");
         }
 
         $sample_exists = ViralsampleView::sample($facility, $patient_identifier, $datecollected)->first();

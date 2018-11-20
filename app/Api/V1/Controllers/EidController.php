@@ -169,7 +169,7 @@ class EidController extends BaseController
 
         if($order_no){
             $sample_exists = SampleView::where(['order_no' => $order_no])->first();
-            if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
+            if($sample_exists && !$editted) return $this->response->errorBadRequest("This sample already exists.");
         }
 
         $sample_exists = SampleView::sample($facility, $patient_identifier, $datecollected)->first();
