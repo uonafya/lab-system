@@ -432,7 +432,7 @@ class Copier
                         unset($del->$u);
                     }
 
-                    foreach ($del as $attr => $attr_val) {
+                    foreach (get_object_vars($row) as $attr => $attr_val) {
                         if(starts_with($attr, 'allocate')) unset($del->$attr);
                         if(starts_with($attr, 'allocate')) return $attr;
                     }
