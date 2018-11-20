@@ -91,7 +91,10 @@ class Cd4Controller extends BaseController
             $patient->fill($request->only(['patient_name', 'medicalrecordno', 'dob']));
             $patient->save();
 
-            $sample->fill($request->only(['datedispatched', 'amrs_location', 'provider_identifier', 'datecollected']));
+            $sample->fill($request->only(['datedispatched', 'amrs_location', 'provider_identifier', 'datecollected', 
+                 'datereceived', 'result', 
+                'THelperSuppressorRatio', 'AVGCD3percentLymph', 'AVGCD3AbsCnt', 'AVGCD3CD4percentLymph', 'AVGCD3CD4AbsCnt',
+                    'AVGCD3CD8percentLymph', 'AVGCD3CD8AbsCnt', 'AVGCD3CD4CD8percentLymph', 'AVGCD3CD4CD8AbsCnt', 'CD45AbsCnt', ]));
         }
 
         else{
