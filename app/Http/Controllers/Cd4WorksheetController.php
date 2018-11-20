@@ -333,4 +333,11 @@ class Cd4WorksheetController extends Controller
                                     ->orderBy('datereceived', 'asc')->orderBy('parentid', 'asc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
     }
+
+    public function search(Request $request){
+        $search = $request->input('search');
+        $worksheets = Cd4Worksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $worksheets->setPath(url()->current());
+        return $worksheets;
+    }
 }

@@ -91,6 +91,14 @@ class Cd4PatientController extends Controller
         return $patients;
     }
 
+    public function search_record_no(Request $request) {
+        $search = $request->input('search');
+        $patients = Cd4Patient::where('medicalrecordno', 'like', '%'.$search.'%')->paginate(10);
+        
+        $patients->setPath(url()->current());
+        return $patients;
+    }
+
     public function new_patient(Request $request)
     {
         echo json_encode(Cd4Patient::where('medicalrecordno', '=', $request->input('patient'))->first());
