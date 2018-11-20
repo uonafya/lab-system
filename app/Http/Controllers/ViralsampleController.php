@@ -10,6 +10,8 @@ use App\Facility;
 use App\Lookup;
 use App\MiscViral;
 
+use Excel;
+
 use Illuminate\Http\Request;
 
 class ViralsampleController extends Controller
