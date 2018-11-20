@@ -178,7 +178,8 @@ class FunctionController extends Controller
             ->when(($sample_status && $test == 3), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
             })
-            ->when($patients, function($query) use($patients){
+            ->when($patients, function($query) use($patients, $test){
+                if($test == 3) return $query->whereIn('medicalrecordno', $patients);
                 return $query->whereIn('patient', $patients);
             })
             ->when($orders, function($query) use($orders){
