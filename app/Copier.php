@@ -101,6 +101,9 @@ class Copier
             if($samples->isEmpty()) break;
 
             foreach ($samples as $key => $value) {
+                $s = \App\Sample::find($value->id);
+                if($s) continue;
+
                 $patient = Patient::existing($value->facility_id, $value->patient)->get()->first();
 
                 if(!$patient){
