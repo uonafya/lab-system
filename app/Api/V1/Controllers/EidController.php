@@ -227,6 +227,13 @@ class EidController extends BaseController
 
         if($editted){
             $sample = Sample::find($sample_exists->id);
+
+            $batch = $sample->batch;
+            $batch->facility_id = $facility;
+            $batch->datereceived = $datereceived;
+            $batch->datedispatched = $datedispatched;
+            $batch->site_entry = 0;
+            $batch->save();
         }
         else{
             $sample = new Sample;
