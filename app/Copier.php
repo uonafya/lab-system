@@ -410,7 +410,7 @@ class Copier
         ini_set("memory_limit", "-1");
         $deliveries = self::deliveries();
         $unset_array = ['synchronized', 'datesynchronized', 'submitted', 'emailsent', 'lab', 'approve', 'testsdone', 'yearofrecordset', 'monthofrecordset', 'equipmentid', 'disposable1000received', 'disposable1000damaged', 'disposable200received', 'disposable200damaged',
-            'allocatequalkit', 'allocatespexagent', 'allocateampinput', 'allocateampflapless', 'allocateampktips', 'allocateampwash', ];
+            'allocatequalkit', 'allocatespexagent', 'allocateampinput', 'allocateampflapless', 'allocateampktips', 'allocateampwash', 'allocatektubes'];
 
         foreach ($deliveries as $key => $value) {
             $offset_value = 0;
