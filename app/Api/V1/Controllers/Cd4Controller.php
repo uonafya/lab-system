@@ -88,10 +88,10 @@ class Cd4Controller extends BaseController
             $sample = Cd4Sample::where(['order_no' => $order_no])->first();
 
             $patient = $sample->patient;
-            $patient->fill($request->only['patient_name', 'medicalrecordno', 'dob']);
+            $patient->fill($request->only(['patient_name', 'medicalrecordno', 'dob']));
             $patient->save();
 
-            $sample->fill($request->only(['datedispatched', 'amrs_location', 'provider_identifier', ]));
+            $sample->fill($request->only(['datedispatched', 'amrs_location', 'provider_identifier', 'datecollected']));
         }
 
         else{
