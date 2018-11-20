@@ -12,6 +12,7 @@
 
 		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for EID patient", true);
 		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for VL patient", true);
+		set_select_patient("sidebar_cd4_patientname", "{{ url('/cd4/patient/search_name') }}", 2, "Search for patient name", true, true);
 
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
 		set_select("viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet", true);
@@ -70,7 +71,7 @@
 		}	
 	}
 	
-	function set_select_patient(div_name, url, minimum_length, placeholder, send_url=true) {
+	function set_select_patient(div_name, url, minimum_length, placeholder, send_url=true, cd4name=false) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({
@@ -92,10 +93,17 @@
 				processResults: function(data, params){
 					return {
 						results 	: $.map(data.data, function (row){
-							return {
-								text	: row.patient + ' - ' + row.name,
-								id		: row.id		
-							};
+							if (cd4name == true) {
+								return {
+									text	: row.patient_name + ' - ' + row.medicalrecordno,
+									id		: row.id		
+								};
+							} else {
+								return {
+									text	: row.patient + ' - ' + row.name,
+									id		: row.id		
+								};
+							}
 						}),
 						pagination	: {
 							more: data.to < data.total

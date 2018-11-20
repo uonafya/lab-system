@@ -117,6 +117,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){
 			Route::post('new', 'Cd4PatientController@new_patient')->name('new');
+			Route::post('search_name', 'Cd4PatientController@search_name')->name('searchname');
 		});
 		Route::resource('patients', 'Cd4PatientController');
 

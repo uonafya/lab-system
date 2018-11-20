@@ -83,6 +83,13 @@ class Cd4PatientController extends Controller
         //
     }
 
+    public function search_name(Request $request) {
+        $search = $request->input('search');
+        $patients = Cd4Patient::where('patient_name', 'like', '%'.$search.'%')->paginate(10);
+        
+        $patients->setPath(url()->current());
+        return $patients;
+    }
 
     public function new_patient(Request $request)
     {

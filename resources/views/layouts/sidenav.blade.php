@@ -427,7 +427,11 @@
                 <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
             @elseif(Session('testingSystem') == 'CD4')
-                <li><a href="#"></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
+                <li><a href="#"><select class="form-control" id=""></select></a></li>
+                <li><a href="#"><select class="form-control" id=""></select></a></li>
+                <li><a href="#"><select class="form-control" id=""></select></a></li>
+                <li><a href="#"><select class="form-control" id=""></select></a></li>
             @else
                 <!-- EID Searches -->
                 <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
