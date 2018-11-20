@@ -6,6 +6,7 @@ use App\Cd4Sample;
 use App\Cd4Patient;
 use Illuminate\Http\Request;
 use App\Lookup;
+use App\ViewFacility;
 
 class Cd4SampleController extends Controller
 {
@@ -166,9 +167,50 @@ class Cd4SampleController extends Controller
         $data['samples'] = Cd4Sample::when($state, function($query) use ($state) {
                             if($state == 1)
                                 return $query->where('status_id', '=', 5);
+                            if($state == 2)
+                                return $query->where('status_id', '=', 6);
+                            if($state == 3)
+                                return $query->where('status_id', '=', 1);
                         })->where('repeatt', '=', 0)->get();
         $data = (object) $data;
         // dd($data);
         return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
+    }
+
+    /**
+     * Print the specified resource from storage.
+     *
+     * @param  \App\Cd4Sample  $sample
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Cd4Sample $sample){
+        $sample->dateresultprinted = gmdate('Y-m-d');
+        $sample->printedby = auth()->user()->id;
+        $sample->status_id = 6;
+        $sample->save();
+
+        return redirect('cd4/sample/printresult/'.$sample->id);
+    }
+
+    public function printresult(Cd4Sample $sample){
+        // dd($sample);
+        return view('exports.cd4_sample', compact('sample'));
+    }
+
+    public function facility($facility){
+        $data = Lookup::cd4_lookups();
+        $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->get();
+        $facility = ViewFacility::find($facility);
+        $data = (object) $data;
+        
+        return view('tables.cd4-samples', compact('data'))->with('pageTitle', $facility->name.' Samples');
+    }
+
+    public function search(Request $request){
+        $search = $request->input('search');
+        $samples = Cd4Sample::where('id', 'like', '%'.$search.'%')->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
     }
 }

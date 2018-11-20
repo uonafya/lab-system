@@ -27,6 +27,18 @@ class Cd4WorksheetController extends Controller
         return view('tables.cd4-worksheets', compact('data'))->with('pageTitle', 'Worksheets');
     }
 
+    public function state($state=null){
+        $data = Lookup::worksheet_lookups();
+        $data['worksheets'] = Cd4Worksheet::when($state, function($query) use ($state){
+                                        if($state == 1) {
+                                            return $query->whereNotNull('reviewedby')->whereNull('reviewedby2');
+                                        }
+                                    })->orderBy('id', 'desc')->get();
+        $data = (object) $data;
+        
+        return view('tables.cd4-worksheets', compact('data'))->with('pageTitle', 'Worksheets');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -320,5 +332,12 @@ class Cd4WorksheetController extends Controller
         return Cd4Sample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->where('status_id', '=', 1)
                                     ->orderBy('datereceived', 'asc')->orderBy('parentid', 'asc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
+    }
+
+    public function search(Request $request){
+        $search = $request->input('search');
+        $worksheets = Cd4Worksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $worksheets->setPath(url()->current());
+        return $worksheets;
     }
 }

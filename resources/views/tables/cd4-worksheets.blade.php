@@ -81,7 +81,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td>No worksheets available yet</td>
+                                    <td colspan="10"><center>No worksheets available yet</center></td>
                                 </tr>
                             @endforelse
                             </tbody>
