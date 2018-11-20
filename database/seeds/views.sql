@@ -146,7 +146,8 @@ CREATE OR REPLACE VIEW old_viralworksheets_view AS
 CREATE OR REPLACE VIEW old_cd4_samples_view AS
 (
     SELECT s.id, s.worksheet as worksheet_id, s.facility as facility_id, s.labtestedin as lab_id, s.parentid,
-    s.AMRSlocation as amrs_location, p.providerid as provider_identifier, s.serialno as serial_no,
+    s.AMRSlocation as amrs_location, p.providerid as provider_identifier, 
+    # s.serialno as serial_no,
     p.age, s.status as status_id, s.orderno as order_no, s.run, s.action as repeatt, s.receivedstatus, s.rejectedreason,
     s.labcomment, `s`.`THelperSuppressor Ratio` AS THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
     s.AVGCD3CD8percentLymph, s.AVGCD3CD8AbsCnt, s.AVGCD3CD4CD8percentLymph, s.AVGCD3CD4CD8AbsCnt, s.CD45AbsCnt, s.result,

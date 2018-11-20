@@ -32,7 +32,14 @@ class Lookup
 
         try {
             $d = date('Y-m-d', strtotime($value));
-            return $d;
+            if($d != '1970-01-01') return $d;
+        } catch (Exception $e) {
+            
+        }
+
+        try {
+            $d = Carbon::createFromFormat('d/m/Y', $value);
+            return $d->toDateString();            
         } catch (Exception $e) {
             
         }
