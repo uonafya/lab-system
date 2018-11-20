@@ -789,6 +789,17 @@ class ViralsampleController extends Controller
             }
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
+
+        if($existing_rows){
+
+            Excel::create("existing_rows", function($excel) use($existing_rows) {
+                $excel->sheet('Sheetname', function($sheet) use($existing_rows) {
+                    $sheet->fromArray($existing_rows);
+                });
+            })->download('csv');
+            
+        }
+
         return redirect('/viralbatch');        
     }
 
