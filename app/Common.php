@@ -453,16 +453,16 @@ class Common
 
         		// dd([$fac->toArray(), $facility->toArray()]);
 
-        		$new_fac = \App\Facility::find($facility->ID);
-        		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
-        		if($new_fac){
-        			$conflict[] = [
-        				'id' => $new_fac->id,
-        				'code' => $new_fac->facilitycode,
-        				'name' => $new_fac->name,
-        			];
-        			continue;
-        		}
+        		// $new_fac = \App\Facility::find($facility->ID);
+        		// // if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
+        		// if($new_fac){
+        		// 	$conflict[] = [
+        		// 		'id' => $new_fac->id,
+        		// 		'code' => $new_fac->facilitycode,
+        		// 		'name' => $new_fac->name,
+        		// 	];
+        		// 	continue;
+        		// }
 
         		foreach ($classes as $class) {
         			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
@@ -473,7 +473,7 @@ class Common
         	}
         }
 
-        dd($conflict);
+        // dd($conflict);
     }
 
 
