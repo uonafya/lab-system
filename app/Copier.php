@@ -258,6 +258,16 @@ class Copier
         echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
+    public static function cd4()
+    {
+        DB::statement("truncate table cd4worksheets");
+        DB::statement("truncate table cd4patients");
+        DB::statement("truncate table cd4samples");
+
+        self::copy_cd4_worksheet();
+        self::copy_cd4();
+    }
+
 
     public static function copy_cd4()
     {
