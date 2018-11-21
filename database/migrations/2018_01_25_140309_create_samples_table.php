@@ -52,7 +52,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();
             $table->tinyInteger('run')->unsigned()->default(1)->nullable();
             $table->tinyInteger('repeatt')->unsigned()->default(0)->nullable();
-            $table->tinyInteger('eqa')->unsigned()->default(0);
+            $table->tinyInteger('eqa')->unsigned()->default(0)->nullable();
 
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();

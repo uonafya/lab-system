@@ -409,6 +409,73 @@ class Common
         }
     }
 
+    public static function ampath_all()
+    {
+    	self::ampath(\App\Batch::class);
+    	self::ampath(\App\Viralbatch::class);
+    }
+
+    public static function ampath($class)
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = $class::where(['batch_complete' => '2'])->where('datereceived', '<', '2018-01-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
+            $batch->batch_complete = 1;
+            $batch->pre_update();
+        }
+    }
+
+    public static function find_facility_mismatch()
+    {
+        ini_set("memory_limit", "-1");
+        $facilities = \App\OldModels\Facility::all();
+
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+        $conflict = [];
+
+        foreach ($facilities as $facility) {
+        	$fac = \App\Facility::locate($facility->facilitycode)->first();
+        	if(!$fac) continue;
+
+        	if($fac->id != $facility->ID){
+
+        		// dd([$fac->toArray(), $facility->toArray()]);
+
+        		// $new_fac = \App\Facility::find($facility->ID);
+        		// // if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
+        		// if($new_fac){
+        		// 	$conflict[] = [
+        		// 		'id' => $new_fac->id,
+        		// 		'code' => $new_fac->facilitycode,
+        		// 		'name' => $new_fac->name,
+        		// 	];
+        		// 	continue;
+        		// }
+
+        		foreach ($classes as $class) {
+        			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
+        			$class::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
+        		}
+
+        		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
+        	}
+        }
+
+        // dd($conflict);
+    }
+
 
 
 }

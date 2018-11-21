@@ -14,7 +14,7 @@ class Lookup
     public static $double_approval = [2, 4, 5];
     public static $amrs = [3, 5];
     public static $worksheet_received = [1, 3];
-    public static $sms = [1, 4];
+    public static $sms = [1, 2, 3, 4, 5, 6, 7, 8, 9 ];
 
     public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
 
@@ -32,7 +32,14 @@ class Lookup
 
         try {
             $d = date('Y-m-d', strtotime($value));
-            return $d;
+            if($d != '1970-01-01') return $d;
+        } catch (Exception $e) {
+            
+        }
+
+        try {
+            $d = Carbon::createFromFormat('d/m/Y', $value);
+            return $d->toDateString();            
         } catch (Exception $e) {
             
         }
@@ -162,6 +169,22 @@ class Lookup
     {
         self::cacher();
         return Cache::get('facilities');
+    }
+
+    public static function get_result($res)
+    {
+        self::cacher();
+        $results = Cache::get('results');
+
+        return $results->where('id', $res)->first()->name ?? '';
+    }
+
+    public static function get_cd4_status($id)
+    {
+        self::cacher();
+        $statuses = Cache::get('cd4sample_statuses');
+
+        return $statuses->where('id', $id)->first()->name ?? '';
     }
 
     public static function worksheet_lookups()

@@ -10,6 +10,8 @@ use App\Facility;
 use App\Lookup;
 use App\MiscViral;
 
+use Excel;
+
 use Illuminate\Http\Request;
 
 class ViralsampleController extends Controller
@@ -635,18 +637,25 @@ class ViralsampleController extends Controller
         $problem_rows = 0;
         $created_rows = 0;
 
+        $existing_rows = [];
+
         $handle = fopen($file, "r");
 
         if(env('APP_LAB') == 8){
             while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
                 $facility = Facility::locate($row[4])->get()->first();
-                if(!$facility) continue;
+                if(!$facility || !is_numeric($row[4])) continue;
 
                 $datecollected = Lookup::other_date($row[9]);
                 $datereceived = Lookup::other_date($row[13]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
                 $patient_string = $row[2];
-                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
+
+                if($existing){
+                    $existing_rows[] = $existing->toArray();
+                    continue;
+                }
 
                 $batch = Viralbatch::withCount(['sample'])
                                         ->where('received_by', auth()->user()->id)
@@ -712,9 +721,12 @@ class ViralsampleController extends Controller
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
-                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
 
-                if($existing) continue;
+                if($existing){
+                    $existing_rows[] = $existing->toArray();
+                    continue;
+                }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
 
@@ -779,6 +791,17 @@ class ViralsampleController extends Controller
             }
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
+
+        if($existing_rows){
+
+            Excel::create("samples_that_were_already_existing", function($excel) use($existing_rows) {
+                $excel->sheet('Sheetname', function($sheet) use($existing_rows) {
+                    $sheet->fromArray($existing_rows);
+                });
+            })->download('csv');
+
+        }
+
         return redirect('/viralbatch');        
     }
 
@@ -801,6 +824,27 @@ class ViralsampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
+
+    public function ord_no(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
+
+        $samples = ViralsampleView::select(['id', 'order_no', 'patient'])
+            ->whereRaw("order_no like '%" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+
 
     private function clear_session(){
         session()->forget('viral_batch');
