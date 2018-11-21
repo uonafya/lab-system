@@ -116,15 +116,26 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request->all());
-        $user = self::__unHashUser($id);
-        if (!empty($user)) {
-            $user->password = $request->password;
-            $user->update();
-            session(['toast_message'=>'User password succesfully updated']);
+        if($request->input('password') == "") { // No password for edit
+            $userData = $request->only(['user_type','email','surname','oname','telephone']);
+            $userData['user_type_id'] = $userData['user_type'];
+            unset($userData['user_type']);
+            
+            $user = User::find($id);
+            $user->fill($userData);
+            $user->save();
         } else {
-            session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+            $user = self::__unHashUser($id);
+
+            if (!empty($user)) {
+                $user->password = $request->password;
+                $user->update();
+                session(['toast_message'=>'User password succesfully updated']);
+            } else {
+                session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+            }
         }
+                
         if (isset($request->user)) {
             return back();
         } else {
