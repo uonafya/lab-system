@@ -302,6 +302,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('{sample}/edit_result', 'SampleController@save_poc');
 
 		Route::post('search', 'SampleController@search');		
+		Route::post('ord_no', 'SampleController@ord_no');		
 	});
 	Route::resource('sample', 'SampleController');
 
@@ -344,6 +345,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 
 		Route::post('search', 'ViralsampleController@search');		
+		Route::post('ord_no', 'ViralsampleController@ord_no');		
 	});
 	Route::resource('viralsample', 'ViralsampleController');
 
