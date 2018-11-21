@@ -428,6 +428,36 @@ class Common
         }
     }
 
+    public function find_facility_mismatch()
+    {
+        ini_set("memory_limit", "-1");
+        $facilities = \App\OldModels\Facility::all();
+
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+        foreach ($facilities as $facility) {
+        	$fac = \App\Facility::locate($facility->facilitycode)->first();
+
+        	if($fac->id != $facility->id){
+        		\App\Batch::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
+        		\App\Batch::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
+
+        		foreach ($classes as $class) {
+        			$class::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
+        			$class::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
+        		}
+        	}
+        }
+    }
+
 
 
 }
