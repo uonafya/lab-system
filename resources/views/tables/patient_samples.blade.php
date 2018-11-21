@@ -32,6 +32,9 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    <?php
+                                        if(!$sample->batch) unset($sample->batch);
+                                    ?>
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>

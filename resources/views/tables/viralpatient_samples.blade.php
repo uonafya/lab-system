@@ -38,7 +38,7 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
-                                        <td>  {!! $sample->batch->hyper_link ?? $sample->batch_id !!} </td>
+                                        <td>  {!! $sample->batch->hyper_link !!} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
@@ -47,19 +47,11 @@
                                             @endforeach
                                         </td>
                                         <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
-                                        <td>                                            
-                                            @if($sample->batch)
-                                                {{ $sample->batch->my_date_format('datereceived') ?? '' }}
-                                            @endif 
-                                         </td>
+                                        <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
                                         <td> {{ $sample->worksheet_id ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datetested') ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
-                                        <td>                                           
-                                            @if($sample->batch)
-                                                {{ $sample->batch->my_date_format('datedispatched') ?? '' }}
-                                            @endif 
-                                         </td>
+                                        <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
                                         <td> {{ $sample->run ?? '' }} </td>
                                         <td> {{ $sample->result ?? '' }} </td>
                                         <td>
