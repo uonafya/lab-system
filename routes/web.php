@@ -119,9 +119,11 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){
-			Route::post('new', 'Cd4PatientController@new_patient')->name('new');
-			Route::post('search_name', 'Cd4PatientController@search_name')->name('searchname');
-			Route::post('search_record_no', 'Cd4PatientController@search_record_no')->name('search_record_no');
+			Route::post('new', 'Cd4PatientController@new_patient')->name('new');			
+			Route::get('search_name/{patient_name}', 'Cd4PatientController@search_name')->name('search_name');
+			Route::post('search_name', 'Cd4PatientController@search_name');
+			Route::get('search_record_no/{recordno}', 'Cd4PatientController@search_record_no')->name('search_record_no');
+			Route::post('search_record_no', 'Cd4PatientController@search_record_no');
 		});
 		Route::resource('patients', 'Cd4PatientController');
 

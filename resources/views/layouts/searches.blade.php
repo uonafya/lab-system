@@ -12,7 +12,7 @@
 
 		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for EID patient", true);
 		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for VL patient", true);
-		set_select_patient("sidebar_cd4_patientname", "{{ url('/cd4/patient/search_name') }}", 2, "Search for patient name", true, true);
+		set_select("sidebar_cd4_patientname", "{{ url('/cd4/patient/search_name') }}", 2, "Search for patient name", false, true);
 		set_select("sibebar_cd4medrecNo_search", "{{ url('cd4/patient/search_record_no') }}", 2, "Search Medical Record #(Ampath #)", false, true);
 
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
@@ -56,7 +56,7 @@
 						results 	: $.map(data.data, function (row){
 							if(cd4 == true){
 								return {
-									text	: row.medicalrecordno,
+									text	: row.medicalrecordno + ' - ' + row.patient_name,
 									id		: row.medicalrecordno
 								};
 							} else {
