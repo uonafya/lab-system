@@ -34,8 +34,6 @@
                                     <?php
                                         if(!$sample->batch) unset($sample->batch);
                                     ?>
-
-                                    @endif
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
