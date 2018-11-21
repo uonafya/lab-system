@@ -12,7 +12,7 @@
 
 		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for EID patient", true);
 		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for VL patient", true);
-		set_select_patient("sidebar_cd4_patientname", "{{ url('/cd4/patient/search_name') }}", 2, "Search for patient name", true, true);
+		set_select("sidebar_cd4_patientname", "{{ url('/cd4/patient/search_name') }}", 2, "Search for patient name", false, true);
 		set_select("sibebar_cd4medrecNo_search", "{{ url('cd4/patient/search_record_no') }}", 2, "Search Medical Record #(Ampath #)", false, true);
 
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
@@ -30,10 +30,11 @@
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
 
+
 		set_select_orderno("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
 		set_select_orderno("sidebar_viral_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
 		set_select("sidebar_cd4labID_search", "{{ url('cd4/sample/search') }}", 1, "Search by CD4 Lab ID");
-		
+	
 	});
 	
 	function set_select(div_name, url, minimum_length, placeholder, worksheet=false, cd4=false) {
@@ -60,7 +61,7 @@
 						results 	: $.map(data.data, function (row){
 							if(cd4 == true){
 								return {
-									text	: row.medicalrecordno,
+									text	: row.medicalrecordno + ' - ' + row.patient_name,
 									id		: row.medicalrecordno
 								};
 							} else {
