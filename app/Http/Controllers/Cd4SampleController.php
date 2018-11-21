@@ -19,7 +19,7 @@ class Cd4SampleController extends Controller
     {
         ini_set("memory_limit", "-1");
         $data = Lookup::cd4_lookups();
-        $data['samples'] = Cd4Sample::orderBy('datecollected', 'desc')->where('patient_id', '=', 13801)->get();
+        $data['samples'] = Cd4Sample::orderBy('datecollected', 'desc')->get();
         $data = (object) $data;
         // dd($data);
         return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
