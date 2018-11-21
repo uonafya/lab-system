@@ -31,7 +31,7 @@
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
 
 		set_select_orderno("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
-		set_select_orderno("sidebar_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
+		set_select_orderno("sidebar_viral_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
 		set_select("sidebar_cd4labID_search", "{{ url('cd4/sample/search') }}", 1, "Search by CD4 Lab ID");
 		
 	});
