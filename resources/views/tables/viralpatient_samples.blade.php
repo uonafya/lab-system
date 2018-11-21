@@ -44,15 +44,23 @@
                                             @endforeach
                                         </td>
                                         <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
-                                        <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
+                                        <td>                                            
+                                            @if($sample->batch)
+                                                {{ $sample->batch->my_date_format('datereceived') ?? '' }}
+                                            @endif 
+                                         </td>
                                         <td> {{ $sample->worksheet_id ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datetested') ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
-                                        <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
+                                        <td>                                           
+                                            @if($sample->batch)
+                                                {{ $sample->batch->my_date_format('datedispatched') ?? '' }}
+                                            @endif 
+                                         </td>
                                         <td> {{ $sample->run ?? '' }} </td>
                                         <td> {{ $sample->result ?? '' }} </td>
                                         <td>
-                                            @if($sample->batch->batch_complete == 1)
+                                            @if($sample->batch && $sample->batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a>
                                             @endif
                                         </td>
