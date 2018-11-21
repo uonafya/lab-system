@@ -503,7 +503,7 @@ class Copier
             if($rows->isEmpty()) break;
 
             foreach ($rows as $key => $row) {
-                $d = Lookup::clean_date($row->initiation_date);
+                $d = self::clean_date($row->initiation_date);
                 if(!$d) continue;
 
                 $patient = Viralpatient::existing($row->facility_id, $row->patient)->first();
