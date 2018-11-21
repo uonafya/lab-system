@@ -19,7 +19,7 @@
 @section('content')
     @php
         $disabled = '';
-        if($view)
+        if(isset($view))
             $disabled = "disabled";
     @endphp
     <div class="content">

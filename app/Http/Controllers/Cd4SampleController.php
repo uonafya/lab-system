@@ -198,6 +198,7 @@ class Cd4SampleController extends Controller
     }
 
     public function facility($facility){
+        ini_set("memory_limit", "-1");
         $data = Lookup::cd4_lookups();
         $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->get();
         $facility = ViewFacility::find($facility);
