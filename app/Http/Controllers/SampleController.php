@@ -875,19 +875,19 @@ class SampleController extends Controller
         return $samples;
     }
 
-    public function order_number(Request $request)
+    public function ord_no(Request $request)
     {
         $user = auth()->user();
         $search = $request->input('search');
         $facility_user = false;
 
         if($user->user_type_id == 5) $facility_user=true;
-        $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
 
-        $samples = Sample::select('samples.id, samples.order_no')
-            ->whereRaw("samples.order_no like '" . $search . "%'")
+        $samples = SampleView::select(['id', 'order_no', 'patient'])
+            ->whereRaw("order_no like '%" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
-                return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
+                return $query->whereRaw($string);
             })
             ->paginate(10);
 

@@ -177,7 +177,7 @@
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
-                                            <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
+                                            <a href="{{ url('/viralsample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                             {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}

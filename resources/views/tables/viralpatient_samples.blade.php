@@ -56,8 +56,11 @@
                                         <td> {{ $sample->result ?? '' }} </td>
                                         <td>
                                             @if($sample->batch && $sample->batch->batch_complete == 1)
-                                                <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                                <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
+
+                                                <a href="{{ url('/viralsample/' . $sample->id ) }} " target='_blank'>View</a> |
+                                                <a href="{{ url('/viralsample/' . $sample->id . '/edit' ) }} " target='_blank'>Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach

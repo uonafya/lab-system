@@ -30,8 +30,8 @@
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
 
-		set_select("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
-		set_select("sidebar_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
+		set_select_orderno("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
+		set_select_orderno("sidebar_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
 		set_select("sidebar_cd4labID_search", "{{ url('cd4/sample/search') }}", 1, "Search by CD4 Lab ID");
 		
 	});
@@ -171,6 +171,59 @@
 
 		if(send_url != false)
 			set_change_listener(div_name, send_url, false);
+	}
+	
+	function set_select_orderno(div_name, url, minimum_length, placeholder, worksheet=false, cd4=false) {
+		div_name = '#' + div_name;		
+
+		$(div_name).select2({
+			minimumInputLength: minimum_length,
+			placeholder: placeholder,
+			ajax: {
+				delay	: 100,
+				type	: "POST",
+				dataType: 'json',
+				data	: function(params){
+					return {
+						search : params.term
+					}
+				},
+				url		: function(params){
+					params.page = params.page || 1;
+					return  url + "?page=" + params.page;
+				},
+				processResults: function(data, params){
+					return {
+						results 	: $.map(data.data, function (row){
+							if(cd4 == true){
+								return {
+									text	: row.medicalrecordno,
+									id		: row.medicalrecordno
+								};
+							} else {
+								return {
+									text	: row.order_no . ' ' . row.patient,
+									id		: row.id		
+								};	
+							}
+							
+						}),
+						pagination	: {
+							more: data.to < data.total
+						}
+					};
+				}
+			}
+		});
+		if(worksheet){
+			set_worksheet_change_listener(div_name, url);
+		} else{
+			if(cd4){
+				set_cd4patient_change_listener(div_name, url);
+			} else {
+				set_change_listener(div_name, url);
+			}			
+		}	
 	}
 
 	function set_change_listener(div_name, url, not_facility=true)
