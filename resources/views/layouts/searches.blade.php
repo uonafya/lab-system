@@ -29,13 +29,6 @@
 
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
-<<<<<<< HEAD
-		set_select("sidebar_cd4labID_search", "{{ url('cd4/sample/search') }}", 1, "Search by CD4 Lab ID");
-=======
-
-		set_select("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
-		set_select("sidebar_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
->>>>>>> 3386f94a116235922b10a777b27caa03948464b7
 		
 	});
 	
@@ -84,8 +77,11 @@
 		if(worksheet){
 			set_worksheet_change_listener(div_name, url);
 		} else{
-			// console.log('We are here');
-			set_change_listener(div_name, url, cd4);			
+			if(cd4){
+				set_cd4patient_change_listener(div_name, url);
+			} else {
+				set_change_listener(div_name, url);
+			}			
 		}	
 	}
 	
@@ -173,12 +169,22 @@
 			set_change_listener(div_name, send_url, false);
 	}
 
-	function set_change_listener(div_name, url, not_facility=true, cd4=false)
+	function set_change_listener(div_name, url, not_facility=true)
 	{
 		if(not_facility){
 			url = url.substring(0, url.length-7);
-		} 
+		} 	
+				
+		$(div_name).change(function(){
+			var val = $(this).val();
+			window.location.href = url + '/' + val;
+		});	
+	}
 
+
+
+	function set_cd4patient_change_listener(div_name, url)
+	{		
 		$(div_name).change(function(){
 			var val = $(this).val();
 			window.location.href = url + '/' + val;

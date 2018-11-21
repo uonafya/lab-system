@@ -448,6 +448,8 @@ class Common
         	if(!$fac) continue;
 
         	if($fac->id != $facility->id){
+
+        		dd([$fac->toArray(), $facility->toArray()]);
         		\App\Batch::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
         		\App\Batch::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
 
