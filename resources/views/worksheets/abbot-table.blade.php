@@ -121,7 +121,7 @@ width:1180px;
 					if($vl){
 						echo "<td align=center > NC </td><td align=center > LPC </td><td  align=center > HPC </td>";
 						$count += 3; 
-						if($calibration){
+						if($worksheet->calibration){
 							echo "
 								<td align=center > Cal A </td> 
 								<td align=center > Cal A </td> 
