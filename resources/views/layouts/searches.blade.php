@@ -202,7 +202,7 @@
 								};
 							} else {
 								return {
-									text	: row.order_no . ' ' . row.patient,
+									text	: row.order_no + ' ' + row.patient,
 									id		: row.id		
 								};	
 							}
