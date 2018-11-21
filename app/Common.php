@@ -423,6 +423,7 @@ class Common
 
         foreach ($batches as $key => $batch) {
             $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
+            $batch->batch_complete = 1;
             $batch->pre_update();
         }
     }
