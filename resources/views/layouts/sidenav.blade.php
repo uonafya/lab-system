@@ -16,7 +16,7 @@
 <aside id="menu">
     <div id="navigation">
         <ul class="nav" id="side-menu" style=" @if(env('APP_LAB') == 5 && Session('testingSystem') != 'CD4') padding-top: 0px; @else padding-top: 12px; @endif padding-left: 8px;">
-        @if(Session('testingSystem') != 'CD4')
+        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5))
             @if(env('APP_LAB') == 5)
                 <li class="label label-success" style="border-radius: 0px;"><a href="#" id="cd4Switch" style="color: white; font-weight: 600; font-size:700;font-size: 12px;">Switch to CD4</a></li>
             @endif
