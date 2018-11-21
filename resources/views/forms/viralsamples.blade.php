@@ -665,7 +665,7 @@
 
         // $("#dateinitiatedontreatment").datepicker({
         $("#initiation_date").datepicker({
-            startView: 0,
+            startView: 2,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
