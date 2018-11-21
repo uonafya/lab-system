@@ -175,12 +175,10 @@
 
 	function set_change_listener(div_name, url, not_facility=true)
 	{
-		if(cd4 == false){
-			if(not_facility){
-				url = url.substring(0, url.length-7);
-			} 	
-		}
-		
+		if(not_facility){
+			url = url.substring(0, url.length-7);
+		} 	
+				
 		$(div_name).change(function(){
 			var val = $(this).val();
 			window.location.href = url + '/' + val;
