@@ -410,27 +410,7 @@
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)
-            @if(session('testingSystem') == 'Viralload')
-                <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
-            @elseif(session('testingSystem') == 'EID')
-                <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
-            @elseif(Session('testingSystem') == 'CD4')
-                <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_cd4labID_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sibebar_cd4medrecNo_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_cd4worksheet_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_cd4facility_search"></select></a></li>
-            @else
+            @if(Auth::user()->user_type_id == 5)
                 <!-- EID Searches -->
                 <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
@@ -439,6 +419,28 @@
                 <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @else
+                @if(session('testingSystem') == 'Viralload')
+                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+                @elseif(session('testingSystem') == 'EID')
+                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+                @elseif(Session('testingSystem') == 'CD4')
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4labID_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sibebar_cd4medrecNo_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4worksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4facility_search"></select></a></li>
+                @endif
             @endif
         @endif
         </ul>
