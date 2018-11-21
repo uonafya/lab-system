@@ -75,7 +75,7 @@ class EidController extends BaseController
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         $batch->user_id = 0;
-        $batch->site_entry = 0;
+        $batch->site_entry = 1;
         $batch->save();
 
         $patient = Patient::existing($facility, $hei_number)->get()->first();

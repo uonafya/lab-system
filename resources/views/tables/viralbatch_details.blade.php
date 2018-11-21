@@ -80,7 +80,9 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
-                            @if(!$batch->datereceived && $batch->site_entry == 1)
+                            @if($batch->site_entry == 1 && (!$batch->datereceived || 
+                            ($batch->datereceived && $samples->where('receivedstatus', null)->first())
+                            ) )
                                 <div class="col-md-4">
                                     <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
                                         <button class="btn btn-primary">Approve Site Entry</button>

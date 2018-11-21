@@ -783,6 +783,7 @@
                         console.log(patient.dob);
 
                         $("#dob").val(patient.dob);
+                        $("#initiation_date").val(patient.initiation_date);
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
                         $("#sex").val(patient.sex).change();

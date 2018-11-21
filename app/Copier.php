@@ -488,6 +488,36 @@ class Copier
         }
     }
 
+    public static function return_vl_dateinitiated()
+    {
+        ini_set("memory_limit", "-1");
+        $offset =0;
+
+        while(true){
+            $rows = ViralsampleView::select('patient', 'facility_id', 'initiation_date')
+                                ->whereNotNull('initiation_date')
+                                ->whereNotIn('initiation_date', ['0000-00-00', ''])
+                                ->limit(5000)
+                                ->offset($offset)
+                                ->get();
+            if($rows->isEmpty()) break;
+
+            foreach ($rows as $key => $row) {
+                $d = self::clean_date($row->initiation_date);
+                if(!$d) continue;
+
+                $patient = Viralpatient::existing($row->facility_id, $row->patient)->first();
+                if(!$patient) continue;
+
+                if($patient->initiation_date && $patient->initiation_date != '0000-00-00') continue;
+                $patient->initiation_date = $d;
+                $patient->save();
+
+            }
+            $offset += 5000;
+        }
+    }
+
 
     public static function previous_dob($class_name=null, $patient=null, $facility_id=null)
     {

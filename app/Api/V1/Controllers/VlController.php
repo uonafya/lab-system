@@ -71,7 +71,7 @@ class VlController extends BaseController
         $batch->user_id = 0;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        $batch->site_entry = 0;
+        $batch->site_entry = 1;
         $batch->save();
 
         $patient = Viralpatient::existing($facility, $ccc_number)->get()->first();
