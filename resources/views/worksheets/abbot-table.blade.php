@@ -119,25 +119,25 @@ width:1180px;
 				<?php 
 					$count = 0;
 					if($vl){
-						echo "<td align=center > NC </td><td align=center > LPC </td><td  align=center > HPC </td>";
+						echo "<td align='center' > NC </td><td align='center' > LPC </td><td  align='center' > HPC </td>";
 						$count += 3; 
 						if($worksheet->calibration){
 							echo "
-								<td align=center > Cal A </td> 
-								<td align=center > Cal A </td> 
-								<td align=center > Cal A </td> 
-								<td align=center > Cal A </td> 
-								<td align=center > Cal B </td>
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal B </td>
 							 </tr>
 							 <tr>
-								<td align=center > Cal B </td>
-								<td align=center > Cal B </td>
-								<td align=center > Cal B </td>							 
+								<td align='center' > Cal B </td>
+								<td align='center' > Cal B </td>
+								<td align='center' > Cal B </td>							 
 							  ";
 						}
 					}
 					else{
-						echo "<td align=center > PC </td><td  align=center > NC </td>";
+						echo "<td align='center' > PC </td><td  align='center' > NC </td>";
 						$count += 2; 
 					}
 				?>
@@ -167,23 +167,23 @@ width:1180px;
 				@endforeach
 
 				{{--@if($vl)
-					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
 				@else
-					<td align=center > PC </td><td  align=center > NC </td>
+					<td align='center' > PC </td><td  align='center' > NC </td>
 				@endif--}}
 			</tr>
 
 			
 			{{--@if($worksheet->calibration)
 				<tr>
-					<td align=center > Cal A </td>
-					<td align=center > Cal A </td>
-					<td align=center > Cal A </td>
-					<td align=center > Cal A </td>
-					<td align=center > Cal B </td>
-					<td align=center > Cal B </td>
-					<td align=center > Cal B </td>
-					<td align=center > Cal B </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal B </td>
+					<td align='center' > Cal B </td>
+					<td align='center' > Cal B </td>
+					<td align='center' > Cal B </td>
 				</tr>
 
 			@endif--}}
