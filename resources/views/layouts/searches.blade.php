@@ -78,7 +78,8 @@
 		if(worksheet){
 			set_worksheet_change_listener(div_name, url);
 		} else{
-			set_change_listener(div_name, url);			
+			// console.log('We are here');
+			set_change_listener(div_name, url, cd4);			
 		}	
 	}
 	
