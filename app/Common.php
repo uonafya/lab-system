@@ -443,6 +443,8 @@ class Common
         	\App\Viralpatient::class,
         ];
 
+        $conflict = [];
+
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
@@ -453,7 +455,14 @@ class Common
 
         		$new_fac = \App\Facility::find($facility->ID);
         		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
-        		if($new_fac) continue;
+        		if($new_fac){
+        			$conflict[] = [
+        				'id' => $new_fac->id,
+        				'code' => $new_fac->facilitycode,
+        				'name' => $new_fac->name,
+        			];
+        			continue;
+        		}
 
         		foreach ($classes as $class) {
         			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
@@ -463,6 +472,8 @@ class Common
         		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
         	}
         }
+
+        dd($conflict);
     }
 
 
