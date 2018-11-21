@@ -17,6 +17,7 @@ class Cd4SampleController extends Controller
      */
     public function index()
     {
+        ini_set("memory_limit", "-1");
         $data = Lookup::cd4_lookups();
         $data['samples'] = Cd4Sample::get();
         $data = (object) $data;
