@@ -445,6 +445,7 @@ class Common
 
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
+        	if(!$fac) continue;
 
         	if($fac->id != $facility->id){
         		\App\Batch::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
