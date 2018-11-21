@@ -112,11 +112,11 @@ width:1180px;
 				<?php 
 					$count = 0;
 					if($vl){
-						echo "<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>";
+						echo "<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>";
 						$count += 3; 
 					}
 					else{
-						echo "<td align=center > PC </td><td  align=center > NC </td>";
+						echo "<td align='center' > PC </td><td  align='center' > NC </td>";
 						$count += 2; 
 					}
 				?>
@@ -147,9 +147,9 @@ width:1180px;
 				@endforeach
 
 				{{--@if($vl) 
-					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
 				@else
-					<td align=center > PC </td><td  align=center > NC </td>
+					<td align='center' > PC </td><td  align='center' > NC </td>
 				@endif--}}
 			</tr>
 				
