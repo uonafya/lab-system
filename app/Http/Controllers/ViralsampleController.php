@@ -834,7 +834,7 @@ class ViralsampleController extends Controller
         if($user->user_type_id == 5) $facility_user=true;
         $string = "(viralbatches.facility_id='{$user->facility_id}' OR viralbatches.user_id='{$user->id}')";
 
-        $samples = Viralsample::select('viralsamples.id')
+        $samples = Viralsample::select('viralsamples.id, viralsamples.order_no')
             ->whereRaw("viralsamples.order_no like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
                 return $query->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')->whereRaw($string);

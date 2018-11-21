@@ -884,7 +884,7 @@ class SampleController extends Controller
         if($user->user_type_id == 5) $facility_user=true;
         $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
 
-        $samples = Sample::select('samples.id')
+        $samples = Sample::select('samples.id, samples.order_no')
             ->whereRaw("samples.order_no like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
                 return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);

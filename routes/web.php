@@ -111,17 +111,32 @@ Route::middleware(['auth'])->group(function(){
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
 			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
+			Route::get('facility/{facility}', 'Cd4SampleController@facility')->name('facility');
+			Route::get('print/{sample}', 'Cd4SampleController@print')->name('print');
+			Route::get('printresult/{sample}', 'Cd4SampleController@printresult')->name('printresult');
+			Route::get('search/{sample}', 'Cd4SampleController@searchresult')->name('searchresult');
+			Route::post('search', 'Cd4SampleController@search')->name('search');
 		});
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){
 			Route::post('new', 'Cd4PatientController@new_patient')->name('new');
+			Route::post('search_name', 'Cd4PatientController@search_name')->name('searchname');
+			Route::post('search_record_no', 'Cd4PatientController@search_record_no')->name('search_record_no');
 		});
 		Route::resource('patients', 'Cd4PatientController');
+
+		Route::prefix('reports')->name('reports.')->group(function(){
+			Route::get('/', 'ReportController@cd4reports')->name('cd4reports');
+			Route::post('dateselect', 'ReportController@dateselect')->name('dateselect');
+			Route::post('generate', 'ReportController@generate')->name('generate');
+		});
 		
 		Route::prefix('worksheet')->name('worksheet.')->group(function(){
 			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
 			Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
 			Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
+			Route::post('search', 'Cd4WorksheetController@search')->name('search');
+			Route::get('state/{state}', 'Cd4WorksheetController@state')->name('state');
 			Route::get('create/{limit}', 'Cd4WorksheetController@create');
 			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
 			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');

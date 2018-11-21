@@ -12,9 +12,12 @@
 
 		set_select_patient("sidebar_patient_search", "{{ url('/patient/search') }}", 2, "Search for EID patient", true);
 		set_select_patient("sidebar_viralpatient_search", "{{ url('/viralpatient/search') }}", 2, "Search for VL patient", true);
+		set_select_patient("sidebar_cd4_patientname", "{{ url('/cd4/patient/search_name') }}", 2, "Search for patient name", true, true);
+		set_select("sibebar_cd4medrecNo_search", "{{ url('cd4/patient/search_record_no') }}", 2, "Search Medical Record #(Ampath #)", false, true);
 
 		set_select("worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for worksheet", true);
 		set_select("viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for worksheet", true);
+		set_select("sidebar_cd4worksheet_search", "{{ url('cd4/worksheet/search') }}", 1, "Search for Worksheet");
 
 		set_select("sidebar_worksheet_search", "{{ url('/worksheet/search') }}", 1, "Search for EID worksheet", true);
 		set_select("sidebar_viralworksheet_search", "{{ url('/viralworksheet/search') }}", 1, "Search for VL worksheet", true);
@@ -22,16 +25,21 @@
 		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility", "{{ url('/batch/facility') }}");
 		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/batch/facility') }}");
 		set_select_facility("sidebar_viralfacility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/viralbatch/facility') }}");
+		set_select_facility("sidebar_cd4facility_search", "{{ url('/facility/search') }}", 3, "Search Site Samples", "{{ url('/cd4/sample/facility') }}")
 
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
+<<<<<<< HEAD
 
 		set_select("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
 		set_select("sidebar_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
+=======
+		set_select("sidebar_cd4labID_search", "{{ url('cd4/sample/search') }}", 1, "Search by CD4 Lab ID");
+>>>>>>> 600e58ace9bf8a23a4ae2fca607dcd4dc5fadc4f
 		
 	});
 	
-	function set_select(div_name, url, minimum_length, placeholder, worksheet=false) {
+	function set_select(div_name, url, minimum_length, placeholder, worksheet=false, cd4=false) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({
@@ -53,10 +61,18 @@
 				processResults: function(data, params){
 					return {
 						results 	: $.map(data.data, function (row){
-							return {
-								text	: row.id,
-								id		: row.id		
-							};
+							if(cd4 == true){
+								return {
+									text	: row.medicalrecordno,
+									id		: row.medicalrecordno
+								};
+							} else {
+								return {
+									text	: row.id,
+									id		: row.id		
+								};	
+							}
+							
 						}),
 						pagination	: {
 							more: data.to < data.total
@@ -67,13 +83,13 @@
 		});
 		if(worksheet){
 			set_worksheet_change_listener(div_name, url);
-		}
-		else{
-			set_change_listener(div_name, url);			
+		} else{
+			// console.log('We are here');
+			set_change_listener(div_name, url, cd4);			
 		}	
 	}
 	
-	function set_select_patient(div_name, url, minimum_length, placeholder, send_url=true) {
+	function set_select_patient(div_name, url, minimum_length, placeholder, send_url=true, cd4name=false) {
 		div_name = '#' + div_name;		
 
 		$(div_name).select2({
@@ -95,10 +111,17 @@
 				processResults: function(data, params){
 					return {
 						results 	: $.map(data.data, function (row){
-							return {
-								text	: row.patient + ' - ' + row.name,
-								id		: row.id		
-							};
+							if (cd4name == true) {
+								return {
+									text	: row.patient_name + ' - ' + row.medicalrecordno,
+									id		: row.id		
+								};
+							} else {
+								return {
+									text	: row.patient + ' - ' + row.name,
+									id		: row.id		
+								};
+							}
 						}),
 						pagination	: {
 							more: data.to < data.total
@@ -150,11 +173,12 @@
 			set_change_listener(div_name, send_url, false);
 	}
 
-	function set_change_listener(div_name, url, not_facility=true)
+	function set_change_listener(div_name, url, not_facility=true, cd4=false)
 	{
 		if(not_facility){
-			url = url.substring(0, url.length-7);	
+			url = url.substring(0, url.length-7);
 		} 
+
 		$(div_name).change(function(){
 			var val = $(this).val();
 			window.location.href = url + '/' + val;

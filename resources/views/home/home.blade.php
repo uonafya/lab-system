@@ -328,8 +328,52 @@
 		                    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
-		                @else
-		                	
+		                @elseif(Session('testingSystem') == 'CD4')
+		                	@if ((int)$widgets['CD4samplesInQueue'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+		                    <li class="list-group-item" style="{{ $style }}">
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4samplesInQueue'] }}</span>
+		                        <a href="{{ url('cd4/sample/dispatch/3') }}">Samples In-Queue.</a>
+		                    </li>
+		                    @if ((int)$widgets['CD4resultsForDispatch'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+		                    <li class="list-group-item" style="{{ $style }}">
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4resultsForDispatch'] }}</span>
+		                        <a href="{{ url('cd4/sample/dispatch/1') }}">Results Awaiting Printing for Dispatch.</a>
+		                    </li>
+		                    @if ((int)$widgets['CD4worksheetFor2ndApproval'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+		                    <li class="list-group-item" style="{{ $style }}">
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4worksheetFor2ndApproval'] }}</span>
+		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
+		                    </li>
 		            	@endif
 		            	</ul>
 		            </div>
