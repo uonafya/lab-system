@@ -78,8 +78,11 @@
 		if(worksheet){
 			set_worksheet_change_listener(div_name, url);
 		} else{
-			// console.log('We are here');
-			set_change_listener(div_name, url, cd4);			
+			if(cd4){
+				set_cd4patient_change_listener(div_name, url);
+			} else {
+				set_change_listener(div_name, url);
+			}			
 		}	
 	}
 	
@@ -167,12 +170,24 @@
 			set_change_listener(div_name, send_url, false);
 	}
 
-	function set_change_listener(div_name, url, not_facility=true, cd4=false)
+	function set_change_listener(div_name, url, not_facility=true)
 	{
-		if(not_facility){
-			url = url.substring(0, url.length-7);
-		} 
+		if(cd4 == false){
+			if(not_facility){
+				url = url.substring(0, url.length-7);
+			} 	
+		}
+		
+		$(div_name).change(function(){
+			var val = $(this).val();
+			window.location.href = url + '/' + val;
+		});	
+	}
 
+
+
+	function set_cd4patient_change_listener(div_name, url)
+	{		
 		$(div_name).change(function(){
 			var val = $(this).val();
 			window.location.href = url + '/' + val;
