@@ -83,11 +83,19 @@ class Cd4SampleController extends Controller
      */
     public function show(Cd4Sample $sample)
     {
-        $data = Lookup::cd4sample_form();
-        $data['sample'] = $sample;
-        $data['view'] = true;
+        // $data = Lookup::cd4sample_form();
+        // $data['sample'] = $sample;
+        // $data['view'] = true;
         
-        return view('forms.cd4samples', $data)->with('pageTitle', 'View CD4 Sample');
+        // return view('forms.cd4samples', $data)->with('pageTitle', 'View CD4 Sample');
+
+        $samples[] = $sample;
+        
+        $data = Lookup::cd4_lookups();
+        $data['samples'] = $samples;
+        $data = (object) $data;
+        // dd($data);
+        return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
     }
 
     /**
