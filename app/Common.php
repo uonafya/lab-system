@@ -428,7 +428,7 @@ class Common
         }
     }
 
-    public function find_facility_mismatch()
+    public static function find_facility_mismatch()
     {
         ini_set("memory_limit", "-1");
         $facilities = \App\OldModels\Facility::all();
@@ -447,18 +447,19 @@ class Common
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
 
-        	if($fac->id != $facility->id){
+        	if($fac->id != $facility->ID){
 
-        		dd([$fac->toArray(), $facility->toArray()]);
-        		\App\Batch::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
-        		\App\Batch::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
+        		// dd([$fac->toArray(), $facility->toArray()]);
+
+        		$new_fac = \App\Facility::find($facility->ID);
+        		if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
 
         		foreach ($classes as $class) {
-        			$class::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
-        			$class::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
+        			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
+        			$class::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
         		}
 
-        		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
+        		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
         	}
         }
     }
