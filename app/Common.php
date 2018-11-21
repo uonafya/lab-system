@@ -454,6 +454,8 @@ class Common
         			$class::where(['facility_id' => $facility->id, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
         			$class::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
         		}
+
+        		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->id])->update(['facility_id' => $fac->id]);
         	}
         }
     }
