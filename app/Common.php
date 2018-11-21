@@ -409,6 +409,25 @@ class Common
         }
     }
 
+    public static function ampath_all()
+    {
+    	self::ampath(\App\Batch::class);
+    	self::ampath(\App\Viralbatch::class);
+    }
+
+    public static function ampath($class)
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = $class::where(['batch_complete' => '2'])->where('datereceived', '<', '2018-01-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
+            $batch->batch_complete = 1;
+            $batch->pre_update();
+        }
+    }
+
 
 
 }
