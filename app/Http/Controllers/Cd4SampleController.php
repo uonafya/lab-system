@@ -215,4 +215,14 @@ class Cd4SampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
+
+    public function searchresult(Cd4Sample $sample) {
+        $samples[] = $sample;
+        
+        $data = Lookup::cd4_lookups();
+        $data['samples'] = $samples;
+        $data = (object) $data;
+        // dd($data);
+        return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
+    }
 }
