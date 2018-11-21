@@ -216,15 +216,11 @@
 				}
 			}
 		});
-		if(worksheet){
-			set_worksheet_change_listener(div_name, url);
-		} else{
-			if(cd4){
-				set_cd4patient_change_listener(div_name, url);
-			} else {
-				set_change_listener(div_name, url);
-			}			
-		}	
+		if(cd4){
+			set_cd4patient_change_listener(div_name, url);
+		} else {
+			set_change_listener(div_name, url);
+		}
 	}
 
 	function set_change_listener(div_name, url, not_facility=true)
