@@ -69,9 +69,10 @@ class VlController extends BaseController
 
         $batch->lab_id = $lab;
         $batch->user_id = 0;
+        if(env('APP_LAB') == 5) $batch->user_id = 66;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        $batch->site_entry = 0;
+        $batch->site_entry = 1;
         $batch->save();
 
         $patient = Viralpatient::existing($facility, $ccc_number)->get()->first();
@@ -119,7 +120,7 @@ class VlController extends BaseController
 
         if($order_no){
             $sample_exists = ViralsampleView::where(['order_no' => $order_no])->first();
-            if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
+            if($sample_exists && !$editted) return $this->response->errorBadRequest("This sample already exists.");
         }
 
         $sample_exists = ViralsampleView::sample($facility, $patient_identifier, $datecollected)->first();

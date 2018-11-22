@@ -43,9 +43,9 @@
                                     <td>{{ $sample->patient->patient_name ?? '' }}</td>
                                     <td>{{ $sample->patient->age ?? '' }}</td>
                                     <td>{{ $sample->facility->name ?? '' }}</td>
-                                    <td>{{ gmdate('d-M-Y', strtotime($sample->datecollected)) }}</td>
+                                    <td>{{ date('d-M-Y', strtotime($sample->datecollected)) }}</td>
                                     <td>@if($sample->datereceived) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->datereceived)) }} 
+                                            {{ date('d-M-Y', strtotime($sample->datereceived)) }} 
                                         @endif</td>
                                     <td>
                                     @foreach($data->received_statuses as $received_status)
@@ -68,22 +68,22 @@
                                     <td>{{ $sample->worksheet_id ?? '' }}</td>
                                     <td>
                                         @if($sample->datetested) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->datetested)) }} 
+                                            {{ date('d-M-Y', strtotime($sample->datetested)) }} 
                                         @endif
                                     </td>
                                     <td>{{ $sample->AVGCD3CD4AbsCnt ?? '' }}</td>
                                     <td>
                                         @if($sample->dateresultprinted) 
-                                            {{ gmdate('d-M-Y', strtotime($sample->dateresultprinted)) }} 
+                                            {{ date('d-M-Y', strtotime($sample->dateresultprinted)) }} 
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ URL::to('cd4/sample/'.$sample->id) }}">Details</a> |
+                                        <a href="{{ URL::to('cd4/sample/'.$sample->id) }}" target="blank">Details</a> |
                                         @if($sample->status_id > 1)
-                                            <a href="#">Print</a> |
+                                            <a href="{{ URL::to('cd4/sample/print/'.$sample->id) }}" target="blank">Print</a> |
                                         @endif
                                         @if($sample->status_id == 1 ||$sample->status_id == 2)
-                                            <a href="{{ url('cd4/sample/'.$sample->id.'/edit') }}">Edit</a> | <a href="#">Delete</a>
+                                            <a href="{{ url('cd4/sample/'.$sample->id.'/edit') }}" target="blank">Edit</a> | <a href="#">Delete</a>
                                         @endif
                                     </td>
                                 </tr>
