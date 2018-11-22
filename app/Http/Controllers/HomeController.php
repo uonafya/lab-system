@@ -39,7 +39,7 @@ class HomeController extends Controller
             session(['toast_message' => 'Please make sure that your contact information is up to date.']);
             return redirect("/facility/{$user->facility_id}/edit");
         }
-        if (auth()->user()->user_type_id == 0 || auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
+        else if (auth()->user()->user_type_id == 0 || auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
             self::cacher();
             $chart = $this->getHomeGraph();
             $week_chart = $this->getHomeGraph('week');
