@@ -75,7 +75,9 @@ class EidController extends BaseController
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         $batch->user_id = 0;
+        if(env('APP_LAB') == 5) $batch->user_id = 66;
         $batch->site_entry = 1;
+        if($datereceived) $batch->site_entry = 0;
         $batch->save();
 
         $patient = Patient::existing($facility, $hei_number)->get()->first();
@@ -138,6 +140,7 @@ class EidController extends BaseController
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
+        if($datereceived) $sample->receivedstatus = 1;
         $sample->save();
 
         $sample->load(['patient.mother', 'batch']);

@@ -48,7 +48,7 @@
                                         </td>
                                         <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
-                                        <td> {{ $sample->worksheet_id ?? '' }} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datetested') ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
