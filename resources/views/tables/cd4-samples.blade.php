@@ -94,6 +94,9 @@
                             @endforelse
                             </tbody>
                         </table>
+                        <center>
+                            {{ $data->samples->links() }}
+                        </center>
                     </div>
 
                 </div>
