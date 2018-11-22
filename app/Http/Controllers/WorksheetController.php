@@ -515,13 +515,13 @@ class WorksheetController extends Controller
                     $result = 3;
                 }
 
-                if(str_contains($raw, ['not detected', 'not'])) $result = 1;
-                else if(str_contains($raw, ['detected dbs', '1', '>'])) $result = 2;
-                else if($interpretation == "Valid") $result = 6;
-                else if($interpretation == "Invalid") $result = 7;
-                else{
-                    $result = 3;
-                }
+                // if(str_contains($raw, ['not detected', 'not'])) $result = 1;
+                // else if(str_contains($raw, ['detected dbs', '1', '>'])) $result = 2;
+                // else if($interpretation == "Valid") $result = 6;
+                // else if($interpretation == "Invalid") $result = 7;
+                // else{
+                //     $result = 3;
+                // }
 
                 if($control == "NC"){
                     $negative_control = $interpretation;

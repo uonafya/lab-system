@@ -52,6 +52,7 @@ class Cd4Controller extends BaseController
         $sample->facility_id = $facility;
         $sample->lab_id = $lab;
         $sample->order_no = $order_no;
+        $sample->user_id = 66;
         $sample->age = $age;
         $sample->status_id = 1;
         $sample->datecollected = $datecollected;
