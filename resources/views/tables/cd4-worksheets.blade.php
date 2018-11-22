@@ -71,6 +71,9 @@
                                         <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">View cancelled worksheet details</a>
                                     @elseif($worksheet->status_id == 2)
                                         <a href="{{ URL::to('cd4/worksheet/confirm/'.$worksheet->id) }}">Reveiw Worksheet Results (@if($worksheet->reviewedby) 2nd @else 1st @endif Review)</a>
+                                    @elseif($worksheet->status_id == 3)
+                                        <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">Details</a> | 
+                                        <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}">Print</a> 
                                     @else
                                         <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">Details</a> | 
                                         <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}">Print</a> | 
@@ -81,7 +84,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td>No worksheets available yet</td>
+                                    <td colspan="10"><center>No worksheets available yet</center></td>
                                 </tr>
                             @endforelse
                             </tbody>

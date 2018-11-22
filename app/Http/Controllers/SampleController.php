@@ -875,6 +875,28 @@ class SampleController extends Controller
         return $samples;
     }
 
+    public function ord_no(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
+
+        $samples = SampleView::select(['id', 'order_no', 'patient'])
+            ->whereRaw("order_no like '%" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+
+
+
     private function clear_session(){
         session()->forget('batch');
         session()->forget('facility_name');

@@ -108,7 +108,18 @@ width:1180px;
 					@endphp
 
 			<tr>
-				@php $count = 0; @endphp
+
+				<?php 
+					$count = 0;
+					if($vl){
+						echo "<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>";
+						$count += 3; 
+					}
+					else{
+						echo "<td align='center' > PC </td><td  align='center' > NC </td>";
+						$count += 2; 
+					}
+				?>
 
 
 				@foreach($samples->where('parentid', '!=', 0) as $sample)
@@ -135,11 +146,11 @@ width:1180px;
 					@endif
 				@endforeach
 
-				@if($vl) 
-					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+				{{--@if($vl) 
+					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
 				@else
-					<td align=center > PC </td><td  align=center > NC </td>
-				@endif
+					<td align='center' > PC </td><td  align='center' > NC </td>
+				@endif--}}
 			</tr>
 				
 		</table>

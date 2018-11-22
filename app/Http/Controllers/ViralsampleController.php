@@ -794,7 +794,7 @@ class ViralsampleController extends Controller
 
         if($existing_rows){
 
-            Excel::create("existing_rows", function($excel) use($existing_rows) {
+            Excel::create("samples_that_were_already_existing", function($excel) use($existing_rows) {
                 $excel->sheet('Sheetname', function($sheet) use($existing_rows) {
                     $sheet->fromArray($existing_rows);
                 });
@@ -824,6 +824,27 @@ class ViralsampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
+
+    public function ord_no(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
+
+        $samples = ViralsampleView::select(['id', 'order_no', 'patient'])
+            ->whereRaw("order_no like '%" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+
 
     private function clear_session(){
         session()->forget('viral_batch');
