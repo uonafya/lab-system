@@ -126,11 +126,9 @@
                                 @endphp
 
 
-
                                 @foreach($samples->where('parentid', '!=', 0) as $key => $sample)
                                     @include('shared/confirm_result_row', ['sample' => $sample])
                                 @endforeach
-
 
 
                                 @foreach($samples->where('parentid', '=', 0) as $key => $sample)
