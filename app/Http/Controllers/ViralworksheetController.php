@@ -755,7 +755,7 @@ class ViralworksheetController extends Controller
                     ->where('result', '!=', 'Invalid')->where('result', '!=', '< LDL copies/ml');
                 }
                 else if ($result == 3) {
-                    return $query->whereRaw("(result='Failed' or result='invalid')");
+                    return $query->whereRaw("(result='Failed' or result='invalid' or result='Collect New Sample')");
                 }                
             })
             ->groupBy('worksheet_id')

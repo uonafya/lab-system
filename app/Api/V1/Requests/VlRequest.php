@@ -15,6 +15,8 @@ class VlRequest extends BaseRequest
 
         $val = array_merge($base, $vl);
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
+
+        if($this->input('editted')) return [];
         return $val;
     }
 }
