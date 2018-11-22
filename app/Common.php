@@ -419,11 +419,11 @@ class Common
     {
         ini_set("memory_limit", "-1");
 
-        // $batches = $class::where(['batch_complete' => '2'])->where('datereceived', '<', '2018-01-01')->get();
-        $batches = $class::where(['batch_complete' => '2'])->where('created_at', '<', '2018-01-01')->get();
+        $batches = $class::where(['batch_complete' => '0'])->where('datereceived', '<', '2018-01-01')->get();
+        // $batches = $class::where(['batch_complete' => '0'])->where('created_at', '<', '2018-01-01')->get();
 
         foreach ($batches as $key => $batch) {
-            $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +1days'));
+            // $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +1days'));
             $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
             $batch->batch_complete = 1;
             $batch->pre_update();
