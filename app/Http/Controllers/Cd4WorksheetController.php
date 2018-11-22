@@ -21,7 +21,7 @@ class Cd4WorksheetController extends Controller
         $data = Lookup::worksheet_lookups();
         $data['worksheets'] = Cd4Worksheet::when($state, function($query) use ($state){
                                             return $query->where('status_id', '=', $state);
-                                        })->orderBy('id', 'desc')->get();
+                                        })->orderBy('id', 'desc')->paginate(20);
         $data = (object) $data;
         
         return view('tables.cd4-worksheets', compact('data'))->with('pageTitle', 'Worksheets');
