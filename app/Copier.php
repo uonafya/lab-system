@@ -76,11 +76,11 @@ class Copier
                 $facility->save();
 
                 foreach ($classes as $class) {
-                    $class::where(['facility_id' => $fac->ID, 'synched' => 1])->update(['facility_id' => $facility->id, 'synched' => 2]);
-                    $class::where(['facility_id' => $fac->ID])->update(['facility_id' => $facility->id]);
+                    $class::where(['facility_id' => $value->ID, 'synched' => 1])->update(['facility_id' => $facility->id, 'synched' => 2]);
+                    $class::where(['facility_id' => $value->ID])->update(['facility_id' => $facility->id]);
                 }
 
-                if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $fac->ID])->update(['facility_id' => $facility->id]);
+                if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $value->ID])->update(['facility_id' => $facility->id]);
             }
             else{
                 $facility = new Facility;
