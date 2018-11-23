@@ -24,7 +24,8 @@ class ViewModel extends Model
 
     public function scopeSample($query, $facility, $patient, $datecollected)
     {
-        return $query->where(['facility_id' => $facility, 'patient' => $patient, 'datecollected' => $datecollected]);
+        $min_date = date('Y-m-d', strtotime($datecollected . ' -6 days'));
+        return $query->where(['facility_id' => $facility, 'patient' => $patient])->where('datecollected', '>', $min_date);
     }
 
     public function scopeExisting($query, $data_array)
