@@ -365,9 +365,9 @@ class ViralsampleController extends Controller
 
         session(['toast_message' => 'The sample has been updated.']);
 
-        /*if($viralsample->receivedstatus == 2 && $viralsample->getOriginal('receivedstatus') == 1 && $viralsample->worksheet_id){
+        if($viralsample->receivedstatus == 2 && $viralsample->getOriginal('receivedstatus') == 1 && $viralsample->worksheet_id){
             $worksheet = $viralsample->worksheet;
-            if($worksheet->status_id == 1){
+            /*if($worksheet->status_id == 1){
                 $d = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, 1);
                 $s = $d['samples']->first();
                 if($s){
@@ -391,11 +391,11 @@ class ViralsampleController extends Controller
                     'toast_message' => 'The worksheet has already been run.',
                     'toast_error' => 1
                 ]);
-            }
+            }*/
             $viralsample->worksheet_id = null;
             $viralsample->result = null;
             $viralsample->interpretation = null;
-        }*/
+        }
         if(env('APP_LAB') == 8){
             $viralsample->areaname = $request->input('areaname');
             $viralsample->label_id = $request->input('label_id');

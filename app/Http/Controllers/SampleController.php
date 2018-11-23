@@ -458,8 +458,8 @@ class SampleController extends Controller
 
         session(['toast_message' => 'The sample has been updated.']);
 
-        /*if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
-            $worksheet = $sample->worksheet;
+        if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
+            /*$worksheet = $sample->worksheet;
             if($worksheet->status_id == 1){
                 $d = Misc::get_worksheet_samples($worksheet->machine_type, 1);
                 $s = $d['samples']->first();
@@ -483,11 +483,11 @@ class SampleController extends Controller
                     'toast_message' => 'The worksheet has already been run.',
                     'toast_error' => 1
                 ]);
-            }
+            }*/
             $sample->worksheet_id = null;
             $sample->result = null;
             $sample->interpretation = null;
-        }*/
+        }
 
 
         $sample->pre_update(); 
