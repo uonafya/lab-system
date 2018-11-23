@@ -39,17 +39,17 @@
                 {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
                 {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-            @endif
 
-            <input type="hidden" value="{{ $machine_type ?? $worksheet->sampletype }}" name="machine_type" >
-            <input type="hidden" value="{{ $sampletype ?? $worksheet->sampletype }}" name="sampletype" >
+                <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
+                <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
 
-            @if($calibration)
-                <input type="hidden" value="1" name="calibration" >
-            @endif
+                @if($calibration)
+                    <input type="hidden" value="1" name="calibration" >
+                @endif
 
-            @if($limit)
-                <input type="hidden" value="{{ $limit }}" name="limit" >
+                @if($limit)
+                    <input type="hidden" value="{{ $limit }}" name="limit" >
+                @endif
             @endif
 
             <div class="row">
