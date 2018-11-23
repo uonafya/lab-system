@@ -10,29 +10,30 @@
             
         @if($create)
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hpanel">
-                        <div class="panel-heading">
-                            <center>Samples</center>
-                        </div>
-                        <div class="panel-body">
-                            @include('shared/samples-partial')
-                        </div>
-                    </div>
-                </div>                
-            </div>
-
             @if (isset($worksheet))
                 {{ Form::open(['url' => '/worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hpanel">
+                            <div class="panel-heading">
+                                <center>Samples</center>
+                            </div>
+                            <div class="panel-body">
+                                @include('shared/samples-partial')
+                            </div>
+                        </div>
+                    </div>                
+                </div>
+            
                 {{ Form::open(['url'=>'/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-            @endif
 
-            <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
+                <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
-            @if($limit)
-                <input type="hidden" value="{{ $limit }}" name="limit" >
+                @if($limit)
+                    <input type="hidden" value="{{ $limit }}" name="limit" >
+                @endif
             @endif
 
             <div class="row">

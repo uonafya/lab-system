@@ -320,7 +320,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 
-		$min_date = date('Y-m-d', strtotime('-1 years'));
+		$min_date = date('Y-m-d', strtotime('-1 month'));
 
 		$batches = $batch_model::where('batch_complete', 1)
 		->where('sent_email', 0)

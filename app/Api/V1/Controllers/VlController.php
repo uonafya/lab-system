@@ -64,7 +64,6 @@ class VlController extends BaseController
         else{
             $batch = new Viralbatch;
         }
-
         
 
         $batch->lab_id = $lab;
