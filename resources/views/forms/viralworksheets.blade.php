@@ -21,23 +21,26 @@
             
         @if($create || env('APP_LAB') == 8)
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hpanel">
-                        <div class="panel-heading">
-                            <center>Viralload Samples</center>
-                        </div>
-                        <div class="panel-body">
-                            @include('shared/viralsamples-partial')
-                        </div>
-                    </div>
-                </div>                
-            </div>
-
 
             @if (isset($worksheet))
                 {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
+
+            
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hpanel">
+                            <div class="panel-heading">
+                                <center>Viralload Samples</center>
+                            </div>
+                            <div class="panel-body">
+                                @include('shared/viralsamples-partial')
+                            </div>
+                        </div>
+                    </div>                
+                </div>
+                
                 {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
