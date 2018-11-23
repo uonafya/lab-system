@@ -41,8 +41,8 @@
                 {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
             @endif
 
-            <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
-            <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
+            <input type="hidden" value="{{ $machine_type ?? $worksheet->sampletype }}" name="machine_type" >
+            <input type="hidden" value="{{ $sampletype ?? $worksheet->sampletype }}" name="sampletype" >
 
             @if($calibration)
                 <input type="hidden" value="1" name="calibration" >

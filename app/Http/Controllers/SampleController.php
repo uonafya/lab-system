@@ -127,21 +127,6 @@ class SampleController extends Controller
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        $patient_string = trim($request->input('patient'));
-        if(env('APP_LAB') == 4){
-            $fac = Facility::find($batch->facility_id);
-            $str = $fac->facilitycode . '/';
-            if(!starts_with($patient_string, $str)){
-                if(starts_with($patient_string, $fac->facilitycode)){
-                    $code = str_after($patient_string, $fac->facilitycode);
-                    $patient_string = $str . $code;
-                }
-                else{
-                    $patient_string = $str . $patient_string;
-                }
-            }
-        }
-
         $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$patient) $patient = new Patient;
         $data = $request->only($samples_arrays['patient']);
