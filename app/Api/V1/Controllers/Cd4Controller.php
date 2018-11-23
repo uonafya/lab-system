@@ -52,9 +52,13 @@ class Cd4Controller extends BaseController
         $sample->facility_id = $facility;
         $sample->lab_id = $lab;
         $sample->order_no = $order_no;
+        $sample->user_id = 66;
         $sample->age = $age;
         $sample->status_id = 1;
         $sample->datecollected = $datecollected;
+        $sample->receivedstatus = 1;
+        $sample->datereceived = $request->input('datereceived', date('Y-m-d'));
+
         // $sample->serial_no = $request->input('serial_no', 0);
         $sample->amrs_location = $request->input('amrs_location');
         $sample->provider_identifier = $request->input('provider_identifier');
@@ -115,6 +119,7 @@ class Cd4Controller extends BaseController
             $sample->age = $age;
             $sample->status_id = 1;
             $sample->datecollected = $datecollected;
+            $sample->receivedstatus = 1;
             // $sample->serial_no = $request->input('serial_no', 0);
             $sample->amrs_location = $request->input('amrs_location');
             $sample->provider_identifier = $request->input('provider_identifier');
