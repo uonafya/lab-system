@@ -98,6 +98,23 @@ class ViralsampleController extends Controller
             return back();   
         }
 
+        $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($data_existing['facility_id']);
+            // $patient_string = $fac->facilitycode . '/' . $patient_string;
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
+        }
+
+        $data_existing['patient'] = $patient_string;
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
         if($existing){
@@ -158,21 +175,6 @@ class ViralsampleController extends Controller
         session(['viral_batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
-        $patient_string = trim($request->input('patient'));
-        if(env('APP_LAB') == 4){
-            $fac = Facility::find($batch->facility_id);
-            // $patient_string = $fac->facilitycode . '/' . $patient_string;
-            $str = $fac->facilitycode . '/';
-            if(!starts_with($patient_string, $str)){
-                if(starts_with($patient_string, $fac->facilitycode)){
-                    $code = str_after($patient_string, $fac->facilitycode);
-                    $patient_string = $str . $code;
-                }
-                else{
-                    $patient_string = $str . $patient_string;
-                }
-            }
-        }
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$viralpatient) $viralpatient = new Viralpatient;
 
