@@ -303,7 +303,7 @@ class Common
         	else{
         		$new_mail = new $mail_class($batch);
         	}
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
         	->send($new_mail);
         	// $batch->save();
         } catch (Exception $e) {
@@ -450,13 +450,14 @@ class Common
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
+        	// if($fac->id < 55000) continue;
 
         	if($fac->id != $facility->ID){
 
         		// dd([$fac->toArray(), $facility->toArray()]);
 
         		// $new_fac = \App\Facility::find($facility->ID);
-        		// // if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
+        		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
         		// if($new_fac){
         		// 	$conflict[] = [
         		// 		'id' => $new_fac->id,
