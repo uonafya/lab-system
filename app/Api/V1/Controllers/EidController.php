@@ -203,6 +203,7 @@ class EidController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->synched = 5;
             $batch->save();            
         }
 
@@ -226,6 +227,7 @@ class EidController extends BaseController
         $patient->mother_id = $mom->id;
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
+        $patient->synched = 5;
         $patient->save();
 
         if($editted){
@@ -236,7 +238,7 @@ class EidController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->save();
+            $batch->pre_update();
         }
         else{
             $sample = new Sample;

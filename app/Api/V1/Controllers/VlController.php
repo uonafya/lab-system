@@ -176,7 +176,7 @@ class VlController extends BaseController
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
             $batch->synched = 5;
-            $batch->save();
+            $batch->pre_update();
             
         }
         else{
@@ -192,7 +192,7 @@ class VlController extends BaseController
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
         $sample->synched = 5;
-        $sample->save();
+        $sample->pre_update();
 
         $sample->load(['patient', 'batch']);
         return $sample;
