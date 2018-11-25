@@ -203,8 +203,7 @@ class EidController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->synched = 5;
-            $batch->save();            
+            $batch->edarp();            
         }
 
         $patient = Patient::existing($facility, $patient_identifier)->get()->first();
@@ -221,14 +220,13 @@ class EidController extends BaseController
         $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
-        $mom->save();
+        $mom->edarp();
 
         $patient->fill($request->only($fields['patient']));
         $patient->mother_id = $mom->id;
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
-        $patient->synched = 5;
-        $patient->save();
+        $patient->edarp();
 
         if($editted){
             $sample = Sample::find($sample_exists->id);
@@ -252,8 +250,7 @@ class EidController extends BaseController
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
-        $sample->synched = 5;
-        $sample->save();
+        $sample->edarp();
 
         $sample->load(['patient.mother', 'batch']);
         return $sample;
