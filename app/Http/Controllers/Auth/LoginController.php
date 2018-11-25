@@ -118,9 +118,9 @@ class LoginController extends Controller
         }
 
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
+        session(['testingSystem' => 'EID']);
         if (env('APP_LAB') == 4) {
             if(!($facility || $user->user_type_id == 4)){
-                session(['testingSystem' => 'EID']);
                 $tasks = $this->pendingTasks();
                 
                 if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
@@ -130,7 +130,6 @@ class LoginController extends Controller
             }
         } else {
             if(!$facility){
-                session(['testingSystem' => 'EID']);
                 $tasks = $this->pendingTasks();
                 
                 if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
@@ -140,7 +139,7 @@ class LoginController extends Controller
             }
         }
 
-        if(env('APP_LAB') == 8) session(['testingSystem' => 'Viralload']);
+        if(env('APP_LAB') == 8 || env('APP_LAB') == 9) session(['testingSystem' => 'Viralload']);
         
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
 

@@ -208,6 +208,9 @@ class Viralsample extends BaseModel
             else if(str_contains($interpretation, ['20'])){
                 $str .= "( Roche Plasma  &lt;20 copies/ml )";
             }
+            else if(str_contains($interpretation, ['Titer', 'titer'])){
+                $str .= "( C8800 Plasma  &lt;20 copies/ml )";
+            }
             else if(str_contains($interpretation, ['30'])){
                 $str .= "( Pantha Plasma  &lt;30 copies/ml )";
             }

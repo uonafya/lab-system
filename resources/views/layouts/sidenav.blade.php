@@ -15,12 +15,10 @@
 </style>
 <aside id="menu">
     <div id="navigation">
-        <ul class="nav" id="side-menu" style=" padding-top: 12px;padding-left: 8px;">
-        @if(Session('testingSystem') != 'CD4')
+        <ul class="nav" id="side-menu" style=" @if(env('APP_LAB') == 5 && Session('testingSystem') != 'CD4') padding-top: 0px; @else padding-top: 12px; @endif padding-left: 8px;">
+        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5))
             @if(env('APP_LAB') == 5)
-                @if(Auth::user()->user_type_id == 1)
-                <li class="label label-success"><a href="#" id="cd4Switch">Switch to CD4</a></li>
-                @endif
+                <li class="label label-success" style="border-radius: 0px;"><a href="#" id="cd4Switch" style="color: white; font-weight: 600; font-size:700;font-size: 12px;">Switch to CD4</a></li>
             @endif
         @endif
             <!-- <li class="active">
@@ -53,7 +51,7 @@
                 <li><a href="{{ url('sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li>
-                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
+                    <a href=" {{ url('batch/site_approval') }}">Approve Site Entry Batches<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <!-- <li>
@@ -85,11 +83,11 @@
                     </ul>
                 </li> -->
                 <!-- <li><a href=" {{ url('batch') }}">View Batches</a></li> -->
-                <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                <li><a href=" {{ url('worksheet/index/1') }}">Update Results<span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
-                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <li><a href=" {{ url('batch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
@@ -127,7 +125,7 @@
                     <hr />
                 @endif
                 <li>
-                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] }}</span></a>
+                    <a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry<span class="label label-warning pull-right">{{ $widgets['batchesForApproval'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <!-- <li>
@@ -165,18 +163,18 @@
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
-                        <li><a href=" {{ url('viralbatch') }}">View</a></li>
-                        <li><a href=" {{ url('viralbatch/site_approval') }}">Approve Site Entry</a></li>
-                        <li><a href=" {{ url('viralbatch/dispatch') }}">Dispatch</a></li>
+                        <li><a href=" {{-- url('viralbatch') --}}">View</a></li>
+                        <li><a href=" {{-- url('viralbatch/site_approval') --}}">Approve Site Entry</a></li>
+                        <li><a href=" {{-- url('viralbatch/dispatch') --}}">Dispatch</a></li>
                     </ul>
                 </li> -->
                 <li><a href=" {{ url('viralworksheet/index/1') }}">Update Results
-                    <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] }}</span>
+                    <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] ?? 0 }}</span>
                     </a>
                 </li>
                 <hr />
                 <li>
-                    <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span></a>
+                    <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 @if(env('APP_LAB') == 4)
@@ -200,18 +198,18 @@
                 
             @endif
             <!-- <li>
-                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
+                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}<span class="fa arrow"></span></span></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="{{ url('batch/dispatch') }}">Dispatch Results
-                            <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                        <a href="{{-- url('batch/dispatch') --}}">Dispatch Results
+                            <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                         </a>
                     </li>
                 </ul>
             </li> -->
             <!-- <li>
-                <a href="{{ url('batch/dispatch') }}">Dispatch Results
-                    <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                <a href="{{-- url('batch/dispatch') --}}">Dispatch Results
+                    <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                 </a>
             </li> -->
         @endif
@@ -271,34 +269,34 @@
                 <a href="#"> <span class="nav-label">Search</span></a>
             </li> -->
         {{--
-        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 0)
-            <li>
-                <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#">Update Results</a></li>
-                    <li>
-                        <a href="{{ url('batch/dispatch') }}">Dispatch Results
-                            <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <hr />
-            <li>
-                <a href="#"><span class="nav-label">Requisitions</span><span class="fa arrow"></span> </a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#">Make Requisition</a></li>
-                    <li><a href="#">Requisition List</a></li>
-                </ul>
-            </li>
-            <hr />
-        @endif
-        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 0)
-            <li>
-                <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
-            </li>
-            <hr />
-        @endif
+            @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 0)
+                <li>
+                    <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}<span class="fa arrow"></span></span></a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="#">Update Results</a></li>
+                        <li>
+                            <a href="{{ url('batch/dispatch') }}">Dispatch Results
+                                <span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <hr />
+                <li>
+                    <a href="#"><span class="nav-label">Requisitions</span><span class="fa arrow"></span> </a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="#">Make Requisition</a></li>
+                        <li><a href="#">Requisition List</a></li>
+                    </ul>
+                </li>
+                <hr />
+            @endif
+            @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4 || Auth::user()->user_type_id == 0)
+                <li>
+                    <a href="#"> <span class="nav-label">Verify Batch Entry</span><span class="label label-danger pull-right">20</span> </a>
+                </li>
+                <hr />
+            @endif
         --}}
         @if(Session('testingSystem') != 'CD4')
             @if (Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 0)
@@ -326,7 +324,7 @@
                     <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
                 </li>
                 <hr />
-                @if(env('APP_LAB') == 1)
+                @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
                     <li>
                         <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                     </li>
@@ -344,19 +342,19 @@
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Create Worksheet (38)</span></a>
+                <a href="{{ url('cd4/worksheet/create/38') }}"><span class="nav-label">Create Worksheet (38)</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Create Worksheet (40)</span></a>
+                <a href="{{ url('cd4/worksheet/create/40') }}"><span class="nav-label">Create Worksheet (40)</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Update Results</span></a>
+                <a href="{{ url('cd4/worksheet/index/1') }}"><span class="nav-label">Update Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForUpdate'] ?? 0 }}</span></a>
             </li>
             <hr />
             <li>
-                <a href="#"><span class="nav-label">Dispatch Results</span></a>
+                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
             </li>
             <hr />
         @endif
@@ -412,23 +410,7 @@
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)
-            @if(session('testingSystem') == 'Viralload')
-                <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
-            @elseif(session('testingSystem') == 'EID')
-                <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
-            @elseif(Session('testingSystem') == 'CD4')
-                <li><a href="#"></a></li>
-            @else
+            @if(Auth::user()->user_type_id == 5)
                 <!-- EID Searches -->
                 <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
@@ -437,6 +419,34 @@
                 <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @else
+                @if(session('testingSystem') == 'Viralload')
+                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+                    @if(env('APP_LAB') == 5)
+                        <li><a href="#"><select class="form-control" id="sidebar_viral_order_no_search"></select></a></li>
+                    @endif
+                @elseif(session('testingSystem') == 'EID')
+                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_worksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+                    @if(env('APP_LAB') == 5)
+                        <li><a href="#"><select class="form-control" id="sidebar_order_no_search"></select></a></li>
+                    @endif
+                @elseif(Session('testingSystem') == 'CD4')
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4labID_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sibebar_cd4medrecNo_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4worksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_cd4facility_search"></select></a></li>
+                @endif
             @endif
         @endif
         </ul>

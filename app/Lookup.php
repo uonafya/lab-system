@@ -14,7 +14,7 @@ class Lookup
     public static $double_approval = [2, 4, 5];
     public static $amrs = [3, 5];
     public static $worksheet_received = [1, 3];
-    public static $sms = [1, 4];
+    public static $sms = [1, 2, 3, 4, 5, 6, 7, 8, 9 ];
 
     public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
 
@@ -32,7 +32,14 @@ class Lookup
 
         try {
             $d = date('Y-m-d', strtotime($value));
-            return $d;
+            if($d != '1970-01-01') return $d;
+        } catch (Exception $e) {
+            
+        }
+
+        try {
+            $d = Carbon::createFromFormat('d/m/Y', $value);
+            return $d->toDateString();            
         } catch (Exception $e) {
             
         }
@@ -123,6 +130,17 @@ class Lookup
         ];
     }
 
+    public static function get_rejected_reason($test, $rejectedreason)
+    {
+        self::cacher();
+
+        if($test == 1) $reasons = Cache::get('rejected_reasons');
+        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+
+        return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
+    }
+
     public static function facility_mfl($mfl)
     {
         // self::cacher(); 
@@ -151,6 +169,22 @@ class Lookup
     {
         self::cacher();
         return Cache::get('facilities');
+    }
+
+    public static function get_result($res)
+    {
+        self::cacher();
+        $results = Cache::get('results');
+
+        return $results->where('id', $res)->first()->name ?? '';
+    }
+
+    public static function get_cd4_status($id)
+    {
+        self::cacher();
+        $statuses = Cache::get('cd4sample_statuses');
+
+        return $statuses->where('id', $id)->first()->name ?? '';
     }
 
     public static function worksheet_lookups()
@@ -193,6 +227,16 @@ class Lookup
         ];
     }
 
+    public static function cd4_lookups()
+    {
+        self::cacher();
+        return [
+                'rejected_reasons' => Cache::get('cd4rejected_reasons'),
+                'sample_statuses' => Cache::get('cd4sample_statuses'),
+                'received_statuses' => Cache::get('received_statuses'),
+            ];
+    }
+
 	public static function samples_form()
 	{
         self::cacher();
@@ -227,7 +271,8 @@ class Lookup
                 'rejectedreasons' => Cache::get('cd4rejected_reasons'),
                 'receivedstatuses' => Cache::get('received_statuses'),
                 'amrs_locations' => Cache::get('amrs_locations'),
-                'genders' => Cache::get('genders')
+                'genders' => Cache::get('genders'),
+                'samplestatus' => Cache::get('cd4sample_statuses')
             ];
     }
 
@@ -462,6 +507,7 @@ class Lookup
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
                 $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
+                $cd4sample_statuses = DB::table('samplestatus')->get();
             }
             
 
@@ -511,6 +557,7 @@ class Lookup
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
                 Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
+                Cache::put('cd4sample_statuses', $cd4sample_statuses, 60);
             }
             
             Cache::put('partners', $partners, 60);

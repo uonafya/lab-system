@@ -14,6 +14,8 @@ use App\SampleView;
 use App\ViralsampleView;
 use App\Worksheet;
 use App\Viralworksheet;
+use App\Cd4Worksheet;
+use App\Cd4Sample;
 
 class DashboardCacher
 {
@@ -81,8 +83,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
         	];
-        }
-        else{
+        } else if (session('testingSystem') == 'EID'){
             return [
                 'pendingSamples' => Cache::get('eid_pendingSamples'),
                 'pendingSamplesOverTen' => Cache::get('eid_pendingSamplesOverTen'),
@@ -95,7 +96,13 @@ class DashboardCacher
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
             ];
-
+        } else if (session('testingSystem') == 'CD4') {
+            return [
+                'CD4samplesInQueue' => Cache::get('CD4samplesInQueue'),
+                'CD4resultsForUpdate' => Cache::get('CD4resultsForUpdate'),
+                'CD4resultsForDispatch' => Cache::get('CD4resultsForDispatch'),
+                'CD4worksheetFor2ndApproval' => Cache::get('CD4worksheetFor2ndApproval')
+            ];
         }
     }
 
@@ -145,6 +152,10 @@ class DashboardCacher
         return $model;
 	}
 
+    public static function CD4pendingSamplesAwaitingTesting(){
+        return Cd4Sample::selectRaw("COUNT(*) as total")->where('status_id', '=', 1)->where('repeatt', '=', 0)->first()->total;
+    }
+
 	public static function siteBatchesAwaitingApproval($testingSystem = 'Viralload')
 	{
         if ($testingSystem == 'Viralload') {
@@ -178,6 +189,16 @@ class DashboardCacher
         }
         return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('batch_complete', '=', '2')->get()->first()->total;
 	}
+
+    public static function cd4samplesAwaitingDispatch(){
+        return Cd4Sample::selectRaw("COUNT(*) as total")->where('lab_id', '=', env('APP_LAB'))
+                            ->where('status_id', '=', 5)->where('repeatt', '=', 0)->first()->total;
+    }
+
+    public static function cd4worksheetFor2ndApproval() {
+        return Cd4Worksheet::selectRaw("COUNT(*) as total")->whereNotNull('reviewedby')->whereNull('reviewedby2')
+                            ->where('status_id', '<>', 2)->first()->total;
+    }
 
 	public static function samplesAwaitingRepeat($testingSystem = 'Viralload')
 	{
@@ -255,11 +276,13 @@ class DashboardCacher
     {
         if ($testingSystem == 'Viralload') {
             $model = Viralworksheet::with(['creator']);
-        } else {
+        } else if ($testingSystem == 'Eid') {
             $model = Worksheet::with(['creator']);
+        } else {
+            $model = Cd4Worksheet::with(['creator']);
         }
 
-        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
+        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->first()->total ?? 0;
     }
 
     public static function overdue($level = 'testing',$testingSystem = 'Viralload') {
@@ -312,6 +335,12 @@ class DashboardCacher
         $overduetesting2 = self::overdue('testing','Eid');
         $overduedispatched2 = self::overdue('dispatched','Eid');
 
+        if(env('APP_LAB') == 5){
+            $CD4samplesInQueue = self::CD4pendingSamplesAwaitingTesting();
+            $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
+            $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
+            $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
+        }
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
@@ -323,8 +352,7 @@ class DashboardCacher
         Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
         Cache::put('vl_overduetesting', $overduetesting, $minutes);
         Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
-
-        
+        // EID cache 
         Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
         Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
         Cache::put('eid_batchesForApproval', $batchesForApproval2, $minutes);
@@ -335,6 +363,14 @@ class DashboardCacher
         Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
         Cache::put('eid_overduetesting', $overduetesting2, $minutes);
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
+        //CD4 Cache
+        if(env('APP_LAB') == 5){
+            Cache::put('CD4samplesInQueue', $CD4samplesInQueue, $minutes);
+            Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
+            Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
+            Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
+        }
+        
     }
 
     public static function clear_cache()

@@ -7,6 +7,7 @@ use App\Sample;
 use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
+use App\Cd4SampleView;
 use App\Abbotdeliveries;
 use App\Taqmandeliveries;
 use App\Abbotprocurement;
@@ -18,29 +19,138 @@ class ReportController extends Controller
 {
     public static $parent = ['ending','wasted','issued','request','pos'];
     public static $suffix = ['received','damaged'];
+    public static $quarters = ['Q1' => '1,2,3', 'Q2' => '4,5,6', 'Q3' => '7,8,9', 'Q4' => '10,11,12'];
 
     public function index()
     {
        return view('reports.reports')->with('pageTitle', 'Lab Reports');
     }
 
+    public function cd4reports(){
+        return view('reports.cd4reports')->with('pageTitle', 'CD4 Reports');
+    }
+
     public function dateselect(Request $request)
     {
-    	$dateString = '';
+        $dateString = '';
+        if (session('testingSystem') == 'CD4') {
+            $data = self::__getCD4Data($request, $dateString)->get();
+            $this->__getExcel($data, $dateString);
+        } else {
+            $data = self::__getDateData($request, $dateString)->get();
+            $this->__getExcel($data, $dateString);
+        }
         
-	    $data = self::__getDateData($request, $dateString)->get();
-        $this->__getExcel($data, $dateString);
-    	
     	return back();
+    }
+    
+    public static function __getCD4Data($request, &$title){
+        $tbl = "cd4_samples_view";
+        $columns = "$tbl.serial_no, view_facilitys.name as facilty, amrslocations.name as amrs, view_facilitys.county, view_facilitys.subcounty, $tbl.medicalrecordno, $tbl.patient_name, $tbl.provider_identifier, gender.gender_description, $tbl.dob, $tbl.datecollected, receivedstatus.name as receivedstatus, cd4rejectedreasons.name as rejectedreason, $tbl.datereceived, date($tbl.created_at) as datecreated, users.surname, $tbl.datetested, $tbl.dateresultprinted, $tbl.AVGCD3percentLymph, $tbl.AVGCD3AbsCnt, $tbl.AVGCD3CD4percentLymph, $tbl.AVGCD3CD4AbsCnt, $tbl.CD45AbsCnt";
+        $model = Cd4SampleView::selectRaw($columns)->where('repeatt', '=', 0)
+                    ->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$tbl.facility_id")
+                    ->leftJoin('amrslocations', 'amrslocations.id', '=', "$tbl.amrs_location")
+                    ->leftJoin('gender', 'gender.id', '=', "$tbl.sex")
+                    ->leftJoin('receivedstatus', 'receivedstatus.id', '=', "$tbl.receivedstatus")
+                    ->leftJoin('cd4rejectedreasons', 'cd4rejectedreasons.id', '=', "$tbl.rejectedreason")
+                    ->leftJoin('users', 'users.id', '=', "$tbl.user_id");
+        if(null !== $request->input('category')) {
+            $title = "cd4 test outcome report ";
+            $model = self::setCD4CategoryFilters($request, $model, $title);
+            $model = self::setCD4DateFilters($request, $model, $title);
+            $model = self::setCD4ReportType($request, $model, $title);
+        } else if (null !== $request->input('specificDate') || null !== $request->input('fromDate')) {
+            $title = "cd4 samples log book ";
+            $model = self::setCD4DateFilters($request, $model, $title);
+        } else {
+            // dd($request->all());
+        }
+        
+        return $model;
+    }
+
+    public static function setCD4DateFilters($request, $model, &$title){
+        if($request->input('specificDate')){
+            $datereceived = $request->input('specificDate');
+            $title .= "for $datereceived ";
+            $model = $model->where('datereceived', '=', $datereceived);
+        } else if (null !== $request->input('period')) {
+            if ($request->input('period') == 'range') {
+                $fromDate = date('Y-m-d', strtotime($request->input('fromDate')));
+                $toDate = date('Y-m-d', strtotime($request->input('toDate')));
+                $title .= "between $fromDate & $toDate ";
+                $model = $model->whereBetween('datetested', [$fromDate,$toDate]);
+            } else if ($request->input('period') == 'monthly') {
+                $year = $request->input('year');
+                $month = $request->input('month');
+                $title .= "for $year - $month ";
+                $model = $model->whereYear('datetested', $year)->whereMonth('datetested', $month);
+            } else if ($request->input('period') == 'quarterly') {
+                $year = $request->input('year');
+                $quarter = $request->input('quarter');
+                $title .= "for $year - $quarter ";
+                $months = self::$quarters[$quarter];
+                $model = $model->whereRaw("MONTH(datetested) in ($months)");
+            } else if ($request->input('period') == 'annually') {
+                $year = $request->input('year');
+                $title .= "for $year";
+                $model = $model->whereYear('datetested', $year);
+            }
+        } else if ($request->input('fromDate')){
+            $fromDate = date('Y-m-d', strtotime($request->input('fromDate')));
+            $toDate = date('Y-m-d', strtotime($request->input('toDate')));
+            $title .= "between $fromDate & $toDate";
+            $model = $model->whereBetween('datereceived', [$fromDate,$toDate]);
+        }
+        return $model;
+    }
+
+    public static function setCD4ReportType($request, $model, &$title){
+        if ($request->input('types') == 'all') {
+
+        } else if ($request->input('types') == 'less500') {
+            $title .= " for less 500 ";
+            $model = $model->where('AVGCD3CD4AbsCnt', '<', 500);
+        } else if ($request->input('types') == 'above500') {
+            $title .= " for above 500 ";
+            $model = $model->where('AVGCD3CD4AbsCnt', '>', 500);
+        }
+        return $model;
+    }
+
+    public static function setCD4CategoryFilters($request, $model, &$title){
+        if($request->input('category') == 'overall') {
+
+        } else if ($request->input('category') == 'county') {
+            $category = $request->input('county');
+            $model = $model->where('view_facilitys.county_id', '=', $category);
+            $set = ViewFacility::where('county_id', '=', $category)->first()->county;
+            $title .= " for $set county ";
+        } else if ($request->input('category') == 'subcounty') {
+            $category = $request->input('district');
+            $model = $model->where('view_facilitys.subcounty_id', '=', $category);
+            $set = ViewFacility::where('subcounty_id', '=', $category)->first()->subcounty;
+            $title .= " for $set sub-county ";
+        } else if ($request->input('category') == 'facility') {
+            $category = $request->input('facility');
+            $model = $model->where('view_facilitys.id', '=', $category);
+            $set = ViewFacility::where('id', '=', $category)->first()->name;
+            $title .= " for $set ";
+        }
+        return $model;
     }
 
     public function generate(Request $request)
     {
         $dateString = '';
-        
-        $data = self::__getDateData($request,$dateString)->get();
-        $this->__getExcel($data, $dateString);
-        
+        if (session('testingSystem') == 'CD4') {
+            $data = self::__getCD4Data($request, $dateString)->get();
+            $this->__getExcel($data, $dateString);
+        } else {
+            $data = self::__getDateData($request,$dateString)->get();
+            $this->__getExcel($data, $dateString);
+        }
+                
         return back();
     }
 
@@ -237,11 +347,12 @@ class ReportController extends Controller
     public static function __getDateData($request, &$dateString)
     {
         ini_set("memory_limit", "-1");
-
+#enteredby
         $title = '';
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
-    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'viralsamples_view.amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.datetested', 'viralsamples_view.datedispatched', 'viralsamples_view.result')
+    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'viralsamples_view.amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')
+                    ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'viralsamples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
     				->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
@@ -252,7 +363,8 @@ class ReportController extends Controller
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification');
     	} else {
     		$table = 'samples_view';
-    		$model = SampleView::select('samples_view.id','samples_view.patient', 'samples_view.batch_id', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'gender.gender_description', 'samples_view.dob', 'samples_view.age', 'ip.name as infantprophylaxis', 'samples_view.datecollected', 'pcrtype.alias as pcrtype', 'samples_view.spots', 'receivedstatus.name as receivedstatus', 'rejectedreasons.name as rejectedreason', 'mr.name as motherresult', 'mp.name as motherprophylaxis', 'feedings.feeding', 'entry_points.name as entrypoint', 'samples_view.datereceived', 'samples_view.datetested', 'samples_view.datedispatched', 'ir.name as infantresult')
+    		$model = SampleView::select('samples_view.id','samples_view.batch_id','samples_view.patient', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'gender.gender_description', 'samples_view.dob', 'samples_view.age', 'ip.name as infantprophylaxis', 'samples_view.datecollected', 'pcrtype.alias as pcrtype', 'samples_view.spots', 'receivedstatus.name as receivedstatus', 'rejectedreasons.name as rejectedreason', 'mr.name as motherresult', 'mp.name as motherprophylaxis', 'feedings.feeding', 'entry_points.name as entrypoint', 'samples_view.datereceived', 'samples_view.created_at', 'samples_view.datetested', 'samples_view.dateapproved', 'samples_view.datedispatched', 'ir.name as infantresult', 'users.surname')
+                    ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
     				->leftJoin('gender', 'gender.id', '=', 'samples_view.sex')
@@ -336,13 +448,18 @@ class ReportController extends Controller
 
     public static function __getExcel($data, $title)
     {
+        $title = strtoupper($title);
         $dataArray = []; 
-
-        $dataArray[] = (session('testingSystem') == 'Viralload') ?
-            ['Lab ID', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date of Receiving', 'Date of Testing', 'Date of Dispatch', 'Viral Load'] :
-            ['Lab ID', 'Sample Code', 'Batch No', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date of Receiving', 'Date of Testing', 'Date of Dispatch', 'Test Result'];
+        if (session('testingSystem') == 'Viralload') {
+            $dataArray[] = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
+        } else if (session('testingSystem') == 'EID') {
+            $dataArray[] = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
+        } else if (session('testingSystem') == 'CD4') {
+            $dataArray[] = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'Age', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
+        }
         
         ini_set("memory_limit", "-1");
+        
         if($data->isNotEmpty()) {
             foreach ($data as $report) {
                 $dataArray[] = $report->toArray();

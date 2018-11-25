@@ -227,7 +227,7 @@ class Synch
 
 		while (true) {
 			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
-			->where('synched', 0)->where('batch_complete', 1)->limit(50)->get();
+			->where('synched', 0)->where('batch_complete', 1)->limit(20)->get();
 			// dd($batches);
 			if($batches->isEmpty()) break;
 
@@ -748,7 +748,7 @@ class Synch
 		foreach ($samples as $sample) {
 			$tat += \App\Common::get_days($sample->datereceived, $sample->datedispatched);
 		}
-		$data['tat'] = round(($tat / $sample_count), 1);
+		$data['tat'] = round(@($tat / $sample_count), 1);
 
 		$data['dispatched'] = $sample_count;
 

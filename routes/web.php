@@ -109,11 +109,43 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('batch', 'BatchController');
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
+		Route::prefix('sample')->name('sample.')->group(function(){
+			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
+			Route::get('facility/{facility}', 'Cd4SampleController@facility')->name('facility');
+			Route::get('print/{sample}', 'Cd4SampleController@print')->name('print');
+			Route::get('printresult/{sample}', 'Cd4SampleController@printresult')->name('printresult');
+			Route::get('search/{sample}', 'Cd4SampleController@searchresult')->name('searchresult');
+			Route::post('search', 'Cd4SampleController@search')->name('search');
+		});
 		Route::resource('sample', 'Cd4SampleController');
 		Route::prefix('patient')->name('patient.')->group(function(){
-			Route::post('new', 'CD4PatientController@new_patient')->name('new');
-			Route::resource('/', 'CD4PatientController');
+			Route::post('new', 'Cd4PatientController@new_patient')->name('new');			
+			Route::get('search_name/{patient_name}', 'Cd4PatientController@search_name')->name('search_name');
+			Route::post('search_name', 'Cd4PatientController@search_name');
+			Route::get('search_record_no/{recordno}', 'Cd4PatientController@search_record_no')->name('search_record_no');
+			Route::post('search_record_no', 'Cd4PatientController@search_record_no');
 		});
+		Route::resource('patients', 'Cd4PatientController');
+
+		Route::prefix('reports')->name('reports.')->group(function(){
+			Route::get('/', 'ReportController@cd4reports')->name('cd4reports');
+			Route::post('dateselect', 'ReportController@dateselect')->name('dateselect');
+			Route::post('generate', 'ReportController@generate')->name('generate');
+		});
+		
+		Route::prefix('worksheet')->name('worksheet.')->group(function(){
+			Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+			Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
+			Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
+			Route::post('search', 'Cd4WorksheetController@search')->name('search');
+			Route::get('state/{state}', 'Cd4WorksheetController@state')->name('state');
+			Route::get('create/{limit}', 'Cd4WorksheetController@create');
+			Route::get('index/{state}', 'Cd4WorksheetController@index')->name('index');
+			Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
+			Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
+		});
+		Route::resource('worksheet', 'Cd4WorksheetController');
 	});
 
 	Route::prefix('viralbatch')->name('viralbatch.')->group(function () {
@@ -270,6 +302,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('{sample}/edit_result', 'SampleController@save_poc');
 
 		Route::post('search', 'SampleController@search');		
+		Route::post('ord_no', 'SampleController@ord_no');		
 	});
 	Route::resource('sample', 'SampleController');
 
@@ -312,6 +345,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 
 		Route::post('search', 'ViralsampleController@search');		
+		Route::post('ord_no', 'ViralsampleController@ord_no');		
 	});
 	Route::resource('viralsample', 'ViralsampleController');
 

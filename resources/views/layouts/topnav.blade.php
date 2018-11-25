@@ -45,7 +45,24 @@
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
                 @if(Session('testingSystem') == 'CD4')
-
+                    <li class="">
+                        <a href="{{ url('home') }}">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cd4/sample') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cd4/worksheet') }}">Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cd4/sample/dispatch/2') }}">Results List</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cd4/reports') }}">Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('home') }}">Dashboard</a>
+                    </li>
                 @else
                     @if(!Session('pendingTasks'))
                         @if (Auth::user()->user_type_id == 5)
@@ -165,19 +182,19 @@
                     </a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Samples</a>
+                    <a href="{{ url('cd4/sample') }}">Samples</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Worksheets</a>
+                    <a href="{{ url('cd4/worksheet') }}">Worksheets</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Results List</a>
+                    <a href="{{ url('cd4/sample/dispatch/2') }}">Results List</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Reports</a>
+                    <a href="{{ url('cd4/reports') }}">Reports</a>
                 </li>
                 <li class="">
-                    <a href="{{ url('cd4/') }}">Dashboard</a>
+                    <a href="{{ url('home') }}">Dashboard</a>
                 </li>
             @else
                 @if(!Session('pendingTasks'))
@@ -233,11 +250,13 @@
                             <a class="label-menu-corner" href="{{ url('home') }}">
                             <i class="pe-7s-home" style="font-size: 25px;"></i>
                                 <span class="label label-danger">
-                                @if(session('testingSystem') == 'Viralload')
-                                    {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
-                                @else
-                                    {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
-                                @endif
+                                @isset($widgets['pendingSamples'])
+                                    @if(session('testingSystem') == 'Viralload')
+                                        {{ $widgets['pendingSamples']['all']+$widgets['batchesForApproval']+$widgets['batchesNotReceived']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                                    @else
+                                        {{ $widgets['pendingSamples']+$widgets['batchesForApproval']+$widgets['batchesForDispatch']+$widgets['samplesForRepeat']+$widgets['rejectedForDispatch'] }}
+                                    @endif
+                                @endisset
                                 </span>
                             </a>
                         </li>
