@@ -24,14 +24,18 @@ class ViewModel extends Model
 
     public function scopeSample($query, $facility, $patient, $datecollected)
     {
-        return $query->where(['facility_id' => $facility, 'patient' => $patient, 'datecollected' => $datecollected]);
+        $min_date = date('Y-m-d', strtotime($datecollected . ' -5 days'));
+        $max_date = date('Y-m-d', strtotime($datecollected . ' +5 days'));
+        return $query->where(['facility_id' => $facility, 'patient' => $patient])
+                        ->whereBetween('datecollected', [$min_date, $max_date]);
     }
 
     public function scopeExisting($query, $data_array)
     {
-        $min_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' -6 days'));
+        $min_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' -5 days'));
+        $max_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' +5 days'));
         return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient']])
-                    ->where('datecollected', '>', $min_date);
+                    ->whereBetween('datecollected', [$min_date, $max_date]);
     }
 
     public function scopePatient($query, $facility, $patient)

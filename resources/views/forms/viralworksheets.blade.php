@@ -21,35 +21,38 @@
             
         @if($create || env('APP_LAB') == 8)
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hpanel">
-                        <div class="panel-heading">
-                            <center>Viralload Samples</center>
-                        </div>
-                        <div class="panel-body">
-                            @include('shared/viralsamples-partial')
-                        </div>
-                    </div>
-                </div>                
-            </div>
-
 
             @if (isset($worksheet))
                 {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
+
+            
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hpanel">
+                            <div class="panel-heading">
+                                <center>Viralload Samples</center>
+                            </div>
+                            <div class="panel-body">
+                                @include('shared/viralsamples-partial')
+                            </div>
+                        </div>
+                    </div>                
+                </div>
+                
                 {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-            @endif
 
-            <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
-            <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
+                <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
+                <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
 
-            @if($calibration)
-                <input type="hidden" value="1" name="calibration" >
-            @endif
+                @if($calibration)
+                    <input type="hidden" value="1" name="calibration" >
+                @endif
 
-            @if($limit)
-                <input type="hidden" value="{{ $limit }}" name="limit" >
+                @if($limit)
+                    <input type="hidden" value="{{ $limit }}" name="limit" >
+                @endif
             @endif
 
             <div class="row">
