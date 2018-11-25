@@ -38,7 +38,13 @@
                     				@endif
                     			</td>
                     			<th>Created By</th>
-                    			<td>{{ $data->worksheet->creator->full_name ?? Auth::user()->full_name }}</td>
+                    			<td>
+                                    @if(isset($data->view))
+                                        {{ $data->worksheet->creator->full_name ?? '' }}
+                                    @else
+                                        {{ Auth::user()->full_name }}
+                                    @endif
+                                </td>
                     			<th>Tru Count Lot #</th>
                     			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Normal Lot #	</th>

@@ -91,6 +91,23 @@ class SampleController extends Controller
             return back();   
         }
 
+        $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($data_existing['facility_id']);
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
+        }
+
+        $data_existing['patient'] = $patient_string;
+
         $existing = SampleView::existing( $data_existing )->get()->first();
         if($existing){
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
@@ -126,21 +143,6 @@ class SampleController extends Controller
         $new_patient = $request->input('new_patient');
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
-
-        $patient_string = trim($request->input('patient'));
-        if(env('APP_LAB') == 4){
-            $fac = Facility::find($batch->facility_id);
-            $str = $fac->facilitycode . '/';
-            if(!starts_with($patient_string, $str)){
-                if(starts_with($patient_string, $fac->facilitycode)){
-                    $code = str_after($patient_string, $fac->facilitycode);
-                    $patient_string = $str . $code;
-                }
-                else{
-                    $patient_string = $str . $patient_string;
-                }
-            }
-        }
 
         $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$patient) $patient = new Patient;
@@ -458,8 +460,8 @@ class SampleController extends Controller
 
         session(['toast_message' => 'The sample has been updated.']);
 
-        /*if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
-            $worksheet = $sample->worksheet;
+        if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
+            /*$worksheet = $sample->worksheet;
             if($worksheet->status_id == 1){
                 $d = Misc::get_worksheet_samples($worksheet->machine_type, 1);
                 $s = $d['samples']->first();
@@ -483,11 +485,11 @@ class SampleController extends Controller
                     'toast_message' => 'The worksheet has already been run.',
                     'toast_error' => 1
                 ]);
-            }
+            }*/
             $sample->worksheet_id = null;
             $sample->result = null;
             $sample->interpretation = null;
-        }*/
+        }
 
 
         $sample->pre_update(); 
@@ -874,6 +876,28 @@ class SampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
+
+    public function ord_no(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
+
+        $samples = SampleView::select(['id', 'order_no', 'patient'])
+            ->whereRaw("order_no like '%" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+
+
 
     private function clear_session(){
         session()->forget('batch');

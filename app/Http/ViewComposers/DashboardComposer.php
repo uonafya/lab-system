@@ -20,7 +20,6 @@ class DashboardComposer
      */
     public function compose(View $view)
     {
-        // dd(DashboardCacher::dashboard());
         $view->with('widgets', DashboardCacher::dashboard());
     }
 	

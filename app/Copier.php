@@ -52,20 +52,48 @@ class Copier
         $db_name = env('DB_DATABASE');
         $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
+        $classes = [
+            \App\Mother::class,
+            \App\Batch::class,
+            \App\Patient::class,
+
+
+            \App\Viralbatch::class,
+            \App\Viralpatient::class,
+        ];
+
         foreach ($facilities as $key => $value) {
             $fac = Facility::find($value->ID);
-            if($fac) continue;
+            if($fac){
+                $facility = new Facility;
+                $facility->fill(get_object_vars($value));
+                $facility->synched=0;
+                unset($facility->ID);
+                unset($facility->wardid);
+                unset($facility->districtname);
+                unset($facility->ANC);
+                unset($facility->{'Column 33'});
+                $facility->save();
 
-            $facility = new Facility;
-            $facility->fill(get_object_vars($value));
-            $facility->id = $value->ID;
-            $facility->synched=0;
-            unset($facility->ID);
-            unset($facility->wardid);
-            unset($facility->districtname);
-            unset($facility->ANC);
-            unset($facility->{'Column 33'});
-            $facility->save();
+                foreach ($classes as $class) {
+                    $class::where(['facility_id' => $value->ID, 'synched' => 1])->update(['facility_id' => $facility->id, 'synched' => 2]);
+                    $class::where(['facility_id' => $value->ID])->update(['facility_id' => $facility->id]);
+                }
+
+                if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $value->ID])->update(['facility_id' => $facility->id]);
+            }
+            else{
+                $facility = new Facility;
+                $facility->fill(get_object_vars($value));
+                $facility->id = $value->ID;
+                $facility->synched=0;
+                unset($facility->ID);
+                unset($facility->wardid);
+                unset($facility->districtname);
+                unset($facility->ANC);
+                unset($facility->{'Column 33'});
+                $facility->save();
+            }
         }
     }
 
@@ -256,6 +284,16 @@ class Copier
         $my = new MiscViral;
         $my->compute_tat(\App\ViralsampleView::class, Viralsample::class);
         echo "Completed vl clean at " . date('d/m/Y h:i:s a', time()). "\n";
+    }
+
+    public static function cd4()
+    {
+        DB::statement("truncate table cd4worksheets");
+        DB::statement("truncate table cd4patients");
+        DB::statement("truncate table cd4samples");
+
+        self::copy_cd4_worksheet();
+        self::copy_cd4();
     }
 
 
@@ -475,6 +513,36 @@ class Copier
             if($old) $contact->fill($old->only($contact_array));
             $contact->facility_id = $facility->id;
             $contact->save();
+        }
+    }
+
+    public static function return_vl_dateinitiated()
+    {
+        ini_set("memory_limit", "-1");
+        $offset =0;
+
+        while(true){
+            $rows = ViralsampleView::select('patient', 'facility_id', 'initiation_date')
+                                ->whereNotNull('initiation_date')
+                                ->whereNotIn('initiation_date', ['0000-00-00', ''])
+                                ->limit(5000)
+                                ->offset($offset)
+                                ->get();
+            if($rows->isEmpty()) break;
+
+            foreach ($rows as $key => $row) {
+                $d = self::clean_date($row->initiation_date);
+                if(!$d) continue;
+
+                $patient = Viralpatient::existing($row->facility_id, $row->patient)->first();
+                if(!$patient) continue;
+
+                if($patient->initiation_date && $patient->initiation_date != '0000-00-00') continue;
+                $patient->initiation_date = $d;
+                $patient->save();
+
+            }
+            $offset += 5000;
         }
     }
 
