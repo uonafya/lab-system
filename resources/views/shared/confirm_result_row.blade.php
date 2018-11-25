@@ -34,7 +34,7 @@
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
                                         <td>  
-                                            @if((in_array(env('APP_LAB'), $double_approval) && $sample->approvedby && $sample->approvedby2) || (!in_array(env('APP_LAB') && $sample->approvedby)  )
+                                            @if( (in_array(env('APP_LAB'), $double_approval) && $sample->approvedby && $sample->approvedby2) || (!in_array(env('APP_LAB') && $sample->approvedby))  )
                                                 @foreach($results as $result)
                                                     @if($sample->result == $result->id)
                                                         {!! $result->name_colour !!}
@@ -55,7 +55,7 @@
                                         </td>
 
                                         <td> 
-                                            @if((in_array(env('APP_LAB'), $double_approval) && $sample->approvedby && $sample->approvedby2) || (!in_array(env('APP_LAB') && $sample->approvedby)  )
+                                            @if((in_array(env('APP_LAB'), $double_approval) && $sample->approvedby && $sample->approvedby2) || (!in_array(env('APP_LAB') && $sample->approvedby))  )
                                                 @foreach($actions as $action)
                                                     @if($sample->repeatt == $action->id)
                                                         {!! $action->name_colour !!}
