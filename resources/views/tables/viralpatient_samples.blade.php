@@ -31,6 +31,7 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
                                     <?php
                                         if(!$sample->batch) unset($sample->batch);
                                     ?>
@@ -55,7 +56,9 @@
                                         <td> {{ $sample->run ?? '' }} </td>
                                         <td> {{ $sample->result ?? '' }} </td>
                                         <td>
-                                            @if($sample->batch && $sample->batch->batch_complete == 1)
+                                            
+                                            {{--@if($sample->batch && $sample->batch->batch_complete == 1)--}}
+                                            @if($sample->repeatt == 0)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
 

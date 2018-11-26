@@ -612,7 +612,7 @@ class ViralsampleController extends Controller
         $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
 
         if($submit_type == "release"){
-            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id]);
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id, 'dateapproved' => date('Y-m-d')]);
             session(['toast_message' => 'The samples have been sent to NASCOP.']);
         }
         else{
