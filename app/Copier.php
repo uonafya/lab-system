@@ -231,6 +231,7 @@ class Copier
 
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
+                    if(!$patient->patient) $patient->patient = '';
                     if($patient->dob) $patient->dob = self::clean_date($patient->dob);
 
                     if(!$patient->dob) $patient->dob = self::previous_dob(ViralsampleView::class, $value->patient, $value->facility_id);
