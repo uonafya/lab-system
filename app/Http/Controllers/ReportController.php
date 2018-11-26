@@ -476,7 +476,7 @@ class ReportController extends Controller
                     $sheet->fromArray($dataArray, null, 'A1', false, false);
                 });
 
-            })->download('xlsx');
+            })->download('csv');
         } else {
             session(['toast_message' => 'No data available for the criteria provided']);
         }
