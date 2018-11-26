@@ -63,7 +63,8 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            @if($sample->batch->batch_complete == 1)
+                                            {{--@if($sample->batch->batch_complete == 1)--}}
+                                            @if($sample->repeatt == 0)
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a> |
                                             @endif
 
