@@ -74,6 +74,7 @@ return [
         'result' => 'required_if:receivedstatus,==,1',
         'receivedstatus' => 'required|integer|max:5',
         'rejectedreason' => 'required_if:receivedstatus,==,2',
+        'lab' => 'required|integer',
         // 'gender' => 'filled',
     ], 
 
