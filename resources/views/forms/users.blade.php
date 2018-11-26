@@ -19,7 +19,11 @@
 @section('content')
     <div class="content">
         <div>
+            @if(isset($user))
+            {{ Form::open(['url' => '/user/' . $user->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+            @else
             {{ Form::open(['url' => '/user', 'method' => 'post', 'class'=>'form-horizontal']) }}
+            @endif
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">
@@ -31,9 +35,19 @@
                                     <label class="col-sm-4 control-label">Account Type</label>
                                     <div class="col-sm-8">
                                         <select class="form-control" required name="user_type" id="user_type">
+                                        @if(!isset($user))
                                             <option value="" selected disabled>Select Account Type</option>
+                                        @endif
                                         @forelse ($accounts as $account)
-                                            <option value="{{ $account->id }}">{{ $account->user_type }}</option>
+                                            @if(isset($user))
+                                                @if($account->id == $user->user_type_id)
+                                                    <option value="{{ $account->id }}" selected>{{ $account->user_type }}</option>
+                                                @else
+                                                    <option value="{{ $account->id }}">{{ $account->user_type }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $account->id }}">{{ $account->user_type }}</option>
+                                            @endif
                                         @empty
                                             <option value="" disabled="true">No Account types available</option>
                                         @endforelse
@@ -46,18 +60,21 @@
                                         <input class="form-control" name="email" id="email" type="email" value="{{ $user->email ?? '' }}">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Password</label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" name="password" id="password" type="password" value="">
+                                <div @isset($user) style="display: none;" @endisset>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Password</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" name="password" id="password" type="password" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Confirm Password</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" name="confirm-password" id="confirm-password" type="password" value="">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Confirm Password</label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" name="confirm-password" id="confirm-password" type="password" value="">
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="hpanel">
@@ -98,11 +115,17 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <center>
+                            @if(isset($user))
+                                <div class="col-sm-10 col-sm-offset-1">
+                                    <button class="btn btn-success submit" type="submit" name="submit_type">Update User</button>
+                                </div>
+                            @else
                                 <div class="col-sm-10 col-sm-offset-1">
                                     <button class="btn btn-success submit" type="submit" name="submit_type" value="release">Save User</button>
                                     <button class="btn btn-primary submit" type="submit" name="submit_type" value="add">Save & Add User</button>
                                     <button class="btn btn-danger" type="reset" formnovalidate name="submit_type" value="cancel">Reset</button>
                                 </div>
+                            @endif
                             </center>
                         </div>
                     </div>
