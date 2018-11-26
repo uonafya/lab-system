@@ -131,7 +131,7 @@
                                             @endforeach
                                         </td>
 
-                                        <td> {{ $sample->get_link('worksheet_id') }} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
