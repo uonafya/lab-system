@@ -347,14 +347,16 @@ class ReportController extends Controller
     public static function __getDateData($request, &$dateString)
     {
         ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
 #enteredby
         $title = '';
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
-    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'viralsamples_view.amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')
+    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'viralsamples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                    ->leftJoin('amrslocations', 'amrslocations.id' '=', 'viralsamples_view.amrs_location')
     				->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
     				->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
     				->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
