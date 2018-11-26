@@ -180,7 +180,7 @@ class Cd4SampleController extends Controller
                                 return $query->where('status_id', '=', 6);
                             if($state == 3)
                                 return $query->where('status_id', '=', 1);
-                        })->where('repeatt', '=', 0)->get();
+                        })->where('repeatt', '=', 0)->paginate(20);
         $data = (object) $data;
         // dd($data);
         return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
@@ -209,7 +209,7 @@ class Cd4SampleController extends Controller
     public function facility($facility){
         ini_set("memory_limit", "-1");
         $data = Lookup::cd4_lookups();
-        $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->get();
+        $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->paginate(20);
         $facility = ViewFacility::find($facility);
         $data = (object) $data;
         
@@ -229,6 +229,7 @@ class Cd4SampleController extends Controller
         
         $data = Lookup::cd4_lookups();
         $data['samples'] = $samples;
+        $data['search'] = true;
         $data = (object) $data;
         // dd($data);
         return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
