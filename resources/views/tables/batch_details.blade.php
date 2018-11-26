@@ -81,11 +81,11 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="18"><center> Sample Log</center></th>
+                                    <th colspan="19"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="7">Patient Information</th>
-                                    <th colspan="3">Sample Information</th>
+                                    <th colspan="4">Sample Information</th>
                                     <th colspan="8">Mother Information</th>
                                 </tr>
                                 <tr> 
@@ -97,6 +97,7 @@
                                     <th>Age (Months)</th>
                                     <th>Infant Prophylaxis</th>
 
+                                    <th>Worksheet</th>
                                     <th>Date Collected</th>
                                     <th>Status</th>
                                     <th>Spots</th>
@@ -130,6 +131,7 @@
                                             @endforeach
                                         </td>
 
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)

@@ -152,8 +152,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->synched = 5;
-            $batch->save();            
+            $batch->edarp();            
         }
 
         $patient = Viralpatient::existing($facility, $patient_identifier)->get()->first();
@@ -165,7 +164,7 @@ class VlController extends BaseController
         $patient->fill($request->only($fields['patient'])); 
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
-        $patient->save();
+        $patient->edarp();
 
         if($editted){
             $sample = Viralsample::find($sample_exists->id);
@@ -175,9 +174,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->synched = 5;
-            $batch->save();
-            
+            $batch->edarp();            
         }
         else{
             $sample = new Viralsample;
@@ -191,8 +188,7 @@ class VlController extends BaseController
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
-        $sample->synched = 5;
-        $sample->save();
+        $sample->edarp();
 
         $sample->load(['patient', 'batch']);
         return $sample;
