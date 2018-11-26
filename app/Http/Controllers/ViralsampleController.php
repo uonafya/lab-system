@@ -528,6 +528,15 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+
+    public function transfer(Viralsample $sample)
+    {
+        $sample->sample_received_by = auth()->user()->id;
+        $sample->save();
+        session(['toast_message' => "The sample has been tranferred to your account."]);
+        return back();
+    }
+
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;

@@ -347,6 +347,7 @@ class ReportController extends Controller
     public static function __getDateData($request, &$dateString)
     {
         ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
 #enteredby
         $title = '';
     	if (session('testingSystem') == 'Viralload') {
