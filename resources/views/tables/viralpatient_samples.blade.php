@@ -31,6 +31,7 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
                                     <?php
                                         if(!$sample->batch) unset($sample->batch);
                                     ?>
