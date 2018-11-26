@@ -16,6 +16,7 @@ class CreateDrWorksheetsTable extends Migration
         Schema::create('dr_worksheets', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('lab_id')->unsigned();
+            $table->integer('plate_id')->unsigned()->index();
 
             // 1 is in process
             // 2 is tested, results uploaded awaiting approval

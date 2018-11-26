@@ -528,6 +528,15 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+
+    public function transfer(Viralsample $sample)
+    {
+        $sample->sample_received_by = auth()->user()->id;
+        $sample->save();
+        session(['toast_message' => "The sample has been tranferred to your account."]);
+        return back();
+    }
+
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;
@@ -612,7 +621,7 @@ class ViralsampleController extends Controller
         $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
 
         if($submit_type == "release"){
-            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id]);
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id, 'dateapproved' => date('Y-m-d')]);
             session(['toast_message' => 'The samples have been sent to NASCOP.']);
         }
         else{
