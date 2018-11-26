@@ -33,7 +33,7 @@ class Cd4WorksheetController extends Controller
                                         if($state == 1) {
                                             return $query->whereNotNull('reviewedby')->whereNull('reviewedby2');
                                         }
-                                    })->orderBy('id', 'desc')->get();
+                                    })->orderBy('id', 'desc')->paginate(20);
         $data = (object) $data;
         
         return view('tables.cd4-worksheets', compact('data'))->with('pageTitle', 'Worksheets');

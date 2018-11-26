@@ -94,9 +94,11 @@
                             @endforelse
                             </tbody>
                         </table>
+                        @if(!isset($data->search))
                         <center>
                             {{ $data->samples->links() }}
                         </center>
+                        @endif
                     </div>
 
                 </div>
