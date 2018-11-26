@@ -93,6 +93,7 @@ class Cd4SampleController extends Controller
         
         $data = Lookup::cd4_lookups();
         $data['samples'] = $samples;
+        $data['search'] = true;
         $data = (object) $data;
         // dd($data);
         return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
