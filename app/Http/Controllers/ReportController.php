@@ -356,7 +356,7 @@ class ReportController extends Controller
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'viralsamples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
-                    ->leftJoin('amrslocations', 'amrslocations.id' '=', 'viralsamples_view.amrs_location')
+                    ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
     				->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
     				->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
     				->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
