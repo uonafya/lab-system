@@ -203,7 +203,7 @@ class Copier
         $fields = self::samples_arrays(); 
         $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
         $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
-        $offset_value = 40000;
+        $offset_value = 50000;
         $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
         while(true)
         {
