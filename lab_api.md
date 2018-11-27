@@ -34,7 +34,7 @@ For the last 4 links, the following fields are common to all
 > - patient_identifier  **required** (ccc_no for vl and hei number for eid)
 > - mflCode  **required**
 > - sex  **required** (1 for male, 2 for female, 3 for unknown)
-> - lab *If the lab is not filled it will be set to the lab where the sample is being sent*
+> - lab (This is the lab tested in.) *If the lab is not filled it will be set to the lab where the sample is being sent. It is however mandatory for complete requests.*
 
 ---
 The following fields are common to complete requests 

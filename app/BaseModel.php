@@ -122,4 +122,15 @@ class BaseModel extends Model
         }
         
     }
+
+    public function edarp()
+    {
+        if(!$this->synched){
+            $this->synched = 5;
+            $this->save();
+        }
+        else{
+            $this->pre_update();
+        }
+    }
 }
