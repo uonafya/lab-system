@@ -176,7 +176,7 @@ class ReportController extends Controller
         }
         $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
                     ->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
-                    ->when(true, function($query) use ($request){
+                    ->when(true, function($query) use ($request, $table){
                         if($request->input('types') == 'remoteentry')
                             return $query->where("$table.site_entry", "=", 1);
                     })->where('repeatt', '=', 0)
