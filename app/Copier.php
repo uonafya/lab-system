@@ -485,7 +485,7 @@ class Copier
 
             $start = $model::max('id');              
 
-            $offset_value = 0;
+            $offset_value = 5000;
             while(true)
             {
                 $worksheets = $view::when($start, function($query) use ($start){
