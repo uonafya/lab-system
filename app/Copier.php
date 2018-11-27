@@ -196,6 +196,69 @@ class Copier
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
+    public static function copy_updated_eid()
+    {
+        $start = Sample::max('id');
+        ini_set("memory_limit", "-1");
+        $fields = self::samples_arrays(); 
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+        $offset_value = 40000;
+        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
+        while(true)
+        {
+            $samples = SampleView::limit(self::$limit)->offset($offset_value)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $value) {
+                $s = \App\Sample::find($value->id);
+                if($s){
+                    $patient = $sample->patient;
+
+                    $mother = $patient->mother;
+                    $mother->fill($value->only($fields['mother']));
+                    $mother->save();
+
+                    $patient->fill($value->only($fields['patient']));
+
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
+
+                    if(!$patient->dob){
+                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+
+                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
+                    $patient->ccc_no = $value->enrollment_ccc_no;
+                    $patient->save();
+
+                    $batch = $sample->batch;
+                    $batch->fill($value->only($fields['batch']));
+                    foreach ($batch_date_array as $date_field) {
+                        $batch->$date_field = self::clean_date($value->$date_field);
+                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+                    }
+                    $batch->save();
+
+                    $sample->fill($value->only($fields['sample']));
+                    foreach ($sample_date_array as $date_field) {
+                        $sample->$date_field = self::clean_date($value->$date_field);
+                        if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
+                    }
+
+                    if($sample->worksheet_id == 0) $sample->worksheet_id = null;
+                    if($sample->receivedstatus == 0) $sample->receivedstatus = null;
+                    if($sample->result == '') $sample->result = null;
+                    if(!$sample->eqa) $sample->eqa = 0;
+
+                    $sample->save();
+                }
+            }
+            $offset_value += self::$limit;
+            echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+        }
+    }
+
 
     public static function copy_vl()
     {
