@@ -180,6 +180,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
+	Route::post('partner/search/', 'HomeController@partnersearch')->name('partner.search');
 
 	Route::get('dashboard/{year?}/{month?}', 'DashboardController@index')->name('dashboard');
 	Route::post('district/search/', 'DistrictController@search')->name('district.search');
