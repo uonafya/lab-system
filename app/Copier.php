@@ -211,8 +211,8 @@ class Copier
             if($samples->isEmpty()) break;
 
             foreach ($samples as $key => $value) {
-                $s = \App\Sample::find($value->id);
-                if($s){
+                $sample = \App\Sample::find($value->id);
+                if($sample){
                     $patient = $sample->patient;
 
                     $mother = $patient->mother;
