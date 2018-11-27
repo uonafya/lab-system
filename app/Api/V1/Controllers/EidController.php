@@ -74,8 +74,8 @@ class EidController extends BaseController
         $batch->lab_id = $lab;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        $batch->user_id = 0;
-        if(env('APP_LAB') == 5) $batch->user_id = 66;
+        $batch->user_id = 66;
+        // if(env('APP_LAB') == 5) $batch->user_id = 66;
         $batch->site_entry = 1;
         if($datereceived) $batch->site_entry = 0;
         $batch->save();
