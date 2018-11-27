@@ -415,6 +415,14 @@ class HomeController extends Controller
         return $county;
     }
 
+    public function partnersearch(Request $request) {
+        $search =  $request->input('search');
+        $partner = DB::table('partners')->select('id', 'name')
+            ->whereRaw("(name like '%" . $search . "%')")
+            ->paginate(10);
+        return $partner;
+    }
+
     public function download($type = 'EID')
     {
         if ($type == 'VL') {

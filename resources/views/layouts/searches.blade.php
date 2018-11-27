@@ -157,10 +157,17 @@
 				processResults: function(data, params){
 					return {
 						results 	: $.map(data.data, function (row){
-							return {
-								text	: row.facilitycode + ' - ' + row.name + ' (' + row.county + ')', 
-								id		: row.id		
-							};
+							if (row.facilitycode == undefined) {
+								return {
+									text	: row.name, 
+									id		: row.id		
+								};
+							} else {
+								return {
+									text	: row.facilitycode + ' - ' + row.name + ' (' + row.county + ')', 
+									id		: row.id		
+								};
+							}
 						}),
 						pagination	: {
 							more: data.to < data.total
