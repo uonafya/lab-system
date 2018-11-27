@@ -52,20 +52,48 @@ class Copier
         $db_name = env('DB_DATABASE');
         $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
+        $classes = [
+            \App\Mother::class,
+            \App\Batch::class,
+            \App\Patient::class,
+
+
+            \App\Viralbatch::class,
+            \App\Viralpatient::class,
+        ];
+
         foreach ($facilities as $key => $value) {
             $fac = Facility::find($value->ID);
-            if($fac) continue;
+            if($fac){
+                $facility = new Facility;
+                $facility->fill(get_object_vars($value));
+                $facility->synched=0;
+                unset($facility->ID);
+                unset($facility->wardid);
+                unset($facility->districtname);
+                unset($facility->ANC);
+                unset($facility->{'Column 33'});
+                $facility->save();
 
-            $facility = new Facility;
-            $facility->fill(get_object_vars($value));
-            $facility->id = $value->ID;
-            $facility->synched=0;
-            unset($facility->ID);
-            unset($facility->wardid);
-            unset($facility->districtname);
-            unset($facility->ANC);
-            unset($facility->{'Column 33'});
-            $facility->save();
+                foreach ($classes as $class) {
+                    $class::where(['facility_id' => $value->ID, 'synched' => 1])->update(['facility_id' => $facility->id, 'synched' => 2]);
+                    $class::where(['facility_id' => $value->ID])->update(['facility_id' => $facility->id]);
+                }
+
+                if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $value->ID])->update(['facility_id' => $facility->id]);
+            }
+            else{
+                $facility = new Facility;
+                $facility->fill(get_object_vars($value));
+                $facility->id = $value->ID;
+                $facility->synched=0;
+                unset($facility->ID);
+                unset($facility->wardid);
+                unset($facility->districtname);
+                unset($facility->ANC);
+                unset($facility->{'Column 33'});
+                $facility->save();
+            }
         }
     }
 
@@ -199,10 +227,12 @@ class Copier
             }
 
             foreach ($samples as $key => $value) {
+                if(!$value->patient) continue;
                 $patient = Viralpatient::existing($value->facility_id, $value->patient)->get()->first();
 
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
+                    // if(!$patient->patient) $patient->patient = '';
                     if($patient->dob) $patient->dob = self::clean_date($patient->dob);
 
                     if(!$patient->dob) $patient->dob = self::previous_dob(ViralsampleView::class, $value->patient, $value->facility_id);

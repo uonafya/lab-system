@@ -64,15 +64,15 @@ class VlController extends BaseController
         else{
             $batch = new Viralbatch;
         }
-
         
 
         $batch->lab_id = $lab;
-        $batch->user_id = 0;
-        if(env('APP_LAB') == 5) $batch->user_id = 66;
+        // $batch->user_id = 0;
+        $batch->user_id = 66;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         $batch->site_entry = 1;
+        if($datereceived) $batch->site_entry = 0;
         $batch->save();
 
         $patient = Viralpatient::existing($facility, $ccc_number)->get()->first();
@@ -93,6 +93,7 @@ class VlController extends BaseController
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
+        if($datereceived) $sample->receivedstatus = 1;
         $sample->save();
 
         $sample->load(['patient', 'batch']);
@@ -151,8 +152,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->synched = 5;
-            $batch->save();            
+            $batch->edarp();            
         }
 
         $patient = Viralpatient::existing($facility, $patient_identifier)->get()->first();
@@ -164,7 +164,7 @@ class VlController extends BaseController
         $patient->fill($request->only($fields['patient'])); 
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
-        $patient->save();
+        $patient->edarp();
 
         if($editted){
             $sample = Viralsample::find($sample_exists->id);
@@ -174,9 +174,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->synched = 5;
-            $batch->save();
-            
+            $batch->edarp();            
         }
         else{
             $sample = new Viralsample;
@@ -190,8 +188,7 @@ class VlController extends BaseController
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
-        $sample->synched = 5;
-        $sample->save();
+        $sample->edarp();
 
         $sample->load(['patient', 'batch']);
         return $sample;

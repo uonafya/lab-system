@@ -105,6 +105,7 @@ class Batch extends BaseModel
 
     public function scopeExisting($query, $facility, $datereceived, $lab)
     {
+        if(!$datereceived) return $query->where(['facility_id' => $facility, 'lab_id' => $lab, 'batch_full' => 0])->whereNull('datereceived');
         return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab, 'batch_full' => 0]);
     }
 

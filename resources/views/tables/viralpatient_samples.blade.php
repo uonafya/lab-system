@@ -31,6 +31,7 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
                                     <?php
                                         if(!$sample->batch) unset($sample->batch);
                                     ?>
@@ -48,14 +49,16 @@
                                         </td>
                                         <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
-                                        <td> {{ $sample->worksheet_id ?? '' }} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datetested') ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
                                         <td> {{ $sample->run ?? '' }} </td>
                                         <td> {{ $sample->result ?? '' }} </td>
                                         <td>
-                                            @if($sample->batch && $sample->batch->batch_complete == 1)
+                                            
+                                            {{--@if($sample->batch && $sample->batch->batch_complete == 1)--}}
+                                            @if($sample->repeatt == 0)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
 

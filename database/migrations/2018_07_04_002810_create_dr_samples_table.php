@@ -16,6 +16,8 @@ class CreateDrSamplesTable extends Migration
         Schema::create('dr_samples', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('patient_id')->unsigned()->index();
+            $table->tinyInteger('control')->unsigned()->nullable()->default(0);
+            $table->integer('sanger_id')->unsigned()->index()->nullable()->default(0);
 
             $table->tinyInteger('prev_prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();
@@ -63,10 +65,31 @@ class CreateDrSamplesTable extends Migration
             $table->date('datetested')->nullable();
             $table->date('datedispatched')->nullable();
 
-            $table->tinyInteger('dr_reason_id')->unsigned()->index();
+            $table->tinyInteger('dr_reason_id')->nullable()->unsigned()->index();
 
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('received_by')->unsigned()->nullable();
+
+
+            $table->tinyInteger('status')->nullable()->unsigned()->index();
+
+
+            $table->text('assembled_sequence')->nullable(); 
+            $table->string('chromatogram_url', 50)->nullable(); 
+            $table->string('exatype_version', 50)->nullable(); 
+
+            $table->boolean('qc_pass')->default(0);
+            $table->smallInteger('qc_distance_to_sample')->nullable()->unsigned();
+            $table->smallInteger('qc_distance_from_sample')->nullable()->unsigned();
+            $table->float('qc_distance_difference', 4, 3)->unsigned()->nullable();
+            $table->string('qc_distance_strain_name', 50)->nullable();
+            $table->string('qc_distance_compare_to_name', 50)->nullable();
+            $table->string('qc_distance_sample_name', 20)->nullable();
+
+            $table->boolean('qc_stop_codon_pass')->default(0);
+            $table->boolean('qc_plate_contamination_pass')->default(0);
+            $table->boolean('qc_frameshift_codon_pass')->default(0);
+            $table->boolean('qc_')->default(0);
             
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();

@@ -91,6 +91,23 @@ class SampleController extends Controller
             return back();   
         }
 
+        $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($data_existing['facility_id']);
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
+        }
+
+        $data_existing['patient'] = $patient_string;
+
         $existing = SampleView::existing( $data_existing )->get()->first();
         if($existing){
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
@@ -126,21 +143,6 @@ class SampleController extends Controller
         $new_patient = $request->input('new_patient');
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
-
-        $patient_string = trim($request->input('patient'));
-        if(env('APP_LAB') == 4){
-            $fac = Facility::find($batch->facility_id);
-            $str = $fac->facilitycode . '/';
-            if(!starts_with($patient_string, $str)){
-                if(starts_with($patient_string, $fac->facilitycode)){
-                    $code = str_after($patient_string, $fac->facilitycode);
-                    $patient_string = $str . $code;
-                }
-                else{
-                    $patient_string = $str . $patient_string;
-                }
-            }
-        }
 
         $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$patient) $patient = new Patient;
@@ -649,6 +651,15 @@ class SampleController extends Controller
             $data[0] = 1;
         }
         return $data;
+    }
+
+
+    public function transfer(Sample $sample)
+    {
+        $sample->sample_received_by = auth()->user()->id;
+        $sample->save();
+        session(['toast_message' => "The sample has been tranferred to your account."]);
+        return back();
     }
 
     public function runs(Sample $sample)

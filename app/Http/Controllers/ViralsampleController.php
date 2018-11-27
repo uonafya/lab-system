@@ -98,6 +98,23 @@ class ViralsampleController extends Controller
             return back();   
         }
 
+        $patient_string = trim($request->input('patient'));
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($data_existing['facility_id']);
+            // $patient_string = $fac->facilitycode . '/' . $patient_string;
+            $str = $fac->facilitycode . '/';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
+        }
+
+        $data_existing['patient'] = $patient_string;
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
         if($existing){
@@ -158,21 +175,6 @@ class ViralsampleController extends Controller
         session(['viral_batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
-        $patient_string = trim($request->input('patient'));
-        if(env('APP_LAB') == 4){
-            $fac = Facility::find($batch->facility_id);
-            // $patient_string = $fac->facilitycode . '/' . $patient_string;
-            $str = $fac->facilitycode . '/';
-            if(!starts_with($patient_string, $str)){
-                if(starts_with($patient_string, $fac->facilitycode)){
-                    $code = str_after($patient_string, $fac->facilitycode);
-                    $patient_string = $str . $code;
-                }
-                else{
-                    $patient_string = $str . $patient_string;
-                }
-            }
-        }
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
         if(!$viralpatient) $viralpatient = new Viralpatient;
 
@@ -526,6 +528,15 @@ class ViralsampleController extends Controller
         return $data;
     }
 
+
+    public function transfer(Viralsample $sample)
+    {
+        $sample->sample_received_by = auth()->user()->id;
+        $sample->save();
+        session(['toast_message' => "The sample has been tranferred to your account."]);
+        return back();
+    }
+
     public function runs(Viralsample $sample)
     {
         // $samples = $sample->child;
@@ -610,7 +621,7 @@ class ViralsampleController extends Controller
         $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
 
         if($submit_type == "release"){
-            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id]);
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id, 'dateapproved' => date('Y-m-d')]);
             session(['toast_message' => 'The samples have been sent to NASCOP.']);
         }
         else{
