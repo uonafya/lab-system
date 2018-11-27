@@ -155,21 +155,34 @@ class MiscDr extends Common
 			$worksheet->qc_run = $w->plate_qc_run;
 			$worksheet->qc_pass = $w->plate_qc;
 
-			// if($w->errors){
-			// 	foreach ($w->errors as $error) {
-			// 		$e = DrWorksheetWarning::firstOrCreate([
-			// 			'worksheet_id' => $worksheet->id,
-			// 			'warning_id' => self::get_sample_warning($error->title),
-			// 			'system' => $error->system,
-			// 			'detail' => $error->detail,
-			// 		]);
+			if($worksheet->sanger_status_id == 4) return null;
 
-			// 	}
-			// }
+			if($worksheet->sanger_status_id != 5){
+
+				if($w->errors){
+					foreach ($w->errors as $error) {
+						$e = DrWorksheetWarning::firstOrCreate([
+							'worksheet_id' => $worksheet->id,
+							'warning_id' => self::get_sample_warning($error->title),
+							'system' => $error->system,
+							'detail' => $error->detail,
+						]);
+					}
+				}
+
+				if($w->warnings){
+					foreach ($w->warnings as $error) {
+						$e = DrWorksheetWarning::firstOrCreate([
+							'worksheet_id' => $worksheet->id,
+							'warning_id' => self::get_sample_warning($error->title),
+							'system' => $error->system,
+							'detail' => $error->detail,
+						]);
+					}
+				}
+			}
 
 			$worksheet->save();
-
-			if($worksheet->sanger_status_id == 4) return null;
 
 			foreach ($body->included as $key => $value) {
 
@@ -180,7 +193,9 @@ class MiscDr extends Common
 					if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
 					$s = $value->attributes;
-					$sample->status_id = self::get_sample_status($s->status_id);					
+					$sample->status_id = self::get_sample_status($s->status_id);	
+
+					if($sample->status_id == 3)	$sample->qc_pass = 0;			
 
 					if($s->sample_qc_pass){
 						$sample->qc_pass = $s->sample_qc_pass;
@@ -215,7 +230,7 @@ class MiscDr extends Common
 					if($s->warnings){
 						$sample->has_warnings = true;
 
-						foreach ($s->errors as $error) {
+						foreach ($s->warnings as $error) {
 							$e = DrWarning::firstOrCreate([
 								'sample_id' => $sample->id,
 								'warning_id' => self::get_sample_warning($error->title),
@@ -268,6 +283,11 @@ class MiscDr extends Common
 					if($s->pending_action == "PendChromatogramManualIntervention"){
 						$sample->pending_manual_intervention = true;
 					}
+
+					if(!$s->pending_action && $sample->pending_manual_intervention){
+						$sample->pending_manual_intervention = false;
+						$sample->had_manual_intervention = true;
+					}				
 
 					$sample->assembled_sequence = $s->assembled_sequence;
 					$sample->chromatogram_url = $s->chromatogram_url;
