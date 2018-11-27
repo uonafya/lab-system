@@ -203,7 +203,7 @@ class Copier
         $fields = self::samples_arrays(); 
         $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
         $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
-        $offset_value = 40000;
+        $offset_value = 60000;
         $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
         while(true)
         {
@@ -460,6 +460,47 @@ class Copier
                         $work->$date_field = self::clean_date($worksheet->$date_field);
                     }
                     $work->id = $worksheet->id;
+                    $work->save();
+                }
+                $offset_value += self::$limit;
+                echo "Completed {$key} worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+            }
+        }
+    }
+
+    public static function copy_updated_worksheet()
+    {
+        $work_array = [
+            'eid' => ['model' => Worksheet::class, 'view' => WorksheetView::class],
+            'vl' => ['model' => Viralworksheet::class, 'view' => ViralworksheetView::class],
+        ];
+
+        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'dateuploaded', 'created_at'];
+
+        ini_set("memory_limit", "-1");
+
+        foreach ($work_array as $key => $value) {
+            $model = $value['model'];
+            $view = $value['view'];
+
+            $start = $model::max('id');              
+
+            $offset_value = 5000;
+            while(true)
+            {
+                $worksheets = $view::when($start, function($query) use ($start){
+                    return $query->where('id', '>', $start);
+                })->limit(self::$limit)->offset($offset_value)->get();
+                if($worksheets->isEmpty()) break;
+
+                foreach ($worksheets as $worksheet_key => $worksheet) {
+                    $duplicate = $worksheet->replicate();
+                    $work = $model::find($worksheet->id);                    
+                    $work->fill($duplicate->toArray());
+                    foreach ($date_array as $date_field) {
+                        $work->$date_field = self::clean_date($worksheet->$date_field);
+                    }
+                    // $work->id = $worksheet->id;
                     $work->save();
                 }
                 $offset_value += self::$limit;
