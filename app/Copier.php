@@ -485,12 +485,10 @@ class Copier
 
             $start = $model::max('id');              
 
-            $offset_value = 0;
+            $offset_value = 5000;
             while(true)
             {
-                $worksheets = $view::when($start, function($query) use ($start){
-                    return $query->where('id', '>', $start);
-                })->limit(self::$limit)->offset($offset_value)->get();
+                $worksheets = $view::limit(self::$limit)->offset($offset_value)->get();
                 if($worksheets->isEmpty()) break;
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {

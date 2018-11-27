@@ -32,7 +32,7 @@ class UserController extends Controller
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a></td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a></td>';
             $row .= '</tr>';
         }
 
@@ -89,9 +89,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
+    public function show(User $user) {
+
+        $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+
+        return view('forms.users', compact('accounts', 'user'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -114,14 +116,26 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = self::__unHashUser($id);
-        if (!empty($user)) {
-            $user->password = $request->password;
-            $user->update();
-            session(['toast_message'=>'User password succesfully updated']);
+        if($request->input('password') == "") { // No password for edit
+            $userData = $request->only(['user_type','email','surname','oname','telephone']);
+            $userData['user_type_id'] = $userData['user_type'];
+            unset($userData['user_type']);
+            
+            $user = User::find($id);
+            $user->fill($userData);
+            $user->save();
         } else {
-            session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+            $user = self::__unHashUser($id);
+
+            if (!empty($user)) {
+                $user->password = $request->password;
+                $user->update();
+                session(['toast_message'=>'User password succesfully updated']);
+            } else {
+                session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+            }
         }
+                
         if (isset($request->user)) {
             return back();
         } else {
