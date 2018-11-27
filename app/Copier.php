@@ -485,7 +485,7 @@ class Copier
 
             $start = $model::max('id');              
 
-            $offset_value = 5000;
+            $offset_value = 1000;
             while(true)
             {
                 $worksheets = $view::limit(self::$limit)->offset($offset_value)->get();
