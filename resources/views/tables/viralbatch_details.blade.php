@@ -80,7 +80,9 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
-                            @if(!$batch->datereceived && $batch->site_entry == 1)
+                            @if($batch->site_entry == 1 && (!$batch->datereceived || 
+                            ($batch->datereceived && $samples->where('receivedstatus', null)->first())
+                            ) )
                                 <div class="col-md-4">
                                     <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
                                         <button class="btn btn-primary">Approve Site Entry</button>
@@ -174,10 +176,15 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @if(auth()->user()->user_type_id != 5 && $batch->batch_complete == 0 && env('APP_LAB') == 3 && !$sample->worksheet_id && $sample->receivedstatus == 1 && (($sample->sample_received_by && $sample->sample_received_by != auth()->user()->id) || 
+                                            (!$sample->sample_received_by && $batch->received_by != auth()->user()->id) ))
+                                                <a href="{{ url('/sample/transfer/' . $sample->id ) }}">Transfer To My Account</a> |
+                                            @endif
+                                            
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
-                                            <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
+                                            <a href="{{ url('/viralsample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                             {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}

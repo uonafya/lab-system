@@ -209,15 +209,9 @@ Artisan::command('copy:facility-missing', function(){
 })->describe('Copy missing facilities from old database to new database.');
 
 Artisan::command('copy:cd4', function(){
-    $str = \App\Copier::copy_cd4();
+    $str = \App\Copier::cd4();
     $this->info($str);
 })->describe('Copy cd4 data from old database to new database.');
-
-
-Artisan::command('copy:cd4-worksheet', function(){
-    $str = \App\Copier::copy_cd4_worksheet();
-    $this->info($str);
-})->describe('Copy cd4 worksheet data from old database to new database.');
 
 
 

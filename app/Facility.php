@@ -23,7 +23,7 @@ class Facility extends BaseModel
 
     public function scopeLocate($query, $mfl)
     {
-        return $query->where("facilitycode", $mfl);
+        return $query->where("facilitycode", $mfl)->whereNotNull('facilitycode')->whereNotIn('facilitycode', ['', '0']);
     }
 
     /**

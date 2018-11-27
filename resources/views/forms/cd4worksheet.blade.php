@@ -38,7 +38,13 @@
                     				@endif
                     			</td>
                     			<th>Created By</th>
-                    			<td>{{ $data->worksheet->creator->full_name ?? Auth::user()->full_name }}</td>
+                    			<td>
+                                    @if(isset($data->view))
+                                        {{ $data->worksheet->creator->full_name ?? '' }}
+                                    @else
+                                        {{ Auth::user()->full_name }}
+                                    @endif
+                                </td>
                     			<th>Tru Count Lot #</th>
                     			<td><input type="text" name="TruCountLotno" class="form-control" value="{{ $data->worksheet->TruCountLotno ?? '' }}" required {{ $disabled }}></td>
                     			<th>Multicheck Normal Lot #	</th>
@@ -128,13 +134,17 @@
 		                <div class="form-group">
 		                    <center>
 		                        <div class="col-sm-10 col-sm-offset-1">
-		                        @if($data->worksheet->status_id != 4)
-		                        	@if(isset($data->view))
-		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
-		                            @else
-		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
-		                            @endif
-		                        @endif
+                                @if(isset($data->worksheet->status_id))
+    		                        @if($data->worksheet->status_id != 4)
+    		                        	@if(isset($data->view))
+    		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
+    		                            @else
+    		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
+    		                            @endif
+    		                        @endif
+                                @else
+                                    <button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
+                                @endif
 		                        </div>
 		                    </center>
 		                </div>

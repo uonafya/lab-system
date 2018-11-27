@@ -16,6 +16,7 @@ class CreateDrWorksheetsTable extends Migration
         Schema::create('dr_worksheets', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('lab_id')->unsigned();
+            $table->integer('plate_id')->unsigned()->nullable()->index();
 
             // 1 is in process
             // 2 is tested, results uploaded awaiting approval
@@ -31,6 +32,11 @@ class CreateDrWorksheetsTable extends Migration
             $table->integer('uploadedby')->unsigned()->nullable();
             $table->integer('cancelledby')->unsigned()->nullable();
             $table->integer('createdby')->unsigned()->nullable();
+
+
+            $table->boolean('qc_pass')->default(0);
+            $table->boolean('qc_run')->default(0);
+            $table->boolean('plate_controls_pass')->default(0);
 
             $table->timestamps();
         });

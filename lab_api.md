@@ -16,11 +16,15 @@ All links are **POST** requests. All post requests are validated using a header 
 > - facility_code *The five digit MFL code*
 > - order_numbers *Either a single mrs order number or a comma separated list of mrs order numbers with no spaces.*
 > - location *AMRS location*
+> - dispatched *Boolean* When true, only samples that have been dispatched will be returned.
+
 > This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 
-- Post incomplete eid request [eid](http://lab.test.nascop.org/api/eid)
+
+For the links below, if the order number exists, it will not save it again.
+- Post incomplete eid request (EID order) [eid](http://lab.test.nascop.org/api/eid)
 - Post complete eid request [eid](http://lab.test.nascop.org/api/eid_complete)
-- Post incomplete vl request [vl](http://lab.test.nascop.org/api/vl)
+- Post incomplete vl request (Viralload order) [vl](http://lab.test.nascop.org/api/vl)
 - Post complete vl request [vl](http://lab.test.nascop.org/api/vl_complete)
 
 ---
@@ -30,7 +34,7 @@ For the last 4 links, the following fields are common to all
 > - patient_identifier  **required** (ccc_no for vl and hei number for eid)
 > - mflCode  **required**
 > - sex  **required** (1 for male, 2 for female, 3 for unknown)
-> - lab *If the lab is not filled it will be set to the lab where the sample is being sent*
+> - lab (This is the lab tested in.) *If the lab is not filled it will be set to the lab where the sample is being sent. It is however mandatory for complete requests.*
 
 ---
 The following fields are common to complete requests 

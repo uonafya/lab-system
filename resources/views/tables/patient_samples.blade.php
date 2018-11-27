@@ -32,6 +32,10 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
+                                    <?php
+                                        if(!$sample->batch) unset($sample->batch);
+                                    ?>
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
@@ -60,9 +64,13 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            @if($sample->batch->batch_complete == 1)
-                                                <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a>
+                                            {{--@if($sample->batch->batch_complete == 1)--}}
+                                            @if($sample->repeatt == 0)
+                                                <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a> |
                                             @endif
+
+                                            <a href="{{ url('/sample/' . $sample->id ) }}" target='_blank'>View</a> |
+                                            <a href="{{ url('/sample/' . $sample->id . '/edit' ) }}" target='_blank'>Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach

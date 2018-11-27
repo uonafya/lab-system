@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Cd4Patient;
+use App\Cd4Sample;
+use App\Lookup;
 use Illuminate\Http\Request;
 
 class Cd4PatientController extends Controller
@@ -83,6 +85,45 @@ class Cd4PatientController extends Controller
         //
     }
 
+    public function search_name(Request $request, $recordno=null) {
+        if($request->method() == "POST"){
+            $search = $request->input('search');
+            $patients = Cd4Patient::where('patient_name', 'like', '%'.$search.'%')->paginate(10);
+            
+            $patients->setPath(url()->current());
+            return $patients;
+        } else {
+            $patient = Cd4Patient::where('medicalrecordno', '=', $recordno)->first();
+            $samples = Cd4Sample::where('patient_id', '=', $patient->id)->orderBy('datecollected', 'desc')->get();
+
+            $data = Lookup::cd4_lookups();
+            $data['samples'] = $samples;
+            $data = (object) $data;
+            // dd($data);
+            return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
+        }
+        
+    }
+
+    public function search_record_no(Request $request, $recordno=null) {
+        if($request->method() == "POST"){
+            $search = $request->input('search');
+            $patients = Cd4Patient::where('medicalrecordno', 'like', '%'.$search.'%')->paginate(10);
+            
+            $patients->setPath(url()->current());
+            return $patients;
+        } else {
+            $patient = Cd4Patient::where('medicalrecordno', '=', $recordno)->first();
+            $samples = Cd4Sample::where('patient_id', '=', $patient->id)->orderBy('datecollected', 'desc')->get();
+
+            $data = Lookup::cd4_lookups();
+            $data['samples'] = $samples;
+            $data = (object) $data;
+            // dd($data);
+            return view('tables.cd4-samples', compact('data'))->with('pageTitle', 'Samples Summary');
+        }
+        
+    }
 
     public function new_patient(Request $request)
     {
