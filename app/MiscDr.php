@@ -38,6 +38,19 @@ class MiscDr extends Common
 			],
 		]);
 
+		$body = json_decode($response->getBody());
+
+		if($response->getStatusCode() < 400)
+		{
+			$worksheet->plate_id = $body->data->id;
+
+			foreach ($body->attributes->samples as $key => $value) {
+				$sample = DrSample::find($value->sample_name);
+				$sample->sanger_id = $value->id;
+				$sample->save();
+			}
+		}
+
 	}
 
 	public static function get_worksheet_files($worksheet)
@@ -62,6 +75,9 @@ class MiscDr extends Common
 					'sample_type' => 'data',
 				],
 			];
+
+			if($sample->control == 1) $s['attributes']['sample_type'] = 'negative';
+			if($sample->control == 2) $s['attributes']['sample_type'] = 'positive';
 
 			$abs = [];
 
