@@ -293,16 +293,19 @@ class Misc extends Common
 			if($sample->result == 2){
 				$message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
 			}
+            if($sample->result == 1){
+                $message = $sample->patient_name . "  Jambo, baby's results are ready. Remember to keep your appointment date! Thank you";
+            }
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+				$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
 			}
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+					$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
 				}
-				else{
-					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you"; 	
-				}
+				// else{
+				// 	$message = $sample->patient_name . " Jambo, baby's results are ready. Remember to keep your appointment date! Thank you"; 	
+				// }
 			}
 		}
 		// Kiswahili
@@ -311,15 +314,18 @@ class Misc extends Common
 				$message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
 			}
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
 			}
+            if($sample->result == 1){
+                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki, Asante";
+            }
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+					$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
 				}
-				else{
-					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-				}
+				// else{
+				// 	$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+				// }
 			}    			
 		}
 
@@ -348,7 +354,7 @@ class Misc extends Common
 		}
     }
 
-    public static function send_sms_person($sample, $tel)
+    /*public static function send_sms_person($sample, $tel)
     {
         // English
         if($sample->preferred_language == 1){
@@ -408,7 +414,7 @@ class Misc extends Common
             $s->time_result_sms_sent = date('Y-m-d H:i:s');
             $s->save();
         }
-    }
+    }*/
 
     public static function sms_test()
     {
