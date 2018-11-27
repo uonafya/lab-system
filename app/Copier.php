@@ -227,6 +227,7 @@ class Copier
 
                     if(!$patient->dob){
                         $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    }
 
                     $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
                     $patient->ccc_no = $value->enrollment_ccc_no;
