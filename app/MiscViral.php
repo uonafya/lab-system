@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Excel;
 
 use App\Common;
 use App\Viralsample;
@@ -19,8 +20,8 @@ class MiscViral extends Common
 
     protected $rcategories = [
         '0' => [],
-        '1' => ['Target Not Detected',  ],
-        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', ],
+        '1' => [],
+        '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
         '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
@@ -33,11 +34,11 @@ class MiscViral extends Common
         ],
         [
             'search_array' =>   ['< LDL copies/ml', '< LDL copies', 'Not Detected', '< LDL copies/ml', '<LDL copies/ml', '< LDL copies/ml', ' < LDL copies/ml', '< LDL'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Target Not Detected']
         ],
         [
             'search_array' =>  ['Less than 20 copies/ml', 'Less than Low Detectable Level'],
-            'update_array' => ['rcategory' => 2, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
+            'update_array' => ['rcategory' => 1, 'result' => '< LDL copies/ml', 'interpretation' => 'Less than 20 copies/ml']
         ],
         [
             'search_array' =>  ['REJECTED'],
@@ -80,6 +81,9 @@ class MiscViral extends Common
         $sample->fill($original->only($fields['sample_rerun']));
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
+
+        $s = Viralsample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
         
 		$sample->save();
 		return $sample;
@@ -91,12 +95,15 @@ class MiscViral extends Common
             $sample = Viralsample::find($batch_id);
             $batch_id = $sample->batch_id;
         }
+
+        Viralsample::where(['batch_id' => $batch_id, 'result' => 'Failed', 'repeatt' => 0])->update(['result' => 'Collect New Sample']);
+
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND approvedby IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
         }
 
 
@@ -108,6 +115,7 @@ class MiscViral extends Common
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
+            Viralsample::where('batch_id', $batch_id)->whereNull('repeatt')->update(['repeatt' => 0]);
             $b = \App\Viralbatch::find($batch_id);
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
@@ -227,16 +235,21 @@ class MiscViral extends Common
         return $samples;
     }
 
-    public static function sample_result($result, $error)
+    public static function sample_result($result, $error=null)
     {
         $str = strtolower($result);
+        $units="";
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '839', '150']))
+        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
         {
             $res= "< LDL copies/ml";
-            $interpretation= $result;
-            $units="";                        
+            $interpretation= $result;       
+        }
+        else if(str_contains($result, ['<']))
+        {
+            $res= "< LDL copies/ml";
+            $interpretation= $result;       
         }
 
         else if(str_contains($str, ['not detected']))
@@ -244,7 +257,6 @@ class MiscViral extends Common
             // $res="Target Not Detected";
             $res= "< LDL copies/ml";
             $interpretation=$result;
-            $units="";
         }
 
         // else if($result == 'Collect New Sample')
@@ -252,14 +264,25 @@ class MiscViral extends Common
         {
             $res= "Collect New Sample";
             $interpretation="Collect New Sample";
-            $units="";                         
         }
 
         else if($result == 'Failed' || $result == '' || str_contains($str, ['error']))
         {
             $res= "Failed";
-            $interpretation = $error;
-            $units="";                         
+            $interpretation = $error;       
+        }
+
+        else if (str_contains($str, ['log'])) 
+        {
+            $interpretation = $result;
+            if(str_contains($str, ['<'])){
+                $res= "< LDL copies/ml";
+            }
+            else{
+                $x = preg_replace("/[^<0-9.]/", "", $result);
+                $res = round(pow(10, $x));
+                $units="cp/mL";                 
+            }           
         }
 
         else{
@@ -271,28 +294,69 @@ class MiscViral extends Common
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
 
+    public static function correct_logs()
+    {
+        ini_set('memory_limit', -1);
+
+        $samples = Viralsample::where('interpretation', 'like', '%log%')->get();
+        $batches = [];
+
+        foreach ($samples as $sample) {
+            $result_array = self::sample_result($sample->interpretation, null);
+            $result = $result_array['result'];
+            $sample->result = $result;
+            $sample->pre_update();
+
+            if(!in_array($sample->batch_id, $batches)) $batches[] = $sample->batch_id;
+        }
+
+        foreach ($batches as $id) {
+            $batch = Viralbatch::find($id);
+            if($batch->batch_complete != 1) continue;
+
+            $datedispatched = Carbon::parse($batch->datedispatched);
+            $months = Carbon::now()->diffInMonths($datedispatched);
+
+            if($months < 5) self::dispatch_batch($batch, 'emails.eid_resend');
+        }
+    }
+
     public static function exponential_result($result)
     {
+        $units="";              
         if($result == 'Invalid'){
             $res= "Collect New Sample";
             $interpretation="Invalid";
-            $units="";              
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
             $res= "< LDL copies/ml";
             $interpretation= $result;
-            $units="";            
         }
-        else{
+        else if(str_contains($result, 'e+')){
             $a = explode('e+', $result);
             $u = explode(' ', $a[1]);
             $power = (int) $u[0];
-            $res = (int) $a[0] * (10**$power);
+            $res = $a[0] * (10**$power);
+            $res = (int) $res;
             $interpretation = $result;
             $units = $u[1] ?? 'cp/mL';
         }
+        else{
+            $res= "Failed";
+            $interpretation = $result;                
+        }
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+    }
+
+    public static function correct_exponential($worksheet_id)
+    {
+        $samples = Viralsample::where('worksheet_id', $worksheet_id)->where('result', '>', 1)->get();
+        foreach ($samples as $key => $sample) {
+            $r = self::exponential_result($sample->interpretation);
+            $sample->result = $r['result'];
+            $sample->pre_update();
+        }
     }
 
     
@@ -363,6 +427,21 @@ class MiscViral extends Common
         return $samples;
     }
 
+    public static function delete_empty_batches()
+    {
+        $batches = \App\Viralbatch::selectRaw("viralbatches.id, count(viralsamples.id) as mycount")
+                        ->leftJoin('viralsamples', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                        ->groupBy('viralbatches.id')
+                        ->having('mycount', 0)
+                        ->get();
+
+        // return $batches->count(); 
+
+        foreach ($batches as $key => $batch) {
+            $batch->delete();
+        }
+    }
+
 
 
     public function set_justification($justification = null)
@@ -400,8 +479,9 @@ class MiscViral extends Common
         }
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
+        if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
         $data = $this->get_rcategory($result);
-        // if(!isset($data['rcategory'])) dd($result);
+        if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
         return $data;
     }
@@ -436,7 +516,8 @@ class MiscViral extends Common
 
         foreach ($samples as $sample) {
             $data = $sample->only(['patient_id', 'datereceived', 'result', 'rcategory']);
-            if($sample->age < 19){
+            if($sample->age < 10) continue;
+            else if($sample->age < 19){
                 $pat = new DrPatient;
                 $pat->fill($data);
                 $pat->dr_reason_id = 2;
@@ -593,6 +674,79 @@ class MiscViral extends Common
         }
     }
 
+    public static function send_sms_person($sample, $tel)
+    {
+        // English
+        if($sample->preferred_language == 1){
+            if($sample->rcategory == 1 || $sample->rcategory == 2){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
+                }
+            }
+            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Your VL results are ready. Please visit the health facility as soon as you can.";                        
+                }
+            }
+            else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you.";
+            }
+        }
+        // Kiswahili
+        else{
+            if($sample->rcategory == 1 || $sample->rcategory == 2){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
+                }
+            }
+            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+                if($sample->age > 15 && $sample->age < 24){
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
+                }
+                else{
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                }
+            }
+            else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
+                $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+            }             
+        }
+
+        if(!$message){
+            print_r($sample);
+            die();
+            return;
+        }
+
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $tel,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        if($response->getStatusCode() == 201){
+            // $s = Viralsample::find($sample->id);
+            // $s->time_result_sms_sent = date('Y-m-d H:i:s');
+            // $s->save();
+        }
+    }
+
     public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null)
     {
         $machines = Lookup::get_machines();
@@ -606,9 +760,11 @@ class MiscViral extends Common
         // session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
 
         $limit = $machine->vl_limit;
-        if($calibration) $limit = $machine->vl_calibration_limit;
 
         if($temp_limit) $limit = $temp_limit;
+
+        // if($calibration) $limit = $machine->vl_calibration_limit;
+        // if($calibration) $limit = $temp_limit - 11;
         
         $year = date('Y') - 1;
         if(date('m') < 7) $year --;
@@ -654,7 +810,7 @@ class MiscViral extends Common
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw("(result IS NULL OR result='0')")
             ->orderBy('isnull', 'asc')
-            ->orderBy('highpriority', 'asc')
+            ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('viralsamples_view.id', 'asc')
@@ -666,9 +822,10 @@ class MiscViral extends Common
 
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
+        if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-            'count' => $count,
+            'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];
@@ -678,7 +835,7 @@ class MiscViral extends Common
     public static function send_to_mlab()
     {
         ini_set('memory_limit', "-1");
-        $min_date = date('Y-m-d', strtotime('-1 years'));
+        $min_date = date('Y-m-d', strtotime('-1 month'));
         $batches = \App\Viralbatch::join('facilitys', 'viralbatches.facility_id', '=', 'facilitys.id')
                 ->select("viralbatches.*")
                 ->with(['facility'])
@@ -731,6 +888,209 @@ class MiscViral extends Common
             $batch->sent_to_mlab = 1;
             $batch->save();
             // break;
+        }
+    }
+
+    public static function dump_worksheet($worksheet_id)
+    {
+        $samples = ViralsampleView::where('worksheet_id', $worksheet_id)->get();
+
+        $data = [];
+        $failed = [];
+
+        foreach ($samples as $key => $sample) {
+            $res = strtolower($sample->result);
+            if(str_contains($res, ['ldl', 'target'])) $res = 0.01;
+            $row = [
+                'Specimen Lab ID' => $sample->id,
+                'IP Code' => $sample->patient,
+                'Name' => $sample->facilityname,
+                'Facility Code' => $sample->facilitycode,
+                'Gender' => $sample->gender,
+                'DOB' => $sample->dob,
+                'Age' => $sample->age,
+                'Sample Type' => $sample->sampletype,
+                'Date Collected' => $sample->datecollected,
+                'Prophylaxis' => $sample->prophylaxis,
+                'Current ART Start Date' => $sample->dateinitiatedonregimen,
+                'Initiation Date' => $sample->initiation_date,
+                'Justification' => $sample->justification,
+                'Date Received' => $sample->datereceived,
+                'Date Run' => $sample->datetested,
+                'Result' => $sample->interpretation,
+                'Interpretation (Final Result)' => $sample->result,
+                'Final Result (for IQC Upload)' => $res,
+            ];
+
+            if(env('APP_LAB') == 8){
+                $row['Specimen Lab ID'] = $sample->label_id;
+            }
+
+            if(str_contains($res, ['failed', 'collect'])){
+                $failed[] = $row;
+                continue;
+            }
+            $data[] = $row;
+        }
+
+        foreach ($failed as $row) {
+            $data[] = $row;
+        }
+
+        $filename = $worksheet_id;
+
+        if(file_exists($filename)) unlink($filename);
+
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
+    }
+
+    public static function find_no_result()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::whereNotNull('interpretation')->whereRaw("(result is null or result = '')")->get();
+
+        $cutoff = Carbon::parse('2018-11-01');
+
+        foreach ($samples as $sample) {
+            $data = self::sample_result($sample->interpretation);
+            $sample->fill($data);
+            if($sample->result != '' || $sample->result != 'Invalid' || $sample->result != 'Failed' || $sample->result != 'Collect New Sample'){
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+            else{
+                $datetested = Carbon::parse($sample->datetested);
+
+                if($cutoff->greaterThan($datetested)){
+
+                    $sample->result = "Collect New Sample";
+                    $sample->labcomment = "Failed Test";
+                    $sample->repeatt = 0;
+                    $sample->save();
+
+                }
+                else{
+                    $sample->repeatt = 1;
+                    $sample->save();
+                    self::save_repeat($sample->id);   
+                }
+            }
+        }
+    }
+
+    public static function find_no_reruns()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = ViralsampleView::where(['repeatt' => 1])->whereNull('datedispatched')
+                        ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
+                        ->get();
+
+        foreach ($samples as $s) {
+
+            $sample = Viralsample::find($s->id);
+            if($sample->has_rerun) continue;
+
+            if($sample->result == 'Failed' || $sample->result == 'Invalid'){
+                $sample->interpretation = $sample->result;
+                $sample->result = "Collect New Sample";
+                $sample->labcomment = "Failed Test";
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+        }
+    } 
+
+    public static function find_not()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::where(['worksheet_id' => 148])->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->result = "Collect New Sample";
+            $sample->labcomment = "Failed Test";
+            $sample->repeatt = 0;
+            $sample->save();
+        }
+    }
+
+    public static function find_not_dispatched()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = ViralsampleView::where(['worksheet_id' => 148])->whereNull('datedispatched')
+                        ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
+                        ->get();
+
+        foreach ($samples as $s) {
+
+            $sample = Viralsample::find($s->id);
+            if($sample->has_rerun) continue;
+
+            if($sample->result == 'Failed' || $sample->result == 'Invalid'){
+                $sample->interpretation = $sample->result;
+                $sample->result = "Collect New Sample";
+                $sample->labcomment = "Failed Test";
+                $sample->repeatt = 0;
+                $sample->save();
+            }
+        }
+    } 
+
+    public static function nyumbani()
+    {
+        ini_set("memory_limit", "-1");
+
+        $samples = ViralsampleView::where(['datedispatched' => '2018-11-14', 'datetested' => '2018-11-14'])->get();
+
+        foreach ($samples as $key => $s) {
+            // $sample = Viralsample::find($s->id);
+            // $worksheet = $sample->worksheet;
+            $worksheet = Viralworksheet::find($s->worksheet_id);
+
+            if(strtotime($worksheet->created_at) < strtotime('2018-11-12') && $worksheet->dateuploaded == '2018-11-14'){
+                $worksheet->datereviewed = $worksheet->daterun = date('Y-m-d', strtotime($worksheet->created_at . ' +1day'));
+                $worksheet->save();
+
+                $viralsamples = $worksheet->sample;
+
+                foreach ($viralsamples as $sample) {
+                    $sample->datetested = $sample->dateapproved = $worksheet->daterun;
+                    $sample->pre_update();
+
+                    $batch = $sample->batch;
+                    $batch->datedispatched = $worksheet->daterun;
+                    $batch->pre_update();
+                }
+            }
+        }
+    }
+
+    public static function nyumba()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-14'])->where('datereceived', '<', '2018-11-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +2days'));
+            $batch->pre_update();
+        }
+    }
+
+    public static function nyumba2()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-21'])->get();
+
+        foreach ($batches as $key => $batch) {
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +6days'));
+            $batch->pre_update();
         }
     }
     

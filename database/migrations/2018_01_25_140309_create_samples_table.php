@@ -21,7 +21,7 @@ class CreateSamplesTable extends Migration
             $table->double('batch_id', 14, 2)->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
-            $table->string('order_no', 30)->nullable();
+            $table->string('order_no', 30)->nullable()->index();
             $table->string('sample_type', 30)->nullable();
 
 
@@ -52,7 +52,7 @@ class CreateSamplesTable extends Migration
             $table->tinyInteger('flag')->unsigned()->default(1)->nullable();
             $table->tinyInteger('run')->unsigned()->default(1)->nullable();
             $table->tinyInteger('repeatt')->unsigned()->default(0)->nullable();
-            $table->tinyInteger('eqa')->unsigned()->default(0);
+            $table->tinyInteger('eqa')->unsigned()->default(0)->nullable();
 
             $table->integer('approvedby')->unsigned()->nullable();
             $table->integer('approvedby2')->unsigned()->nullable();

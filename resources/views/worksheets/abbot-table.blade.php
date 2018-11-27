@@ -116,12 +116,36 @@ width:1180px;
 		<table border="0" class="data-table">
 
 			<tr>
-				@php $count = 0; @endphp
+				<?php 
+					$count = 0;
+					if($vl){
+						echo "<td align='center' > NC </td><td align='center' > LPC </td><td  align='center' > HPC </td>";
+						$count += 3; 
+						if($worksheet->calibration){
+							echo "
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal A </td> 
+								<td align='center' > Cal B </td>
+							 </tr>
+							 <tr>
+								<td align='center' > Cal B </td>
+								<td align='center' > Cal B </td>
+								<td align='center' > Cal B </td>							 
+							  ";
+						}
+					}
+					else{
+						echo "<td align='center' > PC </td><td  align='center' > NC </td>";
+						$count += 2; 
+					}
+				?>
 
 
 				@foreach($samples->where('parentid', '!=', 0) as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample])
+					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@php $count++; @endphp
 
@@ -133,7 +157,7 @@ width:1180px;
 
 				@foreach($samples->where('parentid', 0) as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample])
+					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@php $count++; @endphp
 
@@ -142,27 +166,27 @@ width:1180px;
 					@endif
 				@endforeach
 
-				@if($vl)
-					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+				{{--@if($vl)
+					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
 				@else
-					<td align=center > PC </td><td  align=center > NC </td>
-				@endif
+					<td align='center' > PC </td><td  align='center' > NC </td>
+				@endif--}}
 			</tr>
 
 			
-			@if($worksheet->calibration)
+			{{--@if($worksheet->calibration)
 				<tr>
-					<td align=center > Cal A </td>
-					<td align=center > Cal A </td>
-					<td align=center > Cal A </td>
-					<td align=center > Cal A </td>
-					<td align=center > Cal B </td>
-					<td align=center > Cal B </td>
-					<td align=center > Cal B </td>
-					<td align=center > Cal B </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal A </td>
+					<td align='center' > Cal B </td>
+					<td align='center' > Cal B </td>
+					<td align='center' > Cal B </td>
+					<td align='center' > Cal B </td>
 				</tr>
 
-			@endif
+			@endif--}}
 				
 		</table>
 	</div>

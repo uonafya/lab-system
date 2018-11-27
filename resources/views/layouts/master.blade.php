@@ -107,12 +107,14 @@
                             </button>
                         </div>
                     </div>
-                        @if(Auth()->user()->user_type_id < 2)
-                        <div class="col-md-1">
-                            <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
-                                Switch to DR
-                            </button>
-                        </div>
+                        @if(env('APP_LAB') == 1)
+                            @if(Auth()->user()->user_type_id < 2)
+                            <div class="col-md-1">
+                                <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
+                                    Switch to DR
+                                </button>
+                            </div>
+                            @endif
                         @endif
                     @endif
                 </div>
@@ -189,7 +191,8 @@
         if(current != ''){
             if(current == 'DR') { test = 'EID';text = '<strong>DRUG RESISTANCE</strong>'; } 
             else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
-            else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; }
+            else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
+            else if (current == 'CD4'){ test = 'EID'; text = '<strong>CD4</strong>'; }
 
             if(current == 'DR'){
                 $("#drswitch").hide();
@@ -209,6 +212,12 @@
 
         $("#drswitch").click(function(){
             $.get("<?= url('sysswitch/DR'); ?>", function(data){
+                location.replace("<?= url('home'); ?>");
+            });
+        });
+
+        $("#cd4Switch").click(function(){
+            $.get("<?= url('sysswitch/CD4'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });

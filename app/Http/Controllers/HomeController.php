@@ -34,7 +34,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if (auth()->user()->user_type_id == 0 || auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
+        $user = auth()->user();
+        if(auth()->user()->user_type_id == 5){
+            session(['toast_message' => 'Please make sure that your contact information is up to date.']);
+            return redirect("/facility/{$user->facility_id}/edit");
+        }
+        else if (auth()->user()->user_type_id == 0 || auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) {
             self::cacher();
             $chart = $this->getHomeGraph();
             $week_chart = $this->getHomeGraph('week');
@@ -43,13 +48,7 @@ class HomeController extends Controller
             return view('home.home', ['chart'=>$chart, 'week_chart' => $week_chart, 'month_chart' => $month_chart])->with('pageTitle', 'Home');
         } else if(auth()->user()->user_type_id == 2) {
             $data = ['eid_samples' =>[], 'vl_samples' =>[], 'eid_batches' => [], 'vl_batches' => [], 'eid_worksheets' => [], 'vl_worksheets' => []];
-            // $users = User::selectRaw("IF(date(last_access) = curdate(), 'today', 'another_day') as `latest_access` ,count(IF(date(last_access) = curdate(), 'today', 'another_day')) as `user_count`")
-            //             ->where('user_type_id', '<>', 5)->whereNull('deleted_at')
-            //             ->groupBy('latest_access')->get();
-            // foreach ($users as $key => $value) {
-            //     $data['users'][$value->latest_access] = $value->user_count;
-            // }
-            // Samples values
+            
             $samples = SampleView::selectRaw("IF(site_entry = 1, 'site', 'lab') as `entered_at`, count(*) as `samples_logged`")->whereRaw("DATE(created_at) = CURDATE()")->groupBy()->get();
             if(!$samples->isEmpty()) {
                 foreach ($samples as $key => $value) {
@@ -414,6 +413,14 @@ class HomeController extends Controller
             ->whereRaw("(name like '%" . $search . "%')")
             ->paginate(10);
         return $county;
+    }
+
+    public function partnersearch(Request $request) {
+        $search =  $request->input('search');
+        $partner = DB::table('partners')->select('id', 'name')
+            ->whereRaw("(name like '%" . $search . "%')")
+            ->paginate(10);
+        return $partner;
     }
 
     public function download($type = 'EID')

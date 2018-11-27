@@ -52,16 +52,16 @@ class TaskController extends Controller
 
     public function addKitDeliveries(Request $request)
     {
-        $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
-        $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+        $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+        $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
 
         if ($request->saveTaqman) {
-            $receivedby = $request->receivedby;
-            $datereceived = $request->datereceived;
-            $vreceivedby = $request->vreceivedby;
-            $vdatereceived = $request->vdatereceived;
+            $receivedby = $request->receivedby ?? NULL;
+            $datereceived = $request->datereceived ?? NULL;
+            $vreceivedby = $request->vreceivedby ?? NULL;
+            $vdatereceived = $request->vdatereceived ?? NULL;
             $lab = auth()->user()->lab_id;
-            $quarter = $request->quarter;
+            $quarter = $request->quarter ?? NULL;
             $status = 1;
             $source = 3;
             $year = date('Y');
@@ -100,10 +100,10 @@ class TaskController extends Controller
                 return redirect()->route('pending');
         } else if ($request->saveAbbott) {
             // dd($request->all());
-            $receivedby = $request->areceivedby;
-            $datereceived = $request->adatereceived;
-            $vreceivedby = $request->vareceivedby;
-            $vdatereceived = $request->vadatereceived;
+            $receivedby = $request->areceivedby ?? NULL;
+            $datereceived = $request->adatereceived ?? NULL;
+            $vreceivedby = $request->vareceivedby ?? NULL;
+            $vdatereceived = $request->vadatereceived ?? NULL;
             $lab = auth()->user()->lab_id;
             $quarter = $request->quarter;
             $status = 1;
@@ -171,7 +171,7 @@ class TaskController extends Controller
                         'taqmandeliveries' => $taqdeliveries,
                         'abbottdeliveries' => $abbottdeliveries
                     ];
-                
+        // dd($data); 
         return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
     }
 

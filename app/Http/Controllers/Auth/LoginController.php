@@ -118,15 +118,29 @@ class LoginController extends Controller
         }
 
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
-        if(!$facility){
-            session(['testingSystem' => 'EID']);
-            $tasks = $this->pendingTasks();
-            
-            if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
-                session(['pendingTasks' => true]);
-                return '/pending';
+        session(['testingSystem' => 'EID']);
+        if (env('APP_LAB') == 4) {
+            if(!($facility || $user->user_type_id == 4)){
+                $tasks = $this->pendingTasks();
+                
+                if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
+                    session(['pendingTasks' => true]);
+                    return '/pending';
+                }
+            }
+        } else {
+            if(!$facility){
+                $tasks = $this->pendingTasks();
+                
+                if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
+                    session(['pendingTasks' => true]);
+                    return '/pending';
+                }
             }
         }
+
+        if(env('APP_LAB') == 8 || env('APP_LAB') == 9) session(['testingSystem' => 'Viralload']);
+        
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
 
         $batch = Batch::editing()->withCount(['sample'])->get()->first();
@@ -154,7 +168,10 @@ class LoginController extends Controller
                 return '/viralsample/create';
             }
         }
-        if($facility) return '/sample/create';
+        if($facility){
+            session(['toast_message' => 'Please make sure that your contact information is up to date.']);
+            return "/facility/{$user->facility_id}/edit";
+        }
         return '/home';        
     }
 }

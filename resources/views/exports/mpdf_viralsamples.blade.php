@@ -52,7 +52,12 @@ p.breakhere {page-break-before: always}
 		@continue($sample->repeatt == 1)
 		<?php 
 			$count++;
+			if(!isset($current_batch)) $current_batch = $sample->batch_id;
 			if(!$sample->batch) unset($sample->batch);
+			if($sample->batch_id != $current_batch){
+				echo "<p class='breakhere'></p> <pagebreak sheet-size='A4'>";
+				$current_batch = $sample->batch_id;
+			}
 		 ?>
 		<table  id="table1" align="center">
 			<tr>
@@ -378,11 +383,19 @@ p.breakhere {page-break-before: always}
 
 		</table>
 
-		<span class="style8" > 
-			If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
-			<br> 
-			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
-		</span>
+		@if($sample->batch->site_entry != 2)
+
+			<span class="style8" > 
+				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
+				<br> 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@else
+			<span class="style8" > 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+		@endif
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>

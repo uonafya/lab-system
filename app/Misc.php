@@ -81,6 +81,9 @@ class Misc extends Common
 		$sample->fill($original->only($fields['sample_rerun']));
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
+
+        $s = Sample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
 		
 		$sample->save();
 		return $sample;
@@ -94,10 +97,10 @@ class Misc extends Common
 		}
 		$double_approval = \App\Lookup::$double_approval; 
 		if(in_array(env('APP_LAB'), $double_approval)){
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
 		}
 		else{
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND repeatt = 0 AND approvedby IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
 		}
 		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
 		$tests = Sample::where('batch_id', $batch_id)
@@ -106,6 +109,7 @@ class Misc extends Common
 		->count();
 
 		if($total == $tests){
+            Sample::where('batch_id', $batch_id)->whereNull('repeatt')->update(['repeatt' => 0]);
             $b = \App\Batch::find($batch_id);
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
@@ -237,6 +241,35 @@ class Misc extends Common
         return $samples;
     }
 
+    public static function clean_dob()
+    {
+    	$samples = Sample::where('age', '>', 36)->with(['patient'])->get();
+
+    	foreach ($samples as $sample) {
+    		// $patient = $sample->patient;
+    		// $patient->dob = null;
+    		// $patient->pre_update();
+
+    		$sample->age=0;
+    		$sample->pre_update();
+    	}
+    }
+
+    public static function delete_empty_batches()
+    {
+    	$batches = \App\Batch::selectRaw("batches.id, count(samples.id) as mycount")
+    					->leftJoin('samples', 'samples.batch_id', '=', 'batches.id')
+    					->groupBy('batches.id')
+    					->having('mycount', 0)
+    					->get();
+
+    	// return $batches->count();
+
+    	foreach ($batches as $key => $batch) {
+    		$batch->delete();
+    	}
+    }
+
     public static function patient_sms()
     {
         ini_set("memory_limit", "-1");
@@ -260,16 +293,19 @@ class Misc extends Common
 			if($sample->result == 2){
 				$message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
 			}
+            if($sample->result == 1){
+                $message = $sample->patient_name . "  Jambo, baby's results are ready. Remember to keep your appointment date! Thank you";
+            }
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+				$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
 			}
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+					$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
 				}
-				else{
-					$message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you"; 	
-				}
+				// else{
+				// 	$message = $sample->patient_name . " Jambo, baby's results are ready. Remember to keep your appointment date! Thank you"; 	
+				// }
 			}
 		}
 		// Kiswahili
@@ -278,15 +314,18 @@ class Misc extends Common
 				$message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
 			}
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
 			}
+            if($sample->result == 1){
+                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki, Asante";
+            }
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+					$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
 				}
-				else{
-					$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-				}
+				// else{
+				// 	$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+				// }
 			}    			
 		}
 
@@ -315,6 +354,68 @@ class Misc extends Common
 		}
     }
 
+    /*public static function send_sms_person($sample, $tel)
+    {
+        // English
+        if($sample->preferred_language == 1){
+            if($sample->result == 2){
+                $message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
+            }
+            else if($sample->result == 3 || $sample->result == 5){
+                $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+            }
+            else{
+                if($sample->receivedstatus == 2){
+                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
+                }
+                else{
+                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";  
+                }
+            }
+        }
+        // Kiswahili
+        else{
+            if($sample->result == 2){
+                $message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
+            }
+            else if($sample->result == 3 || $sample->result == 5){
+                $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+            }
+            else{
+                if($sample->receivedstatus == 2){
+                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+                }
+                else{
+                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
+                }
+            }               
+        }
+
+        if(!$message){
+            print_r($sample);
+            return;
+        }
+
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $sample->patient_phone_no,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        if($response->getStatusCode() == 201){
+            $s = Sample::find($sample->id);
+            $s->time_result_sms_sent = date('Y-m-d H:i:s');
+            $s->save();
+        }
+    }*/
+
     public static function sms_test()
     {
         $client = new Client(['base_uri' => self::$sms_url]);
@@ -328,12 +429,31 @@ class Misc extends Common
 				'recipient' => '254702266217',
 				'message' => 'This is a successful test.',
 			],
-
 		]);
 
 		$body = json_decode($response->getBody());
 		echo 'Status code is ' . $response->getStatusCode();
 		// dd($body);
+    }
+
+    public static function sms_random($number, $message)
+    {
+        $client = new Client(['base_uri' => self::$sms_url]);
+
+        $response = $client->request('post', '', [
+            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+            'debug' => true,
+            'http_errors' => false,
+            'json' => [
+                'sender' => env('SMS_SENDER_ID'),
+                'recipient' => $number,
+                'message' => $message,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        echo 'Status code is ' . $response->getStatusCode();
+        // dd($body);
     }
 
     public static function get_worksheet_samples($machine_type, $temp_limit=null)
@@ -397,9 +517,10 @@ class Misc extends Common
 
         $create = false;
         if($count == $machine->eid_limit) $create = true;
+        if($temp_limit && $count == $temp_limit) $create = true;
 
         return [
-        	'count' => $count,
+        	'count' => $count, 'limit' => $temp_limit,
             'create' => $create, 'machine_type' => $machine_type, 'machine' => $machine, 'samples' => $samples
         ];
 
@@ -408,7 +529,7 @@ class Misc extends Common
     public static function send_to_mlab()
     {
     	ini_set('memory_limit', "-1");
-		$min_date = date('Y-m-d', strtotime('-1 years'));
+        $min_date = date('Y-m-d', strtotime('-1 month'));
     	$batches = \App\Batch::join('facilitys', 'batches.facility_id', '=', 'facilitys.id')
     			->select("batches.*")
     			->with(['facility'])

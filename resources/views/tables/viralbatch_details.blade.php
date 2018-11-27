@@ -80,6 +80,15 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
+                            @if($batch->site_entry == 1 && (!$batch->datereceived || 
+                            ($batch->datereceived && $samples->where('receivedstatus', null)->first())
+                            ) )
+                                <div class="col-md-4">
+                                    <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Approve Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('viralbatch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
@@ -120,12 +129,13 @@
                                 </tr>
                             </thead>
                             <tbody> 
+                                <?php $i=1; ?>
                                 @foreach($samples as $key => $sample)
                                     @continue($sample->repeatt == 1)
                                     <tr>
-                                        <td> {{ $key+1 }} </td>
+                                        <td> {{ $i++ }} </td>
                                         <td> {{ $sample->id }} </td>
-                                        <td> {{ $sample->patient->patient }} </td>
+                                        <td>  {!! $sample->patient->hyperlink !!} </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
@@ -144,7 +154,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td>{{ $sample->worksheet_id }} </td>
+                                        <td>{!! $sample->get_link('worksheet_id') !!} </td>
                                         <td>
                                             @foreach($prophylaxis as $proph)
                                                 @if($sample->prophylaxis == $proph->id)
@@ -160,12 +170,21 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td> {{ $sample->result }} </td>
+                                        <td> {{ $sample->result }}  
+                                            @if(is_numeric($sample->result))
+                                                {{ $sample->units }}
+                                            @endif
+                                        </td>
                                         <td>
+                                            @if(auth()->user()->user_type_id != 5 && $batch->batch_complete == 0 && env('APP_LAB') == 3 && !$sample->worksheet_id && $sample->receivedstatus == 1 && (($sample->sample_received_by && $sample->sample_received_by != auth()->user()->id) || 
+                                            (!$sample->sample_received_by && $batch->received_by != auth()->user()->id) ))
+                                                <a href="{{ url('/sample/transfer/' . $sample->id ) }}">Transfer To My Account</a> |
+                                            @endif
+                                            
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
-                                            <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
+                                            <a href="{{ url('/viralsample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                             {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}

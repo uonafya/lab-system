@@ -13,8 +13,9 @@ class Lookup
 
     public static $double_approval = [2, 4, 5];
     public static $amrs = [3, 5];
-    public static $worksheet_received = [1, 3];
-    public static $sms = [1, 4];
+    // public static $worksheet_received = [1, 3];
+    public static $worksheet_received = [1];
+    public static $sms = [1, 2, 3, 4, 5, 6, 7, 8, 9 ];
 
     public static $api_data = ['s.id', 's.order_no', 'p.patient', 's.provider_identifier', 'f.facilitycode', 's.amrs_location', 'p.patient_name', 's.datecollected', 'b.datereceived', 's.datetested', 's.interpretation', 's.result', 'b.datedispatched', 'b.batch_complete', 's.receivedstatus', 's.approvedby', 's.repeatt'];
 
@@ -31,7 +32,39 @@ class Lookup
         if(!$value) return null;
 
         try {
+            $d = date('Y-m-d', strtotime($value));
+            if($d != '1970-01-01') return $d;
+        } catch (Exception $e) {
+            
+        }
+
+        try {
+            $d = Carbon::createFromFormat('d/m/Y', $value);
+            return $d->toDateString();            
+        } catch (Exception $e) {
+            
+        }
+
+        try {
             $d = Carbon::createFromFormat('m/d/Y', $value);
+            return $d->toDateString();
+        } catch (Exception $e) {
+            try {
+                $d = Carbon::createFromFormat('m/d/y', $value);
+                return $d->toDateString();                
+            } catch (Exception $ee) {
+                return null;
+            }
+            return null;
+        }        
+    }
+
+    public static function normal_date($value)
+    {
+        if(!$value) return null;
+
+        try {
+            $d = Carbon::parse($value);
             return $d->toDateString();
         } catch (Exception $e) {
             try {
@@ -48,11 +81,11 @@ class Lookup
     {
         $value = trim($value);
         $value = strtolower($value);
-        if(str_contains($value, ['m', '1'])){
-            return 1;
-        }
-        else if(str_contains($value, ['f', '2'])){
+        if(str_contains($value, ['f', '2'])){
             return 2;
+        }
+        else if(str_contains($value, ['m', '1'])){
+            return 1;
         }
         else{
             return 3;
@@ -98,6 +131,17 @@ class Lookup
         ];
     }
 
+    public static function get_rejected_reason($test, $rejectedreason)
+    {
+        self::cacher();
+
+        if($test == 1) $reasons = Cache::get('rejected_reasons');
+        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+
+        return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
+    }
+
     public static function facility_mfl($mfl)
     {
         // self::cacher(); 
@@ -126,6 +170,22 @@ class Lookup
     {
         self::cacher();
         return Cache::get('facilities');
+    }
+
+    public static function get_result($res)
+    {
+        self::cacher();
+        $results = Cache::get('results');
+
+        return $results->where('id', $res)->first()->name ?? '';
+    }
+
+    public static function get_cd4_status($id)
+    {
+        self::cacher();
+        $statuses = Cache::get('cd4sample_statuses');
+
+        return $statuses->where('id', $id)->first()->name ?? '';
     }
 
     public static function worksheet_lookups()
@@ -168,6 +228,16 @@ class Lookup
         ];
     }
 
+    public static function cd4_lookups()
+    {
+        self::cacher();
+        return [
+                'rejected_reasons' => Cache::get('cd4rejected_reasons'),
+                'sample_statuses' => Cache::get('cd4sample_statuses'),
+                'received_statuses' => Cache::get('received_statuses'),
+            ];
+    }
+
 	public static function samples_form()
 	{
         self::cacher();
@@ -193,6 +263,19 @@ class Lookup
             'sms' => self::$sms,
         ];
 	}
+
+    public static function cd4sample_form()
+    {
+        self::cacher();
+
+        return [
+                'rejectedreasons' => Cache::get('cd4rejected_reasons'),
+                'receivedstatuses' => Cache::get('received_statuses'),
+                'amrs_locations' => Cache::get('amrs_locations'),
+                'genders' => Cache::get('genders'),
+                'samplestatus' => Cache::get('cd4sample_statuses')
+            ];
+    }
 
     public static function calculate_age($date_collected, $dob)
     {
@@ -232,9 +315,10 @@ class Lookup
     public static function eid_intervention($val)
     {
         self::cacher();       
-        $my_array = Cache::get('interventions');       
-        return $my_array->where('rank', $val)->first()->id ?? 7;
-    }  
+        $my_array = Cache::get('interventions');   
+        if(is_numeric($val)) return $my_array->where('rank', $val)->first()->id ?? 7;   
+        return $my_array->where('alias', $val)->first()->id ?? 7;
+    } 
 
     public static function samples_arrays()
     {
@@ -421,6 +505,12 @@ class Lookup
             $arv_toxicities = DB::table('arv_toxicities')->get();
             $other_medications = DB::table('other_medications')->get();
 
+            if(env('APP_LAB') == 5) {
+                // CD4 Lookup Data
+                $cd4rejected_reasons = DB::table('cd4rejectedreasons')->get();
+                $cd4sample_statuses = DB::table('samplestatus')->get();
+            }
+            
 
             $partners = DB::table('partners')->get();
             $subcounties = DB::table('districts')->get();
@@ -465,7 +555,12 @@ class Lookup
             Cache::put('arv_toxicities', $arv_toxicities, 60);
             Cache::put('other_medications', $other_medications, 60);
 
-
+            if(env('APP_LAB') == 5) {
+                // CD4 Lookup Data
+                Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
+                Cache::put('cd4sample_statuses', $cd4sample_statuses, 60);
+            }
+            
             Cache::put('partners', $partners, 60);
             Cache::put('subcounties', $subcounties, 60);
         }		
@@ -509,6 +604,11 @@ class Lookup
         Cache::forget('clinical_indications');
         Cache::forget('arv_toxicities');
         Cache::forget('other_medications');
+
+        if(env('APP_LAB') == 5) {
+            // CD4 Lookup Data
+            Cache::forget('cd4rejected_reasons');
+        }
 
         Cache::forget('partners');
         Cache::forget('subcounties');

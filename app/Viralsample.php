@@ -97,6 +97,31 @@ class Viralsample extends BaseModel
                 ->get();
         $this->previous_tests = $samples;
     }
+
+    public function remove_reruns()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete();
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function remove_after_reruns()
+    {
+        $parent = $this->parent;
+        $children = $parent->child;
+
+        foreach ($children as $s) {
+            if($s->run > $this->run) $s->delete();            
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
     
 
     /**
@@ -138,6 +163,26 @@ class Viralsample extends BaseModel
     }
 
     /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\Viralsample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
+    }
+
+
+    /**
      * Get the sample's result comment
      *
      * @return string
@@ -163,8 +208,16 @@ class Viralsample extends BaseModel
             else if(str_contains($interpretation, ['20'])){
                 $str .= "( Roche Plasma  &lt;20 copies/ml )";
             }
+            else if(str_contains($interpretation, ['Titer', 'titer'])){
+                $str .= "( C8800 Plasma  &lt;20 copies/ml )";
+            }
             else if(str_contains($interpretation, ['30'])){
                 $str .= "( Pantha Plasma  &lt;30 copies/ml )";
+            }
+            else if(str_contains($interpretation, ['log']) && str_contains($interpretation, ['<'])){
+                $x = preg_replace("/[^<0-9.]/", "", $interpretation);
+                $n = round(pow(10, $x));
+                $str .= "( &lt;{$n} copies/ml )";
             }
             else{
                 $n = preg_replace("/[^<0-9]/", "", $interpretation);

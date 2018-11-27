@@ -77,6 +77,33 @@ class FacilityController extends Controller
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities With Contacts');
     }
 
+    public function lab()
+    {
+        $facilities = ViewFacility::join('batches', 'batches.facility_id', '=', 'view_facilitys.id')
+                                    ->join('viralbatches', 'viralbatches.facility_id', '=', 'view_facilitys.id')
+                                    ->selectRaw("distinct view_facilitys.id, view_facilitys.name, view_facilitys.facilitycode, view_facilitys.county, view_facilitys.subcounty, view_facilitys.email, view_facilitys.telephone, view_facilitys.telephone2")->get();
+        $table = '';
+        foreach ($facilities as $key => $facility) {
+            if ((!isset($facility->email) || $facility->email == '') || (!isset($facility->telephone) || $facility->telephone == '') || (!isset($facility->telephone2) || $facility->telephone2 == '')){
+                $contact = "<span class='label label-danger'>Unavailable</span>";
+            } else {
+                $contact = "<span class='label label-success'>Contact</span>";
+            }
+            $table .= '<tr>';
+            $table .= '<td>'.$facility->facilitycode.'</td>';
+            $table .= '<td>'.$facility->name.'</td>';
+            $table .= '<td>'.$facility->county.'</td>';
+            $table .= '<td>'.$facility->subcounty.'</td>';
+            $table .= '<td>'.$facility->email.'</td>';
+            $table .= '<td>'.$facility->telephone.'</td>';
+            $table .= '<td>'.$facility->telephone2.'</td>';
+            $table .= '<td>'.$contact.'</td>';
+            $table .= '</tr>';
+        }
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available']);
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilites Sending Samples');
+    }
+
     public function served()
     {
         /*$facilities = DB::table('facilitys')
@@ -224,6 +251,7 @@ class FacilityController extends Controller
      */
     public function create()
     {
+        $this->auth_user([2]);
         $facilitytype = DB::table('facilitytype')->get();
         $districts = DB::table('districts')->get();
         $wards = DB::table('wards')->get();
@@ -246,6 +274,7 @@ class FacilityController extends Controller
      */
     public function store(Request $request)
     {
+        $this->auth_user([2]);
         $facility = new Facility();
         $facility->fill($request->except(['_token', 'submit_type']));
         $facility->save();
@@ -290,6 +319,7 @@ class FacilityController extends Controller
      */
     public function edit($id)
     {
+        if(auth()->user()->user_type_id == 5 && auth()->user()->facility_id != $id) abort(403);
         $facility = $this->getFacility($id);
         // dd($facility[0]);
         return view('facilities.facility', ['facility' => $facility[0], 'disabled' => ''])
@@ -312,6 +342,8 @@ class FacilityController extends Controller
         $data = $request->except(['_token', 'id', '_method']);
         $facility->fill($data);
         $facility->pre_update();
+        session(['toast_message' => 'The update has been made.']);
+        if(auth()->user()->user_type_id == 5) return redirect('sample/create');
         return redirect()->route('facility.index')->with('success', $success);
 
         // $this->validate($request, [
@@ -401,6 +433,7 @@ class FacilityController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
+        $search = addslashes($search);
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")

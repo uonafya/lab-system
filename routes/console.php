@@ -44,8 +44,9 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
 })->describe('Compute Vl Tat.');
 
 
-Artisan::command('dispatch:results {type}', function($type){
-    $str = \App\Common::dispatch_results($type);
+Artisan::command('dispatch:results', function(){
+    $str = \App\Common::dispatch_results('eid');
+    $str = \App\Common::dispatch_results('vl');
     $this->info($str);
 })->describe('Send emails for dispatched batches.');
 
@@ -56,21 +57,45 @@ Artisan::command('dispatch:mlab', function(){
 })->describe('Post dispatched results to mlab.');
 
 
-Artisan::command('input-complete {type}', function($type){
-    $str = \App\Common::input_complete_batches($type);
+Artisan::command('input-complete', function(){
+    $str = \App\Common::input_complete_batches('eid');
+    $str = \App\Common::input_complete_batches('vl');
     $this->info($str);
 })->describe('Mark batches as input completed.');
 
 
-Artisan::command('batch-complete {type}', function($type){
-    $str = \App\Common::check_batches($type);
+Artisan::command('batch-complete', function(){
+    $str = \App\Common::check_batches('eid');
+    $str = \App\Common::check_batches('vl');
     $this->info($str);
 })->describe('Check if batch is ready for dispatch.');
 
 
+Artisan::command('fix:noage', function(){
+    $str = \App\Common::fix_no_age('eid');
+    $str = \App\Common::fix_no_age('vl');
+    $this->info($str);
+})->describe('Fix no age.');
 
-Artisan::command('lablog {type}', function($type){
-	$str = \App\Synch::labactivity($type);
+
+Artisan::command('delete:empty-batches', function(){
+    \App\Misc::delete_empty_batches();
+    \App\MiscViral::delete_empty_batches();
+})->describe('Delete empty batches.');
+
+
+Artisan::command('delete:pdfs', function(){
+    $str = \App\Common::delete_folder(storage_path('app/batches'));
+    $this->info($str);
+})->describe('Delete pdfs from hard drive.');
+
+
+
+
+
+Artisan::command('lablog', function(){
+    $str = \App\Synch::labactivity('eid');
+	$str = \App\Synch::labactivity('vl');
     $this->info($str);
 })->describe('Send lablog data to national.');
 
@@ -78,6 +103,12 @@ Artisan::command('lablog {type}', function($type){
 // 	$str = \App\Synch::synch_vl_patients();
 //     $this->info($str);
 // })->describe('Synch vl patients to the national database.');
+
+
+Artisan::command('send:communication', function(){
+    $str = \App\Common::send_communication();
+    $this->info($str);
+})->describe('Send any pending emails.');
 
 
 Artisan::command('send:sms', function(){
@@ -100,33 +131,39 @@ Artisan::command('send:weekly-backlog', function(){
 
 
 
-Artisan::command('synch:patients {type}', function($type){
-    if($type == 'eid') $str = \App\Synch::synch_eid_patients();
-    else { $str = \App\Synch::synch_vl_patients(); }    
+Artisan::command('synch:patients', function(){
+    // if($type == 'eid') $str = \App\Synch::synch_eid_patients();
+    // else { $str = \App\Synch::synch_vl_patients(); }  
+    $str = \App\Synch::synch_eid_patients();  
+    $str .= \App\Synch::synch_vl_patients();  
     $this->info($str);
 })->describe('Synch patients to the national database.');
 
 
-Artisan::command('synch:batches {type}', function($type){
-	$str = \App\Synch::synch_batches($type);
+Artisan::command('synch:batches', function(){
+    $str = \App\Synch::synch_batches('eid');
+	$str = \App\Synch::synch_batches('vl');
     $this->info($str);
 })->describe('Synch batches to the national database.');
 
 
-Artisan::command('synch:worksheets {type}', function($type){
-	$str = \App\Synch::synch_worksheets($type);
+Artisan::command('synch:worksheets', function(){
+    $str = \App\Synch::synch_worksheets('eid');
+	$str = \App\Synch::synch_worksheets('vl');
     $this->info($str);
 })->describe('Synch worksheets to the national database.');
 
 
-Artisan::command('synch:updates {type}', function($type){
-    $str = \App\Synch::synch_updates($type);
+Artisan::command('synch:updates', function(){
+    $str = \App\Synch::synch_updates('eid');
+    $str = \App\Synch::synch_updates('vl');
     $this->info($str);
 })->describe('Synch updates to the national database.');
 
 
-Artisan::command('synch:deletes {type}', function($type){
-	$str = \App\Synch::synch_deletes($type);
+Artisan::command('synch:deletes', function(){
+    $str = \App\Synch::synch_deletes('eid');
+	$str = \App\Synch::synch_deletes('vl');
     $this->info($str);
 })->describe('Synch deletes to the national database.');
 
@@ -144,10 +181,12 @@ Artisan::command('copy:vl', function(){
     $this->info($str);
 })->describe('Copy vl data from old database to new database.');
 
+
 Artisan::command('copy:worksheet', function(){
 	$str = \App\Copier::copy_worksheet();
     $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
+
 
 Artisan::command('copy:worklist', function(){
     $str = \App\Copier::copy_worklist();
@@ -163,6 +202,16 @@ Artisan::command('copy:facility-contacts', function(){
     $str = \App\Copier::copy_facility_contacts();
     $this->info($str);
 })->describe('Copy facility contacts from old database to new database.');
+
+Artisan::command('copy:facility-missing', function(){
+    $str = \App\Copier::copy_missing_facilities();
+    $this->info($str);
+})->describe('Copy missing facilities from old database to new database.');
+
+Artisan::command('copy:cd4', function(){
+    $str = \App\Copier::cd4();
+    $this->info($str);
+})->describe('Copy cd4 data from old database to new database.');
 
 
 
@@ -185,12 +234,6 @@ Artisan::command('match:batches {type}', function($type){
     $this->info($str);
 })->describe('Match batches with records on the national database.');
 
-
-
-Artisan::command('email:urgent', function(){
-    $str = \App\Common::send_communication();
-    $this->info($str);
-})->describe('Send test email.');
 
 Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();

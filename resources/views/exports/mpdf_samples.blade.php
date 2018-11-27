@@ -50,7 +50,12 @@ p.breakhere {page-break-before: always}
 		@continue($sample->repeatt == 1)
 		<?php 
 			$count++;
+			if(!isset($current_batch)) $current_batch = $sample->batch_id;
 			if(!$sample->batch) unset($sample->batch);
+			if($sample->batch_id != $current_batch){
+				echo "<p class='breakhere'></p> <pagebreak sheet-size='A4'>";
+				$current_batch = $sample->batch_id;
+			}
 		 ?>
 		<table id="table1" align="center">
 
@@ -326,18 +331,27 @@ p.breakhere {page-break-before: always}
 
 		</table>
 
-		<span class="style8" > 
+		@if($sample->batch->site_entry != 2)
 
-			@if(env('APP_LAB') == 1)
-				If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
-			@elseif(env('APP_LAB') == 3)
-				If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
-			@else
-				If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
-			@endif
+			<span class="style8" > 
 
-			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
-		</span>
+				@if(env('APP_LAB') == 1)
+					If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
+				@elseif(env('APP_LAB') == 3)
+					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
+				@else
+					If you have questions or problems regarding samples, please contact the {{ $sample->batch->lab->name }} at {{ $sample->batch->lab->email }}
+				@endif
+
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@else
+			<span class="style8" > 
+				<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
+			</span>
+
+		@endif
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>

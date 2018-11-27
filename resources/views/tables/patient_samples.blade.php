@@ -32,11 +32,15 @@
                             </thead>
                             <tbody> 
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
+                                    <?php
+                                        if(!$sample->batch) unset($sample->batch);
+                                    ?>
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
-                                        <td> {{ $sample->batch_id ?? '' }} </td>
+                                        <td>  {!! $sample->batch->hyper_link !!} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
@@ -47,7 +51,7 @@
                                         <td> {{ $sample->spots ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datereceived') ?? '' }} </td>
-                                        <td> {{ $sample->worksheet_id ?? '' }} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datetested') ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datemodified') ?? '' }} </td>
                                         <td> {{ $sample->batch->my_date_format('datedispatched') ?? '' }} </td>
@@ -60,9 +64,13 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            @if($sample->batch->batch_complete == 1)
-                                                <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a>
+                                            {{--@if($sample->batch->batch_complete == 1)--}}
+                                            @if($sample->repeatt == 0)
+                                                <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a> |
                                             @endif
+
+                                            <a href="{{ url('/sample/' . $sample->id ) }}" target='_blank'>View</a> |
+                                            <a href="{{ url('/sample/' . $sample->id . '/edit' ) }}" target='_blank'>Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach

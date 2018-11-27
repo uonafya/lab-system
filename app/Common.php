@@ -160,7 +160,7 @@ class Common
 	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
-        $offset_value = 0;
+        $offset_value = 50000;
         while(true){
 
 			$samples = $view_model::where(['batch_complete' => 1])
@@ -263,7 +263,8 @@ class Common
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
-			$misc_model::check_batch($batch->id);
+			$str = $misc_model::check_batch($batch->id);
+			// if($str) echo $str . "\n";
 		}
 	}
 
@@ -285,20 +286,25 @@ class Common
         }
     }
 
-    public static function dispatch_batch($batch)
+    public static function dispatch_batch($batch, $view_name=null)
     {
     	$facility = $batch->facility; 
     	
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(!$mail_array) return null;
 
         if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
         if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
 
         try {
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
-        	->send(new $mail_class($batch));
+        	if($view_name) $new_mail = new $mail_class($batch, $view_name);
+        	else{
+        		$new_mail = new $mail_class($batch);
+        	}
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	->send($new_mail);
         	// $batch->save();
         } catch (Exception $e) {
         	
@@ -314,7 +320,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 
-		$min_date = date('Y-m-d', strtotime('-1 years'));
+		$min_date = date('Y-m-d', strtotime('-1 month'));
 
 		$batches = $batch_model::where('batch_complete', 1)
 		->where('sent_email', 0)
@@ -350,23 +356,129 @@ class Common
 		} 
     }
 
+	public static function fix_no_age($type)
+	{
+    	ini_set('memory_limit', "-1");
+		if($type == 'eid'){
+			$sample_model = \App\Sample::class;
+			$view_model = \App\SampleView::class;
+			$func_name = 'calculate_age';
+		}else{
+			$sample_model = \App\Viralsample::class;
+			$view_model = \App\ViralsampleView::class;
+			$func_name = 'calculate_viralage';
+		}
+
+		$samples = $view_model::select('id', 'dob', 'datecollected')
+								->whereNotNull('dob')
+								->whereRaw("(age is null or age=0)")
+								->get();
+
+		foreach ($samples as $sample) {
+			$s = $sample_model::find($sample->id);
+			$s->age = \App\Lookup::$func_name($sample->datecollected, $sample->dob);
+			$s->pre_update();
+		}
+	}
+
+    // public static function send_communication()
+    // {
+    //     ini_set("memory_limit", "-1");
+    //     $facilities = \App\Facility::where('flag', 1)->get();
+
+    //     foreach ($facilities as $key => $facility) {
+    //     	$mail_array = $facility->email_array;
+    //     	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+    //     	$comm = new UrgentCommunication;
+    //     	try {
+	   //      	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+	   //      	->send($comm);
+	   //      } catch (Exception $e) {
+        	
+	   //      }
+    //     	// break;
+    //     }
+    // }
+
     public static function send_communication()
     {
-        ini_set("memory_limit", "-1");
-        $facilities = \App\Facility::where('flag', 1)->get();
+        $emails = \App\Email::where('sent', false)->where('time_to_be_sent', '<', date('Y-m-d H:i:s'))->get();
 
-        foreach ($facilities as $key => $facility) {
-        	$mail_array = $facility->email_array;
-        	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        	$comm = new UrgentCommunication;
-        	try {
-	        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
-	        	->send($comm);
-	        } catch (Exception $e) {
-        	
-	        }
-        	// break;
+        foreach ($emails as $email) {
+        	$email->dispatch();
         }
     }
+
+    public static function ampath_all()
+    {
+    	self::ampath(\App\Batch::class);
+    	self::ampath(\App\Viralbatch::class);
+    }
+
+    public static function ampath($class)
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = $class::where(['batch_complete' => '0'])->where('datereceived', '<', '2018-01-01')->get();
+        // $batches = $class::where(['batch_complete' => '0'])->where('created_at', '<', '2018-01-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            // $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +1days'));
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
+            $batch->batch_complete = 1;
+            $batch->pre_update();
+        }
+    }
+
+    public static function find_facility_mismatch()
+    {
+        ini_set("memory_limit", "-1");
+        $facilities = \App\OldModels\Facility::all();
+
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+        $conflict = [];
+
+        foreach ($facilities as $facility) {
+        	$fac = \App\Facility::locate($facility->facilitycode)->first();
+        	if(!$fac) continue;
+        	// if($fac->id < 55000) continue;
+
+        	if($fac->id != $facility->ID){
+
+        		// dd([$fac->toArray(), $facility->toArray()]);
+
+        		// $new_fac = \App\Facility::find($facility->ID);
+        		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
+        		// if($new_fac){
+        		// 	$conflict[] = [
+        		// 		'id' => $new_fac->id,
+        		// 		'code' => $new_fac->facilitycode,
+        		// 		'name' => $new_fac->name,
+        		// 	];
+        		// 	continue;
+        		// }
+
+        		foreach ($classes as $class) {
+        			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
+        			$class::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
+        		}
+
+        		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
+        	}
+        }
+
+        // dd($conflict);
+    }
+
+
 
 }

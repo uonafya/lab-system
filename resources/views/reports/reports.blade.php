@@ -101,6 +101,14 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
+                                    <input type="radio" name="category" value="partner" class="i-checks">Select Partner
+                                </label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" id="report_partner_search" name="partner"></select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label">
                                     <input type="radio" name="category" value="subcounty" class="i-checks">Select Sub County
                                 </label>
                                 <div class="col-sm-9">
@@ -160,21 +168,21 @@
                                             <tr>
                                                 <th>Select Year and Month </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year">
+                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 6; $i >= 0; $i--)
+                                                        @for ($i = 0; $i <= 6; $i++)
                                                             @php
-                                                                $year=Date('Y')-$i
+                                                                $year=gmdate('Y')-$i
                                                             @endphp
                                                         <option value="{{ $year }}">{{ $year }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control" id="month" name="month">
+                                                    <select class="form-control" id="month" name="month" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Month</option>
-                                                        @for ($i = 1; $i <= 12; $i++)
-                                                            <option value="{{ $i }}">{{ date("F", mktime(null, null, null, $i)) }}</option>
+                                                        @for($i = 1; $i <= 12; ++$i)
+                                                            <option value="{{ $i }}">{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
@@ -188,18 +196,18 @@
                                             <tr>
                                                 <th>Select Year and Quarter </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year">
+                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 6; $i >= 0; $i--)
+                                                        @for ($i = 0; $i <= 6; $i++)
                                                             @php
-                                                                $year=Date('Y')-$i
+                                                                $year=gmdate('Y')-$i
                                                             @endphp
                                                         <option value="{{ $year }}">{{ $year }}</option>
                                                         @endfor
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control" id="quarter" name="quarter">
+                                                    <select class="form-control" id="quarter" name="quarter" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Quarter</option>
                                                         @for ($i = 1; $i <= 4; $i++)
                                                             <option value="Q{{ $i }}">Q{{ $i }}</option>
@@ -216,11 +224,11 @@
                                             <tr>
                                                 <th>Select Year </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year">
+                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 6; $i >= 0; $i--)
+                                                       @for ($i = 0; $i <= 6; $i++)
                                                             @php
-                                                                $year=Date('Y')-$i
+                                                                $year=gmdate('Y')-$i
                                                             @endphp
                                                         <option value="{{ $year }}">{{ $year }}</option>
                                                         @endfor
@@ -235,8 +243,14 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
-                                <label> <input type="radio" name="types" value="tested" class="i-checks"> Tested Samples </label>
-                                <label> <input type="radio" name="types" value="rejected" class="i-checks"> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="tested" class="i-checks" required> Tested Samples </label>
+                                @if(Session('testingSystem') == 'EID')
+                                <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
+                                @endif
+                                <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label>
+                                <label> <input type="radio" name="types" value="rejected" class="i-checks" required> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
+                                <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
                             </div>
                         </div>
 
@@ -282,8 +296,9 @@
         });
 
         set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
-        set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false)
+        set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false);
         set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
+        set_select_facility("report_partner_search", "{{ url('partner/search') }}", 1, "Search for Partner", false);
 
     @endcomponent
     <script type="text/javascript">
@@ -315,6 +330,9 @@
                 } else if (selValue == 'subcounty') {
                     category = $("#report_district_search").val();
                     cat = 'Sub-County';
+                } else if (selValue == 'partner') {
+                    category = $("#report_partner_search").val();
+                    cat = 'Partner';
                 } else if (selValue == 'facility') {
                     category = $("#report_facility_search").val();
                     cat = 'Facility';
