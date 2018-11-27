@@ -17,7 +17,7 @@ class CreateDrCallsTable extends Migration
             $table->increments('id');
             $table->integer('sample_id')->unsigned()->index();
             $table->string('drug_class', 50)->nullable(); 
-            $table->tinyInteger('drug_class_id', 50)->nullable()->unsigned()->index(); 
+            $table->tinyInteger('drug_class_id')->nullable()->unsigned()->index(); 
             $table->timestamps();
         });
     }

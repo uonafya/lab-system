@@ -203,7 +203,7 @@ class Copier
         $fields = self::samples_arrays(); 
         $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
         $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
-        $offset_value = 40000;
+        $offset_value = 60000;
         $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
         while(true)
         {
@@ -485,12 +485,10 @@ class Copier
 
             $start = $model::max('id');              
 
-            $offset_value = 0;
+            $offset_value = 1000;
             while(true)
             {
-                $worksheets = $view::when($start, function($query) use ($start){
-                    return $query->where('id', '>', $start);
-                })->limit(self::$limit)->offset($offset_value)->get();
+                $worksheets = $view::limit(self::$limit)->offset($offset_value)->get();
                 if($worksheets->isEmpty()) break;
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
