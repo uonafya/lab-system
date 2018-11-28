@@ -247,7 +247,7 @@
                                 @if(Session('testingSystem') == 'EID')
                                 <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
                                 @endif
-                                <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label>
+                                <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
                                 <label> <input type="radio" name="types" value="rejected" class="i-checks" required> Rejected Samples </label>
                                 <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
                                 <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>

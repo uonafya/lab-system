@@ -147,11 +147,103 @@ class ReportController extends Controller
             $data = self::__getCD4Data($request, $dateString)->get();
             $this->__getExcel($data, $dateString);
         } else {
-            $data = self::__getDateData($request,$dateString)->get();
-            $this->__getExcel($data, $dateString);
+            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported') {
+                $data = self::__getSiteEntryData($request,$dateString)->get();
+                $this->__getSiteEntryExcel($data, $dateString);
+            } else {
+                $data = self::__getDateData($request,$dateString)->get();
+                $this->__getExcel($data, $dateString);
+            }
         }
-                
         return back();
+    }
+
+    public static function __getSiteEntryData($request, &$dateString) {
+        if(session('testingSystem') == 'Viralload') {
+            $dateString = 'VL';
+            $table = "viralsamples_view";
+            $model = ViralsampleView::orderBy('totalsamples', 'desc');
+        } else if(session('testingSystem') == 'EID') {
+            $dateString = 'EID';
+            $table = "samples_view";
+            $model = SampleView::orderBy('totalsamples', 'desc');
+        }
+
+        if($request->input('types') == 'remoteentry') {
+            $dateString .= ' site entry ';
+        } else if ($request->input('types') == 'sitessupported') {
+            $dateString .= ' suported sites ';
+        }
+        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
+                    ->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
+                    ->when(true, function($query) use ($request, $table){
+                        if($request->input('types') == 'remoteentry')
+                            return $query->where("$table.site_entry", "=", 1);
+                    })->where('repeatt', '=', 0)
+                    ->groupBy(['facilitycode', 'facility', 'county', 'subcounty', 'partner']);
+        $model = self::__getBelongingTo($request, $model, $dateString);
+        $model = self::__getDateRequested($request, $model, $table, $dateString);
+
+        return $model;
+    }
+
+    public static function __getBelongingTo($request, $model, &$dateString) {
+        $title = 'for ';
+        if ($request->input('category') == 'county') {
+            $model = $model->where('view_facilitys.county_id', '=', $request->input('county'));
+            $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
+            $title .= $county->county;
+        } else if ($request->input('category') == 'subcounty') {
+            $model = $model->where('view_facilitys.subcounty_id', '=', $request->input('district'));
+            $subc = ViewFacility::where('subcounty_id', '=', $request->input('district'))->get()->first();
+            $title .= $subc->subcounty;
+        } else if ($request->input('category') == 'facility') {
+            $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
+            $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
+            $title .= $facility->name;
+        } else if ($request->input('category') == 'partner') {
+            $model = $model->where('view_facilitys.partner_id', '=', $request->input('partner'));
+            $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
+            $title .= $partner->name;
+        }
+        $dateString .= $title;
+        return $model;
+    }
+
+    public static function __getDateRequested($request, $model, $table, &$dateString, $receivedOnly=true) {
+        if ($receivedOnly) { $column = 'datereceived'; } else { $column = 'datetested'; }
+
+        if (!$request->input('period') || $request->input('period') == 'range') {
+            $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
+            $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+        } else if ($request->input('period') == 'monthly') {
+            $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
+            $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."' AND MONTH($table.$column) = '".$request->input('month')."'");
+        } else if ($request->input('period') == 'quarterly') {
+            if ($request->input('quarter') == 'Q1') {
+                $startQuarter = 1;
+                $endQuarter = 3;
+            } else if ($request->input('quarter') == 'Q2') {
+                $startQuarter = 4;
+                $endQuarter = 6;
+            } else if ($request->input('quarter') == 'Q3') {
+                $startQuarter = 7;
+                $endQuarter = 9;
+            } else if ($request->input('quarter') == 'Q4') {
+                $startQuarter = 10;
+                $endQuarter = 12;
+            } else {
+                $startQuarter = 0;
+                $endQuarter = 0;
+            }
+            $dateString .= $request->input('quarter').' - '.$request->input('year');
+            $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."' AND MONTH($table.$column) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
+        } else if ($request->input('period') == 'annually') {
+            $dateString .= $request->input('year');
+            $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
+        }
+
+        return $model;
     }
 
     public function kits(Request $request)
@@ -395,6 +487,10 @@ class ReportController extends Controller
             $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
             $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
             $title .= $facility->name;
+        } else if ($request->input('category') == 'partner') {
+            $model = $model->where('view_facilitys.partner_id', '=', $request->input('partner'));
+            $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
+            $title .= $partner->name;
         }
 
     	if ($request->input('specificDate')) {
@@ -464,6 +560,37 @@ class ReportController extends Controller
             $dataArray[] = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'Age', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
         }
         
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
+        
+        if($data->isNotEmpty()) {
+            foreach ($data as $report) {
+                $dataArray[] = $report->toArray();
+            }
+            
+            Excel::create($title, function($excel) use ($dataArray, $title) {
+                $excel->setTitle($title);
+                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('EID/VL System');
+                $excel->setDescription($title);
+
+                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+                    $sheet->fromArray($dataArray, null, 'A1', false, false);
+                });
+
+            })->download('csv');
+        } else {
+            session(['toast_message' => 'No data available for the criteria provided']);
+        }
+    }
+
+    public function __getSiteEntryExcel($data, $title)
+    {
+        $title = strtoupper($title);
+        $dataArray[] = ['MFL Code', 'Facility Name', 'County', 'Sub-County', 'Partner', 'Total Samples'];
+        $this->generate_excel($data, $dataArray, $title);
+    }
+
+    public function generate_excel($data, $dataArray, $title){
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
         

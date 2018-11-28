@@ -7,8 +7,19 @@ use GuzzleHttp\Client;
 use App\Common;
 use App\DrSample;
 
+use App\DrWorksheetWarning;
+use App\DrWarning;
+
+use App\DrCall;
+use App\DrCallDrug;
+
+use App\DrGenotype;
+use App\DrResidue;
+
 class MiscDr extends Common
 {
+
+	public static $hyrax_url = 'http://blablabla';
 
 	public static function get_hyrax_key()
 	{
@@ -17,11 +28,11 @@ class MiscDr extends Common
 
 	public static function create_plate($worksheet)
 	{
-		$client = new Client(['base_uri' => 'https://blablabla']);
+		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$sample_data = self::get_worksheet_files($worksheet);
 
-		$response = $client->request('post', '', [
+		$response = $client->request('POST', 'sanger/plate', [
 			'headers' => [
 				'Accept' => 'application/json',
 				// 'X-Hyrax-Apikey' => env('DR_KEY'),
@@ -44,7 +55,7 @@ class MiscDr extends Common
 		{
 			$worksheet->plate_id = $body->data->id;
 
-			foreach ($body->attributes->samples as $key => $value) {
+			foreach ($body->data->attributes->samples as $key => $value) {
 				$sample = DrSample::find($value->sample_name);
 				$sample->sanger_id = $value->id;
 				$sample->save();
@@ -120,6 +131,187 @@ class MiscDr extends Common
 			}
 		}
 		return false;
+	}
+
+	public static function get_plate_result($worksheet)
+	{
+		$client = new Client(['base_uri' => self::$hyrax_url]);
+
+		$response = $client->request('GET', "sanger/plate/result/{$worksheet->plate_id}", [
+			'headers' => [
+				'Accept' => 'application/json',
+				// 'X-Hyrax-Apikey' => env('DR_KEY'),
+				'x-hyrax-daemon-apikey' => self::get_hyrax_key(),
+			],
+		]);
+
+		$body = json_decode($response->getBody());
+
+		if($response->getStatusCode() == 200)
+		{
+			$w = $body->data->attributes;
+			$worksheet->sanger_status_id = self::get_worksheet_status($w->status);
+			$worksheet->plate_controls_pass = $w->plate_controls_pass;
+			$worksheet->qc_run = $w->plate_qc_run;
+			$worksheet->qc_pass = $w->plate_qc;
+
+			if($worksheet->sanger_status_id == 4) return null;
+
+			if($worksheet->sanger_status_id != 5){
+
+				if($w->errors){
+					foreach ($w->errors as $error) {
+						$e = DrWorksheetWarning::firstOrCreate([
+							'worksheet_id' => $worksheet->id,
+							'warning_id' => self::get_sample_warning($error->title),
+							'system' => $error->system,
+							'detail' => $error->detail,
+						]);
+					}
+				}
+
+				if($w->warnings){
+					foreach ($w->warnings as $error) {
+						$e = DrWorksheetWarning::firstOrCreate([
+							'worksheet_id' => $worksheet->id,
+							'warning_id' => self::get_sample_warning($error->title),
+							'system' => $error->system,
+							'detail' => $error->detail,
+						]);
+					}
+				}
+			}
+
+			$worksheet->save();
+
+			foreach ($body->included as $key => $value) {
+
+				$sample = DrSample::where(['sanger_id' => $value->attributes->id])->first();
+
+				if($sample){
+
+					if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
+
+					$s = $value->attributes;
+					$sample->status_id = self::get_sample_status($s->status_id);	
+
+					if($sample->status_id == 3)	$sample->qc_pass = 0;			
+
+					if($s->sample_qc_pass){
+						$sample->qc_pass = $s->sample_qc_pass;
+
+						$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass;
+						$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass;
+						$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass;
+					}
+
+					if($s->sample_qc_distance){
+						$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id;
+						$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id;
+						$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference;
+						$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name;
+						$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name;
+						$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name;
+					}
+
+					if($s->errors){
+						$sample->has_errors = true;
+
+						foreach ($s->errors as $error) {
+							$e = DrWarning::firstOrCreate([
+								'sample_id' => $sample->id,
+								'warning_id' => self::get_sample_warning($error->title),
+								'system' => $error->system,
+								'detail' => $error->detail,
+							]);
+						}
+					}
+
+					if($s->warnings){
+						$sample->has_warnings = true;
+
+						foreach ($s->warnings as $error) {
+							$e = DrWarning::firstOrCreate([
+								'sample_id' => $sample->id,
+								'warning_id' => self::get_sample_warning($error->title),
+								'system' => $error->system,
+								'detail' => $error->detail,
+							]);
+						}
+					}
+
+					if($s->calls){
+						$sample->has_calls = true;
+
+						foreach ($s->calls as $call) {
+							$c = DrCall::firstOrCreate([
+								'sample_id' => $sample->id,
+								'drug_class' => $call->drug_class,
+								'other_mutations' => $call->other_mutations,
+								'major_mutations' => $call->major_mutations,
+							]);
+
+							foreach ($call->drugs as $drug) {
+								$d = DrCallDrug::firstOrCreate([
+									'call_id' => $c->id,
+									'short_name' => $drug->short_name,
+									'call' => $drug->call,
+								]);
+							}
+						}
+					}
+
+					if($s->genotype){
+						$sample->has_genotypes = true;
+
+						foreach ($s->genotype as $genotype) {
+							$g = DrGenotype::firstOrCreate([
+								'sample_id' => $sample->id,
+								'locus' => $genotype->locus,
+							]);
+
+							foreach ($genotype->residues as $residue) {
+								$r = DrResidue::firstOrCreate([
+									'genotype_id' => $g->id,
+									'residue' => $residue->residues[0],
+									'position' => $residue->position,
+								]);
+							}
+						}
+					}
+
+					if($s->pending_action == "PendChromatogramManualIntervention"){
+						$sample->pending_manual_intervention = true;
+					}
+
+					if(!$s->pending_action && $sample->pending_manual_intervention){
+						$sample->pending_manual_intervention = false;
+						$sample->had_manual_intervention = true;
+					}				
+
+					$sample->assembled_sequence = $s->assembled_sequence;
+					$sample->chromatogram_url = $s->chromatogram_url;
+					$sample->exatype_version = $s->exatype_version;
+					$sample->algorithm = $s->algorithm;
+					$sample->save();
+				}
+			}
+		}
+	}
+
+	public static function get_worksheet_status($id)
+	{
+		return DB::table('dr_plate_statuses')->where(['name' => $id])->first()->id;
+	}
+
+	public static function get_sample_status($id)
+	{
+		return DB::table('dr_sample_statuses')->where(['other_id' => $id])->first()->id;
+	}
+
+	public static function get_sample_warning($id)
+	{
+		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
 	}
 
 
