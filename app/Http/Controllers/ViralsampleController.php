@@ -357,6 +357,11 @@ class ViralsampleController extends Controller
         // }
 
         $viralpatient = $viralsample->patient;
+
+        if($viralpatient->patient != $request->input('patient')){
+            $viralpatient = new Viralpatient;
+            $created_patient = true;
+        }
         
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
@@ -404,6 +409,28 @@ class ViralsampleController extends Controller
         }
 
         $viralsample->pre_update();
+
+        if(isset($created_patient)){
+            if($viralsample->run == 1 && $viralsample->has_rerun){
+                $children = $viralsample->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $viralpatient->id;
+                    $kid->pre_update();
+                }
+            }
+            else if($viralsample->run > 1){
+                $parent = $viralsample->parent;
+                $parent->pre_update();
+                
+                $children = $parent->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $viralpatient->id;
+                    $kid->pre_update();
+                }
+            }
+        }
 
         MiscViral::check_batch($batch->id); 
 
