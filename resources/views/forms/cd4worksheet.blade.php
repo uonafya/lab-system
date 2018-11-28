@@ -134,13 +134,17 @@
 		                <div class="form-group">
 		                    <center>
 		                        <div class="col-sm-10 col-sm-offset-1">
-		                        @if($data->worksheet->status_id != 4)
-		                        	@if(isset($data->view))
-		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
-		                            @else
-		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
-		                            @endif
-		                        @endif
+                                @if(isset($data->worksheet->status_id))
+    		                        @if($data->worksheet->status_id != 4)
+    		                        	@if(isset($data->view))
+    		                            	<a href="{{ url('cd4/worksheet/print/'.$data->worksheet->id) }}"><button class="btn btn-success">Print Worksheet</button></a>
+    		                            @else
+    		                            	<button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
+    		                            @endif
+    		                        @endif
+                                @else
+                                    <button class="btn btn-success" type="submit"> Save & Print Worksheet</button>
+                                @endif
 		                        </div>
 		                    </center>
 		                </div>

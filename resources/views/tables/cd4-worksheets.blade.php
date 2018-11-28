@@ -89,6 +89,9 @@
                             @endforelse
                             </tbody>
                         </table>
+                        <center>
+                            {{ $data->worksheets->links() }}
+                        </center>
                     </div>
 
                 </div>
