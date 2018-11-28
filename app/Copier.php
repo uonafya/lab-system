@@ -73,7 +73,7 @@ class Copier
                 unset($facility->districtname);
                 unset($facility->ANC);
                 unset($facility->sent2);
-                unset($facility->sentemail);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
 
