@@ -25,7 +25,7 @@ class Cd4Controller extends BaseController
 
     public function partial(Cd4Request $request)
     {
-        if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not do CD4.");
+        if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not provide CD4.");
         $code = $request->input('mflCode');
         $datecollected = $request->input('datecollected');
         $order_no = $request->input('order_no');
@@ -70,6 +70,7 @@ class Cd4Controller extends BaseController
 
     public function complete_result(Cd4Request $request)
     {
+        if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not provide CD4.");
         $code = $request->input('mflCode');
         $datecollected = $request->input('datecollected');
         $order_no = $request->input('order_no');
