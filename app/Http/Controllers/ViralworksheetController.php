@@ -644,6 +644,9 @@ class ViralworksheetController extends Controller
             }
             $sample = Viralsample::find($samples[$key]);
             $sample->fill($data);
+            if($sample->repeatt == 0 && in_array($sample->result, ["", "Failed"])){
+                $sample->result = "Collect New Sample";
+            }
             $sample->pre_update();
 
             // Viralsample::where('id', $samples[$key])->update($data);

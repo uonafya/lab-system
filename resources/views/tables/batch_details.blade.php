@@ -60,7 +60,7 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
-                            @if($batch->site_entry == 1 && (!$batch->datereceived || 
+                            @if(($batch->site_entry == 1 || ($batch->site_entry == 0 && $batch->user_id == 0 && !$batch->batch_complete )) && (!$batch->datereceived || 
                             ($batch->datereceived && $samples->where('receivedstatus', null)->first())
                             ) )
                                 <div class="col-md-4">

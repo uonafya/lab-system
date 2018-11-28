@@ -378,7 +378,7 @@ class BatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
-            if($sample->parentid > 0 && $submit_type == "new_batch"){
+            if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result ))){
                 continue;
             }else{
                 $parent = $sample->parent;

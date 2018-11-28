@@ -322,7 +322,11 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" required class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                    <input type="text" id="initiation_date" 
+                                    @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
+                                        required 
+                                    @endif
+                                    class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>
