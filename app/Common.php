@@ -450,7 +450,8 @@ class Common
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
-        	// if($fac->id < 55000) continue;
+        	if($facility->facilitycode == 0) continue;
+         	// if($fac->id < 55000) continue;
 
         	if($fac->id != $facility->ID){
 
