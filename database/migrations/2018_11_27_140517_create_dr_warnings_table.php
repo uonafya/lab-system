@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDrCallsTable extends Migration
+class CreateDrWarningsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateDrCallsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_calls', function (Blueprint $table) {
+        Schema::create('dr_warnings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('sample_id')->unsigned()->index();
-            $table->string('drug_class', 50)->nullable(); 
-            $table->tinyInteger('drug_class_id')->nullable()->unsigned()->index(); 
-            $table->string('other_mutations', 50)->nullable(); 
-            $table->string('major_mutations', 50)->nullable(); 
+            $table->integer('warning_id')->unsigned()->index();
+            // $table->boolean('error')->default(0);
+            // $table->string('title', 20)->nullable();
+            $table->string('system', 20)->nullable();
+            $table->string('detail', 100)->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ class CreateDrCallsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dr_calls');
+        Schema::dropIfExists('dr_warnings');
     }
 }
