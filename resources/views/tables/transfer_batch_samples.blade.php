@@ -99,6 +99,7 @@
                                 </thead>
                                 <tbody> 
                                     @foreach($samples as $key => $sample)
+                                        @continue($sample->repeatt == 1)
                                         <tr>                                            
                                             <td>
                                                 <div align='center'>
