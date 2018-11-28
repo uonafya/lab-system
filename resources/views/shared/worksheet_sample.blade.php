@@ -12,14 +12,18 @@
 						<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
 						<b>Sample ID:</b> {{ $sample->patient->patient }} <br />
 						<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br />--}}
-	<span class='style7'>
+	<span class='style7'
+	@if(env('APP_LAB') == 5)
+		style="font-size: 12px;" 
+	@endif
+	>
 		<?php
 			if(!$sample->batch){
 				unset($sample->batch);
 			}
 		?>
 		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id }}</b> <br />
-		{{ $sample->patient->patient }} - {{ $sample->my_date_format('datecollected') }} 
+		{{ $sample->patient->patient }} - @if(env('APP_LAB') != 5){{ $sample->my_date_format('datecollected') }} @endif 
 	</span>
 	<br />
 
