@@ -71,7 +71,9 @@
                     <hr />
                     <li><a href="{{ url('worksheet/create/2/70') }}">Create Abbott Worksheet(72)</a></li>
                     <hr />
-                @elseif(env('APP_LAB') == 3)
+                @elseif(env('APP_LAB') == 2 ||env('APP_LAB') == 3)
+                    <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
+                    <hr />
                     <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
                     <hr />
                 @endif
