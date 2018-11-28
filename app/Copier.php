@@ -94,6 +94,8 @@ class Copier
                 unset($facility->wardid);
                 unset($facility->districtname);
                 unset($facility->ANC);
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
             }
