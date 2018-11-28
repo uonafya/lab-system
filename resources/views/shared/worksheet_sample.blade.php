@@ -23,7 +23,7 @@
 			}
 		?>
 		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id }}</b> <br />
-		{{ $sample->patient->patient }} - @if(env('APP_LAB') != 5){{ $sample->my_date_format('datecollected') }} @endif 
+		{{ $sample->patient->patient }}@if(env('APP_LAB') != 5) - {{ $sample->my_date_format('datecollected') }} @endif 
 	</span>
 	<br />
 
