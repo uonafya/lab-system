@@ -33,6 +33,23 @@ class DrSample extends BaseModel
     }
 
 
+
+    public function warning()
+    {
+        return $this->hasMany('App\DrWarning', 'sample_id');
+    }
+
+    public function dr_call()
+    {
+        return $this->hasMany('App\DrCall', 'sample_id');
+    }
+
+    public function genotype()
+    {
+        return $this->hasMany('App\DrGenotype', 'sample_id');
+    }
+
+
     public function setArvToxicitiesAttribute($value)
     {
         $val = '[';
@@ -88,5 +105,11 @@ class DrSample extends BaseModel
 
         return $str;   
     }
+
+
+
+
+
+
 
 }

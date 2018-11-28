@@ -2,9 +2,13 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class DrCallDrug extends Model
+class DrCallDrug extends BaseModel
 {
-    //
+
+    public function dr_call()
+    {
+        return $this->belongsTo('App\DrCall', 'call_id');
+    }
 }
