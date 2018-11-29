@@ -28,6 +28,9 @@
 
 	<a href="{{ url('viralworksheet/approve/' . $worksheet_id) }}" title="Click to Approve Samples Results in worksheet for Rerun or Dispatch" target='_blank'>
 		Approve Worksheet Results
+		@if(in_array(env('APP_LAB'), $double_approval) && $worksheet->datereviewed)
+			(Second Review)
+		@endif
 	</a> | 
 	<a href="{{ url('viralworksheet/print/' . $worksheet_id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
