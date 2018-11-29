@@ -117,7 +117,7 @@ class ViralsampleController extends Controller
         $data_existing['patient'] = $patient_string;
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
-        if($existing){
+        if($existing && !$request->input('reentry')){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            
@@ -445,6 +445,10 @@ class ViralsampleController extends Controller
             if($work_samples_edta['count'] > 20) $str .=  'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.';
 
             if($str != '') session(['toast_message' => $str]);
+        }
+
+        if($viralsample->receivedstatus && !$viralsample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('viralbatch/site_approval_group/' . $batch->id);
         }
 
         $site_entry_approval = session()->pull('site_entry_approval');

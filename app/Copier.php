@@ -50,7 +50,7 @@ class Copier
     public static function copy_missing_facilities()
     {
         $db_name = env('DB_DATABASE');
-        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+        $facilities = DB::connection('old')->table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         $classes = [
             \App\Mother::class,
@@ -72,6 +72,10 @@ class Copier
                 unset($facility->wardid);
                 unset($facility->districtname);
                 unset($facility->ANC);
+                unset($facility->partnerregion);
+                unset($facility->pasco);
+                unset($facility->zuia);
+                unset($facility->negpilot);
                 unset($facility->{'sent2'});
                 unset($facility->sent2);
                 unset($facility->sentmail);
@@ -93,6 +97,10 @@ class Copier
                 unset($facility->ID);
                 unset($facility->wardid);
                 unset($facility->districtname);
+                unset($facility->partnerregion);
+                unset($facility->pasco);
+                unset($facility->zuia);
+                unset($facility->negpilot);
                 unset($facility->ANC);
                 unset($facility->sent2);
                 unset($facility->sentmail);
