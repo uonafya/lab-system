@@ -174,7 +174,7 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'sitessupported') {
             $dateString .= ' suported sites ';
         }
-        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility,view_facilitys.county, facilitys.name as enteredby, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
+        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility, facilitys.name as enteredby,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
                     ->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
                     ->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
