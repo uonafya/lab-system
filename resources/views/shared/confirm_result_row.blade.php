@@ -75,9 +75,13 @@
                                                 </select>
                                             @endif
                                         </td>
-
-                                        <td> {{ $sample->dateapproved }} </td>
-                                        <td> {{ $sample->approver->full_name ?? '' }} </td>
+                                        @if(in_array(env('APP_LAB'), $double_approval))
+                                            <td> {{ $sample->dateapproved2 }} </td>
+                                            <td> {{ $sample->final_approver->full_name ?? '' }} </td>
+                                        @else
+                                            <td> {{ $sample->dateapproved }} </td>
+                                            <td> {{ $sample->approver->full_name ?? '' }} </td>
+                                        @endif
                                         <td> 
                                             <a href="{{ url('sample/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
                                             <a href="{{ url('sample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  

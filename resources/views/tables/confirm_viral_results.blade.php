@@ -126,13 +126,13 @@
                                     }
                                 @endphp
 
-                                @foreach($samples->where('parentid', '!=', 0) as $key => $sample)
+                                @foreach($samples as $key => $sample)
                                     @include('shared/confirm_viral_result_row', ['sample' => $sample])
                                 @endforeach
 
-                                @foreach($samples->where('parentid', '=', 0) as $key => $sample)
+                                {{--@foreach($samples->where('parentid', '=', 0) as $key => $sample)
                                     @include('shared/confirm_viral_result_row', ['sample' => $sample])
-                                @endforeach
+                                @endforeach--}}
 
                                 @if($worksheet->status_id != 3)
 

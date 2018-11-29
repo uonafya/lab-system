@@ -109,7 +109,7 @@ class SampleController extends Controller
         $data_existing['patient'] = $patient_string;
 
         $existing = SampleView::existing( $data_existing )->get()->first();
-        if($existing){
+        if($existing && !$request->input('reentry')){
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
             return back();            
@@ -545,6 +545,10 @@ class SampleController extends Controller
                 'toast_message' => 'The sample has been saved to batch number ' . $batch->id]);
             return redirect('sample/create');
         } */    
+
+        if($sample->receivedstatus && !$sample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('batch/site_approval_group/' . $batch->id);
+        }
 
         $site_entry_approval = session()->pull('site_entry_approval');
 

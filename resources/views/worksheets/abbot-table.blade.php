@@ -43,11 +43,20 @@ width:1180px;
 >
 	<div align="center">
 		<table border="0" class="data-table">
+			<tr class="odd">
+				<td colspan="8">
+					<center>
+						ABBOTT M2000 SPRT TEMPLATE						
+					</center>	
+				</td>			
+			</tr>
 			@if(get_class($worksheet) == "App\Viralworksheet")
 				<tr class="odd">
 					<td colspan="8">
 						<center>
-							[{{ $worksheet->sample_type_name }}]							
+							 [{{ $worksheet->sample_type_name }}]
+							 <br />
+							 						
 						</center>						
 					</td>					
 				</tr>
@@ -143,7 +152,7 @@ width:1180px;
 				?>
 
 
-				@foreach($samples->where('parentid', '!=', 0) as $sample)
+				@foreach($samples as $sample)
 
 					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
@@ -153,17 +162,6 @@ width:1180px;
 						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
 					@endif
 
-				@endforeach
-
-				@foreach($samples->where('parentid', 0) as $sample)
-
-					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
-
-					@php $count++; @endphp
-
-					@if($count % 8 == 0)
-						</tr><tr><td colspan=8>&nbsp;</td></tr><tr>
-					@endif
 				@endforeach
 
 				{{--@if($vl)
