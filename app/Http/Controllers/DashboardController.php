@@ -424,17 +424,17 @@ class DashboardController extends Controller
 
         $model = $model->when($tat, function($query) use ($tat) {
                             if($tat == 1)
-                                return $query->selectRaw("AVG(tat1) as tat");
+                                return $query->selectRaw("AVG(tat1) as tatvalues");
                             if($tat == 2)
-                                return $query->selectRaw("AVG(tat2) as tat");
+                                return $query->selectRaw("AVG(tat2) as tatvalues");
                             if($tat == 3)
-                                return $query->selectRaw("AVG(tat3) as tat");
+                                return $query->selectRaw("AVG(tat3) as tatvalues");
                             if($tat == 4)
-                                return $query->selectRaw("AVG(tat4) as tat");
+                                return $query->selectRaw("AVG(tat4) as tatvalues");
                         })->whereRaw("YEAR($table.datetested) = ".$year)
                         ->when($month, function($query) use ($month){
                             return $query->whereMonth("$table.datetested", $month);
-                        })->where('repeatt', '=', 0)->first()->tat ?? 0;
+                        })->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
 
         return round($model);
     	// if ($tat == null || !is_int($tat))
