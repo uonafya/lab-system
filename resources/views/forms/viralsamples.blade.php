@@ -470,7 +470,7 @@
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
+                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
                             </div>
                         </div>
 
