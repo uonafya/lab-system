@@ -595,7 +595,7 @@ class ViralworksheetController extends Controller
         $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('viralsamples.*', 'viralbatches.facility_id')
-                    ->whereIn('viralsamples.id', $sample_array)
+                    ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
                     ->get();
