@@ -162,11 +162,11 @@ class ReportController extends Controller
         if(session('testingSystem') == 'Viralload') {
             $dateString = 'VL';
             $table = "viralsamples_view";
-            $model = ViralsampleView::orderBy('totalsamples', 'desc')->where('lab_id', '=', env('APP_LAB'));
+            $model = ViralsampleView::orderBy('totalsamples', 'desc')->where('viralsamples_view.lab_id', '=', env('APP_LAB'));
         } else if(session('testingSystem') == 'EID') {
             $dateString = 'EID';
             $table = "samples_view";
-            $model = SampleView::orderBy('totalsamples', 'desc')->where('lab_id', '=', env('APP_LAB'));
+            $model = SampleView::orderBy('totalsamples', 'desc')->where('samples_view.lab_id', '=', env('APP_LAB'));
         }
 
         if($request->input('types') == 'remoteentry') {
