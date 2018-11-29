@@ -368,7 +368,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
+                <a href="{{ url('cd4/worksheet/state/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
             </li>
             <hr />
         @endif
