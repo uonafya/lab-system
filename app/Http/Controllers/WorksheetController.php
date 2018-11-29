@@ -205,7 +205,7 @@ class WorksheetController extends Controller
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['patient', 'batch.facility'])
                     ->select('samples.*', 'batches.facility_id')
-                    ->whereIn('id', $sample_array)
+                    ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
                     ->get();
@@ -273,8 +273,8 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['patient', 'batch.facility'])
-                    ->select('samples.*', 'batches.facility_id')
-                    ->whereIn('id', $sample_array)
+                    ->select('samples.samples.*', 'batches.facility_id')
+                    ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
                     ->get();
