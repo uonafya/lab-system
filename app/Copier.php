@@ -459,6 +459,8 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $duplicate = $worksheet->replicate();
+                    $existing = $model::find($worksheet->id);
+                    if($existing) continue;
                     $work = new $model;                    
                     $work->fill($duplicate->toArray());
                     foreach ($date_array as $date_field) {

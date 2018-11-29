@@ -411,45 +411,71 @@ class DashboardController extends Controller
 
     public static function __getTAT($tat = null)
     {
-    	if ($tat == null || !is_int($tat))
-    		return 0;
-
-    	if ($tat == 1) {
-    		$d1 = "samples.datecollected";
-    		$d2 = "batches.datereceived";
-    	} else if ($tat == 2) {
-    		$d1 = "batches.datereceived";
-            $d2 = "samples.datetested";
-    	} else if ($tat == 3) {
-            $d1 = "samples.datetested";
-            $d2 = "batches.datedispatched";
-        } else if ($tat == 4) {
-            $d1 = "samples.datecollected";
-            $d2 = "batches.datedispatched";
-        } else if ($tat == 5) {
-            $d1 = "batches.datereceived";
-            $d2 = "batches.datedispatched";
-        } else {
-            return 0;
-        }
-
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
-    	
-    	return  self::__getActualTATDays(DB::table('samples')
-    					->select("$d1 as d1", "$d2 as d2", DB::RAW("TIMESTAMPDIFF(DAY,$d1,$d2) as daysdiff"))
-    					->join('batches', 'batches.id', '=', 'samples.batch_id')
-    					->where($d2, '<>', '0000-00-00')
-    					->where($d2, '<>', '1970-01-01')
-    					->where($d1, '<>', '0000-00-00')
-    					->where($d1, '<>', '1970-01-01')
-    					->where($d1, '<=', $d2)
-                        ->whereRaw("YEAR(samples.datetested) = ".$year)
+
+        if(session('testingSystem') == 'Viralload'){
+            $model = Viralsample::where('flag', '=', 1);
+            $table = 'viralsamples';
+        } else if (session('testingSystem') == 'EID') {
+            $model = Sample::where('flag', '=', 1);
+            $table = 'samples';
+        }
+
+        $model = $model->when($tat, function($query) use ($tat) {
+                            if($tat == 1)
+                                return $query->selectRaw("AVG(tat1) as tatvalues");
+                            if($tat == 2)
+                                return $query->selectRaw("AVG(tat2) as tatvalues");
+                            if($tat == 3)
+                                return $query->selectRaw("AVG(tat3) as tatvalues");
+                            if($tat == 4)
+                                return $query->selectRaw("AVG(tat4) as tatvalues");
+                        })->whereRaw("YEAR($table.datetested) = ".$year)
                         ->when($month, function($query) use ($month){
-                            return $query->whereMonth('samples.datetested', $month);
-                        })->where('repeatt', '=', 0)
-                        ->where('flag', '=', 1)
-    					->get());
+                            return $query->whereMonth("$table.datetested", $month);
+                        })->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
+
+        return round($model);
+    	// if ($tat == null || !is_int($tat))
+    	// 	return 0;
+
+    	// if ($tat == 1) {
+    	// 	$d1 = "samples.datecollected";
+    	// 	$d2 = "batches.datereceived";
+    	// } else if ($tat == 2) {
+    	// 	$d1 = "batches.datereceived";
+     //        $d2 = "samples.datetested";
+    	// } else if ($tat == 3) {
+     //        $d1 = "samples.datetested";
+     //        $d2 = "batches.datedispatched";
+     //    } else if ($tat == 4) {
+     //        $d1 = "samples.datecollected";
+     //        $d2 = "batches.datedispatched";
+     //    } else if ($tat == 5) {
+     //        $d1 = "batches.datereceived";
+     //        $d2 = "batches.datedispatched";
+     //    } else {
+     //        return 0;
+     //    }
+
+     //    $year = session('dashboardYear');
+     //    $month = session('dashboardMonth');
+    	
+    	// return  self::__getActualTATDays(DB::table('samples')
+    	// 				->select("$d1 as d1", "$d2 as d2", DB::RAW("TIMESTAMPDIFF(DAY,$d1,$d2) as daysdiff"))
+    	// 				->join('batches', 'batches.id', '=', 'samples.batch_id')
+    	// 				->where($d2, '<>', '0000-00-00')
+    	// 				->where($d2, '<>', '1970-01-01')
+    	// 				->where($d1, '<>', '0000-00-00')
+    	// 				->where($d1, '<>', '1970-01-01')
+    	// 				->where($d1, '<=', $d2)
+     //                    ->whereRaw("YEAR(samples.datetested) = ".$year)
+     //                    ->when($month, function($query) use ($month){
+     //                        return $query->whereMonth('samples.datetested', $month);
+     //                    })->where('repeatt', '=', 0)
+     //                    ->where('flag', '=', 1)
+    	// 				->get());
     }
 
     public static function __getActualTATDays($data = null)
