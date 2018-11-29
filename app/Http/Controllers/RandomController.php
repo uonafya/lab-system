@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\LabEquipmentTracker;
+use App\LabPerformanceTracker;
 
 class RandomController extends Controller
 {
@@ -50,6 +52,14 @@ class RandomController extends Controller
 	public function search()
 	{
 		return view('forms.search')->with('pageTitle', 'Search');
+	}
+
+	public function lab_equipment(){
+		$month = date('m') - 1;
+		$performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->get();
+		$data = (object)['performance' => $performance];
+		dd($data);
+		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}
 
 	public function config()

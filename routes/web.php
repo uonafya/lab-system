@@ -221,6 +221,10 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('email', 'EmailController');
 	});
+
+	Route::group(['middleware' => ['only_utype:1']], function() {
+		Route::get('equipment', 'RandomController@lab_equipment')->name('equipment');
+	});
 	
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::get('facility/served', 'FacilityController@served');

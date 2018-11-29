@@ -413,6 +413,10 @@
             </li>
             <hr />
         @endif
+        @if(Session('testingSystem') != 'CD4' && Auth::user()->user_type_id == 0)
+            <li><a href="{{ url('equipment') }}">Lab Equipments</a></li>
+            <hr />
+        @endif
         @if(Auth::user()->user_type_id != 2)
             @if(Auth::user()->user_type_id == 5)
                 <!-- EID Searches -->
