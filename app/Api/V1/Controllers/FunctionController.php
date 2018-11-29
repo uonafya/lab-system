@@ -139,6 +139,7 @@ class FunctionController extends Controller
             ];
 
             if($test == 1) $r['result'] = Lookup::get_result($sample->result);
+            if($test == 2 && is_numeric($sample->result)) $r['result_log'] = round(log10($sample->result), 1);
 
             if($sample->receivedstatus == 2){
                 $r['rejected_reason'] = Lookup::get_rejected_reason($test, $sample->rejectedreason);
