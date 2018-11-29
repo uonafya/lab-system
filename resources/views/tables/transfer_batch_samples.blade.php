@@ -97,7 +97,8 @@
                                         <th>Task</th>
                                     </tr>
                                 </thead>
-                                <tbody> 
+                                <tbody>                                     
+                                    <?php $i=1; ?>
                                     @foreach($samples as $key => $sample)
                                         @continue($sample->repeatt == 1)
                                         <tr>                                            

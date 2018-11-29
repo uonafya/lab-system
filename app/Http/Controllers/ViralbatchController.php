@@ -79,6 +79,7 @@ class ViralbatchController extends Controller
                 if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.id', 'desc');
             })
+            ->where('viralbatches.lab_id', env('APP_LAB'))
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -988,6 +989,7 @@ class ViralbatchController extends Controller
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
+            ->where('lab_id', $user->lab_id)
             ->paginate(10);
 
         $batches->setPath(url()->current());

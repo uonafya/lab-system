@@ -1072,7 +1072,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-14'])->where('datereceived', '<', '2018-11-01')->get();
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-29'])->where('datereceived', '<', '2018-11-01')->get();
 
         foreach ($batches as $key => $batch) {
             $dt = $batch->sample->max('datetested');
