@@ -149,7 +149,7 @@ class ViralworksheetController extends Controller
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
         
-        $samples = Viralsample::join(['viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id'])
+        $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
                     ->with(['patient', 'batch.facility'])
                     ->select('samples.*', 'viralbatches.facility_id')
                     ->whereIn('id', $sample_array)
@@ -218,8 +218,8 @@ class ViralworksheetController extends Controller
         $worksheet->load(['creator']);
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
-        
-        $samples = Viralsample::join(['viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id'])
+
+        $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
                     ->with(['patient', 'batch.facility'])
                     ->select('samples.*', 'viralbatches.facility_id')
                     ->whereIn('id', $sample_array)
