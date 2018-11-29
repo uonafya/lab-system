@@ -24,25 +24,25 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '7', 'user_type' => 'POC Admin'],
 		]);
 
-		$old_users = DB::connection('old')->table('users')->get();
+		// $old_users = DB::connection('old')->table('users')->get();
 
-		foreach ($old_users as $old_user) {
-			$user = new User;
-			$user->id = $old_user->ID;
-			$user->user_type_id = $old_user->account;
-			$user->lab_id = $old_user->lab;
-			$user->surname = $old_user->surname;
-			$user->oname = $old_user->oname;
-			$user->email = $old_user->email;
+		// foreach ($old_users as $old_user) {
+		// 	$user = new User;
+		// 	$user->id = $old_user->ID;
+		// 	$user->user_type_id = $old_user->account;
+		// 	$user->lab_id = $old_user->lab;
+		// 	$user->surname = $old_user->surname;
+		// 	$user->oname = $old_user->oname;
+		// 	$user->email = $old_user->email;
 
-			if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
+		// 	if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
 
-			$existing = User::withTrashed()->where('email', $old_user->email)->get()->first();
-			if($existing) $user->email = str_random(5) . $user->email;
+		// 	$existing = User::withTrashed()->where('email', $old_user->email)->get()->first();
+		// 	if($existing) $user->email = str_random(5) . $user->email;
 
-			$user->password = env('DEFAULT_PASSWORD', 12345678);
-			$user->save();
-		}
+		// 	$user->password = env('DEFAULT_PASSWORD', 12345678);
+		// 	$user->save();
+		// }
 
 
 
