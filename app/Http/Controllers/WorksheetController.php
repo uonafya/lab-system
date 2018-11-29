@@ -626,7 +626,15 @@ class WorksheetController extends Controller
     {        
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        
+        $samples = Viralsample::join('batches', 'samples.batch_id', '=', 'batches.id')
+                    ->with(['approver', 'final_approver'])
+                    ->select('samples.*', 'batches.facility_id')
+                    ->whereIn('samples.id', $sample_array)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $s = $this->get_worksheets($worksheet->id);
 
