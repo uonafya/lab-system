@@ -74,6 +74,7 @@ class Copier
                 unset($facility->ANC);
                 unset($facility->partnerregion);
                 unset($facility->pasco);
+                unset($facility->zuia);
                 unset($facility->{'sent2'});
                 unset($facility->sent2);
                 unset($facility->sentmail);
@@ -97,6 +98,7 @@ class Copier
                 unset($facility->districtname);
                 unset($facility->partnerregion);
                 unset($facility->pasco);
+                unset($facility->zuia);
                 unset($facility->ANC);
                 unset($facility->sent2);
                 unset($facility->sentmail);
