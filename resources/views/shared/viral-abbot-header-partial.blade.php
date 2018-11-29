@@ -86,5 +86,19 @@
 		<td><strong>Date Reviewed	</strong>    </td>
 		<td> {{ $worksheet->my_date_format('datereviewed') }}</td>
 	</tr>
+	
+	
+	@if(in_array(env('APP_LAB'), $double_approval))
+		<tr class="even">
+			<td>    </td>
+			<td> </td>
+			<td>    </td>
+			<td> </td>
+			<td><strong> Second Reviewer	</strong>    </td>
+			<td> {{ $worksheet->reviewer2->full_name ?? '' }}</td>
+			<td><strong>Date of Second Review	</strong>    </td>
+			<td> {{ $worksheet->my_date_format('datereviewed2') }}</td>
+		</tr>
+	@endif
 
 </table>
