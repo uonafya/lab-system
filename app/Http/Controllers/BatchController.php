@@ -884,6 +884,7 @@ class BatchController extends Controller
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
+            ->where('lab_id', $user->lab_id)
             ->paginate(10);
 
         $batches->setPath(url()->current());
