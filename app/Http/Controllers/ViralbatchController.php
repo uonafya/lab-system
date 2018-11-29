@@ -79,6 +79,7 @@ class ViralbatchController extends Controller
                 if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.id', 'desc');
             })
+            ->where('viralbatches.lab_id', env('APP_LAB'))
             ->paginate();
 
         $batches->setPath(url()->current());

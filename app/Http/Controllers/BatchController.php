@@ -79,6 +79,7 @@ class BatchController extends Controller
                 if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
                 return $query->orderBy('batches.id', 'desc');
             })
+            ->where('batches.lab_id', env('APP_LAB'))
             ->paginate();
 
         $batches->setPath(url()->current());
