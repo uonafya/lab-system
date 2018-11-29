@@ -419,7 +419,7 @@ class Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = $class::where(['batch_complete' => '0'])->where('datereceived', '<', '2018-01-01')->get();
+        $batches = $class::whereIn('batch_complete', ['0', '2'])->where('datereceived', '<', '2018-05-01')->get();
         // $batches = $class::where(['batch_complete' => '0'])->where('created_at', '<', '2018-01-01')->get();
 
         foreach ($batches as $key => $batch) {
@@ -450,22 +450,23 @@ class Common
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
-        	// if($fac->id < 55000) continue;
+        	if($facility->facilitycode == 0) continue;
+         	// if($fac->id < 55000) continue;
 
         	if($fac->id != $facility->ID){
 
         		// dd([$fac->toArray(), $facility->toArray()]);
 
-        		// $new_fac = \App\Facility::find($facility->ID);
+        		$new_fac = \App\Facility::find($facility->ID);
         		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
-        		// if($new_fac){
-        		// 	$conflict[] = [
-        		// 		'id' => $new_fac->id,
-        		// 		'code' => $new_fac->facilitycode,
-        		// 		'name' => $new_fac->name,
-        		// 	];
-        		// 	continue;
-        		// }
+        		if($new_fac){
+        			$conflict[] = [
+        				'id' => $new_fac->id,
+        				'code' => $new_fac->facilitycode,
+        				'name' => $new_fac->name,
+        			];
+        			continue;
+        		}
 
         		foreach ($classes as $class) {
         			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
@@ -476,7 +477,7 @@ class Common
         	}
         }
 
-        // dd($conflict);
+        dd($conflict);
     }
 
 

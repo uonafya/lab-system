@@ -50,7 +50,7 @@ class Copier
     public static function copy_missing_facilities()
     {
         $db_name = env('DB_DATABASE');
-        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+        $facilities = DB::connection('old')->table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         $classes = [
             \App\Mother::class,
@@ -72,6 +72,13 @@ class Copier
                 unset($facility->wardid);
                 unset($facility->districtname);
                 unset($facility->ANC);
+                unset($facility->partnerregion);
+                unset($facility->pasco);
+                unset($facility->zuia);
+                unset($facility->negpilot);
+                unset($facility->{'sent2'});
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
 
@@ -90,7 +97,13 @@ class Copier
                 unset($facility->ID);
                 unset($facility->wardid);
                 unset($facility->districtname);
+                unset($facility->partnerregion);
+                unset($facility->pasco);
+                unset($facility->zuia);
+                unset($facility->negpilot);
                 unset($facility->ANC);
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
             }
@@ -196,6 +209,70 @@ class Copier
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
     }
 
+    public static function copy_updated_eid()
+    {
+        $start = Sample::max('id');
+        ini_set("memory_limit", "-1");
+        $fields = self::samples_arrays(); 
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+        $offset_value = 60000;
+        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
+        while(true)
+        {
+            $samples = SampleView::limit(self::$limit)->offset($offset_value)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $value) {
+                $sample = \App\Sample::find($value->id);
+                if($sample){
+                    $patient = $sample->patient;
+
+                    $mother = $patient->mother;
+                    $mother->fill($value->only($fields['mother']));
+                    $mother->save();
+
+                    $patient->fill($value->only($fields['patient']));
+
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
+
+                    if(!$patient->dob){
+                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    }
+
+                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
+                    $patient->ccc_no = $value->enrollment_ccc_no;
+                    $patient->save();
+
+                    $batch = $sample->batch;
+                    $batch->fill($value->only($fields['batch']));
+                    foreach ($batch_date_array as $date_field) {
+                        $batch->$date_field = self::clean_date($value->$date_field);
+                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+                    }
+                    $batch->save();
+
+                    $sample->fill($value->only($fields['sample']));
+                    foreach ($sample_date_array as $date_field) {
+                        $sample->$date_field = self::clean_date($value->$date_field);
+                        if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
+                    }
+
+                    if($sample->worksheet_id == 0) $sample->worksheet_id = null;
+                    if($sample->receivedstatus == 0) $sample->receivedstatus = null;
+                    if($sample->result == '') $sample->result = null;
+                    if(!$sample->eqa) $sample->eqa = 0;
+
+                    $sample->save();
+                }
+            }
+            $offset_value += self::$limit;
+            echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+        }
+    }
+
 
     public static function copy_vl()
     {
@@ -227,10 +304,12 @@ class Copier
             }
 
             foreach ($samples as $key => $value) {
+                if(!$value->patient) continue;
                 $patient = Viralpatient::existing($value->facility_id, $value->patient)->get()->first();
 
                 if(!$patient){
                     $patient = new Viralpatient($value->only($fields['patient']));
+                    // if(!$patient->patient) $patient->patient = '';
                     if($patient->dob) $patient->dob = self::clean_date($patient->dob);
 
                     if(!$patient->dob) $patient->dob = self::previous_dob(ViralsampleView::class, $value->patient, $value->facility_id);
@@ -388,12 +467,53 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $duplicate = $worksheet->replicate();
+                    $existing = $model::find($worksheet->id);
+                    if($existing) continue;
                     $work = new $model;                    
                     $work->fill($duplicate->toArray());
                     foreach ($date_array as $date_field) {
                         $work->$date_field = self::clean_date($worksheet->$date_field);
                     }
                     $work->id = $worksheet->id;
+                    $work->save();
+                }
+                $offset_value += self::$limit;
+                echo "Completed {$key} worksheet {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+            }
+        }
+    }
+
+    public static function copy_updated_worksheet()
+    {
+        $work_array = [
+            'eid' => ['model' => Worksheet::class, 'view' => WorksheetView::class],
+            'vl' => ['model' => Viralworksheet::class, 'view' => ViralworksheetView::class],
+        ];
+
+        $date_array = ['kitexpirydate', 'sampleprepexpirydate', 'bulklysisexpirydate', 'controlexpirydate', 'calibratorexpirydate', 'amplificationexpirydate', 'datecut', 'datereviewed', 'datereviewed2', 'datecancelled', 'daterun', 'dateuploaded', 'created_at'];
+
+        ini_set("memory_limit", "-1");
+
+        foreach ($work_array as $key => $value) {
+            $model = $value['model'];
+            $view = $value['view'];
+
+            $start = $model::max('id');              
+
+            $offset_value = 1000;
+            while(true)
+            {
+                $worksheets = $view::limit(self::$limit)->offset($offset_value)->get();
+                if($worksheets->isEmpty()) break;
+
+                foreach ($worksheets as $worksheet_key => $worksheet) {
+                    $duplicate = $worksheet->replicate();
+                    $work = $model::find($worksheet->id);                    
+                    $work->fill($duplicate->toArray());
+                    foreach ($date_array as $date_field) {
+                        $work->$date_field = self::clean_date($worksheet->$date_field);
+                    }
+                    // $work->id = $worksheet->id;
                     $work->save();
                 }
                 $offset_value += self::$limit;

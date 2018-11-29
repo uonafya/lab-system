@@ -80,7 +80,7 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
-                            @if($batch->site_entry == 1 && (!$batch->datereceived || 
+                            @if(($batch->site_entry == 1 || ($batch->site_entry == 0 && $batch->user_id == 0 && !$batch->batch_complete )) && (!$batch->datereceived || 
                             ($batch->datereceived && $samples->where('receivedstatus', null)->first())
                             ) )
                                 <div class="col-md-4">
@@ -176,6 +176,11 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @if(auth()->user()->user_type_id != 5 && $batch->batch_complete == 0 && env('APP_LAB') == 3 && !$sample->worksheet_id && $sample->receivedstatus == 1 && (($sample->sample_received_by && $sample->sample_received_by != auth()->user()->id) || 
+                                            (!$sample->sample_received_by && $batch->received_by != auth()->user()->id) ))
+                                                <a href="{{ url('/sample/transfer/' . $sample->id ) }}">Transfer To My Account</a> |
+                                            @endif
+                                            
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif

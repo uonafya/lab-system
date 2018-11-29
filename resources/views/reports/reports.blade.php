@@ -101,6 +101,14 @@
                             </div>
                             <div class="row">
                                 <label class="col-sm-3 control-label">
+                                    <input type="radio" name="category" value="partner" class="i-checks">Select Partner
+                                </label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" id="report_partner_search" name="partner"></select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 control-label">
                                     <input type="radio" name="category" value="subcounty" class="i-checks">Select Sub County
                                 </label>
                                 <div class="col-sm-9">
@@ -235,8 +243,14 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
-                                <label> <input type="radio" name="types" value="tested" class="i-checks"> Tested Samples </label>
-                                <label> <input type="radio" name="types" value="rejected" class="i-checks"> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="tested" class="i-checks" required> Tested Samples </label>
+                                @if(Session('testingSystem') == 'EID')
+                                <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
+                                @endif
+                                <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
+                                <label> <input type="radio" name="types" value="rejected" class="i-checks" required> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
+                                <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
                             </div>
                         </div>
 
@@ -282,8 +296,9 @@
         });
 
         set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
-        set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false)
+        set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false);
         set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
+        set_select_facility("report_partner_search", "{{ url('partner/search') }}", 1, "Search for Partner", false);
 
     @endcomponent
     <script type="text/javascript">
@@ -315,6 +330,9 @@
                 } else if (selValue == 'subcounty') {
                     category = $("#report_district_search").val();
                     cat = 'Sub-County';
+                } else if (selValue == 'partner') {
+                    category = $("#report_partner_search").val();
+                    cat = 'Partner';
                 } else if (selValue == 'facility') {
                     category = $("#report_facility_search").val();
                     cat = 'Facility';

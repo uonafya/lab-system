@@ -79,6 +79,7 @@ class ViralbatchController extends Controller
                 if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.id', 'desc');
             })
+            ->where('viralbatches.lab_id', env('APP_LAB'))
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -411,7 +412,7 @@ class ViralbatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
-            if($sample->parentid > 0 && $submit_type == "new_batch"){
+            if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result && $sample->result != "Failed"))){
                 continue;
             }else{
                 $parent = $sample->parent;
@@ -434,6 +435,10 @@ class ViralbatchController extends Controller
             $sample->pre_update();
             $s = $sample;
             $count++;
+        }
+
+        if($count == 0){
+            // $new_batch->delete();
         }
 
         MiscViral::check_batch($batch->id);

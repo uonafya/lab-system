@@ -97,15 +97,17 @@
                                         <th>Task</th>
                                     </tr>
                                 </thead>
-                                <tbody> 
+                                <tbody>                                     
+                                    <?php $i=1; ?>
                                     @foreach($samples as $key => $sample)
+                                        @continue($sample->repeatt == 1)
                                         <tr>                                            
                                             <td>
                                                 <div align='center'>
                                                     <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
                                                 </div>
                                             </td>
-                                            <td> {{ $key+1 }} </td>
+                                            <td> {{ $i++ }} </td>
                                             <td> {{ $sample->patient->patient }} </td>
                                             <td> {{ $sample->patient->gender }} </td>
                                             <td> {{ $sample->patient->my_date_format('dob') }} </td>

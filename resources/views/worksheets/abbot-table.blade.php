@@ -43,11 +43,20 @@ width:1180px;
 >
 	<div align="center">
 		<table border="0" class="data-table">
+			<tr class="odd">
+				<td colspan="8">
+					<center>
+						ABBOTT M2000 SPRT TEMPLATE						
+					</center>	
+				</td>			
+			</tr>
 			@if(get_class($worksheet) == "App\Viralworksheet")
 				<tr class="odd">
 					<td colspan="8">
 						<center>
-							[{{ $worksheet->sample_type_name }}]							
+							 [{{ $worksheet->sample_type_name }}]
+							 <br />
+							 						
 						</center>						
 					</td>					
 				</tr>

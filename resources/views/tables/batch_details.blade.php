@@ -60,7 +60,7 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
-                            @if($batch->site_entry == 1 && (!$batch->datereceived || 
+                            @if(($batch->site_entry == 1 || ($batch->site_entry == 0 && $batch->user_id == 0 && !$batch->batch_complete )) && (!$batch->datereceived || 
                             ($batch->datereceived && $samples->where('receivedstatus', null)->first())
                             ) )
                                 <div class="col-md-4">
@@ -69,6 +69,9 @@
                                     </a>
                                 </div>
                             @endif
+
+
+
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('batch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
@@ -81,11 +84,11 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="18"><center> Sample Log</center></th>
+                                    <th colspan="19"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="7">Patient Information</th>
-                                    <th colspan="3">Sample Information</th>
+                                    <th colspan="4">Sample Information</th>
                                     <th colspan="8">Mother Information</th>
                                 </tr>
                                 <tr> 
@@ -97,6 +100,7 @@
                                     <th>Age (Months)</th>
                                     <th>Infant Prophylaxis</th>
 
+                                    <th>Worksheet</th>
                                     <th>Date Collected</th>
                                     <th>Status</th>
                                     <th>Spots</th>
@@ -130,6 +134,7 @@
                                             @endforeach
                                         </td>
 
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
@@ -172,6 +177,11 @@
                                             @endforeach
                                         </td>
                                         <td>
+                                            @if(auth()->user()->user_type_id != 5 && $batch->batch_complete == 0 && env('APP_LAB') == 3 && !$sample->worksheet_id && $sample->receivedstatus == 1 && (($sample->sample_received_by && $sample->sample_received_by != auth()->user()->id) || 
+                                            (!$sample->sample_received_by && $batch->received_by != auth()->user()->id) ))
+                                                <a href="{{ url('/sample/transfer/' . $sample->id ) }}">Transfer To My Account</a> |
+                                            @endif
+
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif

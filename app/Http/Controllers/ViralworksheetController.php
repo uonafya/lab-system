@@ -147,7 +147,15 @@ class ViralworksheetController extends Controller
     {
         $Viralworksheet->load(['creator']);
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        
+        $samples = Viralsample::join(['viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id'])
+                    ->with(['patient', 'batch.facility'])
+                    ->select('samples.*', 'viralbatches.facility_id')
+                    ->whereIn('id', $sample_array)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
 
@@ -209,7 +217,15 @@ class ViralworksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        
+        $samples = Viralsample::join(['viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id'])
+                    ->with(['patient', 'batch.facility'])
+                    ->select('samples.*', 'viralbatches.facility_id')
+                    ->whereIn('id', $sample_array)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
 
@@ -644,6 +660,9 @@ class ViralworksheetController extends Controller
             }
             $sample = Viralsample::find($samples[$key]);
             $sample->fill($data);
+            if($sample->repeatt == 0 && in_array($sample->result, ["", "Failed"])){
+                $sample->result = "Collect New Sample";
+            }
             $sample->pre_update();
 
             // Viralsample::where('id', $samples[$key])->update($data);
@@ -745,7 +764,7 @@ class ViralworksheetController extends Controller
             ->where('receivedstatus', '!=', 2)
             ->when(true, function($query) use ($result){
                 if ($result == 0) {
-                    return $query->whereNull('result');
+                    return $query->whereRaw("(result is null or result='')");
                 }
                 else if ($result == 1) {
                     return $query->where('result', '< LDL copies/ml');

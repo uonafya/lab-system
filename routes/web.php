@@ -180,6 +180,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('viralbatch', 'ViralbatchController');
 
 	Route::post('county/search/', 'HomeController@countysearch')->name('county.search');
+	Route::post('partner/search/', 'HomeController@partnersearch')->name('partner.search');
 
 	Route::get('dashboard/{year?}/{month?}', 'DashboardController@index')->name('dashboard');
 	Route::post('district/search/', 'DistrictController@search')->name('district.search');
@@ -287,7 +288,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('print/{sample}', 'SampleController@individual');
 		
 		Route::group(['middleware' => ['utype:4']], function () {
-			Route::get('runs/{sample}', 'SampleController@runs');		
+			Route::get('runs/{sample}', 'SampleController@runs');	
+			Route::get('transfer/{sample}', 'SampleController@transfer');	
 		});
 
 		Route::get('upload', 'SampleController@site_sample_page');
@@ -337,6 +339,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['utype:4']], function () {
 			Route::get('runs/{sample}', 'ViralsampleController@runs');		
+			Route::get('transfer/{sample}', 'ViralsampleController@transfer');		
 		});
 
 		Route::get('create_poc', 'ViralsampleController@create_poc');

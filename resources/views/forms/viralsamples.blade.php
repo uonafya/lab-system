@@ -171,6 +171,17 @@
                             </div>
                         </div>
 
+                        @if(!isset($viralsample))
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="reentry" value="1" />
+                                </div>
+                            </div>
+
+                        @endif
+
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
                             <div class="col-sm-8">
@@ -322,7 +333,11 @@
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" required class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                    <input type="text" id="initiation_date" 
+                                    @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
+                                        required 
+                                    @endif
+                                    class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>
@@ -455,7 +470,7 @@
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="vl_test_request_no" number="number" min=1 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
+                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
                             </div>
                         </div>
 

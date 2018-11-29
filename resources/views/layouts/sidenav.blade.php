@@ -64,7 +64,7 @@
                 </li> -->
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
                 <hr />
-                @if(env('APP_LAB') == 8 || env('APP_LAB') == 9)
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
                     <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
@@ -120,8 +120,12 @@
                     <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                     <hr />
                 @endif
-                @if(env('APP_LAB') == 2)
+                @if(env('APP_LAB') == 2 && (auth()->user()->user_type_id == 0 || auth()->user()->lab_id == 7))
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
+                    <hr />
+                @endif
+                @if(env('APP_LAB') == 2 && (auth()->user()->user_type_id == 0 || auth()->user()->lab_id == 10))
+                    <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
                     <hr />
                 @endif
                 <li>
@@ -142,7 +146,7 @@
                     <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [8, 9]))
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/21') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>

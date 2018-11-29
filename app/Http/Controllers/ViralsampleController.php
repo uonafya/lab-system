@@ -117,7 +117,7 @@ class ViralsampleController extends Controller
         $data_existing['patient'] = $patient_string;
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
-        if($existing){
+        if($existing && !$request->input('reentry')){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            
@@ -357,6 +357,11 @@ class ViralsampleController extends Controller
         // }
 
         $viralpatient = $viralsample->patient;
+
+        if($viralpatient->patient != $request->input('patient')){
+            $viralpatient = new Viralpatient;
+            $created_patient = true;
+        }
         
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
@@ -405,6 +410,28 @@ class ViralsampleController extends Controller
 
         $viralsample->pre_update();
 
+        if(isset($created_patient)){
+            if($viralsample->run == 1 && $viralsample->has_rerun){
+                $children = $viralsample->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $viralpatient->id;
+                    $kid->pre_update();
+                }
+            }
+            else if($viralsample->run > 1){
+                $parent = $viralsample->parent;
+                $parent->pre_update();
+                
+                $children = $parent->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $viralpatient->id;
+                    $kid->pre_update();
+                }
+            }
+        }
+
         MiscViral::check_batch($batch->id); 
 
         if($viralsample->receivedstatus == 1 && $user->is_lab_user()){            
@@ -418,6 +445,10 @@ class ViralsampleController extends Controller
             if($work_samples_edta['count'] > 20) $str .=  'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.';
 
             if($str != '') session(['toast_message' => $str]);
+        }
+
+        if($viralsample->receivedstatus && !$viralsample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('viralbatch/site_approval_group/' . $batch->id);
         }
 
         $site_entry_approval = session()->pull('site_entry_approval');
@@ -473,7 +504,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->result == NULL){
+        if($viralsample->result == NULL || $viralsample->run < 2){
             $batch = $viralsample->batch;
             $viralsample->delete();
             $samples = $batch->sample;
@@ -526,6 +557,15 @@ class ViralsampleController extends Controller
             $data[0] = 1;
         }
         return $data;
+    }
+
+
+    public function transfer(Viralsample $sample)
+    {
+        $sample->sample_received_by = auth()->user()->id;
+        $sample->save();
+        session(['toast_message' => "The sample has been tranferred to your account."]);
+        return back();
     }
 
     public function runs(Viralsample $sample)
@@ -612,7 +652,7 @@ class ViralsampleController extends Controller
         $batches = Viralsample::selectRaw("distinct batch_id")->whereIn('id', $viralsamples)->get();
 
         if($submit_type == "release"){
-            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id]);
+            Viralsample::whereIn('id', $viralsamples)->update(['synched' => 0, 'approvedby' => $user->id, 'dateapproved' => date('Y-m-d')]);
             session(['toast_message' => 'The samples have been sent to NASCOP.']);
         }
         else{
