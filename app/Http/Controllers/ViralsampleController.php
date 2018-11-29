@@ -447,6 +447,10 @@ class ViralsampleController extends Controller
             if($str != '') session(['toast_message' => $str]);
         }
 
+        if($viralsample->receivedstatus && !$viralsample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('viralbatch/site_approval_group/' . $batch->id);
+        }
+
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){

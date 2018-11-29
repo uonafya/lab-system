@@ -546,6 +546,10 @@ class SampleController extends Controller
             return redirect('sample/create');
         } */    
 
+        if($sample->receivedstatus && !$sample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('batch/site_approval_group/' . $batch->id);
+        }
+
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){
