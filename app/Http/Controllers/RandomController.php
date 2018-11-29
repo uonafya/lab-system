@@ -58,7 +58,7 @@ class RandomController extends Controller
 		$month = date('m') - 1;
 		$performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->get();
 		$data = (object)['performance' => $performance];
-		dd($data);
+		// dd($data);
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}
 
