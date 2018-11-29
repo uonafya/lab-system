@@ -201,8 +201,8 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         // $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
 
-        
-        $samples = Sample::join(['batches', 'samples.batch_id', '=', 'batches.id'])
+
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['patient', 'batch.facility'])
                     ->select('samples.*', 'batches.facility_id')
                     ->whereIn('id', $sample_array)
@@ -271,7 +271,7 @@ class WorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        $samples = Sample::join(['batches', 'samples.batch_id', '=', 'batches.id'])
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['patient', 'batch.facility'])
                     ->select('samples.*', 'batches.facility_id')
                     ->whereIn('id', $sample_array)
