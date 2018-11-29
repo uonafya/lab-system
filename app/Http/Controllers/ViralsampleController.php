@@ -448,7 +448,7 @@ class ViralsampleController extends Controller
         }
 
         if($viralsample->receivedstatus && !$viralsample->getOriginal('receivedstatus') && $batch->site_entry == 1){
-            return redirect('batch/site_approval_group/' . $batch->id);
+            return redirect('viralbatch/site_approval_group/' . $batch->id);
         }
 
         $site_entry_approval = session()->pull('site_entry_approval');
