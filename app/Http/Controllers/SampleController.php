@@ -391,11 +391,23 @@ class SampleController extends Controller
         $batch->pre_update();
 
         $patient = $sample->patient;
+
+        if($patient->patient != $request->input('patient')){
+            $patient = new Patient;
+            $created_patient = true;
+        }
+
+
+
         $data = $request->only($samples_arrays['patient']);
         $patient->fill($data);
-        $patient->pre_update();
 
-        $mother = $patient->mother;
+        if(isset($created_patient)){
+            $mother = new Mother;
+        }else{
+            $mother = $patient->mother;
+        }
+
         $data = $request->only($samples_arrays['mother']);
         $mother->fill($data);
 
@@ -403,6 +415,11 @@ class SampleController extends Controller
         if($viralpatient) $mother->patient_id = $viralpatient->id;
 
         $mother->pre_update();
+
+        $patient->mother_id = $mother->id;
+        $patient->pre_update();
+
+        
 
 
         // $new_patient = $request->input('new_patient');
@@ -494,6 +511,28 @@ class SampleController extends Controller
 
         $sample->pre_update(); 
 
+        if(isset($created_patient)){
+            if($sample->run == 1 && $sample->has_rerun){
+                $children = $sample->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $patient->id;
+                    $kid->pre_update();
+                }
+            }
+            else if($sample->run > 1){
+                $parent = $sample->parent;
+                $parent->pre_update();
+                
+                $children = $parent->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $patient->id;
+                    $kid->pre_update();
+                }
+            }
+        }
+
         Misc::check_batch($batch->id);  
 
         if($sample->receivedstatus == 1 && $user->is_lab_user()){            
@@ -551,7 +590,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->result == NULL){
+        if($sample->result == NULL || $sample->run < 2){
             $batch = $sample->batch;
             $sample->delete();
             $samples = $batch->sample;

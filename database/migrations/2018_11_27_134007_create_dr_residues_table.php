@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDrCallDrugsTable extends Migration
+class CreateDrResiduesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateDrCallDrugsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_call_drugs', function (Blueprint $table) {
+        Schema::create('dr_residues', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('call_id')->unsigned()->index();
-            $table->string('short_name', 20)->nullable(); 
-            $table->tinyInteger('short_name_id')->nullable()->unsigned()->index();
-            $table->string('call', 10)->nullable(); 
+            $table->integer('genotype_id')->unsigned()->index();
+            $table->string('residue', 10)->nullable(); 
+            $table->smallInteger('residue_id')->nullable()->unsigned()->index();
+            $table->smallInteger('position')->nullable()->unsigned();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateDrCallDrugsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dr_call_drugs');
+        Schema::dropIfExists('dr_residues');
     }
 }
