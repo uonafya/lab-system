@@ -72,6 +72,9 @@ class Copier
                 unset($facility->wardid);
                 unset($facility->districtname);
                 unset($facility->ANC);
+                unset($facility->{'sent2'});
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
 
@@ -91,6 +94,8 @@ class Copier
                 unset($facility->wardid);
                 unset($facility->districtname);
                 unset($facility->ANC);
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
             }
@@ -454,6 +459,8 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $duplicate = $worksheet->replicate();
+                    $existing = $model::find($worksheet->id);
+                    if($existing) continue;
                     $work = new $model;                    
                     $work->fill($duplicate->toArray());
                     foreach ($date_array as $date_field) {
