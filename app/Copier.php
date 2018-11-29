@@ -75,6 +75,7 @@ class Copier
                 unset($facility->partnerregion);
                 unset($facility->pasco);
                 unset($facility->zuia);
+                unset($facility->negpilot);
                 unset($facility->{'sent2'});
                 unset($facility->sent2);
                 unset($facility->sentmail);
@@ -99,6 +100,7 @@ class Copier
                 unset($facility->partnerregion);
                 unset($facility->pasco);
                 unset($facility->zuia);
+                unset($facility->negpilot);
                 unset($facility->ANC);
                 unset($facility->sent2);
                 unset($facility->sentmail);
