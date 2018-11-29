@@ -117,7 +117,7 @@ class ViralsampleController extends Controller
         $data_existing['patient'] = $patient_string;
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
-        if($existing){
+        if($existing && !$request->input('reentry')){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            

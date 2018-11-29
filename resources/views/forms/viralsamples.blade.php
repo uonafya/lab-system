@@ -171,6 +171,17 @@
                             </div>
                         </div>
 
+                        @if(!isset($viralsample))
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="reentry" value="1" />
+                                </div>
+                            </div>
+
+                        @endif
+
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
                             <div class="col-sm-8">
