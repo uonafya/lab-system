@@ -504,18 +504,18 @@ class Misc extends Common
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
-            ->where('parentid', '>', 0)
+            // ->where('parentid', '>', 0)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('highpriority', 'desc')
+            // ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('samples_view.id', 'asc')
             ->limit($limit)
             ->get();
 
-        dd($samples);
+        // dd($samples);
 
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
