@@ -190,7 +190,6 @@ class ViralpatientController extends Controller
             ->when($female, function($query){
                 return $query->where('sex', 2);
             })
-            ->where('lab_id', $user->lab_id)
             ->paginate(10);
 
         $patients->setPath(url()->current());

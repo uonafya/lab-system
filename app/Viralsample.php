@@ -98,7 +98,15 @@ class Viralsample extends BaseModel
         $this->previous_tests = $samples;
     }
 
-    public function remove_reruns()
+    public function remove_rerun()
+    {
+        if($this->parentid == 0) $this->remove_child();
+        else{
+            $this->remove_sibling();
+        }
+    }
+
+    public function remove_child()
     {
         $children = $this->child;
 
@@ -110,7 +118,7 @@ class Viralsample extends BaseModel
         $this->save();
     }
 
-    public function remove_after_reruns()
+    public function remove_sibling()
     {
         $parent = $this->parent;
         $children = $parent->child;

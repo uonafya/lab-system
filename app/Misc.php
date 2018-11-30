@@ -474,12 +474,13 @@ class Misc extends Common
         $date_str = $year . '-12-31';        
 
         if($test){
-            $repeats = SampleView::selectRaw("samples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
+            $repeats = SampleView::selectRaw("samples_view.*, facilitys.name, users.surname, users.oname")
                 ->leftJoin('users', 'users.id', '=', 'samples_view.user_id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
                 ->where('datereceived', '>', $date_str)
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
+                ->whereNull('datedispatched')
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
@@ -500,6 +501,7 @@ class Misc extends Common
                 	->whereRaw("((received_by={$user->id} && sample_received_by IS NULL) OR  sample_received_by={$user->id})");
             })
             ->where('site_entry', '!=', 2)
+            ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
