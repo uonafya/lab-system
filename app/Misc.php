@@ -504,7 +504,7 @@ class Misc extends Common
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
-            ->where('parentid', '>', 0)
+            // ->where('parentid', '>', 0)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
