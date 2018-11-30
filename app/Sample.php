@@ -50,14 +50,14 @@ class Sample extends BaseModel
         return $this->belongsTo('App\User', 'cancelledby');
     }
 
-    public function reviewer()
-    {
-        return $this->belongsTo('App\User', 'reviewedby');
-    }
-
     public function approver()
     {
         return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
     }
 
 
