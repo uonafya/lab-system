@@ -42,7 +42,7 @@
                                                 @foreach($dilutions as $dilution)
                                                     <option value="{{$dilution->dilutionfactor }}"
                                                         @if($sample->dilutionfactor == $dilution->dilutionfactor    )
-                                                            selected
+                                                            selected="selected"
                                                         @endif
                                                         > {{ $dilution->dilutiontype }} </option>
                                                 @endforeach
