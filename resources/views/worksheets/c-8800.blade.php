@@ -129,7 +129,7 @@ width:1180px;
 				?>
 
 
-				@foreach($samples->where('parentid', '!=', 0) as $sample)
+				@foreach($samples as $sample)
 
 					@include('shared/worksheet_sample', ['sample' => $sample])
 
@@ -142,7 +142,7 @@ width:1180px;
 				@endforeach
 
 
-				@foreach($samples->where('parentid', 0) as $sample)
+				{{--@foreach($samples->where('parentid', 0) as $sample)
 
 					@include('shared/worksheet_sample', ['sample' => $sample])
 
@@ -153,7 +153,7 @@ width:1180px;
 					@endif
 				@endforeach
 
-				{{--@if($vl) 
+				@if($vl) 
 					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
 				@else
 					<td align='center' > PC </td><td  align='center' > NC </td>

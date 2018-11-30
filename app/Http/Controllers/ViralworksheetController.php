@@ -590,7 +590,15 @@ class ViralworksheetController extends Controller
     {
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
         
-        $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        // $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        
+        $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                    ->with(['approver', 'final_approver'])
+                    ->select('viralsamples.*', 'viralbatches.facility_id')
+                    ->where('worksheet_id', $worksheet->id)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
         $failed = $this->checknull($this->get_worksheet_results(3, $worksheet->id));
