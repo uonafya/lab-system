@@ -139,9 +139,11 @@ class FunctionController extends Controller
             ];
 
             if($test == 1) $r['result'] = Lookup::get_result($sample->result);
-            if($test == 2 && ){
+            if($test == 2){
                 $r['result_log'] = null;
-                if(is_numeric($sample->result)) $r['result_log'] = round(log10($sample->result), 1);                
+                if(is_numeric($sample->result)) {
+                    $r['result_log'] = round(log10($sample->result), 1);                
+                }
             }
 
             if($sample->receivedstatus == 2){
