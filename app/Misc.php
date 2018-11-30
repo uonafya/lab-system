@@ -480,6 +480,7 @@ class Misc extends Common
                 ->where('datereceived', '>', $date_str)
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
+                ->whereNull('datedispatched')
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
@@ -500,6 +501,7 @@ class Misc extends Common
                 	->whereRaw("((received_by={$user->id} && sample_received_by IS NULL) OR  sample_received_by={$user->id})");
             })
             ->where('site_entry', '!=', 2)
+            ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])

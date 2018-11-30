@@ -781,6 +781,7 @@ class MiscViral extends Common
                 })
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
+                ->whereNull('datedispatched')
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
@@ -805,6 +806,7 @@ class MiscViral extends Common
                 if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
             })
             ->where('site_entry', '!=', 2)
+            ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
