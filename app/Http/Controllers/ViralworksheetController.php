@@ -285,8 +285,15 @@ class ViralworksheetController extends Controller
             return back();
         }
 
+        $samples = Viralsample::where(['repeatt' => 1, 'worksheet_id' => $worksheet->id])->get();
+
+        foreach ($samples as $sample) {
+            $sample->remove_rerun();
+        }
+
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0]);
+
+        Viralsample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -624,6 +631,7 @@ class ViralworksheetController extends Controller
         $batches = $request->input('batches');
         $redraws = $request->input('redraws');
         $results = $request->input('results');
+        $interpretations = $request->input('interpretations');
         $actions = $request->input('actions');
         $dilutions = $request->input('dilutionfactors');
 
