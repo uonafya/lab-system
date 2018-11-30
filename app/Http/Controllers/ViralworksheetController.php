@@ -631,6 +631,7 @@ class ViralworksheetController extends Controller
         $batches = $request->input('batches');
         $redraws = $request->input('redraws');
         $results = $request->input('results');
+        $interpretations = $request->input('interpretations');
         $actions = $request->input('actions');
         $dilutions = $request->input('dilutionfactors');
 
