@@ -59,7 +59,7 @@ class ViralbatchController extends Controller
             })
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id)->where('site_entry', '!=', 2);
+                return $query->where('viralbatches.lab_id', $user->lab_id)->where('site_entry', '!=', 2);
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('viralbatches.facility_id', $facility_id);
