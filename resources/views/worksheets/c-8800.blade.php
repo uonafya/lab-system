@@ -44,7 +44,11 @@ width:1180px;
 			<tr class="odd">
 				<td colspan="8">
 					<center>
-						C8800						
+						C8800	
+
+						@if($worksheet->cdcworksheetno)
+							({{ $worksheet->cdcworksheetno }})
+						@endif											
 					</center>	
 				</td>			
 			</tr>
