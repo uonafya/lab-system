@@ -485,7 +485,7 @@ class Misc extends Common
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw('((result IS NULL ) OR (result=0 ))')
-                ->orderBy('samples_view.id', 'asc')
+                ->orderBy('samples_view.id', 'desc')
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
