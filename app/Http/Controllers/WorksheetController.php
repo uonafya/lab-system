@@ -333,6 +333,12 @@ class WorksheetController extends Controller
             return back();
         }
 
+        $samples = Sample::where(['repeatt' => 1, 'worksheet_id' => $worksheet->id])->get();
+
+        foreach ($samples as $sample) {
+            $sample->remove_rerun();
+        }
+
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0]);
         $worksheet->status_id = 1;
