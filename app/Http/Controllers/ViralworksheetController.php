@@ -665,7 +665,7 @@ class ViralworksheetController extends Controller
                 if(is_numeric($interpretation)) $data['result'] = (int) $interpretation * $dilutions[$key];
                 else{
                     $r = MiscViral::sample_result($interpretation);
-                    $data['result'] = $r['result'] * $dilutions[$key];
+                    $data['result'] = (int) $r['result'] * $dilutions[$key];
                 }
                 // $data['result'] = (int) $results[$key] * $dilutions[$key];
             }
