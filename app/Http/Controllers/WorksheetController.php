@@ -260,11 +260,11 @@ class WorksheetController extends Controller
      */
     public function destroy(Worksheet $worksheet)
     {
-        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
         // $worksheet->status_id = 4;
-        // $worksheet->save();
+        $worksheet->delete();
 
-        // return redirect("/worksheet");
+        return redirect("/worksheet");
     }
 
     public function print(Worksheet $worksheet)
