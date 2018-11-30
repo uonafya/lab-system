@@ -509,7 +509,7 @@ class Misc extends Common
             ->whereRaw('((result IS NULL ) OR (result =0 ))')            
             ->orderBy('run', 'desc')
             // ->orderBy('isnull', 'asc')
-            // ->orderBy('highpriority', 'desc')
+            ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('samples_view.id', 'asc')
