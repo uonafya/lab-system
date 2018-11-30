@@ -488,6 +488,7 @@ class Misc extends Common
                 ->orderBy('samples_view.id', 'desc')
                 ->limit($limit)
                 ->get();
+                dd($repeats);
             $limit -= $repeats->count();
         }
 
