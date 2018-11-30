@@ -508,14 +508,14 @@ class Misc extends Common
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
-            ->orderBy('highpriority', 'desc')
+            // ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('samples_view.id', 'asc')
             ->limit($limit)
             ->get();
 
-        dd($samples);
+        // dd($samples);
 
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
