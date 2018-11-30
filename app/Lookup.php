@@ -195,6 +195,7 @@ class Lookup
             'machines' => Cache::get('machines'),
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'worksheet_sampletypes' => Cache::get('worksheet_sampletypes'),
+            'double_approval' => self::$double_approval,
         ];
     }
 
@@ -208,7 +209,7 @@ class Lookup
             'worksheet_sampletypes' => Cache::get('worksheet_sampletypes'),
             'dilutions' => Cache::get('dilutions'),
             'results' => Cache::get('results'),
-            'double_approval' => self::$double_approval
+            'double_approval' => self::$double_approval,
         ];
     }
 

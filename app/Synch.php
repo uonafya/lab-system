@@ -114,7 +114,7 @@ class Synch
 
 	public static function login()
 	{
-		Cache::forget('api_token');
+		Cache::store('file')->forget('api_token');
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'auth/login', [
@@ -127,16 +127,16 @@ class Synch
 			],
 		]);
 		$body = json_decode($response->getBody());
-		Cache::put('api_token', $body->token, 60);
+		Cache::store('file')->put('api_token', $body->token, 60);
 	}
 
 	public static function get_token()
 	{
-		if(Cache::has('api_token')){}
+		if(Cache::store('file')->has('api_token')){}
 		else{
 			self::login();
 		}
-		return Cache::get('api_token');
+		return Cache::store('file')->get('api_token');
 	}
 
 	public static function synch_eid_patients()
