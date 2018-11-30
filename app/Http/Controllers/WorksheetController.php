@@ -628,7 +628,7 @@ class WorksheetController extends Controller
 
         // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
         
-        $samples = Viralsample::join('batches', 'samples.batch_id', '=', 'batches.id')
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
                     ->where('worksheet_id', $worksheet->id)
