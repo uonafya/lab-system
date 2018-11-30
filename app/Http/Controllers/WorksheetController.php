@@ -199,7 +199,16 @@ class WorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        // $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+
+
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
+                    ->with(['patient', 'batch.facility'])
+                    ->select('samples.*', 'batches.facility_id')
+                    ->whereIn('samples.id', $sample_array)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
 
@@ -262,7 +271,13 @@ class WorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
+                    ->with(['patient', 'batch.facility'])
+                    ->select('samples.samples.*', 'batches.facility_id')
+                    ->whereIn('samples.id', $sample_array)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
 
@@ -611,7 +626,15 @@ class WorksheetController extends Controller
     {        
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
-        $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
+                    ->with(['approver', 'final_approver'])
+                    ->select('samples.*', 'batches.facility_id')
+                    ->where('worksheet_id', $worksheet->id)
+                    ->orderBy('run', 'desc')
+                    ->orderBy('facility_id')
+                    ->get();
 
         $s = $this->get_worksheets($worksheet->id);
 

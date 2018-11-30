@@ -419,7 +419,7 @@ class Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = $class::where(['batch_complete' => '0'])->where('datereceived', '<', '2018-01-01')->get();
+        $batches = $class::whereIn('batch_complete', ['0', '2'])->where('datereceived', '<', '2018-05-01')->get();
         // $batches = $class::where(['batch_complete' => '0'])->where('created_at', '<', '2018-01-01')->get();
 
         foreach ($batches as $key => $batch) {
@@ -450,7 +450,8 @@ class Common
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
-        	// if($fac->id < 55000) continue;
+        	if($facility->facilitycode == 0) continue;
+         	// if($fac->id < 55000) continue;
 
         	if($fac->id != $facility->ID){
 
