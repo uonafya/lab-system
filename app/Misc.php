@@ -488,7 +488,6 @@ class Misc extends Common
                 ->orderBy('samples_view.id', 'desc')
                 ->limit($limit)
                 ->get();
-                dd($repeats);
             $limit -= $repeats->count();
         }
 
@@ -505,6 +504,7 @@ class Misc extends Common
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
+            ->where('parentid', '>', 0)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw('((result IS NULL ) OR (result =0 ))')
             ->orderBy('isnull', 'asc')
@@ -514,6 +514,8 @@ class Misc extends Common
             ->orderBy('samples_view.id', 'asc')
             ->limit($limit)
             ->get();
+
+        dd($samples;)
 
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
