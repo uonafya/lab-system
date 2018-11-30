@@ -515,7 +515,7 @@ class Misc extends Common
             ->limit($limit)
             ->get();
 
-        dd($samples;)
+        dd($samples);
 
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
