@@ -811,11 +811,12 @@ class MiscViral extends Common
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw("(result IS NULL OR result='0')")
-            ->orderBy('isnull', 'asc')
+            // ->orderBy('isnull', 'asc')           
+            ->orderBy('run', 'desc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('viralsamples_view.id', 'asc')
+            ->orderBy('facilitys.id', 'asc')
             ->limit($limit)
             ->get();
 
