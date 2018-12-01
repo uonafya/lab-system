@@ -16,16 +16,17 @@
                         <center>Facility Information</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
+
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Code</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" required name="facilitycode" type="text" value="{{ $facility->facilitycode }}" id="facilitycode" {{ $disabled }}>
+                                <input class="form-control editable" required name="facilitycode" type="text" value="{{ $facility->facilitycode }}" id="facilitycode" @if(Auth::user()->user_type_id == 5) disabled @else {{ $disabled }} @endif>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Name</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" required name="name" type="text" value="{{ $facility->facility }}" id="name" {{ $disabled }}>
+                                <input class="form-control editable" required name="name" type="text" value="{{ $facility->facility }}" id="name" @if(Auth::user()->user_type_id == 5) disabled @else {{ $disabled }} @endif>
                             </div>
                         </div>
                         <div class="form-group">

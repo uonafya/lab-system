@@ -162,11 +162,11 @@ class ReportController extends Controller
         if(session('testingSystem') == 'Viralload') {
             $dateString = 'VL';
             $table = "viralsamples_view";
-            $model = ViralsampleView::orderBy('totalsamples', 'desc');
+            $model = ViralsampleView::orderBy('totalsamples', 'desc')->where('viralsamples_view.lab_id', '=', env('APP_LAB'));
         } else if(session('testingSystem') == 'EID') {
             $dateString = 'EID';
             $table = "samples_view";
-            $model = SampleView::orderBy('totalsamples', 'desc');
+            $model = SampleView::orderBy('totalsamples', 'desc')->where('samples_view.lab_id', '=', env('APP_LAB'));
         }
 
         if($request->input('types') == 'remoteentry') {
@@ -174,8 +174,10 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'sitessupported') {
             $dateString .= ' suported sites ';
         }
-        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
+        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility, facilitys.name as enteredby,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
                     ->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
+                    ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                    ->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
                     ->when(true, function($query) use ($request, $table){
                         if($request->input('types') == 'remoteentry')
                             return $query->where("$table.site_entry", "=", 1);
@@ -251,9 +253,9 @@ class ReportController extends Controller
         if($request->method() == 'POST') {
             $platform = $request->input('platform');
             if ($platform == 'abbott') 
-                $model = Abbotdeliveries::select('*');
+                $model = Abbotdeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             if ($platform == 'taqman')
-                $model = Taqmandeliveries::select('*');
+                $model = Taqmandeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             
             if($request->input('types') == 'eid') 
                 $model->where('testtype', '=', 1);
@@ -322,13 +324,13 @@ class ReportController extends Controller
         $data = [];
         $platform = $request->input('platform');
         if ($platform == 'abbott') {
-            $model = Abbotprocurement::select('*');
-            $kits = Abbotdeliveries::select('*');
+            $model = Abbotprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
+            $kits = Abbotdeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             $sub = $this->abbottKits;
         }
         if ($platform == 'taqman') {
-            $model = Taqmanprocurement::select('*');
-            $kits = Taqmandeliveries::select('*');
+            $model = Taqmanprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
+            $kits = Taqmandeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             $sub = $this->taqmanKits;
         }
 
@@ -336,7 +338,7 @@ class ReportController extends Controller
         if($request->input('types') == 'eid') {
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
-            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")
+            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('lab_id', '=', env('APP_LAB'))
                         ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
@@ -349,7 +351,7 @@ class ReportController extends Controller
         if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('lab_id', '=', env('APP_LAB'))
                         ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
@@ -444,7 +446,7 @@ class ReportController extends Controller
         $title = '';
     	if (session('testingSystem') == 'Viralload') {
     		$table = 'viralsamples_view';
-    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')
+    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')->where('lab_id', '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'viralsamples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -458,7 +460,7 @@ class ReportController extends Controller
     	} else if (session('testingSystem') == 'EID'){
             $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, labs.labdesc, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname";
     		$table = 'samples_view';
-    		$model = SampleView::selectRaw($columns)
+    		$model = SampleView::selectRaw($columns)->where('lab_id', '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -586,7 +588,7 @@ class ReportController extends Controller
     public function __getSiteEntryExcel($data, $title)
     {
         $title = strtoupper($title);
-        $dataArray[] = ['MFL Code', 'Facility Name', 'County', 'Sub-County', 'Partner', 'Total Samples'];
+        $dataArray[] = ['MFL Code', 'Facility Name', 'Site Entered', 'County', 'Sub-County', 'Partner', 'Total Samples'];
         $this->generate_excel($data, $dataArray, $title);
     }
 
