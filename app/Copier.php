@@ -586,7 +586,7 @@ class Copier
         foreach ($samples as $sample) {
             $old = SampleView::find($sample->id);
 
-            $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,]);
+            $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,])->first();
 
             if(!$batch) continue;
 
@@ -603,7 +603,7 @@ class Copier
         foreach ($samples as $sample) {
             $old = ViralsampleView::find($sample->id);
 
-            $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,]);
+            $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,])->first();
 
             if(!$batch) continue;
 
