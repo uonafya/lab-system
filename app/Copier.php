@@ -578,6 +578,23 @@ class Copier
         }
     }
 
+    public static function match_poc_batches()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Sample::where('batch_id', 0)->get();
+
+        foreach ($samples as $sample) {
+            $old = SampleView::find($sample->id);
+
+            $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,]);
+
+            if(!$batch) continue;
+
+            $sample->batch_id = $batch->id;
+            $sample->pre_update();
+        }
+    }
+
     public static function return_vl_dateinitiated()
     {
         ini_set("memory_limit", "-1");
