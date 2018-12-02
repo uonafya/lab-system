@@ -187,7 +187,10 @@ class Copier
                     $sample->$date_field = self::clean_date($value->$date_field);
                     if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
-                $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
+                if($value->original_batch_id != 0) $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
+                else{
+                    $sample->batch_id = $new_batch_id;
+                }
                 $sample->patient_id = $patient->id;
 
                 if(!$sample->age && $batch->datecollected && $patient->dob){
@@ -207,70 +210,6 @@ class Copier
         $my = new Misc;
         $my->compute_tat(\App\SampleView::class, Sample::class);
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
-    }
-
-    public static function copy_updated_eid()
-    {
-        $start = Sample::max('id');
-        ini_set("memory_limit", "-1");
-        $fields = self::samples_arrays(); 
-        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
-        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
-        $offset_value = 60000;
-        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
-        while(true)
-        {
-            $samples = SampleView::limit(self::$limit)->offset($offset_value)->get();
-            if($samples->isEmpty()) break;
-
-            foreach ($samples as $key => $value) {
-                $sample = \App\Sample::find($value->id);
-                if($sample){
-                    $patient = $sample->patient;
-
-                    $mother = $patient->mother;
-                    $mother->fill($value->only($fields['mother']));
-                    $mother->save();
-
-                    $patient->fill($value->only($fields['patient']));
-
-                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
-
-                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
-
-                    if(!$patient->dob){
-                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
-                    }
-
-                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
-                    $patient->ccc_no = $value->enrollment_ccc_no;
-                    $patient->save();
-
-                    $batch = $sample->batch;
-                    $batch->fill($value->only($fields['batch']));
-                    foreach ($batch_date_array as $date_field) {
-                        $batch->$date_field = self::clean_date($value->$date_field);
-                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
-                    }
-                    $batch->save();
-
-                    $sample->fill($value->only($fields['sample']));
-                    foreach ($sample_date_array as $date_field) {
-                        $sample->$date_field = self::clean_date($value->$date_field);
-                        if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
-                    }
-
-                    if($sample->worksheet_id == 0) $sample->worksheet_id = null;
-                    if($sample->receivedstatus == 0) $sample->receivedstatus = null;
-                    if($sample->result == '') $sample->result = null;
-                    if(!$sample->eqa) $sample->eqa = 0;
-
-                    $sample->save();
-                }
-            }
-            $offset_value += self::$limit;
-            echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
-        }
     }
 
 
@@ -344,7 +283,10 @@ class Copier
                     $sample->$date_field = self::clean_date($value->$date_field);
                     if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
-                $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
+                if($value->original_batch_id != 0) $sample->batch_id = $value->original_batch_id;
+                else{
+                    $sample->batch_id = $new_batch_id;
+                }
                 $sample->patient_id = $patient->id;
 
                 if(!$sample->age && $batch->datecollected && $patient->dob){
@@ -636,6 +578,40 @@ class Copier
         }
     }
 
+    public static function match_eid_poc_batches()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Sample::where('batch_id', 0)->get();
+
+        foreach ($samples as $sample) {
+            $old = SampleView::find($sample->id);
+
+            $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,]);
+
+            if(!$batch) continue;
+
+            $sample->batch_id = $batch->id;
+            $sample->pre_update();
+        }
+    }
+
+    public static function match_vl_poc_batches()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::where('batch_id', 0)->get();
+
+        foreach ($samples as $sample) {
+            $old = ViralsampleView::find($sample->id);
+
+            $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'datedispatched' => $old->datedispatched, 'facility_id' => $old->facility_id,]);
+
+            if(!$batch) continue;
+
+            $sample->batch_id = $batch->id;
+            $sample->pre_update();
+        }
+    }
+
     public static function return_vl_dateinitiated()
     {
         ini_set("memory_limit", "-1");
@@ -835,6 +811,87 @@ class Copier
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static function copy_updated_eid()
+    {
+        $start = Sample::max('id');
+        ini_set("memory_limit", "-1");
+        $fields = self::samples_arrays(); 
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+        $offset_value = 60000;
+        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
+        while(true)
+        {
+            $samples = SampleView::limit(self::$limit)->offset($offset_value)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $value) {
+                $sample = \App\Sample::find($value->id);
+                if($sample){
+                    $patient = $sample->patient;
+
+                    $mother = $patient->mother;
+                    $mother->fill($value->only($fields['mother']));
+                    $mother->save();
+
+                    $patient->fill($value->only($fields['patient']));
+
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
+
+                    if(!$patient->dob){
+                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    }
+
+                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
+                    $patient->ccc_no = $value->enrollment_ccc_no;
+                    $patient->save();
+
+                    $batch = $sample->batch;
+                    $batch->fill($value->only($fields['batch']));
+                    foreach ($batch_date_array as $date_field) {
+                        $batch->$date_field = self::clean_date($value->$date_field);
+                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+                    }
+                    $batch->save();
+
+                    $sample->fill($value->only($fields['sample']));
+                    foreach ($sample_date_array as $date_field) {
+                        $sample->$date_field = self::clean_date($value->$date_field);
+                        if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
+                    }
+
+                    if($sample->worksheet_id == 0) $sample->worksheet_id = null;
+                    if($sample->receivedstatus == 0) $sample->receivedstatus = null;
+                    if($sample->result == '') $sample->result = null;
+                    if(!$sample->eqa) $sample->eqa = 0;
+
+                    $sample->save();
+                }
+            }
+            $offset_value += self::$limit;
+            echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+        }
+    }
 
 
 }
