@@ -457,13 +457,14 @@ class Common
 
         		// dd([$fac->toArray(), $facility->toArray()]);
 
-        		$new_fac = \App\Facility::find($facility->ID);
+        		$new_fac = \App\ViewFacility::find($facility->ID);
         		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
         		if($new_fac){
         			$conflict[] = [
         				'id' => $new_fac->id,
         				'code' => $new_fac->facilitycode,
         				'name' => $new_fac->name,
+        				'county' => $new_fac->county,
         			];
         			continue;
         		}
