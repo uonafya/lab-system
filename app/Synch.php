@@ -974,12 +974,14 @@ class Synch
 			$url = 'synch/viralbatches';
 		}
 		$done=0;
+		$offset=0;
 
 		while (true) {
 			$batches = $batch_class::with(['sample:id'])
 				->where('synched', '>', 0)
 				->whereNull('national_batch_id')
 				->limit(200)
+				->offset($offset)
 				->get();
 			if($batches->isEmpty()) break;
 
@@ -994,12 +996,14 @@ class Synch
 				],
 
 			]);
+			$i=0;
 
 			$body = json_decode($response->getBody());
 
 			foreach ($body->batches as $key => $value) {
 				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
 				$batch_class::where('id', $value->original_id)->update($update_data);
+				$i++;
 			}
 
 			foreach ($body->samples as $key => $value) {
@@ -1011,6 +1015,8 @@ class Synch
 				// }
 				$sample_class::where('id', $value->original_id)->update($update_data);
 			}
+			
+			$offset += (200 - ($i+1));
 
 			$done+=200;
 			echo "Matched {$done} {$type} batch records at " . date('d/m/Y h:i:s a', time()). "\n";
