@@ -846,7 +846,7 @@ class Synch
 				->where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
-				// ->offset($offset)
+				->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
@@ -916,7 +916,7 @@ class Synch
 			$patients = Viralpatient::where('synched', '>', 0)
 				->whereNull('national_patient_id')
 				->limit(200)
-				// ->offset($offset)
+				->offset($offset)
 				->get();
 			if($patients->isEmpty()) break;
 
