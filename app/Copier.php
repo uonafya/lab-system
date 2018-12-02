@@ -582,13 +582,24 @@ class Copier
     {
         ini_set("memory_limit", "-1");
         $samples = Sample::where('batch_id', 0)->get();
+        $fields = self::samples_arrays(); 
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
 
         foreach ($samples as $sample) {
             $old = SampleView::find($sample->id);
 
-            $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
+            $batch = new Batch($value->only($fields['batch']));
 
-            if(!$batch) continue;
+            foreach ($batch_date_array as $date_field) {
+                $batch->$date_field = self::clean_date($value->$date_field);
+                if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+            }
+            $batch->entered_by = $value->user_id;
+            $batch->save();
+
+            // $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
+
+            // if(!$batch) continue;
 
             $sample->batch_id = $batch->id;
             $sample->pre_update();
@@ -599,13 +610,22 @@ class Copier
     {
         ini_set("memory_limit", "-1");
         $samples = Viralsample::where('batch_id', 0)->get();
+        $fields = self::viralsamples_arrays(); 
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
 
         foreach ($samples as $sample) {
             $old = ViralsampleView::find($sample->id);
 
-            $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
+            $batch = new Viralbatch($value->only($fields['batch']));
+            foreach ($batch_date_array as $date_field) {
+                $batch->$date_field = self::clean_date($value->$date_field);
+                if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+            }
+            $batch->entered_by = $value->user_id;
+            $batch->save();
 
-            if(!$batch) continue;
+            // $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
+            // if(!$batch) continue;
 
             $sample->batch_id = $batch->id;
             $sample->pre_update();
