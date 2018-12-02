@@ -594,7 +594,7 @@ class Copier
                 $batch->$date_field = self::clean_date($old->$date_field);
                 if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
             }
-            $batch->entered_by = $value->user_id;
+            $batch->entered_by = $old->user_id;
             $batch->save();
 
             // $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
@@ -621,7 +621,7 @@ class Copier
                 $batch->$date_field = self::clean_date($old->$date_field);
                 if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
             }
-            $batch->entered_by = $value->user_id;
+            $batch->entered_by = $old->user_id;
             $batch->save();
 
             // $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
