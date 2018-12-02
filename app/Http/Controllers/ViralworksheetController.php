@@ -792,7 +792,7 @@ class ViralworksheetController extends Controller
                     return $query->where('result', '< LDL copies/ml');
                 }
                 else if ($result == 2) {
-                    return $query->whereNotIn('result', ['Failed', 'Invalid', '< LDL copies/ml', 'Collect New Sample']);
+                    return $query->whereNotIn('result', ['Failed', 'Invalid', '< LDL copies/ml', 'Collect New Sample', '']);
                 }
                 else if ($result == 3) {
                     return $query->whereRaw("(result='Failed' or result='invalid' or result='Collect New Sample')");
