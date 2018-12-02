@@ -38,7 +38,7 @@
 
 
                                         <td> 
-                                            <select class="dilutionfactor {{ $class }}" name="dilutionfactors[]">
+                                            <select class="dilutionfactor {{ $class }} dilution-{{ $sample->dilutionfactor }}" name="dilutionfactors[]">
                                                 @foreach($dilutions as $dilution)
                                                     <option value="{{$dilution->dilutionfactor }}"
                                                         @if($sample->dilutionfactor == $dilution->dilutionfactor    )
