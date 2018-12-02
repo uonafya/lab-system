@@ -58,6 +58,8 @@ class Cd4SampleController extends Controller
 
         if ($request->input('receivedstatus') == 2) { //If rejected set status to rejected also
             $sampleData['status_id'] = $request->input('receivedstatus');
+        } else {
+            $sampleData['status_id'] =  1;
         }
         
         $sample->fill($sampleData);
