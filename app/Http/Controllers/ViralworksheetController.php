@@ -661,7 +661,13 @@ class ViralworksheetController extends Controller
             $data['dilutionfactor'] = $dilutions[$key];
 
             if(is_numeric($results[$key])){
-                $data['result'] = (int) $results[$key] * $dilutions[$key];
+                $interpretation = $interpretations[$key];
+                if(is_numeric($interpretation)) $data['result'] = (int) $interpretation * $dilutions[$key];
+                else{
+                    $r = MiscViral::sample_result($interpretation);
+                    $data['result'] = (int) $r['result'] * $dilutions[$key];
+                }
+                // $data['result'] = (int) $results[$key] * $dilutions[$key];
             }
             else{
                 $data['result'] = $results[$key];
@@ -786,7 +792,7 @@ class ViralworksheetController extends Controller
                     return $query->where('result', '< LDL copies/ml');
                 }
                 else if ($result == 2) {
-                    return $query->whereNotIn('result', ['Failed', 'Invalid', '< LDL copies/ml', 'Collect New Sample']);
+                    return $query->whereNotIn('result', ['Failed', 'Invalid', '< LDL copies/ml', 'Target Not Detected', 'Collect New Sample', '']);
                 }
                 else if ($result == 3) {
                     return $query->whereRaw("(result='Failed' or result='invalid' or result='Collect New Sample')");
