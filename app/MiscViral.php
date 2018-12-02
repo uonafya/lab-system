@@ -781,6 +781,7 @@ class MiscViral extends Common
                 })
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
+                ->whereNull('datedispatched')
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
                 ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
@@ -805,15 +806,17 @@ class MiscViral extends Common
                 if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
             })
             ->where('site_entry', '!=', 2)
+            ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
             ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw("(result IS NULL OR result='0')")
-            ->orderBy('isnull', 'asc')
+            // ->orderBy('isnull', 'asc')           
+            ->orderBy('run', 'desc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('viralsamples_view.id', 'asc')
+            ->orderBy('facilitys.id', 'asc')
             ->limit($limit)
             ->get();
 
@@ -1072,11 +1075,11 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-29'])->where('datereceived', '<', '2018-11-01')->get();
+        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-12-01'])->where('datereceived', '<', '2018-11-01')->get();
 
         foreach ($batches as $key => $batch) {
-            $dt = $batch->sample->max('datetested');
-            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +2days'));
+            // $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +2days'));
             $batch->pre_update();
         }
     }

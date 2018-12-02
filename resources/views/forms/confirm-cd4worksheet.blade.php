@@ -166,10 +166,10 @@
                                     </td>
                                     <td>{{ $sample->first_approver->full_name ?? '' }}</td>
                                     <td>
-                                    @if($sample->dateapproved2)
-                                        <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" checked disabled style="width: 16px;height: 16px;" /></center>
-                                    @else
+                                    @if(null !== $sample->dateapproved && $sample->dateapproved2 == null)
                                         <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" value="{{ $key }}" checked style="width: 16px;height: 16px;" /></center>
+                                    @else
+                                        <center><input class="form-control input-sm" name="checkbox[]" type="checkbox" id="checkbox[]" checked disabled style="width: 16px;height: 16px;" /></center>
                                     @endif
                                     </td>
                                     <td>

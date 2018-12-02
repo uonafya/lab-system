@@ -126,13 +126,13 @@
                                     }
                                 @endphp
 
-                                @foreach($samples->where('parentid', '!=', 0) as $key => $sample)
+                                @foreach($samples as $key => $sample)
                                     @include('shared/confirm_viral_result_row', ['sample' => $sample])
                                 @endforeach
 
-                                @foreach($samples->where('parentid', '=', 0) as $key => $sample)
+                                {{--@foreach($samples->where('parentid', '=', 0) as $key => $sample)
                                     @include('shared/confirm_viral_result_row', ['sample' => $sample])
-                                @endforeach
+                                @endforeach--}}
 
                                 @if($worksheet->status_id != 3)
 
@@ -181,6 +181,9 @@
 
     @component('/tables/scripts')
         $(".editable.dilutionfactor").val(1).change();
+        $(".editable.dilution-2").val(2).change();
+        $(".editable.dilution-4").val(4).change();
+        $(".editable.dilution-8").val(8).change();
         $('.noneditable').attr("disabled", "disabled");     
     @endcomponent
 

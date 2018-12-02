@@ -117,7 +117,7 @@ class DashboardCacher
         if ($testingSystem == 'Viralload') {
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 14")
+                                ->whereRaw("datediff(datereceived, datetested) > 14")->where('lab_id', '=', env('APP_LAB'))
                                 ->whereNull('result')->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
@@ -129,13 +129,14 @@ class DashboardCacher
                         ->where('datereceived', '>', $date_str)
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->where('flag', '1')->get()->first()->total; 
                 }
             }
         } else {
             if ($over == true) {
                 $model = SampleView::selectRaw('COUNT(id) as total')
-                                ->whereNull('worksheet_id')
+                                ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
                                 ->whereRaw("datediff(datereceived, datetested) > 14")
                                 ->whereNull('result')->get()->first()->total;
             } else {
@@ -145,6 +146,7 @@ class DashboardCacher
                     ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
+                    ->where('lab_id', '=', env('APP_LAB'))
                     ->where('flag', '1')->get()->first()->total;
             }
         }
@@ -165,6 +167,7 @@ class DashboardCacher
                         // ->where('repeatt', '=', '0')
                         // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                         // ->where('site_entry', '=', '1')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('receivedstatus')
                         ->where('site_entry', 1);
         } else {
@@ -174,6 +177,7 @@ class DashboardCacher
                     // ->where('repeatt', '=', '0')
                     // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                     // ->where('site_entry', '=', '1')
+                    ->where('lab_id', '=', env('APP_LAB'))
                     ->whereNull('receivedstatus')
                     ->where('site_entry', 1);
         }
@@ -211,6 +215,7 @@ class DashboardCacher
                         ->whereBetween('sampletype', [1, 5])
                         ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->whereNull('worksheet_id')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->where('datereceived', '>', $date_str)
                         ->where('parentid', '>', 0)
                         // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
@@ -227,6 +232,7 @@ class DashboardCacher
                                   ->orWhere('result', '=', 0);
                         })
                         // ->where(DB::raw(('samples.result is null or samples.result = 0')))
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->where('flag', '=', '1')
                         ->where('parentid', '>', '0');
         }
@@ -242,6 +248,7 @@ class DashboardCacher
                         ->where('flag', '=', 1)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('datedispatched');
                         // ->where('datedispatched', '=', '')
                         // ->orWhere('datedispatched', '=', '0000-00-00')
@@ -252,6 +259,7 @@ class DashboardCacher
                         ->where('receivedstatus', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('datedispatched');
         }
         
@@ -264,6 +272,7 @@ class DashboardCacher
         if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('count(distinct batch_id) as total')
                         ->where('receivedstatus', '=', '4')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->orWhereNull('receivedstatus')->get()->first();
         } else {
             # code...
@@ -282,7 +291,7 @@ class DashboardCacher
             $model = Cd4Worksheet::with(['creator']);
         }
 
-        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->first()->total ?? 0;
+        return $model->selectRaw('count(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('status_id', '=', '1')->first()->total ?? 0;
     }
 
     public static function overdue($level = 'testing',$testingSystem = 'Viralload') {
@@ -302,6 +311,7 @@ class DashboardCacher
         }
 
         return $model->where('repeatt', 0)
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereYear('datereceived', '>', $year)
                         ->whereRaw("datediff(curdate(), datereceived) > 14")
                         ->get()->first()->total ?? 0;

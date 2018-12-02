@@ -358,7 +358,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
+                <a href="{{ url('cd4/worksheet/state/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
             </li>
             <hr />
         @endif
@@ -411,6 +411,10 @@
                 <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
             @endif
             </li>
+            <hr />
+        @endif
+        @if(Session('testingSystem') != 'CD4' && Auth::user()->user_type_id == 0)
+            <li><a href="{{ url('equipment') }}">Lab Equipments</a></li>
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)
