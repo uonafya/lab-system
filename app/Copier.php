@@ -588,7 +588,7 @@ class Copier
         foreach ($samples as $sample) {
             $old = SampleView::find($sample->id);
 
-            $batch = new Batch($value->only($fields['batch']));
+            $batch = new Batch($old->only($fields['batch']));
 
             foreach ($batch_date_array as $date_field) {
                 $batch->$date_field = self::clean_date($old->$date_field);
@@ -616,7 +616,7 @@ class Copier
         foreach ($samples as $sample) {
             $old = ViralsampleView::find($sample->id);
 
-            $batch = new Viralbatch($value->only($fields['batch']));
+            $batch = new Viralbatch($old->only($fields['batch']));
             foreach ($batch_date_array as $date_field) {
                 $batch->$date_field = self::clean_date($old->$date_field);
                 if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
