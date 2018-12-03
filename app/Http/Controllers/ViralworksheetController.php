@@ -155,6 +155,8 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
@@ -225,6 +227,8 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];

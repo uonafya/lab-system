@@ -54,10 +54,11 @@ class RandomController extends Controller
 		return view('forms.search')->with('pageTitle', 'Search');
 	}
 
-	public function lab_equipment(){
+	public function lablogs(){
 		$month = date('m') - 1;
 		$performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->get();
-		$data = (object)['performance' => $performance];
+		$equipment = LabEquipmentTracker::where('year', date('Y'))->where('month', $month)->get();
+		$data = (object)['performance' => $performance, 'equipments' => $equipment];
 		// dd($data);
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}
