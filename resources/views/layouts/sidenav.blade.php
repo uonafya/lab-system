@@ -414,7 +414,7 @@
             <hr />
         @endif
         @if(Session('testingSystem') != 'CD4' && Auth::user()->user_type_id == 0)
-            <li><a href="{{ url('equipment') }}">Lab Equipments</a></li>
+            <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)

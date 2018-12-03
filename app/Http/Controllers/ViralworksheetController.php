@@ -156,6 +156,7 @@ class ViralworksheetController extends Controller
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
                     ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
@@ -227,6 +228,7 @@ class ViralworksheetController extends Controller
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
                     ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
