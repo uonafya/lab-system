@@ -181,6 +181,9 @@
 
     @component('/tables/scripts')
         $(".editable.dilutionfactor").val(1).change();
+        $(".editable.dilution-2").val(2).change();
+        $(".editable.dilution-4").val(4).change();
+        $(".editable.dilution-8").val(8).change();
         $('.noneditable').attr("disabled", "disabled");     
     @endcomponent
 

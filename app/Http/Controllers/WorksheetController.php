@@ -260,11 +260,11 @@ class WorksheetController extends Controller
      */
     public function destroy(Worksheet $worksheet)
     {
-        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
         // $worksheet->status_id = 4;
-        // $worksheet->save();
+        $worksheet->delete();
 
-        // return redirect("/worksheet");
+        return redirect("/worksheet");
     }
 
     public function print(Worksheet $worksheet)
@@ -273,7 +273,7 @@ class WorksheetController extends Controller
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['patient', 'batch.facility'])
-                    ->select('samples.samples.*', 'batches.facility_id')
+                    ->select('samples.*', 'batches.facility_id')
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
@@ -333,8 +333,14 @@ class WorksheetController extends Controller
             return back();
         }
 
+        $samples = Sample::where(['repeatt' => 1, 'worksheet_id' => $worksheet->id])->get();
+
+        foreach ($samples as $sample) {
+            $sample->remove_rerun();
+        }
+
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0]);
+        Sample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -628,7 +634,7 @@ class WorksheetController extends Controller
 
         // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
         
-        $samples = Viralsample::join('batches', 'samples.batch_id', '=', 'batches.id')
+        $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
                     ->where('worksheet_id', $worksheet->id)

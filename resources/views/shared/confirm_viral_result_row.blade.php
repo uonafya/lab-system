@@ -30,6 +30,7 @@
                                             <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
                                             <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
                                             <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
+                                            <input type="hidden" name="interpretations[]" value="{{ $sample->interpretation }}" class="{{ $class }}">
                                         </td>
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
@@ -37,11 +38,11 @@
 
 
                                         <td> 
-                                            <select class="dilutionfactor {{ $class }}" name="dilutionfactors[]">
+                                            <select class="dilutionfactor {{ $class }} dilution-{{ $sample->dilutionfactor }}" name="dilutionfactors[]">
                                                 @foreach($dilutions as $dilution)
                                                     <option value="{{$dilution->dilutionfactor }}"
                                                         @if($sample->dilutionfactor == $dilution->dilutionfactor    )
-                                                            selected
+                                                            selected="selected"
                                                         @endif
                                                         > {{ $dilution->dilutiontype }} </option>
                                                 @endforeach

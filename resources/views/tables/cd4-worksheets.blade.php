@@ -76,7 +76,7 @@
                                         <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}">Print</a> 
                                     @else
                                         <a href="{{ URL::to('cd4/worksheet/'.$worksheet->id) }}">Details</a> | 
-                                        <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}">Print</a> | 
+                                        <a href="{{ URL::to('cd4/worksheet/print/'.$worksheet->id) }}" target="blank">Print</a> | 
                                         <a href="{{ URL::to('cd4/worksheet/cancel/'.$worksheet->id) }}">Cancel</a> | 
                                         <a href="{{ URL::to('cd4/worksheet/upload/'.$worksheet->id) }}">Update Results</a>
                                     @endif
