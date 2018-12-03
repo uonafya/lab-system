@@ -72,6 +72,7 @@ class VlController extends BaseController
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
+        $batch->input_complete = 1;
         $batch->site_entry = 1;
         if($datereceived || $batch->facility_id == 4840) $batch->site_entry = 0;
         $batch->save();
