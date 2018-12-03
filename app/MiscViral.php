@@ -816,7 +816,8 @@ class MiscViral extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('viralsamples_view.id', 'asc')
+            ->orderBy('facilitys.id', 'asc')
+            ->orderBy('batch_id', 'asc')
             ->limit($limit)
             ->get();
 
@@ -1075,11 +1076,12 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-29'])->where('datereceived', '<', '2018-11-01')->get();
+        $batches = Viralbatch::with(['sample'])->where(['batch_complete' => '2'])->where('datereceived', '<', '2018-09-01')->get();
 
         foreach ($batches as $key => $batch) {
-            $dt = $batch->sample->max('datetested');
-            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +2days'));
+            // $dt = $batch->sample->max('datetested');
+            $batch->batch_complete = 1;
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +2days'));
             $batch->pre_update();
         }
     }
@@ -1093,6 +1095,20 @@ class MiscViral extends Common
         foreach ($batches as $key => $batch) {
             $dt = $batch->sample->max('datetested');
             $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +6days'));
+            $batch->pre_update();
+        }
+    }
+
+    public static function kisumu()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::whereNull('datereceived')->where(['batch_complete' => '2'])->get();
+
+        foreach ($batches as $key => $batch) {
+            // $dt = $batch->sample->max('datetested');
+            $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +2days'));
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->created_at . ' +3days'));
             $batch->pre_update();
         }
     }

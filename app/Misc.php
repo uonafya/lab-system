@@ -512,7 +512,8 @@ class Misc extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('samples_view.id', 'asc')
+            ->orderBy('facilitys.id', 'asc')
+            ->orderBy('batch_id', 'asc')
             ->limit($limit)
             ->get();
 
