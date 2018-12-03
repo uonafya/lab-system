@@ -1097,5 +1097,19 @@ class MiscViral extends Common
             $batch->pre_update();
         }
     }
+
+    public static function kisumu()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::whereNull('datereceived')->where(['batch_complete' => '2'])->get();
+
+        foreach ($batches as $key => $batch) {
+            // $dt = $batch->sample->max('datetested');
+            $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +2days'));
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->created_at . ' +3days'));
+            $batch->pre_update();
+        }
+    }
     
 }
