@@ -208,6 +208,7 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
@@ -277,6 +278,7 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
