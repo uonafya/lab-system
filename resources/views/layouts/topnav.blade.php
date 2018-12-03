@@ -64,7 +64,7 @@
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
                 @else
-                    @if(!Session('pendingTasks'))
+                    @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
                             <li class="">
                                 <a href="{{ url('batch') }}">EID Samples</a>
@@ -114,7 +114,7 @@
                                 <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                         @else
-                            @if(!Session('pendingTasks'))
+                            @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                                 <li class="">
                                     <a href="
                                         @if(session('testingSystem') == 'Viralload')
@@ -202,7 +202,7 @@
                     <a href="{{ url('home') }}">Dashboard</a>
                 </li>
             @else
-                @if(!Session('pendingTasks'))
+                @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                     @if (Auth::user()->user_type_id == 5)
                         <li class="">
                             <a href="{{ url('batch') }}">EID Samples</a>

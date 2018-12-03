@@ -57,8 +57,9 @@ class ViralbatchController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
-            ->when($facility_user, function($query) use ($string){
-                return $query->whereRaw($string);
+            ->when(true, function($query) use ($user, $string){
+                if($user->user_type_id == 5) return $query->whereRaw($string);
+                return $query->where('viralbatches.lab_id', $user->lab_id)->where('site_entry', '!=', 2);
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('viralbatches.facility_id', $facility_id);
@@ -72,14 +73,10 @@ class ViralbatchController extends Controller
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
             })
-            ->when(true, function($query) use ($facility_user){
-                if(!$facility_user) return $query->where('site_entry', '!=', 2);
-            })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.id', 'desc');
             })
-            ->where('viralbatches.lab_id', env('APP_LAB'))
             ->paginate();
 
         $batches->setPath(url()->current());
@@ -979,17 +976,14 @@ class ViralbatchController extends Controller
     public function search(Request $request)
     {
         $user = auth()->user();
-        $facility_user = false;
-
-        if($user->user_type_id == 5) $facility_user=true;
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $search = $request->input('search');
         $batches = Viralbatch::whereRaw("id like '" . $search . "%'")
-            ->when($facility_user, function($query) use ($string){
-                return $query->whereRaw($string);
+            ->when(true, function($query) use ($user, $string){
+                if($user->user_type_id == 5) return $query->whereRaw($string);
+                return $query->where('lab_id', $user->lab_id);
             })
-            ->where('lab_id', $user->lab_id)
             ->paginate(10);
 
         $batches->setPath(url()->current());

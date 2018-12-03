@@ -201,7 +201,6 @@ class PatientController extends Controller
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })
-            ->where('lab_id', $user->lab_id)
             ->paginate(10);
 
         $patients->setPath(url()->current());
