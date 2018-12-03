@@ -35,7 +35,7 @@
 	<br />
 	{{ $sample->id }}
 
-	@if(env('APP_LAB') == 9)
+	@if(env('APP_LAB') == 9 || env('APP_LAB') == 2)
 		- ({{ $i }})
 	@endif
 
