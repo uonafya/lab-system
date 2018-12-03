@@ -19,4 +19,8 @@ class LabEquipmentTracker extends BaseModel
     {
         return $this->belongsTo('App\User', 'submittedBy');
     }
+
+    public function equipment() {
+    	return $this->belongsTo('App\LabEquipment', 'equipment_id');
+    }
 }
