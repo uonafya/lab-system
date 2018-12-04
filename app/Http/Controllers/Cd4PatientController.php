@@ -94,7 +94,7 @@ class Cd4PatientController extends Controller
             return $patients;
         } else {
             $patient = Cd4Patient::where('medicalrecordno', '=', $recordno)->first();
-            $samples = Cd4Sample::where('patient_id', '=', $patient->id)->orderBy('datecollected', 'desc')->get();
+            $samples = Cd4Sample::where('patient_id', '=', $patient->id)->orderBy('datecollected', 'desc')->paginate(20);
 
             $data = Lookup::cd4_lookups();
             $data['samples'] = $samples;
@@ -114,7 +114,7 @@ class Cd4PatientController extends Controller
             return $patients;
         } else {
             $patient = Cd4Patient::where('medicalrecordno', '=', $recordno)->first();
-            $samples = Cd4Sample::where('patient_id', '=', $patient->id)->orderBy('datecollected', 'desc')->get();
+            $samples = Cd4Sample::where('patient_id', '=', $patient->id)->orderBy('datecollected', 'desc')->paginate(20);
 
             $data = Lookup::cd4_lookups();
             $data['samples'] = $samples;
