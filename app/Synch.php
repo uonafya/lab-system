@@ -487,39 +487,27 @@ class Synch
 		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
 
 		$data['inprocesssamples'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->get()->first()->totals;
 
 		$data['abbottinprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where('machine_type', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->get()->first()->totals;
 
 		$data['rocheinprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where('machine_type', 1)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->get()->first()->totals;
 
 		$data['panthainprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where('machine_type', 4)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
@@ -527,20 +515,14 @@ class Synch
 
 		// Check error in Tim's code
 		$data['processedsamples'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 2)
 						->where('datetested', $today)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->get()->first()->totals;
 
 		$data['abbottprocessed'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 2)
 						->where('machine_type', 2)
 						->where('datetested', $today)
@@ -548,10 +530,7 @@ class Synch
 						->get()->first()->totals;
 
 		$data['rocheprocessed'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 2)
 						->where('machine_type', 1)
 						->where('datetested', $today)
@@ -559,10 +538,7 @@ class Synch
 						->get()->first()->totals;
 
 		$data['panthaprocessed'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 2)
 						->where('machine_type', 4)
 						->where('datetested', $today)
@@ -581,10 +557,7 @@ class Synch
 
 
 		$data['pendingapproval'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
-						})
+						->when(true, self::join_worksheets($type))
 						->where('status_id', 2)
 						->whereNull('approvedby')
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
@@ -646,7 +619,14 @@ class Synch
 	public static function join_worksheets($type)
 	{
 		if($type == 'eid'){
-			
+	    	return function($query){
+	    		return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');;
+	    	};
+		}
+		else{
+	    	return function($query){
+	    		return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');;
+	    	};			
 		}
 	}
 
