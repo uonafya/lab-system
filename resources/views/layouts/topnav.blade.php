@@ -30,7 +30,7 @@
             <span class="text-primary">@if(Session('testingSystem') == 'CD4') CD4 @else EID - VL @endif</span>
         </div>
         @if(Session('testingSystem') != 'CD4')
-            @if(Session('pendingTasks') && env('APP_LAB') != 2)
+            @if(Session('pendingTasks') && !(env('APP_LAB') == 2 || env('APP_LAB') == 5))
                 <form role="search" class="navbar-form-custom" style="width: 400px;">
                     <div class="form-group">
                         <h4 style="margin-top:1em;">{{ $pageTitle ?? '' }}</h4>
