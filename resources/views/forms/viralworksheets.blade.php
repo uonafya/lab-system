@@ -19,7 +19,7 @@
 
    <div class="content">
             
-        @if($create || env('APP_LAB') == 8)
+        @if($create || env('APP_LAB') == 8 || env('APP_LAB') == 9)
 
 
             @if (isset($worksheet))
