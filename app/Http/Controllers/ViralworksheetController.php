@@ -155,6 +155,8 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
@@ -225,6 +227,8 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
@@ -605,6 +609,8 @@ class ViralworksheetController extends Controller
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')                    
                     ->get();
 
         $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
@@ -792,7 +798,7 @@ class ViralworksheetController extends Controller
                     return $query->where('result', '< LDL copies/ml');
                 }
                 else if ($result == 2) {
-                    return $query->whereNotIn('result', ['Failed', 'Invalid', '< LDL copies/ml', 'Collect New Sample']);
+                    return $query->whereNotIn('result', ['Failed', 'Invalid', '< LDL copies/ml', 'Target Not Detected', 'Collect New Sample', '']);
                 }
                 else if ($result == 3) {
                     return $query->whereRaw("(result='Failed' or result='invalid' or result='Collect New Sample')");
