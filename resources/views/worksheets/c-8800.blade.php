@@ -135,7 +135,7 @@ width:1180px;
 
 				@foreach($samples as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample])
+					@include('shared/worksheet_sample', ['sample' => $sample, ++$i])
 
 					@php $count++; @endphp
 
