@@ -109,17 +109,26 @@
 			                        	<td colspan="7">
 			                        		<strong>Rejected Reasons: </strong><br>
 			                        	@if($performance->testtype == 1)
-			                        		@foreach($data->eidrejected as $rejected)
-					                    	{{ $rejected->name }}<br>
+			                        		@foreach($data->eidrejected as $key => $rejected)
+				                        		{{ $rejected->name }}
+				                        		@if(count($rejected) != ($key+1))
+						                    		&nbsp;;&nbsp;
+						                    	@endif
 					                    	@endforeach
 					                    @elseif($performance->testtype == 2)
 					                    	@if($performance->sampletype == 1)
-					                    		@foreach($data->vlplasmarejected as $rejected)
-						                    	{{ $rejected->name }}<br>
+					                    		@foreach($data->vlplasmarejected as $key => $rejected)
+					                        		{{ $rejected->name }}
+					                        		@if(count($rejected) != ($key+1))
+							                    		&nbsp;;&nbsp;
+							                    	@endif
 						                    	@endforeach
 					                    	@else 
-					                    		@foreach($data->vldbsrejected as $rejected)
-						                    	{{ $rejected->name }}<br>
+					                    		@foreach($data->vldbsrejected as $key => $rejected)
+					                        		{{ $rejected->name }}
+					                        		@if(count($rejected) != ($key+1))
+							                    		&nbsp;;&nbsp;
+							                    	@endif
 						                    	@endforeach
 					                    	@endif
 					                    @endif

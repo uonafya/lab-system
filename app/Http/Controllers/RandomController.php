@@ -78,6 +78,7 @@ class RandomController extends Controller
 			$set = session(['lablogmonth' => $month]);
 		}
 
+		
 		$year = session('lablogyear');
 		$month = session('lablogmonth');
 		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
