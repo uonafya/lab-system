@@ -36,10 +36,14 @@
 	{{ $sample->id }}
 
 	@if(env('APP_LAB') == 9 || env('APP_LAB') == 2)
-		@if(get_class($worksheet) == "App\Viralworksheet")
-			- ({{ $i+3 }})
+		@if(env('APP_LAB') == 9)
+			@if(get_class($worksheet) == "App\Viralworksheet")
+				- ({{ $i+3 }})
+			@else
+				- ({{ $i+2 }})
+			@endif
 		@else
-			- ({{ $i+2 }})
+			- ({{ $i }})
 		@endif
 	@endif
 
