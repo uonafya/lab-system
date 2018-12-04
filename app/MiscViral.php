@@ -240,8 +240,12 @@ class MiscViral extends Common
         $str = strtolower($result);
         $units="";
 
+        if(str_contains($result, ['e+'])){
+            return self::exponential_result($result);
+        }
+
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-        if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
+        else if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;       
