@@ -91,11 +91,39 @@
 			                                {{ $performance->notlogged }}
 			                            </td>
 			                            <td>
-			                                {{ $performance->tested }}
+			                            	@if($performance->testtype == 1)
+						                    	{{ $data->eidcount }}
+						                    @elseif($performance->testtype == 2)
+						                    	@if($performance->sampletype == 1)
+						                    		{{ $data->vlplasmacount }}
+						                    	@else 
+						                    		{{ $data->vldbscount }}
+						                    	@endif
+						                    @endif
 			                            </td>
 			                            <td>
 			                                {{ $performance->reasonforbacklog }}
 			                            </td>
+			                        </tr>
+			                        <tr>
+			                        	<td colspan="7">
+			                        		<strong>Rejected Reasons: </strong><br>
+			                        	@if($performance->testtype == 1)
+			                        		@foreach($data->eidrejected as $rejected)
+					                    	{{ $rejected }}<br>
+					                    	@endforeach
+					                    @elseif($performance->testtype == 2)
+					                    	@if($performance->sampletype == 1)
+					                    		@foreach($data->vlplasmarejected as $rejected)
+						                    	{{ $rejected }}<br>
+						                    	@endforeach
+					                    	@else 
+					                    		@foreach($data->vldbsrejected as $rejected)
+						                    	{{ $rejected }}<br>
+						                    	@endforeach
+					                    	@endif
+					                    @endif
+			                        	</td>
 			                        </tr>
 			                    </tbody>
 			                </table>
