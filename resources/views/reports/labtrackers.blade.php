@@ -110,16 +110,16 @@
 			                        		<strong>Rejected Reasons: </strong><br>
 			                        	@if($performance->testtype == 1)
 			                        		@foreach($data->eidrejected as $rejected)
-					                    	{{ $rejected }}<br>
+					                    	{{ $rejected->name }}<br>
 					                    	@endforeach
 					                    @elseif($performance->testtype == 2)
 					                    	@if($performance->sampletype == 1)
 					                    		@foreach($data->vlplasmarejected as $rejected)
-						                    	{{ $rejected }}<br>
+						                    	{{ $rejected->name }}<br>
 						                    	@endforeach
 					                    	@else 
 					                    		@foreach($data->vldbsrejected as $rejected)
-						                    	{{ $rejected }}<br>
+						                    	{{ $rejected->name }}<br>
 						                    	@endforeach
 					                    	@endif
 					                    @endif
