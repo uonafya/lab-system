@@ -64,7 +64,7 @@
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
                 @else
-                    @if(!Session('pendingTasks') || env('APP_LAB') == 2 || env('APP_LAB') == 5)
+                    @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
                             <li class="">
                                 <a href="{{ url('batch') }}">EID Samples</a>
