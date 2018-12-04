@@ -110,25 +110,16 @@
 			                        		<strong>Rejected Reasons: </strong><br>
 			                        	@if($performance->testtype == 1)
 			                        		@foreach($data->eidrejected as $key => $rejected)
-				                        		{{ $rejected->name }}
-				                        		@if($rejected->count() != ($key+1))
-						                    		&nbsp;;&nbsp;
-						                    	@endif
+				                        		{{ $rejected->name }}&nbsp;;&nbsp;
 					                    	@endforeach
 					                    @elseif($performance->testtype == 2)
 					                    	@if($performance->sampletype == 1)
 					                    		@foreach($data->vlplasmarejected as $key => $rejected)
-					                        		{{ $rejected->name }}
-					                        		@if($rejected->count() != ($key+1))
-							                    		&nbsp;;&nbsp;
-							                    	@endif
+					                        		{{ $rejected->name }}&nbsp;;&nbsp;
 						                    	@endforeach
 					                    	@else 
 					                    		@foreach($data->vldbsrejected as $key => $rejected)
-					                        		{{ $rejected->name }}
-					                        		@if($rejected->count() != ($key+1))
-							                    		&nbsp;;&nbsp;
-							                    	@endif
+					                        		{{ $rejected->name }}&nbsp;;&nbsp;
 						                    	@endforeach
 					                    	@endif
 					                    @endif
