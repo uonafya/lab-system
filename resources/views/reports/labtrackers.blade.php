@@ -111,7 +111,7 @@
 			                        	@if($performance->testtype == 1)
 			                        		@foreach($data->eidrejected as $key => $rejected)
 				                        		{{ $rejected->name }}
-				                        		@if(count($rejected) != ($key+1))
+				                        		@if($rejected->count() != ($key+1))
 						                    		&nbsp;;&nbsp;
 						                    	@endif
 					                    	@endforeach
@@ -119,14 +119,14 @@
 					                    	@if($performance->sampletype == 1)
 					                    		@foreach($data->vlplasmarejected as $key => $rejected)
 					                        		{{ $rejected->name }}
-					                        		@if(count($rejected) != ($key+1))
+					                        		@if($rejected->count() != ($key+1))
 							                    		&nbsp;;&nbsp;
 							                    	@endif
 						                    	@endforeach
 					                    	@else 
 					                    		@foreach($data->vldbsrejected as $key => $rejected)
 					                        		{{ $rejected->name }}
-					                        		@if(count($rejected) != ($key+1))
+					                        		@if($rejected->count() != ($key+1))
 							                    		&nbsp;;&nbsp;
 							                    	@endif
 						                    	@endforeach
