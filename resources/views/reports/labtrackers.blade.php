@@ -128,9 +128,9 @@
 			                        <tr>
 			                            <td>{{ $key+1 }}</td>
 			                            <td>{{ $equipment->equipment->name ?? '' }}</td>
-			                            <td>@isseet($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }}</td>
-			                            <td>@isseet($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }}</td>
-			                            <td>@isseet($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }}</td>
+			                            <td>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }}</td>
+			                            <td>@isset($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }}</td>
+			                            <td>@isset($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }}</td>
 			                            <td>{{ $equipment->downtime ?? '' }}</td>
 			                            <td>{{ $equipment->samplesnorun ?? '' }}</td>
 			                            <td>{{ $equipment->failedruns ?? '' }}</td>
