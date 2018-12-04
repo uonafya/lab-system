@@ -488,8 +488,8 @@ class Synch
 
 		$data['inprocesssamples'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
 						})
 						->where('status_id', 1)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
@@ -497,8 +497,8 @@ class Synch
 
 		$data['abbottinprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
 						})
 						->where('status_id', 1)
 						->where('machine_type', 2)
@@ -507,8 +507,8 @@ class Synch
 
 		$data['rocheinprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
 						})
 						->where('status_id', 1)
 						->where('machine_type', 1)
@@ -517,8 +517,8 @@ class Synch
 
 		$data['panthainprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, function($query) use ($type){
-							if($type == 'eid') return $query->join('worksheets', 'samples.worksheet_id', '=', 'worksheets.id');
-							return $query->join('viralworksheets', 'viralsamples.worksheet_id', '=', 'viralworksheets.id');
+							if($type == 'eid') return $query->join('worksheets', 'samples_view.worksheet_id', '=', 'worksheets.id');
+							return $query->join('viralworksheets', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id');
 						})
 						->where('status_id', 1)
 						->where('machine_type', 4)
@@ -641,6 +641,13 @@ class Synch
 				'lab_id' => env('APP_LAB', null),
 			],
 		]);
+	}
+
+	public static function join_worksheets($type)
+	{
+		if($type == 'eid'){
+			
+		}
 	}
 
 	public static function send_weekly_activity()
