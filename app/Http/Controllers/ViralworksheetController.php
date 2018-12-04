@@ -154,8 +154,9 @@ class ViralworksheetController extends Controller
                     ->select('viralsamples.*', 'viralbatches.facility_id')
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
-                    ->orderBy('facility_id')
-                    ->orderBy('batch_id', 'asc')
+                    ->when(true, function($query){
+                        if(env('APP_LAB') != 9) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                    })
                     ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
@@ -226,8 +227,9 @@ class ViralworksheetController extends Controller
                     ->select('viralsamples.*', 'viralbatches.facility_id')
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
-                    ->orderBy('facility_id')
-                    ->orderBy('batch_id', 'asc')
+                    ->when(true, function($query){
+                        if(env('APP_LAB') != 9) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                    })
                     ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
