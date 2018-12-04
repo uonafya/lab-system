@@ -610,7 +610,7 @@ class Synch
 				'Authorization' => 'Bearer ' . self::get_token(),
 			],
 			'json' => [
-				'data' => json_encode($data),
+				'data' => $data,
 				'lab_id' => env('APP_LAB', null),
 			],
 		]);
