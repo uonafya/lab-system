@@ -74,7 +74,7 @@ class WorksheetController extends Controller
             $worksheet->failed = $failed;
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;
-            $worksheet->mylinks = $this->get_links($worksheet->id, $status);
+            $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
             $worksheet->machine = $data['machines']->where('id', $worksheet->machine_type)->first()->output ?? '';
             $worksheet->status = $data['worksheet_statuses']->where('id', $status)->first()->output ?? '';
 
@@ -647,7 +647,7 @@ class WorksheetController extends Controller
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
                     ->orderBy('batch_id', 'asc')
-                    ->orderBy('viralsamples.id', 'asc')  
+                    ->orderBy('samples.id', 'asc')  
                     ->get();
 
         $s = $this->get_worksheets($worksheet->id);
@@ -795,7 +795,7 @@ class WorksheetController extends Controller
         }
     }
 
-    public function get_links($worksheet_id, $status)
+    public function get_links($worksheet_id, $status, $datereviewed)
     {
         if($status == 1)
         {
@@ -806,7 +806,11 @@ class WorksheetController extends Controller
         }
         else if($status == 2)
         {
-            $d = "<a href='" . url('worksheet/approve/' . $worksheet_id) . "' title='Click to Approve Samples Results in worksheet for Rerun or Dispatch' target='_blank'> Approve Worksheet Results</a>";
+            $d = "<a href='" . url('worksheet/approve/' . $worksheet_id) . "' title='Click to Approve Samples Results in worksheet for Rerun or Dispatch' target='_blank'> Approve Worksheet Results ";
+
+            if($datereviewed) $d .= "(Second Review)";
+
+            $d .= "</a>";
 
         }
         else if($status == 3)
