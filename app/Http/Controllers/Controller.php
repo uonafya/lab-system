@@ -90,7 +90,7 @@ class Controller extends BaseController
             $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
                         
         }
-
+        // dd($abbot);
         if ($abbot == 1) {
             //..if both taqman and abbott have been submitted; set $submittedstatus > 0
             if ( ($taqman[0] > 0 && $taqman[1] >0 ) && ($abbot[0] > 0 && $abbot[1]>0) )
@@ -117,6 +117,7 @@ class Controller extends BaseController
                 $submittedstatus = 0;
             
         } else {
+            // dd($taqman);
             $submittedstatus = 1;
             if ($taqman[0] == 0 || $taqman[1] ==0)
                 $submittedstatus = 0;

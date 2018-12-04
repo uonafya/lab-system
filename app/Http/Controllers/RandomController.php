@@ -54,11 +54,22 @@ class RandomController extends Controller
 		return view('forms.search')->with('pageTitle', 'Search');
 	}
 
-	public function lablogs(){
+	public function lablogs($year = null, $month = null){
+		if ($year == null) {
+			if(null !== session('lablogyear')) {
+				$year = session('lablogyear');
+			} else {
+				$set = session(['lablogyear' => date('Y')]);
+			}
+		} else {
+			$set = session(['lablogyear' => $year]);
+		}
+
+		$year = session('lablogyear');
 		$month = date('m') - 1;
-		$performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->get();
-		$equipment = LabEquipmentTracker::where('year', date('Y'))->where('month', $month)->get();
-		$data = (object)['performance' => $performance, 'equipments' => $equipment];
+		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
+		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
+		$data = (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month];
 		// dd($data);
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}
