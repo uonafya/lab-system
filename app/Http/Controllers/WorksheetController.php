@@ -644,6 +644,8 @@ class WorksheetController extends Controller
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')  
                     ->get();
 
         $s = $this->get_worksheets($worksheet->id);

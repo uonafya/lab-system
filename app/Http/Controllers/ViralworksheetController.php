@@ -609,6 +609,8 @@ class ViralworksheetController extends Controller
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')                    
                     ->get();
 
         $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
