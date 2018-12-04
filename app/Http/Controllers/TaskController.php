@@ -262,11 +262,11 @@ class TaskController extends Controller
         
         $data['taqmanKits'] = $this->taqmanKits;
         $data['abbottKits'] = $this->abbottKits;
-        $data['EIDteststaq'] = SampleView::selectRaw("COUNT(*) as totaltests")->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->whereIn('worksheets.machine_type',[1,3])->first()->totaltests;
-        $data['EIDtestsabbott'] = SampleView::selectRaw("COUNT(*) as totaltests")->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->where('worksheets.machine_type',2)->first()->totaltests;
+        $data['EIDteststaq'] = SampleView::selectRaw("COUNT(*) as totaltests")->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->orWhereNull('rejectedreason')->whereIn('worksheets.machine_type',[1,3])->first()->totaltests;
+        $data['EIDtestsabbott'] = SampleView::selectRaw("COUNT(*) as totaltests")->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('samples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->orWhereNull('rejectedreason')->where('worksheets.machine_type',2)->first()->totaltests;
 
-        $data['VLteststaq'] = ViralsampleView::selectRaw("count(*) as tests")->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('viralsamples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->whereIn('viralworksheets.machine_type',[1,3])->first()->tests;
-        $data['VLtestsabbott'] = ViralsampleView::selectRaw("count(*) as tests")->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('viralsamples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->where('viralworksheets.machine_type',2)->first()->tests;
+        $data['VLteststaq'] = ViralsampleView::selectRaw("count(*) as tests")->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('viralsamples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->orWhereNull('rejectedreason')->whereIn('viralworksheets.machine_type',[1,3])->first()->tests;
+        $data['VLtestsabbott'] = ViralsampleView::selectRaw("count(*) as tests")->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')->whereRaw("YEAR(datetested) = $year")->whereRaw("MONTH(datetested) = $previousMonth")->where('viralsamples_view.lab_id', env('APP_LAB'))->where('rejectedreason', '=', '0')->orWhereNull('rejectedreason')->where('viralworksheets.machine_type',2)->first()->tests;
         
         foreach ($data['testtypes'] as $key => $value) {
             $data['prevabbott'.$value] = NULL;
@@ -407,7 +407,7 @@ class TaskController extends Controller
                 return redirect()->route('pending');
             
         }
-        $data = DB::table('lab_equipment_mapping')->where('lab', '=', Auth()->user()->lab_id)->get();
+        $data = DB::table('lab_equipment_mapping')->where('lab', '=', auth()->user()->lab_id)->get();
         // dd($data);
         return view('tasks.equipmentlog', compact('data'))->with('pageTitle', 'Lab Equipment Log::'.date("F", mktime(null, null, null, $month)).', '.date('Y'));
     }
