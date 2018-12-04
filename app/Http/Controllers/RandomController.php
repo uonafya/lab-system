@@ -54,11 +54,33 @@ class RandomController extends Controller
 		return view('forms.search')->with('pageTitle', 'Search');
 	}
 
-	public function lablogs(){
-		$month = date('m') - 1;
-		$performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->get();
-		$equipment = LabEquipmentTracker::where('year', date('Y'))->where('month', $month)->get();
-		$data = (object)['performance' => $performance, 'equipments' => $equipment];
+	public function lablogs($year = null, $month = null){
+		if ($year == null || $year=='null') {
+			if(null !== session('lablogyear')) {
+				$year = session('lablogyear');
+			} else {
+				$set = session(['lablogyear' => date('Y')]);
+			}
+		} else {
+			$set = session(['lablogyear' => $year]);
+		}
+
+
+		if ($month == null || $month=='null') {
+			if (null !== session('lablogmonth')) {
+				$month = session('lablogmonth');
+			} else {
+				$set = session(['lablogmonth' => date('m') - 1]);
+			}
+		} else {
+			$set = session(['lablogmonth' => $month]);
+		}
+
+		$year = session('lablogyear');
+		$month = session('lablogmonth');
+		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
+		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
+		$data = (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month];
 		// dd($data);
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}

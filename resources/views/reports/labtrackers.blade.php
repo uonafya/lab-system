@@ -20,14 +20,35 @@
 <div class="content">
     <div class="row">
         <div class="col-lg-12">
+        	<div class="row" style="margin-bottom: 1em;">
+	            <!-- Year -->
+	            <div class="col-md-6">
+	                <center><h5>Year Filter</h5></center>
+	                @for ($i = 0; $i <= 9; $i++)
+	                    @php
+	                        $year=Date('Y')-$i
+	                    @endphp
+	                    <a href='{{ url("lablogs/$year") }}'>{{ Date('Y')-$i }}</a> |
+	                @endfor
+	            </div>
+	            <!-- Year -->
+	            <!-- Month -->
+	            <div class="col-md-6">
+	                <center><h5>Month Filter</h5></center>
+	                @for ($i = 1; $i <= 12; $i++)
+	                    <a href='{{ url("lablogs/null/$i") }}'>{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</a> |
+	                @endfor
+	            </div>
+	            <!-- Month -->
+	        </div>
             <div class="hpanel">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#labs-performance"><strong>A.) Lab Performance Report ({{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }})</strong></a></li>
-                    <li class=""><a data-toggle="tab" href="#labs-equipment"><strong>B.) Lab Equipment Reports ({{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }})</strong></a></li>
+                    <li class="active"><a data-toggle="tab" href="#labs-performance"><strong>A.) Lab Performance Report ({{ date("F", mktime(null, null, null, $data->month)) }}, {{ $data->year }})</strong></a></li>
+                    <li class=""><a data-toggle="tab" href="#labs-equipment"><strong>B.) Lab Equipment Reports ({{ date("F", mktime(null, null, null, $data->month)) }}, {{ $data->year }})</strong></a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="labs-performance" class="tab-pane active">
-                    @foreach($data->performance as $performance)
+                    @forelse($data->performance as $performance)
 			            <div class="alert alert-warning">
 			                <center>
 			                    <font color="#4183D7">
@@ -79,7 +100,11 @@
 			                    </tbody>
 			                </table>
 	                    </div>
-	                @endforeach
+	                @empty
+	                	<div class="panel-body">
+	                		<div class="alert alert-warning">No data available</div>
+	                	</div>
+	                @endforelse
                     </div>
                     <div id="labs-equipment" class="tab-pane">
                         <div class="panel-body">
@@ -106,14 +131,14 @@
 			                            <td>{{ date('d M, Y', strtotime($equipment->datebrokendown)) ?? '' }}</td>
 			                            <td>{{ date('d M, Y', strtotime($equipment->datereported)) ?? '' }}</td>
 			                            <td>{{ date('d M, Y', strtotime($equipment->datefixed)) ?? '' }}</td>
-			                            <td>{{ $equipment->downtime ?? '' }}</td>
-			                            <td>{{ $equipment->samplesnorun ?? '' }}</td>
-			                            <td>{{ $equipment->failedruns ?? '' }}</td>
-			                            <td>{{ $equipment->reagentswasted ?? '' }}</td>
+			                            <td>@isset($equipment->downtime) {{ number_format($equipment->downtime) }} @endisset</td>
+			                            <td>@isset($equipment->samplesnorun) {{ number_format($equipment->samplesnorun) }} @endisset</td>
+			                            <td>@isset($equipment->failedruns) {{ number_format($equipment->failedruns) }} @endisset</td>
+			                            <td>@isset($equipment->reagentswasted) {{ number_format($equipment->reagentswasted) }} @endisset</td>
 			                            <td>{{ $equipment->breakdownreason ?? '' }}</td>
 			                        </tr>
 			                    @empty
-			                    	<tr><td colspan="">No Data Available</td></tr>
+			                    	<tr><td colspan="10"><center>No Data Available</center></td></tr>
 			                    @endforelse
 			                    </tbody>
 			                </table>
