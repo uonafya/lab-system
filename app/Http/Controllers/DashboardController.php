@@ -432,7 +432,7 @@ class DashboardController extends Controller
                             if($tat == 4)
                                 return $query->selectRaw("AVG(tat4) as tatvalues");
                         })->whereRaw("YEAR($table.datetested) = ".$year)
-                        ->when($month, function($query) use ($month){
+                        ->when($month, function($query) use ($month, $table){
                             return $query->whereMonth("$table.datetested", $month);
                         })->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
 
