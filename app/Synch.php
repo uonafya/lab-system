@@ -118,6 +118,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'auth/login', [
+            'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -126,6 +127,8 @@ class Synch
 				'password' => env('MASTER_PASSWORD', null),
 			],
 		]);
+		$status_code = $response->getStatusCode();
+		if($status_code > 399) die();
 		$body = json_decode($response->getBody());
 		Cache::store('file')->put('api_token', $body->token, 60);
 	}
@@ -638,7 +641,6 @@ class Synch
 				'lab_id' => env('APP_LAB', null),
 			],
 		]);
-
 	}
 
 	public static function send_weekly_activity()
