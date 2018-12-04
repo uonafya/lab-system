@@ -128,13 +128,13 @@
 			                        <tr>
 			                            <td>{{ $key+1 }}</td>
 			                            <td>{{ $equipment->equipment->name ?? '' }}</td>
-			                            <td>{{ date('d M, Y', strtotime($equipment->datebrokendown)) ?? '' }}</td>
-			                            <td>{{ date('d M, Y', strtotime($equipment->datereported)) ?? '' }}</td>
-			                            <td>{{ date('d M, Y', strtotime($equipment->datefixed)) ?? '' }}</td>
-			                            <td>@isset($equipment->downtime) {{ number_format($equipment->downtime) }} @endisset</td>
-			                            <td>@isset($equipment->samplesnorun) {{ number_format($equipment->samplesnorun) }} @endisset</td>
-			                            <td>@isset($equipment->failedruns) {{ number_format($equipment->failedruns) }} @endisset</td>
-			                            <td>@isset($equipment->reagentswasted) {{ number_format($equipment->reagentswasted) }} @endisset</td>
+			                            <td>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }} @endisset</td>
+			                            <td>@isset($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }} @endisset</td>
+			                            <td>@isset($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }} @endisset</td>
+			                            <td>{{ $equipment->downtime ?? '' }}</td>
+			                            <td>{{ $equipment->samplesnorun ?? '' }}</td>
+			                            <td>{{ $equipment->failedruns ?? '' }}</td>
+			                            <td>{{ $equipment->reagentswasted ?? '' }}</td>
 			                            <td>{{ $equipment->breakdownreason ?? '' }}</td>
 			                        </tr>
 			                    @empty
