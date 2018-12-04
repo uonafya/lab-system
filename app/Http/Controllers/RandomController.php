@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
+use App\Sample;
+use App\Viralsample;
 
 class RandomController extends Controller
 {
@@ -76,11 +78,21 @@ class RandomController extends Controller
 			$set = session(['lablogmonth' => $month]);
 		}
 
+		
 		$year = session('lablogyear');
 		$month = session('lablogmonth');
 		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
+		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', '=', 1)->first()->tests;
+		$eidrejected = Sample::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples.rejectedreason')->where('receivedstatus', '=', 2)->get();
+
+		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
+		$vlplasmarejected = Viralsample::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->get();
+
+		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
+		$vldbsrejected = Viralsample::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->get();
+		
 		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
-		$data = (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month];
+		$data = (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
 		// dd($data);
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}
