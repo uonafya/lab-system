@@ -65,8 +65,19 @@ class RandomController extends Controller
 			$set = session(['lablogyear' => $year]);
 		}
 
+
+		if ($month == null) {
+			if (null !== session('lablogmonth')) {
+				$month = session('lablogmonth');
+			} else {
+				$set = session(['lablogmonth' => date('m') - 1]);
+			}
+		} else {
+			$set = session(['lablogmonth' => $month]);
+		}
+
 		$year = session('lablogyear');
-		$month = date('m') - 1;
+		$month = session('lablogmonth');
 		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
 		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
 		$data = (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month];

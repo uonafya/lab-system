@@ -20,10 +20,31 @@
 <div class="content">
     <div class="row">
         <div class="col-lg-12">
+        	<div class="row" style="margin-bottom: 1em;">
+	            <!-- Year -->
+	            <div class="col-md-6">
+	                <center><h5>Year Filter</h5></center>
+	                @for ($i = 0; $i <= 9; $i++)
+	                    @php
+	                        $year=Date('Y')-$i
+	                    @endphp
+	                    <a href='{{ url("lablogs/$year") }}'>{{ Date('Y')-$i }}</a> |
+	                @endfor
+	            </div>
+	            <!-- Year -->
+	            <!-- Month -->
+	            <div class="col-md-6">
+	                <center><h5>Month Filter</h5></center>
+	                @for ($i = 1; $i <= 12; $i++)
+	                    <a href='{{ url("lablogs/null/$i") }}'>{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</a> |
+	                @endfor
+	            </div>
+	            <!-- Month -->
+	        </div>
             <div class="hpanel">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#labs-performance"><strong>A.) Lab Performance Report ({{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }})</strong></a></li>
-                    <li class=""><a data-toggle="tab" href="#labs-equipment"><strong>B.) Lab Equipment Reports ({{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }})</strong></a></li>
+                    <li class="active"><a data-toggle="tab" href="#labs-performance"><strong>A.) Lab Performance Report ({{ date("F", mktime(null, null, null, $data->month)) }}, {{ $data->year }})</strong></a></li>
+                    <li class=""><a data-toggle="tab" href="#labs-equipment"><strong>B.) Lab Equipment Reports ({{ date("F", mktime(null, null, null, $data->month)) }}, {{ $data->year }})</strong></a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="labs-performance" class="tab-pane active">

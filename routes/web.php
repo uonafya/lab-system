@@ -223,7 +223,7 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 	Route::group(['middleware' => ['only_utype:1']], function() {
-		Route::get('lablogs', 'RandomController@lablogs')->name('lablogs');
+		Route::get('lablogs/{year?}/{month?}', 'RandomController@lablogs')->name('lablogs');
 	});
 	
 	Route::group(['middleware' => ['utype:4']], function () {
