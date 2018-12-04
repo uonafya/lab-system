@@ -457,13 +457,14 @@ class Common
 
         		// dd([$fac->toArray(), $facility->toArray()]);
 
-        		$new_fac = \App\Facility::find($facility->ID);
+        		$new_fac = \App\ViewFacility::find($facility->ID);
         		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
         		if($new_fac){
         			$conflict[] = [
         				'id' => $new_fac->id,
         				'code' => $new_fac->facilitycode,
         				'name' => $new_fac->name,
+        				'county' => $new_fac->county,
         			];
         			continue;
         		}
@@ -478,6 +479,30 @@ class Common
         }
 
         dd($conflict);
+    }
+
+    public static function change_facility_id($old_id, $new_id)
+    {
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+
+		foreach ($classes as $class) {
+			$class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
+			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
+
+		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+
+
+
     }
 
 
