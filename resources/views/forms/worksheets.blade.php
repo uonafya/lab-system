@@ -8,7 +8,7 @@
    <div class="content">
         <div>
             
-        @if($create)
+        @if($create || env('APP_LAB') == 9)
 
             @if (isset($worksheet))
                 {{ Form::open(['url' => '/worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
