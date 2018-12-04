@@ -55,7 +55,7 @@ class RandomController extends Controller
 	}
 
 	public function lablogs($year = null, $month = null){
-		if ($year == null) {
+		if ($year == null || $year=='null') {
 			if(null !== session('lablogyear')) {
 				$year = session('lablogyear');
 			} else {
@@ -66,7 +66,7 @@ class RandomController extends Controller
 		}
 
 
-		if ($month == null) {
+		if ($month == null || $month=='null') {
 			if (null !== session('lablogmonth')) {
 				$month = session('lablogmonth');
 			} else {

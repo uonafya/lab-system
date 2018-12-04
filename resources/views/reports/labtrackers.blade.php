@@ -48,7 +48,7 @@
                 </ul>
                 <div class="tab-content">
                     <div id="labs-performance" class="tab-pane active">
-                    @foreach($data->performance as $performance)
+                    @forelse($data->performance as $performance)
 			            <div class="alert alert-warning">
 			                <center>
 			                    <font color="#4183D7">
@@ -100,7 +100,11 @@
 			                    </tbody>
 			                </table>
 	                    </div>
-	                @endforeach
+	                @empty
+	                	<div class="panel-body">
+	                		<div class="alert alert-warning">No data available</div>
+	                	</div>
+	                @endforelse
                     </div>
                     <div id="labs-equipment" class="tab-pane">
                         <div class="panel-body">
@@ -134,7 +138,7 @@
 			                            <td>{{ $equipment->breakdownreason ?? '' }}</td>
 			                        </tr>
 			                    @empty
-			                    	<tr><td colspan="">No Data Available</td></tr>
+			                    	<tr><td colspan="10"><center>No Data Available</center></td></tr>
 			                    @endforelse
 			                    </tbody>
 			                </table>
