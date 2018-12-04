@@ -207,8 +207,9 @@ class WorksheetController extends Controller
                     ->select('samples.*', 'batches.facility_id')
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
-                    ->orderBy('facility_id')
-                    ->orderBy('batch_id', 'asc')
+                    ->when(true, function($query){
+                        if(env('APP_LAB') != 9) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                    })
                     ->orderBy('samples.id', 'asc')
                     ->get();
 
@@ -278,8 +279,9 @@ class WorksheetController extends Controller
                     ->select('samples.*', 'batches.facility_id')
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
-                    ->orderBy('facility_id')
-                    ->orderBy('batch_id', 'asc')
+                    ->when(true, function($query){
+                        if(env('APP_LAB') != 9) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                    })
                     ->orderBy('samples.id', 'asc')
                     ->get();
 
