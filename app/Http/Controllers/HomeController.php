@@ -180,6 +180,7 @@ class HomeController extends Controller
                         }
                     })
                     ->whereNull('worksheet_id')
+                    ->whereNull('datedispatched')
                     ->where('datereceived', '>', '2017-12-31')
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
@@ -191,6 +192,7 @@ class HomeController extends Controller
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
                     ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                     ->whereNull('worksheet_id')
+                    ->whereNull('datedispatched')
                     ->where('datereceived', '>', '2014-12-31')
                     ->whereIn('receivedstatus', [1, 3])
                     ->whereRaw("(result is null or result = '0')")
