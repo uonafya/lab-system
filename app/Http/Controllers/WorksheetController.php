@@ -208,6 +208,8 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('samples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
@@ -277,6 +279,8 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('samples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
@@ -640,6 +644,8 @@ class WorksheetController extends Controller
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
                     ->orderBy('facility_id')
+                    ->orderBy('batch_id', 'asc')
+                    ->orderBy('viralsamples.id', 'asc')  
                     ->get();
 
         $s = $this->get_worksheets($worksheet->id);

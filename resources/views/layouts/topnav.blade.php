@@ -30,7 +30,7 @@
             <span class="text-primary">@if(Session('testingSystem') == 'CD4') CD4 @else EID - VL @endif</span>
         </div>
         @if(Session('testingSystem') != 'CD4')
-            @if(Session('pendingTasks'))
+            @if(Session('pendingTasks') && !(env('APP_LAB') == 2 || env('APP_LAB') == 5))
                 <form role="search" class="navbar-form-custom" style="width: 400px;">
                     <div class="form-group">
                         <h4 style="margin-top:1em;">{{ $pageTitle ?? '' }}</h4>
@@ -64,7 +64,7 @@
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
                 @else
-                    @if(!Session('pendingTasks'))
+                    @if(!Session('pendingTasks') || env('APP_LAB') == 2 || env('APP_LAB') == 5)
                         @if (Auth::user()->user_type_id == 5)
                             <li class="">
                                 <a href="{{ url('batch') }}">EID Samples</a>
@@ -114,7 +114,7 @@
                                 <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                             </li>
                         @else
-                            @if(!Session('pendingTasks'))
+                            @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                                 <li class="">
                                     <a href="
                                         @if(session('testingSystem') == 'Viralload')
@@ -202,7 +202,7 @@
                     <a href="{{ url('home') }}">Dashboard</a>
                 </li>
             @else
-                @if(!Session('pendingTasks'))
+                @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                     @if (Auth::user()->user_type_id == 5)
                         <li class="">
                             <a href="{{ url('batch') }}">EID Samples</a>

@@ -235,6 +235,12 @@ Artisan::command('match:batches {type}', function($type){
 })->describe('Match batches with records on the national database.');
 
 
+Artisan::command('match:poc', function(){
+    $str = \App\Copier::match_eid_poc_batches();
+    $str = \App\Copier::match_vl_poc_batches();
+    $this->info($str);
+})->describe('Match POC records.');
+
 Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();
     $this->info($str);
