@@ -434,7 +434,8 @@ class DashboardController extends Controller
                         })->whereRaw("YEAR($table.datetested) = ".$year)
                         ->when($month, function($query) use ($month, $table){
                             return $query->whereMonth("$table.datetested", $month);
-                        })->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
+                        })->whereNotNull('tat1')->whereNotNull('tat2')->whereNotNull('tat3')->whereNotNull('tat4')
+                        ->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
 
         return round($model);
     }
