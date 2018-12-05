@@ -213,12 +213,19 @@ p.breakhere {page-break-before: always}
 				</span></td>
 			</tr>
 
-			@if($sample->receivedstatus == 2)
+			<tr>
+				
 
-			@else
+				@if($sample->receivedstatus == 2)
 
-				<tr>
+					<td colspan="4" class="style4 style1 comment">
+						Sample Rejected. Reason: {{ $rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
+					</td>
+
+
+				@else
 					<td colspan="3" class="style4 style1 comment"><strong>Test Result</strong></td>
+
 					<td colspan="1" class="style4 style1 comment">
 						<strong> 
 		                    @foreach($results as $result)
@@ -235,9 +242,9 @@ p.breakhere {page-break-before: always}
 						</strong>
 					</td>
 					<td colspan="3"></td>
-				</tr>
 
-			@endif
+				@endif
+			</tr>
 
 			
 			@if($sample->worksheet)
