@@ -245,7 +245,7 @@ class Cd4WorksheetController extends Controller
 
         foreach ($checkbox as $key => $value) {
             $sample = Cd4Sample::find($id[$value]);
-            if($sample->approvedby){
+            if(isset($sample->approvedby)){
                 $sample->approvedby2 = auth()->user()->id;
                 $sample->dateapproved2 = gmdate('Y-m-d');
             } else {
@@ -281,7 +281,7 @@ class Cd4WorksheetController extends Controller
             }
         }
 
-        if($worksheet->reviewedby){
+        if(isset($worksheet->reviewedby)){
             $worksheet->reviewedby2 = auth()->user()->id;    
             $worksheet->datereviewed2 = gmdate('Y-m-d');
             $worksheet->status_id = 3;
