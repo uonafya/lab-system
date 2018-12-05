@@ -101,6 +101,7 @@ class Copier
         foreach ($facilities as $key => $value) {
             $fac = Facility::find($value->ID);
             if($fac){
+                continue;
                 $facility = new Facility;
                 $facility->fill(get_object_vars($value));
                 $facility->synched=0;
