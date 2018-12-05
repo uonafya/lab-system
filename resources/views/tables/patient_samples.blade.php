@@ -65,7 +65,7 @@
                                         </td>
                                         <td>
                                             {{--@if($sample->batch->batch_complete == 1)--}}
-                                            @if($sample->repeatt == 0)
+                                            @if($sample->is_ready)
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a> |
                                             @endif
 

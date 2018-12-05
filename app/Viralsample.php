@@ -132,6 +132,21 @@ class Viralsample extends BaseModel
     }
     
 
+    public function getIsReadyAttribute()
+    {
+        if($this->repeatt == 0){
+            if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                if(($this->dateapproved && $this->dateapproved2) || ($this->approvedby && $this->approvedby2)){
+                    return true;
+                }
+            }
+            else{
+                if($this->dateapproved || $this->approvedby) return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Get the sample's coloured result name
      *
