@@ -1131,7 +1131,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = Batch::where('datereceived', '<', '2018-01-01')->where('batch_complete', 0)->get();
+        $batches = Viralbatch::where('datereceived', '<', '2018-01-01')->where('batch_complete', 0)->get();
 
         foreach ($batches as $batch) {
             $samples = $batch->sample;
