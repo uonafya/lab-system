@@ -362,6 +362,7 @@ class ViralworksheetController extends Controller
             $batch->fill($batches_data);
             $batch->pre_update();
         }
+        return back();
 
     }
 
