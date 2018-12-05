@@ -63,7 +63,8 @@ class FunctionController extends Controller
                 return $query->where('facilitycode', $facility);
             })
             ->when($dispatched, function($query){
-                return $query->whereNotNull('datedispatched');
+                // return $query->whereNotNull('datedispatched');
+                return $query->whereRaw("(datedispatched is not null OR (dateapproved is not null and dateapproved2 is not null))")
             })
             ->when(($sample_status && $test == 3), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
