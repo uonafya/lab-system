@@ -1104,11 +1104,11 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-21'])->get();
+        $batches = Viralbatch::with(['sample'])->where('datereceived', '<', '2018-01-01')->where(['datedispatched' => '2018-11-29'])->get();
 
         foreach ($batches as $key => $batch) {
-            $dt = $batch->sample->max('datetested');
-            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +6days'));
+            // $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +3days'));
             $batch->pre_update();
         }
     }
