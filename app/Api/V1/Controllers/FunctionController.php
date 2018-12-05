@@ -135,7 +135,7 @@ class FunctionController extends Controller
                 'interpretation' => $sample->interpretation,
                 'result' => $sample->result,
                 // 'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
-                'date_dispatched' => $sample->datedispatched,
+                'date_dispatched' => $sample->datedispatched ?? null,
                 'sample_status' => $sample->sample_status
             ];
 
