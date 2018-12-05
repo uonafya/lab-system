@@ -136,7 +136,7 @@ class FunctionController extends Controller
                 'result' => $sample->result,
                 // 'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
                 'date_dispatched' => $sample->datedispatched,
-                'sample_status' => $sample->sample_status
+                'sample_status' => $sample->sample_status,
             ];
 
             if($test == 1) $r['result'] = Lookup::get_result($sample->result);
