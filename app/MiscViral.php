@@ -339,7 +339,7 @@ class MiscViral extends Common
     {
         $units="";              
         if($result == 'Invalid'){
-            $res= "Collect New Sample";
+            $res= "Failed";
             $interpretation="Invalid";
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
