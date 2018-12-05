@@ -217,7 +217,7 @@ p.breakhere {page-break-before: always}
 				
 
 				@if($sample->receivedstatus == 2)
-					<td colspan="3" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
+					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
 						 {{ $rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
