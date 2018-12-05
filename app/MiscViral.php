@@ -1107,8 +1107,8 @@ class MiscViral extends Common
         $batches = Viralbatch::with(['sample'])->where('datereceived', '<', '2018-01-01')->where(['datedispatched' => '2018-11-29'])->get();
 
         foreach ($batches as $key => $batch) {
-            // $dt = $batch->sample->max('datetested');
-            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +3days'));
+            $dt = $batch->sample->max('datetested');
+            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +1days'));
             $batch->pre_update();
         }
     }
