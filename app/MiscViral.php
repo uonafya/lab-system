@@ -1126,5 +1126,27 @@ class MiscViral extends Common
             $batch->pre_update();
         }
     }
+
+    public static function cpgh()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::where('datereceived', '<', '2018-01-01')->where('batch_complete', 0)->get();
+
+        foreach ($batches as $batch) {
+            $samples = $batch->sample;
+
+            foreach ($samples as $sample) {
+                if($sample->repeatt == 1 && !$sample->has_rerun){
+                    $sample->repeatt = 0;
+                    $sample->save();
+                }
+            }
+
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +2days'));
+            $batch->batch_complete = 1;
+            $batch->save();
+        }
+    }
     
 }
