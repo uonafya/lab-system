@@ -213,25 +213,31 @@ p.breakhere {page-break-before: always}
 				</span></td>
 			</tr>
 
-			<tr>
-				<td colspan="3" class="style4 style1 comment"><strong>Test Result</strong></td>
-				<td colspan="1" class="style4 style1 comment">
-					<strong> 
-	                    @foreach($results as $result)
-	                        @if($sample->result == $result->id)
-	                        	<span
-	                        		@if($result->id == 2)
-	                        			class="emph"
-	                        		@endif
+			@if($sample->receivedstatus == 2)
 
-	                        	> {{ $result->name }} </span>
-	                            
-	                        @endif
-	                    @endforeach
-					</strong>
-				</td>
-				<td colspan="3"></td>
-			</tr>
+			@else
+
+				<tr>
+					<td colspan="3" class="style4 style1 comment"><strong>Test Result</strong></td>
+					<td colspan="1" class="style4 style1 comment">
+						<strong> 
+		                    @foreach($results as $result)
+		                        @if($sample->result == $result->id)
+		                        	<span
+		                        		@if($result->id == 2)
+		                        			class="emph"
+		                        		@endif
+
+		                        	> {{ $result->name }} </span>
+		                            
+		                        @endif
+		                    @endforeach
+						</strong>
+					</td>
+					<td colspan="3"></td>
+				</tr>
+
+			@endif
 
 			
 			@if($sample->worksheet)
