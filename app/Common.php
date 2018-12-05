@@ -248,6 +248,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+		$batch_model::whereNull('input_complete')->update(['input_complete' => true]);
 		return "Batches of {$type} have been marked as input complete";
 	}
 
@@ -502,7 +503,7 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    
+
 
 
 
