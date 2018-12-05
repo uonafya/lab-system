@@ -149,6 +149,7 @@ class Common
 				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));
 				$data = array_merge($data, $viral_data);				
 			}
+			if($sample->synched == 1) $data['synched'] = 2;
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
