@@ -144,24 +144,6 @@ width:1180px;
 					@endif
 
 				@endforeach
-
-
-				{{--@foreach($samples->where('parentid', 0) as $sample)
-
-					@include('shared/worksheet_sample', ['sample' => $sample])
-
-					@php $count++; @endphp
-
-					@if($count % 5 == 0)
-						</tr><tr><td colspan=5>&nbsp;</td></tr><tr>
-					@endif
-				@endforeach
-
-				@if($vl) 
-					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
-				@else
-					<td align='center' > PC </td><td  align='center' > NC </td>
-				@endif--}}
 			</tr>
 				
 		</table>
