@@ -100,9 +100,18 @@ class MiscViral extends Common
 
         $double_approval = \App\Lookup::$double_approval; 
         if(in_array(env('APP_LAB'), $double_approval)){
+            Viralsample::whereRaw("(result is null or result = '')")
+                ->where('repeatt', 0)
+                ->whereNotNull('dateapproved')
+                ->whereNotNull('dateapproved2')
+                ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
             $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
         }
         else{
+            Viralsample::whereRaw("(result is null or result = '')")
+                ->where('repeatt', 0)
+                ->whereNotNull('dateapproved')
+                ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
             $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
         }
 
