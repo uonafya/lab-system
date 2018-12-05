@@ -27,7 +27,9 @@ class Common
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f);
+		$workingdays = $s->diffInWeekdays($f, false);
+
+		if($workingdays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
@@ -149,6 +151,7 @@ class Common
 				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));
 				$data = array_merge($data, $viral_data);				
 			}
+			if($sample->synched == 1) $data['synched'] = 2;
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
