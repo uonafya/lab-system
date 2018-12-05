@@ -86,7 +86,7 @@ class Copier
     public static function copy_missing_facilities()
     {
         $db_name = env('DB_DATABASE');
-        $facilities = DB::connection('old')->table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         $classes = [
             \App\Mother::class,
