@@ -45,6 +45,7 @@ class FunctionController extends Controller
         $sample_status = $request->input('sample_status');
         $location = $request->input('location'); 
         $dispatched = $request->input('dispatched');   
+        $ids = $request->input('ids');   
 
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
@@ -58,6 +59,10 @@ class FunctionController extends Controller
             $orders = str_replace(' ', '', $orders);
             $orders = explode(',', $orders);
         } 
+        if($ids){
+            $ids = str_replace(' ', '', $ids);
+            $ids = explode(',', $ids);
+        }
  
         $result = $class::when($facility, function($query) use($facility){
                 return $query->where('facilitycode', $facility);
@@ -75,6 +80,9 @@ class FunctionController extends Controller
             })
             ->when($orders, function($query) use($orders){
                 return $query->whereIn('order_no', $orders);
+            })
+            ->when($ids, function($query) use($ids){
+                return $query->whereIn('id', $ids);
             })
             ->when($location, function($query) use($location){
                 return $query->where('amrs_location', $location);
