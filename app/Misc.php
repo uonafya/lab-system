@@ -96,19 +96,20 @@ class Misc extends Common
 			$batch_id = $sample->batch_id;
 		}
 		$double_approval = \App\Lookup::$double_approval; 
+
+        Sample::whereNull('result')
+            ->where('repeatt', 0)
+            ->where('batch_id', $batch_id)
+            ->whereNotNull('dateapproved')
+            ->when((in_array(env('APP_LAB'), $double_approval)), function($query){
+                return $query->whereNotNull('dateapproved2');
+            })            
+            ->update(['result' => 5, 'labcomment' => 'Failed Test']);
+
 		if(in_array(env('APP_LAB'), $double_approval)){
-            Sample::whereNull('result')
-                ->where('repeatt', 0)
-                ->whereNotNull('dateapproved')
-                ->whereNotNull('dateapproved2')
-                ->update(['result' => 5, 'labcomment' => 'Failed Test']);
 			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
 		}
 		else{
-            Sample::whereNull('result')
-                ->where('repeatt', 0)
-                ->whereNotNull('dateapproved')
-                ->update(['result' => 5, 'labcomment' => 'Failed Test']);
 			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
 		}
 		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
