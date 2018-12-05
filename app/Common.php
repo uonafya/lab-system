@@ -500,10 +500,9 @@ class Common
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
-
-
-
     }
+
+    
 
 
 
