@@ -487,7 +487,6 @@ class ViralworksheetController extends Controller
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
 
-                $datetested = Carbon::parse()
 
                 $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
