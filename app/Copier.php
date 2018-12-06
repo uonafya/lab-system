@@ -47,10 +47,46 @@ class Copier
 {
     private static $limit = 5000;
 
+    public static function missing_facilities()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = SampleView::where('facility_id', 4575)->get();
+
+        foreach ($samples as $key => $sample) {
+            $s = Sample::find($sample->id);
+            $batch = $s->batch;
+            $batch->facility_id = 55073;
+            $batch->pre_update();
+
+            $patient = $s->patient;
+            $patient->facility_id = 55073;
+            $patient->pre_update();
+
+            $mother = $patient->mother;
+            $mother->facility_id = 55073;
+            $mother->pre_update();
+        }
+
+        $viralsamples = ViralsampleView::where('facility_id', 4575)->get();
+
+        foreach ($viralsamples as $key => $sample) {
+            $s = Viralsample::find($sample->id);
+            $batch = $s->batch;
+            $batch->facility_id = 55073;
+            $batch->pre_update();
+
+            $patient = $s->patient;
+            $patient->facility_id = 55073;
+            $patient->pre_update();
+        }
+    }
+
+
+
     public static function copy_missing_facilities()
     {
         $db_name = env('DB_DATABASE');
-        $facilities = DB::connection('old')->table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         $classes = [
             \App\Mother::class,
@@ -65,6 +101,7 @@ class Copier
         foreach ($facilities as $key => $value) {
             $fac = Facility::find($value->ID);
             if($fac){
+                continue;
                 $facility = new Facility;
                 $facility->fill(get_object_vars($value));
                 $facility->synched=0;

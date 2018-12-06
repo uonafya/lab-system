@@ -27,7 +27,9 @@ class Common
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f);
+		$workingdays = $s->diffInWeekdays($f, false);
+
+		if($workingdays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
@@ -149,6 +151,7 @@ class Common
 				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));
 				$data = array_merge($data, $viral_data);				
 			}
+			if($sample->synched == 1) $data['synched'] = 2;
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
@@ -160,7 +163,8 @@ class Common
 	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
-        $offset_value = 50000;
+        // $offset_value = 50000;
+        $offset_value = 0;
         while(true){
 
 			$samples = $view_model::where(['batch_complete' => 1])
@@ -248,6 +252,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+		$batch_model::whereNull('input_complete')->update(['input_complete' => true]);
 		return "Batches of {$type} have been marked as input complete";
 	}
 
@@ -500,10 +505,9 @@ class Common
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
-
-
-
     }
+
+
 
 
 

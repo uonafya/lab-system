@@ -45,6 +45,7 @@ class FunctionController extends Controller
         $sample_status = $request->input('sample_status');
         $location = $request->input('location'); 
         $dispatched = $request->input('dispatched');   
+        $ids = $request->input('ids');   
 
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
@@ -58,12 +59,17 @@ class FunctionController extends Controller
             $orders = str_replace(' ', '', $orders);
             $orders = explode(',', $orders);
         } 
+        if($ids){
+            $ids = str_replace(' ', '', $ids);
+            $ids = explode(',', $ids);
+        }
  
         $result = $class::when($facility, function($query) use($facility){
                 return $query->where('facilitycode', $facility);
             })
             ->when($dispatched, function($query){
-                return $query->whereNotNull('datedispatched');
+                // return $query->whereNotNull('datedispatched');
+                return $query->whereRaw("(datedispatched is not null OR (dateapproved is not null and dateapproved2 is not null))");
             })
             ->when(($sample_status && $test == 3), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
@@ -74,6 +80,9 @@ class FunctionController extends Controller
             })
             ->when($orders, function($query) use($orders){
                 return $query->whereIn('order_no', $orders);
+            })
+            ->when($ids, function($query) use($ids){
+                return $query->whereIn('id', $ids);
             })
             ->when($location, function($query) use($location){
                 return $query->where('amrs_location', $location);
@@ -135,7 +144,7 @@ class FunctionController extends Controller
                 'result' => $sample->result,
                 // 'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
                 'date_dispatched' => $sample->datedispatched,
-                'sample_status' => $sample->sample_status
+                'sample_status' => $sample->sample_status,
             ];
 
             if($test == 1) $r['result'] = Lookup::get_result($sample->result);

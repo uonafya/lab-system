@@ -96,14 +96,24 @@ class MiscViral extends Common
             $batch_id = $sample->batch_id;
         }
 
-        Viralsample::where(['batch_id' => $batch_id, 'result' => 'Failed', 'repeatt' => 0])->update(['result' => 'Collect New Sample']);
-
         $double_approval = \App\Lookup::$double_approval; 
+
+        // Viralsample::where(['batch_id' => $batch_id, 'result' => 'Failed', 'repeatt' => 0])->update(['result' => 'Collect New Sample']);
+
+        Viralsample::whereRaw("(result is null or result = '' or result = 'Failed')")
+            ->where('repeatt', 0)
+            ->where('batch_id', $batch_id)
+            ->whereNotNull('dateapproved')
+            ->when((in_array(env('APP_LAB'), $double_approval)), function($query){
+                return $query->whereNotNull('dateapproved2');
+            })            
+            ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
+
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
         }
 
 
@@ -329,7 +339,7 @@ class MiscViral extends Common
     {
         $units="";              
         if($result == 'Invalid'){
-            $res= "Collect New Sample";
+            $res= "Failed";
             $interpretation="Invalid";
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
@@ -1094,11 +1104,12 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = Viralbatch::with(['sample'])->where(['datedispatched' => '2018-11-21'])->get();
+        $batches = Viralbatch::with(['sample'])->whereNull('datereceived')->where(['datedispatched' => '2018-11-29'])->get();
 
         foreach ($batches as $key => $batch) {
             $dt = $batch->sample->max('datetested');
-            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +6days'));
+            $batch->datereceived = date('Y-m-d', strtotime($dt . ' -2days'));
+            $batch->datedispatched = date('Y-m-d', strtotime($dt . ' +1days'));
             $batch->pre_update();
         }
     }
@@ -1114,6 +1125,28 @@ class MiscViral extends Common
             $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +2days'));
             $batch->datedispatched = date('Y-m-d', strtotime($batch->created_at . ' +3days'));
             $batch->pre_update();
+        }
+    }
+
+    public static function cpgh()
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = Viralbatch::where('datereceived', '<', '2018-01-01')->where('batch_complete', 0)->get();
+
+        foreach ($batches as $batch) {
+            $samples = $batch->sample;
+
+            foreach ($samples as $sample) {
+                if($sample->repeatt == 1 && !$sample->has_rerun){
+                    $sample->repeatt = 0;
+                    $sample->save();
+                }
+            }
+
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +2days'));
+            $batch->batch_complete = 1;
+            $batch->save();
         }
     }
     
