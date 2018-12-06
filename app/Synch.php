@@ -303,16 +303,14 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
-		$classes = self::$synch_arrays;
+		$c = self::$synch_arrays[$type];
 
-		foreach ($classes as $c) {
-			$misc_class = $c['misc_class'];
-			$sample_class = $c['sample_class'];
-			$sampleview_class = $c['sampleview_class'];
+		$misc_class = $c['misc_class'];
+		$sample_class = $c['sample_class'];
+		$sampleview_class = $c['sampleview_class'];
 
-			$my = new $misc_class;
-			$my->save_tat($sampleview_class, $sample_class);		
-		}
+		$my = new $misc_class;
+		$my->save_tat($sampleview_class, $sample_class);
 
 		$updates = self::$update_arrays[$type];
 
@@ -334,6 +332,12 @@ class Synch
 							                return $query->where('status_id', 3);
 							            })->limit(20)->get();
 				if($models->isEmpty()) break;
+
+				if($key == 'batches'){
+					foreach ($models as $batch) {
+						$my->save_tat($sampleview_class, $sample_class, $batch->id);
+					}
+				}
 
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
