@@ -91,21 +91,17 @@
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
                                                 $qualkitused = round(($tests / 42));
+                                                $kits['name'] = $kits['VLname'];
                                             } else if ($types == 'EID') {
                                                 $qualkitused = round(($tests / 44));
+                                                $kits['name'] = $kits['EIDname'];
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor']);
                                         }
                                     @endphp
                                     <tr>
-                                        <td>
-                                        @if($types == 'VL')
-                                            {{ $kits['VLname'] }}
-                                        @elseif($types == 'EID')
-                                            {{ $kits['EIDname'] }}
-                                        @endif
-                                        </td>
+                                        <td>{{ $kits['name'] }}</td>
                                         <td>{{ $kits['unit'] }}</td>
                                         <td>
                                             <input class="form-control input-edit" type="text" name="taqman{{ $types }}beginingbal{{ $kits['alias'] }}" id="taqman{{ $types }}beginingbal{{ $kits['alias'] }}" value="{{ $data->$prevtaqman->$prefix ?? 0 }}" disabled="true">
@@ -216,21 +212,17 @@
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
                                                 $qualkitused = round(($tests / 93));
+                                                $kits['name'] = $kits['VLname'];
                                             } else if ($types == 'EID') {
                                                 $qualkitused = round(($tests / 94));
+                                                $kits['name'] = $kits['EIDname'];
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor'][$types]);
                                         }
                                     @endphp
                                     <tr>
-                                        <td>
-                                        @if($types == 'VL')
-                                            {{ $kits['VLname'] }}
-                                        @elseif($types == 'EID')
-                                            {{ $kits['EIDname'] }}
-                                        @endif
-                                        </td>
+                                        <td>{{ $kits['name'] }}</td>
                                         <td>
                                             <input class="form-control input-edit" type="text" name="abbott{{ $types }}beginingbal{{ $kits['alias'] }}" id="abbott{{ $types }}beginingbal{{ $kits['alias'] }}" value="{{ $data->$prevabbott->$prefix ?? 0 }}" disabled="true">
                                         </td>
