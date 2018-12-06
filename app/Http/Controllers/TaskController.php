@@ -275,7 +275,7 @@ class TaskController extends Controller
             $data['taqmandeliveries'.$value] = NULL;
             $type = $key+1;
             foreach(Abbotprocurement::where('month', $previousMonth-1)->where('testtype', $type)->get() as $key1 => $value1) {
-                $data['prevabbott'.$value] = $value;
+                $data['prevabbott'.$value] = $value1;
             }
             foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevtaqman'.$value] = $value1;
