@@ -81,6 +81,18 @@ class Copier
         }
     }
 
+    public static function split_batches()
+    {
+        $batches = ViralsampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
+                                    ->groupBy('original_batch_id')
+                                    ->having('facility_count', '>', 1)
+                                    ->get();
+
+        foreach ($batches as $key => $b) {
+            
+        }
+    }
+
 
 
     public static function copy_missing_facilities()
