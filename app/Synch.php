@@ -974,7 +974,7 @@ class Synch
 		while (true) {
 			$batches = $batch_class::with(['sample:id'])
 				->where('synched', '>', 0)
-				->whereNull('national_batch_id')
+				// ->whereNull('national_batch_id')
 				->limit(200)
 				->offset($offset)
 				->get();
