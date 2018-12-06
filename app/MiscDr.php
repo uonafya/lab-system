@@ -61,7 +61,6 @@ class MiscDr extends Common
 				$sample->save();
 			}
 		}
-
 	}
 
 	public static function get_worksheet_files($worksheet)
@@ -79,7 +78,7 @@ class MiscDr extends Common
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
-					'sample_name' => "{$sample->id}",
+					'sample_name' => "{$sample->mid}",
 					'pathogen' => 'hiv',
 					'assay' => 'cdc-hiv',
 					'enforce_recall' => false,
@@ -118,8 +117,8 @@ class MiscDr extends Common
 				return $a;
 			}
 			else{
-				// if(starts_with($file, $sample->id . $primer)){
-				if(starts_with($file, $sample->id . '-') && str_contains($file, $primer))
+				// if(starts_with($file, $sample->mid . $primer)){
+				if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
 				{
 					$a = [
 						'filename' => $file,
