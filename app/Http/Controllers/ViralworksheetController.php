@@ -10,6 +10,8 @@ use App\MiscViral;
 use App\Lookup;
 use DB;
 use Excel;
+use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ViralworksheetController extends Controller
@@ -473,7 +475,20 @@ class ViralworksheetController extends Controller
                         $nc_units = $result_array['units']; 
                     }
                 }
-                $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
+
+                $datetested = $today;
+
+                try {
+                    $dt = Carbon::parse($value[12]);
+                    $datetested = $dt->toDateString();
+                } catch (Exception $e) {
+                    $datetested = $today;
+                }
+
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+
+                $datetested = Carbon::parse()
+
                 $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
