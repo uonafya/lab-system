@@ -113,6 +113,7 @@ class DrWorksheetController extends Controller
 
         $dr_results = DrResult::whereIn('sample_id', $sample_ids)->orderBy('sample_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
         $data['dr_results'] = $dr_results;
+        $data['date_created'] = $drWorksheet->my_date_format('created_at', "Y-m-d");
         if($print) $data['print'] = true;
         return view('worksheets.dr', $data);
     }

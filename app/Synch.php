@@ -1018,6 +1018,65 @@ class Synch
 		}
 	}
 
+	public static function match_samples($type)
+	{
+		$classes = self::$synch_arrays[$type];
+
+		$misc_class = $classes['misc_class'];
+		$sample_class = $classes['sample_class'];
+		$sampleview_class = $classes['sampleview_class'];
+		$batch_class = $classes['batch_class'];
+
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+		// $my = new $misc_class;
+		// $my->save_tat($sampleview_class, $sample_class);
+
+		if($batch_class == "App\\Batch"){
+			$url = 'synch/samples';
+		}else{
+			$url = 'synch/viralsamples';
+		}
+		$done=0;
+		$offset=0;
+
+		while (true) {
+			$samples = $sample_class::with(['batch:id,national_batch_id,lab_id'])
+				->where('synched', '>', 0)
+				->whereNull('national_sample_id')
+				->limit(200)
+				->offset($offset)
+				->get();
+			if($samples->isEmpty()) break;
+
+			$response = $client->request('post', $url, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'samples' => $samples->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+			$i=0;
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->samples as $key => $value) {
+				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1];
+				$i++;
+				$sample_class::where('id', $value->original_id)->update($update_data);
+			}
+			
+			$offset += (200 - ($i+1));
+
+			$done+=200;
+			echo "Matched {$done} {$type} sample records at " . date('d/m/Y h:i:s a', time()). "\n";
+		}
+	}
+
 
 	// No longer necessary
 	// Facilities will be created nationally then synched to all labs
