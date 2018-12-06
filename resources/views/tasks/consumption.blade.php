@@ -90,9 +90,9 @@
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
-                                                $qualkitused = round(($tests / 42), 2);
+                                                $qualkitused = round(($tests / 42));
                                             } else if ($types == 'EID') {
-                                                $qualkitused = round(($tests / 44), 2);
+                                                $qualkitused = round(($tests / 44));
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor']);
@@ -209,9 +209,9 @@
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
-                                                $qualkitused = round(($tests / 93), 2);
+                                                $qualkitused = round(($tests / 93));
                                             } else if ($types == 'EID') {
-                                                $qualkitused = round(($tests / 94), 2);
+                                                $qualkitused = round(($tests / 94));
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor'][$types]);
@@ -326,9 +326,9 @@
                                         $received = $kits['alias'].'received';
                                         $qualkitused = 0;
                                         if ($types == 'VL') {
-                                            $qualkitused = round(($tests / 93), 2);
+                                            $qualkitused = round(($tests / 93));
                                         } else if ($types == 'EID') {
-                                            $qualkitused = round(($tests / 94), 2);
+                                            $qualkitused = round(($tests / 94));
                                         }
                                         $endingbal = (@($data->$prevabbott->$prefix+$data->$abbottdeliveries->$received) - @($qualkitused));
                                     @endphp
@@ -383,9 +383,9 @@
                                         $received = $kits['alias'].'received';
                                         $qualkitused = 0;
                                         if ($types == 'VL') {
-                                            $qualkitused = round(($tests / 42), 2);
+                                            $qualkitused = round(($tests / 42));
                                         } else if ($types == 'EID') {
-                                            $qualkitused = round(($tests / 44), 2);
+                                            $qualkitused = round(($tests / 44));
                                         }
                                         $endingbal = (@($data->$prevtaqman->$prefix+$data->$taqmandeliveries->$received) - @($qualkitused));
                                     @endphp
