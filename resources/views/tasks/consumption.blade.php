@@ -99,7 +99,13 @@
                                         }
                                     @endphp
                                     <tr>
-                                        <td>{{ $kits['name'] }}</td>
+                                        <td>
+                                        @if($types == 'VL')
+                                            {{ $kits['VLname'] }}
+                                        @elseif($types == 'EID')
+                                            {{ $kits['EIDname'] }}
+                                        @endif
+                                        </td>
                                         <td>{{ $kits['unit'] }}</td>
                                         <td>
                                             <input class="form-control input-edit" type="text" name="taqman{{ $types }}beginingbal{{ $kits['alias'] }}" id="taqman{{ $types }}beginingbal{{ $kits['alias'] }}" value="{{ $data->$prevtaqman->$prefix ?? 0 }}" disabled="true">
@@ -218,7 +224,13 @@
                                         }
                                     @endphp
                                     <tr>
-                                        <td>{{ $kits['name'] }}</td>
+                                        <td>
+                                        @if($types == 'VL')
+                                            {{ $kits['VLname'] }}
+                                        @elseif($types == 'EID')
+                                            {{ $kits['EIDname'] }}
+                                        @endif
+                                        </td>
                                         <td>
                                             <input class="form-control input-edit" type="text" name="abbott{{ $types }}beginingbal{{ $kits['alias'] }}" id="abbott{{ $types }}beginingbal{{ $kits['alias'] }}" value="{{ $data->$prevabbott->$prefix ?? 0 }}" disabled="true">
                                         </td>
