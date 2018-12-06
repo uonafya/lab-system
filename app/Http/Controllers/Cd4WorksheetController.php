@@ -245,9 +245,10 @@ class Cd4WorksheetController extends Controller
 
         foreach ($checkbox as $key => $value) {
             $sample = Cd4Sample::find($id[$value]);
-            if($sample->approvedby){
+            if(isset($sample->approvedby)){
                 $sample->approvedby2 = auth()->user()->id;
                 $sample->dateapproved2 = gmdate('Y-m-d');
+                $sample->status_id = 5;
             } else {
                 $sample->approvedby = auth()->user()->id;
                 $sample->dateapproved = gmdate('Y-m-d');
@@ -257,14 +258,13 @@ class Cd4WorksheetController extends Controller
             $sample->AVGCD3CD4percentLymph = $AVGCD3CD4percentLymph[$value];
             $sample->AVGCD3CD4AbsCnt = $AVGCD3CD4AbsCnt[$value];
             $sample->CD45AbsCnt = $CD45AbsCnt[$value];
-            $sample->status_id = 5;
             if($repeatt[$value] == 0){
                 $sample->repeatt = $repeatt[$value];
             } else {
                 $sample->repeatt = $repeatt[$value];
             }
             $sample->save();
-            if($sample->repeatt = 1){
+            if($sample->repeatt == 1){
                 $repeatSamples = Cd4Sample::where('parentid', '=', $sample->id)->count();
                 if($repeatSamples > 0){
                     $sample = new Cd4Sample();
@@ -281,7 +281,7 @@ class Cd4WorksheetController extends Controller
             }
         }
 
-        if($worksheet->reviewedby){
+        if(isset($worksheet->reviewedby)){
             $worksheet->reviewedby2 = auth()->user()->id;    
             $worksheet->datereviewed2 = gmdate('Y-m-d');
             $worksheet->status_id = 3;
