@@ -145,7 +145,7 @@ class ViralworksheetController extends Controller
      * @param  \App\Viralworksheet  $Viralworksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(Viralworksheet $Viralworksheet)
+    public function show(Viralworksheet $Viralworksheet, $print=false)
     {
         $Viralworksheet->load(['creator']);
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
@@ -163,6 +163,8 @@ class ViralworksheetController extends Controller
                     ->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
+
+        if($print) $data['print'] = true;
 
         if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
@@ -220,6 +222,8 @@ class ViralworksheetController extends Controller
 
     public function print(Viralworksheet $worksheet)
     {
+        return $this->show($worksheet, true);
+
         $worksheet->load(['creator']);
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
