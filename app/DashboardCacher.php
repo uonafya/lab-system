@@ -118,6 +118,7 @@ class DashboardCacher
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
                                 ->whereRaw("datediff(datereceived, datetested) > 14")->where('lab_id', '=', env('APP_LAB'))
+                                ->where('site_entry', '<>', 2)
                                 ->whereNull('result')->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
@@ -130,6 +131,7 @@ class DashboardCacher
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
                         ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         ->where('flag', '1')->get()->first()->total; 
                 }
             }
@@ -138,6 +140,7 @@ class DashboardCacher
                 $model = SampleView::selectRaw('COUNT(id) as total')
                                 ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
                                 ->whereRaw("datediff(datereceived, datetested) > 14")
+                                ->where('site_entry', '<>', 2)
                                 ->whereNull('result')->get()->first()->total;
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
@@ -146,6 +149,7 @@ class DashboardCacher
                     ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
+                    ->where('site_entry', '<>', 2)
                     ->where('lab_id', '=', env('APP_LAB'))
                     ->where('flag', '1')->get()->first()->total;
             }
