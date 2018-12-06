@@ -431,6 +431,9 @@ class Lookup
             'prophylaxis' => Cache::get('prophylaxis'),
             'dr_rejected_reasons' => Cache::get('dr_rejected_reasons'),
 
+            'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
+            'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+
         ];
     }
 

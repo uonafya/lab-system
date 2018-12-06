@@ -195,7 +195,7 @@ class WorksheetController extends Controller
      * @param  \App\Worksheet  $worksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(Worksheet $worksheet)
+    public function show(Worksheet $worksheet, $print=false)
     {
         $worksheet->load(['creator']);
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
@@ -214,6 +214,8 @@ class WorksheetController extends Controller
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
+
+        if($print) $data['print'] = true;
 
         if($worksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
@@ -272,6 +274,8 @@ class WorksheetController extends Controller
 
     public function print(Worksheet $worksheet)
     {
+        return $this->show($worksheet, true);
+
         $worksheet->load(['creator']);
         $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')

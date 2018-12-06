@@ -125,15 +125,7 @@ class DrWorksheetController extends Controller
      */
     public function print(DrWorksheet $worksheet)
     {
-        $data = Lookup::get_dr();
-
-        $samples = $worksheet->sample;
-        $sample_ids = $samples->pluck(['id'])->toArray();
-
-        $dr_results = DrResult::whereIn('sample_id', $sample_ids)->orderBy('sample_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
-        $data['dr_results'] = $dr_results;
-        $data['print'] = true;
-        return view('worksheets.dr', $data);
+        return $this->show($worksheet, true);
     }
 
     /**
