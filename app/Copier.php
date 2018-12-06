@@ -86,7 +86,7 @@ class Copier
     public static function copy_missing_facilities()
     {
         $db_name = env('DB_DATABASE');
-        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+        $facilities = DB::connection('old')->table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         $classes = [
             \App\Mother::class,
@@ -101,7 +101,6 @@ class Copier
         foreach ($facilities as $key => $value) {
             $fac = Facility::find($value->ID);
             if($fac){
-                continue;
                 $facility = new Facility;
                 $facility->fill(get_object_vars($value));
                 $facility->synched=0;
@@ -118,6 +117,7 @@ class Copier
                 unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
+                continue;
 
                 foreach ($classes as $class) {
                     $class::where(['facility_id' => $value->ID, 'synched' => 1])->update(['facility_id' => $facility->id, 'synched' => 2]);
