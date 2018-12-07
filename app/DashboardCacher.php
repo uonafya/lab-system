@@ -253,6 +253,7 @@ class DashboardCacher
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
                         ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         ->whereNull('datedispatched');
                         // ->where('datedispatched', '=', '')
                         // ->orWhere('datedispatched', '=', '0000-00-00')
@@ -263,6 +264,7 @@ class DashboardCacher
                         ->where('receivedstatus', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
+                        ->where('site_entry', '<>', 2)
                         ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('datedispatched');
         }

@@ -91,8 +91,10 @@
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
                                                 $qualkitused = round(($tests / 42));
+                                                $kits['name'] = $kits['VLname'];
                                             } else if ($types == 'EID') {
                                                 $qualkitused = round(($tests / 44));
+                                                $kits['name'] = $kits['EIDname'];
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor']);
@@ -210,8 +212,10 @@
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
                                                 $qualkitused = round(($tests / 93));
+                                                $kits['name'] = $kits['VLname'];
                                             } else if ($types == 'EID') {
                                                 $qualkitused = round(($tests / 94));
+                                                $kits['name'] = $kits['EIDname'];
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor'][$types]);
