@@ -424,6 +424,7 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 	Route::group(['middleware' => ['only_utype:0']], function(){
+		Route::get('abbottdeliveries/{id}/restore', 'AbbottDeliveriesController@restore');
 		Route::get('abbottdeliveries/{id}/delete', 'AbbottDeliveriesController@delete');
 		Route::resource('abbottdeliveries', 'AbbottDeliveriesController');
 		Route::get('taqmandeliveries/{id}/delete', 'TaqmanDeliveriesController@delete');
