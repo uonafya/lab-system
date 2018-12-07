@@ -302,21 +302,18 @@ class Common
         if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
 
         if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
-        
+
+        try {
+        	if($view_name) $new_mail = new $mail_class($batch, $view_name);
+        	else{
+        		$new_mail = new $mail_class($batch);
+        	}
         	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
         	->send($new_mail);
-
-        // try {
-        // 	if($view_name) $new_mail = new $mail_class($batch, $view_name);
-        // 	else{
-        // 		$new_mail = new $mail_class($batch);
-        // 	}
-        // 	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
-        // 	->send($new_mail);
-        // 	// $batch->save();
-        // } catch (Exception $e) {
+        	// $batch->save();
+        } catch (Exception $e) {
         	
-        // }
+        }
     }
 
     public static function dispatch_results($type = 'eid')
