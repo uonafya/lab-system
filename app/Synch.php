@@ -1058,7 +1058,6 @@ class Synch
 					'samples' => $samples->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
-
 			]);
 			$i=0;
 
