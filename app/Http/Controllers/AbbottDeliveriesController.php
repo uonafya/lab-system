@@ -73,7 +73,7 @@ class AbbottDeliveriesController extends Controller
     }
 
     public function restore($id) {
-        $delivery = Abbotdeliveries::withTrashed()->find($id);
+        $delivery = Abbotdeliveries::onlyTrashed()->find($id);
         if(null !== $delivery){
             $delivery->restore();
             if($delivery) { print("Successfully restored the delivery entry"); } 
@@ -106,4 +106,3 @@ class AbbottDeliveriesController extends Controller
         }        
     }
 }
-
