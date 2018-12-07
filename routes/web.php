@@ -423,4 +423,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('worklist', 'WorklistController', ['except' => ['edit']]);
 	});
 
+	Route::group(['middleware' => ['only_utype:0']], function(){
+		Route::get('abbottdeliveries/{id}/delete', 'AbbottDeliveriesController@delete');
+		Route::resource('abbottdeliveries', 'AbbottDeliveriesController');
+		Route::get('taqmandeliveries/{id}/delete', 'TaqmanDeliveriesController@delete');
+		Route::resource('taqmandeliveries', 'TaqmanDeliveriesController');
+	});
+
 });
