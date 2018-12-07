@@ -151,6 +151,7 @@ class HomeController extends Controller
 
         $samples = $model->where('repeatt', 0)
                         ->whereYear('datereceived', '>', $year)
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereRaw("datediff(curdate(), datereceived) > 14")
                         ->get();
 
@@ -184,6 +185,8 @@ class HomeController extends Controller
                     ->where('datereceived', '>', '2017-12-31')
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
+                    ->where('lab_id', '=', env('APP_LAB'))
+                    ->where('site_entry', '<>', 2)
                     ->where('viralsamples_view.flag', '1')
                     ->orderBy('parentid', 'desc')
                     ->orderBy('waitingtime', 'desc')->get();
@@ -197,6 +200,8 @@ class HomeController extends Controller
                     ->whereIn('receivedstatus', [1, 3])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
+                    ->where('lab_id', '=', env('APP_LAB'))
+                    ->where('site_entry', '<>', 2)
                     ->where('flag', '1')
                     ->orderBy('parentid', 'desc')
                     ->orderBy('waitingtime', 'desc')->get();
@@ -218,6 +223,8 @@ class HomeController extends Controller
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
                         ->where('parentid', '>', 0)
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
@@ -228,6 +235,8 @@ class HomeController extends Controller
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
                         ->whereNull('worksheet_id')
                         ->whereYear('datereceived', '>', '2015')
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->where(function ($query) {
                             $query->whereNull('result')
@@ -252,6 +261,8 @@ class HomeController extends Controller
                         ->join('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
                         ->where('receivedstatus', 2)
                         ->where('flag', '=', 1)
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
                         ->whereNull('datedispatched')->get();
@@ -262,6 +273,8 @@ class HomeController extends Controller
                         ->where('receivedstatus', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
+                        ->where('site_entry', '<>', 2)
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('datedispatched')->get();
         }
         $noSamples = $samples->count();
@@ -300,12 +313,16 @@ class HomeController extends Controller
         $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
             return Viralsample::selectRaw("count(id) as total")
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
             })->get()->first()->total;
         } else {
             return Sample::selectRaw("count(id) as total")
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
@@ -319,6 +336,8 @@ class HomeController extends Controller
         if (session('testingSystem') == 'Viralload') {
             return ViralsampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->whereIn('receivedstatus', [1, 3])
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
@@ -327,6 +346,8 @@ class HomeController extends Controller
         } else {
             return SampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->whereIn('receivedstatus', [1, 3])
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->whereDate('datereceived', '>', $param);
@@ -341,6 +362,8 @@ class HomeController extends Controller
         if (session('testingSystem') == 'Viralload') {
             return ViralsampleView::selectRaw("count(id) as total")
             ->where('receivedstatus', 2)
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
                 return $query->where('datereceived', $param);
@@ -360,6 +383,8 @@ class HomeController extends Controller
         $param = self::starting_day($period);
         if (session('testingSystem') == 'Viralload') {
             return Viralsample::selectRaw("count(id) as total")
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datetested', '>', $param);
                 return $query->where('datetested', $param);
@@ -380,6 +405,8 @@ class HomeController extends Controller
         if (session('testingSystem') == 'Viralload') {
             return ViralsampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datedispatched', '>', $param);
                 return $query->where('datedispatched', $param);
@@ -387,6 +414,8 @@ class HomeController extends Controller
         } else {
             return SampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datedispatched', '>', $param);
                 return $query->where('datedispatched', $param);
