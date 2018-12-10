@@ -707,6 +707,10 @@
                     $("#rejectedreason").removeAttr("disabled");
                     $('.requirable').removeAttr("required");
                 @endif
+
+                @if($viralsample->patient->sex == 1)
+                    $("#pmtct").attr("disabled", "disabled");
+                @endif
             @else
                 $("#patient").blur(function(){
                     var patient = $(this).val();

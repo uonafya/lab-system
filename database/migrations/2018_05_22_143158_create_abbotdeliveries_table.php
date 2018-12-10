@@ -45,6 +45,7 @@ class CreateAbbotdeliveriesTable extends Migration
             // $table->date('datesynchronized')->nullable();
             $table->tinyInteger('synched')->default(0);
             $table->date('datesynched')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->index(['year', 'quarter'], 'year_quarter');

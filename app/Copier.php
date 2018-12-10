@@ -91,7 +91,7 @@ class Copier
         foreach ($batches as $b) {
             $batch1 = $batch2 = $batch3 = null;
 
-            // $batch = Viralbatch::find($b->original_batch_id);
+            $batch1 = Viralbatch::find($b->original_batch_id);
 
             $samples = ViralsampleView::where('original_batch_id', $b->original_batch_id)->get();
 
@@ -104,7 +104,7 @@ class Copier
 
                 if($cur_sample->facility_id == $f->id) continue;
 
-                
+
             }
         }
     }
