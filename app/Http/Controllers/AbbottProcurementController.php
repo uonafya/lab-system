@@ -93,7 +93,7 @@ class AbbottProcurementController extends Controller
             $testtype = 'VL';
         }
         foreach ($this->abbottKits as $key => $kits) {
-            $column = 'ending'.$kits['alias'];
+            $column = 'ending'.strtolower($kits['alias']);
             $procurement->$column = $qualkit * $kits['factor'][$testtype];
         }
         $procurement->save();
