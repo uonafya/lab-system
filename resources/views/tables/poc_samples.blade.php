@@ -45,7 +45,7 @@
                                     <tr>
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->batch_id }} </td>
-                                        <td> {{ $sample->facility->name }} </td>
+                                        <td> {{ $sample->facility->name ?? '' }} </td>
                                         <td> {{ $sample->patient }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->gender ?? '' }} </td>
