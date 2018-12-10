@@ -85,7 +85,6 @@ class TaqmanProcurementController extends Controller
 
     public function recomputeending($id) {
         $procurement = Taqmanprocurement::find($id);
-        $procurement = Abbotprocurement::find($id);
         $qualkit = $procurement->endingqualkit;
         
         foreach ($this->taqmanKits as $key => $kits) {
