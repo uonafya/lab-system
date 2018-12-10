@@ -110,10 +110,10 @@ class MiscViral extends Common
             ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) )";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND repeatt = 0 AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
         }
 
 
@@ -797,7 +797,7 @@ class MiscViral extends Common
                 ->where('parentid', '>', 0)
                 ->whereNull('datedispatched')
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                ->where('input_complete', true)
+                // ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw("(result IS NULL OR result='0')")
                 ->orderBy('viralsamples_view.id', 'asc')
@@ -822,7 +822,7 @@ class MiscViral extends Common
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-            ->where('input_complete', true)
+            // ->where('input_complete', true)
             ->whereIn('receivedstatus', [1, 3])
             ->whereRaw("(result IS NULL OR result='0')")
             // ->orderBy('isnull', 'asc')           
