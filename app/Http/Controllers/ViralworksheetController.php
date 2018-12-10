@@ -10,6 +10,8 @@ use App\MiscViral;
 use App\Lookup;
 use DB;
 use Excel;
+use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ViralworksheetController extends Controller
@@ -143,7 +145,7 @@ class ViralworksheetController extends Controller
      * @param  \App\Viralworksheet  $Viralworksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(Viralworksheet $Viralworksheet)
+    public function show(Viralworksheet $Viralworksheet, $print=false)
     {
         $Viralworksheet->load(['creator']);
         $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
@@ -155,12 +157,14 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
-                        if(env('APP_LAB') != 9) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(!in_array(env('APP_LAB'), [9, 1])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                     })
                     ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
+
+        if($print) $data['print'] = true;
 
         if($Viralworksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
@@ -218,32 +222,7 @@ class ViralworksheetController extends Controller
 
     public function print(Viralworksheet $worksheet)
     {
-        $worksheet->load(['creator']);
-        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
-
-        $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-                    ->with(['patient', 'batch.facility'])
-                    ->select('viralsamples.*', 'viralbatches.facility_id')
-                    ->whereIn('viralsamples.id', $sample_array)
-                    ->orderBy('run', 'desc')
-                    ->when(true, function($query){
-                        if(env('APP_LAB') != 9) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
-                    })
-                    ->orderBy('viralsamples.id', 'asc')
-                    ->get();
-
-        $data = ['worksheet' => $worksheet, 'samples' => $samples, 'print' => true, 'i' => 0];
-
-        if($worksheet->machine_type == 1){
-            return view('worksheets.other-table', $data)->with('pageTitle', 'Print Worksheet');
-        }
-        else if($worksheet->machine_type == 3){
-            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
-        }
-        else{
-            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Print Abbot Worksheet');
-        }
+        return $this->show($worksheet, true);
     }
 
     public function convert_worksheet(Viralworksheet $worksheet, $machine_type)
@@ -473,7 +452,19 @@ class ViralworksheetController extends Controller
                         $nc_units = $result_array['units']; 
                     }
                 }
-                $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
+
+                $datetested = $today;
+
+                try {
+                    $dt = Carbon::parse($value[12]);
+                    $datetested = $dt->toDateString();
+                } catch (Exception $e) {
+                    $datetested = $today;
+                }
+
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+
+
                 $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
