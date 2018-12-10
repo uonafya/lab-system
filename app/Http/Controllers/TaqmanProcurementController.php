@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Taqmanprocurement;
 use Illuminate\Http\Request;
-use App\Abbotdeliveries;
 
-class AbbottDeliveriesController extends Controller
+class TaqmanProcurementController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -72,21 +72,6 @@ class AbbottDeliveriesController extends Controller
         //
     }
 
-    public function restore($id) {
-        $delivery = Abbotdeliveries::onlyTrashed()->find($id);
-        if(null !== $delivery){
-            $delivery->restore();
-            if($delivery) { print("Successfully restored the delivery entry"); } 
-            else { print("Restoration of the delivery entry failed"); }
-        } else {
-            print("This delivery is not deleted");
-        }
-    }
-
-    public function delete($id){
-        $this->destroy($id);
-    }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -95,18 +80,23 @@ class AbbottDeliveriesController extends Controller
      */
     public function destroy($id)
     {
-        $delivery = Abbotdeliveries::find($id);
-        if(null !== $delivery){
-            $delivery->delete();
-            if($delivery) { print("Successfully deleted the delivery entry"); } 
-            else { print("Deletion of the delivery entry failed"); }
-        } else {
-            print("This delivery does not exist or was soft deleted");
-        }        
+        //
     }
 
-    public function recompute($id) {
-        $delivery = Abbotdeliveries::find($id);
-        dd($delivery);
+    public function recomputeending($id) {
+        $procurement = Taqmanprocurement::find($id);
+        $procurement = Abbotprocurement::find($id);
+        $qualkit = $procurement->endingqualkit;
+        
+        foreach ($this->taqmanKits as $key => $kits) {
+            $column = 'ending'.$kits['alias'];
+            $procurement->$column = $qualkit * $kits['factor'];
+        }
+        $procurement->save();
+        $string = "Update of taqman ending balances failed";
+        if ($procurement)
+            $string = "Update of taqman ending balances successful";
+
+        print($string);
     }
 }

@@ -424,11 +424,21 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 	Route::group(['middleware' => ['only_utype:0']], function(){
+		Route::get('abbottdeliveries/{id}/recompute', 'AbbottDeliveriesController@recompute');
 		Route::get('abbottdeliveries/{id}/restore', 'AbbottDeliveriesController@restore');
 		Route::get('abbottdeliveries/{id}/delete', 'AbbottDeliveriesController@delete');
 		Route::resource('abbottdeliveries', 'AbbottDeliveriesController');
+
+		Route::get('abbottprocurement/{id}/recomputeending', 'AbbottProcurementController@recomputeending');
+		Route::resource('abbottprocurement', 'AbbottProcurementController');
+
+		Route::get('taqmandeliveries/{id}/recompute', 'TaqmanDeliveriesController@recompute');
+		Route::get('taqmandeliveries/{id}/restore', 'TaqmanDeliveriesController@restore');
 		Route::get('taqmandeliveries/{id}/delete', 'TaqmanDeliveriesController@delete');
 		Route::resource('taqmandeliveries', 'TaqmanDeliveriesController');
+		
+		Route::get('taqmanprocurement/{id}/recomputeending', 'TaqmanProcurementController@recomputeending');
+		Route::resource('taqmanprocurement', 'TaqmanProcurementController');
 	});
 
 });
