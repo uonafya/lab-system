@@ -623,7 +623,7 @@ class ViralsampleController extends Controller
 
         $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
-        $prev_sample->result = 5;
+        $prev_sample->result = "Collect New Sample";
         $prev_sample->approvedby = auth()->user()->id;
         $prev_sample->approvedby2 = auth()->user()->id;
         $prev_sample->dateapproved = date('Y-m-d');
