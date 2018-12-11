@@ -239,12 +239,11 @@ class SampleController extends Controller
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
+        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'batch_total' => $sample_count, 'last_patient' => $patient->patient]);
 
         $submit_type = $request->input('submit_type');
-
-        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
-        session(['batch_total' => $sample_count]);
 
         if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
             if($sample_count > 9) $batch->full_batch(); 
@@ -955,6 +954,7 @@ class SampleController extends Controller
         session()->forget('batch');
         session()->forget('facility_name');
         session()->forget('batch_total');
+        session()->forget('last_patient');
         // session()->forget('batch_dispatch');
         // session()->forget('batch_dispatched');
         // session()->forget('batch_received');

@@ -72,6 +72,15 @@
                             </div>
                             <br />
 
+                            @if(session('last_patient'))
+
+                                <div class="alert alert-success">
+                                    <center> <b>Last Patient Entered</b> - {{ session('last_patient') }} </center>
+                                </div>
+                                <br />
+
+                            @endif
+
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
                         
