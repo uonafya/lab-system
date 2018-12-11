@@ -81,35 +81,6 @@ class Copier
         }
     }
 
-    public static function split_batches()
-    {
-        $batches = ViralsampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
-                                    ->groupBy('original_batch_id')
-                                    ->having('facility_count', '>', 1)
-                                    ->get();
-
-        foreach ($batches as $b) {
-            $batch1 = $batch2 = $batch3 = null;
-
-            $batch1 = Viralbatch::find($b->original_batch_id);
-
-            $samples = ViralsampleView::where('original_batch_id', $b->original_batch_id)->get();
-
-            foreach ($samples as $s) {
-                $fac = \App\OldModels\Facility::find($s->facility_id);
-
-                $f = \App\Facility::locate($fac->ID);
-
-                $cur_sample = \App\ViralsampleView::find($s->id);
-
-                if($cur_sample->facility_id == $f->id) continue;
-
-
-            }
-        }
-    }
-
-
 
     public static function copy_missing_facilities()
     {
@@ -174,6 +145,38 @@ class Copier
             }
         }
     }
+
+    public static function split_batches()
+    {
+        $batches = ViralsampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
+                                    ->groupBy('original_batch_id')
+                                    ->having('facility_count', '>', 1)
+                                    ->get();
+
+        foreach ($batches as $b) {
+            $batch1 = $batch2 = $batch3 = null;
+
+            $batch1 = Viralbatch::find($b->original_batch_id);
+
+            $samples = ViralsampleView::where('original_batch_id', $b->original_batch_id)->get();
+
+            foreach ($samples as $s) {
+                $fac = \App\OldModels\Facility::find($s->facility_id);
+
+                $f = \App\Facility::locate($fac->ID);
+
+                $cur_sample = \App\ViralsampleView::find($s->id);
+
+                if($cur_sample->facility_id == $f->id) continue;
+
+                $batch2 = new Viralbatch;
+                $batch2->fill();
+
+
+            }
+        }
+    }
+
 
     public static function copy_areaname()
     {
