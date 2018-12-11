@@ -408,6 +408,8 @@ class ViralsampleController extends Controller
             $viralsample->label_id = $request->input('label_id');
         }
 
+        if($viralpatient->sex == 1) $viralsample->pmtct = 3;
+
         $viralsample->pre_update();
 
         if(isset($created_patient)){
