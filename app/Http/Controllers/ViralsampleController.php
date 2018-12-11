@@ -359,8 +359,12 @@ class ViralsampleController extends Controller
         $viralpatient = $viralsample->patient;
 
         if($viralpatient->patient != $request->input('patient')){
-            $viralpatient = new Viralpatient;
-            $created_patient = true;
+            $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+
+            if(!$viralpatient){
+                $viralpatient = new Viralpatient;
+                $created_patient = true;
+            }
         }
         
 
