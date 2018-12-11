@@ -215,12 +215,12 @@ class ViralsampleController extends Controller
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
-
-        $submit_type = $request->input('submit_type');
 
         $sample_count = Viralsample::where('batch_id', $batch->id)->get()->count();
-        session(['viral_batch_total' => $sample_count]);
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'viral_batch_total' => $sample_count, 'viral_last_patient' => $viralpatient->patient]);
+
+        $submit_type = $request->input('submit_type');
 
         if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
             if($sample_count > 9) $batch->full_batch(); 
@@ -894,6 +894,7 @@ class ViralsampleController extends Controller
         session()->forget('viral_batch');
         session()->forget('viral_facility_name');
         session()->forget('viral_batch_total');
+        session()->forget('viral_last_patient');
 
         // session()->forget('viral_batch_no');
         // session()->forget('viral_batch_dispatch');
