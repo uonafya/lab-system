@@ -424,7 +424,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $justification->name }}
+                                        > {!! $justification->displaylabel !!}
                                         </option>
                                     @endforeach
                                 </select>
