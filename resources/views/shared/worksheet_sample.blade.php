@@ -27,6 +27,9 @@
 		@if(env('APP_LAB') != 5) 
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
 		@endif 
+		@if(env('APP_LAB') == 2 && get_class($worksheet) == "App\Worksheet")
+			<br /> Batch Number - {{ $sample->batch_id }} 
+		@endif
 	</span>
 	<br />
 
