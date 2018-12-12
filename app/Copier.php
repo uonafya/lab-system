@@ -157,7 +157,7 @@ class Copier
                                     ->get();
 
         foreach ($batches as $b) {
-            $batch = Viralbatch::find($b->original_batch_id);
+            $batch = Viralbatch::find(self::set_batch_id($b->original_batch_id));
 
             $samples = ViralsampleView::where('original_batch_id', $b->original_batch_id)->get();
 
@@ -205,7 +205,7 @@ class Copier
                                     ->get();
 
         foreach ($batches as $b) {
-            $batch = Batch::find($b->original_batch_id);
+            $batch = Batch::find(self::set_batch_id($b->original_batch_id));
 
             $samples = SampleView::where('original_batch_id', $b->original_batch_id)->get();
 
