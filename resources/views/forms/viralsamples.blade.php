@@ -35,7 +35,7 @@
 
                             <div class="alert alert-warning">
                                 <center>
-                                    Please fill the ccc number by starting the facility mfl code <br />
+                                    Please fill the ccc number by starting with the facility mfl code <br />
                                     If you do not do so the system will add it.
                                 </center>
                             </div>
