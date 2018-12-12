@@ -194,6 +194,58 @@ class Copier
         }
     }
 
+    public static function split_eid_batches()
+    {
+        $fields = self::viralsamples_arrays();  
+
+        $batches = SampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
+                                    ->groupBy('original_batch_id')
+                                    ->where("original_batch_id", '!=', 0)
+                                    ->having('facility_count', '>', 1)
+                                    ->get();
+
+        foreach ($batches as $b) {
+            $batch = Batch::find($b->original_batch_id);
+
+            $samples = SampleView::where('original_batch_id', $b->original_batch_id)->get();
+
+            foreach ($samples as $s) {
+                $fac = \App\OldModels\Facility::find($s->facility_id);
+                $f = null;
+                if($fac) $f = \App\Facility::locate($fac->facilitycode)->first();
+
+                // $cur_sample = \App\ViralsampleView::find($s->id);
+
+                $facility_id = $f->id ?? $s->facility_id;
+
+                if($batch->facility_id == $facility_id) continue;
+
+                $new_batch = Batch::where(['facility_id' => $facility_id, 'id' => $b->original_batch_id])->first();
+
+                if(!$new_batch){
+
+                    $new_batch = new Batch;
+                    $new_batch->fill($s->only($fields['batch']));
+                    $new_batch->synched = 0;
+                    $new_batch->facility_id = $facility_id;
+                    $new_batch->save();
+                }
+
+                $current_sample = Sample::find($s->id);
+                $current_sample->batch_id = $new_batch->id;
+                $current_sample->save();
+
+                $patient = $current_sample->patient;
+                $patient->facility_id = $facility_id;
+                $patient->pre_update();
+
+                $mother = $patient->mother;
+                $mother->facility_id = $facility_id;
+                $mother->pre_update();
+            }
+        }
+    }
+
 
     public static function copy_areaname()
     {
