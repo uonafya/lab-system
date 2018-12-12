@@ -168,16 +168,18 @@ class Copier
 
                 // $cur_sample = \App\ViralsampleView::find($s->id);
 
-                if($batch->facility_id == $f->id) continue;
+                $facility_id = $f->id ?? $s->facility_id;
 
-                $new_batch = Viralbatch::where(['facility_id' => $f->id, 'id' => $b->original_batch_id])->first();
+                if($batch->facility_id == $facility_id) continue;
+
+                $new_batch = Viralbatch::where(['facility_id' => $facility_id, 'id' => $b->original_batch_id])->first();
 
                 if(!$new_batch){
 
                     $new_batch = new Viralbatch;
                     $new_batch->fill($s->only($fields['batch']));
                     $new_batch->synched = 0;
-                    $new_batch->facility_id = $f->id;
+                    $new_batch->facility_id = $facility_id;
                     $new_batch->save();
                 }
 
@@ -186,7 +188,7 @@ class Copier
                 $current_sample->save();
 
                 $patient = $current_sample->patient;
-                $patient->facility_id = $f->id;
+                $patient->facility_id = $facility_id;
                 $patient->pre_update();
             }
         }
