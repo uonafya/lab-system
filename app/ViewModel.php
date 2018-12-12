@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class ViewModel extends Model
 {
 
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
+    }
+
     public function my_date_format($value)
     {
         if($this->$value) return date('d-M-Y', strtotime($this->$value));
