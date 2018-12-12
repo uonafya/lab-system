@@ -112,6 +112,8 @@ class LoginController extends Controller
         $user = auth()->user();
         $user->set_last_access();
 
+        if($user->user_type_id == 7) return "/sample/list_poc";
+
         if($facility){
             $fac = \App\Facility::find($user->facility_id);
             session(['logged_facility' => $fac]);
