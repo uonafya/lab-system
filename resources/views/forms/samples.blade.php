@@ -47,7 +47,7 @@
                             <div class="alert alert-warning">
                                 <center>
                                     Please fill the HEI number by starting the facility mfl code <br />
-                                    Use the following format: MFL-YEAR-Hei number
+                                    Use the following format: MFL-YYYY-NNNNN
                                 </center>
                             </div>
 
