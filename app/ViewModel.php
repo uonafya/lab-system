@@ -17,6 +17,11 @@ class ViewModel extends Model
         return $this->belongsTo('App\ViewFacility', 'facility_id');
     }
 
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
     public function my_date_format($value)
     {
         if($this->$value) return date('d-M-Y', strtotime($this->$value));
@@ -51,16 +56,6 @@ class ViewModel extends Model
     public function scopePatient($query, $facility, $patient)
     {
         return $query->where(['facility_id' => $facility, 'patient' => $patient]);
-    }
-
-    public function facility()
-    {
-        return $this->belongsTo('App\Facility');
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo('App\User', 'user_id');
     }
 
     public function getIsReadyAttribute()
