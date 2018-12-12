@@ -36,8 +36,9 @@ class ViralsampleController extends Controller
     public function list_poc()
     {
         $user = auth()->user();
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
-        $data = Lookup::get_lookups();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        $data = Lookup::get_viral_lookups();
         $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
@@ -215,12 +216,12 @@ class ViralsampleController extends Controller
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
-
-        $submit_type = $request->input('submit_type');
 
         $sample_count = Viralsample::where('batch_id', $batch->id)->get()->count();
-        session(['viral_batch_total' => $sample_count]);
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'viral_batch_total' => $sample_count, 'viral_last_patient' => $viralpatient->patient]);
+
+        $submit_type = $request->input('submit_type');
 
         if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
             if($sample_count > 9) $batch->full_batch(); 
@@ -359,8 +360,12 @@ class ViralsampleController extends Controller
         $viralpatient = $viralsample->patient;
 
         if($viralpatient->patient != $request->input('patient')){
-            $viralpatient = new Viralpatient;
-            $created_patient = true;
+            $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+
+            if(!$viralpatient){
+                $viralpatient = new Viralpatient;
+                $created_patient = true;
+            }
         }
         
 
@@ -407,6 +412,8 @@ class ViralsampleController extends Controller
             $viralsample->areaname = $request->input('areaname');
             $viralsample->label_id = $request->input('label_id');
         }
+
+        if($viralpatient->sex == 1) $viralsample->pmtct = 3;
 
         $viralsample->pre_update();
 
@@ -617,7 +624,7 @@ class ViralsampleController extends Controller
 
         $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
-        $prev_sample->result = 5;
+        $prev_sample->result = "Collect New Sample";
         $prev_sample->approvedby = auth()->user()->id;
         $prev_sample->approvedby2 = auth()->user()->id;
         $prev_sample->dateapproved = date('Y-m-d');
@@ -892,6 +899,7 @@ class ViralsampleController extends Controller
         session()->forget('viral_batch');
         session()->forget('viral_facility_name');
         session()->forget('viral_batch_total');
+        session()->forget('viral_last_patient');
 
         // session()->forget('viral_batch_no');
         // session()->forget('viral_batch_dispatch');

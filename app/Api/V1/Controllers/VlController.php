@@ -95,6 +95,7 @@ class VlController extends BaseController
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
+        if($patient->sex == 1) $sample->pmtct = 3;
         if($datereceived || $batch->facility_id == 4840) $sample->receivedstatus = 1;
         $sample->save();
 
@@ -190,6 +191,7 @@ class VlController extends BaseController
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
+        if($patient->sex == 1) $sample->pmtct = 3;
         $sample->edarp();
 
         $sample->load(['patient', 'batch']);
