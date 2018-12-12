@@ -163,8 +163,8 @@ class Copier
 
             foreach ($samples as $s) {
                 $fac = \App\OldModels\Facility::find($s->facility_id);
-
-                $f = \App\Facility::locate($fac->facilitycode)->first();
+                $f = null;
+                if($fac) $f = \App\Facility::locate($fac->facilitycode)->first();
 
                 // $cur_sample = \App\ViralsampleView::find($s->id);
 
