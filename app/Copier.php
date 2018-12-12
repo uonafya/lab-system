@@ -196,7 +196,7 @@ class Copier
 
     public static function split_eid_batches()
     {
-        $fields = self::viralsamples_arrays();  
+        $fields = self::samples_arrays();  
 
         $batches = SampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
                                     ->groupBy('original_batch_id')
