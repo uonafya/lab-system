@@ -218,7 +218,7 @@ class Copier
 
                 $facility_id = $f->id ?? $s->facility_id;
 
-                if($batch->facility_id == $facility_id) continue;
+                if($batch && $batch->facility_id == $facility_id) continue;
 
                 $new_batch = Batch::where(['facility_id' => $facility_id, 'id' => $b->original_batch_id])->first();
 
