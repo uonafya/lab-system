@@ -32,6 +32,7 @@ class Synch
 			'sampleview_class' => \App\SampleView::class,
 			'batch_class' => Batch::class,
 			'worksheet_class' => Worksheet::class,
+			'patient_class' => Patient::class,
 		],
 
 		'vl' => [
@@ -40,6 +41,7 @@ class Synch
 			'sampleview_class' => \App\ViralsampleView::class,
 			'batch_class' => Viralbatch::class,
 			'worksheet_class' => Viralworksheet::class,
+			'patient_class' => Viralpatient::class,
 		],
 	];
 

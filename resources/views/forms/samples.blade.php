@@ -42,6 +42,18 @@
                         </div>
                         <br />
 
+                        @if(env('APP_LAB') == 2)
+
+                            <div class="alert alert-warning">
+                                <center>
+                                    Please fill the HEI number by starting the facility mfl code <br />
+                                    Use the following format: MFL/YYYY/NNNNN
+                                </center>
+                            </div>
+                            <br />
+
+                        @endif
+
                         @isset($sample)
                             <div class="alert alert-warning">
                                 <center>
@@ -71,6 +83,15 @@
                                 <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
                             </div>
                             <br />
+
+                            @if(session('last_patient'))
+
+                                <div class="alert alert-success">
+                                    <center> <b>Last Patient Entered</b> - {{ session('last_patient') }} </center>
+                                </div>
+                                <br />
+
+                            @endif
 
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
