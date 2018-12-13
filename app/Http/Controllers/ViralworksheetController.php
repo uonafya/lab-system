@@ -217,7 +217,13 @@ class ViralworksheetController extends Controller
      */
     public function destroy(Viralworksheet $Viralworksheet)
     {
-        //
+        if($Viralworksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        // DB::table("viralsamples")->where('worksheet_id', $Viralworksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        $Viralworksheet->delete();
+        return back();
     }
 
     public function print(Viralworksheet $worksheet)
