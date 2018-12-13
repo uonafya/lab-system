@@ -464,7 +464,7 @@ class Common
 
         $classes = \App\Synch::$synch_arrays;
 
-        $f = \App\Facility::locate($mfl)->first();
+        $facility = \App\Facility::locate($mfl)->first();
 
         foreach ($classes as $c) {
 
