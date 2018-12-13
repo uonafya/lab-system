@@ -21,6 +21,7 @@
     <div class="content animate-panel" data-child="hpanel">
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1">
+                @if(Auth::user()->user_type_id != 5)
                 <div class="hpanel">
                     <div class="alert alert-success">
                         <center>Sample Log [ All Recevied Samples ]</center>
@@ -72,15 +73,18 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="hpanel">
                     <div class="alert alert-success">
                         <center>Test Outcome Report [ All Tested Samples ]</center>
                     </div>
                     <div class="panel-body">
+                        @if(Auth::user()->user_type_id != 5)
                         <div class="alert alert-warning">
                             <center>Please select Overall <strong>or Province or County or District or Facility & Period To generate the report based on your criteria.</strong></center>
                         </div>
+                        @endif
                         {{ Form::open(['url'=>'/reports', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
                         <div class="form-group">
                             <div class="row">
@@ -88,9 +92,10 @@
                                     <input type="radio" name="category" class="i-checks" value="overall">Overall
                                 </label>
                                 <div class="col-sm-9">
-                                    << For all samples tested in Lab >>
+                                    << For all samples tested @if(Auth::user()->user_type_id == 5) for {{ session('logged_facility')->name ?? ''  }} @else in Lab @endif >>
                                 </div>
                             </div>
+                            @if(Auth::user()->user_type_id != 5)
                             <div class="row">
                                 <label class="col-sm-3 control-label">
                                     <input type="radio" name="category" value="county" class="i-checks">Select County
@@ -123,6 +128,7 @@
                                     <select class="form-control" id="report_facility_search" name="facility"></select>
                                 </div>
                             </div>
+                            @endif
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Select Period</label>
@@ -243,17 +249,25 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
-                                <label> <input type="radio" name="types" value="tested" class="i-checks" required> Tested Samples </label>
+                                <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
+                                @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')
                                 <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
                                 @endif
+                                @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
                                 <label> <input type="radio" name="types" value="rejected" class="i-checks" required> Rejected Samples </label>
+                                @if(Auth::user()->user_type_id == 5)
+                                <label> <input type="radio" name="types" value="poc" class="i-checks" required> All POC Samples Tested </label>
+                                @else
                                 <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
                                 <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
+                                @endif
                             </div>
                         </div>
-
+                        @if(Auth::user()->user_type_id == 5)
+                        <input type="hidden" name="testtype" value="{{ $testtype }}">
+                        @endif
                         <div class="form-group">
                             <center>
                                 <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
