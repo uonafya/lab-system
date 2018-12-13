@@ -42,6 +42,18 @@
                         </div>
                         <br />
 
+                        @if(env('APP_LAB') == 2)
+
+                            <div class="alert alert-warning">
+                                <center>
+                                    Please fill the HEI number by starting the facility mfl code <br />
+                                    Use the following format: MFL/YYYY/NNNNN
+                                </center>
+                            </div>
+                            <br />
+
+                        @endif
+
                         @isset($sample)
                             <div class="alert alert-warning">
                                 <center>

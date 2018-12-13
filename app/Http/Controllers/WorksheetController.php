@@ -266,11 +266,13 @@ class WorksheetController extends Controller
      */
     public function destroy(Worksheet $worksheet)
     {
-        DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
-        // $worksheet->status_id = 4;
+        if($worksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
         $worksheet->delete();
-
-        return redirect("/worksheet");
+        return back();
     }
 
     public function print(Worksheet $worksheet)
@@ -281,8 +283,7 @@ class WorksheetController extends Controller
     public function convert_worksheet($machine_type, Worksheet $worksheet)
     {
         if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;

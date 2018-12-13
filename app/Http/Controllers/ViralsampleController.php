@@ -36,8 +36,9 @@ class ViralsampleController extends Controller
     public function list_poc()
     {
         $user = auth()->user();
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
-        $data = Lookup::get_lookups();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        $data = Lookup::get_viral_lookups();
         $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
@@ -99,10 +100,12 @@ class ViralsampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
+        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
         if(env('APP_LAB') == 4){
             $fac = Facility::find($data_existing['facility_id']);
             // $patient_string = $fac->facilitycode . '/' . $patient_string;
-            $str = $fac->facilitycode . '/';
+            $str = $fac->facilitycode;
+            if(env('APP_LAB') == 4) $str .= '/';
             if(!starts_with($patient_string, $str)){
                 if(starts_with($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);

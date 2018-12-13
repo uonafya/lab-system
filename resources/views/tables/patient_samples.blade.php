@@ -69,6 +69,8 @@
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a> |
                                             @endif
 
+                                            {!! $sample->hyper_link !!}
+
                                             <a href="{{ url('/sample/' . $sample->id ) }}" target='_blank'>View</a> |
                                             <a href="{{ url('/sample/' . $sample->id . '/edit' ) }}" target='_blank'>Edit</a>
                                         </td>

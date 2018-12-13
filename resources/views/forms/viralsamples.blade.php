@@ -31,6 +31,17 @@
                         </div>
                         <br />
 
+                        @if(env('APP_LAB') == 2)
+
+                            <div class="alert alert-warning">
+                                <center>
+                                    Please fill the ccc number by starting with the facility mfl code 
+                                </center>
+                            </div>
+                            <br />
+
+                        @endif
+
                         @isset($viralsample)
                             <div class="alert alert-warning">
                                 <center>
