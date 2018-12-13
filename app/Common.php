@@ -435,6 +435,57 @@ class Common
         }
     }
 
+    public static function mrs($type = 'vl')
+    {
+        ini_set("memory_limit", "-1");
+
+        $c = \App\Synch::$synch_arrays[$type];
+
+        $view_model = $c['sampleview_class'];
+        $patient_model = $c['patient_class'];
+
+        $samples = $view_model::where('user_id', 66)->where('created_at', '>', '2018-11-28')->get();
+
+        foreach ($samples as $sample) {        	
+        	$facility = $sample->facility;
+
+        	if(starts_with($sample->patient, $facility->facilitycode)){
+        		$patient = $patient_model::find($sample->patient_id);
+
+        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
+        		$patient->pre_update();
+        	}
+        }
+    }
+
+    public static function correct_facility($mfl)
+    {
+        ini_set("memory_limit", "-1");
+
+        $classes = \App\Synch::$synch_arrays;
+
+        $facility = \App\Facility::locate($mfl)->first();
+
+        foreach ($classes as $c) {
+
+	        $sampleview_class = $c['sampleview_class'];
+	        $patient_class = $c['patient_class'];
+	        $batch_class = $c['batch_class'];
+
+	        $samples = $sampleview_class::where('patient', 'like', "{mfl}%")->where('facility_id', '!=', $facility->id)->get();
+
+	        foreach ($samples as $sample) {
+	        	$batch = $batch_class::find($sample->batch_id);
+	        	$batch->facility_id = $facility->id;
+	        	$batch->pre_update();
+
+	        	$patient = $patient_class::find($sample->patient_id);
+	        	$patient->facility_id = $facility->id;
+	        	$patient->pre_update();
+	        }
+        }
+    }
+
     public static function find_facility_mismatch()
     {
         ini_set("memory_limit", "-1");
