@@ -29,7 +29,8 @@ class SampleController extends Controller
     public function list_poc()
     {
         $user = auth()->user();
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         $data = Lookup::get_lookups();
         $samples = SampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
@@ -92,9 +93,12 @@ class SampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
+        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
         if(env('APP_LAB') == 4){
             $fac = Facility::find($data_existing['facility_id']);
             $str = $fac->facilitycode . '/';
+            // if(env('APP_LAB') == 4) $str .= '/';
+            // if(env('APP_LAB') == 2) $str .= '-';
             if(!starts_with($patient_string, $str)){
                 if(starts_with($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
@@ -239,12 +243,11 @@ class SampleController extends Controller
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
+        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'batch_total' => $sample_count, 'last_patient' => $patient->patient]);
 
         $submit_type = $request->input('submit_type');
-
-        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
-        session(['batch_total' => $sample_count]);
 
         if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
             if($sample_count > 9) $batch->full_batch(); 
@@ -393,8 +396,12 @@ class SampleController extends Controller
         $patient = $sample->patient;
 
         if($patient->patient != $request->input('patient')){
-            $patient = new Patient;
-            $created_patient = true;
+            $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+
+            if(!$patient){
+                $patient = new Patient;
+                $created_patient = true;
+            }
         }
 
 
@@ -955,6 +962,7 @@ class SampleController extends Controller
         session()->forget('batch');
         session()->forget('facility_name');
         session()->forget('batch_total');
+        session()->forget('last_patient');
         // session()->forget('batch_dispatch');
         // session()->forget('batch_dispatched');
         // session()->forget('batch_received');

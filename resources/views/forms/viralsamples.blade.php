@@ -31,6 +31,17 @@
                         </div>
                         <br />
 
+                        @if(env('APP_LAB') == 2)
+
+                            <div class="alert alert-warning">
+                                <center>
+                                    Please fill the ccc number by starting with the facility mfl code 
+                                </center>
+                            </div>
+                            <br />
+
+                        @endif
+
                         @isset($viralsample)
                             <div class="alert alert-warning">
                                 <center>
@@ -65,6 +76,15 @@
                                 <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
                             </div>
                             <br />
+
+                            @if(session('viral_last_patient'))
+
+                                <div class="alert alert-success">
+                                    <center> <b>Last Patient Entered</b> - {{ session('viral_last_patient') }} </center>
+                                </div>
+                                <br />
+
+                            @endif
                             
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
@@ -424,7 +444,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $justification->name }}
+                                        > {!! $justification->displaylabel !!}
                                         </option>
                                     @endforeach
                                 </select>
