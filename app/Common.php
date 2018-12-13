@@ -458,7 +458,7 @@ class Common
         }
     }
 
-    public static function correction($mfl)
+    public static function correct_facility($mfl)
     {
         ini_set("memory_limit", "-1");
 
