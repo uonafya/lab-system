@@ -50,6 +50,7 @@
                                     Use the following format: MFL/YYYY/NNNNN
                                 </center>
                             </div>
+                            <br />
 
                         @endif
 
