@@ -157,7 +157,7 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
-                        if(!in_array(env('APP_LAB'), [9, 1])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                     })
                     ->orderBy('viralsamples.id', 'asc')
                     ->get();
@@ -217,7 +217,13 @@ class ViralworksheetController extends Controller
      */
     public function destroy(Viralworksheet $Viralworksheet)
     {
-        //
+        if($Viralworksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        // DB::table("viralsamples")->where('worksheet_id', $Viralworksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        $Viralworksheet->delete();
+        return back();
     }
 
     public function print(Viralworksheet $worksheet)

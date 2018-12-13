@@ -39,6 +39,7 @@ class BaseModel extends Model
         $text = $this->id;
 
         if(str_contains($c, 'patient')) $text = $this->patient;
+        if(str_contains($c, 'sample')) $text = "View Runs";
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 
@@ -57,11 +58,13 @@ class BaseModel extends Model
         $user = auth()->user();
 
         if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
-        else if(str_contains($attr, 'sample')) $url = url($pre . 'sample/runs/' . $this->$attr);
+        else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
         }
+
+        if($attr == 'id' && (!$user || ($user && $user->user_type_id == 5))) return null;
 
         if(str_contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
 
