@@ -223,8 +223,7 @@ class ViralworksheetController extends Controller
         }
         // DB::table("viralsamples")->where('worksheet_id', $Viralworksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
         $Viralworksheet->delete();
-
-        return redirect("/viralworksheet");
+        return back();
     }
 
     public function print(Viralworksheet $worksheet)
