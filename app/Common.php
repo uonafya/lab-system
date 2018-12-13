@@ -458,6 +458,34 @@ class Common
         }
     }
 
+    public static function correction($mfl)
+    {
+        ini_set("memory_limit", "-1");
+
+        $classes = \App\Synch::$synch_arrays;
+
+        $f = \App\Facility::locate($mfl)->first();
+
+        foreach ($classes as $c) {
+
+	        $sampleview_class = $c['sampleview_class'];
+	        $patient_class = $c['patient_class'];
+	        $batch_class = $c['batch_class'];
+
+	        $samples = $sampleview_class::where('patient', 'like', "{mfl}%")->where('facility_id', '!=', $facility->id)->get();
+
+	        foreach ($samples as $sample) {
+	        	$batch = $batch_class::find($sample->batch_id);
+	        	$batch->facility_id = $facility->id;
+	        	$batch->pre_update();
+
+	        	$patient = $patient_class::find($sample->patient_id);
+	        	$patient->facility_id = $facility->id;
+	        	$patient->pre_update();
+	        }
+        }
+    }
+
     public static function find_facility_mismatch()
     {
         ini_set("memory_limit", "-1");
