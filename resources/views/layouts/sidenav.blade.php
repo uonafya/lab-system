@@ -259,6 +259,14 @@
             </li>
             <hr />
             <li>
+                <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
+            </li>
+            <hr>
+            <li>
+                <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
+            </li>
+            <hr>
+            <li>
                 <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
             </li>
             <li>

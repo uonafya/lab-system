@@ -7,6 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class ViewModel extends Model
 {
 
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
     public function my_date_format($value)
     {
         if($this->$value) return date('d-M-Y', strtotime($this->$value));
@@ -43,16 +58,6 @@ class ViewModel extends Model
         return $query->where(['facility_id' => $facility, 'patient' => $patient]);
     }
 
-    public function facility()
-    {
-        return $this->belongsTo('App\Facility');
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo('App\User', 'user_id');
-    }
-
     public function getIsReadyAttribute()
     {
         if($this->repeatt == 0){
@@ -66,6 +71,37 @@ class ViewModel extends Model
             }
         }
         return false;
+    }
+
+    public function get_link($attr)
+    {
+        $user = auth()->user();
+        $c = get_class($this);
+        $c = strtolower($c);
+        $c = str_replace_first('app\\', '', $c);
+
+        $pre = '';
+        if(str_contains($c, 'viral')) $pre = 'viral';
+        $user = auth()->user();
+
+        if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
+        else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
+        else{
+            $a = explode('_', $attr);
+            $url = url($pre . $a[0] . '/' . $this->$attr);
+        }
+
+        if($attr == 'id' && (!$user || ($user && $user->user_type_id == 5))) return null;
+
+        if(str_contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
+
+        $text = $this->$attr;
+
+        // if(str_contains($c, 'patient')) $text = $this->patient;
+
+        $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
+
+        return $full_link;
     }
 
 
