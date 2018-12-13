@@ -10,6 +10,12 @@ class Facility extends BaseModel
     protected $table = "facilitys";
     public $timestamps = false;
 
+    
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionEnabled = true;
+    protected $revisionCleanup = true; 
+    protected $historyLimit = 500; 
+
 
     public function facility_contact()
     {
