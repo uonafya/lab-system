@@ -97,6 +97,16 @@ p.breakhere {page-break-before: always}
 
 			@endif
 
+			@if(env('APP_LAB') == 5 && $sample->amrs_location)			
+
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<strong>AMRS Location:</strong> &nbsp; {{ $amrs_locations->where('id', $sample->amrs_location)->first()->name ?? ''  }}
+					</td>					
+				</tr>
+
+			@endif
+
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
 					<span class="style1 style10">

@@ -72,6 +72,12 @@ class ViralbatchController extends Controller
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
+
+                else if($batch_complete == 5){
+                    return $query->whereNull('datereceived')
+                        ->where(['site_entry' => 1, 'batch_complete' => 0])
+                        ->where('viralbatches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
+                }
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
@@ -480,7 +486,9 @@ class ViralbatchController extends Controller
      */
     public function destroy(Viralbatch $viralbatch)
     {
-        //
+        if(!$viralbatch->delete_button) abort(409, "This batch is not eligible for deletion.");
+        Viralsample::where(['batch_id' => $viralbatch->id])->delete();
+        $viralbatch->delete();
     }
 
 
