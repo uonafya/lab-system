@@ -27,7 +27,7 @@
                     Dispatched Batches
                 </a> |
                 <a href="{{ $myurl2 }}/5">
-                    Batches Overdue for Receipt at Lab
+                    Batches Overdue for Receipt at Lab (10 days)
                 </a>
             </div>
         </div>
