@@ -25,6 +25,9 @@
                 </a> |
                 <a href="{{ $myurl2 }}/1">
                     Dispatched Batches
+                </a> |
+                <a href="{{ $myurl2 }}/5">
+                    Batches Overdue for Receipt at Lab
                 </a>
             </div>
         </div>

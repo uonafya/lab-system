@@ -136,7 +136,7 @@ class Batch extends BaseModel
         $min_time = strtotime("-10 days");
         $created_at = strtotime($this->created_at);
         if($this->site_entry == 1 && !$this->datereceived && $created_at < $min_time && $this->batch_complete == 0){
-            return "<form method='post' action='" . url('batch/' . $this->id) . "' onSubmit=\"return confirm('Are you sure you want to delete the following batch?');\">
+            return "| <form method='post' action='" . url('batch/' . $this->id) . "' onSubmit=\"return confirm('Are you sure you want to delete the following batch?');\">
                     " . csrf_field() . " 
                     <input name='_method' type='hidden' value='DELETE'>
                     <button type='submit' class='btn btn-xs btn-primary'>Delete</button>
