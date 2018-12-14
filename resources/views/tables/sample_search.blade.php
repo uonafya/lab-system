@@ -21,12 +21,12 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="14"><center> Sample Log</center></th>
+                                    <th colspan="15"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="5">Patient Information</th>
                                     <th colspan="3">Mother Information</th>
-                                    <th colspan="5">sample Information</th>
+                                    <th colspan="6">Sample Information</th>
                                     <th rowspan="2">Task</th>
                                 </tr>
                                 <tr>
@@ -43,6 +43,7 @@
                                     <th>Date Collected</th>
                                     <th>Status</th>
                                     <th>Spots</th>
+                                    <th>Batch</th>
                                     <th>Worksheet</th>
                                     <th>Result</th>
                                 </tr>
@@ -96,7 +97,8 @@
                                         @endforeach
                                     </td>
                                     <td> {{ $sample->spots }} </td>
-                                    <td> {{ $sample->worksheet_id }} </td>
+                                    <td> {{ $sample->get_link('batch_id') }} </td>
+                                    <td> {{ $sample->get_link('worksheet_id') }} </td>
                                     <td>
                                         @foreach($results as $result)
                                             @if($sample->result == $result->id)

@@ -226,6 +226,7 @@ class Lookup
             'results' => Cache::get('results'),
             'received_statuses' => Cache::get('received_statuses'),
             'pcrtypes' => Cache::get('pcr_types'),
+            'amrs_locations' => Cache::get('amrs_locations'),
         ];
     }
 
@@ -352,6 +353,7 @@ class Lookup
             'prophylaxis' => Cache::get('prophylaxis'),
             'justifications' => Cache::get('justifications'),
             'pmtct_types' => Cache::get('pmtct_types'),
+            'amrs_locations' => Cache::get('amrs_locations'),
         ];        
     }
 
