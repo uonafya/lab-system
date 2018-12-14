@@ -129,19 +129,6 @@ class Misc extends Common
 		}
 	}
 
-	public static function check_original($sample_id)
-	{
-		$lab = auth()->user()->lab_id;
-
-		$sample = Sample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
-		->get()
-		->first();
-
-		return $sample;
-	}
-
 	public static function check_previous($sample_id)
 	{
 		$lab = auth()->user()->lab_id;
