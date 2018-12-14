@@ -24,11 +24,11 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="14"><center> Sample Log</center></th>
+                                    <th colspan="15"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="5">Patient Information</th>
-                                    <th colspan="4">Sample Information</th>
+                                    <th colspan="5">Sample Information</th>
                                     <th colspan="5">History Information</th>
                                 </tr>
                                 <tr>
@@ -41,6 +41,7 @@
                                     <th>Sample Type</th>
                                     <th>Collection Date</th>
                                     <th>Received Status</th>
+                                    <th>Batch</th>
                                     <th>Worksheet</th>
 
                                     <th>Current Regimen</th>
@@ -78,7 +79,8 @@
                                             @endif
                                         @endforeach
                                     </td>
-                                    <td> {{ $sample->worksheet_id }} </td>
+                                    <td> {{ $sample->get_link('batch_id') }} </td>
+                                    <td> {{ $sample->get_link('worksheet_id') }} </td>
                                     <td>
                                         @foreach($prophylaxis as $proph)
                                             @if($sample->prophylaxis == $proph->id)
