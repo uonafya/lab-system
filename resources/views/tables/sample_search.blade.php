@@ -97,8 +97,8 @@
                                         @endforeach
                                     </td>
                                     <td> {{ $sample->spots }} </td>
-                                    <td> {{ $sample->get_link('batch_id') }} </td>
-                                    <td> {{ $sample->get_link('worksheet_id') }} </td>
+                                    <td> {!! $sample->get_link('batch_id') !!} </td>
+                                    <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                     <td>
                                         @foreach($results as $result)
                                             @if($sample->result == $result->id)
