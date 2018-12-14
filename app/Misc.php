@@ -43,6 +43,7 @@ class Misc extends Common
 
 				else if($sample->run == 3){
 					$second = self::check_run($original->id, 2);
+                    dd($original);
                     dd($sample);
 
 					if( ($sample->result == 3 && $second->result == 3 && $original->result == 3) ||
