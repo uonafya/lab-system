@@ -29,7 +29,7 @@ class Misc extends Common
 				}
 			}
 			else{
-				$original = self::check_original($sample->id);
+                $original = $sample->parent;
 
 				if($sample->run == 2){
 					if( ($sample->result == 3 && $original->result == 3) || 
@@ -79,6 +79,7 @@ class Misc extends Common
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();
 		$sample->fill($original->only($fields['sample_rerun']));
+        $sample->age = $original->age;
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 
@@ -126,19 +127,6 @@ class Misc extends Common
                 $b->save();
             }
 		}
-	}
-
-	public static function check_original($sample_id)
-	{
-		$lab = auth()->user()->lab_id;
-
-		$sample = Sample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
-		->get()
-		->first();
-
-		return $sample;
 	}
 
 	public static function check_previous($sample_id)
