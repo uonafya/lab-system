@@ -156,6 +156,8 @@ class Copier
                                     ->having('facility_count', '>', 1)
                                     ->get();
 
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+
         foreach ($batches as $b) {
             $batch = Viralbatch::find(self::set_batch_id($b->original_batch_id));
 
@@ -178,6 +180,12 @@ class Copier
 
                     $new_batch = new Viralbatch;
                     $new_batch->fill($s->only($fields['batch']));
+
+                    foreach ($batch_date_array as $date_field) {
+                        $new_batch->$date_field = self::clean_date($s->$date_field);
+                        if($new_batch->$date_field == '1970-01-01') $new_batch->$date_field = null;
+                    }
+
                     $new_batch->synched = 0;
                     $new_batch->facility_id = $facility_id;
                     $new_batch->save();
@@ -197,6 +205,8 @@ class Copier
     public static function split_eid_batches()
     {
         $fields = self::samples_arrays();  
+
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
 
         $batches = SampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
                                     ->groupBy('original_batch_id')
@@ -226,6 +236,12 @@ class Copier
 
                     $new_batch = new Batch;
                     $new_batch->fill($s->only($fields['batch']));
+
+                    foreach ($batch_date_array as $date_field) {
+                        $new_batch->$date_field = self::clean_date($s->$date_field);
+                        if($new_batch->$date_field == '1970-01-01') $new_batch->$date_field = null;
+                    }
+                    
                     $new_batch->synched = 0;
                     $new_batch->facility_id = $facility_id;
                     $new_batch->save();

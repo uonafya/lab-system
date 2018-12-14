@@ -25,6 +25,9 @@
                 </a> |
                 <a href="{{ $myurl2 }}/1">
                     Dispatched Batches
+                </a> |
+                <a href="{{ $myurl2 }}/5">
+                    Batches Overdue for Receipt at Lab (10 days)
                 </a>
             </div>
         </div>
@@ -204,6 +207,10 @@
                                                         | <a href="{{ url($pre . 'batch/individual/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Individual </a> 
                                                         | <a href="{{ url($pre . 'batch/envelope/' . $batch->id) }}"><i class='fa fa-envelope'></i> Envelope </a>
                                                         | <a href="{{ url($pre . 'batch/email/' . $batch->id) }}"><i class='fa fa-envelope'></i> Email </a>
+                                                    @endif
+
+                                                    @if(auth()->user()->is_lab_user())
+                                                        {!! $batch->delete_button !!}
                                                     @endif
 
                                                 @endif
