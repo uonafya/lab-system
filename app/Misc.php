@@ -29,7 +29,8 @@ class Misc extends Common
 				}
 			}
 			else{
-				$original = self::check_original($sample->id);
+				// $original = self::check_original($sample->id);
+                $original = $sample->parent;
 
 				if($sample->run == 2){
 					if( ($sample->result == 3 && $original->result == 3) || 
@@ -43,9 +44,7 @@ class Misc extends Common
 
 				else if($sample->run == 3){
 					$second = self::check_run($original->id, 2);
-                    dd($original);
-                    dd($sample);
-
+                    
 					if( ($sample->result == 3 && $second->result == 3 && $original->result == 3) ||
 						($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
 						($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
@@ -81,6 +80,7 @@ class Misc extends Common
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();
 		$sample->fill($original->only($fields['sample_rerun']));
+        $sample->age = $original->age;
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 
