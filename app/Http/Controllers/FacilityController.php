@@ -340,6 +340,8 @@ class FacilityController extends Controller
         $failed = 'Updated failed try again later';
 
         $data = $request->except(['_token', 'id', '_method']);
+        if(auth()->user()->user_type_id == 5)
+            $data = $request->except(['_token', 'id', '_method', 'name', 'facilitycode']);
         $facility->fill($data);
         $facility->pre_update();
         session(['toast_message' => 'The update has been made.']);
