@@ -79,6 +79,7 @@ class MiscViral extends Common
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
         $sample->fill($original->only($fields['sample_rerun']));
+        $sample->age = $original->age;
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
@@ -137,19 +138,6 @@ class MiscViral extends Common
         else{
             return false;
         }
-	}
-
-	public static function check_original($sample_id)
-	{
-		$lab = auth()->user()->lab_id;
-
-		$sample = Viralsample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
-		->get()
-		->first();
-
-		return $sample;
 	}
 
 	public static function check_previous($sample_id)
