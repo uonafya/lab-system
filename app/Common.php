@@ -458,6 +458,26 @@ class Common
         }
     }
 
+    public static function batch_date()
+    {
+        ini_set("memory_limit", "-1");
+        $classes = \App\Synch::$synch_arrays;
+
+        foreach ($classes as $c) {
+
+	        $batch_class = $c['batch_class'];
+	        $sample_class = $c['sample_class'];
+
+	        $batches = $batch_class::whereDate('created_at', '2018-12-12')->get();
+
+	        foreach ($batches as $batch) {
+	        	$sample = $sample_class::where('batch_id', $batch->id)->first();
+	        	$batch->created_at = $sample->created_at;
+	        	$batch->pre_update();
+	        }
+	    }
+    }
+
     public static function correct_facility($mfl)
     {
         ini_set("memory_limit", "-1");

@@ -81,7 +81,7 @@ class BatchController extends Controller
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
-                return $query->orderBy('batches.id', 'desc');
+                return $query->orderBy('batches.created_at', 'desc');
             })
             ->where('batches.lab_id', env('APP_LAB'))
             ->paginate();
