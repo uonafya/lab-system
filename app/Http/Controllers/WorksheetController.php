@@ -447,29 +447,31 @@ class WorksheetController extends Controller
                     $interpretation = $value[5];
                     $error = $value[10];
 
-                    switch ($interpretation) {
-                        case 'Not Detected':
-                            $result = 1;
-                            break;
-                        case 'HIV-1 Detected':
-                            $result = 2;
-                            break;
-                        case 'Detected':
-                            $result = 2;
-                            break;
-                        case 'Collect New Sample':
-                            $result = 5;
-                            break;
-                        default:
-                            $result = 3;
-                            $interpretation = $error;
-                            break;
-                    }
+                    // switch ($interpretation) {
+                    //     case 'Not Detected':
+                    //         $result = 1;
+                    //         break;
+                    //     case 'HIV-1 Detected':
+                    //         $result = 2;
+                    //         break;
+                    //     case 'Detected':
+                    //         $result = 2;
+                    //         break;
+                    //     case 'Collect New Sample':
+                    //         $result = 5;
+                    //         break;
+                    //     default:
+                    //         $result = 3;
+                    //         $interpretation = $error;
+                    //         break;
+                    // }
 
-                    if($sample_id == "HIV_NEG") $negative_control = $value[5];
-                    if($sample_id == "HIV_HIPOS") $positive_control = $value[5];
+                    $data_array = Misc::sample_result($interpretation, $error);
 
-                    $data_array = ['datemodified' => $today, 'datetested' => $today, 'interpretation' => $interpretation, 'result' => $result];
+                    if($sample_id == "HIV_NEG") $negative_control = $data_array;
+                    if($sample_id == "HIV_HIPOS") $positive_control = $data_array;
+
+                    $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $today]);
                     // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     // Sample::where($search)->update($data_array);
 
@@ -484,17 +486,17 @@ class WorksheetController extends Controller
                 if($bool && $value[5] == "RESULT") break;
             }
 
-            if($positive_control == "Passed"){
-                $pos_result = 6;
-            }else{
-                $pos_result = 7;
-            }
+            // if($positive_control == "Passed"){
+            //     $pos_result = 6;
+            // }else{
+            //     $pos_result = 7;
+            // }
 
-            if($negative_control == "Passed"){
-                $neg_result = 6;
-            }else{
-                $neg_result = 7;
-            }
+            // if($negative_control == "Passed"){
+            //     $neg_result = 6;
+            // }else{
+            //     $neg_result = 7;
+            // }
         }
         else
         {
@@ -504,27 +506,27 @@ class WorksheetController extends Controller
                 $interpretation = rtrim($data[8]);
                 $control = rtrim($data[5]);
 
-                $raw = strtolower($interpretation);
+                // $raw = strtolower($interpretation);
 
                 $flag = $data[10];
                 if($flag != NULL) $interpretation = $flag;
 
                 $dateoftest=date("Y-m-d", strtotime($data[3]));
 
-                if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
-                {
-                    $result = 1;
-                }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00" || $interpretation == "Detected DBS")
-                {
-                    $result = 2;
-                }else if($interpretation == "Valid"){
-                    $result = 6;
-                }else if($interpretation == "Invalid"){
-                    $result = 7;
-                }
-                else{
-                    $result = 3;
-                }
+                // if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
+                // {
+                //     $result = 1;
+                // }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00" || $interpretation == "Detected DBS")
+                // {
+                //     $result = 2;
+                // }else if($interpretation == "Valid"){
+                //     $result = 6;
+                // }else if($interpretation == "Invalid"){
+                //     $result = 7;
+                // }
+                // else{
+                //     $result = 3;
+                // }
 
                 // if(str_contains($raw, ['not detected', 'not'])) $result = 1;
                 // else if(str_contains($raw, ['detected dbs', '1', '>'])) $result = 2;
@@ -534,15 +536,11 @@ class WorksheetController extends Controller
                 //     $result = 3;
                 // }
 
-                if($control == "NC"){
-                    $negative_control = $interpretation;
-                    $neg_result = $result;
-                }
+                $data_array = Misc::sample_result($interpretation, $error);
 
-                if($control == "LPC" || $control == "PC"){
-                    $positive_control = $interpretation;
-                    $pos_result = $result;
-                }
+                if($control == "NC") $negative_control = $data_array;
+
+                if($control == "LPC" || $control == "PC") $positive_control = $data_array;
 
                 $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $interpretation, 'result' => $result];
 
@@ -578,37 +576,37 @@ class WorksheetController extends Controller
                     break;
             }*/
 
-            if($positive_control == 1 || $positive_control == "1" || $positive_control == ">1" || $positive_control == "> 1 " || $positive_control == "> 1" || $positive_control == "1.00E+00" || $positive_control == ">1.00E+00" || $positive_control == "> 1.00E+00" || $positive_control == "> 1.00E+00 ")
-            {
-                $pos_result = 2;
-            }
-            else if($positive_control == "5")
-            {
-                $pos_result = 5;
-            }
-            else if($positive_control == "Valid")
-            {
-                $pos_result = 6;
-            }
-            else if($positive_control == "Invalid")
-            {
-                $pos_result = 7;
-            }
-            else
-            {
-                $pos_result = 3;
-            }
+            // if($positive_control == 1 || $positive_control == "1" || $positive_control == ">1" || $positive_control == "> 1 " || $positive_control == "> 1" || $positive_control == "1.00E+00" || $positive_control == ">1.00E+00" || $positive_control == "> 1.00E+00" || $positive_control == "> 1.00E+00 ")
+            // {
+            //     $pos_result = 2;
+            // }
+            // else if($positive_control == "5")
+            // {
+            //     $pos_result = 5;
+            // }
+            // else if($positive_control == "Valid")
+            // {
+            //     $pos_result = 6;
+            // }
+            // else if($positive_control == "Invalid")
+            // {
+            //     $pos_result = 7;
+            // }
+            // else
+            // {
+            //     $pos_result = 3;
+            // }
         }
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
         Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
 
-        $worksheet->neg_control_interpretation = $negative_control;
-        $worksheet->neg_control_result = $neg_result;
+        $worksheet->neg_control_interpretation = $negative_control['interpretation'];
+        $worksheet->neg_control_result = $negative_control['result'];
 
-        $worksheet->pos_control_interpretation = $positive_control;
-        $worksheet->pos_control_result = $pos_result;
+        $worksheet->pos_control_interpretation = $positive_control['interpretation'];
+        $worksheet->pos_control_result = $positive_control['result'];
         $worksheet->daterun = $dateoftest;
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
