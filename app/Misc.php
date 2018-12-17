@@ -71,6 +71,32 @@ class Misc extends Common
 		return true;
 	}
 
+    public static function sample_result($result, $error=null)
+    {
+        $str = strtolower($result);
+
+        if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+            $res = 1;
+        }
+        else if(str_contains($result, ['1', '>']) || str_contains($str, ['detected'])){
+            $res = 2;
+        }
+        else if(str_contains($str, ['invalid'])){
+            $res = 7;
+        }
+        else if(str_contains($str, ['valid', 'passed'])){
+            $res = 6;
+        }
+        else if(str_contains($str, ['collect', '5'])){
+            $res = 5;
+        }
+        else{
+            return ['res' => 5, 'interpretation' => $error];
+        }
+
+        return ['result' => $res, 'interpretation' => $result];
+    }
+
 	public static function save_repeat($sample_id)
 	{
 		$original = Sample::find($sample_id);

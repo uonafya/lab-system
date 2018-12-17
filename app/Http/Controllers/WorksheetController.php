@@ -602,6 +602,7 @@ class WorksheetController extends Controller
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
+        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
 
         $worksheet->neg_control_interpretation = $negative_control;
         $worksheet->neg_control_result = $neg_result;

@@ -573,6 +573,7 @@ class ViralworksheetController extends Controller
         }
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
+        Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
 
         $worksheet->neg_units = $nc_units;
         $worksheet->neg_control_interpretation = $nc_int;
