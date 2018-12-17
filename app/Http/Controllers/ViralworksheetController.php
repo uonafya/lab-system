@@ -375,14 +375,14 @@ class ViralworksheetController extends Controller
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/vl');
-        $today = $dateoftest = date("Y-m-d");
+        $today = $datetested = date("Y-m-d");
         $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
 
         $my = new MiscViral;
 
         if($worksheet->machine_type == 2)
         {
-            $dateoftest = $today;
+            $datetested = $today;
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -418,7 +418,7 @@ class ViralworksheetController extends Controller
                         $lpc_units = $result_array['units'];
                     }
 
-                    $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                    $data_array = ['datemodified' => $today, 'datetested' => $datetested, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                     // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     // Viralsample::where($search)->update($data_array);
 
@@ -511,7 +511,7 @@ class ViralworksheetController extends Controller
                 }
 
                 $result_array = MiscViral::sample_result($result);
-                $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
 
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
@@ -525,7 +525,7 @@ class ViralworksheetController extends Controller
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $dateoftest=date("Y-m-d", strtotime($value[3]));
+                $datetested=date("Y-m-d", strtotime($value[3]));
 
                 $sample_id = trim($value[4]);
                 $result = $value[8];
@@ -551,11 +551,11 @@ class ViralworksheetController extends Controller
                     $lpc_units = $result_array['units'];
                 }
 
-                // $data_array = ['datemodified' => $today, 'datetested' => $dateoftest, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
+                // $data_array = ['datemodified' => $today, 'datetested' => $datetested, 'interpretation' => $result_array['interpretation'], 'result' => $result_array['result'], 'units' => $result_array['units']];
                 // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                 // Viralsample::where($search)->update($data_array);
 
-                $data_array = array_merge(['datemodified' => $today, 'datetested' => $dateoftest], $result_array);
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
 
                 // $sample_id = substr($sample_id, 0, -1);
                 $sample_id = (int) $sample_id;
@@ -586,7 +586,7 @@ class ViralworksheetController extends Controller
         $worksheet->lowpos_control_interpretation = $lpc_int;
         $worksheet->lowpos_control_result = $lpc;
 
-        $worksheet->daterun = $dateoftest;
+        $worksheet->daterun = $datetested;
         $worksheet->uploadedby = auth()->user()->id;
 
         $worksheet->save();
