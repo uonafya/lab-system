@@ -431,8 +431,6 @@ class WorksheetController extends Controller
 
             $check = array();
 
-            // dd($data);
-
             $bool = false;
             $positive_control = $negative_control = "Passed";
 
@@ -446,25 +444,6 @@ class WorksheetController extends Controller
                     $sample_id = $value[1];
                     $interpretation = $value[5];
                     $error = $value[10];
-
-                    // switch ($interpretation) {
-                    //     case 'Not Detected':
-                    //         $result = 1;
-                    //         break;
-                    //     case 'HIV-1 Detected':
-                    //         $result = 2;
-                    //         break;
-                    //     case 'Detected':
-                    //         $result = 2;
-                    //         break;
-                    //     case 'Collect New Sample':
-                    //         $result = 5;
-                    //         break;
-                    //     default:
-                    //         $result = 3;
-                    //         $interpretation = $error;
-                    //         break;
-                    // }
 
                     $data_array = Misc::sample_result($interpretation, $error);
 
@@ -485,18 +464,6 @@ class WorksheetController extends Controller
 
                 if($bool && $value[5] == "RESULT") break;
             }
-
-            // if($positive_control == "Passed"){
-            //     $pos_result = 6;
-            // }else{
-            //     $pos_result = 7;
-            // }
-
-            // if($negative_control == "Passed"){
-            //     $neg_result = 6;
-            // }else{
-            //     $neg_result = 7;
-            // }
         }
         else
         {
@@ -506,35 +473,9 @@ class WorksheetController extends Controller
                 $interpretation = rtrim($data[8]);
                 $control = rtrim($data[5]);
 
-                // $raw = strtolower($interpretation);
-
                 $error = $data[10];
-                // if($flag != NULL) $interpretation = $flag;
 
                 $dateoftest=date("Y-m-d", strtotime($data[3]));
-
-                // if($interpretation == "Target Not Detected" || $interpretation == "Not Detected DBS")
-                // {
-                //     $result = 1;
-                // }else if($interpretation == 1 || $interpretation == "1" || $interpretation == ">1" || $interpretation == ">1 " || $interpretation == "> 1" || $interpretation == "> 1 " || $interpretation == "1.00E+00" || $interpretation == ">1.00E+00" || $interpretation == ">1.00E+00 " || $interpretation == "> 1.00E+00" || $interpretation == "Detected DBS")
-                // {
-                //     $result = 2;
-                // }else if($interpretation == "Valid"){
-                //     $result = 6;
-                // }else if($interpretation == "Invalid"){
-                //     $result = 7;
-                // }
-                // else{
-                //     $result = 3;
-                // }
-
-                // if(str_contains($raw, ['not detected', 'not'])) $result = 1;
-                // else if(str_contains($raw, ['detected dbs', '1', '>'])) $result = 2;
-                // else if($interpretation == "Valid") $result = 6;
-                // else if($interpretation == "Invalid") $result = 7;
-                // else{
-                //     $result = 3;
-                // }
 
                 $data_array = Misc::sample_result($interpretation, $error);
 
@@ -544,9 +485,6 @@ class WorksheetController extends Controller
 
                 $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $dateoftest]);
 
-                // $search = ['id' => $data[4], 'worksheet_id' => $worksheet->id];
-                // Sample::where($search)->update($data_array);
-                
                 $sample_id = (int) trim($data[4]);                  
                 // $sample_id = substr($sample_id, 0, -1);
                 $sample = Sample::find($sample_id);
@@ -557,45 +495,6 @@ class WorksheetController extends Controller
 
             }
             fclose($handle);
-
-            /*switch ($negative_control) {
-                case 'Target Not Detected':
-                    $neg_result = 1;
-                    break;
-                case 'Valid':
-                    $neg_result = 6;
-                    break;
-                case 'Invalid':
-                    $neg_result = 7;
-                    break;
-                case '5':
-                    $neg_result = 5;
-                    break;                
-                default:
-                    $neg_result = 3;
-                    break;
-            }*/
-
-            // if($positive_control == 1 || $positive_control == "1" || $positive_control == ">1" || $positive_control == "> 1 " || $positive_control == "> 1" || $positive_control == "1.00E+00" || $positive_control == ">1.00E+00" || $positive_control == "> 1.00E+00" || $positive_control == "> 1.00E+00 ")
-            // {
-            //     $pos_result = 2;
-            // }
-            // else if($positive_control == "5")
-            // {
-            //     $pos_result = 5;
-            // }
-            // else if($positive_control == "Valid")
-            // {
-            //     $pos_result = 6;
-            // }
-            // else if($positive_control == "Invalid")
-            // {
-            //     $pos_result = 7;
-            // }
-            // else
-            // {
-            //     $pos_result = 3;
-            // }
         }
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
