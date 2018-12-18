@@ -91,7 +91,7 @@ class Misc extends Common
             $res = 5;
         }
         else{
-            return ['res' => 3, 'interpretation' => $error];
+            return ['result' => 3, 'interpretation' => $error];
         }
 
         return ['result' => $res, 'interpretation' => $result];
