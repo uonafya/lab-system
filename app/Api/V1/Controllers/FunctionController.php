@@ -40,7 +40,7 @@ class FunctionController extends Controller
         $date_dispatched_start = $request->input('date_dispatched_start');
         $date_dispatched_end = $request->input('date_dispatched_end');
         $patients = $request->input('patient_id');
-        $facility = $request->input('facility_code');
+        $facilities = $request->input('facility_code');
         $orders = $request->input('order_numbers');
         $sample_status = $request->input('sample_status');
         $location = $request->input('location'); 
@@ -63,9 +63,13 @@ class FunctionController extends Controller
             $ids = str_replace(' ', '', $ids);
             $ids = explode(',', $ids);
         }
+        if($facilities){
+            $facilities = str_replace(' ', '', $facilities);
+            $facilities = explode(',', $facilities);
+        }
  
-        $result = $class::when($facility, function($query) use($facility){
-                return $query->where('facilitycode', $facility);
+        $result = $class::when($facilities, function($query) use($facilities){
+                return $query->whereIn('facilitycode', $facilities);
             })
             ->when($dispatched, function($query){
                 // return $query->whereNotNull('datedispatched');
