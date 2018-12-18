@@ -818,8 +818,8 @@ class MiscViral extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('facilitys.id', 'asc')
             ->orderBy('batch_id', 'asc')
+            // ->orderBy('facilitys.id', 'asc')
             ->limit($limit)
             ->get();
 
