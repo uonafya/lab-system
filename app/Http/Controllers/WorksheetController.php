@@ -508,7 +508,7 @@ class WorksheetController extends Controller
 
                 // $raw = strtolower($interpretation);
 
-                $flag = $data[10];
+                $error = $data[10];
                 // if($flag != NULL) $interpretation = $flag;
 
                 $dateoftest=date("Y-m-d", strtotime($data[3]));
@@ -536,7 +536,7 @@ class WorksheetController extends Controller
                 //     $result = 3;
                 // }
 
-                $data_array = Misc::sample_result($interpretation, $flag);
+                $data_array = Misc::sample_result($interpretation, $error);
 
                 if($control == "NC") $negative_control = $data_array;
 

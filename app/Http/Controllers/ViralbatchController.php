@@ -81,7 +81,7 @@ class ViralbatchController extends Controller
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
-                return $query->orderBy('viralbatches.id', 'desc');
+                return $query->orderBy('viralbatches.created_at', 'desc');
             })
             ->paginate();
 
