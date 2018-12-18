@@ -155,12 +155,38 @@ class ReportController extends Controller
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
                 $this->__getSiteEntryExcel($data, $dateString);
-            } else {
+            } else if ($request->input('types') == 'tat') {
+                $data = $this->__getTATData($request, $dateString)->get();
+                $this->__getTATExcel($data, $dateString);
+            }else {
                 $data = self::__getDateData($request,$dateString)->get();
                 $this->__getExcel($data, $dateString);
             }
         }
         return back();
+    }
+
+    public function __getTATData($request, &$dateString) {
+        if (session('testingSystem') == 'Viralload'){
+            $dateString = 'VL TAT ';
+            $table = "viralsamples_view";
+            $model = ViralsampleView::groupBy('facility');
+        } else if (session('testingSystem') == 'EID'){
+            $dateString = 'EID TAT ';
+            $table = "samples_view";
+            $model = SampleView::groupBy('facility');
+        } else if (session('testingSystem') == 'CD4') {
+            return back();
+        }
+        $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
+                    ->where("$table.lab_id", '=', env('APP_LAB'))->whereNotNull('tat1')->whereNotNull('tat2')
+                    ->whereNotNull('tat3')->whereNotNull('tat4')->orderBy('tat2', 'asc')
+                    ->orderBy('tat1', 'asc')->orderBy('tat3', 'asc')->orderBy('tat4', 'asc');
+
+        $model = self::__getBelongingTo($request, $model, $dateString);
+        $model = self::__getDateRequested($request, $model, $table, $dateString, false);
+
+        return $model;
     }
 
     public static function __getSiteEntryData($request, &$dateString) {
@@ -601,6 +627,12 @@ class ReportController extends Controller
     {
         $title = strtoupper($title);
         $dataArray[] = ['MFL Code', 'Facility Name', 'Site Entered', 'County', 'Sub-County', 'Partner', 'Total Samples'];
+        $this->generate_excel($data, $dataArray, $title);
+    }
+
+    public function __getTATExcel($data, $title) {
+        $title = strtoupper($title);
+        $dataArray[] = ['MFL Code', 'Facility Name', 'TAT1', 'TAT2', 'TAT3', 'TAT4'];
         $this->generate_excel($data, $dataArray, $title);
     }
 
