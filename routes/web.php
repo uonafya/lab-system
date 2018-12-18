@@ -243,6 +243,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('reports', 'ReportController@generate')->name('reports');
 	Route::post('reports/kitdeliveries', 'ReportController@kits');
 	Route::post('reports/kitsconsumption', 'ReportController@consumption');
+	Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');
