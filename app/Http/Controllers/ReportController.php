@@ -225,19 +225,19 @@ class ReportController extends Controller
         if ($request->input('category') == 'county') {
             $model = $model->where('view_facilitys.county_id', '=', $request->input('county'));
             $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
-            $title .= $county->county;
+            $title .= $county->county.'county ';
         } else if ($request->input('category') == 'subcounty') {
             $model = $model->where('view_facilitys.subcounty_id', '=', $request->input('district'));
             $subc = ViewFacility::where('subcounty_id', '=', $request->input('district'))->get()->first();
-            $title .= $subc->subcounty;
+            $title .= $subc->subcounty.' ';
         } else if ($request->input('category') == 'facility') {
             $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
             $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
-            $title .= $facility->name;
+            $title .= $facility->name.' ';
         } else if ($request->input('category') == 'partner') {
             $model = $model->where('view_facilitys.partner_id', '=', $request->input('partner'));
             $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
-            $title .= $partner->name;
+            $title .= $partner->name.' ';
         }
         $dateString .= $title;
         return $model;
