@@ -16,7 +16,7 @@
                         @php
                             $year=Date('Y')-$i
                         @endphp
-                        <a href='{{ url("user/activity/null/$year") }}'>{{ Date('Y')-$i }}</a> |
+                        <a href='{{ url("users/activity/null/$year") }}'>{{ Date('Y')-$i }}</a> |
                     @endfor
                 </div>
                 <!-- Year -->
@@ -24,7 +24,7 @@
                 <div class="col-md-6">
                     <center><h5>Month Filter</h5></center>
                     @for ($i = 1; $i <= 12; $i++)
-                        <a href='{{ url("user/activity/null/null/$i") }}'>{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</a> |
+                        <a href='{{ url("users/activity/null/null/$i") }}'>{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</a> |
                     @endfor
                 </div>
                 <!-- Month -->
@@ -37,8 +37,8 @@
                                 <tr>
                                     <th rowspan="2">#</th>
                                     <th rowspan="2">Full Names</th>
-                                    <th colspan="2"><center>Samples Entered ({{ $data->year }}, {{ $data->monthName }})</center></th>
-                                    <th colspan="2"><center>Site Samples Approved ({{ $data->year }}, {{ $data->monthName }})</center></th>
+                                    <th colspan="2"><center>Samples Entered ({{ $data->year }} {{ $data->monthName }})</center></th>
+                                    <th colspan="2"><center>Site Samples Approved ({{ $data->year }} {{ $data->monthName }})</center></th>
                                     <!-- <th rowspan="2">Action</th> -->
                                 </tr>
                                 <tr>
