@@ -527,7 +527,7 @@ class WorksheetController extends Controller
                     ->select('samples.*', 'batches.facility_id')
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
-                    ->orderBy('facility_id')
+                    // ->orderBy('facility_id')
                     ->orderBy('batch_id', 'asc')
                     ->orderBy('samples.id', 'asc')  
                     ->get();
