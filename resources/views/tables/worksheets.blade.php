@@ -137,7 +137,7 @@
                                 <tr>
                                     <td>{{ $worksheet->id }} </td>
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
-                                    <td> {{ $worksheet->creator->full_name }} </td>
+                                    <td> {{ $worksheet->creator->full_name ?? '' }} </td>
                                     <td> {!! $worksheet->machine !!} </td>
                                     <td> {!! $worksheet->status !!} </td>
                                     <td> {{ $worksheet->pos }} </td>
