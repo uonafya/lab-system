@@ -16,9 +16,9 @@
                                 <tr>
                                     <th rowspan="2">#</th>
                                     <th rowspan="2">Full Names</th>
-                                    <th colspan="2"><center>Uploaded Worksheets (Today)</center></th>
-                                    <th colspan="2"><center>Reviewed Worksheets (Today)</center></th>
-                                    <th rowspan="2">Action</th>
+                                    <th colspan="2"><center>Saples Entered (2018, Nov)</center></th>
+                                    <th colspan="2"><center>Site Sampes Approved (2018, Nov)</center></th>
+                                    <!-- <th rowspan="2">Action</th> -->
                                 </tr>
                                 <tr>
                                     <th><center>EID</center></th>
@@ -32,11 +32,11 @@
                                 <tr>
                                     <td>{{ $key+1 }}</td>
                                     <td>{{ $user->full_name }}</td>
-                                    <td>{{ $user->uploaded(gmdate("Y-m-d"))->eid }}</td>
-                                    <td>{{ $user->uploaded(gmdate("Y-m-d"))->vl }}</td>
-                                    <td>{{ $user->reviewed(gmdate("Y-m-d"))->eid }}</td>
-                                    <td>{{ $user->reviewed(gmdate("Y-m-d"))->vl }}</td>
-                                    <td><a href='{{ url("users/activity/$user->id") }}'>View Log</a></td>
+                                    <td>{{ $user->samples_entered('EID', 2018, 11) }}</td>
+                                    <td>{{ $user->samples_entered('VL', 2018, 11) }}</td>
+                                    <td>{{ $user->sitesamplesapproved('EID', 2018, 11) }}</td>
+                                    <td>{{ $user->sitesamplesapproved('VL', 2018, 11) }}</td>
+                                    <!-- <td><a href='{{-- url("users/activity/$user->id") --}}'>View Log</a></td> -->
                                 </tr>
                             @endforeach
                             </tbody>

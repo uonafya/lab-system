@@ -163,13 +163,13 @@ class UserController extends Controller
     }
 
     public function activity($user_id = null) {
-        if (isset($user_id)) {
-            $users = User::whereNotIn('user_type_id', [2,5,6])->get();
-            return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
-        } else {
-            $users = User::whereNotIn('user_type_id', [2,5,6])->get();
-            return view('tables.users-activity', compact('users'))->with('pageTitle', 'Users Activity');
-        }
+        // if (isset($user_id)) {
+        //     $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+        //     return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
+        // } else {
+        $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+        return view('tables.users-activity', compact('users'))->with('pageTitle', 'Users Activity');
+        // }
     }
 
     public function switch_user($id)
