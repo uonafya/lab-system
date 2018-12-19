@@ -118,6 +118,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('print/{sample}', 'Cd4SampleController@print')->name('print');
 			Route::get('printresult/{sample}', 'Cd4SampleController@printresult')->name('printresult');
 			Route::get('search/{sample}', 'Cd4SampleController@searchresult')->name('searchresult');
+			Route::get('delete/{sample}', 'Cd4SampleController@destroy')->name('delete');
 			Route::post('search', 'Cd4SampleController@search')->name('search');
 		});
 		Route::resource('sample', 'Cd4SampleController');
