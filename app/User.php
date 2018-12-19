@@ -110,8 +110,10 @@ class User extends Authenticatable implements JWTSubject
         } else {
             return null;
         }
-        $model = $model->whereYear('created_at', $year)->whereMonth('created_at', $month)
-                    ->where('user_id', '=',$id);
+        $model = $model->whereYear('created_at', $year)
+                    ->when($month, function($query) use ($month) {
+                        return $query->whereMonth('datereceived', $month);
+                    })->where('user_id', '=',$id);
 
         return number_format($model->first()->samples);
     }
@@ -125,8 +127,10 @@ class User extends Authenticatable implements JWTSubject
         } else {
             return null;
         }
-        $model = $model->whereYear('datereceived', $year)->whereMonth('datereceived', $month)
-                    ->where('received_by', '=',$id)->where('site_entry', '=', 1);
+        $model = $model->whereYear('datereceived', $year)
+                    ->when($month, function($query) use ($month) {
+                        return $query->whereMonth('datereceived', $month);
+                    })->where('received_by', '=',$id)->where('site_entry', '=', 1);
 
         return number_format($model->first()->samples);
     }
