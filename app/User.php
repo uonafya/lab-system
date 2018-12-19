@@ -101,6 +101,40 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function samples_entered($testtype, $year, $month=null) {
+        $id = $this->id;
+        if ($testtype == 'EID') {
+            $model = SampleView::selectRaw("COUNT(*) as samples");
+        } else if ($testtype == 'VL') {
+            $model = ViralsampleView::selectRaw("COUNT(*) as samples");
+        } else {
+            return null;
+        }
+        $model = $model->whereYear('created_at', $year)
+                    ->when($month, function($query) use ($month) {
+                        return $query->whereMonth('datereceived', $month);
+                    })->where('user_id', '=',$id);
+
+        return number_format($model->first()->samples);
+    }
+
+    public function sitesamplesapproved($testtype, $year, $month=null) {
+        $id = $this->id;
+        if ($testtype == 'EID') {
+            $model = SampleView::selectRaw("COUNT(*) as samples");
+        } else if ($testtype == 'VL') {
+            $model = ViralsampleView::selectRaw("COUNT(*) as samples");
+        } else {
+            return null;
+        }
+        $model = $model->whereYear('datereceived', $year)
+                    ->when($month, function($query) use ($month) {
+                        return $query->whereMonth('datereceived', $month);
+                    })->where('received_by', '=',$id)->where('site_entry', '=', 1);
+
+        return number_format($model->first()->samples);
+    }
+
     public function uploaded($from_date, $to_date = null) {
         $user = $this->id;
         $eid_worksheets = \App\Worksheet::selectRaw("COUNT(*) AS worksheets")
