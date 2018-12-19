@@ -176,14 +176,15 @@ class UserController extends Controller
             session(['activityMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
         }
 
-        $year = session('dashboardYear');
-        $month = session('dashboardMonth');
+        $year = session('activityYear');
+        $month = session('activityMonth');
         $monthName = "";
         
         if (null !== $month) 
             $monthName = "- ".date("F", mktime(null, null, null, $month));
 
         $data = (object)['year'=>$year,'monthName'=>$monthName, 'month'=>$month];
+        // dd($data);
         // if (isset($user_id)) {
         //     $users = User::whereNotIn('user_type_id', [2,5,6])->get();
         //     return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
