@@ -147,5 +147,14 @@ class Batch extends BaseModel
             return null;
         }
     }
+
+    public function batch_delete()
+    {
+        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        \App\Sample::where(['batch_id' => $this->id])->delete();
+        $this->delete();
+        session(['toast_message' => "Batch {$this->id} has been deleted."]);
+        return true;
+    }
     
 }

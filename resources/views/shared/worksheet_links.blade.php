@@ -39,7 +39,7 @@
 @elseif($worksheet->status_id == 4)
 	<a href="{{ url('worksheet/' . $worksheet->id) }}" title="Click to View Cancelled Worksheet Details">
 		View Cancelled  Worksheet Details
-	</a>
+	</a> |
 
 	{{ Form::open(['url' => 'worksheet/' . $worksheet->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following worksheet?');"]) }}
         <button type="submit" class="btn btn-xs btn-primary">Delete</button>
