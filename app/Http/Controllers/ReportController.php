@@ -530,37 +530,42 @@ class ReportController extends Controller
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            if (!$request->input('period') || $request->input('period') == 'range') {
-                $dateString = date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
-                if ($request->input('period')) { $column = 'datetested'; } 
-                else { $column = 'datereceived'; }
-                $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
-            } else if ($request->input('period') == 'monthly') {
-                $dateString = date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) = '".$request->input('month')."'");
-            } else if ($request->input('period') == 'quarterly') {
-                if ($request->input('quarter') == 'Q1') {
-                    $startQuarter = 1;
-                    $endQuarter = 3;
-                } else if ($request->input('quarter') == 'Q2') {
-                    $startQuarter = 4;
-                    $endQuarter = 6;
-                } else if ($request->input('quarter') == 'Q3') {
-                    $startQuarter = 7;
-                    $endQuarter = 9;
-                } else if ($request->input('quarter') == 'Q4') {
-                    $startQuarter = 10;
-                    $endQuarter = 12;
-                } else {
-                    $startQuarter = 0;
-                    $endQuarter = 0;
-                }
-                $dateString = $request->input('quarter').' - '.$request->input('year');
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
-            } else if ($request->input('period') == 'annually') {
-                $dateString = $request->input('year');
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."'");
-            }
+            $receivedOnly=false;
+            if ($request->input('types') == 'rejected')
+                $receivedOnly=true;
+            
+            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
+            // if (!$request->input('period') || $request->input('period') == 'range') {
+            //     $dateString = date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
+            //     if ($request->input('period')) { $column = 'datetested'; } 
+            //     else { $column = 'datereceived'; }
+            //     $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+            // } else if ($request->input('period') == 'monthly') {
+            //     $dateString = date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
+            //     $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) = '".$request->input('month')."'");
+            // } else if ($request->input('period') == 'quarterly') {
+            //     if ($request->input('quarter') == 'Q1') {
+            //         $startQuarter = 1;
+            //         $endQuarter = 3;
+            //     } else if ($request->input('quarter') == 'Q2') {
+            //         $startQuarter = 4;
+            //         $endQuarter = 6;
+            //     } else if ($request->input('quarter') == 'Q3') {
+            //         $startQuarter = 7;
+            //         $endQuarter = 9;
+            //     } else if ($request->input('quarter') == 'Q4') {
+            //         $startQuarter = 10;
+            //         $endQuarter = 12;
+            //     } else {
+            //         $startQuarter = 0;
+            //         $endQuarter = 0;
+            //     }
+            //     $dateString = $request->input('quarter').' - '.$request->input('year');
+            //     $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
+            // } else if ($request->input('period') == 'annually') {
+            //     $dateString = $request->input('year');
+            //     $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."'");
+            // }
     	}
 
         $report = (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') ? 'VL ' : 'EID ';
