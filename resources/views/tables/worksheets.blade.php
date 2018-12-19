@@ -153,7 +153,11 @@
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
-                                    <td> {!! $worksheet->mylinks !!} </td>
+                                    <td> 
+                                        @include('shared.worksheet_links', ['worksheet' => $worksheet])
+
+                                        <!-- $worksheet->mylinks  -->
+                                    </td>
                                 </tr>
                             @endforeach
 
