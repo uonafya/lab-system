@@ -253,7 +253,7 @@
                                             <td colspan="1"> </td>  
                                             <td colspan="5"> 
                                                 <center>
-                                                    <button class="btn btn-warning" type="submit" name="print_type" value="summary">Delete Selected Batches</button>
+                                                    <button class="btn btn-warning" type="submit" name="print_type" value="summary">Delete Selected Batches (This is permanent and cannot be reversed)</button>
                                                 </center>
                                             </td>
                                             <td colspan="10"> </td>                                            
