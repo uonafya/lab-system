@@ -610,7 +610,7 @@ class ViralworksheetController extends Controller
                     ->select('viralsamples.*', 'viralbatches.facility_id')
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
-                    ->orderBy('facility_id')
+                    // ->orderBy('facility_id')
                     ->orderBy('batch_id', 'asc')
                     ->orderBy('viralsamples.id', 'asc')                    
                     ->get();
