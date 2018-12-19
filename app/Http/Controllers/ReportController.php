@@ -508,23 +508,7 @@ class ReportController extends Controller
     				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
     	}
 
-        if ($request->input('category') == 'county') {
-            $model = $model->where('view_facilitys.county_id', '=', $request->input('county'));
-            $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
-            $title .= $county->county;
-        } else if ($request->input('category') == 'subcounty') {
-            $model = $model->where('view_facilitys.subcounty_id', '=', $request->input('district'));
-            $subc = ViewFacility::where('subcounty_id', '=', $request->input('district'))->get()->first();
-            $title .= $subc->subcounty;
-        } else if ($request->input('category') == 'facility') {
-            $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
-            $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
-            $title .= $facility->name;
-        } else if ($request->input('category') == 'partner') {
-            $model = $model->where('view_facilitys.partner_id', '=', $request->input('partner'));
-            $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
-            $title .= $partner->name;
-        }
+        $model = self::__getBelongingTo($request, $model, $dateString);
 
     	if ($request->input('specificDate')) {
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
@@ -535,37 +519,6 @@ class ReportController extends Controller
                 $receivedOnly=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
-            // if (!$request->input('period') || $request->input('period') == 'range') {
-            //     $dateString = date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
-            //     if ($request->input('period')) { $column = 'datetested'; } 
-            //     else { $column = 'datereceived'; }
-            //     $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
-            // } else if ($request->input('period') == 'monthly') {
-            //     $dateString = date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
-            //     $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) = '".$request->input('month')."'");
-            // } else if ($request->input('period') == 'quarterly') {
-            //     if ($request->input('quarter') == 'Q1') {
-            //         $startQuarter = 1;
-            //         $endQuarter = 3;
-            //     } else if ($request->input('quarter') == 'Q2') {
-            //         $startQuarter = 4;
-            //         $endQuarter = 6;
-            //     } else if ($request->input('quarter') == 'Q3') {
-            //         $startQuarter = 7;
-            //         $endQuarter = 9;
-            //     } else if ($request->input('quarter') == 'Q4') {
-            //         $startQuarter = 10;
-            //         $endQuarter = 12;
-            //     } else {
-            //         $startQuarter = 0;
-            //         $endQuarter = 0;
-            //     }
-            //     $dateString = $request->input('quarter').' - '.$request->input('year');
-            //     $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
-            // } else if ($request->input('period') == 'annually') {
-            //     $dateString = $request->input('year');
-            //     $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."'");
-            // }
     	}
 
         $report = (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') ? 'VL ' : 'EID ';

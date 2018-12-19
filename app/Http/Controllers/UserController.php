@@ -162,14 +162,36 @@ class UserController extends Controller
         return back();
     }
 
-    public function activity($user_id = null) {
-        if (isset($user_id)) {
-            $users = User::whereNotIn('user_type_id', [2,5,6])->get();
-            return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
+    public function activity($user_id = null, $year = null, $month = null) {
+        if ($year==null || $year=='null'){
+            if (session('activityYear')==null)
+                session(['activityYear' => Date('Y')]);
         } else {
-            $users = User::whereNotIn('user_type_id', [2,5,6])->get();
-            return view('tables.users-activity', compact('users'))->with('pageTitle', 'Users Activity');
+            session(['activityYear'=>$year]);
         }
+
+        if ($month==null || $month=='null'){
+            session()->forget('activityMonth');
+        } else {
+            session(['activityMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
+        }
+
+        $year = session('activityYear');
+        $month = session('activityMonth');
+        $monthName = "";
+        
+        if (null !== $month) 
+            $monthName = "- ".date("F", mktime(null, null, null, $month));
+
+        $data = (object)['year'=>$year,'monthName'=>$monthName, 'month'=>$month];
+        // dd($data);
+        // if (isset($user_id)) {
+        //     $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+        //     return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
+        // } else {
+        $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+        return view('tables.users-activity', compact('users'), compact('data'))->with('pageTitle', 'Users Activity');
+        // }
     }
 
     public function switch_user($id)
