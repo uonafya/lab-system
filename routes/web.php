@@ -90,6 +90,9 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
+
+			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
+			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 
@@ -161,6 +164,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
+
+			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');

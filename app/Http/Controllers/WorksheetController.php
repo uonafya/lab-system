@@ -91,38 +91,6 @@ class WorksheetController extends Controller
         $data['myurl'] = url('worksheet/index/' . $state . '/');
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
-
-        // $table_rows = "";
-
-        // foreach ($worksheets as $key => $worksheet) {
-        //     $new_key = $key+1;
-        //     $table_rows .= "<tr> <td>{$new_key}</td> <td>" . $worksheet->my_date_format('created_at') . "</td><td> " . $worksheet->creator->full_name . "</td><td>" . $this->mtype($worksheet->machine_type) . "</td><td>";
-        //     $status = $worksheet->status_id;
-        //     $table_rows .= $this->wstatus($status) . "</td><td>";
-
-        //     if($status == 2 || $status == 3){
-        //         $neg = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 1));
-        //         $pos = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 2));
-        //         $failed = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 3));
-        //         $redraw = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 5));
-        //         $noresult = $this->checknull($samples->where('worksheet_id', $worksheet->id)->where('result', 0));
-
-        //         $total = $neg + $pos + $failed + $redraw + $noresult;
-
-        //     }
-        //     else{
-        //         $neg = $pos = $failed = $redraw = $noresult = $total = 0;
-
-        //         if($status == 1){
-        //             $noresult = $total = $this->checknull($samples->where('worksheet_id', $worksheet->id));
-        //         }
-        //     }
-
-        //     $table_rows .= "{$pos}</td><td>{$neg}</td><td>{$failed}</td><td>{$redraw}</td><td>{$noresult}</td><td>{$total}</td><td>" . $worksheet->my_date_format('daterun') . "</td><td>" . $worksheet->my_date_format('dateuploaded') . "</td><td>" . $worksheet->my_date_format('datereviewed') . "</td><td>" . $this->get_links($worksheet->id, $status) . "</td></tr>";
-
-        // }
-        return view('tables.worksheets', ['worksheets' => $worksheets, 'myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
-        // return view('tables.worksheetsdtsvr', ['myurl' => url('worksheet/index/' . $state . '/')])->with('pageTitle', 'Worksheets');
     }
 
     
