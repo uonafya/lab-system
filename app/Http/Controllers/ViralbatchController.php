@@ -489,6 +489,20 @@ class ViralbatchController extends Controller
         if(!$viralbatch->delete_button) abort(409, "This batch is not eligible for deletion.");
         Viralsample::where(['batch_id' => $viralbatch->id])->delete();
         $viralbatch->delete();
+        session(['toast_message' => 'The batch has been deleted.']);
+        return back();
+    }
+
+    public function destroy_multiple(Request $request)
+    {
+        $batches = $request->input('batches');
+
+        foreach ($batches as $id) {
+            $batch = Viralbatch::find($id);
+            $batch->batch_delete();
+        }
+        session(['toast_message' => "The selected batches have been deleted."]);
+        return back();
     }
 
 

@@ -453,6 +453,20 @@ class BatchController extends Controller
         if(!$batch->delete_button) abort(409, "This batch is not eligible for deletion.");
         Sample::where(['batch_id' => $batch->id])->delete();
         $batch->delete();
+        session(['toast_message' => "Batch {$batch->id} has been deleted."]);
+        return back();
+    }
+
+    public function destroy_multiple(Request $request)
+    {
+        $batches = $request->input('batches');
+
+        foreach ($batches as $id) {
+            $batch = Batch::find($id);
+            $batch->batch_delete();
+        }
+        session(['toast_message' => "The selected batches have been deleted."]);
+        return back();
     }
 
     public function batch_dispatch()
