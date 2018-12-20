@@ -353,7 +353,7 @@ class Misc extends Common
 			}    			
 		}
 
-		if(!$message){
+		if(!isset($message)){
 			print_r($sample);
 			return;
 		}

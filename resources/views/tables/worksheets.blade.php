@@ -137,7 +137,7 @@
                                 <tr>
                                     <td>{{ $worksheet->id }} </td>
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
-                                    <td> {{ $worksheet->creator->full_name }} </td>
+                                    <td> {{ $worksheet->creator->full_name ?? '' }} </td>
                                     <td> {!! $worksheet->machine !!} </td>
                                     <td> {!! $worksheet->status !!} </td>
                                     <td> {{ $worksheet->pos }} </td>
@@ -153,7 +153,11 @@
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
-                                    <td> {!! $worksheet->mylinks !!} </td>
+                                    <td> 
+                                        @include('shared.worksheet_links', ['worksheet' => $worksheet])
+
+                                        <!-- $worksheet->mylinks  -->
+                                    </td>
                                 </tr>
                             @endforeach
 
