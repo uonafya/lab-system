@@ -84,12 +84,12 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="19"><center> Sample Log</center></th>
+                                    <th colspan="20"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="7">Patient Information</th>
                                     <th colspan="4">Sample Information</th>
-                                    <th colspan="8">Mother Information</th>
+                                    <th colspan="9">Mother Information</th>
                                 </tr>
                                 <tr> 
                                     <th>No</th>
@@ -113,6 +113,7 @@
                                     <th>Entry Point</th>
                                     <th>Result</th>
                                     <th>Task</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -187,10 +188,12 @@
                                             @endif
                                             <a href="{{ url('/sample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
+                                        </td>
 
+                                        <td>
                                             {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                 <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                            {{ Form::close() }}
+                                            {{ Form::close() }}                                            
                                         </td>
                                     </tr>
                                 @endforeach
