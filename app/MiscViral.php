@@ -203,6 +203,7 @@ class MiscViral extends Common
                 return $query->where('batch_complete', 2);
             })
             ->whereRaw("(receivedstatus != 2 or receivedstatus is null)")
+            ->where('repeatt', 0)
             ->groupBy('batch_id')
             ->get();
 

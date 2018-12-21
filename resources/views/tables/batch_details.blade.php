@@ -84,12 +84,12 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="19"><center> Sample Log</center></th>
+                                    <th colspan="20"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="7">Patient Information</th>
                                     <th colspan="4">Sample Information</th>
-                                    <th colspan="8">Mother Information</th>
+                                    <th colspan="9">Mother Information</th>
                                 </tr>
                                 <tr> 
                                     <th>No</th>
@@ -102,7 +102,7 @@
 
                                     <th>Worksheet</th>
                                     <th>Date Collected</th>
-                                    <th>Status</th>
+                                    <th>Received Status</th>
                                     <th>Spots</th>
 
                                     <th>CCC #</th>
@@ -113,6 +113,7 @@
                                     <th>Entry Point</th>
                                     <th>Result</th>
                                     <th>Task</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -186,11 +187,17 @@
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
                                             <a href="{{ url('/sample/' . $sample->id ) }} ">View</a> |
-                                            <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
+                                            <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
 
+                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
+                                                | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @endif
+                                        </td>
+
+                                        <td>
                                             {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                 <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                            {{ Form::close() }}
+                                            {{ Form::close() }}                                            
                                         </td>
                                     </tr>
                                 @endforeach
