@@ -291,14 +291,17 @@ class BatchController extends Controller
                 session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
                 session(['toast_error' => 1]);
                 return back();
-            }            
+            }    
         }
+        $new_batch->created_at = $batch->created_at;
         $new_batch->save();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 
         $count = 0;
         $s;
+
+        $has_received_status = false;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
@@ -320,12 +323,18 @@ class BatchController extends Controller
                 }
             }
             if($sample->result && $submit_type == "new_batch") continue;
+            if($sample->receivedstatus) $has_received_status = true;
             $sample->batch_id = $new_id;
             $sample->pre_update();
             $s = $sample;
             $count++;
         }
         // $s = $new_batch->sample->first();
+
+        if(!$has_received_status){
+            $new_batch->datereceived = null;
+            $new_batch->save();
+        }
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
