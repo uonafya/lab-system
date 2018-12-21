@@ -345,9 +345,9 @@ class DashboardCacher
             })
             ->groupBy("{$pre}batches.id")
             ->havingRaw("COUNT({$pre}samples.id) > 0")
-            ->count();
+            ->get();
 
-        return $count;
+        return $count->count();
     }
 
     public static function cacher()
