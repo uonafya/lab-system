@@ -314,7 +314,7 @@ class ViralbatchController extends Controller
                 }
                 return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
             })
-            ->groupBy('viralatches.id')
+            ->groupBy('viralbatches.id')
             // ->having('samples_count', '>', 0)
             ->havingRaw('COUNT(viralsamples.id) > 0')
             ->paginate();
