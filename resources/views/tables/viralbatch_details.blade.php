@@ -189,7 +189,7 @@
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
                                             @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
-                                                | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                                | <a href="{{ url('/viralsample/release/' . $sample->id ) }} ">Release As Redraw</a> 
                                             @endif
                                         </td>
                                         <td>

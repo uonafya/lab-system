@@ -744,7 +744,8 @@ class SampleController extends Controller
 
     public function release_redraw(Sample $sample)
     {
-        if($sample->run == 1){
+        $batch = $sample->batch;
+        if($sample->run == 1 || $batch->batch_complete != 0 ){
             session(['toast_message' => 'The sample cannot be released as a redraw.']);
             session(['toast_error' => 1]);
             return back();
