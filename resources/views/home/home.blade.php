@@ -336,7 +336,7 @@
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['delayed_batches']) }}">
 		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['delayed_batches']) }}">{{ $widgets['delayed_batches'] }}</span>
-		                    	<a href="{{ url('viralbatch/delayed') }}">Batches Delayed </a>
+		                    	<a href="{{ url('batch/delayed') }}">Batches Delayed </a>
 		                    </li>
 		                @elseif(Session('testingSystem') == 'CD4')
 		                	@if ((int)$widgets['CD4samplesInQueue'] > 0)
