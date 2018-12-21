@@ -209,6 +209,8 @@
 		                    	<a href="{{ url('viralbatch/delayed') }}">Batches Delayed </a>
 		                    </li>--}}
 
+		                    <!-- {{ $get_style(10) ?? 'No get style defined' }} -->
+
 		            	@elseif(session('testingSystem') == 'EID')
 		            		@if ((int)$widgets['overduetesting'] > 0)
 		            			@php
