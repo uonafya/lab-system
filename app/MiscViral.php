@@ -203,6 +203,7 @@ class MiscViral extends Common
                 return $query->where('batch_complete', 2);
             })
             ->whereRaw("(receivedstatus != 2 or receivedstatus is null)")
+            ->where('repeatt', 0)
             ->groupBy('batch_id')
             ->get();
 
@@ -819,7 +820,9 @@ class MiscViral extends Common
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
             ->orderBy('batch_id', 'asc')
-            ->orderBy('facilitys.id', 'asc')
+            ->when((env('APP_LAB') == 2), function($query){
+                return $query->orderBy('facilitys.id', 'asc');
+            })            
             ->limit($limit)
             ->get();
 
