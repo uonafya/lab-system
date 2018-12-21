@@ -271,7 +271,7 @@ class BatchController extends Controller
 
     public function delayed_batches()
     {
-        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, users.oname"])
+        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, users.oname")
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->leftJoin('samples', 'facilitys.id', '=', 'batches.facility_id')
