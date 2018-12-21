@@ -70,8 +70,20 @@ class DashboardCacher
     {
     	self::cacher();
 
+        $data['get_style'] = function($val=null)
+        {
+            if($val && $val > 0) return 'background-color: #FDE3A7';
+            return '';
+        };
+
+        $data['get_badge'] = function($val=null)
+        {
+            if($val && $val > 0) return 'danger';
+            return 'success';
+        };
+
         if (session('testingSystem') == 'Viralload') {            
-        	return [
+        	return array_merge($data, [
         		'pendingSamples' => Cache::get('vl_pendingSamples'),
         		'pendingSamplesOverTen' => Cache::get('vl_pendingSamplesOverTen'),
         		'batchesForApproval' => Cache::get('vl_batchesForApproval'),
@@ -82,9 +94,10 @@ class DashboardCacher
         		'resultsForUpdate' => Cache::get('vl_resultsForUpdate'),
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
-        	];
+                'delayed_batches' => Cache::get('vl_delayed_batches'),
+        	]);
         } else if (session('testingSystem') == 'EID'){
-            return [
+            return array_merge($data, [
                 'pendingSamples' => Cache::get('eid_pendingSamples'),
                 'pendingSamplesOverTen' => Cache::get('eid_pendingSamplesOverTen'),
                 'batchesForApproval' => Cache::get('eid_batchesForApproval'),
@@ -95,14 +108,15 @@ class DashboardCacher
                 'resultsForUpdate' => Cache::get('eid_resultsForUpdate'),
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
-            ];
+                'delayed_batches' => Cache::get('eid_delayed_batches'),
+            ]);
         } else if (session('testingSystem') == 'CD4') {
-            return [
+            return array_merge($data, [
                 'CD4samplesInQueue' => Cache::get('CD4samplesInQueue'),
                 'CD4resultsForUpdate' => Cache::get('CD4resultsForUpdate'),
                 'CD4resultsForDispatch' => Cache::get('CD4resultsForDispatch'),
                 'CD4worksheetFor2ndApproval' => Cache::get('CD4worksheetFor2ndApproval')
-            ];
+            ]);
         }
     }
 
@@ -334,7 +348,7 @@ class DashboardCacher
             $res_query = "result > 0";            
         }
 
-        $count = $batch_class::selectRaw("{$pre}batches.*, COUNT({$pre}samples.id) AS `samples_count`")
+        $delayed = $batch_class::selectRaw("{$pre}batches.*, COUNT({$pre}samples.id) AS `samples_count`")
             ->join("{$pre}samples", "{$pre}batches.id", '=', "{$pre}samples.batch_id")
             ->where('batch_complete', 0)
             ->when(true, function($query) use ($res_query){
@@ -347,7 +361,7 @@ class DashboardCacher
             ->havingRaw("COUNT({$pre}samples.id) > 0")
             ->get();
 
-        return $count->count();
+        return $delayed->count();
     }
 
     public static function cacher()
@@ -366,6 +380,7 @@ class DashboardCacher
         $resultsForUpdate = self::resultsAwaitingpdate();
         $overduetesting = self::overdue('testing');
         $overduedispatched = self::overdue('dispatched');
+        $delayed_batches = self::delayed_batches('viral');
 
         $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
         $pendingSamplesOverTen2 = self::pendingSamplesAwaitingTesting(true, 'Eid');
@@ -377,6 +392,7 @@ class DashboardCacher
         $resultsForUpdate2 = self::resultsAwaitingpdate('Eid');
         $overduetesting2 = self::overdue('testing','Eid');
         $overduedispatched2 = self::overdue('dispatched','Eid');
+        $delayed_batches2 = self::delayed_batches();
 
         if(env('APP_LAB') == 5){
             $CD4samplesInQueue = self::CD4pendingSamplesAwaitingTesting();
@@ -395,6 +411,7 @@ class DashboardCacher
         Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
         Cache::put('vl_overduetesting', $overduetesting, $minutes);
         Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
+        Cache::put('vl_delayed_batches', $delayed_batches, $minutes);
         // EID cache 
         Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
         Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
@@ -406,6 +423,7 @@ class DashboardCacher
         Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
         Cache::put('eid_overduetesting', $overduetesting2, $minutes);
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
+        Cache::put('eid_delayed_batches', $delayed_batches2, $minutes);
         //CD4 Cache
         if(env('APP_LAB') == 5){
             Cache::put('CD4samplesInQueue', $CD4samplesInQueue, $minutes);
@@ -428,6 +446,7 @@ class DashboardCacher
     	Cache::forget('vl_resultsForUpdate');
         Cache::forget('vl_overduetesting');
         Cache::forget('vl_overduedispatched');
+        Cache::forget('vl_delayed_batches');
         
         Cache::forget('eid_pendingSamples');
         Cache::forget('eid_pendingSamplesOverTen');
@@ -439,6 +458,7 @@ class DashboardCacher
         Cache::forget('eid_resultsForUpdate');
         Cache::forget('eid_overduetesting');
         Cache::forget('eid_overduedispatched');
+        Cache::forget('eid_delayed_batches');
     }
 
 
