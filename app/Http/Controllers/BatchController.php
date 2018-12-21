@@ -274,7 +274,7 @@ class BatchController extends Controller
         $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, users.oname")
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
-            ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
+            ->join('samples', 'batches.id', '=', 'samples.batch_id')
             ->where('batch_complete', 0)
             ->when(true, function($query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
