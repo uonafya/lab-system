@@ -204,10 +204,10 @@
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $get_style($widgets['delayed_batches']) }}">
+		                    {{--<li class="list-group-item" style="{{ $get_style($widgets['delayed_batches']) }}">
 		                    	<span class="badge badge-{{ $get_badge($widgets['delayed_batches']) }}">{{ $widgets['delayed_batches'] }}</span>
 		                    	<a href="{{ url('viralbatch/delayed') }}">Batches Delayed </a>
-		                    </li>
+		                    </li>--}}
 
 		            	@elseif(session('testingSystem') == 'EID')
 		            		@if ((int)$widgets['overduetesting'] > 0)
@@ -334,10 +334,10 @@
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $get_style($widgets['delayed_batches']) }}">
+		                    {{--<li class="list-group-item" style="{{ $get_style($widgets['delayed_batches']) }}">
 		                    	<span class="badge badge-{{ $get_badge($widgets['delayed_batches']) }}">{{ $widgets['delayed_batches'] }}</span>
 		                    	<a href="{{ url('batch/delayed') }}">Batches Delayed </a>
-		                    </li>
+		                    </li>--}}
 		                @elseif(Session('testingSystem') == 'CD4')
 		                	@if ((int)$widgets['CD4samplesInQueue'] > 0)
 		            			@php
