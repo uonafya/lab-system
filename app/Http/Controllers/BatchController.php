@@ -271,7 +271,7 @@ class BatchController extends Controller
 
     public function delayed_batches()
     {
-        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, users.surname, users.oname")
+        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS `sample_count`, facilitys.name, users.surname, users.oname")
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->join('samples', 'batches.id', '=', 'samples.batch_id')
@@ -283,8 +283,9 @@ class BatchController extends Controller
                 return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
             })
             ->groupBy('batches.id')
-            ->having('sample_count', '>', 0)
-            ->orderBy('sample_count', 'desc')
+            // ->having('sample_count', '>', 0)
+            ->having('COUNT(samples.id)', '>', 0)
+            ->orderBy('COUNT(samples.id)', 'desc')
             ->paginate();
 
         $this->batches_transformer($batches);
