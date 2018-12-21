@@ -284,8 +284,8 @@ class BatchController extends Controller
             })
             ->groupBy('batches.id')
             // ->having('sample_count', '>', 0)
-            ->having('COUNT(samples.id)', '>', 0)
-            ->orderBy('COUNT(samples.id)', 'desc')
+            ->havingRaw('COUNT(samples.id) > 0')
+            // ->orderBy('COUNT(samples.id)', 'desc')
             ->paginate();
 
         $this->batches_transformer($batches);
