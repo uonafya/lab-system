@@ -102,7 +102,7 @@
 
                                     <th>Worksheet</th>
                                     <th>Date Collected</th>
-                                    <th>Status</th>
+                                    <th>Received Status</th>
                                     <th>Spots</th>
 
                                     <th>CCC #</th>
