@@ -1046,6 +1046,8 @@ class ViralbatchController extends Controller
 
     public function batches_transformer(&$batches, $batch_complete=4)
     {
+        $subtotals = $date_modified = $date_tested = null;
+        
         $batches->setPath(url()->current());
 
         $batch_ids = $batches->pluck(['id'])->toArray();
