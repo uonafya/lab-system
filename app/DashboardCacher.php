@@ -337,7 +337,7 @@ class DashboardCacher
         $count = $batch_class::selectRaw("{$pre}batches.*, COUNT({$pre}samples.id) AS `samples_count`")
             ->join("{$pre}samples", "{$pre}batches.id", '=', "{$pre}samples.batch_id")
             ->where('batch_complete', 0)
-            ->when(true, function($query){
+            ->when(true, function($query) use ($res_query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
                     return $query->whereRaw("( receivedstatus=2 OR  ({$res_query} AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
                 }
