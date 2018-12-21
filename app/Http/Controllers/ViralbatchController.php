@@ -295,6 +295,7 @@ class ViralbatchController extends Controller
                 return back();
             }
         }
+        $new_batch->created_at = $batch->created_at;
         $new_batch->save();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
@@ -323,6 +324,7 @@ class ViralbatchController extends Controller
                 }
             }
             if($sample->result && $submit_type == "new_batch") continue;
+            if($sample->receivedstatus) $has_received_status = true;
             $sample->batch_id = $new_id;
             $sample->pre_update();
             $s = $sample;
@@ -331,6 +333,11 @@ class ViralbatchController extends Controller
 
         if($count == 0){
             // $new_batch->delete();
+        }
+
+        if(!$has_received_status){
+            $new_batch->datereceived = null;
+            $new_batch->save();
         }
 
         MiscViral::check_batch($batch->id);
