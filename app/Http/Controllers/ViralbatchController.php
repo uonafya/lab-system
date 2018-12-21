@@ -301,6 +301,29 @@ class ViralbatchController extends Controller
 
     }
 
+    public function delayed_batches()
+    {
+        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS `samples_count`, facilitys.name, users.surname, users.oname")
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+            ->join('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->where('batch_complete', 0)
+            ->when(true, function($query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
+                }
+                return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
+            })
+            ->groupBy('viralatches.id')
+            // ->having('samples_count', '>', 0)
+            ->havingRaw('COUNT(viralsamples.id) > 0')
+            ->paginate();
+
+        $this->batches_transformer($batches);
+
+        return view('tables.batches', ['batches' => $batches, 'display_delayed' => true, 'pre' => 'viral', ])->with('pageTitle', 'Delayed Batches');
+    }
+
     public function facility_batches($facility_id, $batch_complete=4, $date_start=NULL, $date_end=NULL)
     {
         session(['facility_search' => $facility_id]);
@@ -1015,5 +1038,79 @@ class ViralbatchController extends Controller
     public function checknull($var)
     {
         return $var->first()->totals ?? 0;
+    }
+
+    public function batches_transformer(&$batches)
+    {
+        $batches->setPath(url()->current());
+
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        if($batch_ids){
+            $noresult_a = MiscViral::get_totals(0, $batch_ids, false);
+            $redraw_a = MiscViral::get_totals(5, $batch_ids, false);
+            $failed_a = MiscViral::get_totals(3, $batch_ids, false);
+            $detected_a = MiscViral::get_totals(2, $batch_ids, false);
+            $undetected_a = MiscViral::get_totals(1, $batch_ids, false);
+            
+            $date_modified = MiscViral::get_maxdatemodified($batch_ids, false);
+            $date_tested = MiscViral::get_maxdatetested($batch_ids, false);
+
+            $rejected = MiscViral::get_rejected($batch_ids, false);
+
+            if($batch_complete == 1) $subtotals = MiscViral::get_subtotals($batch_ids, false);
+        }
+        else{
+            $noresult_a = $redraw_a = $failed_a = $detected_a = $undetected_a = $rejected = false;
+        }
+
+        $batches->transform(function($batch, $key) use ($batch_complete, $undetected_a, $detected_a, $failed_a, $redraw_a, $noresult_a, $rejected, $subtotals, $date_modified, $date_tested){
+
+            if(!$noresult_a && !$redraw_a && !$failed_a && !$detected_a && !$undetected_a && !$rejected){
+                $total = $rej = $result = $noresult = 0;
+            }else{
+                $undetected = $undetected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $detected = $detected_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $failed = $failed_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $redraw = $redraw_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $noresult = $noresult_a->where('batch_id', $batch->id)->first()->totals ?? 0;
+
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $undetected + $detected + $failed + $redraw + $noresult + $rej;
+
+                $result = $detected + $undetected + $redraw + $failed;
+            }
+
+            if($batch_complete == 1){
+                $und = $subtotals->where('batch_id', $batch->id)->where('rcategory', 1)->first()->totals ?? 0;
+                $under1000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 2)->first()->totals ?? 0;
+                $under5000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 3)->first()->totals ?? 0;
+                $over5000 = $subtotals->where('batch_id', $batch->id)->where('rcategory', 4)->first()->totals ?? 0;
+                $unknown = $subtotals->where('batch_id', $batch->id)->where('rcategory', 0)->first()->totals ?? 0;
+                $f = $subtotals->where('batch_id', $batch->id)->where('rcategory', 5)->first()->totals ?? 0;
+
+                $batch->suppressed = $und + $under1000;
+                $batch->nonsuppressed = $under5000 + $over5000;
+                $batch->failures = $unknown + $f;
+            }
+
+            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+
+            $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->datedispatched = $batch->my_date_format('datedispatched');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = $result;
+            $batch->noresult = $noresult;
+            $batch->status = $batch->batch_complete;
+            $batch->approval = false;
+            return $batch;
+        });
+
+        return $batches;
     }
 }
