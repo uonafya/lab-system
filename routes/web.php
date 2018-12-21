@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@index');
 		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@facility_batches');
+		Route::get('delayed/', 'BatchController@delayed_batches');
 		Route::post('index', 'BatchController@batch_search');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
 		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
