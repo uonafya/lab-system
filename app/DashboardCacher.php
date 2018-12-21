@@ -323,11 +323,38 @@ class DashboardCacher
                         ->get()->first()->total ?? 0;
     }
 
+    public static function delayed_batches($pre = null)
+    {
+        if($pre){
+            $batch_class = \App\Viralbatch::class;
+            $res_query = "result IS NOT NULL AND result != 'Failed' AND result != ''";
+        }
+        else{
+            $batch_class = \App\Batch::class;
+            $res_query = "result > 0";            
+        }
+
+        $count = $batch_class::selectRaw("{$pre}batches.*, COUNT({$pre}samples.id) AS `samples_count`")
+            ->join("{$pre}samples", "{$pre}batches.id", '=', "{$pre}samples.batch_id")
+            ->where('batch_complete', 0)
+            ->when(true, function($query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->whereRaw("( receivedstatus=2 OR  ({$res_query} AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
+                }
+                return $query->whereRaw("( receivedstatus=2 OR  ({$res_query} AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
+            })
+            ->groupBy("{$pre}batches.id")
+            ->havingRaw("COUNT({$pre}samples.id) > 0")
+            ->count();
+
+        return $count;
+    }
+
     public static function cacher()
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 1;
+    	$minutes = 3;
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);

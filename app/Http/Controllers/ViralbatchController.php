@@ -176,9 +176,9 @@ class ViralbatchController extends Controller
             ->where('batch_complete', 0)
             ->when(true, function($query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
-                    return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
+                    return $query->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
                 }
-                return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
+                return $query->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
             })
             ->groupBy('viralbatches.id')
             // ->having('samples_count', '>', 0)
