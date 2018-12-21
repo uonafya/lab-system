@@ -85,6 +85,8 @@ class ViralbatchController extends Controller
             })
             ->paginate();
 
+        // $this->batches_transformer($batches, $batch_complete);
+
         $batches->setPath(url()->current());
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -192,7 +194,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
-            ->where('batch_complete', 1)
+            ->where('batch_complete', $batch_complete)
             ->whereRaw('(datebatchprinted is null or dateindividualresultprinted is null)')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
@@ -219,6 +221,8 @@ class ViralbatchController extends Controller
             })
             ->orderBy('viralbatches.datedispatched', 'desc')
             ->paginate(50);
+
+        // $this->batches_transformer($batches, $batch_complete);
 
         $batches->setPath(url()->current());
 
@@ -1040,7 +1044,7 @@ class ViralbatchController extends Controller
         return $var->first()->totals ?? 0;
     }
 
-    public function batches_transformer(&$batches)
+    public function batches_transformer(&$batches, $batch_complete=4)
     {
         $batches->setPath(url()->current());
 
