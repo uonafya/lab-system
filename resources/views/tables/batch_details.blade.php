@@ -187,7 +187,11 @@
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
                                             <a href="{{ url('/sample/' . $sample->id ) }} ">View</a> |
-                                            <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a> |
+                                            <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
+
+                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
+                                                | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @endif
                                         </td>
 
                                         <td>

@@ -101,12 +101,12 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="15"><center> Sample Log</center></th>
+                                    <th colspan="16"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
                                     <th colspan="6">Patient Information</th>
                                     <th colspan="4">Sample Information</th>
-                                    <th colspan="5">History Information</th>
+                                    <th colspan="6">History Information</th>
                                 </tr>
                                 <tr>
                                     <th>#</th>
@@ -126,6 +126,7 @@
                                     <th>Justification</th>
                                     <th>Viral Load</th>
                                     <th>Task</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -187,9 +188,14 @@
                                             <a href="{{ url('/viralsample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
+                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
+                                                | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @endif
+                                        </td>
+                                        <td>
                                             {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                 <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-                                            {{ Form::close() }}
+                                            {{ Form::close() }}                                            
                                         </td>
                                     </tr>
                                 @endforeach
