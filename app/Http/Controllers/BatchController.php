@@ -283,8 +283,8 @@ class BatchController extends Controller
                 return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
             })
             ->groupBy('batches.id')
-            ->having('samples_count', '>', 0)
-            // ->havingRaw('COUNT(samples.id) > 0')
+            // ->having('samples_count', '>', 0)
+            ->havingRaw('COUNT(samples.id) > 0')
             // ->orderBy('COUNT(samples.id)', 'desc')
             ->paginate();
 
