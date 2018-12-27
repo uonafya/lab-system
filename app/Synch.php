@@ -804,32 +804,26 @@ class Synch
     	/**** Total samples run ****/
     	$totaleidsamplesrun = Sample::selectRaw("count(*) as samples_run")
     								->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+    								->where('repeatt', '=', 0)
     								->where('worksheets.status_id', '<', 3)->first()->samples_run;
     	$totalvlsamplesrun = Viralsample::selectRaw("count(*) as samples_run")
     								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+    								->where('repeatt', '=', 0)
     								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
 
     	/**** Samples pending results ****/
     	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
-    								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
     								->whereRaw("((result IS NULL ) OR (result = 0 ))")->where('input_complete', '=', 1)
+    								->where('site_entry', '!=', 2)
+    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
     								->where('flag', '=', 1)->first()->pending_samples;
     	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
-    								->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
     								->whereRaw("((result IS NULL ) OR (result =0 ) OR (result !='Collect New Sample') )")
     								->where('input_complete', '=', 1)->where('sampletype', '>', 0)
-    								->where('flag', '=', 1)->first()->pending_samples;
-
-
-    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
-    								->where('receivedstatus', 1)
-    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereNull('datedispatched')
-    								->whereRaw("((result IS NULL ) OR (result = 0 ))")
-    								->where('input_complete', '=', 1)
-    								->where('repeatt', '=', 0)
+    								->where('site_entry', '!=', 2)
+    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
     								->where('flag', '=', 1)->first()->pending_samples;
 
     	return (object)[
