@@ -826,6 +826,7 @@ class Synch
     	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
     								->where('receivedstatus', 1)
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
+    								->whereNull('datedispatched')
     								->whereRaw("((result IS NULL ) OR (result = 0 ))")
     								->where('input_complete', '=', 1)
     								->where('repeatt', '=', 0)
