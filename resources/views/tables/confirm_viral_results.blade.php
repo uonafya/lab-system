@@ -160,7 +160,7 @@
                                             <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
                                             <input type="hidden" name="interpretations[]" value="{{ $sample->interpretation }}" class="{{ $class }}">
                                         </td>
-                                        <td>{{ $key }} - {{ $sample->id }}  </td>
+                                        <td>{{ $key+1 }} - {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
 
