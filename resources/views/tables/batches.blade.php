@@ -8,7 +8,7 @@
 
 <div class="content">
 
-    @empty($site_approval)
+    @if(!isset($site_approval) && !isset($display_delayed))
 
         <div class="row">
             <div class="col-md-12">
@@ -78,7 +78,7 @@
             </div>
         </div>
 
-    @endempty
+    @endif
     
     <div class="row">
         <div class="col-lg-12">
