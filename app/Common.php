@@ -421,6 +421,8 @@ class Common
 
         $fp = fopen($filename, 'w');
 
+        fputcsv($fp, ['Lab ID', 'MFL Code', 'Facility', 'Patient', 'Sex', 'Age', 'DOB', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched']);
+
         foreach ($samples as $key => $value) {
         	$val = $value->toArray();
         	// $val = get_object_vars($value);
