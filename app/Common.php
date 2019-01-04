@@ -421,6 +421,16 @@ class Common
 
         $fp = fopen($filename, 'w');
 
+        $row;
+
+        foreach ($samples as $key => $value) {
+        	foreach ($value as $key2 => $value2) {
+        		$row[] = $key2;
+        	}
+        	fputcsv($fp, $row);
+        	break;
+        }
+
         foreach ($samples as $key => $value) {
         	$val = $value->toArray();
         	// $val = get_object_vars($value);
