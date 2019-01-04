@@ -7,6 +7,7 @@ use App\Mail\TestMail;
 use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
 use App\Mail\UrgentCommunication;
+use App\Mail\NoDataReport;
 use Carbon\Carbon;
 use Exception;
 
@@ -386,20 +387,29 @@ class Common
 		}
 	}
 
+	public static function no_data_report($type)
+	{
+		$noage = self::no_data($type, 'age');
+		$nogender = self::no_data($type, 'gender');
+
+		$comm = new NoDataReport($type, $noage, $nogender);
+
+		Mail::to(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+	}
+
 	public static function no_data($type, $param)
 	{
     	ini_set('memory_limit', "-1");
 
 		if($type == 'eid'){
-			$sample_model = \App\Sample::class;
 			$view_model = \App\SampleView::class;
 		}else{
-			$sample_model = \App\Viralsample::class;
 			$view_model = \App\ViralsampleView::class;
 		}
 
 		$samples = $view_model::selectRaw("id as 'Lab ID', facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
 				->where('repeatt', 0)
+				->where('datereceived', '>', '2018-01-01')
 				->when(true, function($query) use ($param){
 					if($param == 'age') return $query->whereRaw("(age is null or age=0)");
 					return $query->where('sex', 3);
@@ -418,7 +428,7 @@ class Common
         	fputcsv($fp, $val);
         }
         fclose($fp);
-
+        return $filename;
 	}
 
     // public static function send_communication()
