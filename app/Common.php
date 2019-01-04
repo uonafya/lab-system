@@ -402,7 +402,7 @@ class Common
 				->where('repeatt', 0)
 				->when(true, function($query) use ($param){
 					if($param == 'age') return $query->whereRaw("(age is null or age=0)");
-					return $query->where('sex', 3)
+					return $query->where('sex', 3);
 				})				
 				->get();
 
