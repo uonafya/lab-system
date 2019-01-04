@@ -35,13 +35,24 @@
                         	<p style="margin-left: 3em;">
                                 <font color="#CCCCCC">
                                     @if (($data->kits->eidtaqkits > 0) && ($data->kits->vltaqkits > 0))
-                                        RECEIVED ABBOTT EID & VL KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
+                                        RECEIVED ABBOTT (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
-                                        RECEIVED ROCHE EID & VL KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
+                                        RECEIVED ROCHE (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
-                                        RECEIVED ABBOTT & ROCHE EID & VL KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
+                                        RECEIVED ABBOTT & ROCHE (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @endif
                                 </font>
+                            </p>
+                            <p style="margin-left: 3em;">
+                                @if (($data->kits->eidtaqkits > 0) && ($data->kits->vltaqkits > 0))
+                                    <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a>
+                                @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
+                                    <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
+                                @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
+                                    <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT & ROCHE (EID & VL) report</a><br>
+                                    <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a><br>
+                                    <a href="{{ url('kitsdeliveries/all') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
+                                @endif
                             </p>
                         </div>
                     @elseif ($data->submittedkits == 1)  
