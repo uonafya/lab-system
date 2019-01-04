@@ -514,9 +514,11 @@ class ReportController extends Controller
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            $receivedOnly=false;
-            if ($request->input('types') == 'rejected')
-                $receivedOnly=true;
+            // $receivedOnly=false;
+            // if ($request->input('types') == 'rejected')
+            //     $receivedOnly=true;
+            
+            $receivedOnly=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
     	}
