@@ -408,6 +408,7 @@ class Common
 		}
 
 		$samples = $view_model::selectRaw("id as 'Lab ID', site_entry, facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
+				->where('facility_id', '!=', 7148)
 				->where('repeatt', 0)
 				->where('datereceived', '>', '2018-01-01')
 				->where('lab_id', env('APP_LAB'))	
