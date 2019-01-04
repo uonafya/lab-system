@@ -133,7 +133,7 @@ class MiscViral extends Common
                 $b->save();
                 return true;
             }
-            // self::save_tat(\App\SampleView::class, \App\Sample::class, $batch_id);
+            // self::save_tat(\App\ViralsampleView::class, \App\Viralsample::class, $batch_id);
 		}
         else{
             return false;
