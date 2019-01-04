@@ -416,14 +416,14 @@ class Common
 				})				
 				->get();
 
-		$filename = storage_path("app/" . $type . "_no_" . $param . "data_report.csv");
+		$filename = storage_path("app/" . $type . "_no_" . $param . "_data_report.csv");
         if(file_exists($filename)) unlink($filename);
 
         $fp = fopen($filename, 'w');
 
         foreach ($samples as $key => $value) {
-        	// $val = $value->toArray();
-        	$val = get_object_vars($value);
+        	$val = $value->toArray();
+        	// $val = get_object_vars($value);
         	$val['sex'] = $value->gender;
         	fputcsv($fp, $val);
         }
