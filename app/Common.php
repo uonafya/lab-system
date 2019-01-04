@@ -426,8 +426,9 @@ class Common
         foreach ($samples as $key => $value) {
         	foreach ($value as $key2 => $value2) {
         		$row[] = $key2;
+        		echo ' key ' . $key2;
         	}
-        	fputcsv($fp, $row);
+        	// fputcsv($fp, $row);
         	break;
         }
 
