@@ -386,6 +386,41 @@ class Common
 		}
 	}
 
+	public static function no_data($type, $param)
+	{
+    	ini_set('memory_limit', "-1");
+
+		if($type == 'eid'){
+			$sample_model = \App\Sample::class;
+			$view_model = \App\SampleView::class;
+		}else{
+			$sample_model = \App\Viralsample::class;
+			$view_model = \App\ViralsampleView::class;
+		}
+
+		$samples = $view_model::selectRaw("id as 'Lab ID', facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
+				->where('repeatt', 0)
+				->when(true, function($query) use ($param){
+					if($param == 'age') return $query->whereRaw("(age is null or age=0)");
+					return $query->where('sex', 3)
+				})				
+				->get();
+
+		$filename = storage_path("app/" . $type . "_no_" . $param . "data_report.csv");
+        if(file_exists($filename)) unlink($filename);
+
+        $fp = fopen($filename, 'w');
+
+        foreach ($samples as $key => $value) {
+        	// $val = $value->toArray();
+        	$val = get_object_vars($value);
+        	$val['sex'] = $value->gender;
+        	fputcsv($fp, $val);
+        }
+        fclose($fp);
+
+	}
+
     // public static function send_communication()
     // {
     //     ini_set("memory_limit", "-1");
