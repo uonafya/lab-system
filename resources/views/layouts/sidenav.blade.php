@@ -74,8 +74,6 @@
                 @endif
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('batch/delayed') }}">Delayed Batches</a></li>
-                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -174,8 +172,6 @@
                         <li><a href=" {{-- url('viralbatch/dispatch') --}}">Dispatch</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('viralbatch/delayed') }}">Delayed Batches</a></li>
-                <hr />
                 <li><a href=" {{ url('viralworksheet/index/1') }}">Update Results
                     <span class="label label-warning pull-right">{{ $widgets['resultsForUpdate'] ?? 0 }}</span>
                     </a>
