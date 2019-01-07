@@ -444,10 +444,10 @@ class TaskController extends Controller
                 $tracker[] = [
                         'month' => $month,
                         'year' => $this->previousYear,
-                        'lab_id' => Auth()->user()->lab_id,
+                        'lab_id' => auth()->user()->lab_id,
                         'equipment_id' => $value,
                         'datesubmitted' => date('Y-m-d'),
-                        'submittedBy' => Auth()->user()->id,
+                        'submittedBy' => auth()->user()->id,
                         'datebrokendown' => ($request->datebrokendown[$key] == "") ? null : $request->datebrokendown[$key],
                         'datereported' => ($request->datereported[$key] == "") ? null : $request->datereported[$key],
                         'datefixed' => ($request->datefixed[$key] == "") ? null : $request->datefixed[$key],
