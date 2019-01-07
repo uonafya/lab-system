@@ -182,12 +182,12 @@ class TaskController extends Controller
 
     protected function submitNullDeliveries($platform) {
         if ($platform == 'abbott') {
-            $this->submitNullDeliveriesAbbott();
+            $deliveries = $this->submitNullDeliveriesAbbott();
         } else if ($platform == 'roche') {
-            $this->submitNullDeliveriesRoche();
+            $deliveries = $this->submitNullDeliveriesRoche();
         } else if ($platform == 'all') {
-            $this->submitNullDeliveriesAbbott();
-            $this->submitNullDeliveriesRoche();
+            $deliveries = $this->submitNullDeliveriesAbbott();
+            $deliveries = $this->submitNullDeliveriesRoche();
         } else {
             return back();
         }
