@@ -180,7 +180,7 @@ class ViralpatientController extends Controller
         $patients = Viralpatient::select('viralpatients.id', 'viralpatients.patient', 'facilitys.name', 'facilitys.facilitycode')
             ->join('facilitys', 'facilitys.id', '=', 'viralpatients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")
-            ->where('viralpatients.synched', '!=', 2)
+            // ->where('viralpatients.synched', '!=', 2)
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
