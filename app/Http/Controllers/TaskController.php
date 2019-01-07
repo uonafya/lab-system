@@ -176,7 +176,8 @@ class TaskController extends Controller
             // dd($data); 
             return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
         } else {
-            $this->submitNullDeliveries($platform);
+            $deliveries = $this->submitNullDeliveries($platform);
+            return redirect()->route('pending');
         }
     }
 
@@ -191,7 +192,7 @@ class TaskController extends Controller
         } else {
             return back();
         }
-        return redirect()->route('pending');
+        return $deliveries;
     }
 
     protected function submitNullDeliveriesAbbott(){
@@ -212,10 +213,11 @@ class TaskController extends Controller
 
     protected function submitNullDeliveriesModel($model, $type) {
         $model->testtype = $type;
+        $model->source = 3;
         $model->lab_id = env('APP_LAB');
         $model->quarter = parent::_getMonthQuarter(date('m'));
         $model->year = date('Y');
-        $model->datereceived = date('Y-m-d');
+        $model->dateentered = date('Y-m-d');
         $model->save();
         return $model;
     }
