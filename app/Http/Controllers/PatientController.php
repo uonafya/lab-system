@@ -194,7 +194,7 @@ class PatientController extends Controller
         $patients = Patient::select('patients.id', 'patients.patient', 'facilitys.name', 'facilitys.facilitycode')
             ->join('facilitys', 'facilitys.id', '=', 'patients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")
-            ->where('patients.synched', '!=', 2)
+            // ->where('patients.synched', '!=', 2)
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
