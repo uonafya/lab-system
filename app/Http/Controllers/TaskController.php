@@ -429,10 +429,10 @@ class TaskController extends Controller
         }
 
         $data['sampletypes'] = (object)['EID', 'Plasma', 'DBS'];
-        $data['logs'] = (object)self::__getLabperformanceLog($data['sampletypes']);
+        $data['logs'] = (object)$this->getLabperformanceLog($data['sampletypes']);
         $data = (object) $data;
         // dd($data);
-        $month = $this->previousMonth
+        $month = $this->previousMonth;
         return view('tasks.performancelog', compact('data'))->with('pageTitle', 'Lab Performance Log::'.date("F", mktime(null, null, null, $month)).', '.$this->previousYear);
     }
 
@@ -526,29 +526,27 @@ class TaskController extends Controller
         return $model->count();
     }
 
-    public static function __getLabperformanceLog($data) {
+    public function getLabperformanceLog($data) {
         $return = [];
         $data = (array)$data;
         foreach ($data as $key => $value) {
             if ($value == 'EID') {
-                $return[$value] = (object)self::__getLogs('EID');
+                $return[$value] = (object)self::__getLogs('EID',null,$this->previousYear, $this->previousMonth);
             } else {
                 if ($value == 'Plasma') {
                     $array = [1,2];
                 } else if ($value == 'DBS'){
                     $array = [3,4];
                 }
-                $return[$value] = (object)self::__getLogs(null, $array);
+                $return[$value] = (object)self::__getLogs(null, $array,$this->previousYear, $this->previousMonth);
             }
         }
         return $return;
     }
 
-    public static function __getLogs($type=null, $sampletypes=null)
+    public static function __getLogs($type=null, $sampletypes=null, $year, $month)
     {
         $types = ['received', 'rejected', 'tested', 'logged'];
-        $year = $this->previousYear;
-        $month = $this->previousMonth;
         $result = [];
 
         foreach ($types as $key => $value) {
