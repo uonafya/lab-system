@@ -571,7 +571,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->leftJoin('users', 'users.id', '=', 'viralbatches.user')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'users.facility_id')
             ->whereNull('receivedstatus')
             ->where('site_entry', 1)
