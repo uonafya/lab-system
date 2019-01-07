@@ -19,6 +19,21 @@ use DB;
 class TaskController extends Controller
 {
     protected $testtypes = ['EID' => 1, 'VL' => 2];
+    protected $year;
+    protected $previousYear;
+    protected $month;
+    protected $previousMonth;
+
+    public function __construct(){
+        $this->year = date('Y');
+        $this->month = date('m');
+
+        if ($this->month == 1) {
+            $this->previousMonth = 12;
+            $this->previousYear = $this->year-1;
+        }
+    }
+
     public function index() 
     {
         $tasks = $this->pendingTasks();
@@ -38,24 +53,24 @@ class TaskController extends Controller
 			$data['submittedkits'] = 0;
 		}
 		
-		$month = date('m')-1;
+		$month = $this->previousMonth;
+        $year = $this->previousYear;
         $range = '';
         $quarter = parent::_getMonthQuarter(date('m'),$range);
         session(['range'=>$range, 'quarter'=>$quarter]);
-        $data['equipment'] = LabEquipmentTracker::where('year', date('Y'))->where('month', $month)->count();
-        $data['performance'] = LabPerformanceTracker::where('year', date('Y'))->where('month', $month)->count();
+        $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
+        $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
-        // dd($data);
-    	return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
+        return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
     public function addKitDeliveries(Request $request, $platform = null)
     {
         if ($platform == null) {
-            $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
-            $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+            $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', $this->year)->where('quarter', parent::_getMonthQuarter($this->month))->first()->entries;
+            $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', $this->year)->where('quarter', parent::_getMonthQuarter($this->month))->first()->entries;
 
             if ($request->saveTaqman) {
                 $receivedby = $request->receivedby ?? NULL;
@@ -66,7 +81,7 @@ class TaskController extends Controller
                 $quarter = $request->quarter ?? NULL;
                 $status = 1;
                 $source = 3;
-                $year = date('Y');
+                $year = $this->year;
                 $eidData = [
                             'testtype' => 1,'lab_id' => $lab,
                             'quarter' => $quarter,'year' => $year,'source' => $source,
@@ -110,7 +125,7 @@ class TaskController extends Controller
                 $quarter = $request->quarter;
                 $status = 1;
                 $source = 3;
-                $year = date('Y');
+                $year = $this->year;
 
                 $eidData = [
                     "testtype" => 1,"lab_id" => $lab,
@@ -215,8 +230,8 @@ class TaskController extends Controller
         $model->testtype = $type;
         $model->source = 3;
         $model->lab_id = env('APP_LAB');
-        $model->quarter = parent::_getMonthQuarter(date('m'));
-        $model->year = date('Y');
+        $model->quarter = parent::_getMonthQuarter($this->month);
+        $model->year = $this->year;
         $model->dateentered = date('Y-m-d');
         $model->save();
         return $model;
@@ -232,8 +247,8 @@ class TaskController extends Controller
         }
 
         $data['testtypes'] = ['EID', 'VL'];
-        $previousMonth = date('m')-1;
-        $year = date('Y');
+        $previousMonth = $this->previousMonth;
+        $year = $this->previousYear;
 
         if ($request->saveTaqman || $request->saveAbbott)
         {
@@ -321,10 +336,11 @@ class TaskController extends Controller
             $data['abbottdeliveries'.$value] = NULL;
             $data['taqmandeliveries'.$value] = NULL;
             $type = $key+1;
-            foreach(Abbotprocurement::where('month', $previousMonth-1)->where('testtype', $type)->get() as $key1 => $value1) {
+
+            foreach(Abbotprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevabbott'.$value] = $value1;
             }
-            foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('testtype', $type)->get() as $key1 => $value1) {
+            foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevtaqman'.$value] = $value1;
             }
             foreach (Taqmandeliveries::whereRaw("YEAR(datereceived) = $year")->whereRaw("MONTH(datereceived) = $previousMonth")->where('testtype', $type)->get() as $key1 => $value1) {
@@ -339,15 +355,15 @@ class TaskController extends Controller
 
         $data = (object) $data;
         // dd($data);
-        return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.date('Y'));
+        return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 
     public function performancelog(Request $request)
     {
         if ($request->submit) {
             $lab = Auth()->user()->lab_id;
-            $month = date('m')-1;
-            $year = date('Y');
+            $month = $this->previousMonth;
+            $year = $this->previousYear;
             $today = date('Y-m-d');
             $user = Auth()->user()->id;
             
@@ -416,18 +432,18 @@ class TaskController extends Controller
         $data['logs'] = (object)self::__getLabperformanceLog($data['sampletypes']);
         $data = (object) $data;
         // dd($data);
-        $month = date('m')-1;
-        return view('tasks.performancelog', compact('data'))->with('pageTitle', 'Lab Performance Log::'.date("F", mktime(null, null, null, $month)).', '.date('Y'));
+        $month = $this->previousMonth
+        return view('tasks.performancelog', compact('data'))->with('pageTitle', 'Lab Performance Log::'.date("F", mktime(null, null, null, $month)).', '.$this->previousYear);
     }
 
     public function equipmentlog(Request $request) {
-        $month = date('m')-1;
+        $month = $this->previousMonth;
         if ($request->submit) {
             $tracker = [];
             foreach ($request->equipmentid as $key => $value) {
                 $tracker[] = [
                         'month' => $month,
-                        'year' => date('Y'),
+                        'year' => $this->previousYear,
                         'lab_id' => Auth()->user()->lab_id,
                         'equipment_id' => $value,
                         'datesubmitted' => date('Y-m-d'),
@@ -448,7 +464,7 @@ class TaskController extends Controller
                 $save = LabEquipmentTracker::create($value);
             }
             session(['toast_message'=>'Lab Equipment Log Successfully Submitted.']);
-            $equipment = LabEquipmentTracker::where('month', $month)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->count();
+            $equipment = LabEquipmentTracker::where('month', $month)->where('year', $this->previousYear)->where('lab_id', auth()->user()->lab_id)->count();
 
             if ($equipment > 0)
                 return redirect()->route('pending');
@@ -456,36 +472,33 @@ class TaskController extends Controller
         }
         $data = DB::table('lab_equipment_mapping')->where('lab', '=', auth()->user()->lab_id)->get();
         // dd($data);
-        return view('tasks.equipmentlog', compact('data'))->with('pageTitle', 'Lab Equipment Log::'.date("F", mktime(null, null, null, $month)).', '.date('Y'));
+        return view('tasks.equipmentlog', compact('data'))->with('pageTitle', 'Lab Equipment Log::'.date("F", mktime(null, null, null, $month)).', '.$this->previousYear);
     }
 
     public function getKitsEntered(){
-    	$quarter = parent::_getMonthQuarter(date('m'));
-    	$currentyear = date('Y');
+    	$quarter = parent::_getMonthQuarter($this->month);
     	return [
-    		'eidtaqkits' => self::__getifKitsEntered(1,1,$quarter,$currentyear),
-			'vltaqkits' => self::__getifKitsEntered(2,1,$quarter,$currentyear),
-			'eidabkits' => self::__getifKitsEntered(1,2,$quarter,$currentyear),
-			'vlabkits' => self::__getifKitsEntered(2,2,$quarter,$currentyear)
+    		'eidtaqkits' => self::__getifKitsEntered(1,1,$quarter,$this->year),
+			'vltaqkits' => self::__getifKitsEntered(2,1,$quarter,$this->year),
+			'eidabkits' => self::__getifKitsEntered(1,2,$quarter,$this->year),
+			'vlabkits' => self::__getifKitsEntered(2,2,$quarter,$this->year)
 		];
 	}
 
     public function getConsumption()
     {
-        $previousMonth = date('m')-1;
-        $currentyear = date('Y');
         return [
-            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$previousMonth,$currentyear),
-            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$previousMonth,$currentyear),
-            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$previousMonth,$currentyear),
-            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$previousMonth,$currentyear)
+            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$this->previousMonth,$this->year),
+            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$this->previousMonth,$this->year),
+            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$this->previousMonth,$this->year),
+            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$this->previousMonth,$this->year)
         ];
     }
 
     public function getRequisitions()
     {
-    	$currentmonth = date('m');
-    	$currentyear = date('Y');
+    	$currentmonth = $this->month;
+    	$currentyear = $this->year;
 
     	$model = Requisition::whereRaw("MONTH(dateapproved) <> $currentmonth")->where('status', 1)->where('flag', 1)
     						->whereRaw("YEAR(dateapproved) = $currentyear")->whereNull('datesubmitted')->get();
@@ -504,7 +517,6 @@ class TaskController extends Controller
     }
 
     public static function __getifConsumptionEntered($testtype,$platform,$month,$currentyear){
-
         if ($platform==1)
             $model = Taqmanprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
 
@@ -535,8 +547,8 @@ class TaskController extends Controller
     public static function __getLogs($type=null, $sampletypes=null)
     {
         $types = ['received', 'rejected', 'tested', 'logged'];
-        $year = date('Y');
-        $month = date('m')-1;
+        $year = $this->previousYear;
+        $month = $this->previousMonth;
         $result = [];
 
         foreach ($types as $key => $value) {
