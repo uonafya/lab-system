@@ -49,9 +49,9 @@
                                 @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
                                     <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
                                 @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
-                                    <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT & ROCHE (EID & VL) report</a><br>
-                                    <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a><br>
-                                    <a href="{{ url('kitsdeliveries/all') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
+                                    <a href="{{ url('kitsdeliveries/all') }}">Click here to submit a NULL ABBOTT & ROCHE (EID & VL) report</a><br>
+                                    <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a><br>
+                                    <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
                                 @endif
                             </p>
                         </div>

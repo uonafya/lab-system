@@ -18,6 +18,7 @@ use DB;
 
 class TaskController extends Controller
 {
+    protected $testtypes = ['EID' => 1, 'VL' => 2];
     public function index() 
     {
         $tasks = $this->pendingTasks();
@@ -194,20 +195,29 @@ class TaskController extends Controller
     }
 
     protected function submitNullDeliveriesAbbott(){
-        $testtypes = ['EID' => 1, 'VL' => 2];
-        foreach ($testtypes as $key => $type) {
-            $nulldelivery = new Abbotdeliveries();
-            $nulldelivery->testtype = $type;
-            $nulldelivery->lab_id = env('APP_LAB');
-            $nulldelivery->quarter = parent::_getMonthQuarter(date('m');
-            $nulldelivery->year = date('Y');
-            $nulldelivery->save();
+        foreach ($this->testtypes as $key => $type) {
+            $model = new Abbotdeliveries();
+            $nulldelivery = $this->submitNullDeliveriesModel($model, $type);
         }
         return $nulldelivery;
     }
 
     protected function submitNullDeliveriesRoche(){
-        
+        foreach ($this->testtypes as $key => $type) {
+            $model = new Taqmandeliveries();
+            $nulldelivery = $this->submitNullDeliveriesModel($model, $type);
+        }
+        return $nulldelivery;
+    }
+
+    protected function submitNullDeliveriesModel($model, $type) {
+        $model->testtype = $type;
+        $model->lab_id = env('APP_LAB');
+        $model->quarter = parent::_getMonthQuarter(date('m'));
+        $model->year = date('Y');
+        $model->datereceived = date('Y-m-d');
+        $model->save();
+        return $model;
     }
 
     public function consumption (Request $request, $guide=null)
