@@ -18,6 +18,7 @@ use DB;
 
 class TaskController extends Controller
 {
+    protected $testtypes = ['EID' => 1, 'VL' => 2];
     public function index() 
     {
         $tasks = $this->pendingTasks();
@@ -50,129 +51,175 @@ class TaskController extends Controller
     	return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
-    public function addKitDeliveries(Request $request)
+    public function addKitDeliveries(Request $request, $platform = null)
     {
-        $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
-        $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+        if ($platform == null) {
+            $taqdeliveries = Taqmandeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
+            $abbottdeliveries = Abbotdeliveries::selectRaw("count(*) as entries")->whereYear('datereceived', '=', date('Y'))->where('quarter', parent::_getMonthQuarter(date('m')))->first()->entries;
 
-        if ($request->saveTaqman) {
-            $receivedby = $request->receivedby ?? NULL;
-            $datereceived = $request->datereceived ?? NULL;
-            $vreceivedby = $request->vreceivedby ?? NULL;
-            $vdatereceived = $request->vdatereceived ?? NULL;
-            $lab = auth()->user()->lab_id;
-            $quarter = $request->quarter ?? NULL;
-            $status = 1;
-            $source = 3;
-            $year = date('Y');
-            $eidData = [
-                        'testtype' => 1,'lab_id' => $lab,
-                        'quarter' => $quarter,'year' => $year,'source' => $source,
-                        'kitlotno' => $request->kitlotno,'expirydate' => $request->expirydate,
-                        'qualkitreceived' => $request->rqualkit,'spexagentreceived' => $request->rspexagent,
-                        'ampinputreceived' => $request->rampinput,'ampflaplessreceived' => $request->rampflapless,
-                        'ampktipsreceived' => $request->rampktips,'ampwashreceived' => $request->rampwash,
-                        'ktubesreceived' => $request->rktubes,'qualkitdamaged' => $request->dqualkit,
-                        'spexagentdamaged' => $request->dspexagent,'ampinputdamaged' => $request->dampinput,
-                        'ampflaplessdamaged' => $request->dampflapless,'ampktipsdamaged' => $request->dampktips,
-                        'ampwashdamaged' => $request->dampwash,'ktubesdamaged' => $request->dktubes,
-                        'receivedby' => $receivedby,'datereceived' => $datereceived,'status' => $status,
-                        'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
-                    ];
-            $save = Taqmandeliveries::create($eidData);
-            $vlData = [
-                        'testtype' => 2,'lab_id' => $lab,
-                        'quarter' => $quarter,'year' => $year,'source' => $source,
-                        'kitlotno' => $request->vkitlotno,'expirydate' => $request->vexpirydate,
-                        'qualkitreceived' => $request->vrqualkit,'spexagentreceived' => $request->vrspexagent,
-                        'ampinputreceived' => $request->vrampinput,'ampflaplessreceived' => $request->vrampflapless,
-                        'ampktipsreceived' => $request->vrampktips,'ampwashreceived' => $request->vrampwash,
-                        'ktubesreceived' => $request->vrktubes,'qualkitdamaged' => $request->vdqualkit,
-                        'spexagentdamaged' => $request->vdspexagent,'ampinputdamaged' => $request->vdampinput,
-                        'ampflaplessdamaged' => $request->vdampflapless,'ampktipsdamaged' => $request->vdampktips,
-                        'ampwashdamaged' => $request->vdampwash,'ktubesdamaged' => $request->vdktubes,
-                        'receivedby' => $vreceivedby,'datereceived' => $vdatereceived,'status' => $status,
-                        'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
-                    ];
-            $save = Taqmandeliveries::create($vlData);
-            session(['toast_message'=>'The KIT delivery has EID/VL Taqman KITS SAVED SUCCESSFULLY.']);
-            if ($abbottdeliveries > 0)
-                return redirect()->route('pending');
-        } else if ($request->saveAbbott) {
-            // dd($request->all());
-            $receivedby = $request->areceivedby ?? NULL;
-            $datereceived = $request->adatereceived ?? NULL;
-            $vreceivedby = $request->vareceivedby ?? NULL;
-            $vdatereceived = $request->vadatereceived ?? NULL;
-            $lab = auth()->user()->lab_id;
-            $quarter = $request->quarter;
-            $status = 1;
-            $source = 3;
-            $year = date('Y');
+            if ($request->saveTaqman) {
+                $receivedby = $request->receivedby ?? NULL;
+                $datereceived = $request->datereceived ?? NULL;
+                $vreceivedby = $request->vreceivedby ?? NULL;
+                $vdatereceived = $request->vdatereceived ?? NULL;
+                $lab = auth()->user()->lab_id;
+                $quarter = $request->quarter ?? NULL;
+                $status = 1;
+                $source = 3;
+                $year = date('Y');
+                $eidData = [
+                            'testtype' => 1,'lab_id' => $lab,
+                            'quarter' => $quarter,'year' => $year,'source' => $source,
+                            'kitlotno' => $request->kitlotno,'expirydate' => $request->expirydate,
+                            'qualkitreceived' => $request->rqualkit,'spexagentreceived' => $request->rspexagent,
+                            'ampinputreceived' => $request->rampinput,'ampflaplessreceived' => $request->rampflapless,
+                            'ampktipsreceived' => $request->rampktips,'ampwashreceived' => $request->rampwash,
+                            'ktubesreceived' => $request->rktubes,'qualkitdamaged' => $request->dqualkit,
+                            'spexagentdamaged' => $request->dspexagent,'ampinputdamaged' => $request->dampinput,
+                            'ampflaplessdamaged' => $request->dampflapless,'ampktipsdamaged' => $request->dampktips,
+                            'ampwashdamaged' => $request->dampwash,'ktubesdamaged' => $request->dktubes,
+                            'receivedby' => $receivedby,'datereceived' => $datereceived,'status' => $status,
+                            'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
+                        ];
+                $save = Taqmandeliveries::create($eidData);
+                $vlData = [
+                            'testtype' => 2,'lab_id' => $lab,
+                            'quarter' => $quarter,'year' => $year,'source' => $source,
+                            'kitlotno' => $request->vkitlotno,'expirydate' => $request->vexpirydate,
+                            'qualkitreceived' => $request->vrqualkit,'spexagentreceived' => $request->vrspexagent,
+                            'ampinputreceived' => $request->vrampinput,'ampflaplessreceived' => $request->vrampflapless,
+                            'ampktipsreceived' => $request->vrampktips,'ampwashreceived' => $request->vrampwash,
+                            'ktubesreceived' => $request->vrktubes,'qualkitdamaged' => $request->vdqualkit,
+                            'spexagentdamaged' => $request->vdspexagent,'ampinputdamaged' => $request->vdampinput,
+                            'ampflaplessdamaged' => $request->vdampflapless,'ampktipsdamaged' => $request->vdampktips,
+                            'ampwashdamaged' => $request->vdampwash,'ktubesdamaged' => $request->vdktubes,
+                            'receivedby' => $vreceivedby,'datereceived' => $vdatereceived,'status' => $status,
+                            'enteredby' => auth()->user()->id,'dateentered' => date('Y-m-d')
+                        ];
+                $save = Taqmandeliveries::create($vlData);
+                session(['toast_message'=>'The KIT delivery has EID/VL Taqman KITS SAVED SUCCESSFULLY.']);
+                if ($abbottdeliveries > 0)
+                    return redirect()->route('pending');
+            } else if ($request->saveAbbott) {
+                // dd($request->all());
+                $receivedby = $request->areceivedby ?? NULL;
+                $datereceived = $request->adatereceived ?? NULL;
+                $vreceivedby = $request->vareceivedby ?? NULL;
+                $vdatereceived = $request->vadatereceived ?? NULL;
+                $lab = auth()->user()->lab_id;
+                $quarter = $request->quarter;
+                $status = 1;
+                $source = 3;
+                $year = date('Y');
 
-            $eidData = [
-                "testtype" => 1,"lab_id" => $lab,
-                "quarter" => $quarter,"year" => $year,"source" => $source,
-                "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->aqualkitexpiry,
-                "qualkitreceived" => $request->arqualkit,"qualkitdamaged" => $request->adqualkit,
-                "controllotno" => $request->acontrollotno,"controlexpiry" => $request->acontrolexpiry,
-                "controlreceived" => $request->arcontrol,"controldamaged" => $request->adcontrol,
-                "bufferlotno" => $request->abufferlotno,"bufferexpiry" => $request->abufferexpiry,
-                "bufferreceived" => $request->arbuffer,"bufferdamaged" => $request->adbuffer,
-                "preparationlotno" => $request->apreparationlotno,"preparationexpiry" => $request->apreparationexpiry,
-                "preparationreceived" => $request->arpreparation,"preparationdamaged" => $request->adpreparation,
-                "adhesivereceived" => $request->aradhesive,"adhesivedamaged" => $request->adadhesive,
-                "deepplatereceived" => $request->ardeepplate,"deepplatedamaged" => $request->addeepplate,
-                "mixtubereceived" => $request->armixtube,"mixtubedamaged" => $request->admixtube,
-                "reactionvesselsreceived" => $request->arreactionvessels,"reactionvesselsdamaged" => $request->adreactionvessels,
-                "reagentreceived" => $request->arreagent,"reagentdamaged" => $request->adreagent,
-                "reactionplatereceived" => $request->arreactionplate,"reactionplatedamaged" => $request->adreactionplate,
-                "1000disposablereceived" => $request->ar1000disposable,"1000disposabledamaged" => $request->ad1000disposable,
-                "200disposablereceived" => $request->ar200disposable,"200disposabledamaged" => $request->ad200disposable,
-                "receivedby" => $receivedby,"datereceived" => $datereceived,"status" => $status,
-                "enteredby" => auth()->user()->id,"dateentered" => date('Y-m-d')
-            ];
-            $save = Abbotdeliveries::create($eidData);
+                $eidData = [
+                    "testtype" => 1,"lab_id" => $lab,
+                    "quarter" => $quarter,"year" => $year,"source" => $source,
+                    "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->aqualkitexpiry,
+                    "qualkitreceived" => $request->arqualkit,"qualkitdamaged" => $request->adqualkit,
+                    "controllotno" => $request->acontrollotno,"controlexpiry" => $request->acontrolexpiry,
+                    "controlreceived" => $request->arcontrol,"controldamaged" => $request->adcontrol,
+                    "bufferlotno" => $request->abufferlotno,"bufferexpiry" => $request->abufferexpiry,
+                    "bufferreceived" => $request->arbuffer,"bufferdamaged" => $request->adbuffer,
+                    "preparationlotno" => $request->apreparationlotno,"preparationexpiry" => $request->apreparationexpiry,
+                    "preparationreceived" => $request->arpreparation,"preparationdamaged" => $request->adpreparation,
+                    "adhesivereceived" => $request->aradhesive,"adhesivedamaged" => $request->adadhesive,
+                    "deepplatereceived" => $request->ardeepplate,"deepplatedamaged" => $request->addeepplate,
+                    "mixtubereceived" => $request->armixtube,"mixtubedamaged" => $request->admixtube,
+                    "reactionvesselsreceived" => $request->arreactionvessels,"reactionvesselsdamaged" => $request->adreactionvessels,
+                    "reagentreceived" => $request->arreagent,"reagentdamaged" => $request->adreagent,
+                    "reactionplatereceived" => $request->arreactionplate,"reactionplatedamaged" => $request->adreactionplate,
+                    "1000disposablereceived" => $request->ar1000disposable,"1000disposabledamaged" => $request->ad1000disposable,
+                    "200disposablereceived" => $request->ar200disposable,"200disposabledamaged" => $request->ad200disposable,
+                    "receivedby" => $receivedby,"datereceived" => $datereceived,"status" => $status,
+                    "enteredby" => auth()->user()->id,"dateentered" => date('Y-m-d')
+                ];
+                $save = Abbotdeliveries::create($eidData);
 
-            $vlData = [
-                "testtype" => 2,"lab_id" => $lab,
-                "quarter" => $quarter,"year" => $year,"source" => $source,
-                "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->vaqualkitexpiry,
-                "qualkitreceived" => $request->varqualkit,"qualkitdamaged" => $request->vadqualkit,
-                "controllotno" => $request->vacontrollotno,"controlexpiry" => $request->vacontrolexpiry,
-                "controlreceived" => $request->varcontrol,"controldamaged" => $request->vadcontrol,
-                "bufferlotno" => $request->vabufferlotno,"bufferexpiry" => $request->vabufferexpiry,
-                "bufferreceived" => $request->varbuffer,"bufferdamaged" => $request->vadbuffer,
-                "preparationlotno" => $request->vapreparationlotno,"preparationexpiry" => $request->vapreparationexpiry,
-                "preparationreceived" => $request->varpreparation,"preparationdamaged" => $request->vadpreparation,
-                "adhesivereceived" => $request->varadhesive,"adhesivedamaged" => $request->vadadhesive,
-                "deepplatereceived" => $request->vardeepplate,"deepplatedamaged" => $request->vaddeepplate,
-                "mixtubereceived" => $request->varmixtube,"mixtubedamaged" => $request->vadmixtube,
-                "reactionvesselsreceived" => $request->varreactionvessels,
-                "reactionvesselsdamaged" => $request->vadreactionvessels,
-                "reagentreceived" => $request->varreagent,"reagentdamaged" => $request->vadreagent,
-                "reactionplatereceived" => $request->varreactionplate,"reactionplatedamaged" => $request->vadreactionplate,
-                "1000disposablereceived" => $request->var1000disposable,"1000disposabledamaged" => $request->vad1000disposable,
-                "200disposablereceived" => $request->var200disposable,"200disposabledamaged" => $request->vad200disposable,
-                "receivedby" => $receivedby,"datereceived" => $datereceived,"status" => $status,
-                "enteredby" => auth()->user()->id,"dateentered" => date('Y-m-d')
-            ];
+                $vlData = [
+                    "testtype" => 2,"lab_id" => $lab,
+                    "quarter" => $quarter,"year" => $year,"source" => $source,
+                    "qualkitlotno" => $request->vaqualkitlotno,"qualkitexpiry" => $request->vaqualkitexpiry,
+                    "qualkitreceived" => $request->varqualkit,"qualkitdamaged" => $request->vadqualkit,
+                    "controllotno" => $request->vacontrollotno,"controlexpiry" => $request->vacontrolexpiry,
+                    "controlreceived" => $request->varcontrol,"controldamaged" => $request->vadcontrol,
+                    "bufferlotno" => $request->vabufferlotno,"bufferexpiry" => $request->vabufferexpiry,
+                    "bufferreceived" => $request->varbuffer,"bufferdamaged" => $request->vadbuffer,
+                    "preparationlotno" => $request->vapreparationlotno,"preparationexpiry" => $request->vapreparationexpiry,
+                    "preparationreceived" => $request->varpreparation,"preparationdamaged" => $request->vadpreparation,
+                    "adhesivereceived" => $request->varadhesive,"adhesivedamaged" => $request->vadadhesive,
+                    "deepplatereceived" => $request->vardeepplate,"deepplatedamaged" => $request->vaddeepplate,
+                    "mixtubereceived" => $request->varmixtube,"mixtubedamaged" => $request->vadmixtube,
+                    "reactionvesselsreceived" => $request->varreactionvessels,
+                    "reactionvesselsdamaged" => $request->vadreactionvessels,
+                    "reagentreceived" => $request->varreagent,"reagentdamaged" => $request->vadreagent,
+                    "reactionplatereceived" => $request->varreactionplate,"reactionplatedamaged" => $request->vadreactionplate,
+                    "1000disposablereceived" => $request->var1000disposable,"1000disposabledamaged" => $request->vad1000disposable,
+                    "200disposablereceived" => $request->var200disposable,"200disposabledamaged" => $request->vad200disposable,
+                    "receivedby" => $receivedby,"datereceived" => $datereceived,"status" => $status,
+                    "enteredby" => auth()->user()->id,"dateentered" => date('Y-m-d')
+                ];
 
-            $save = Abbotdeliveries::create($vlData);
-            session(['toast_message'=>'The KIT delivery has EID/VL ABBOTT KITS SAVED SUCCESSFULLY.']);
+                $save = Abbotdeliveries::create($vlData);
+                session(['toast_message'=>'The KIT delivery has EID/VL ABBOTT KITS SAVED SUCCESSFULLY.']);
 
-            if ($taqdeliveries > 0)
-                return redirect()->route('pending');
+                if ($taqdeliveries > 0)
+                    return redirect()->route('pending');
+            }
+
+            $users = User::where('user_type_id', '<', 5)->get();
+            $data = (object)[
+                            'users' => $users,
+                            'taqmandeliveries' => $taqdeliveries,
+                            'abbottdeliveries' => $abbottdeliveries
+                        ];
+            // dd($data); 
+            return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
+        } else {
+            $deliveries = $this->submitNullDeliveries($platform);
+            return redirect()->route('pending');
         }
+    }
 
-        $users = User::where('user_type_id', '<', 5)->get();
-        $data = (object)[
-                        'users' => $users,
-                        'taqmandeliveries' => $taqdeliveries,
-                        'abbottdeliveries' => $abbottdeliveries
-                    ];
-        // dd($data); 
-        return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
+    protected function submitNullDeliveries($platform) {
+        if ($platform == 'abbott') {
+            $deliveries = $this->submitNullDeliveriesAbbott();
+        } else if ($platform == 'roche') {
+            $deliveries = $this->submitNullDeliveriesRoche();
+        } else if ($platform == 'all') {
+            $deliveries = $this->submitNullDeliveriesAbbott();
+            $deliveries = $this->submitNullDeliveriesRoche();
+        } else {
+            return back();
+        }
+        return $deliveries;
+    }
+
+    protected function submitNullDeliveriesAbbott(){
+        foreach ($this->testtypes as $key => $type) {
+            $model = new Abbotdeliveries();
+            $nulldelivery = $this->submitNullDeliveriesModel($model, $type);
+        }
+        return $nulldelivery;
+    }
+
+    protected function submitNullDeliveriesRoche(){
+        foreach ($this->testtypes as $key => $type) {
+            $model = new Taqmandeliveries();
+            $nulldelivery = $this->submitNullDeliveriesModel($model, $type);
+        }
+        return $nulldelivery;
+    }
+
+    protected function submitNullDeliveriesModel($model, $type) {
+        $model->testtype = $type;
+        $model->source = 3;
+        $model->lab_id = env('APP_LAB');
+        $model->quarter = parent::_getMonthQuarter(date('m'));
+        $model->year = date('Y');
+        $model->dateentered = date('Y-m-d');
+        $model->save();
+        return $model;
     }
 
     public function consumption (Request $request, $guide=null)

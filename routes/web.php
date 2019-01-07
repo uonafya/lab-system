@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@index');
 		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@facility_batches');
+		Route::get('delayed/', 'BatchController@delayed_batches');
 		Route::post('index', 'BatchController@batch_search');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
 		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
@@ -90,6 +91,9 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
+
+			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
+			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 
@@ -154,6 +158,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@index');
 		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@facility_batches');
+		Route::get('delayed/', 'ViralbatchController@delayed_batches');
 		Route::post('index', 'ViralbatchController@batch_search');
 		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
 		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
@@ -161,6 +166,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
+
+			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
@@ -268,7 +275,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/pending', 'TaskController@index')->name('pending');
 	Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
 	Route::post('/performancelog', 'TaskController@performancelog');
-	Route::get('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+	Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	
 	Route::post('viralpatient/search/', 'ViralpatientController@search');

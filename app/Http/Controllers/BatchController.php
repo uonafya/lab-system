@@ -86,60 +86,7 @@ class BatchController extends Controller
             ->where('batches.lab_id', env('APP_LAB'))
             ->paginate();
 
-        $batches->setPath(url()->current());
-
-        $batch_ids = $batches->pluck(['id'])->toArray();
-
-        if($batch_ids){
-            $subtotals = Misc::get_subtotals($batch_ids, false);
-            $rejected = Misc::get_rejected($batch_ids, false);
-            $date_modified = Misc::get_maxdatemodified($batch_ids, false);
-            $date_tested = Misc::get_maxdatetested($batch_ids, false);
-        }else{
-            $subtotals = $rejected = $date_modified = $date_tested = false;
-        }
-
-        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
-
-            if(!$subtotals && !$rejected){
-                $total = $rej = $result = $noresult = $pos + $neg + $redraw + $failed = 0;
-            }
-            else{
-                $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
-                $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
-                $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
-                $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
-                // $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
-                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
-                // $noresult += $n;
-
-                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
-                $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
-
-                $result = $pos + $neg + $redraw + $failed;
-            }
-
-            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
-            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
-
-            $batch->creator = $batch->surname . ' ' . $batch->oname;
-            $batch->datecreated = $batch->my_date_format('created_at');
-            $batch->datereceived = $batch->my_date_format('datereceived');
-            $batch->datedispatched = $batch->my_date_format('datedispatched');
-            $batch->total = $total;
-            $batch->rejected = $rej;
-            $batch->result = $result;
-            $batch->noresult = $noresult;
-
-            $batch->pos = $pos;
-            $batch->neg = $neg;
-            $batch->redraw = $redraw;
-            $batch->failed = $failed;
-
-            $batch->status = $batch->batch_complete;
-            $batch->approval = false;
-            return $batch;
-        });
+        $this->batches_transformer($batches);
 
         if($batch_complete == 1){
             $p = Lookup::get_partners();
@@ -205,58 +152,7 @@ class BatchController extends Controller
             ->orderBy('batches.datedispatched', 'desc')
             ->paginate(50);
 
-        $batches->setPath(url()->current());
-
-        $batch_ids = $batches->pluck(['id'])->toArray();
-
-        if($batch_ids){
-            $subtotals = Misc::get_subtotals($batch_ids, false);
-            $rejected = Misc::get_rejected($batch_ids, false);
-            $date_modified = Misc::get_maxdatemodified($batch_ids, false);
-            $date_tested = Misc::get_maxdatetested($batch_ids, false);
-        }else{
-            $subtotals = $rejected = $date_modified = $date_tested = false;
-        }
-
-        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
-
-            if(!$subtotals && !$rejected){
-                $total = $rej = $result = $noresult = $pos + $neg + $redraw + $failed = 0;
-            }
-            else{
-                $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
-                $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
-                $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
-                $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
-                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
-
-                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
-                $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
-
-                $result = $pos + $neg + $redraw + $failed;
-            }
-
-            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
-            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
-
-            $batch->creator = $batch->surname . ' ' . $batch->oname;
-            $batch->datecreated = $batch->my_date_format('created_at');
-            $batch->datereceived = $batch->my_date_format('datereceived');
-            $batch->datedispatched = $batch->my_date_format('datedispatched');
-            $batch->total = $total;
-            $batch->rejected = $rej;
-            $batch->result = $result;
-            $batch->noresult = $noresult;
-
-            $batch->pos = $pos;
-            $batch->neg = $neg;
-            $batch->redraw = $redraw;
-            $batch->failed = $failed;
-
-            $batch->status = $batch->batch_complete;
-            $batch->approval = false;
-            return $batch;
-        });
+        $this->batches_transformer($batches);
 
         $p = Lookup::get_partners();
         $fac = false;
@@ -267,6 +163,29 @@ class BatchController extends Controller
             'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
             'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
                 ->with('pageTitle', 'Samples by Batch');
+    }
+
+    public function delayed_batches()
+    {
+        $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS `samples_count`, facilitys.name, users.surname, users.oname")
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->join('samples', 'batches.id', '=', 'samples.batch_id')
+            ->where('batch_complete', 0)
+            ->when(true, function($query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
+                }
+                return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
+            })
+            ->groupBy('batches.id')
+            // ->having('samples_count', '>', 0)
+            ->havingRaw('COUNT(samples.id) > 0')
+            ->paginate();
+
+        $this->batches_transformer($batches);
+
+        return view('tables.batches', ['batches' => $batches, 'display_delayed' => true, 'pre' => '', ])->with('pageTitle', 'Delayed Batches');
     }
 
     public function facility_batches($facility_id, $batch_complete=4, $date_start=NULL, $date_end=NULL)
@@ -372,14 +291,17 @@ class BatchController extends Controller
                 session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
                 session(['toast_error' => 1]);
                 return back();
-            }            
+            }    
         }
+        $new_batch->created_at = $batch->created_at;
         $new_batch->save();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 
         $count = 0;
         $s;
+
+        $has_received_status = false;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
@@ -401,12 +323,18 @@ class BatchController extends Controller
                 }
             }
             if($sample->result && $submit_type == "new_batch") continue;
+            if($sample->receivedstatus) $has_received_status = true;
             $sample->batch_id = $new_id;
             $sample->pre_update();
             $s = $sample;
             $count++;
         }
         // $s = $new_batch->sample->first();
+
+        if(!$has_received_status){
+            $new_batch->datereceived = null;
+            $new_batch->save();
+        }
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
@@ -453,6 +381,20 @@ class BatchController extends Controller
         if(!$batch->delete_button) abort(409, "This batch is not eligible for deletion.");
         Sample::where(['batch_id' => $batch->id])->delete();
         $batch->delete();
+        session(['toast_message' => "Batch {$batch->id} has been deleted."]);
+        return back();
+    }
+
+    public function destroy_multiple(Request $request)
+    {
+        $batches = $request->input('batches');
+
+        foreach ($batches as $id) {
+            $batch = Batch::find($id);
+            $batch->batch_delete();
+        }
+        session(['toast_message' => "The selected batches have been deleted."]);
+        return back();
     }
 
     public function batch_dispatch()
@@ -549,7 +491,8 @@ class BatchController extends Controller
         $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('samples', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-            ->leftJoin('facilitys as creator', 'creator.id', '=', 'batches.user_id')
+            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->leftJoin('facilitys as creator', 'creator.id', '=', 'users.facility_id')
             ->whereNull('receivedstatus')
             ->where('site_entry', 1)
             ->groupBy('batches.id')
@@ -897,6 +840,66 @@ class BatchController extends Controller
     public function checknull($var)
     {
         return $var->first()->totals ?? 0;
+    }
+
+    public function batches_transformer(&$batches)
+    {  
+        $batches->setPath(url()->current());
+
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        if($batch_ids){
+            $subtotals = Misc::get_subtotals($batch_ids, false);
+            $rejected = Misc::get_rejected($batch_ids, false);
+            $date_modified = Misc::get_maxdatemodified($batch_ids, false);
+            $date_tested = Misc::get_maxdatetested($batch_ids, false);
+        }else{
+            $subtotals = $rejected = $date_modified = $date_tested = false;
+        }
+
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
+
+            if(!$subtotals && !$rejected){
+                $total = $rej = $result = $noresult = $pos + $neg + $redraw + $failed = 0;
+            }
+            else{
+                $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+                $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+                $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+                $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+                // $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+                $noresult = $subtotals->where('batch_id', $batch->id)->where('result', null)->first()->totals ?? 0;
+                // $noresult += $n;
+
+                $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+                $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
+
+                $result = $pos + $neg + $redraw + $failed;
+            }
+
+            $batch->date_modified = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+            $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->datecreated = $batch->my_date_format('created_at');
+            $batch->datereceived = $batch->my_date_format('datereceived');
+            $batch->datedispatched = $batch->my_date_format('datedispatched');
+            $batch->total = $total;
+            $batch->rejected = $rej;
+            $batch->result = $result;
+            $batch->noresult = $noresult;
+
+            $batch->pos = $pos;
+            $batch->neg = $neg;
+            $batch->redraw = $redraw;
+            $batch->failed = $failed;
+
+            $batch->status = $batch->batch_complete;
+            $batch->approval = false;
+            return $batch;
+        });
+
+        return $batches;
     }
 
 
