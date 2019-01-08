@@ -738,12 +738,24 @@
             }
         @endslot
 
-        $(".date:not(#datedispatched)").datepicker({
+        $(".date:not(#datedispatched, #dob)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
+            startDate: "-1m",
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $("#dob").datepicker({
+            startView: 1,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: "-2y",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });

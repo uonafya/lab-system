@@ -378,68 +378,6 @@ class Misc extends Common
 		}
     }
 
-    /*public static function send_sms_person($sample, $tel)
-    {
-        // English
-        if($sample->preferred_language == 1){
-            if($sample->result == 2){
-                $message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
-            }
-            else if($sample->result == 3 || $sample->result == 5){
-                $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
-            }
-            else{
-                if($sample->receivedstatus == 2){
-                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
-                }
-                else{
-                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";  
-                }
-            }
-        }
-        // Kiswahili
-        else{
-            if($sample->result == 2){
-                $message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
-            }
-            else if($sample->result == 3 || $sample->result == 5){
-                $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-            }
-            else{
-                if($sample->receivedstatus == 2){
-                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-                }
-                else{
-                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-                }
-            }               
-        }
-
-        if(!$message){
-            print_r($sample);
-            return;
-        }
-
-        $client = new Client(['base_uri' => self::$sms_url]);
-
-        $response = $client->request('post', '', [
-            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-            'http_errors' => false,
-            'json' => [
-                'sender' => env('SMS_SENDER_ID'),
-                'recipient' => $sample->patient_phone_no,
-                'message' => $message,
-            ],
-        ]);
-
-        $body = json_decode($response->getBody());
-        if($response->getStatusCode() == 201){
-            $s = Sample::find($sample->id);
-            $s->time_result_sms_sent = date('Y-m-d H:i:s');
-            $s->save();
-        }
-    }*/
-
     public static function sms_test()
     {
         $client = new Client(['base_uri' => self::$sms_url]);
@@ -560,7 +498,7 @@ class Misc extends Common
     public static function send_to_mlab()
     {
     	ini_set('memory_limit', "-1");
-        $min_date = date('Y-m-d', strtotime('-1 month'));
+        $min_date = date('Y-m-d', strtotime('-2 month'));
     	$batches = \App\Batch::join('facilitys', 'batches.facility_id', '=', 'facilitys.id')
     			->select("batches.*")
     			->with(['facility'])
@@ -615,27 +553,5 @@ class Misc extends Common
     		$batch->save();
     		// break;
     	}
-    }
-
-    public static function cpgh()
-    {
-        ini_set("memory_limit", "-1");
-
-        $batches = Batch::where('datereceived', '<', '2018-01-01')->where('batch_complete', 0)->get();
-
-        foreach ($batches as $batch) {
-            $samples = $batch->sample;
-
-            foreach ($samples as $sample) {
-                if($sample->repeatt == 1 && !$sample->has_rerun){
-                    $sample->repeatt = 0;
-                    $sample->save();
-                }
-            }
-
-            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +2days'));
-            $batch->batch_complete = 1;
-            $batch->save();
-        }
     }
 }
