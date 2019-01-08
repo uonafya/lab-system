@@ -439,8 +439,7 @@ class FacilityController extends Controller
         $search = addslashes($search);
 
         $poc = false;
-        if($div_id == "lab_id") $poc = true;
-
+        if($div_id == "#lab_id") $poc = true;
         cache('div_id', $div_id);
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
