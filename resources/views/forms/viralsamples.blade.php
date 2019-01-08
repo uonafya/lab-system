@@ -669,7 +669,7 @@
         @endslot
 
 
-        $(".date").datepicker({
+        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
