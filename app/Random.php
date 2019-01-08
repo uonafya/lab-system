@@ -28,4 +28,18 @@ class Random
 		}
 	} 
 
+	public static function mlab_sites()
+	{
+		ini_set("memory_limit", "-1");
+        config(['excel.import.heading' => true]);
+		$path = public_path('mlab_facilities.csv');
+		$data = Excel::load($path, function($reader){
+
+		})->get();
+
+		foreach ($data as $row) {
+			Facility::where(['facilitycode' => $row->code])->update(['smsprinter' => 1]);
+		}
+	} 
+
 }
