@@ -59,7 +59,16 @@
             			@foreach($data->child as $key => $sub)
                             <tr>
                 				<td>{{ $key+1 }}</td>
-                                <td>{{ $sub->name }}</td>
+                                <td>
+                                @if($sub->alias == 'qualkit')
+                                    @php
+                                        $name = $viewdata->type.'name';
+                                    @endphp
+                                    {{ $sub->$name }}
+                                @else
+                                    {{ $sub->name }}
+                                @endif
+                                </td>
                                 <td>{{ $viewdata->prevreport['ending'.$sub->alias] }}</td>
                 				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
                                 <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
