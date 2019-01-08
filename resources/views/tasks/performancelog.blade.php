@@ -14,7 +14,14 @@
 
 @section('content')
 @php
+    $currentmonth = date('m');
     $prevmonth = date('m')-1;
+    $year = date('Y');
+    $prevyear = $year;
+    if ($currentmonth == 1) {
+        $prevmonth = 12;
+        $prevyear -= 1;
+    }
 @endphp
 <div class="row">
     <div class="col-md-12">
@@ -48,7 +55,7 @@
                     <tbody>
                         <tr>
                             <th>
-                                {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }}
+                                {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }}
                             </th>
                             <td>
                                 <input class="form-control input-sm" id="{{ $sampletype }}received" name="{{ $sampletype }}received" type="text" value="{{ $data->logs->$sampletype->received }}" disabled="true">

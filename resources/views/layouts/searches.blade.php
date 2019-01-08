@@ -136,7 +136,8 @@
 	}
 
 	function set_select_facility(div_name, url, minimum_length, placeholder, send_url=false) {
-		div_name = '#' + div_name;		
+		div_name = '#' + div_name;	
+		console.log(div_name);	
 
 		$(div_name).select2({
 			minimumInputLength: minimum_length,
@@ -145,7 +146,7 @@
 				delay	: 100,
 				type	: "POST",
 				dataType: 'json',
-				data	: function(params, div_name){
+				data	: function(params){
 					return {
 						search : params.term,
 						div_id : div_name
