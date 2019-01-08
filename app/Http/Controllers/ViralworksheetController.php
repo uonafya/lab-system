@@ -380,6 +380,7 @@ class ViralworksheetController extends Controller
 
         $my = new MiscViral;
 
+        // Abbott
         if($worksheet->machine_type == 2)
         {
             $datetested = $today;
@@ -432,6 +433,7 @@ class ViralworksheetController extends Controller
                 if($bool && $value[5] == "RESULT") break;
             }
         }
+        // C8800
         else if($worksheet->machine_type == 3){
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
@@ -475,7 +477,7 @@ class ViralworksheetController extends Controller
                 $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
-                if($sample->worksheet_id != $worksheet->id) continue;
+                // if($sample->worksheet_id != $worksheet->id) continue;
                 $sample->fill($data_array);
                 $sample->save();
             }

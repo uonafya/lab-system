@@ -105,6 +105,12 @@ Artisan::command('lablog', function(){
 // })->describe('Synch vl patients to the national database.');
 
 
+Artisan::command('send:nodata', function(){
+    $str = \App\Common::no_data_report('eid');
+    $str = \App\Common::no_data_report('vl');
+    $this->info($str);
+})->describe('Send no data report.');
+
 Artisan::command('send:communication', function(){
     $str = \App\Common::send_communication();
     $this->info($str);
