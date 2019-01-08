@@ -146,7 +146,7 @@
 				delay	: 100,
 				type	: "POST",
 				dataType: 'json',
-				data	: function(params, div_name){
+				data	: function(params){
 					return {
 						search : params.term,
 						div_id : div_name
