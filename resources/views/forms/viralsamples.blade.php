@@ -675,6 +675,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
+            startDate: "-1m",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
