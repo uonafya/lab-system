@@ -90,10 +90,10 @@ class Controller extends BaseController
         
         foreach ($testype as $key => $value) {
             if ($abbot == 1) {//Check for both abbot and taqman
-                $abbot[] = Abbotprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
+                $abbot[] = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                             }
                                
-            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
+            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                         
         }
         // dd($abbot);
