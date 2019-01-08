@@ -8,6 +8,13 @@ use App\Facilitys;
 class Random
 {
 
+	public static function facilitys()
+	{
+		self::alter_facilitys();
+		self::poc_sites();
+		self::mlab_sites();
+	}
+
 	public static function alter_facilitys()
 	{
 		DB::statement('ALTER TABLE facilitys ADD COLUMN `poc` TINYINT UNSIGNED DEFAULT 0 after latitude;');
