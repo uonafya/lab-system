@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Requests;
+
+use BaseRequest;
+use App\Rules\BeforeOrEqual;
+
+class SampleRequest extends BaseRequest
+{
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            //
+        ];
+    }
+}

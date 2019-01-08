@@ -14,7 +14,14 @@
 
 @section('content')
 @php
+    $currentmonth = date('m');
     $prevmonth = date('m')-1;
+    $year = date('Y');
+    $prevyear = $year;
+    if ($currentmonth == 1) {
+        $prevmonth = 12;
+        $prevyear -= 1;
+    }
 @endphp
 <div class="row">
     <div class="col-md-12">
