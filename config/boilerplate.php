@@ -72,8 +72,6 @@ return [
 
         'editted' => 'filled|integer',
         'result' => 'required_if:receivedstatus,==,1',
-        'receivedstatus' => 'required|integer|max:5',
-        'rejectedreason' => 'required_if:receivedstatus,==,2',
         'lab' => 'required|integer',
         // 'gender' => 'filled',
     ], 
@@ -109,6 +107,19 @@ return [
         'sex' => 'required|integer|max:3', 
         'lab' => 'integer',
         'amrs_location' => 'integer',
+    ],
+
+    'form_base' => [
+        'patient' => 'required',
+        'facility_id' => 'required|integer', 
+        'dob' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'sex' => 'required|integer|max:3', 
+        'amrs_location' => 'integer',
+        
+        // 'datereceived' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        // 'receivedstatus' => 'required|integer|max:2',
+        // 'rejectedreason' => 'required_if:receivedstatus,==,2',
     ],
 
 
