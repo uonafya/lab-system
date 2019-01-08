@@ -407,13 +407,15 @@ class Common
 			$view_model = \App\ViralsampleView::class;
 		}
 
-		$samples = $view_model::selectRaw("id as 'Lab ID', facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
+		$samples = $view_model::selectRaw("id as 'Lab ID', site_entry, facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
+				->where('facility_id', '!=', 7148)
 				->where('repeatt', 0)
 				->where('datereceived', '>', '2018-01-01')
+				->where('lab_id', env('APP_LAB'))	
 				->when(true, function($query) use ($param){
 					if($param == 'age') return $query->whereRaw("(age is null or age=0)");
 					return $query->where('sex', 3);
-				})				
+				})			
 				->get();
 
 		$filename = storage_path("app/" . $type . "_no_" . $param . "_data_report.csv");
@@ -421,12 +423,14 @@ class Common
 
         $fp = fopen($filename, 'w');
 
-        fputcsv($fp, ['Lab ID', 'MFL Code', 'Facility', 'Patient', 'Sex', 'Age', 'DOB', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched']);
+        fputcsv($fp, ['Lab ID', 'Entry Type', 'MFL Code', 'Facility', 'Patient', 'Sex', 'Age', 'DOB', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched']);
 
         foreach ($samples as $key => $value) {
         	$val = $value->toArray();
         	// $val = get_object_vars($value);
         	$val['sex'] = $value->gender;
+        	$val['site_entry'] = 'Lab Entry';
+        	if($value->site_entry == 1) $val['site_entry'] = 'Site Entry';
         	fputcsv($fp, $val);
         }
         fclose($fp);
