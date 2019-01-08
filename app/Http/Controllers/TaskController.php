@@ -240,10 +240,7 @@ class TaskController extends Controller
     public function consumption (Request $request, $guide=null)
     {
         if ($guide != null) {
-            $filename = 'CONSUMPTION_GUIDE.pdf';
-            $path = storage_path('app/downloads/' . $filename);
-
-            return response()->download($path);
+            return redirect('http://lab-2.test.nascop.org/download/consumption');
         }
 
         $data['testtypes'] = ['EID', 'VL'];
