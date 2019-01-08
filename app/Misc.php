@@ -498,7 +498,7 @@ class Misc extends Common
     public static function send_to_mlab()
     {
     	ini_set('memory_limit', "-1");
-        $min_date = date('Y-m-d', strtotime('-1 month'));
+        $min_date = date('Y-m-d', strtotime('-2 month'));
     	$batches = \App\Batch::join('facilitys', 'batches.facility_id', '=', 'facilitys.id')
     			->select("batches.*")
     			->with(['facility'])
