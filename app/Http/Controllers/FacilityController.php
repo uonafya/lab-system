@@ -441,7 +441,7 @@ class FacilityController extends Controller
         $poc = false;
         if($div_id == "lab_id") $poc = true;
 
-        cache(['div_id' => $div_id]);
+        // cache(['div_id' => $div_id]);
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
