@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Facility;
 use App\ViewFacility;
 use App\Lookup;
@@ -439,12 +440,13 @@ class FacilityController extends Controller
         $search = addslashes($search);
 
         $poc = false;
-        if($div_id == "lab_id") $poc = true;
+        if($div_id == "#lab_id") $poc = true;
+        Cache::put('facility_request', $request->all(), 60);
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->when($poc, function($query){
-                $query->where(['poc' => 1]);
+                return $query->where(['poc' => 1]);
             })
             ->paginate(10);
 
