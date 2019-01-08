@@ -434,11 +434,18 @@ class FacilityController extends Controller
 
     public function search(Request $request)
     {
+        $div_id = $request->input('div_id');
         $search = $request->input('search');
         $search = addslashes($search);
+
+        $poc = false;
+        if($div_id == "lab_id") $poc = true;
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
+            ->when($poc, function($query){
+                $query->where(['poc' => 1]);
+            })
             ->paginate(10);
 
         $facilities->setPath(url()->current());
