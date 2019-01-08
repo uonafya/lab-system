@@ -147,7 +147,8 @@
 				dataType: 'json',
 				data	: function(params){
 					return {
-						search : params.term
+						search : params.term,
+						div_id : div_name
 					}
 				},
 				url		: function(params){
