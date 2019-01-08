@@ -8024,7 +8024,7 @@ VIEW view_facilitys AS
 SELECT  
 
 fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, dis.id as subcounty_id, countys.name as county, countys.id as county_id, dis.province as province_id,
-labs.name as lab, partners.name as partner, partners.id as partner_id, fc.physicaladdress, fc.PostalAddress, fc.telephone, fc.telephone2, fc.fax, 
+labs.name as lab, partners.name as partner, partners.id as partner_id, fac.poc, fac.smsprinter, fc.physicaladdress, fc.PostalAddress, fc.telephone, fc.telephone2, fc.fax, 
 fc.email, fc.contactperson, fc.ContactEmail, fc.contacttelephone, fc.contacttelephone2, 
 fc.sms_printer_phoneno, fc.G4Sbranchname, fc.G4Slocation, fc.G4Sphone1, fc.G4Sphone2, fc.G4Sphone3, fc.G4Sfax
 
