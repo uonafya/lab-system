@@ -63,6 +63,7 @@ class TaskController extends Controller
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
+        
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
@@ -485,10 +486,10 @@ class TaskController extends Controller
     public function getConsumption()
     {
         return [
-            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$this->previousMonth,$this->year),
-            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$this->previousMonth,$this->year),
-            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$this->previousMonth,$this->year),
-            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$this->previousMonth,$this->year)
+            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$this->previousMonth,$this->previousYear),
+            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$this->previousMonth,$this->previousYear),
+            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$this->previousMonth,$this->previousYear),
+            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$this->previousMonth,$this->previousYear)
         ];
     }
 
