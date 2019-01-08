@@ -10,7 +10,7 @@ class Random
 
 	public static function alter_facilitys()
 	{
-		DB::statement('ALTER TABLE facilitys ADD `poc` TINYINTEGER UNSIGNED DEFAULT 0 after latitude;');
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `poc` TINYINT UNSIGNED DEFAULT 0 after latitude;');
 		Facility::where('id', '>', 0)->update(['smsprinter' => 0]);
 	}
 
