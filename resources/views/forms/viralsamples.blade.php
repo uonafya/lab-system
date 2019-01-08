@@ -669,12 +669,13 @@
         @endslot
 
 
-        $(".date:not(#datedispatched, #dateinitiatedontreatment, #dob)").datepicker({
+        $(".date").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
+            startDate: "-1m",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
