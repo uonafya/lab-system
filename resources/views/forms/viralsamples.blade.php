@@ -351,7 +351,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <div class="input-group date-art">
+                                <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="initiation_date" 
                                     @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
@@ -399,7 +399,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Initiated on Current Regimen</label>
                             <div class="col-sm-8">
-                                <div class="input-group date-art">
+                                <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen">
                                 </div>
@@ -669,7 +669,7 @@
         @endslot
 
 
-        $(".date").datepicker({
+        $(".date :not(.date-dob, .date-art, .date-dispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -689,7 +689,7 @@
             format: "yyyy-mm-dd"
         });
 
-        $("datedispatched-dispatched").datepicker({
+        $(".date-dispatched").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
