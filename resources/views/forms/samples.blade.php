@@ -740,7 +740,7 @@
 
         // :not(#datedispatched, #dob)
 
-        $(".date").datepicker({
+        $(".date :not(date-dob, .date-datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
