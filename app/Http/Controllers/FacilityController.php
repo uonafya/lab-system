@@ -444,7 +444,7 @@ class FacilityController extends Controller
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->when($poc, function($query){
-                $query->where(['poc' => 1]);
+                return $query->where(['poc' => 1]);
             })
             ->paginate(10);
 
