@@ -738,7 +738,7 @@
             }
         @endslot
 
-        $(".date:not(#datedispatched)").datepicker({
+        $(".date").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
