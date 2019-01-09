@@ -370,7 +370,7 @@ class ReportController extends Controller
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
             $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('worksheets.lab_id', '=', env('APP_LAB'))
-                        ->where('rejectedreason', '=', '0')
+                        ->where('receivedstatus', '=', '1')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("worksheets.machine_type", "=", 2);
@@ -382,8 +382,8 @@ class ReportController extends Controller
         if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralworksheets.worksheet_id")->where('viralsamples.lab_id', '=', env('APP_LAB'))
-                        ->where('rejectedreason', '=', '0')
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
+                        ->where('receivedstatus', '=', '1')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("viralworksheets.machine_type", "=", 2);
@@ -393,12 +393,17 @@ class ReportController extends Controller
             $type = 'VL';
         }
         $month = $request->input('month');
-        $previousMonth = $month -1;
+        $previousMonth = $month - 1;
+        if ($month == 1)
+            $previousMonth = 12;
         
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
+        $previousYear = $year;
+        if ($previousMonth == 12)
+            $previousYear = $year - 1;
 
-        $model->where('year', $year);
+        $model->whereRaw("(`year` = $year or `year` = $previousYear)");
         $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
         $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
@@ -411,6 +416,7 @@ class ReportController extends Controller
         $report = $model->get();
         $kits = $kits->get();
         $tests = $tests->first()->tests;
+        
         $data = json_decode(json_encode([
                     'parent' => self::$parent,
                     'child' => $sub,
@@ -464,8 +470,7 @@ class ReportController extends Controller
                         'month' => $monthName,
                         'year' => $year
                     ];
-        // $reports = $newdata;
-        // dd($viewdata);
+        
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 

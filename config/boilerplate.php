@@ -94,7 +94,7 @@ return [
         'dateinitiatedonregimen' => ['date_format:Y-m-d', 'before_or_equal:today',],
         'prophylaxis' => 'required|integer|max:30',
         'regimenline' => 'required|integer|max:10',
-        'sampletype' => 'required|integer|max:10',
+        'sampletype' => 'required|integer|between:1,4',
         'justification' => 'required|integer|max:15',
         'pmtct' => 'integer|between:1,3|required_if:sex,==,2',
     ],
@@ -112,14 +112,17 @@ return [
     'form_base' => [
         'patient' => 'required',
         'facility_id' => 'required|integer', 
-        'dob' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'dob' => ['required_without:age', 'before_or_equal:today', 'date_format:Y-m-d'],
         'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
-        'sex' => 'required|integer|max:3', 
+        'sex' => 'required|integer|between:1,2', 
         'amrs_location' => 'integer',
-        
-        // 'datereceived' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
-        // 'receivedstatus' => 'required|integer|max:2',
-        // 'rejectedreason' => 'required_if:receivedstatus,==,2',
+
+    ],
+
+    'lab_user' => [
+        'datereceived' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'receivedstatus' => 'required|integer|between:1,2',
+        'rejectedreason' => 'required_if:receivedstatus,==,2',        
     ],
 
 
