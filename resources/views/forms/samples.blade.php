@@ -559,7 +559,6 @@
                             </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
                                 </div>
                             </div>                            
