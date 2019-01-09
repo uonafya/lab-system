@@ -36,6 +36,7 @@
                         <div class="panel-body" style="padding-bottom: 6px;">
                             <div class="alert alert-error">
                                 <center>
+                                    The sample was not saved due to the following errors: <br />
                                     @foreach ($errors->all() as $error)
                                         {{ $error }} <br />
                                     @endforeach

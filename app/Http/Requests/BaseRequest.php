@@ -31,7 +31,8 @@ class BaseRequest extends FormRequest
     public function messages()
     {
         return [
-            'before_or_equal' => 'The :attribute field must be before or equal to today.'
+            'before_or_equal' => 'The :attribute field must be before or equal to today.',
+            'after_or_equal' => 'The :attribute field must be after the date which you had set.',
         ];
     }
 }
