@@ -33,9 +33,15 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="hpanel">
-                        @foreach ($errors->all() as $error)
-                            {{ $error }}
-                        @endforeach
+                        <div class="panel-body" style="padding-bottom: 6px;">
+                            <div class="alert alert-warning">
+                                <center>
+                                    @foreach ($errors->all() as $error)
+                                        {{ $error }}
+                                    @endforeach
+                                </center>
+                            </div>
+                        </div>
                     </div>
                 </div>                
             </div>
