@@ -38,6 +38,7 @@ class ViralsampleController extends Controller
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
         $data = Lookup::get_viral_lookups();
         $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
@@ -47,7 +48,12 @@ class ViralsampleController extends Controller
 
     public function list_sms()
     {
-        $samples = ViralsampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
+        $data = Lookup::get_viral_lookups();
+        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
