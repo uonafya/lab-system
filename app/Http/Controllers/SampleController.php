@@ -12,6 +12,7 @@ use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
 
+use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
@@ -31,6 +32,7 @@ class SampleController extends Controller
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
         $data = Lookup::get_lookups();
         $samples = SampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
@@ -40,8 +42,12 @@ class SampleController extends Controller
 
     public function list_sms()
     {
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
@@ -71,7 +77,7 @@ class SampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SampleRequest $request)
     {
         $samples_arrays = Lookup::samples_arrays();
         $submit_type = $request->input('submit_type');
@@ -315,7 +321,7 @@ class SampleController extends Controller
      */
     public function edit(Sample $sample)
     {
-        $sample->load(['patient.mother', 'batch.facility']);
+        // $sample->load(['patient.mother', 'batch.facility']);
         $data = Lookup::samples_form();
         $data['sample'] = $sample;
         return view('forms.samples', $data)->with('pageTitle', 'Samples');
