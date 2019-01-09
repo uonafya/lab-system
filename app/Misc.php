@@ -82,7 +82,7 @@ class Misc extends Common
             $res = 2;
         }
         else if(str_contains($str, ['invalid'])){
-            $res = 7;
+            $res = 3;
         }
         else if(str_contains($str, ['valid', 'passed'])){
             $res = 6;

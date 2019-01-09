@@ -738,8 +738,6 @@
             }
         @endslot
 
-        // :not(#datedispatched, #dob)
-
         $(".date :not(date-dob, .date-datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
