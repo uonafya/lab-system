@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use BaseRequest;
+use App\Http\Requests\BaseRequest;
 use Config;
 use App\Rules\BeforeOrEqual;
 
