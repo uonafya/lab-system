@@ -382,7 +382,7 @@ class ReportController extends Controller
         if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralworksheets.worksheet_id")->where('viralsamples.lab_id', '=', env('APP_LAB'))
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralworksheets.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
                         ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
@@ -393,12 +393,17 @@ class ReportController extends Controller
             $type = 'VL';
         }
         $month = $request->input('month');
-        $previousMonth = $month -1;
+        $previousMonth = $month - 1;
+        if ($month == 1)
+            $previousMonth = 12;
         
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
+        $previousYear = $year;
+        if ($previousMonth == 12)
+            $previousYear = $year - 1;
 
-        $model->where('year', $year);
+        $model->whereRaw("(`year` = $year or `year` = $previousYear)");
         $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
         $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
@@ -464,8 +469,7 @@ class ReportController extends Controller
                         'month' => $monthName,
                         'year' => $year
                     ];
-        // $reports = $newdata;
-        // dd($viewdata);
+        
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
