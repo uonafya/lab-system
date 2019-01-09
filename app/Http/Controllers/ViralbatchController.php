@@ -302,6 +302,8 @@ class ViralbatchController extends Controller
 
         $count = 0;
         $s;
+        
+        $has_received_status = false;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
