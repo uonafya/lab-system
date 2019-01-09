@@ -320,7 +320,7 @@ class SampleController extends Controller
      */
     public function edit(Sample $sample)
     {
-        $sample->load(['patient.mother', 'batch.facility']);
+        // $sample->load(['patient.mother', 'batch.facility']);
         $data = Lookup::samples_form();
         $data['sample'] = $sample;
         return view('forms.samples', $data)->with('pageTitle', 'Samples');
