@@ -415,8 +415,8 @@ class ReportController extends Controller
 
         $report = $model->get();
         $kits = $kits->get();
-        // $tests = $tests->first()->tests;
-        dd($tests->toSql());
+        $tests = $tests->first()->tests;
+        
         $data = json_decode(json_encode([
                     'parent' => self::$parent,
                     'child' => $sub,
