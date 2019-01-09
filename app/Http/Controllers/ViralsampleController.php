@@ -12,6 +12,7 @@ use App\MiscViral;
 
 use Excel;
 
+use App\Http\Requests\ViralsampleRequest;
 use Illuminate\Http\Request;
 
 class ViralsampleController extends Controller
@@ -84,7 +85,7 @@ class ViralsampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ViralsampleRequest $request)
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
         $submit_type = $request->input('submit_type');
