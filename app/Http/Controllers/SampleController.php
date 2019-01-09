@@ -12,6 +12,7 @@ use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
 
+use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
@@ -44,7 +45,7 @@ class SampleController extends Controller
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
-        
+
         $data = Lookup::get_lookups();
         $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
@@ -76,7 +77,7 @@ class SampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SampleRequest $request)
     {
         $samples_arrays = Lookup::samples_arrays();
         $submit_type = $request->input('submit_type');
