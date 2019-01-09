@@ -757,7 +757,7 @@
             }
         @endslot
 
-        // $(".date :not(.date-dob, .date-datedispatched)").datepicker({
+        // $(".date :not(.date-dob, .date-dispatched)").datepicker({
         $(".date-normal").datepicker({
             startView: 0,
             todayBtn: "linked",
@@ -780,7 +780,7 @@
             format: "yyyy-mm-dd"
         });
 
-        $(".date-datedispatched").datepicker({
+        $(".date-dispatched").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
