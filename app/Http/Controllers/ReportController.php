@@ -382,7 +382,7 @@ class ReportController extends Controller
         if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralworksheets.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
                         ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
