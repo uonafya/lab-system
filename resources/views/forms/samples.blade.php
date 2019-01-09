@@ -34,10 +34,10 @@
                 <div class="col-lg-12">
                     <div class="hpanel">
                         <div class="panel-body" style="padding-bottom: 6px;">
-                            <div class="alert alert-warning">
+                            <div class="alert alert-error">
                                 <center>
                                     @foreach ($errors->all() as $error)
-                                        {{ $error }}
+                                        {{ $error }} <br />
                                     @endforeach
                                 </center>
                             </div>
@@ -559,6 +559,7 @@
                             </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
                                 </div>
                             </div>                            
@@ -755,7 +756,7 @@
             }
         @endslot
 
-        $(".date :not(date-dob, .date-datedispatched)").datepicker({
+        $(".date :not(.date-dob, .date-datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
