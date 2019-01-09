@@ -105,6 +105,12 @@ Artisan::command('lablog', function(){
 // })->describe('Synch vl patients to the national database.');
 
 
+Artisan::command('send:nodata', function(){
+    $str = \App\Common::no_data_report('eid');
+    $str = \App\Common::no_data_report('vl');
+    $this->info($str);
+})->describe('Send no data report.');
+
 Artisan::command('send:communication', function(){
     $str = \App\Common::send_communication();
     $this->info($str);
@@ -234,6 +240,18 @@ Artisan::command('match:batches {type}', function($type){
     $this->info($str);
 })->describe('Match batches with records on the national database.');
 
+
+Artisan::command('match:samples {type}', function($type){
+    $str = \App\Synch::match_samples($type);
+    $this->info($str);
+})->describe('Match samples with records on the national database.');
+
+
+Artisan::command('match:poc', function(){
+    $str = \App\Copier::match_eid_poc_batches();
+    $str = \App\Copier::match_vl_poc_batches();
+    $this->info($str);
+})->describe('Match POC records.');
 
 Artisan::command('test:email', function(){
 	$str = \App\Common::test_email();

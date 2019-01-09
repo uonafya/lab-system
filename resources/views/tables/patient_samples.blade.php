@@ -40,7 +40,7 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
-                                        <td>  {!! $sample->batch->hyper_link !!} </td>
+                                        <td>  {!! $sample->batch->hyper_link ?? $sample->batch_id !!} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
@@ -65,9 +65,11 @@
                                         </td>
                                         <td>
                                             {{--@if($sample->batch->batch_complete == 1)--}}
-                                            @if($sample->repeatt == 0)
+                                            @if($sample->is_ready)
                                                 <a href="{{ url('/sample/print/' . $sample->id ) }}" target='_blank'>Print</a> |
                                             @endif
+
+                                            {!! $sample->hyper_link !!}
 
                                             <a href="{{ url('/sample/' . $sample->id ) }}" target='_blank'>View</a> |
                                             <a href="{{ url('/sample/' . $sample->id . '/edit' ) }}" target='_blank'>Edit</a>

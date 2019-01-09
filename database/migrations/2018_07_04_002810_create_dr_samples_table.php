@@ -71,14 +71,14 @@ class CreateDrSamplesTable extends Migration
             $table->integer('received_by')->unsigned()->nullable();
 
 
-            $table->tinyInteger('status')->nullable()->unsigned()->index();
+            $table->tinyInteger('status_id')->nullable()->unsigned()->index();
 
+            $table->boolean('qc_pass')->default(0)->nullable();
 
-            $table->text('assembled_sequence')->nullable(); 
-            $table->string('chromatogram_url', 50)->nullable(); 
-            $table->string('exatype_version', 50)->nullable(); 
+            $table->boolean('qc_stop_codon_pass')->default(0)->nullable();
+            $table->boolean('qc_plate_contamination_pass')->default(0)->nullable();
+            $table->boolean('qc_frameshift_codon_pass')->default(0)->nullable();
 
-            $table->boolean('qc_pass')->default(0);
             $table->smallInteger('qc_distance_to_sample')->nullable()->unsigned();
             $table->smallInteger('qc_distance_from_sample')->nullable()->unsigned();
             $table->float('qc_distance_difference', 4, 3)->unsigned()->nullable();
@@ -86,10 +86,24 @@ class CreateDrSamplesTable extends Migration
             $table->string('qc_distance_compare_to_name', 50)->nullable();
             $table->string('qc_distance_sample_name', 20)->nullable();
 
-            $table->boolean('qc_stop_codon_pass')->default(0);
-            $table->boolean('qc_plate_contamination_pass')->default(0);
-            $table->boolean('qc_frameshift_codon_pass')->default(0);
-            $table->boolean('qc_')->default(0);
+
+            $table->boolean('has_errors')->default(0);
+            $table->boolean('has_warnings')->default(0);
+            $table->boolean('has_calls')->default(0);
+            $table->boolean('has_genotypes')->default(0);
+
+            // PendChromatogramManualIntervention
+            $table->boolean('pending_manual_intervention')->default(0);
+            $table->boolean('had_manual_intervention')->default(0);
+
+
+            $table->text('assembled_sequence')->nullable(); 
+            $table->string('chromatogram_url', 50)->nullable(); 
+            $table->string('pdf_download_link', 100)->nullable(); 
+            $table->string('exatype_version', 50)->nullable(); 
+            $table->string('algorithm', 20)->nullable(); 
+
+
             
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();

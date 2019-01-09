@@ -97,6 +97,16 @@ p.breakhere {page-break-before: always}
 
 			@endif
 
+			@if(env('APP_LAB') == 5 && $sample->amrs_location)			
+
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<strong>AMRS Location:</strong> &nbsp; {{ $amrs_locations->where('id', $sample->amrs_location)->first()->name ?? ''  }}
+					</td>					
+				</tr>
+
+			@endif
+
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
 					<span class="style1 style10">
@@ -145,16 +155,18 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong>Gender</strong></td>
 				<td colspan="3"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				<td class="style4 style1 comment" colspan="1" ><strong>PMTCT</strong></td>
-				<td colspan="2" class="comment">
-					<span class="style5">
-	                    @foreach($pmtct_types as $pmtct_type)
-	                        @if($sample->pmtct == $pmtct_type->id)
-	                            {{ $pmtct_type->name }}
-	                        @endif
-	                    @endforeach						
-					</span>
-				</td>
+				@if($sample->patient->sex == 2)
+					<td class="style4 style1 comment" colspan="1" ><strong>PMTCT</strong></td>
+					<td colspan="2" class="comment">
+						<span class="style5">
+		                    @foreach($pmtct_types as $pmtct_type)
+		                        @if($sample->pmtct == $pmtct_type->id)
+		                            {{ $pmtct_type->name }}
+		                        @endif
+		                    @endforeach						
+						</span>
+					</td>
+				@endif
 			</tr>
 
 			<tr >

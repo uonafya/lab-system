@@ -64,15 +64,12 @@
                 </li> -->
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
                 <hr />
-                @if(env('APP_LAB') == 8 || env('APP_LAB') == 9)
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
                     <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
                     <hr />
                     <li><a href="{{ url('worksheet/create/2/70') }}">Create Abbott Worksheet(72)</a></li>
-                    <hr />
-                @elseif(env('APP_LAB') == 3)
-                    <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
                     <hr />
                 @endif
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
@@ -123,8 +120,12 @@
                     <li><a href="{{ url('viralsample/create') }}">Add Samples</a></li>
                     <hr />
                 @endif
-                @if(env('APP_LAB') == 2)
+                @if(env('APP_LAB') == 2 && (auth()->user()->user_type_id == 0 || auth()->user()->lab_id == 7))
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
+                    <hr />
+                @endif
+                @if(env('APP_LAB') == 2 && (auth()->user()->user_type_id == 0 || auth()->user()->lab_id == 10))
+                    <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
                     <hr />
                 @endif
                 <li>
@@ -145,15 +146,12 @@
                     <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [8, 9]))
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/21') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/69') }}">Create Abbott Worksheet(72)</a></li>
-                    <hr />
-                @elseif(env('APP_LAB') == 3)
-                    <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>
                     <hr />
                 @endif
                 <li><a href="{{ url('viralworksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
@@ -261,6 +259,14 @@
             </li>
             <hr />
             <li>
+                <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
+            </li>
+            <hr>
+            <li>
+                <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
+            </li>
+            <hr>
+            <li>
                 <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
             </li>
             <li>
@@ -360,7 +366,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/sample/dispatch/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
+                <a href="{{ url('cd4/worksheet/state/1') }}"><span class="nav-label">Dispatch Results</span><span class="label label-warning pull-right">{{ $widgets['CD4resultsForDispatch'] ?? 0 }}</span></a>
             </li>
             <hr />
         @endif
@@ -413,6 +419,10 @@
                 <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
             @endif
             </li>
+            <hr />
+        @endif
+        @if(Session('testingSystem') != 'CD4' && Auth::user()->user_type_id == 0)
+            <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)

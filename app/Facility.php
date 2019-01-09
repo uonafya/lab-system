@@ -10,6 +10,12 @@ class Facility extends BaseModel
     protected $table = "facilitys";
     public $timestamps = false;
 
+    
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionEnabled = true;
+    protected $revisionCleanup = true; 
+    protected $historyLimit = 500; 
+
 
     public function facility_contact()
     {
@@ -103,11 +109,11 @@ class Facility extends BaseModel
         $emails = [];
         if($this->email && $this->email != '') $emails[] = $this->email;
         if($this->contact_email && $this->contact_email != '') $emails[] = $this->contact_email;
-        $f = ['dmltemail', 'dtlcemail', 'subcountyemail', 'countyemail', 'partneremail', 'partnerlabmail', 'partnerpointmail'];
+        // $f = ['dmltemail', 'dtlcemail', 'subcountyemail', 'countyemail', 'partneremail', 'partnerlabmail', 'partnerpointmail'];
 
-        foreach ($f as $val) {
-            if($this->$val && $this->$val != '') $emails[] = $this->$val;
-        }
+        // foreach ($f as $val) {
+        //     if($this->$val && $this->$val != '') $emails[] = $this->$val;
+        // }
         return $emails;
     }
 

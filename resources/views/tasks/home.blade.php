@@ -24,7 +24,14 @@
 	            </div>
 
                 @php
+                    $currentmonth = date('m');
                     $prevmonth = date('m')-1;
+                    $year = date('Y');
+                    $prevyear = $year;
+                    if ($currentmonth == 1) {
+                        $prevmonth = 12;
+                        $prevyear -= 1;
+                    }
                 @endphp
                 
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
@@ -35,23 +42,34 @@
                         	<p style="margin-left: 3em;">
                                 <font color="#CCCCCC">
                                     @if (($data->kits->eidtaqkits > 0) && ($data->kits->vltaqkits > 0))
-                                        RECEIVED ABBOTT EID & VL KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
+                                        RECEIVED ABBOTT (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
-                                        RECEIVED ROCHE EID & VL KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
+                                        RECEIVED ROCHE (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
-                                        RECEIVED ABBOTT & ROCHE EID & VL KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
+                                        RECEIVED ABBOTT & ROCHE (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @endif
                                 </font>
+                            </p>
+                            <p style="margin-left: 3em;">
+                                @if (($data->kits->eidtaqkits > 0) && ($data->kits->vltaqkits > 0))
+                                    <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a>
+                                @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
+                                    <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
+                                @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
+                                    <a href="{{ url('kitsdeliveries/all') }}">Click here to submit a NULL ABBOTT & ROCHE (EID & VL) report</a><br>
+                                    <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a><br>
+                                    <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
+                                @endif
                             </p>
                         </div>
                     @elseif ($data->submittedkits == 1)  
                         @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)))
                             <div class="alert alert-success spacing bottom">
-                                <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Consumption Report Submitted</a></strong>
+                                <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Consumption Report Submitted</a></strong>
                             </div>
                         @else
                         <div class="alert alert-warning spacing bottom">
-                            <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, date('m'))) }}, {{ date('Y') }}]</a></strong>
+                            <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }}]</a></strong>
                             <p style="margin-left: 3em;">
                                 <font color="#CCCCCC">
                                     @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0)))
@@ -79,7 +97,7 @@
                         </div>
                     @else 
                         <div class="alert alert-success spacing bottom">
-                            <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Lab Performance Log ( Tracker ) Submitted</a></strong>
+                            <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Lab Performance Log ( Tracker ) Submitted</a></strong>
                         </div>
                     @endif
                     <!-- Lab performance Report -->
@@ -92,7 +110,7 @@
                         </div>
                     @else
                         <div class="alert alert-success spacing bottom">
-                            <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} Lab Monthly Equipment Log ( Tracker ) Submitted</a></strong>
+                            <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Lab Monthly Equipment Log ( Tracker ) Submitted</a></strong>
                         </div>
                     @endif
                     <!-- Lab equipment Report -->

@@ -42,6 +42,18 @@
                         </div>
                         <br />
 
+                        @if(env('APP_LAB') == 2)
+
+                            <div class="alert alert-warning">
+                                <center>
+                                    Please fill the HEI number by starting the facility mfl code <br />
+                                    Use the following format: MFL/YYYY/NNNNN
+                                </center>
+                            </div>
+                            <br />
+
+                        @endif
+
                         @isset($sample)
                             <div class="alert alert-warning">
                                 <center>
@@ -71,6 +83,15 @@
                                 <center> <b>Facility</b> - {{ $facility_name }}<br />  <b>Batch</b> - {{ $batch->id }} </center>
                             </div>
                             <br />
+
+                            @if(session('last_patient'))
+
+                                <div class="alert alert-success">
+                                    <center> <b>Last Patient Entered</b> - {{ session('last_patient') }} </center>
+                                </div>
+                                <br />
+
+                            @endif
 
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
@@ -190,6 +211,17 @@
                             </div>
                         </div>
 
+                        @if(!isset($sample))
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="reentry" value="1" />
+                                </div>
+                            </div>
+
+                        @endif
+
                         <div class="form-group">
                             <label class="col-sm-4 control-label">PCR Type
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -230,7 +262,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
+                                <div class="input-group date date-dob">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
                                 </div>
@@ -519,7 +551,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
                             <div class="col-sm-8">
-                                <div class="input-group date date_future">
+                                <div class="input-group date date-dispatched date_future">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datedispatched" class="form-control" value="{{ $sample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
                                 </div>
@@ -706,17 +738,29 @@
             }
         @endslot
 
-        $(".date:not(#datedispatched)").datepicker({
+        $(".date :not(date-dob, .date-datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
+            startDate: "-1m",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
 
-        $("#datedispatched").datepicker({
+        $(".date-dob").datepicker({
+            startView: 1,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: "-2y",
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $(".date-datedispatched").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,

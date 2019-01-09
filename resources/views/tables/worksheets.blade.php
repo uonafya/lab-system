@@ -91,7 +91,7 @@
 
             @foreach($status_count->where('status_id', $worksheet_status->id) as $mach)
                 <div class="col-sm-2">
-                    <b>{!! $machines->where('id', $mach->machine_type)->first()->machine !!}</b> : {{ $mach->total }}
+                    <b>{!! $machines->where('id', $mach->machine_type)->first()->machine ?? '' !!}</b> : {{ $mach->total }}
                 </div>
             @endforeach
         </div>
@@ -137,7 +137,7 @@
                                 <tr>
                                     <td>{{ $worksheet->id }} </td>
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
-                                    <td> {{ $worksheet->creator->full_name }} </td>
+                                    <td> {{ $worksheet->creator->full_name ?? '' }} </td>
                                     <td> {!! $worksheet->machine !!} </td>
                                     <td> {!! $worksheet->status !!} </td>
                                     <td> {{ $worksheet->pos }} </td>
@@ -153,7 +153,11 @@
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
-                                    <td> {!! $worksheet->mylinks !!} </td>
+                                    <td> 
+                                        @include('shared.worksheet_links', ['worksheet' => $worksheet])
+
+                                        <!-- $worksheet->mylinks  -->
+                                    </td>
                                 </tr>
                             @endforeach
 

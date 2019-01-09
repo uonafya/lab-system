@@ -40,11 +40,12 @@ class FunctionController extends Controller
         $date_dispatched_start = $request->input('date_dispatched_start');
         $date_dispatched_end = $request->input('date_dispatched_end');
         $patients = $request->input('patient_id');
-        $facility = $request->input('facility_code');
+        $facilities = $request->input('facility_code');
         $orders = $request->input('order_numbers');
         $sample_status = $request->input('sample_status');
         $location = $request->input('location'); 
         $dispatched = $request->input('dispatched');   
+        $ids = $request->input('ids');   
 
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
@@ -58,12 +59,21 @@ class FunctionController extends Controller
             $orders = str_replace(' ', '', $orders);
             $orders = explode(',', $orders);
         } 
+        if($ids){
+            $ids = str_replace(' ', '', $ids);
+            $ids = explode(',', $ids);
+        }
+        if($facilities){
+            $facilities = str_replace(' ', '', $facilities);
+            $facilities = explode(',', $facilities);
+        }
  
-        $result = $class::when($facility, function($query) use($facility){
-                return $query->where('facilitycode', $facility);
+        $result = $class::when($facilities, function($query) use($facilities){
+                return $query->whereIn('facilitycode', $facilities);
             })
             ->when($dispatched, function($query){
-                return $query->whereNotNull('datedispatched');
+                // return $query->whereNotNull('datedispatched');
+                return $query->whereRaw("(datedispatched is not null OR (dateapproved is not null and dateapproved2 is not null))");
             })
             ->when(($sample_status && $test == 3), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
@@ -74,6 +84,9 @@ class FunctionController extends Controller
             })
             ->when($orders, function($query) use($orders){
                 return $query->whereIn('order_no', $orders);
+            })
+            ->when($ids, function($query) use($ids){
+                return $query->whereIn('id', $ids);
             })
             ->when($location, function($query) use($location){
                 return $query->where('amrs_location', $location);
@@ -135,10 +148,16 @@ class FunctionController extends Controller
                 'result' => $sample->result,
                 // 'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
                 'date_dispatched' => $sample->datedispatched,
-                'sample_status' => $sample->sample_status
+                'sample_status' => $sample->sample_status,
             ];
 
             if($test == 1) $r['result'] = Lookup::get_result($sample->result);
+            if($test == 2){
+                $r['result_log'] = null;
+                if(is_numeric($sample->result)) {
+                    $r['result_log'] = round(log10($sample->result), 1);                
+                }
+            }
 
             if($sample->receivedstatus == 2){
                 $r['rejected_reason'] = Lookup::get_rejected_reason($test, $sample->rejectedreason);

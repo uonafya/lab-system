@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@index');
 		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'BatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'BatchController@facility_batches');
+		Route::get('delayed/', 'BatchController@delayed_batches');
 		Route::post('index', 'BatchController@batch_search');
 		Route::get('site_approval/', 'BatchController@approve_site_entry');
 		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
@@ -90,6 +91,9 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
+
+			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
+			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'BatchController@confirm_dispatch');
 
@@ -115,6 +119,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('print/{sample}', 'Cd4SampleController@print')->name('print');
 			Route::get('printresult/{sample}', 'Cd4SampleController@printresult')->name('printresult');
 			Route::get('search/{sample}', 'Cd4SampleController@searchresult')->name('searchresult');
+			Route::get('delete/{sample}', 'Cd4SampleController@destroy')->name('delete');
 			Route::post('search', 'Cd4SampleController@search')->name('search');
 		});
 		Route::resource('sample', 'Cd4SampleController');
@@ -153,6 +158,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{batch_complete?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@index');
 		Route::get('to_print/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'ViralbatchController@to_print');
 		Route::get('facility/{facility_id}/{batch_complete?}/{date_start?}/{date_end?}', 'ViralbatchController@facility_batches');
+		Route::get('delayed/', 'ViralbatchController@delayed_batches');
 		Route::post('index', 'ViralbatchController@batch_search');
 		Route::get('site_approval/', 'ViralbatchController@approve_site_entry');
 		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
@@ -160,6 +166,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
+
+			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
 			Route::post('complete_dispatch/', 'ViralbatchController@confirm_dispatch');
@@ -221,6 +229,10 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('email', 'EmailController');
 	});
+
+	Route::group(['middleware' => ['only_utype:1']], function() {
+		Route::get('lablogs/{year?}/{month?}', 'RandomController@lablogs')->name('lablogs');
+	});
 	
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::get('facility/served', 'FacilityController@served');
@@ -239,6 +251,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('reports', 'ReportController@generate')->name('reports');
 	Route::post('reports/kitdeliveries', 'ReportController@kits');
 	Route::post('reports/kitsconsumption', 'ReportController@consumption');
+	Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');
@@ -262,7 +275,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/pending', 'TaskController@index')->name('pending');
 	Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
 	Route::post('/performancelog', 'TaskController@performancelog');
-	Route::get('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+	Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	
 	Route::post('viralpatient/search/', 'ViralpatientController@search');
@@ -315,7 +328,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('users', 'UserController@index')->name('users');
 		Route::get('user/add', 'UserController@create')->name('user.add');
 		Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
-		Route::get('users/activity/{user?}', 'UserController@activity')->name('user.activity');
+		Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
 	});
 	Route::resource('user', 'UserController');	
 
@@ -417,6 +430,24 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('print/{worklist}', 'WorklistController@print')->name('print');
 		});
 		Route::resource('worklist', 'WorklistController', ['except' => ['edit']]);
+	});
+
+	Route::group(['middleware' => ['only_utype:0']], function(){
+		Route::get('abbottdeliveries/{id}/recompute', 'AbbottDeliveriesController@recompute');
+		Route::get('abbottdeliveries/{id}/restore', 'AbbottDeliveriesController@restore');
+		Route::get('abbottdeliveries/{id}/delete', 'AbbottDeliveriesController@delete');
+		Route::resource('abbottdeliveries', 'AbbottDeliveriesController');
+
+		Route::get('abbottprocurement/{id}/recomputeending', 'AbbottProcurementController@recomputeending');
+		Route::resource('abbottprocurement', 'AbbottProcurementController');
+
+		Route::get('taqmandeliveries/{id}/recompute', 'TaqmanDeliveriesController@recompute');
+		Route::get('taqmandeliveries/{id}/restore', 'TaqmanDeliveriesController@restore');
+		Route::get('taqmandeliveries/{id}/delete', 'TaqmanDeliveriesController@delete');
+		Route::resource('taqmandeliveries', 'TaqmanDeliveriesController');
+		
+		Route::get('taqmanprocurement/{id}/recomputeending', 'TaqmanProcurementController@recomputeending');
+		Route::resource('taqmanprocurement', 'TaqmanProcurementController');
 	});
 
 });

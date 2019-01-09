@@ -41,6 +41,17 @@ width:1180px;
 	@endisset
 	>
 	<div align="center">
+			<tr class="odd">
+				<td colspan="8">
+					<center>
+						C8800	
+
+						@if($worksheet->cdcworksheetno)
+							({{ $worksheet->cdcworksheetno }})
+						@endif											
+					</center>	
+				</td>			
+			</tr>
 			@if(get_class($worksheet) == "App\Viralworksheet")
 				<tr class="odd">
 					<td colspan="8">
@@ -122,9 +133,9 @@ width:1180px;
 				?>
 
 
-				@foreach($samples->where('parentid', '!=', 0) as $sample)
+				@foreach($samples as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample])
+					@include('shared/worksheet_sample', ['sample' => $sample, ++$i])
 
 					@php $count++; @endphp
 
@@ -133,24 +144,6 @@ width:1180px;
 					@endif
 
 				@endforeach
-
-
-				@foreach($samples->where('parentid', 0) as $sample)
-
-					@include('shared/worksheet_sample', ['sample' => $sample])
-
-					@php $count++; @endphp
-
-					@if($count % 5 == 0)
-						</tr><tr><td colspan=5>&nbsp;</td></tr><tr>
-					@endif
-				@endforeach
-
-				{{--@if($vl) 
-					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
-				@else
-					<td align='center' > PC </td><td  align='center' > NC </td>
-				@endif--}}
 			</tr>
 				
 		</table>

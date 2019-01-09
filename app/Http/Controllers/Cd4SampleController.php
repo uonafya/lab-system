@@ -58,6 +58,8 @@ class Cd4SampleController extends Controller
 
         if ($request->input('receivedstatus') == 2) { //If rejected set status to rejected also
             $sampleData['status_id'] = $request->input('receivedstatus');
+        } else {
+            $sampleData['status_id'] =  1;
         }
         
         $sample->fill($sampleData);
@@ -167,9 +169,15 @@ class Cd4SampleController extends Controller
      * @param  \App\Cd4Sample  $cd4Sample
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cd4Sample $cd4Sample)
+    public function destroy(Cd4Sample $sample)
     {
-        //
+        if(($sample->status_id == 1 || $sample->status_id == 2) && $sample->datetested == null){
+            $sample->delete();
+            session(['toast_message' => 'Sample Successfully deleted']);
+        } else {
+            abort(403);
+        }
+        return back();
     }
 
     public function dispatch($state=null){

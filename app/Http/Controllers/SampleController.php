@@ -29,7 +29,9 @@ class SampleController extends Controller
     public function list_poc()
     {
         $user = auth()->user();
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
         $data = Lookup::get_lookups();
         $samples = SampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
@@ -39,8 +41,12 @@ class SampleController extends Controller
 
     public function list_sms()
     {
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
@@ -92,9 +98,12 @@ class SampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
+        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
         if(env('APP_LAB') == 4){
             $fac = Facility::find($data_existing['facility_id']);
             $str = $fac->facilitycode . '/';
+            // if(env('APP_LAB') == 4) $str .= '/';
+            // if(env('APP_LAB') == 2) $str .= '-';
             if(!starts_with($patient_string, $str)){
                 if(starts_with($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
@@ -109,7 +118,7 @@ class SampleController extends Controller
         $data_existing['patient'] = $patient_string;
 
         $existing = SampleView::existing( $data_existing )->get()->first();
-        if($existing){
+        if($existing && !$request->input('reentry')){
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
             return back();            
@@ -239,12 +248,11 @@ class SampleController extends Controller
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
+        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'batch_total' => $sample_count, 'last_patient' => $patient->patient]);
 
         $submit_type = $request->input('submit_type');
-
-        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
-        session(['batch_total' => $sample_count]);
 
         if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
             if($sample_count > 9) $batch->full_batch(); 
@@ -391,11 +399,27 @@ class SampleController extends Controller
         $batch->pre_update();
 
         $patient = $sample->patient;
+
+        if($patient->patient != $request->input('patient')){
+            $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+
+            if(!$patient){
+                $patient = new Patient;
+                $created_patient = true;
+            }
+        }
+
+
+
         $data = $request->only($samples_arrays['patient']);
         $patient->fill($data);
-        $patient->pre_update();
 
-        $mother = $patient->mother;
+        if(isset($created_patient)){
+            $mother = new Mother;
+        }else{
+            $mother = $patient->mother;
+        }
+
         $data = $request->only($samples_arrays['mother']);
         $mother->fill($data);
 
@@ -403,6 +427,11 @@ class SampleController extends Controller
         if($viralpatient) $mother->patient_id = $viralpatient->id;
 
         $mother->pre_update();
+
+        $patient->mother_id = $mother->id;
+        $patient->pre_update();
+
+        
 
 
         // $new_patient = $request->input('new_patient');
@@ -494,6 +523,28 @@ class SampleController extends Controller
 
         $sample->pre_update(); 
 
+        if(isset($created_patient)){
+            if($sample->run == 1 && $sample->has_rerun){
+                $children = $sample->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $patient->id;
+                    $kid->pre_update();
+                }
+            }
+            else if($sample->run > 1){
+                $parent = $sample->parent;
+                $parent->pre_update();
+                
+                $children = $parent->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $patient->id;
+                    $kid->pre_update();
+                }
+            }
+        }
+
         Misc::check_batch($batch->id);  
 
         if($sample->receivedstatus == 1 && $user->is_lab_user()){            
@@ -506,6 +557,10 @@ class SampleController extends Controller
                 'toast_message' => 'The sample has been saved to batch number ' . $batch->id]);
             return redirect('sample/create');
         } */    
+
+        if($sample->receivedstatus && !$sample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('batch/site_approval_group/' . $batch->id);
+        }
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
@@ -551,7 +606,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->result == NULL){
+        if($sample->result == NULL && $sample->run < 2){
             $batch = $sample->batch;
             $sample->delete();
             $samples = $batch->sample;
@@ -694,7 +749,8 @@ class SampleController extends Controller
 
     public function release_redraw(Sample $sample)
     {
-        if($sample->run == 1){
+        $batch = $sample->batch;
+        if($sample->run == 1 || $batch->batch_complete != 0 ){
             session(['toast_message' => 'The sample cannot be released as a redraw.']);
             session(['toast_error' => 1]);
             return back();
@@ -912,6 +968,7 @@ class SampleController extends Controller
         session()->forget('batch');
         session()->forget('facility_name');
         session()->forget('batch_total');
+        session()->forget('last_patient');
         // session()->forget('batch_dispatch');
         // session()->forget('batch_dispatched');
         // session()->forget('batch_received');

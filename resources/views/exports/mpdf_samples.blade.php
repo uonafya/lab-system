@@ -96,6 +96,16 @@ p.breakhere {page-break-before: always}
 
 			@endif
 
+			@if(env('APP_LAB') == 5 && $sample->amrs_location)			
+
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<strong>AMRS Location:</strong> &nbsp; {{ $amrs_locations->where('id', $sample->amrs_location)->first()->name ?? ''  }}
+					</td>					
+				</tr>
+
+			@endif
+
 			<tr>
 				<td colspan="3"  class="evenrow" align="center" >
 					<span class="style1 style10">
@@ -214,23 +224,37 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="3" class="style4 style1 comment"><strong>Test Result</strong></td>
-				<td colspan="1" class="style4 style1 comment">
-					<strong> 
-	                    @foreach($results as $result)
-	                        @if($sample->result == $result->id)
-	                        	<span
-	                        		@if($result->id == 2)
-	                        			class="emph"
-	                        		@endif
+				
 
-	                        	> {{ $result->name }} </span>
-	                            
-	                        @endif
-	                    @endforeach
-					</strong>
-				</td>
-				<td colspan="3"></td>
+				@if($sample->receivedstatus == 2)
+					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
+
+					<td colspan="4" class="style4 style1 comment">
+						 {{ $rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
+					</td>
+
+
+				@else
+					<td colspan="3" class="style4 style1 comment"><strong>Test Result</strong></td>
+
+					<td colspan="1" class="style4 style1 comment">
+						<strong> 
+		                    @foreach($results as $result)
+		                        @if($sample->result == $result->id)
+		                        	<span
+		                        		@if($result->id == 2)
+		                        			class="emph"
+		                        		@endif
+
+		                        	> {{ $result->name }} </span>
+		                            
+		                        @endif
+		                    @endforeach
+						</strong>
+					</td>
+					<td colspan="3"></td>
+
+				@endif
 			</tr>
 
 			

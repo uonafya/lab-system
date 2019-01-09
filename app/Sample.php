@@ -50,14 +50,64 @@ class Sample extends BaseModel
         return $this->belongsTo('App\User', 'cancelledby');
     }
 
-    public function reviewer()
-    {
-        return $this->belongsTo('App\User', 'reviewedby');
-    }
-
     public function approver()
     {
         return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
+    
+
+    public function remove_rerun()
+    {
+        if($this->parentid == 0) $this->remove_child();
+        else{
+            $this->remove_sibling();
+        }
+    }
+
+    public function remove_child()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete();
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function remove_sibling()
+    {
+        $parent = $this->parent;
+        $children = $parent->child;
+
+        foreach ($children as $s) {
+            if($s->run > $this->run) $s->delete();            
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function getIsReadyAttribute()
+    {
+        if($this->repeatt == 0){
+            if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                if(($this->dateapproved && $this->dateapproved2) || ($this->approvedby && $this->approvedby2)){
+                    return true;
+                }
+            }
+            else{
+                if($this->dateapproved || $this->approvedby) return true;
+            }
+        }
+        return false;
     }
 
 

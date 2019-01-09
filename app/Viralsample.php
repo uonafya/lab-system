@@ -52,14 +52,14 @@ class Viralsample extends BaseModel
         return $this->belongsTo('App\User', 'cancelledby');
     }
 
-    public function reviewer()
-    {
-        return $this->belongsTo('App\User', 'reviewedby');
-    }
-
     public function approver()
     {
         return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
     }
 
     public function scopeRuns($query, $sample)
@@ -98,7 +98,15 @@ class Viralsample extends BaseModel
         $this->previous_tests = $samples;
     }
 
-    public function remove_reruns()
+    public function remove_rerun()
+    {
+        if($this->parentid == 0) $this->remove_child();
+        else{
+            $this->remove_sibling();
+        }
+    }
+
+    public function remove_child()
     {
         $children = $this->child;
 
@@ -110,7 +118,7 @@ class Viralsample extends BaseModel
         $this->save();
     }
 
-    public function remove_after_reruns()
+    public function remove_sibling()
     {
         $parent = $this->parent;
         $children = $parent->child;
@@ -123,6 +131,21 @@ class Viralsample extends BaseModel
         $this->save();
     }
     
+
+    public function getIsReadyAttribute()
+    {
+        if($this->repeatt == 0){
+            if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                if(($this->dateapproved && $this->dateapproved2) || ($this->approvedby && $this->approvedby2)){
+                    return true;
+                }
+            }
+            else{
+                if($this->dateapproved || $this->approvedby) return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Get the sample's coloured result name

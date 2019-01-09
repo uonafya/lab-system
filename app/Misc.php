@@ -29,7 +29,7 @@ class Misc extends Common
 				}
 			}
 			else{
-				$original = self::check_original($sample->id);
+                $original = $sample->parent;
 
 				if($sample->run == 2){
 					if( ($sample->result == 3 && $original->result == 3) || 
@@ -71,6 +71,32 @@ class Misc extends Common
 		return true;
 	}
 
+    public static function sample_result($result, $error=null)
+    {
+        $str = strtolower($result);
+
+        if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+            $res = 1;
+        }
+        else if(str_contains($result, ['1', '>']) || str_contains($str, ['detected'])){
+            $res = 2;
+        }
+        else if(str_contains($str, ['invalid'])){
+            $res = 3;
+        }
+        else if(str_contains($str, ['valid', 'passed'])){
+            $res = 6;
+        }
+        else if(str_contains($str, ['collect', '5'])){
+            $res = 5;
+        }
+        else{
+            return ['result' => 3, 'interpretation' => $error];
+        }
+
+        return ['result' => $res, 'interpretation' => $result];
+    }
+
 	public static function save_repeat($sample_id)
 	{
 		$original = Sample::find($sample_id);
@@ -79,6 +105,7 @@ class Misc extends Common
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();
 		$sample->fill($original->only($fields['sample_rerun']));
+        $sample->age = $original->age;
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 
@@ -96,6 +123,16 @@ class Misc extends Common
 			$batch_id = $sample->batch_id;
 		}
 		$double_approval = \App\Lookup::$double_approval; 
+
+        Sample::whereNull('result')
+            ->where('repeatt', 0)
+            ->where('batch_id', $batch_id)
+            ->whereNotNull('dateapproved')
+            ->when((in_array(env('APP_LAB'), $double_approval)), function($query){
+                return $query->whereNotNull('dateapproved2');
+            })            
+            ->update(['result' => 5, 'labcomment' => 'Failed Test']);
+
 		if(in_array(env('APP_LAB'), $double_approval)){
 			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
 		}
@@ -116,19 +153,6 @@ class Misc extends Common
                 $b->save();
             }
 		}
-	}
-
-	public static function check_original($sample_id)
-	{
-		$lab = auth()->user()->lab_id;
-
-		$sample = Sample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.id' => $sample_id])
-		->get()
-		->first();
-
-		return $sample;
 	}
 
 	public static function check_previous($sample_id)
@@ -329,7 +353,7 @@ class Misc extends Common
 			}    			
 		}
 
-		if(!$message){
+		if(!isset($message)){
 			print_r($sample);
 			return;
 		}
@@ -353,68 +377,6 @@ class Misc extends Common
 			$s->save();
 		}
     }
-
-    /*public static function send_sms_person($sample, $tel)
-    {
-        // English
-        if($sample->preferred_language == 1){
-            if($sample->result == 2){
-                $message = $sample->patient_name . " Jambo, baby's results are ready. Please come to the clinic when you can. Thank You";
-            }
-            else if($sample->result == 3 || $sample->result == 5){
-                $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
-            }
-            else{
-                if($sample->receivedstatus == 2){
-                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";
-                }
-                else{
-                    $message = $sample->patient_name . " Jambo,  please come to the clinic as soon as you can! Thank you";  
-                }
-            }
-        }
-        // Kiswahili
-        else{
-            if($sample->result == 2){
-                $message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
-            }
-            else if($sample->result == 3 || $sample->result == 5){
-                $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-            }
-            else{
-                if($sample->receivedstatus == 2){
-                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-                }
-                else{
-                    $message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
-                }
-            }               
-        }
-
-        if(!$message){
-            print_r($sample);
-            return;
-        }
-
-        $client = new Client(['base_uri' => self::$sms_url]);
-
-        $response = $client->request('post', '', [
-            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-            'http_errors' => false,
-            'json' => [
-                'sender' => env('SMS_SENDER_ID'),
-                'recipient' => $sample->patient_phone_no,
-                'message' => $message,
-            ],
-        ]);
-
-        $body = json_decode($response->getBody());
-        if($response->getStatusCode() == 201){
-            $s = Sample::find($sample->id);
-            $s->time_result_sms_sent = date('Y-m-d H:i:s');
-            $s->save();
-        }
-    }*/
 
     public static function sms_test()
     {
@@ -474,17 +436,18 @@ class Misc extends Common
         $date_str = $year . '-12-31';        
 
         if($test){
-            $repeats = SampleView::selectRaw("samples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
+            $repeats = SampleView::selectRaw("samples_view.*, facilitys.name, users.surname, users.oname")
                 ->leftJoin('users', 'users.id', '=', 'samples_view.user_id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
                 ->where('datereceived', '>', $date_str)
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
+                ->whereNull('datedispatched')
                 ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                ->where('input_complete', true)
+                // ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw('((result IS NULL ) OR (result=0 ))')
-                ->orderBy('samples_view.id', 'asc')
+                ->orderBy('samples_view.id', 'desc')
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();
@@ -500,17 +463,23 @@ class Misc extends Common
                 	->whereRaw("((received_by={$user->id} && sample_received_by IS NULL) OR  sample_received_by={$user->id})");
             })
             ->where('site_entry', '!=', 2)
+            ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-            ->where('input_complete', true)
+            // ->where('input_complete', true)
+            // ->where('parentid', '>', 0)
             ->whereIn('receivedstatus', [1, 3])
-            ->whereRaw('((result IS NULL ) OR (result =0 ))')
-            ->orderBy('isnull', 'asc')
+            ->whereRaw('((result IS NULL ) OR (result =0 ))')            
+            ->orderBy('run', 'desc')
+            // ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('samples_view.id', 'asc')
+            ->orderBy('batch_id', 'asc')
+            // ->orderBy('facilitys.id', 'asc')
             ->limit($limit)
             ->get();
+
+        // dd($samples);
 
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
@@ -529,7 +498,7 @@ class Misc extends Common
     public static function send_to_mlab()
     {
     	ini_set('memory_limit', "-1");
-        $min_date = date('Y-m-d', strtotime('-1 month'));
+        $min_date = date('Y-m-d', strtotime('-2 month'));
     	$batches = \App\Batch::join('facilitys', 'batches.facility_id', '=', 'facilitys.id')
     			->select("batches.*")
     			->with(['facility'])

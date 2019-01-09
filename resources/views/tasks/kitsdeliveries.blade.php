@@ -56,10 +56,10 @@
                                 <select class="form-control input-sm" required name="platform" id="platform">
                                     <option value="" selected>Select Platform</option>
                                     {{-- @if($data->taqmandeliveries == 0) --}}
-                                    <option value="1">COBAS/TAQMAN</option>
+                                    <option value="1">COBAS/TAQMAN @if($data->taqmandeliveries > 0) <i>(Entry made for current quarter)</i> @endif</option>
                                     {{-- @endif
                                     @if($data->abbottdeliveries == 0) --}}
-                                    <option value="2">ABBOTT</option>
+                                    <option value="2">ABBOTT @if($data->abbottdeliveries > 0) <i>(Entry made for current quarter)</i> @endif</option>
                                     {{-- @endif --}}
                                 </select>
                             </div>
@@ -88,7 +88,7 @@
                                 <thead>               
                                     <tr>
                                         <th></th>
-                                        <th>HIV Quantitative Test Kits</th>
+                                        <th>HIV Qualitative Test Kits</th>
                                         <th>SPEX Agent</th>
                                         <th>Ampliprep Input s-tube</th>
                                         <th>Ampliprep flapless SPU</th>
@@ -606,7 +606,7 @@
                                 <tbody>
                                     <tr>
                                         <td>1</td>
-                                        <td><strong>ABBOTT RealTime HIV-1 Qualitative Amplification Reagent Kit</strong></td>
+                                        <td><strong>ABBOTT RealTime HIV-1 Quantitative Amplification Reagent Kit</strong></td>
                                         <td>
                                             <input class="form-control input-sm input-edit-empty" required id="vaqualkitlotno" name="vaqualkitlotno" type="text" value="">
                                         </td>
@@ -628,7 +628,7 @@
                                     </tr>
                                     <tr>
                                         <td>2</td>
-                                        <td><strong>ABBOTT RealTime HIV-1 Qualitative Control Kit </strong></td>
+                                        <td><strong>ABBOTT RealTime HIV-1 Quantitative Control Kit </strong></td>
                                         <td>
                                             <input class="form-control input-sm input-edit-empty" required id="vacontrollotno" name="vacontrollotno" type="text" value="">
                                         </td>

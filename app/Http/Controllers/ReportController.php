@@ -21,9 +21,11 @@ class ReportController extends Controller
     public static $suffix = ['received','damaged'];
     public static $quarters = ['Q1' => '1,2,3', 'Q2' => '4,5,6', 'Q3' => '7,8,9', 'Q4' => '10,11,12'];
 
-    public function index()
-    {
-       return view('reports.reports')->with('pageTitle', 'Lab Reports');
+    public function index($testtype = null) {
+        if($testtype == null && auth()->user()->user_type_id == 5)
+            $testtype = 'EID';
+        $testtype = strtoupper($testtype);
+        return view('reports.reports', compact('testtype'))->with('pageTitle', 'Lab Reports');
     }
 
     public function cd4reports(){
@@ -47,7 +49,7 @@ class ReportController extends Controller
     public static function __getCD4Data($request, &$title){
         $tbl = "cd4_samples_view";
         $columns = "$tbl.serial_no, view_facilitys.name as facilty, amrslocations.name as amrs, view_facilitys.county, view_facilitys.subcounty, $tbl.medicalrecordno, $tbl.patient_name, $tbl.provider_identifier, gender.gender_description, $tbl.dob, $tbl.datecollected, receivedstatus.name as receivedstatus, cd4rejectedreasons.name as rejectedreason, $tbl.datereceived, date($tbl.created_at) as datecreated, users.surname, $tbl.datetested, $tbl.dateresultprinted, $tbl.AVGCD3percentLymph, $tbl.AVGCD3AbsCnt, $tbl.AVGCD3CD4percentLymph, $tbl.AVGCD3CD4AbsCnt, $tbl.CD45AbsCnt";
-        $model = Cd4SampleView::selectRaw($columns)->where('repeatt', '=', 0)
+        $model = Cd4SampleView::selectRaw($columns)->where('repeatt', '=', 0)->where('parentid', '=', 0)
                     ->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$tbl.facility_id")
                     ->leftJoin('amrslocations', 'amrslocations.id', '=', "$tbl.amrs_location")
                     ->leftJoin('gender', 'gender.id', '=', "$tbl.sex")
@@ -146,12 +148,135 @@ class ReportController extends Controller
         if (session('testingSystem') == 'CD4') {
             $data = self::__getCD4Data($request, $dateString)->get();
             $this->__getExcel($data, $dateString);
-        } else {
+        } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             $this->__getExcel($data, $dateString);
+        }else {
+            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported') {
+                $data = self::__getSiteEntryData($request,$dateString)->get();
+                $this->__getSiteEntryExcel($data, $dateString);
+            } else if ($request->input('types') == 'tat') {
+                $data = $this->__getTATData($request, $dateString)->get();
+                $this->__getTATExcel($data, $dateString);
+            }else {
+                $data = self::__getDateData($request,$dateString)->get();
+                $this->__getExcel($data, $dateString);
+            }
         }
-                
         return back();
+    }
+
+    public function __getTATData($request, &$dateString) {
+        if (session('testingSystem') == 'Viralload'){
+            $dateString = 'VL TAT ';
+            $table = "viralsamples_view";
+            $model = ViralsampleView::groupBy('facility');
+        } else if (session('testingSystem') == 'EID'){
+            $dateString = 'EID TAT ';
+            $table = "samples_view";
+            $model = SampleView::groupBy('facility');
+        } else if (session('testingSystem') == 'CD4') {
+            return back();
+        }
+        $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")->where('repeatt', '=', 0)->where('parentid', '=', 0)
+                    ->where("$table.lab_id", '=', env('APP_LAB'))->whereNotNull('tat1')->whereNotNull('tat2')
+                    ->whereNotNull('tat3')->whereNotNull('tat4')->orderBy('tat2', 'asc')
+                    ->orderBy('tat1', 'asc')->orderBy('tat3', 'asc')->orderBy('tat4', 'asc');
+
+        $model = self::__getBelongingTo($request, $model, $dateString);
+        $model = self::__getDateRequested($request, $model, $table, $dateString, false);
+
+        return $model;
+    }
+
+    public static function __getSiteEntryData($request, &$dateString) {
+        if(session('testingSystem') == 'Viralload') {
+            $dateString = 'VL';
+            $table = "viralsamples_view";
+            $model = ViralsampleView::orderBy('totalsamples', 'desc')->where('viralsamples_view.lab_id', '=', env('APP_LAB'));
+        } else if(session('testingSystem') == 'EID') {
+            $dateString = 'EID';
+            $table = "samples_view";
+            $model = SampleView::orderBy('totalsamples', 'desc')->where('samples_view.lab_id', '=', env('APP_LAB'));
+        }
+
+        if($request->input('types') == 'remoteentry') {
+            $dateString .= ' site entry ';
+        } else if ($request->input('types') == 'sitessupported') {
+            $dateString .= ' suported sites ';
+        }
+        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility, facilitys.name as enteredby,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
+                    ->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
+                    ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                    ->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
+                    ->when(true, function($query) use ($request, $table){
+                        if($request->input('types') == 'remoteentry')
+                            return $query->where("$table.site_entry", "=", 1);
+                    })->where('repeatt', '=', 0)->where('parentid', '=', 0)
+                    ->groupBy(['facilitycode', 'facility', 'county', 'subcounty', 'partner']);
+        $model = self::__getBelongingTo($request, $model, $dateString);
+        $model = self::__getDateRequested($request, $model, $table, $dateString);
+
+        return $model;
+    }
+
+    public static function __getBelongingTo($request, $model, &$dateString) {
+        $title = 'for ';
+        if ($request->input('category') == 'county') {
+            $model = $model->where('view_facilitys.county_id', '=', $request->input('county'));
+            $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
+            $title .= $county->county.'county ';
+        } else if ($request->input('category') == 'subcounty') {
+            $model = $model->where('view_facilitys.subcounty_id', '=', $request->input('district'));
+            $subc = ViewFacility::where('subcounty_id', '=', $request->input('district'))->get()->first();
+            $title .= $subc->subcounty.' ';
+        } else if ($request->input('category') == 'facility') {
+            $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
+            $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
+            $title .= $facility->name.' ';
+        } else if ($request->input('category') == 'partner') {
+            $model = $model->where('view_facilitys.partner_id', '=', $request->input('partner'));
+            $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
+            $title .= $partner->name.' ';
+        }
+        $dateString .= $title;
+        return $model;
+    }
+
+    public static function __getDateRequested($request, $model, $table, &$dateString, $receivedOnly=true) {
+        if ($receivedOnly) { $column = 'datereceived'; } else { $column = 'datetested'; }
+
+        if (!$request->input('period') || $request->input('period') == 'range') {
+            $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
+            $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+        } else if ($request->input('period') == 'monthly') {
+            $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
+            $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."' AND MONTH($table.$column) = '".$request->input('month')."'");
+        } else if ($request->input('period') == 'quarterly') {
+            if ($request->input('quarter') == 'Q1') {
+                $startQuarter = 1;
+                $endQuarter = 3;
+            } else if ($request->input('quarter') == 'Q2') {
+                $startQuarter = 4;
+                $endQuarter = 6;
+            } else if ($request->input('quarter') == 'Q3') {
+                $startQuarter = 7;
+                $endQuarter = 9;
+            } else if ($request->input('quarter') == 'Q4') {
+                $startQuarter = 10;
+                $endQuarter = 12;
+            } else {
+                $startQuarter = 0;
+                $endQuarter = 0;
+            }
+            $dateString .= $request->input('quarter').' - '.$request->input('year');
+            $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."' AND MONTH($table.$column) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
+        } else if ($request->input('period') == 'annually') {
+            $dateString .= $request->input('year');
+            $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
+        }
+
+        return $model;
     }
 
     public function kits(Request $request)
@@ -159,9 +284,9 @@ class ReportController extends Controller
         if($request->method() == 'POST') {
             $platform = $request->input('platform');
             if ($platform == 'abbott') 
-                $model = Abbotdeliveries::select('*');
+                $model = Abbotdeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             if ($platform == 'taqman')
-                $model = Taqmandeliveries::select('*');
+                $model = Taqmandeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             
             if($request->input('types') == 'eid') 
                 $model->where('testtype', '=', 1);
@@ -230,13 +355,13 @@ class ReportController extends Controller
         $data = [];
         $platform = $request->input('platform');
         if ($platform == 'abbott') {
-            $model = Abbotprocurement::select('*');
-            $kits = Abbotdeliveries::select('*');
+            $model = Abbotprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
+            $kits = Abbotdeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             $sub = $this->abbottKits;
         }
         if ($platform == 'taqman') {
-            $model = Taqmanprocurement::select('*');
-            $kits = Taqmandeliveries::select('*');
+            $model = Taqmanprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
+            $kits = Taqmandeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
             $sub = $this->taqmanKits;
         }
 
@@ -244,7 +369,7 @@ class ReportController extends Controller
         if($request->input('types') == 'eid') {
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
-            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")
+            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('samples.lab_id', '=', env('APP_LAB'))
                         ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
@@ -257,7 +382,7 @@ class ReportController extends Controller
         if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralsamples.lab_id', '=', env('APP_LAB'))
                         ->where('rejectedreason', '=', '0')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
@@ -350,11 +475,11 @@ class ReportController extends Controller
         ini_set("max_execution_time", "3000");
 
         $title = '';
-    	if (session('testingSystem') == 'Viralload') {
+    	if (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') {
     		$table = 'viralsamples_view';
-    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')
+    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.partner', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
-    				->leftJoin('labs', 'labs.id', '=', 'viralsamples_view.lab_id')
+    				->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                     ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
     				->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
@@ -363,10 +488,10 @@ class ReportController extends Controller
     				->leftJoin('viralrejectedreasons', 'viralrejectedreasons.id', '=', 'viralsamples_view.rejectedreason')
     				->leftJoin('viralprophylaxis', 'viralprophylaxis.id', '=', 'viralsamples_view.prophylaxis')
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification');
-    	} else if (session('testingSystem') == 'EID'){
-            $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, labs.labdesc, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname";
+    	} else if (session('testingSystem') == 'EID' || $request->input('testtype') == 'EID'){
+            $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname";
     		$table = 'samples_view';
-    		$model = SampleView::selectRaw($columns)
+    		$model = SampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -383,58 +508,22 @@ class ReportController extends Controller
     				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
     	}
 
-        if ($request->input('category') == 'county') {
-            $model = $model->where('view_facilitys.county_id', '=', $request->input('county'));
-            $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
-            $title .= $county->county;
-        } else if ($request->input('category') == 'subcounty') {
-            $model = $model->where('view_facilitys.subcounty_id', '=', $request->input('district'));
-            $subc = ViewFacility::where('subcounty_id', '=', $request->input('district'))->get()->first();
-            $title .= $subc->subcounty;
-        } else if ($request->input('category') == 'facility') {
-            $model = $model->where('view_facilitys.id', '=', $request->input('facility'));
-            $facility = ViewFacility::where('id', '=', $request->input('facility'))->get()->first();
-            $title .= $facility->name;
-        }
+        $model = self::__getBelongingTo($request, $model, $dateString);
 
     	if ($request->input('specificDate')) {
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            if (!$request->input('period') || $request->input('period') == 'range') {
-                $dateString = date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
-                if ($request->input('period')) { $column = 'datetested'; } 
-                else { $column = 'datereceived'; }
-                $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
-            } else if ($request->input('period') == 'monthly') {
-                $dateString = date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) = '".$request->input('month')."'");
-            } else if ($request->input('period') == 'quarterly') {
-                if ($request->input('quarter') == 'Q1') {
-                    $startQuarter = 1;
-                    $endQuarter = 3;
-                } else if ($request->input('quarter') == 'Q2') {
-                    $startQuarter = 4;
-                    $endQuarter = 6;
-                } else if ($request->input('quarter') == 'Q3') {
-                    $startQuarter = 7;
-                    $endQuarter = 9;
-                } else if ($request->input('quarter') == 'Q4') {
-                    $startQuarter = 10;
-                    $endQuarter = 12;
-                } else {
-                    $startQuarter = 0;
-                    $endQuarter = 0;
-                }
-                $dateString = $request->input('quarter').' - '.$request->input('year');
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."' AND MONTH($table.datetested) BETWEEN '".$startQuarter."' AND '".$endQuarter."'");
-            } else if ($request->input('period') == 'annually') {
-                $dateString = $request->input('year');
-                $model = $model->whereRaw("YEAR($table.datetested) = '".$request->input('year')."'");
-            }
+            // $receivedOnly=false;
+            // if ($request->input('types') == 'rejected')
+            //     $receivedOnly=true;
+            
+            $receivedOnly=true;
+            
+            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
     	}
 
-        $report = (session('testingSystem') == 'Viralload') ? 'VL ' : 'EID ';
+        $report = (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') ? 'VL ' : 'EID ';
 
         if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
@@ -445,11 +534,18 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'positives') {
             $model = $model->where("$table.result", "=", 1);
             $report .= 'positive outcomes';
+        } else if ($request->input('types') == 'poc') {
+            $model = $model->where("$table.site_entry", '=', 2);
+            $report .= 'poc tests';
+        }
+
+        if(auth()->user()->user_type_id == 5) {
+            $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
 
-        return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
+        return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0);
     }
 
     public static function __getExcel($data, $title)
@@ -457,13 +553,50 @@ class ReportController extends Controller
         $title = strtoupper($title);
         $dataArray = []; 
         if (session('testingSystem') == 'Viralload') {
-            $dataArray[] = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
+            $dataArray[] = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
         } else if (session('testingSystem') == 'EID') {
-            $dataArray[] = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
+            $dataArray[] = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
         } else if (session('testingSystem') == 'CD4') {
             $dataArray[] = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'Age', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
         }
         
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
+        
+        if($data->isNotEmpty()) {
+            foreach ($data as $report) {
+                $dataArray[] = $report->toArray();
+            }
+            
+            Excel::create($title, function($excel) use ($dataArray, $title) {
+                $excel->setTitle($title);
+                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('EID/VL System');
+                $excel->setDescription($title);
+
+                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+                    $sheet->fromArray($dataArray, null, 'A1', false, false);
+                });
+
+            })->download('csv');
+        } else {
+            session(['toast_message' => 'No data available for the criteria provided']);
+        }
+    }
+
+    public function __getSiteEntryExcel($data, $title)
+    {
+        $title = strtoupper($title);
+        $dataArray[] = ['MFL Code', 'Facility Name', 'Site Entered', 'County', 'Sub-County', 'Partner', 'Total Samples'];
+        $this->generate_excel($data, $dataArray, $title);
+    }
+
+    public function __getTATExcel($data, $title) {
+        $title = strtoupper($title);
+        $dataArray[] = ['MFL Code', 'Facility Name', 'TAT1', 'TAT2', 'TAT3', 'TAT4'];
+        $this->generate_excel($data, $dataArray, $title);
+    }
+
+    public function generate_excel($data, $dataArray, $title){
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
         

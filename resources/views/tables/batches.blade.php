@@ -8,7 +8,7 @@
 
 <div class="content">
 
-    @empty($site_approval)
+    @if(!isset($site_approval) && !isset($display_delayed))
 
         <div class="row">
             <div class="col-md-12">
@@ -25,6 +25,9 @@
                 </a> |
                 <a href="{{ $myurl2 }}/1">
                     Dispatched Batches
+                </a> |
+                <a href="{{ $myurl2 }}/5">
+                    Batches Overdue for Receipt at Lab (10 days)
                 </a>
             </div>
         </div>
@@ -75,7 +78,7 @@
             </div>
         </div>
 
-    @endempty
+    @endif
     
     <div class="row">
         <div class="col-lg-12">
@@ -89,11 +92,16 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <form  method="post" action="{{ url($pre . 'batch/summaries/') }}  " >
+                        @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                        <form  method="post" action="{{ url($pre . 'batch/destroy_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
                             {{ csrf_field() }}
+                        @endif
                             <table class="table table-striped table-bordered table-hover @isset($datatable) data-table @endisset" >
                                 <thead>
                                     <tr class="colhead">
+                                        @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                                            <th rowspan="2"  id="check_all">CheckBox</th>
+                                        @endif
                                         <th rowspan="2">Batch No</th>
 
                                         @if(isset($batch_complete) && $batch_complete == 1)
@@ -142,6 +150,13 @@
 
                                     @foreach($batches as $batch)
                                         <tr>
+                                            @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                                                <td>
+                                                    <div align='center'>
+                                                        <input name='batches[]' type='checkbox' class='checks' value='{{ $batch->id }}' />
+                                                    </div>
+                                                </td>  
+                                            @endif
                                             <td>
                                                 <a href="{{ url($pre . 'batch/' . $batch->id) }} ">
                                                     {{ $batch->id }}
@@ -232,9 +247,24 @@
                                             </td>
                                         </tr>
                                     @endif
+
+                                    @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                                        <tr>
+                                            <td colspan="1"> </td>  
+                                            <td colspan="5"> 
+                                                <center>
+                                                    <button class="btn btn-warning" type="submit" name="print_type" value="summary">Delete Selected Batches (This is permanent and cannot be reversed)</button>
+                                                </center>
+                                            </td>
+                                            <td colspan="10"> </td>                                            
+                                        </tr>
+
+                                    @endif
                                 </tbody>
                             </table>
+                        @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
                         </form>
+                        @endif
                     </div>
 
                     {{-- {!!  $links !!} --}}
@@ -262,6 +292,18 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
+
+            // $("#check_all").on('click', function(){
+            //     var str = $(this).html();
+            //     if(str == "Check All"){
+            //         $(this).html("Uncheck All");
+            //         $(".checks").prop('checked', true);
+            //     }
+            //     else{
+            //         $(this).html("Check All");
+            //         $(".checks").prop('checked', false);           
+            //     }
+            // });
 
             $(".date").datepicker({
                 startView: 0,

@@ -33,6 +33,31 @@ class DrSample extends BaseModel
     }
 
 
+
+    public function warning()
+    {
+        return $this->hasMany('App\DrWarning', 'sample_id');
+    }
+
+    public function dr_call()
+    {
+        return $this->hasMany('App\DrCall', 'sample_id');
+    }
+
+    public function genotype()
+    {
+        return $this->hasMany('App\DrGenotype', 'sample_id');
+    }
+
+
+    // mid being my id
+    // Used when sending samples to sanger
+    public function getMidAttribute()
+    {
+        return env('DR_PREFIX') . $this->id;
+    }
+
+
     public function setArvToxicitiesAttribute($value)
     {
         $val = '[';
@@ -88,5 +113,25 @@ class DrSample extends BaseModel
 
         return $str;   
     }
+
+    public function get_primers($date_created=null, $row, $column = 1)
+    {
+        $primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
+        $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        if(!$date_created)
+
+        foreach ($primers as $key => $value) {
+            $loc = $key+1;
+            if($column == 2) $loc += 6;
+
+            
+        }
+    }
+
+
+
+
+
+
 
 }

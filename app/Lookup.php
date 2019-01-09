@@ -195,6 +195,7 @@ class Lookup
             'machines' => Cache::get('machines'),
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'worksheet_sampletypes' => Cache::get('worksheet_sampletypes'),
+            'double_approval' => self::$double_approval,
         ];
     }
 
@@ -208,7 +209,7 @@ class Lookup
             'worksheet_sampletypes' => Cache::get('worksheet_sampletypes'),
             'dilutions' => Cache::get('dilutions'),
             'results' => Cache::get('results'),
-            'double_approval' => self::$double_approval
+            'double_approval' => self::$double_approval,
         ];
     }
 
@@ -225,6 +226,7 @@ class Lookup
             'results' => Cache::get('results'),
             'received_statuses' => Cache::get('received_statuses'),
             'pcrtypes' => Cache::get('pcr_types'),
+            'amrs_locations' => Cache::get('amrs_locations'),
         ];
     }
 
@@ -351,6 +353,7 @@ class Lookup
             'prophylaxis' => Cache::get('prophylaxis'),
             'justifications' => Cache::get('justifications'),
             'pmtct_types' => Cache::get('pmtct_types'),
+            'amrs_locations' => Cache::get('amrs_locations'),
         ];        
     }
 
@@ -430,6 +433,9 @@ class Lookup
             'prophylaxis' => Cache::get('prophylaxis'),
             'dr_rejected_reasons' => Cache::get('dr_rejected_reasons'),
 
+            'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
+            'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+
         ];
     }
 
@@ -482,7 +488,7 @@ class Lookup
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
             $pmtct_types = DB::table('viralpmtcttype')->get();
             $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
-            $justifications = DB::table('viraljustifications')->get();
+            $justifications = DB::table('viraljustifications')->orderBy('displaylabel', 'asc')->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
             $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
             $vl_result_guidelines = DB::table('vlresultsguidelines')->get();

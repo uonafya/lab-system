@@ -63,7 +63,7 @@ class LoginController extends Controller
         $batch = Batch::find($batch_no);
 
         if($batch){
-            if($batch->outdated()) return $this->outdated_batch_error(); 
+            if($batch->outdated() && env('APP_LAB') != 2) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
                 
@@ -77,7 +77,7 @@ class LoginController extends Controller
         $batch = Viralbatch::find($batch_no);
 
         if($batch){
-            if($batch->outdated()) return $this->outdated_batch_error(); 
+            if($batch->outdated() && env('APP_LAB') != 2) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
 
@@ -112,6 +112,8 @@ class LoginController extends Controller
         $user = auth()->user();
         $user->set_last_access();
 
+        if($user->user_type_id == 7) return "/sample/list_poc";
+
         if($facility){
             $fac = \App\Facility::find($user->facility_id);
             session(['logged_facility' => $fac]);
@@ -131,7 +133,7 @@ class LoginController extends Controller
         } else {
             if(!$facility){
                 $tasks = $this->pendingTasks();
-                
+                // dd($tasks);
                 if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
                     session(['pendingTasks' => true]);
                     return '/pending';

@@ -7,6 +7,7 @@ use App\Mail\TestMail;
 use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
 use App\Mail\UrgentCommunication;
+use App\Mail\NoDataReport;
 use Carbon\Carbon;
 use Exception;
 
@@ -27,7 +28,9 @@ class Common
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f);
+		$workingdays = $s->diffInWeekdays($f, false);
+
+		if($workingdays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
@@ -149,6 +152,7 @@ class Common
 				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));
 				$data = array_merge($data, $viral_data);				
 			}
+			if($sample->synched == 1) $data['synched'] = 2;
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
@@ -160,7 +164,8 @@ class Common
 	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
-        $offset_value = 50000;
+        // $offset_value = 50000;
+        $offset_value = 0;
         while(true){
 
 			$samples = $view_model::where(['batch_complete' => 1])
@@ -248,6 +253,7 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+		$batch_model::whereNull('input_complete')->update(['input_complete' => true]);
 		return "Batches of {$type} have been marked as input complete";
 	}
 
@@ -381,6 +387,56 @@ class Common
 		}
 	}
 
+	public static function no_data_report($type)
+	{
+		$noage = self::no_data($type, 'age');
+		$nogender = self::no_data($type, 'gender');
+
+		$comm = new NoDataReport($type, $noage, $nogender);
+
+		Mail::to(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+	}
+
+	public static function no_data($type, $param)
+	{
+    	ini_set('memory_limit', "-1");
+
+		if($type == 'eid'){
+			$view_model = \App\SampleView::class;
+		}else{
+			$view_model = \App\ViralsampleView::class;
+		}
+
+		$samples = $view_model::selectRaw("id as 'Lab ID', site_entry, facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
+				->where('facility_id', '!=', 7148)
+				->where('repeatt', 0)
+				->where('datereceived', '>', '2018-01-01')
+				->where('lab_id', env('APP_LAB'))	
+				->when(true, function($query) use ($param){
+					if($param == 'age') return $query->whereRaw("(age is null or age=0)");
+					return $query->where('sex', 3);
+				})			
+				->get();
+
+		$filename = storage_path("app/" . $type . "_no_" . $param . "_data_report.csv");
+        if(file_exists($filename)) unlink($filename);
+
+        $fp = fopen($filename, 'w');
+
+        fputcsv($fp, ['Lab ID', 'Entry Type', 'MFL Code', 'Facility', 'Patient', 'Sex', 'Age', 'DOB', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched']);
+
+        foreach ($samples as $key => $value) {
+        	$val = $value->toArray();
+        	// $val = get_object_vars($value);
+        	$val['sex'] = $value->gender;
+        	$val['site_entry'] = 'Lab Entry';
+        	if($value->site_entry == 1) $val['site_entry'] = 'Site Entry';
+        	fputcsv($fp, $val);
+        }
+        fclose($fp);
+        return $filename;
+	}
+
     // public static function send_communication()
     // {
     //     ini_set("memory_limit", "-1");
@@ -419,7 +475,7 @@ class Common
     {
         ini_set("memory_limit", "-1");
 
-        $batches = $class::where(['batch_complete' => '0'])->where('datereceived', '<', '2018-01-01')->get();
+        $batches = $class::whereIn('batch_complete', ['0', '2'])->where('datereceived', '<', '2018-05-01')->get();
         // $batches = $class::where(['batch_complete' => '0'])->where('created_at', '<', '2018-01-01')->get();
 
         foreach ($batches as $key => $batch) {
@@ -427,6 +483,100 @@ class Common
             $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
             $batch->batch_complete = 1;
             $batch->pre_update();
+        }
+    }
+
+    public static function mrs($type = 'vl')
+    {
+        ini_set("memory_limit", "-1");
+
+        $c = \App\Synch::$synch_arrays[$type];
+
+        $view_model = $c['sampleview_class'];
+        $patient_model = $c['patient_class'];
+
+        $samples = $view_model::where('user_id', 66)->where('created_at', '>', '2018-11-28')->get();
+
+        foreach ($samples as $sample) {        	
+        	$facility = $sample->facility;
+
+        	if(starts_with($sample->patient, $facility->facilitycode)){
+        		$patient = $patient_model::find($sample->patient_id);
+
+        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
+        		$patient->pre_update();
+        	}
+        }
+    }
+
+    public static function mrs_two($type = 'vl')
+    {
+        ini_set("memory_limit", "-1");
+
+        $c = \App\Synch::$synch_arrays[$type];
+
+        $view_model = $c['sampleview_class'];
+        $patient_model = $c['patient_class'];
+
+        $samples = $view_model::where('facilitycode', 14020)->where('created_at', '>', '2018-11-01')->get();
+
+        foreach ($samples as $sample) {        	
+        	$facility = $sample->facility;
+
+        	if(starts_with($sample->patient, $facility->facilitycode)){
+        		$patient = $patient_model::find($sample->patient_id);
+
+        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
+        		$patient->pre_update();
+        	}
+        }
+    }
+
+    public static function batch_date()
+    {
+        ini_set("memory_limit", "-1");
+        $classes = \App\Synch::$synch_arrays;
+
+        foreach ($classes as $c) {
+
+	        $batch_class = $c['batch_class'];
+	        $sample_class = $c['sample_class'];
+
+	        $batches = $batch_class::whereDate('created_at', '2018-12-12')->get();
+
+	        foreach ($batches as $batch) {
+	        	$sample = $sample_class::where('batch_id', $batch->id)->first();
+	        	$batch->created_at = $sample->created_at;
+	        	$batch->pre_update();
+	        }
+	    }
+    }
+
+    public static function correct_facility($mfl)
+    {
+        ini_set("memory_limit", "-1");
+
+        $classes = \App\Synch::$synch_arrays;
+
+        $facility = \App\Facility::locate($mfl)->first();
+
+        foreach ($classes as $c) {
+
+	        $sampleview_class = $c['sampleview_class'];
+	        $patient_class = $c['patient_class'];
+	        $batch_class = $c['batch_class'];
+
+	        $samples = $sampleview_class::where('patient', 'like', "{mfl}%")->where('facility_id', '!=', $facility->id)->get();
+
+	        foreach ($samples as $sample) {
+	        	$batch = $batch_class::find($sample->batch_id);
+	        	$batch->facility_id = $facility->id;
+	        	$batch->pre_update();
+
+	        	$patient = $patient_class::find($sample->patient_id);
+	        	$patient->facility_id = $facility->id;
+	        	$patient->pre_update();
+	        }
         }
     }
 
@@ -450,22 +600,24 @@ class Common
         foreach ($facilities as $facility) {
         	$fac = \App\Facility::locate($facility->facilitycode)->first();
         	if(!$fac) continue;
-        	// if($fac->id < 55000) continue;
+        	if($facility->facilitycode == 0) continue;
+         	// if($fac->id < 55000) continue;
 
         	if($fac->id != $facility->ID){
 
         		// dd([$fac->toArray(), $facility->toArray()]);
 
-        		// $new_fac = \App\Facility::find($facility->ID);
+        		$new_fac = \App\ViewFacility::find($facility->ID);
         		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
-        		// if($new_fac){
-        		// 	$conflict[] = [
-        		// 		'id' => $new_fac->id,
-        		// 		'code' => $new_fac->facilitycode,
-        		// 		'name' => $new_fac->name,
-        		// 	];
-        		// 	continue;
-        		// }
+        		if($new_fac){
+        			$conflict[] = [
+        				'id' => $new_fac->id,
+        				'code' => $new_fac->facilitycode,
+        				'name' => $new_fac->name,
+        				'county' => $new_fac->county,
+        			];
+        			continue;
+        		}
 
         		foreach ($classes as $class) {
         			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
@@ -476,8 +628,31 @@ class Common
         	}
         }
 
-        // dd($conflict);
+        dd($conflict);
     }
+
+    public static function change_facility_id($old_id, $new_id)
+    {
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+
+		foreach ($classes as $class) {
+			$class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
+			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
+
+		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+    }
+
+
 
 
 

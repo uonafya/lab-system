@@ -75,7 +75,7 @@ The following fields are common to vl requests
 > - regimenline **Required**
 > - sampletype **Required**
 > - justification **Required**
-> - pmtct *(**Required** if sex is **2** i.e. **female**. 3 is for none of the above)*
+> - pmtct *(**Required** if sex is **2** i.e. **female**. 1 for pregnant, 2 for breast-feeding and 3 is for none of the above)*
 
 
 ---

@@ -33,10 +33,10 @@
                             <select class="form-control input-sm" required name="platform" id="platform">
                                 <option value="" selected>Select Platform</option>
                                 {{-- @if($data->taqproc == 0) --}}
-                                <option value="1">COBAS/TAQMAN</option>
-                                {{ -- @endif
+                                <option value="1">COBAS/TAQMAN @if($data->taqproc > 0) <i>(Entry made for {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} )</i> @endif</option>
+                                {{-- @endif
                                 @if($data->abbottproc == 0) --}}
-                                <option value="2">ABBOTT</option>
+                                <option value="2">ABBOTT @if($data->abbottproc > 0) <i>(Entry made for {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ date('Y') }} )</i> @endif</option>
                                 {{-- @endif --}}
                             </select>
                         </div>
@@ -90,9 +90,11 @@
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
-                                                $qualkitused = round(($tests / 42), 2);
+                                                $qualkitused = round(($tests / 42));
+                                                $kits['name'] = $kits['VLname'];
                                             } else if ($types == 'EID') {
-                                                $qualkitused = round(($tests / 44), 2);
+                                                $qualkitused = round(($tests / 44));
+                                                $kits['name'] = $kits['EIDname'];
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor']);
@@ -209,9 +211,11 @@
 
                                         if ($kits['alias'] == 'qualkit') {
                                             if ($types == 'VL') {
-                                                $qualkitused = round(($tests / 93), 2);
+                                                $qualkitused = round(($tests / 93));
+                                                $kits['name'] = $kits['VLname'];
                                             } else if ($types == 'EID') {
-                                                $qualkitused = round(($tests / 94), 2);
+                                                $qualkitused = round(($tests / 94));
+                                                $kits['name'] = $kits['EIDname'];
                                             }
                                         } else {
                                             $used = round($qualkitused * $kits['factor'][$types]);
@@ -326,9 +330,9 @@
                                         $received = $kits['alias'].'received';
                                         $qualkitused = 0;
                                         if ($types == 'VL') {
-                                            $qualkitused = round(($tests / 93), 2);
+                                            $qualkitused = round(($tests / 93));
                                         } else if ($types == 'EID') {
-                                            $qualkitused = round(($tests / 94), 2);
+                                            $qualkitused = round(($tests / 94));
                                         }
                                         $endingbal = (@($data->$prevabbott->$prefix+$data->$abbottdeliveries->$received) - @($qualkitused));
                                     @endphp
@@ -383,9 +387,9 @@
                                         $received = $kits['alias'].'received';
                                         $qualkitused = 0;
                                         if ($types == 'VL') {
-                                            $qualkitused = round(($tests / 42), 2);
+                                            $qualkitused = round(($tests / 42));
                                         } else if ($types == 'EID') {
-                                            $qualkitused = round(($tests / 44), 2);
+                                            $qualkitused = round(($tests / 44));
                                         }
                                         $endingbal = (@($data->$prevtaqman->$prefix+$data->$taqmandeliveries->$received) - @($qualkitused));
                                     @endphp

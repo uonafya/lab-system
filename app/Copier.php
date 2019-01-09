@@ -47,10 +47,45 @@ class Copier
 {
     private static $limit = 5000;
 
+    public static function missing_facilities()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = SampleView::where('facility_id', 4575)->get();
+
+        foreach ($samples as $key => $sample) {
+            $s = Sample::find($sample->id);
+            $batch = $s->batch;
+            $batch->facility_id = 55073;
+            $batch->pre_update();
+
+            $patient = $s->patient;
+            $patient->facility_id = 55073;
+            $patient->pre_update();
+
+            $mother = $patient->mother;
+            $mother->facility_id = 55073;
+            $mother->pre_update();
+        }
+
+        $viralsamples = ViralsampleView::where('facility_id', 4575)->get();
+
+        foreach ($viralsamples as $key => $sample) {
+            $s = Viralsample::find($sample->id);
+            $batch = $s->batch;
+            $batch->facility_id = 55073;
+            $batch->pre_update();
+
+            $patient = $s->patient;
+            $patient->facility_id = 55073;
+            $patient->pre_update();
+        }
+    }
+
+
     public static function copy_missing_facilities()
     {
         $db_name = env('DB_DATABASE');
-        $facilities = DB::table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
+        $facilities = DB::connection('old')->table('eid_kemri2.facilitys')->whereRaw("facilitycode not IN (select facilitycode from {$db_name}.facilitys)")->get();
 
         $classes = [
             \App\Mother::class,
@@ -72,8 +107,16 @@ class Copier
                 unset($facility->wardid);
                 unset($facility->districtname);
                 unset($facility->ANC);
+                unset($facility->partnerregion);
+                unset($facility->pasco);
+                unset($facility->zuia);
+                unset($facility->negpilot);
+                unset($facility->{'sent2'});
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
+                continue;
 
                 foreach ($classes as $class) {
                     $class::where(['facility_id' => $value->ID, 'synched' => 1])->update(['facility_id' => $facility->id, 'synched' => 2]);
@@ -90,12 +133,135 @@ class Copier
                 unset($facility->ID);
                 unset($facility->wardid);
                 unset($facility->districtname);
+                unset($facility->partnerregion);
+                unset($facility->pasco);
+                unset($facility->zuia);
+                unset($facility->negpilot);
                 unset($facility->ANC);
+                unset($facility->sent2);
+                unset($facility->sentmail);
                 unset($facility->{'Column 33'});
                 $facility->save();
             }
         }
     }
+
+    public static function split_batches()
+    {
+        $fields = self::viralsamples_arrays();  
+
+        $batches = ViralsampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
+                                    ->groupBy('original_batch_id')
+                                    ->where("original_batch_id", '!=', 0)
+                                    ->having('facility_count', '>', 1)
+                                    ->get();
+
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+
+        foreach ($batches as $b) {
+            $batch = Viralbatch::find(self::set_batch_id($b->original_batch_id));
+
+            $samples = ViralsampleView::where('original_batch_id', $b->original_batch_id)->get();
+
+            foreach ($samples as $s) {
+                $fac = \App\OldModels\Facility::find($s->facility_id);
+                $f = null;
+                if($fac) $f = \App\Facility::locate($fac->facilitycode)->first();
+
+                // $cur_sample = \App\ViralsampleView::find($s->id);
+
+                $facility_id = $f->id ?? $s->facility_id;
+
+                if($batch->facility_id == $facility_id) continue;
+
+                $new_batch = Viralbatch::where(['facility_id' => $facility_id, 'id' => $b->original_batch_id])->first();
+
+                if(!$new_batch){
+
+                    $new_batch = new Viralbatch;
+                    $new_batch->fill($s->only($fields['batch']));
+
+                    foreach ($batch_date_array as $date_field) {
+                        $new_batch->$date_field = self::clean_date($s->$date_field);
+                        if($new_batch->$date_field == '1970-01-01') $new_batch->$date_field = null;
+                    }
+
+                    $new_batch->synched = 0;
+                    $new_batch->facility_id = $facility_id;
+                    $new_batch->save();
+                }
+
+                $current_sample = Viralsample::find($s->id);
+                $current_sample->batch_id = $new_batch->id;
+                $current_sample->save();
+
+                $patient = $current_sample->patient;
+                $patient->facility_id = $facility_id;
+                $patient->pre_update();
+            }
+        }
+    }
+
+    public static function split_eid_batches()
+    {
+        $fields = self::samples_arrays();  
+
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+
+        $batches = SampleView::selectRaw("original_batch_id, count(distinct facility_id) as facility_count")
+                                    ->groupBy('original_batch_id')
+                                    ->where("original_batch_id", '!=', 0)
+                                    ->having('facility_count', '>', 1)
+                                    ->get();
+
+        foreach ($batches as $b) {
+            $batch = Batch::find(self::set_batch_id($b->original_batch_id));
+
+            $samples = SampleView::where('original_batch_id', $b->original_batch_id)->get();
+
+            foreach ($samples as $s) {
+                $fac = \App\OldModels\Facility::find($s->facility_id);
+                $f = null;
+                if($fac) $f = \App\Facility::locate($fac->facilitycode)->first();
+
+                // $cur_sample = \App\ViralsampleView::find($s->id);
+
+                $facility_id = $f->id ?? $s->facility_id;
+
+                if($batch && $batch->facility_id == $facility_id) continue;
+
+                $new_batch = Batch::where(['facility_id' => $facility_id, 'id' => $b->original_batch_id])->first();
+
+                if(!$new_batch){
+
+                    $new_batch = new Batch;
+                    $new_batch->fill($s->only($fields['batch']));
+
+                    foreach ($batch_date_array as $date_field) {
+                        $new_batch->$date_field = self::clean_date($s->$date_field);
+                        if($new_batch->$date_field == '1970-01-01') $new_batch->$date_field = null;
+                    }
+                    
+                    $new_batch->synched = 0;
+                    $new_batch->facility_id = $facility_id;
+                    $new_batch->save();
+                }
+
+                $current_sample = Sample::find($s->id);
+                $current_sample->batch_id = $new_batch->id;
+                $current_sample->save();
+
+                $patient = $current_sample->patient;
+                $patient->facility_id = $facility_id;
+                $patient->pre_update();
+
+                $mother = $patient->mother;
+                $mother->facility_id = $facility_id;
+                $mother->pre_update();
+            }
+        }
+    }
+
 
     public static function copy_areaname()
     {
@@ -174,7 +340,10 @@ class Copier
                     $sample->$date_field = self::clean_date($value->$date_field);
                     if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
-                $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
+                if($value->original_batch_id != 0) $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
+                else{
+                    $sample->batch_id = $new_batch_id;
+                }
                 $sample->patient_id = $patient->id;
 
                 if(!$sample->age && $batch->datecollected && $patient->dob){
@@ -194,70 +363,6 @@ class Copier
         $my = new Misc;
         $my->compute_tat(\App\SampleView::class, Sample::class);
         echo "Completed eid clean at " . date('d/m/Y h:i:s a', time()). "\n";
-    }
-
-    public static function copy_updated_eid()
-    {
-        $start = Sample::max('id');
-        ini_set("memory_limit", "-1");
-        $fields = self::samples_arrays(); 
-        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
-        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
-        $offset_value = 60000;
-        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
-        while(true)
-        {
-            $samples = SampleView::limit(self::$limit)->offset($offset_value)->get();
-            if($samples->isEmpty()) break;
-
-            foreach ($samples as $key => $value) {
-                $sample = \App\Sample::find($value->id);
-                if($sample){
-                    $patient = $sample->patient;
-
-                    $mother = $patient->mother;
-                    $mother->fill($value->only($fields['mother']));
-                    $mother->save();
-
-                    $patient->fill($value->only($fields['patient']));
-
-                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
-
-                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
-
-                    if(!$patient->dob){
-                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
-                    }
-
-                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
-                    $patient->ccc_no = $value->enrollment_ccc_no;
-                    $patient->save();
-
-                    $batch = $sample->batch;
-                    $batch->fill($value->only($fields['batch']));
-                    foreach ($batch_date_array as $date_field) {
-                        $batch->$date_field = self::clean_date($value->$date_field);
-                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
-                    }
-                    $batch->save();
-
-                    $sample->fill($value->only($fields['sample']));
-                    foreach ($sample_date_array as $date_field) {
-                        $sample->$date_field = self::clean_date($value->$date_field);
-                        if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
-                    }
-
-                    if($sample->worksheet_id == 0) $sample->worksheet_id = null;
-                    if($sample->receivedstatus == 0) $sample->receivedstatus = null;
-                    if($sample->result == '') $sample->result = null;
-                    if(!$sample->eqa) $sample->eqa = 0;
-
-                    $sample->save();
-                }
-            }
-            $offset_value += self::$limit;
-            echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
-        }
     }
 
 
@@ -331,7 +436,10 @@ class Copier
                     $sample->$date_field = self::clean_date($value->$date_field);
                     if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
                 }
-                $sample->batch_id = $value->original_batch_id ?? $new_batch_id;
+                if($value->original_batch_id != 0) $sample->batch_id = $value->original_batch_id;
+                else{
+                    $sample->batch_id = $new_batch_id;
+                }
                 $sample->patient_id = $patient->id;
 
                 if(!$sample->age && $batch->datecollected && $patient->dob){
@@ -454,6 +562,8 @@ class Copier
 
                 foreach ($worksheets as $worksheet_key => $worksheet) {
                     $duplicate = $worksheet->replicate();
+                    $existing = $model::find($worksheet->id);
+                    if($existing) continue;
                     $work = new $model;                    
                     $work->fill($duplicate->toArray());
                     foreach ($date_array as $date_field) {
@@ -618,6 +728,60 @@ class Copier
             if($old) $contact->fill($old->only($contact_array));
             $contact->facility_id = $facility->id;
             $contact->save();
+        }
+    }
+
+    public static function match_eid_poc_batches()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Sample::where('batch_id', 0)->get();
+        $fields = self::samples_arrays(); 
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+
+        foreach ($samples as $sample) {
+            $old = SampleView::find($sample->id);
+
+            $batch = new Batch($old->only($fields['batch']));
+
+            foreach ($batch_date_array as $date_field) {
+                $batch->$date_field = self::clean_date($old->$date_field);
+                if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+            }
+            $batch->entered_by = $old->user_id;
+            $batch->save();
+
+            // $batch = Batch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
+
+            // if(!$batch) continue;
+
+            $sample->batch_id = $batch->id;
+            $sample->pre_update();
+        }
+    }
+
+    public static function match_vl_poc_batches()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = Viralsample::where('batch_id', 0)->get();
+        $fields = self::viralsamples_arrays(); 
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+
+        foreach ($samples as $sample) {
+            $old = ViralsampleView::find($sample->id);
+
+            $batch = new Viralbatch($old->only($fields['batch']));
+            foreach ($batch_date_array as $date_field) {
+                $batch->$date_field = self::clean_date($old->$date_field);
+                if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+            }
+            $batch->entered_by = $old->user_id;
+            $batch->save();
+
+            // $batch = Viralbatch::where(['site_entry' => 2, 'datereceived' => $old->datereceived, 'facility_id' => $old->facility_id,])->first();
+            // if(!$batch) continue;
+
+            $sample->batch_id = $batch->id;
+            $sample->pre_update();
         }
     }
 
@@ -820,6 +984,87 @@ class Copier
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static function copy_updated_eid()
+    {
+        $start = Sample::max('id');
+        ini_set("memory_limit", "-1");
+        $fields = self::samples_arrays(); 
+        $sample_date_array = ['datecollected', 'datetested', 'datemodified', 'dateapproved', 'dateapproved2', 'created_at'];
+        $batch_date_array = ['datedispatchedfromfacility', 'datereceived', 'datedispatched', 'dateindividualresultprinted', 'datebatchprinted', 'created_at'];
+        $offset_value = 60000;
+        $new_batch_id = SampleView::selectRaw("max(original_batch_id) as max_id")->first()->max_id;
+        while(true)
+        {
+            $samples = SampleView::limit(self::$limit)->offset($offset_value)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $value) {
+                $sample = \App\Sample::find($value->id);
+                if($sample){
+                    $patient = $sample->patient;
+
+                    $mother = $patient->mother;
+                    $mother->fill($value->only($fields['mother']));
+                    $mother->save();
+
+                    $patient->fill($value->only($fields['patient']));
+
+                    if($patient->dob) $patient->dob = self::clean_date($patient->dob);
+
+                    if(!$patient->dob) $patient->dob = self::previous_dob(SampleView::class, $value->patient, $value->facility_id);
+
+                    if(!$patient->dob){
+                        $patient->dob = self::calculate_dob($value->datecollected, 0, $value->age, SampleView::class, $value->patient, $value->facility_id);
+                    }
+
+                    $patient->sex = self::resolve_gender($value->gender, SampleView::class, $value->patient, $value->facility_id);
+                    $patient->ccc_no = $value->enrollment_ccc_no;
+                    $patient->save();
+
+                    $batch = $sample->batch;
+                    $batch->fill($value->only($fields['batch']));
+                    foreach ($batch_date_array as $date_field) {
+                        $batch->$date_field = self::clean_date($value->$date_field);
+                        if($batch->$date_field == '1970-01-01') $batch->$date_field = null;
+                    }
+                    $batch->save();
+
+                    $sample->fill($value->only($fields['sample']));
+                    foreach ($sample_date_array as $date_field) {
+                        $sample->$date_field = self::clean_date($value->$date_field);
+                        if($sample->$date_field == '1970-01-01') $sample->$date_field = null;
+                    }
+
+                    if($sample->worksheet_id == 0) $sample->worksheet_id = null;
+                    if($sample->receivedstatus == 0) $sample->receivedstatus = null;
+                    if($sample->result == '') $sample->result = null;
+                    if(!$sample->eqa) $sample->eqa = 0;
+
+                    $sample->save();
+                }
+            }
+            $offset_value += self::$limit;
+            echo "Completed eid {$offset_value} at " . date('d/m/Y h:i:s a', time()). "\n";
+        }
+    }
 
 
 }

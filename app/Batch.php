@@ -4,6 +4,8 @@ namespace App;
 
 use App\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BatchDeletedNotification;
 
 class Batch extends BaseModel
 {
@@ -123,6 +125,43 @@ class Batch extends BaseModel
     public function scopeEditing($query)
     {
         return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0]);
+    }
+
+    /**
+     * Get the batch's delete button
+     *
+     * @return string
+     */
+    public function getDeleteButtonAttribute()
+    {
+        // $min_time = strtotime("-1 month");
+        $min_time = strtotime("-10 days");
+        $created_at = strtotime($this->created_at);
+        if($this->site_entry == 1 && !$this->datereceived && !$this->datedispatched && $created_at < $min_time && $this->batch_complete == 0){
+            return "| <form method='post' action='" . url('batch/' . $this->id) . "' onSubmit=\"return confirm('Are you sure you want to delete the following batch?');\">
+                    " . csrf_field() . " 
+                    <input name='_method' type='hidden' value='DELETE'>
+                    <button type='submit' class='btn btn-xs btn-primary'>Delete</button>
+                </form>
+             ";
+        }
+        else{
+            return null;
+        }
+    }
+
+    public function batch_delete()
+    {
+        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        if(env('APP_LAB') != 4){
+            $comm = new BatchDeletedNotification($this);
+            $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
+            Mail::to($this->facility->email_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
+        }
+        \App\Sample::where(['batch_id' => $this->id])->delete();
+        $this->delete();
+        session(['toast_message' => "Batch {$this->id} has been deleted."]);
+        return true;
     }
     
 }

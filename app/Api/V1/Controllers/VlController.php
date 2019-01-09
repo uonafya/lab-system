@@ -71,8 +71,10 @@ class VlController extends BaseController
         $batch->user_id = 66;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
+        if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
+        $batch->input_complete = 1;
         $batch->site_entry = 1;
-        if($datereceived) $batch->site_entry = 0;
+        if($datereceived || $batch->facility_id == 4840) $batch->site_entry = 0;
         $batch->save();
 
         $patient = Viralpatient::existing($facility, $ccc_number)->get()->first();
@@ -93,7 +95,8 @@ class VlController extends BaseController
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
-        if($datereceived) $sample->receivedstatus = 1;
+        if($patient->sex == 1) $sample->pmtct = 3;
+        if($datereceived || $batch->facility_id == 4840) $sample->receivedstatus = 1;
         $sample->save();
 
         $sample->load(['patient', 'batch']);
@@ -188,6 +191,7 @@ class VlController extends BaseController
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
+        if($patient->sex == 1) $sample->pmtct = 3;
         $sample->edarp();
 
         $sample->load(['patient', 'batch']);

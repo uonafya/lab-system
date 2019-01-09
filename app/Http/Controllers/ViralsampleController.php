@@ -36,8 +36,10 @@ class ViralsampleController extends Controller
     public function list_poc()
     {
         $user = auth()->user();
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
-        $data = Lookup::get_lookups();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
+        $data = Lookup::get_viral_lookups();
         $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
@@ -46,7 +48,12 @@ class ViralsampleController extends Controller
 
     public function list_sms()
     {
-        $samples = ViralsampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
+        $data = Lookup::get_viral_lookups();
+        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
@@ -99,10 +106,12 @@ class ViralsampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
+        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
         if(env('APP_LAB') == 4){
             $fac = Facility::find($data_existing['facility_id']);
             // $patient_string = $fac->facilitycode . '/' . $patient_string;
-            $str = $fac->facilitycode . '/';
+            $str = $fac->facilitycode;
+            if(env('APP_LAB') == 4) $str .= '/';
             if(!starts_with($patient_string, $str)){
                 if(starts_with($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
@@ -117,7 +126,7 @@ class ViralsampleController extends Controller
         $data_existing['patient'] = $patient_string;
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
-        if($existing){
+        if($existing && !$request->input('reentry')){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            
@@ -215,12 +224,12 @@ class ViralsampleController extends Controller
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
-
-        $submit_type = $request->input('submit_type');
 
         $sample_count = Viralsample::where('batch_id', $batch->id)->get()->count();
-        session(['viral_batch_total' => $sample_count]);
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'viral_batch_total' => $sample_count, 'viral_last_patient' => $viralpatient->patient]);
+
+        $submit_type = $request->input('submit_type');
 
         if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
             if($sample_count > 9) $batch->full_batch(); 
@@ -357,6 +366,15 @@ class ViralsampleController extends Controller
         // }
 
         $viralpatient = $viralsample->patient;
+
+        if($viralpatient->patient != $request->input('patient')){
+            $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+
+            if(!$viralpatient){
+                $viralpatient = new Viralpatient;
+                $created_patient = true;
+            }
+        }
         
 
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
@@ -403,7 +421,31 @@ class ViralsampleController extends Controller
             $viralsample->label_id = $request->input('label_id');
         }
 
+        if($viralpatient->sex == 1) $viralsample->pmtct = 3;
+
         $viralsample->pre_update();
+
+        if(isset($created_patient)){
+            if($viralsample->run == 1 && $viralsample->has_rerun){
+                $children = $viralsample->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $viralpatient->id;
+                    $kid->pre_update();
+                }
+            }
+            else if($viralsample->run > 1){
+                $parent = $viralsample->parent;
+                $parent->pre_update();
+                
+                $children = $parent->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $viralpatient->id;
+                    $kid->pre_update();
+                }
+            }
+        }
 
         MiscViral::check_batch($batch->id); 
 
@@ -418,6 +460,10 @@ class ViralsampleController extends Controller
             if($work_samples_edta['count'] > 20) $str .=  'You now have ' . $work_samples_edta['count'] . ' Plasma / EDTA samples that are eligible for testing.';
 
             if($str != '') session(['toast_message' => $str]);
+        }
+
+        if($viralsample->receivedstatus && !$viralsample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('viralbatch/site_approval_group/' . $batch->id);
         }
 
         $site_entry_approval = session()->pull('site_entry_approval');
@@ -473,7 +519,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->result == NULL){
+        if($viralsample->result == NULL && $viralsample->run < 2){
             $batch = $viralsample->batch;
             $viralsample->delete();
             $samples = $batch->sample;
@@ -569,7 +615,8 @@ class ViralsampleController extends Controller
 
     public function release_redraw(Viralsample $sample)
     {
-        if($sample->run == 1){
+        $batch = $sample->batch;
+        if($sample->run == 1 || $batch->batch_complete != 0 ){
             session(['toast_message' => 'The sample cannot be released as a redraw.']);
             session(['toast_error' => 1]);
             return back();
@@ -586,7 +633,7 @@ class ViralsampleController extends Controller
 
         $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
-        $prev_sample->result = 5;
+        $prev_sample->result = "Collect New Sample";
         $prev_sample->approvedby = auth()->user()->id;
         $prev_sample->approvedby2 = auth()->user()->id;
         $prev_sample->dateapproved = date('Y-m-d');
@@ -861,6 +908,7 @@ class ViralsampleController extends Controller
         session()->forget('viral_batch');
         session()->forget('viral_facility_name');
         session()->forget('viral_batch_total');
+        session()->forget('viral_last_patient');
 
         // session()->forget('viral_batch_no');
         // session()->forget('viral_batch_dispatch');
