@@ -31,6 +31,7 @@ class SampleController extends Controller
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
         $data = Lookup::get_lookups();
         $samples = SampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
@@ -40,8 +41,12 @@ class SampleController extends Controller
 
     public function list_sms()
     {
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
