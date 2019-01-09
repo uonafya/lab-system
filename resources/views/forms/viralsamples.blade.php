@@ -23,7 +23,7 @@
                 <div class="col-lg-12">
                     <div class="hpanel">
                         <div class="panel-body" style="padding-bottom: 6px;">
-                            <div class="alert alert-error">
+                            <div class="alert alert-danger">
                                 <center>
                                     The sample was not saved due to the following errors: <br />
                                     @foreach ($errors->all() as $error)
