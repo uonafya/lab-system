@@ -370,7 +370,7 @@ class ReportController extends Controller
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
             $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('worksheets.lab_id', '=', env('APP_LAB'))
-                        ->where('rejectedreason', '=', '0')
+                        ->where('receivedstatus', '=', '1')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("worksheets.machine_type", "=", 2);
@@ -383,7 +383,7 @@ class ReportController extends Controller
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
             $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
-                        ->where('rejectedreason', '=', '0')
+                        ->where('receivedstatus', '=', '1')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("viralworksheets.machine_type", "=", 2);
@@ -415,7 +415,8 @@ class ReportController extends Controller
 
         $report = $model->get();
         $kits = $kits->get();
-        $tests = $tests->first()->tests;
+        // $tests = $tests->first()->tests;
+        dd($tests->toSql());
         $data = json_decode(json_encode([
                     'parent' => self::$parent,
                     'child' => $sub,
