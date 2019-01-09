@@ -559,7 +559,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
+                                <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
                                 </div>
@@ -586,7 +586,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="input-group date">
+                                    <div class="input-group date date-normal">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
                                     </div>
@@ -757,7 +757,8 @@
             }
         @endslot
 
-        $(".date :not(.date-dob, .date-datedispatched)").datepicker({
+        // $(".date :not(.date-dob, .date-datedispatched)").datepicker({
+        $(".date-normal").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
