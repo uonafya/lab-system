@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use BaseRequest;
+use Config;
 use App\Rules\BeforeOrEqual;
 
 class SampleRequest extends BaseRequest
@@ -15,8 +16,26 @@ class SampleRequest extends BaseRequest
      */
     public function rules()
     {
+        if($this->input('facility_id') == 7148) return [];
+
+        $base = Config::get('boilerplate.form_base'); 
+        $specifics = Config::get('boilerplate.eid'); 
+        $received = Config::get('boilerplate.lab_user'); 
+
+        $rules = array_merge($base, $specifics);
+
+        $user  = auth()->user();
+
+        if($user->is_lab_user()) $rules = array_merge($rules, $received);
+
+        $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
+        $val['dob'] = array_merge($val['dob'], ['after_or_equal:-2y']);
+
+
+        return $val;
+
         return [
-            //
+
         ];
     }
 }

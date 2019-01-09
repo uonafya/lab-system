@@ -156,7 +156,7 @@ class Batch extends BaseModel
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
+            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
         }
         \App\Sample::where(['batch_id' => $this->id])->delete();
         $this->delete();
