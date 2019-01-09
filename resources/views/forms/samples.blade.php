@@ -29,6 +29,18 @@
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
 
+        @if ($errors->any())
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}
+                        @endforeach
+                    </div>
+                </div>                
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
