@@ -262,7 +262,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
+                                <div class="input-group date date-dob">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="dob" required class="form-control lockable requirable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
                                 </div>
@@ -551,7 +551,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
                             <div class="col-sm-8">
-                                <div class="input-group date date_future">
+                                <div class="input-group date date-dispatched date_future">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datedispatched" class="form-control" value="{{ $sample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
                                 </div>
@@ -738,7 +738,9 @@
             }
         @endslot
 
-        $(".date:not(#datedispatched, #dob)").datepicker({
+        // :not(#datedispatched, #dob)
+
+        $(".date :not(date-dob, .date-datedispatched)").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -749,7 +751,7 @@
             format: "yyyy-mm-dd"
         });
 
-        $("#dob").datepicker({
+        $(".date-dob").datepicker({
             startView: 1,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -760,7 +762,7 @@
             format: "yyyy-mm-dd"
         });
 
-        $("#datedispatched").datepicker({
+        $(".date-datedispatched").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
