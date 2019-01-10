@@ -120,10 +120,10 @@ class Viralbatch extends BaseModel
         $user = auth()->user();
         $today = date('Y-m-d');
         if(!$datereceived){
-            return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0])
-                    ->whereDate('created_at', $today)->whereNull('datereceived');
+            return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0, 'batch_complete' => 0])
+                    ->whereDate('created_at', $today)->whereNull('datereceived')->whereNull('datedispatched');
         }
-        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user->id, 'batch_full' => 0]);
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user->id, 'batch_full' => 0, 'batch_complete' => 0])->whereNull('datedispatched');
     }
 
     public function scopeEditing($query)
@@ -161,7 +161,7 @@ class Viralbatch extends BaseModel
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->cc($cc_array)->bcc($bcc_array)->send($comm);
+            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
         }
         \App\Viralsample::where(['batch_id' => $this->id])->delete();
         $this->delete();

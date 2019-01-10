@@ -18,6 +18,25 @@
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
 
+        @if ($errors->any())
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-body" style="padding-bottom: 6px;">
+                            <div class="alert alert-danger">
+                                <center>
+                                    The sample was not saved due to the following errors: <br />
+                                    @foreach ($errors->all() as $error)
+                                        {{ $error }} <br />
+                                    @endforeach
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
@@ -329,7 +348,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
+                                <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datecollected" required class="form-control requirable" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
                                 </div>
@@ -339,7 +358,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Separation</label>
                             <div class="col-sm-8">
-                                <div class="input-group date">
+                                <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="dateseparated" class="form-control" value="{{ $viralsample->dateseparated ?? '' }}" name="dateseparated">
                                 </div>
@@ -506,7 +525,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="input-group date">
+                                    <div class="input-group date date-normal">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         <input type="text" id="datereceived" required class="form-control requirable" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
                                     </div>
@@ -669,13 +688,14 @@
         @endslot
 
 
-        $(".date :not(.date-dob, .date-art, .date-dispatched)").datepicker({
+        //$(".date :not(.date-dob, .date-art, .date-dispatched)").datepicker({
+        $(".date-normal").datepicker({
             startView: 0,
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-1m",
+            // startDate: "-1m",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
@@ -695,6 +715,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
+            // startDate: "-1m",
             endDate: "+7d",
             format: "yyyy-mm-dd"
         });

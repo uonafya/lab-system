@@ -283,7 +283,7 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
+        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email'])->toArray());
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
             $new_id = $batch->id + 0.5;
@@ -551,7 +551,7 @@ class BatchController extends Controller
 
     public function site_entry_approval_group(Batch $batch)
     {
-        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get();
+        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereRaw("(receivedstatus is null or receivedstatus=0)")->get();
 
         if($samples->count() > 0){            
             $data = Lookup::samples_form();
