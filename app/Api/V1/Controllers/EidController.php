@@ -137,6 +137,7 @@ class EidController extends BaseController
             $sample->pcrtype = $recommended_pcr;
         }
 
+        $sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         $sample->regimen = Lookup::eid_regimen($sample->regimen);
         $sample->mother_prophylaxis = Lookup::eid_intervention($sample->mother_prophylaxis);
         $sample->batch_id = $batch->id;
