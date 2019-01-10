@@ -90,6 +90,7 @@ class VlController extends BaseController
 
         $sample = new Viralsample;
         $sample->fill($request->only($fields['sample']));
+        $sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         $sample->justification = Lookup::justification($sample->justification);
         $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
         $sample->batch_id = $batch->id;
