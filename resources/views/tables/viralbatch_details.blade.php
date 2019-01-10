@@ -193,15 +193,14 @@
                                             @endif
                                         </td>
 
-                                        @if($batch->batch_complete == 0 && $sample->result == null && $sample->run < 2)
-
-                                            <td>
+                                        <td>
+                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->run < 2)
+                                            
                                                 {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                     <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-                                                {{ Form::close() }}                                            
-                                            </td>
-
-                                        @endif
+                                                {{ Form::close() }}
+                                            @endif                                            
+                                        </td>
                                     </tr>
                                 @endforeach
 
