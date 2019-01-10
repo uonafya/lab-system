@@ -555,6 +555,7 @@ class ReportController extends Controller
 
     public static function __getExcel($data, $title)
     {
+        // dd(session('testingSystem'));
         $title = strtoupper($title);
         $dataArray = []; 
         if (session('testingSystem') == 'Viralload') {
