@@ -551,7 +551,7 @@ class BatchController extends Controller
 
     public function site_entry_approval_group(Batch $batch)
     {
-        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get();
+        $samples = Sample::with(['patient.mother'])->where('batch_id', $batch->id)->whereRaw("(receivedstatus is null or receivedstatus=0)")->get();
 
         if($samples->count() > 0){            
             $data = Lookup::samples_form();
