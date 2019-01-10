@@ -19,12 +19,13 @@ use App\DrResidue;
 class MiscDr extends Common
 {
 
-	public static $hyrax_url = 'http://blablabla';
+	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
 
 	public static function get_hyrax_key()
 	{
 		return env('DR_KEY');
 	}
+
 
 	public static function create_plate($worksheet)
 	{
@@ -63,6 +64,7 @@ class MiscDr extends Common
 		}
 	}
 
+
 	public static function get_worksheet_files($worksheet)
 	{
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
@@ -94,6 +96,7 @@ class MiscDr extends Common
 			foreach ($primers as $primer) {
 				$abs[] = self::find_ab_file($path, $sample, $primer);
 			}
+			if(!$abs) continue;
 			$s['attributes']['ab1s'] = $abs;
 			$sample_data[] = $s;
 		}

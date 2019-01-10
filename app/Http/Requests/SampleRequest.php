@@ -28,7 +28,7 @@ class SampleRequest extends BaseRequest
 
         if($user->is_lab_user()) $rules = array_merge($rules, $received);
 
-        $rules['dob'] = array_merge($rules['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected'), 'after_or_equal:-2years']);
+        // $rules['dob'] = array_merge($rules['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected'), 'after_or_equal:-2years']);
 
         return $rules;
     }
