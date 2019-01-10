@@ -1193,6 +1193,8 @@ class Random
 		DB::statement("ALTER TABLE amrslocations MODIFY COLUMN id smallint UNSIGNED AUTO_INCREMENT;");
 		DB::statement("ALTER TABLE samples MODIFY COLUMN amrs_location smallint UNSIGNED;");
 		DB::statement("ALTER TABLE viralsamples MODIFY COLUMN amrs_location smallint UNSIGNED;");
+
+		if(env('APP_LAB') == 5) DB::statement("ALTER TABLE cd4samples MODIFY COLUMN amrs_location smallint UNSIGNED;");
 	
 		$locations = json_decode($locations);
 
