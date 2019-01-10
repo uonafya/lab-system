@@ -302,6 +302,8 @@ class ViralbatchController extends Controller
 
         $count = 0;
         $s;
+        
+        $has_received_status = false;
 
         foreach ($sample_ids as $key => $id) {
             $sample = Viralsample::find($id);
@@ -630,7 +632,7 @@ class ViralbatchController extends Controller
 
     public function site_entry_approval_group(Viralbatch $batch)
     {
-        $samples = Viralsample::with(['patient'])->where('batch_id', $batch->id)->whereRaw("receivedstatus is null or receivedstatus=0")->get();
+        $samples = Viralsample::with(['patient'])->where('batch_id', $batch->id)->whereRaw("(receivedstatus is null or receivedstatus=0)")->get();
 
         if($samples->count() > 0){            
             $data = Lookup::viralsample_form();
