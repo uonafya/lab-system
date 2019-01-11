@@ -113,15 +113,15 @@ return [
         'patient' => 'required',
         'facility_id' => ['required', 'integer'], 
         'dob' => ['required_without:age', 'before_or_equal:today', 'date_format:Y-m-d'],
-        // 'datecollected' => ['required', 'after_or_equal:-1month', 'before_or_equal:today', 'date_format:Y-m-d'],
-        // 'datedispatchedfromfacility' => ['after_or_equal:-1month', 'before_or_equal:+7days', 'date_format:Y-m-d'],
+        'datecollected' => ['required', 'after_or_equal:-2month', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'datedispatchedfromfacility' => ['after_or_equal:-2month', 'before_or_equal:+7days', 'date_format:Y-m-d'],
         'sex' => ['required', 'integer', 'between:1,2'], 
         'amrs_location' => 'integer',
 
     ],
 
     'lab_user' => [
-        // 'datereceived' => ['required', 'after_or_equal:-1month', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'datereceived' => ['required', 'after_or_equal:-2month', 'before_or_equal:today', 'date_format:Y-m-d'],
         'receivedstatus' => ['required', 'integer', 'between:1,2'],
         'rejectedreason' => ['required_if:receivedstatus,==,2'],        
     ],

@@ -22,6 +22,23 @@ class Common
         Mail::to(['joelkith@gmail.com'])->send(new TestMail());
     }
 
+    public static function get_misc_class($type)
+    {
+    	if($type == 'eid') return \App\Misc::class;
+    	 return \App\MiscViral::class;
+    }
+
+    public static function get_batch_class($type)
+    {
+    	if($type == 'eid') return \App\Batch::class;
+    	 return \App\Viralbatch::class;
+    }
+
+    public static function get_patient_class($type)
+    {
+    	if($type == 'eid') return \App\Patient::class;
+    	 return \App\Viralpatient::class;
+    }
 
 	public static function get_days($start, $finish)
 	{
@@ -272,6 +289,18 @@ class Common
 		foreach ($batches as $key => $batch) {
 			$str = $misc_model::check_batch($batch->id);
 			// if($str) echo $str . "\n";
+		}
+	}
+
+	public static function delete_delayed_batches($type)
+	{
+		$batch_model = self::get_batch_class($type);
+        $min_time = strtotime("-14 days");
+
+		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
+
+		foreach ($batches as $batch) {
+			$batch->batch_delete();
 		}
 	}
 
