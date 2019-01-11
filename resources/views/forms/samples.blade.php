@@ -764,7 +764,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-1m",
+            // startDate: "-1m",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
@@ -775,7 +775,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-2y",
+            // startDate: "-2y",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
@@ -786,7 +786,8 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            endDate: "+7d",
+            // startDate: "-1m",
+            // endDate: "+7d",
             format: "yyyy-mm-dd"
         });
 

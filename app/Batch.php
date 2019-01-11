@@ -116,10 +116,10 @@ class Batch extends BaseModel
         $user = auth()->user();
         $today = date('Y-m-d');
         if(!$datereceived){
-            return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0])
-                    ->whereDate('created_at', $today)->whereNull('datereceived');
+            return $query->where(['facility_id' => $facility, 'user_id' => $user->id, 'batch_full' => 0, 'batch_complete' => 0])
+                    ->whereDate('created_at', $today)->whereNull('datereceived')->whereNull('datedispatched');
         }
-        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user->id, 'batch_full' => 0]);
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user->id, 'batch_full' => 0, 'batch_complete' => 0])->whereNull('datedispatched');
     }
 
     public function scopeEditing($query)
