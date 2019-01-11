@@ -16,12 +16,17 @@ class CreateDrWorksheetsTable extends Migration
         Schema::create('dr_worksheets', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('lab_id')->unsigned();
+
+            // This is the sanger id
             $table->integer('plate_id')->unsigned()->nullable()->index();
+            $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
 
             // 1 is in process
-            // 2 is tested, results uploaded awaiting approval
-            // 3 is results uploaded and approved
+            // 2 is tested, results uploaded
+            // 3 is results from sanger approved
             // 4 is cancelled
+            // 5 is sent to sanger, awaiting response
+            // 6 is result sent back by sanger
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
             $table->tinyInteger('sanger_status_id')->unsigned()->default(1)->index();
 
@@ -34,6 +39,7 @@ class CreateDrWorksheetsTable extends Migration
             $table->integer('cancelledby')->unsigned()->nullable();
             $table->integer('createdby')->unsigned()->nullable();
 
+            $table->dateTime('time_sent_to_sanger')->nullable();
 
             $table->boolean('qc_pass')->default(0);
             $table->boolean('qc_run')->default(0);
