@@ -8018,6 +8018,8 @@ CREATE TABLE `facility_contacts` (
   KEY `facility_contacts_facility_id_index` (`facility_id`)
 ) ENGINE=InnoDB;
 
+alter table facilitys add column poc tinyint unsigned default 0 after latitude;
+
 
 CREATE OR REPLACE
 VIEW view_facilitys AS
