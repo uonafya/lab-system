@@ -33,6 +33,8 @@ class Synch
 			'batch_class' => Batch::class,
 			'worksheet_class' => Worksheet::class,
 			'patient_class' => Patient::class,
+			'view_table' => 'samples_view',
+			'worksheets_table' => 'worksheets',
 		],
 
 		'vl' => [
@@ -42,6 +44,8 @@ class Synch
 			'batch_class' => Viralbatch::class,
 			'worksheet_class' => Viralworksheet::class,
 			'patient_class' => Viralpatient::class,
+			'view_table' => 'viralsamples_view',
+			'worksheets_table' => 'viralworksheets',
 		],
 	];
 
@@ -673,17 +677,13 @@ class Synch
 		$classes = self::$synch_arrays[$type];
 		$sample_class = $classes['sample_class'];
 		$sampleview_class = $classes['sampleview_class'];
+		$view_table = $classes['view_table'];
+		$worksheets_table = $classes['worksheets_table'];
 
 		$data['smsfoot'] = \App\Lab::find(env('APP_LAB'))->labname ?? '';
-
-		$samples_table = 'samples_view';
-		$worksheets_table = 'worksheets';
 		$data['testtype'] = 1;
-		if($type == 'vl'){
-			$samples_table = 'viralsamples_view';
-			$worksheets_table = 'viralworksheets';
-			$data['testtype'] = 2;
-		}
+
+		if($type == 'vl') $data['testtype'] = 2;
 
 		$today = date("Y-m-d");
 		$weekstartdate= date ( "Y-m-d", strtotime ('-4 days') );
