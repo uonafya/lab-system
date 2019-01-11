@@ -27,11 +27,6 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\User', 'user_id');
     }
 
-    public function result()
-    {
-        return $this->hasMany('App\DrResult', 'sample_id');
-    }
-
 
 
     public function warning()
@@ -118,11 +113,15 @@ class DrSample extends BaseModel
     {
         $primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
         $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        if(!$date_created)
+        if(!$date_created) return null;
+
+        $str = '';
 
         foreach ($primers as $key => $value) {
             $loc = $key+1;
             if($column == 2) $loc += 6;
+
+            $str .= '<td>';
 
             
         }
