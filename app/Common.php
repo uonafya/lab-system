@@ -14,7 +14,8 @@ use Exception;
 class Common
 {
 	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
-	public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
+	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
+	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
 
     public static function test_email()
     {

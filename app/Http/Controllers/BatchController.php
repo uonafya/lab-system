@@ -283,7 +283,7 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full'])->toArray());
+        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email'])->toArray());
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
             $new_id = $batch->id + 0.5;
