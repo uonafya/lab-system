@@ -63,7 +63,7 @@ Route::middleware(['signed'])->group(function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-
+	
 	Route::prefix('home')->name('home.')->group(function(){
 		Route::get('/', 'HomeController@index');
 		Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
