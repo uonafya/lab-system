@@ -3,6 +3,8 @@
 namespace App;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
+use DB;
 
 use App\Common;
 use App\DrSample;
@@ -21,9 +23,63 @@ class MiscDr extends Common
 
 	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
 
+
+
+    public static function dump_log($postData, $encode_it=true)
+    {
+    	if(!is_dir(storage_path('app/logs/'))) mkdir(storage_path('app/logs/'), 0777);
+
+		if($encode_it) $postData = json_encode($postData);
+		
+		$file = fopen(storage_path('app/logs/' . 'dr_logs2' .'.txt'), "a");
+		if(fwrite($file, $postData) === FALSE) fwrite("Error: no data written");
+		fwrite($file, "\r\n");
+		fclose($file);
+    }
+
 	public static function get_hyrax_key()
 	{
-		return env('DR_KEY');
+		if(Cache::store('file')->has('dr_api_token')){}
+		else{
+			self::login();
+		}
+		return Cache::store('file')->get('dr_api_token');
+	}
+
+	public static function login()
+	{
+		Cache::store('file')->forget('dr_api_token');
+		$client = new Client(['base_uri' => self::$hyrax_url]);
+
+		$response = $client->request('POST', 'sanger/authorisations', [
+			'headers' => [
+				// 'Accept' => 'application/json',
+			],
+			'json' => [
+				'data' => [
+					'type' => 'authorisations',
+					'attributes' => [
+						'email' => env('DR_USERNAME'),
+						'password' => env('DR_PASSWORD'),
+					],
+				],
+			],
+		]);
+
+		$body = json_decode($response->getBody());
+
+		if($response->getStatusCode() < 400)
+		{
+			$key = $body->data->attributes->api_key ?? null;
+
+			if(!$key) dd($body);
+
+			Cache::store('file')->put('dr_api_token', $key, 60);
+
+			echo $key;
+			return;
+		}
+		die();
 	}
 
 
@@ -33,21 +89,29 @@ class MiscDr extends Common
 
 		$sample_data = self::get_worksheet_files($worksheet);
 
-		$response = $client->request('POST', 'sanger/plate', [
-			'headers' => [
-				'Accept' => 'application/json',
-				// 'X-Hyrax-Apikey' => env('DR_KEY'),
-				'x-hyrax-daemon-apikey' => self::get_hyrax_key(),
-			],
-			'json' => [
-				[
+		$postData = [
+				'data' => [
 					'type' => 'plate_create',
 					'attributes' => [
 						'plate_name' => "{$worksheet->id}",
 					],
 				],
 				'included' => $sample_data,
+			];
+
+		self::dump_log($postData);
+
+		// die();
+
+		$response = $client->request('POST', 'sanger/plate', [
+            'http_errors' => false,
+            // 'debug' => true,
+			'headers' => [
+				// 'Accept' => 'application/json',
+				// 'x-hyrax-daemon-apikey' => self::get_hyrax_key(),
+				'X-Hyrax-Apikey' => self::get_hyrax_key(),
 			],
+			'json' => $postData,
 		]);
 
 		$body = json_decode($response->getBody());
@@ -55,6 +119,9 @@ class MiscDr extends Common
 		if($response->getStatusCode() < 400)
 		{
 			$worksheet->plate_id = $body->data->id;
+			$worksheet->time_sent_to_sanger = date('Y-m-d H:i:s');
+			$worksheet->status_id = 5;
+			$worksheet->save();
 
 			foreach ($body->data->attributes->samples as $key => $value) {
 				$sample = DrSample::find($value->sample_name);
@@ -62,6 +129,10 @@ class MiscDr extends Common
 				$sample->save();
 			}
 		}
+
+		echo "\n The status code is " . $response->getStatusCode() . "\n";
+
+		// dd($body);
 	}
 
 
@@ -70,13 +141,19 @@ class MiscDr extends Common
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
 
 		$samples = $worksheet->sample;
-		$samples->load(['result']);
+		// $samples->load(['result']);
 
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
 
 		$sample_data = [];
+		$print_data = [];
 
 		foreach ($samples as $key => $sample) {
+
+			// if($key == 4) break;
+
+			// if($key != 4) continue;
+
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
@@ -92,15 +169,25 @@ class MiscDr extends Common
 			if($sample->control == 2) $s['attributes']['sample_type'] = 'positive';
 
 			$abs = [];
+			$abs2 = [];
 
 			foreach ($primers as $primer) {
-				$abs[] = self::find_ab_file($path, $sample, $primer);
+				$ab = self::find_ab_file($path, $sample, $primer);
+				// if($ab) $abs[] = $ab;
+				if($ab){
+					$abs[] = $ab;
+					$abs2[] = ['file_name' => $ab['file_name']];
+				}
 			}
 			if(!$abs) continue;
 			$s['attributes']['ab1s'] = $abs;
 			$sample_data[] = $s;
-		}
 
+			$s['attributes']['ab1s'] = $abs2;
+			$print_data[] = $s;
+		}
+		// self::dump_log($print_data);
+		// die();
 		return $sample_data;
 	}
 
@@ -112,7 +199,7 @@ class MiscDr extends Common
 		foreach ($files as $file) {
 			if($file == '.' || $file == '..') continue;
 
-			$new_path = $path . $file;
+			$new_path = $path . '/' . $file;
 			if(is_dir($new_path)){
 				$a = self::find_ab_file($new_path, $sample, $primer);
 
@@ -124,7 +211,7 @@ class MiscDr extends Common
 				if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
 				{
 					$a = [
-						'filename' => $file,
+						'file_name' => $file,
 						'data' => base64_encode(file_get_contents($new_path)),
 					];
 					return $a;
@@ -141,9 +228,8 @@ class MiscDr extends Common
 
 		$response = $client->request('GET', "sanger/plate/result/{$worksheet->plate_id}", [
 			'headers' => [
-				'Accept' => 'application/json',
-				// 'X-Hyrax-Apikey' => env('DR_KEY'),
-				'x-hyrax-daemon-apikey' => self::get_hyrax_key(),
+				// 'Accept' => 'application/json',
+				'X-Hyrax-Apikey' => self::get_hyrax_key(),
 			],
 		]);
 
@@ -184,6 +270,7 @@ class MiscDr extends Common
 				}
 			}
 
+			$worksheet->status_id = 6;
 			$worksheet->save();
 
 			foreach ($body->included as $key => $value) {
@@ -246,11 +333,23 @@ class MiscDr extends Common
 						$sample->has_calls = true;
 
 						foreach ($s->calls as $call) {
+							// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
+							// if(!$c) $c = new DrCall;
+
+							// $c->fill([
+							// 	'sample_id' => $sample->id,
+							// 	'drug_class' => $call->drug_class,
+							// 	'other_mutations' => $call->other_mutations,
+							// 	'major_mutations' => $call->major_mutations,
+							// ]);
+
+							// $c->save();
+
 							$c = DrCall::firstOrCreate([
 								'sample_id' => $sample->id,
 								'drug_class' => $call->drug_class,
-								'other_mutations' => $call->other_mutations,
-								'major_mutations' => $call->major_mutations,
+								'other_mutations' => self::escape_null($call->other_mutations),
+								'major_mutations' => self::escape_null($call->major_mutations),
 							]);
 
 							foreach ($call->drugs as $drug) {
@@ -275,7 +374,7 @@ class MiscDr extends Common
 							foreach ($genotype->residues as $residue) {
 								$r = DrResidue::firstOrCreate([
 									'genotype_id' => $g->id,
-									'residue' => $residue->residues[0],
+									'residue' => $residue->residues[0] ?? null,
 									'position' => $residue->position,
 								]);
 							}
@@ -299,6 +398,8 @@ class MiscDr extends Common
 				}
 			}
 		}
+
+		// dd($body);
 	}
 
 	public static function get_worksheet_status($id)
@@ -314,6 +415,26 @@ class MiscDr extends Common
 	public static function get_sample_warning($id)
 	{
 		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
+	}
+
+	public static function escape_null($var)
+	{
+		if($var) return $var;
+		return null;
+	}
+
+	public static function get_worksheet_samples($extraction_worksheet_id)
+	{
+		$samples = DrSample::whereNull('worksheet_id')
+		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		->orderBy('control', 'desc')
+		->limit(16)
+		->get();
+
+		if($samples->count() > 0){
+			return ['samples' => $samples, 'create' => true];
+		}
+		return ['create' => false];
 	}
 
 

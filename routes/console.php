@@ -78,6 +78,12 @@ Artisan::command('fix:noage', function(){
 })->describe('Fix no age.');
 
 
+Artisan::command('delete:delayed-batches', function(){
+    \App\Common::delete_delayed_batches('eid');
+    \App\Common::delete_delayed_batches('vl');
+})->describe('Delete batches that have not been received after 2 weeks.');
+
+
 Artisan::command('delete:empty-batches', function(){
     \App\Misc::delete_empty_batches();
     \App\MiscViral::delete_empty_batches();
