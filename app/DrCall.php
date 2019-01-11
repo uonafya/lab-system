@@ -28,6 +28,9 @@ class DrCall extends BaseModel
             }
             $this->attributes['other_mutations'] = $val . ']';            
         }
+        else{
+            $this->attributes['other_mutations'] = null;
+        }
     }
 
     public function getOtherMutationsArrayAttribute()
@@ -44,6 +47,9 @@ class DrCall extends BaseModel
                 $val .= "'" . $v . "',";
             }
             $this->attributes['major_mutations'] = $val . ']';
+        }
+        else{
+            $this->attributes['major_mutations'] = null;
         }
     }
 
