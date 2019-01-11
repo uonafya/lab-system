@@ -1217,46 +1217,4 @@ class Random
 		}
 	}
 
-	public static function mrs_locations()
-	{
-		ini_set("memory_limit", "-1");
-
-		/*DB::table('amrslocations')->insert([
-			['id' => , 'identifier' => 10, 'name' => 'Kapenguria', ],
-			['id' => , 'identifier' => 30, 'name' => 'Anderson', ],
-			['id' => , 'identifier' => 32, 'name' => 'Eldoret Catholic Church(IDP)', ],
-			['id' => , 'identifier' => 33, 'name' => 'Eldoret Police Station(IDP)', ],
-			['id' => , 'identifier' => 34, 'name' => 'Majengo (Our Lady) Church(IDP)', ],
-			['id' => , 'identifier' => 35, 'name' => 'Turbo Police Station', ],
-			['id' => , 'identifier' => 36, 'name' => 'Nakuru(IDP)', ],
-			['id' => , 'identifier' => 37, 'name' => 'Nairobi(IDP)', ],
-			['id' => , 'identifier' => 38, 'name' => 'Eldoret Showground(IDP)', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-			['id' => , 'identifier' => , 'name' => '', ],
-		]);*/
-	} 
-
 }
