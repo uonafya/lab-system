@@ -150,7 +150,7 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
-            $this->__getExcel($data, $dateString);
+            $this->__getExcel($data, $dateString,$request);
         }else {
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
@@ -556,19 +556,27 @@ class ReportController extends Controller
         return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0);
     }
 
-    public static function __getExcel($data, $title)
+    public static function __getExcel($data, $title, $request = null)
     {
-        // dd(session('testingSystem'));
         $title = strtoupper($title);
         $dataArray = []; 
-        if (session('testingSystem') == 'Viralload') {
-            $dataArray[] = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
-        } else if (session('testingSystem') == 'EID') {
-            $dataArray[] = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
-        } else if (session('testingSystem') == 'CD4') {
-            $dataArray[] = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
+        $vlDataArray = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
+        $eidDataArray = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
+        $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
+        if (auth()->user()->user_type_id == 5) {
+            if ($request->input('testtype') == 'VL')
+                $dataArray[] = $vlDataArray;
+            else if ($request->input('testtype') == 'EID')
+                $dataArray[] = $eidDataArray;
+        } else {
+            if (session('testingSystem') == 'Viralload')
+                $dataArray[] = $vlDataArray;
+            else if (session('testingSystem') == 'EID')
+                $dataArray[] = $eidDataArray;
+            else if (session('testingSystem') == 'CD4')
+                $dataArray[] = $cd4DataArray;
         }
-        
+                
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
         
