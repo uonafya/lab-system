@@ -119,6 +119,8 @@ class MiscDr extends Common
 		if($response->getStatusCode() < 400)
 		{
 			$worksheet->plate_id = $body->data->id;
+			$worksheet->time_sent_to_sanger = date('Y-m-d H:i:s');
+			$worksheet->status_id = 5;
 			$worksheet->save();
 
 			foreach ($body->data->attributes->samples as $key => $value) {
@@ -268,6 +270,7 @@ class MiscDr extends Common
 				}
 			}
 
+			$worksheet->status_id = 6;
 			$worksheet->save();
 
 			foreach ($body->included as $key => $value) {
@@ -330,24 +333,24 @@ class MiscDr extends Common
 						$sample->has_calls = true;
 
 						foreach ($s->calls as $call) {
-							$c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
-							if(!$c) $c = new DrCall;
+							// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
+							// if(!$c) $c = new DrCall;
 
-							$c->fill([
-								'sample_id' => $sample->id,
-								'drug_class' => $call->drug_class,
-								'other_mutations' => $call->other_mutations,
-								'major_mutations' => $call->major_mutations,
-							]);
-
-							$c->save();
-
-							// $c = DrCall::firstOrCreate([
+							// $c->fill([
 							// 	'sample_id' => $sample->id,
 							// 	'drug_class' => $call->drug_class,
 							// 	'other_mutations' => $call->other_mutations,
 							// 	'major_mutations' => $call->major_mutations,
 							// ]);
+
+							// $c->save();
+
+							$c = DrCall::firstOrCreate([
+								'sample_id' => $sample->id,
+								'drug_class' => $call->drug_class,
+								'other_mutations' => self::escape_null($call->other_mutations),
+								'major_mutations' => self::escape_null($call->major_mutations),
+							]);
 
 							foreach ($call->drugs as $drug) {
 								$d = DrCallDrug::firstOrCreate([
@@ -396,7 +399,7 @@ class MiscDr extends Common
 			}
 		}
 
-		dd($body);
+		// dd($body);
 	}
 
 	public static function get_worksheet_status($id)
@@ -412,6 +415,26 @@ class MiscDr extends Common
 	public static function get_sample_warning($id)
 	{
 		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
+	}
+
+	public static function escape_null($var)
+	{
+		if($var) return $var;
+		return null;
+	}
+
+	public static function get_worksheet_samples($extraction_worksheet_id)
+	{
+		$samples = DrSample::whereNull('worksheet_id')
+		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		->orderBy('control', 'desc')
+		->limit(16)
+		->get();
+
+		if($samples->count() > 0){
+			return ['samples' => $samples, 'create' => true];
+		}
+		return ['create' => false];
 	}
 
 
