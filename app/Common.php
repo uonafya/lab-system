@@ -525,7 +525,7 @@ class Common
         $view_model = $c['sampleview_class'];
         $sample_model = $c['sample_class'];
 
-        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-28', '2019-01-07'])->get();
+        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->get();
 
         foreach ($samples as $sample) {
         	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
