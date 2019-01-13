@@ -54,10 +54,10 @@ class EidController extends BaseController
             $sample_exists = SampleView::where(['order_no' => $order_no])->first();
             if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
         }
-
         
 
-        $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        // $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        $batch = Batch::eligible($facility, $datereceived)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
             unset($batch->sample_count);

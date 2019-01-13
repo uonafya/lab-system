@@ -523,42 +523,13 @@ class Common
         $c = \App\Synch::$synch_arrays[$type];
 
         $view_model = $c['sampleview_class'];
-        $patient_model = $c['patient_class'];
+        $sample_model = $c['sample_class'];
 
-        $samples = $view_model::where('user_id', 66)->where('created_at', '>', '2018-11-28')->get();
+        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-28', '2019-01-07'])->get();
 
-        foreach ($samples as $sample) {        	
-        	$facility = $sample->facility;
-
-        	if(starts_with($sample->patient, $facility->facilitycode)){
-        		$patient = $patient_model::find($sample->patient_id);
-
-        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
-        		$patient->pre_update();
-        	}
-        }
-    }
-
-    public static function mrs_two($type = 'vl')
-    {
-        ini_set("memory_limit", "-1");
-
-        $c = \App\Synch::$synch_arrays[$type];
-
-        $view_model = $c['sampleview_class'];
-        $patient_model = $c['patient_class'];
-
-        $samples = $view_model::where('facilitycode', 14020)->where('created_at', '>', '2018-11-01')->get();
-
-        foreach ($samples as $sample) {        	
-        	$facility = $sample->facility;
-
-        	if(starts_with($sample->patient, $facility->facilitycode)){
-        		$patient = $patient_model::find($sample->patient_id);
-
-        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
-        		$patient->pre_update();
-        	}
+        foreach ($samples as $sample) {
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
         }
     }
 

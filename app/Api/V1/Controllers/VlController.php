@@ -51,7 +51,8 @@ class VlController extends BaseController
             return $this->response->errorBadRequest("VL CCC # {$ccc_number} collected on {$datecollected} already exists in database.");
         }
 
-        $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        // $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        $batch = Viralbatch::eligible($facility, $datereceived)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
             unset($batch->sample_count);
