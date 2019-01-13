@@ -527,7 +527,8 @@ class Common
 
         $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->get();
 
-        foreach ($samples as $sample) {
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
         	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         	$sample->save();
         }
