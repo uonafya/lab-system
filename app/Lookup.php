@@ -193,7 +193,7 @@ class Lookup
     {
         self::cacher();       
         $my_array = Cache::get('amrs_locations');       
-        return $my_array->where('identifier', $val)->first()->id ?? 0;
+        return $my_array->where('identifier', $val)->first()->id ?? $val;
     }
 
     public static function worksheet_lookups()

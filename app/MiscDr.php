@@ -8,6 +8,7 @@ use DB;
 
 use App\Common;
 use App\DrSample;
+use App\DrSampleView;
 
 use App\DrWorksheetWarning;
 use App\DrWarning;
@@ -423,18 +424,37 @@ class MiscDr extends Common
 		return null;
 	}
 
+
+	public static function get_extraction_worksheet_samples($limit=48)
+	{
+		$samples = DrSampleView::whereNull('worksheet_id')
+		->whereNull('extraction_worksheet_id')
+		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
+		->where(['receivedstatus' => 1])
+		->orderBy('datereceived', 'asc')
+		->orderBy('id', 'asc')
+		->limit($limit)
+		->get();
+
+		if($samples->count() == $limit){
+			return ['samples' => $samples, 'create' => true];
+		}
+		return ['samples' => $samples, 'create' => false];
+	}
+
 	public static function get_worksheet_samples($extraction_worksheet_id)
 	{
-		$samples = DrSample::whereNull('worksheet_id')
+		$samples = DrSampleView::whereNull('worksheet_id')
 		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
 		->orderBy('control', 'desc')
+		->orderBy('id', 'asc')
 		->limit(16)
 		->get();
 
 		if($samples->count() > 0){
-			return ['samples' => $samples, 'create' => true];
+			return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
 		}
-		return ['create' => false];
+		return ['create' => false, 'extraction_worksheet_id' => $extraction_worksheet_id];
 	}
 
 
