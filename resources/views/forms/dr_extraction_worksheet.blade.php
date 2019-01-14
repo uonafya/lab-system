@@ -50,27 +50,24 @@
                         </table>
                     </div>
 
-
                     @if($create)
 
                         @if (isset($worksheet))
-                            {{ Form::open(['url' => '/dr_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                            {{ Form::open(['url' => '/dr_extraction_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
                         @else
-                            {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-
+                            {{ Form::open(['url'=>'/dr_extraction_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
                             <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
                             <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
-                            <input type="hidden" value="{{ $extraction_worksheet_id }}" name="extraction_worksheet_id">
                         @endif
+
 
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-4">
                                         <button class="btn btn-success" type="submit"
 
-                                        >Save & Print Worksheet</button>
+                                        >Create Extraction Worksheet</button>
                                     </div>
                                 </div>
-
 
                         {{ Form::close() }}
 
@@ -82,7 +79,7 @@
                                     <div class="panel-body"> 
                                         <div class="alert alert-warning">
                                             <center>
-                                                No worksheet could be created from extraction worksheet {{ $extraction_worksheet_id }}.
+                                                There are only {{ $samples->count() }} samples that qualify to be in a worksheet.
                                             </center>
                                         </div>
                                     <br />
