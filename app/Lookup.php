@@ -188,6 +188,21 @@ class Lookup
         return $statuses->where('id', $id)->first()->name ?? '';
     }
 
+
+    public static function get_mrslocation($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('amrs_locations');       
+        return $my_array->where('identifier', $val)->first()->id ?? $val;
+    }
+
+    public static function get_mrslocation_reverse($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('amrs_locations');       
+        return $my_array->where('id', $val)->first()->identifier ?? $val;
+    }
+
     public static function worksheet_lookups()
     {
         self::cacher();
@@ -303,7 +318,7 @@ class Lookup
         $dc = Carbon::parse( $date_collected );
         $dc->subYears($age);
         return $dc->toDateString();
-    }
+    } 
 
 
     public static function eid_regimen($val)

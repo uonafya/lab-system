@@ -55,9 +55,10 @@ class EidController extends BaseController
             if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
         }
 
-        
+        if(env('APP_LAB') == 5 && !$datereceived && in_array($facility, [4840, 5798, 4902, 4899, 4880])) $datereceived = date('Y-m-d');        
 
-        $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        // $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        $batch = Batch::eligible($facility, $datereceived)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
             unset($batch->sample_count);
@@ -74,7 +75,7 @@ class EidController extends BaseController
         $batch->lab_id = $lab;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
+        // if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
         $batch->user_id = 66;
         // if(env('APP_LAB') == 5) $batch->user_id = 66;
         $batch->input_complete = 1;
@@ -137,6 +138,7 @@ class EidController extends BaseController
             $sample->pcrtype = $recommended_pcr;
         }
 
+        $sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         $sample->regimen = Lookup::eid_regimen($sample->regimen);
         $sample->mother_prophylaxis = Lookup::eid_intervention($sample->mother_prophylaxis);
         $sample->batch_id = $batch->id;
