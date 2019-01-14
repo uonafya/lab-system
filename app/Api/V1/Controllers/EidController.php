@@ -55,7 +55,7 @@ class EidController extends BaseController
             if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
         }
 
-        if(env('APP_LAB') == 5 && !$datereceived && in_array($facility, [4840, 5798, 4902])) $datereceived = date('Y-m-d');        
+        if(env('APP_LAB') == 5 && !$datereceived && in_array($facility, [4840, 5798, 4902, 4899, 4880])) $datereceived = date('Y-m-d');        
 
         // $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
         $batch = Batch::eligible($facility, $datereceived)->withCount(['sample'])->get()->first();
