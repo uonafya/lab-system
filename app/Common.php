@@ -534,6 +534,24 @@ class Common
         }
     }
 
+    public static function mrs_reverse($type = 'vl')
+    {
+        ini_set("memory_limit", "-1");
+
+        $c = \App\Synch::$synch_arrays[$type];
+
+        $view_model = $c['sampleview_class'];
+        $sample_class = $c['sample_class'];
+
+        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->whereDate('updated_at', '2019-01-13')->get();
+
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation_reverse($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
     public static function batch_date()
     {
         ini_set("memory_limit", "-1");
