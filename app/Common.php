@@ -525,7 +525,7 @@ class Common
         $view_model = $c['sampleview_class'];
         $sample_class = $c['sample_class'];
 
-        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->get();
+        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-01', '2018-11-31'])->get();
 
         foreach ($samples as $s) {
         	$sample = $sample_class::find($s->id)->first();
