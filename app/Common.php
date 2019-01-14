@@ -525,10 +525,22 @@ class Common
         $view_model = $c['sampleview_class'];
         $sample_class = $c['sample_class'];
 
-        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-01', '2018-11-31'])->get();
+        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-27', '2019-11-31'])->get();
 
         foreach ($samples as $s) {
         	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
+    public static function mrs_cd4()
+    {
+        ini_set("memory_limit", "-1");
+
+        $samples = \App\Cd4Sample::where('user_id', 66)->whereBetween('created_at', ['2018-11-27', '2019-01-15'])->get();
+
+        foreach ($samples as $sample) {
         	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         	$sample->save();
         }

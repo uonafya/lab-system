@@ -61,7 +61,8 @@ class Cd4Controller extends BaseController
         $sample->datereceived = $request->input('datereceived', date('Y-m-d'));
 
         // $sample->serial_no = $request->input('serial_no', 0);
-        $sample->amrs_location = $request->input('amrs_location');
+        $sample->amrs_location = $request->input('amrs_location');        
+        $sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         $sample->provider_identifier = $request->input('provider_identifier');
         $sample->save();
         $sample->load(['patient']);
