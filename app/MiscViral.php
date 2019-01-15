@@ -989,7 +989,8 @@ class MiscViral extends Common
 
         
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(env('APP_ENV') == 'production') 
+            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
         if(!$mail_array) return null;
 
         try {
