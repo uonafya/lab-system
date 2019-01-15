@@ -462,7 +462,7 @@ class MiscDr extends Common
 	{
 		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(150)->get();
 
-		foreach ($potential_patients as $key => $value) {
+		foreach ($potential_patients as $patient) {
 	        $data = $patient->only(['patient_id', 'dr_reason_id']);
 	        $data['user_id'] = 0;
 	        $data['receivedstatus'] = 1;
