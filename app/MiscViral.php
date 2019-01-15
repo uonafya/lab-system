@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Excel;
@@ -14,6 +16,8 @@ use App\Viralworksheet;
 
 use App\DrPatient;
 use App\Lookup;
+
+use App\Mail\EdarpValidation as Edarp;
 
 class MiscViral extends Common
 {
@@ -953,8 +957,7 @@ class MiscViral extends Common
         }
     }
 
-    public static function find_not_dispatched()
-    {
+    public static function find_not_dispatched() {
         ini_set("memory_limit", "-1");
         $samples = ViralsampleView::where(['worksheet_id' => 148])->whereNull('datedispatched')
                         ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
@@ -974,5 +977,29 @@ class MiscViral extends Common
             }
         }
     } 
+
+    public static function edarpsamplesforapproval() {
+        $samples = Viralsample::selectRaw("count(if(date(created_at) = curdate(), 1, null)) as today, count(*) as total")->where('synched', 5)->first();
+        $edarpUser = User::where('user_type_id', 8)->first();
+        if ($edarpUser->count())
+            $url = URL::temporarySignedRoute(
+                'nhrl', now()->addDays(1), ['user' => $edarpUser->id]
+            );
+        $data = (object)['samples' => $samples, 'url' => $url];
+
+        
+        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        if(env('APP_ENV') == 'production') 
+            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
+        if(!$mail_array) return null;
+
+        try {
+            Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+            ->send(new Edarp($data));
+            
+        } catch (Exception $e) {
+            
+        }
+    }
     
 }

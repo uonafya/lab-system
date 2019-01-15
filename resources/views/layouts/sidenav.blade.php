@@ -405,11 +405,11 @@
             <hr />
         @endif
         --}}
-        @if (Auth::user()->user_type_id != 5)
+        @if (!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5))
+        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)
