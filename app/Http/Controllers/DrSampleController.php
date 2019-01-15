@@ -43,8 +43,12 @@ class DrSampleController extends Controller
     {        
         $data = $patient->only(['patient_id', 'dr_reason_id']);
         $data['user_id'] = auth()->user()->id;
-        $sample = DrSample::create($data);
+        // $sample = DrSample::create($data);
+        $sample = new DrSample;
+        $sample->fill($data);
         $facility = $sample->patient->facility;
+        $sample->facility_id = $facility_id;
+        $sample->save();
 
         if($facility->email != null || $facility->email != '')
         {
