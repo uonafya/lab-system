@@ -32,7 +32,7 @@ class DrExtractionWorksheetController extends Controller
     {
         $data = Lookup::get_dr();
         $data = array_merge($data, MiscDr::get_extraction_worksheet_samples($limit));
-        return view('forms.dr_extraction_worksheets', $data);        
+        return view('forms.dr_extraction_worksheet', $data);        
     }
 
     /**
