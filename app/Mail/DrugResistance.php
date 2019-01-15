@@ -57,6 +57,8 @@ class DrugResistance extends Mailable
 
         $this->form_url = str_replace($old_signature, $new_signature, $form_url);
 
+        $this->form_url = $url;
+
         $data = Lookup::get_dr();
 
         if(!is_dir(storage_path('app/dr/'))) mkdir(storage_path('app/dr'), 0777, true);
