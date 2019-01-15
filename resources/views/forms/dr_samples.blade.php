@@ -53,7 +53,7 @@
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="facility_id" id="facility_id">
                                     @isset($sample)
-                                    <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
+                                    <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
                                     @endisset
                                 </select>
                             </div>
@@ -124,7 +124,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $proph->displaylabel }}
+                                        > {!! $proph->displaylabel !!}
                                         </option>
                                     @endforeach
                                 </select>
