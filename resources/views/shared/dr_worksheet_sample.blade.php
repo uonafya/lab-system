@@ -3,7 +3,7 @@
 		@if($column == 1)
 			<tr>
 		@endif
-		
+
 @if($sample)
 	@foreach($primers as $primer_key => $primer)
 				<td>
@@ -50,6 +50,9 @@
 			<td></td>
 			<td></td>
 	@endif
-	</tr>
 
 @endif
+
+		@if($column == 2)
+			</tr>
+		@endif
