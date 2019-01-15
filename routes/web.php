@@ -60,6 +60,7 @@ Route::get('download_api', 'RandomController@download_api');
 
 Route::middleware(['signed'])->group(function(){
 	Route::get('dr_sample/edit/{user}/{sample}', 'DrSampleController@facility_edit')->name('dr_sample.facility_edit');
+	Route::get('nhrl', 'RandomController@login_edarp')->name('nhrl');
 });
 
 Route::middleware(['auth'])->group(function(){
@@ -337,7 +338,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('create/{sampletype?}', 'ViralsampleController@create');
 
-		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
+		Route::get('nhrl', 'ViralsampleController@nhrl_samples')->name('nhrl');
 		Route::post('nhrl', 'ViralsampleController@approve_nhrl');
 
 		Route::get('upload', 'ViralsampleController@site_sample_page');

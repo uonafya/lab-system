@@ -9,6 +9,7 @@ use App\Sample;
 use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
+use App\Random;
 
 class RandomController extends Controller
 {
@@ -58,49 +59,56 @@ class RandomController extends Controller
 		return view('forms.search')->with('pageTitle', 'Search');
 	}
 
+	
+
 	public function lablogs($year = null, $month = null){
-		if ($year == null || $year=='null') {
-			if(null !== session('lablogyear')) {
-				$year = session('lablogyear');
-			} else {
-				$set = session(['lablogyear' => date('Y')]);
-			}
-		} else {
-			$set = session(['lablogyear' => $year]);
-		}
-
-
 		if ($month == null || $month=='null') {
 			if (null !== session('lablogmonth')) {
 				$month = session('lablogmonth');
 			} else {
-				$set = session(['lablogmonth' => date('m') - 1]);
+				$currentMonth = date('m');
+				$prevMonth = $currentMonth - 1;
+				if ($currentMonth == 1)
+					$prevMonth = 12;
+				$set = session(['lablogmonth' => $prevMonth]);
 			}
 		} else {
 			$set = session(['lablogmonth' => $month]);
 		}
-
+		if ($year == null || $year=='null') {
+			if(null !== session('lablogyear')) {
+				$year = session('lablogyear');
+			} else {
+				if ($prevMonth == 12)
+					$year = date('Y') - 1;
+				else
+					$year = date('Y');
+				$set = session(['lablogyear' => $year]);
+			}
+		} else {
+			$set = session(['lablogyear' => $year]);
+		}
 		
 		$year = session('lablogyear');
 		$month = session('lablogmonth');
-		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
-		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', '=', 1)->first()->tests;
-		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->whereMonth('samples_view.datereceived', $month)->get();
-
-		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
-		$vlplasmarejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
-
-		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
-		$vldbsrejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
-		
-		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
-		$data = (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
-		// dd($data);
+		$data = Random::__getLablogsData($year, $month);
+				
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
 	}
 
 	public function config()
 	{
 		return phpinfo();
+	}
+
+	public function login_edarp(Request $request) {
+		if(auth()->user()) auth()->logout();
+        $user = \App\User::find($request->user);
+        auth()->login($user);
+
+        if (auth()->check())
+        	return redirect()->route('viralsample.nhrl');
+        else
+        	abort(401);
 	}
 }
