@@ -21,7 +21,7 @@ class CreateDrSampleViewsTable extends Migration
 
           FROM dr_samples s
             LEFT JOIN viralpatients p ON p.id=s.patient_id
-            LEFT JOIN facilitys f ON f.id=s.facility_id
+            LEFT JOIN facilitys f ON f.id=p.facility_id
 
         );
         ");
