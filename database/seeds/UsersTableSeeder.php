@@ -24,6 +24,9 @@ class UsersTableSeeder extends Seeder
 		//     ['id' => '7', 'user_type' => 'POC Admin'],
 		//     ['id' => '8', 'user_type' => 'EDARP Admin'],
 		// ]);
+		   DB::table('user_types')->insert([
+		    ['id' => '8', 'user_type' => 'EDARP Admin'],
+		]);
 
 		// // $old_users = DB::connection('old')->table('users')->get();
 
