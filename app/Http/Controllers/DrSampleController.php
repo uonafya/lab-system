@@ -148,6 +148,7 @@ class DrSampleController extends Controller
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
+        if(auth()->user()->user_type_id == 5) return redirect('/viralbatch');
         return redirect('/dr_sample');
     }
 
