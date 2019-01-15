@@ -430,14 +430,14 @@ class MiscDr extends Common
 		$samples = DrSampleView::whereNull('worksheet_id')
 		->whereNull('extraction_worksheet_id')
 		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
-		->where(['receivedstatus' => 1])
+		->where(['receivedstatus' => 1, 'control' => 0])
 		->orderBy('datereceived', 'asc')
 		->orderBy('id', 'asc')
 		->limit($limit)
 		->get();
 
 		if($samples->count() == $limit){
-			return ['samples' => $samples, 'create' => true, 'limit' => true];
+			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 		}
 		return ['samples' => $samples, 'create' => false];
 	}
