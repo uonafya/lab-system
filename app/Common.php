@@ -8,6 +8,7 @@ use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
 use App\Mail\UrgentCommunication;
 use App\Mail\NoDataReport;
+use App\Mail\LabTracker;
 use Carbon\Carbon;
 use Exception;
 
@@ -22,6 +23,23 @@ class Common
         Mail::to(['joelkith@gmail.com'])->send(new TestMail());
     }
 
+    public static function get_misc_class($type)
+    {
+    	if($type == 'eid') return \App\Misc::class;
+    	 return \App\MiscViral::class;
+    }
+
+    public static function get_batch_class($type)
+    {
+    	if($type == 'eid') return \App\Batch::class;
+    	 return \App\Viralbatch::class;
+    }
+
+    public static function get_patient_class($type)
+    {
+    	if($type == 'eid') return \App\Patient::class;
+    	 return \App\Viralpatient::class;
+    }
 
 	public static function get_days($start, $finish)
 	{
@@ -275,6 +293,18 @@ class Common
 		}
 	}
 
+	public static function delete_delayed_batches($type)
+	{
+		$batch_model = self::get_batch_class($type);
+        $min_time = strtotime("-14 days");
+
+		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
+
+		foreach ($batches as $batch) {
+			$batch->batch_delete();
+		}
+	}
+
     public static function delete_folder($path)
     {
         if(!ends_with($path, '/')) $path .= '/';
@@ -494,42 +524,44 @@ class Common
         $c = \App\Synch::$synch_arrays[$type];
 
         $view_model = $c['sampleview_class'];
-        $patient_model = $c['patient_class'];
+        $sample_class = $c['sample_class'];
 
-        $samples = $view_model::where('user_id', 66)->where('created_at', '>', '2018-11-28')->get();
+        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-27', '2019-11-31'])->get();
 
-        foreach ($samples as $sample) {        	
-        	$facility = $sample->facility;
-
-        	if(starts_with($sample->patient, $facility->facilitycode)){
-        		$patient = $patient_model::find($sample->patient_id);
-
-        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
-        		$patient->pre_update();
-        	}
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
         }
     }
 
-    public static function mrs_two($type = 'vl')
+    public static function mrs_cd4()
+    {
+        ini_set("memory_limit", "-1");
+
+        $samples = \App\Cd4Sample::where('user_id', 66)->whereBetween('created_at', ['2018-11-27', '2019-01-15'])->get();
+
+        foreach ($samples as $sample) {
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
+    public static function mrs_reverse($type = 'vl')
     {
         ini_set("memory_limit", "-1");
 
         $c = \App\Synch::$synch_arrays[$type];
 
         $view_model = $c['sampleview_class'];
-        $patient_model = $c['patient_class'];
+        $sample_class = $c['sample_class'];
 
-        $samples = $view_model::where('facilitycode', 14020)->where('created_at', '>', '2018-11-01')->get();
+        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->whereDate('updated_at', '2019-01-13')->get();
 
-        foreach ($samples as $sample) {        	
-        	$facility = $sample->facility;
-
-        	if(starts_with($sample->patient, $facility->facilitycode)){
-        		$patient = $patient_model::find($sample->patient_id);
-
-        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
-        		$patient->pre_update();
-        	}
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation_reverse($sample->amrs_location);
+        	$sample->save();
         }
     }
 
@@ -651,6 +683,32 @@ class Common
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+    }
+
+    public static function send_lab_tracker() {
+    	$year = date('Y');
+    	$month = date('m');
+    	$previousMonth =  $month - 1;
+    	if ($month == 1) {
+    		$previousMonth = 12;
+    		$year -= 1;
+    	}
+    	$data = Random::__getLablogsData($year, $month);
+
+    	// $facility = $batch->facility; 
+    	
+        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        if(env('APP_ENV') == 'production') 
+        	$mail_array = $facility->email_array;
+        if(!$mail_array) 
+        	return null;
+
+        try {
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	->send(new LabTracker($data));
+        } catch (Exception $e) {
+        	
+        }
     }
 
 

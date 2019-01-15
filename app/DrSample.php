@@ -17,6 +17,11 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\DrWorksheet', 'worksheet_id');
     }
 
+    public function extraction_worksheet()
+    {
+        return $this->belongsTo('App\DrExtractionWorksheet', 'extraction_worksheet_id');
+    }
+
     public function receiver()
     {
         return $this->belongsTo('App\User', 'received_by');
@@ -25,11 +30,6 @@ class DrSample extends BaseModel
     public function creator()
     {
         return $this->belongsTo('App\User', 'user_id');
-    }
-
-    public function result()
-    {
-        return $this->hasMany('App\DrResult', 'sample_id');
     }
 
 
@@ -118,14 +118,31 @@ class DrSample extends BaseModel
     {
         $primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
         $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        if(!$date_created)
+        if(!$date_created) return null;
+
+        $str = '';
 
         foreach ($primers as $key => $value) {
             $loc = $key+1;
             if($column == 2) $loc += 6;
 
+            $str .= '<td>';
+
             
         }
+    }
+
+
+    /**
+     * Get the patient's gender
+     *
+     * @return string
+     */
+    public function getControlTypeAttribute()
+    {
+        if($this->control == 1){ return "Negative Control"; }
+        else if($this->control == 2){ return "Positive Control"; }
+        else{ return "Normal Sample"; }
     }
 
 

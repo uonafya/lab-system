@@ -16,6 +16,11 @@ class CreateDrSamplesTable extends Migration
         Schema::create('dr_samples', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('patient_id')->unsigned()->index();
+            $table->integer('facility_id')->unsigned()->index();
+
+            // 0 is for normal sample
+            // 1 is negative control
+            // 2 is positive control
             $table->tinyInteger('control')->unsigned()->nullable()->default(0);
             $table->integer('sanger_id')->unsigned()->index()->nullable()->default(0);
 
@@ -58,6 +63,7 @@ class CreateDrSamplesTable extends Migration
             $table->date('date_prev_regimen')->nullable(); 
             $table->date('date_current_regimen')->nullable(); 
 
+            $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
             $table->integer('worksheet_id')->nullable()->unsigned()->index();
 
             $table->date('datecollected')->nullable();
@@ -70,6 +76,7 @@ class CreateDrSamplesTable extends Migration
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('received_by')->unsigned()->nullable();
 
+            $table->boolean('passed_gel_documentation')->nullable();
 
             $table->tinyInteger('status_id')->nullable()->unsigned()->index();
 

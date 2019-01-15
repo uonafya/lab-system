@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\DrWorksheet;
 use App\DrPatient;
 use App\DrSample;
-use App\DrResult;
+use App\DrSampleView;
 use App\User;
 
 use App\Lookup;
@@ -47,19 +47,21 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($extraction_worksheet_id)
     {
-        $data = Lookup::get_dr();
-        $samples = DrSample::selectRaw("dr_samples.*")
-                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-                        ->orderBy('drug_resistance_reasons.rank', 'asc')
-                        ->whereNull('worksheet_id')
-                        ->where('receivedstatus', 1)
-                        ->limit(14)
-                        ->get();
+        // $samples = DrSample::selectRaw("dr_samples.*")
+        //                 ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
+        //                 ->orderBy('drug_resistance_reasons.rank', 'asc')
+        //                 ->whereNull('worksheet_id')
+        //                 ->where('receivedstatus', 1)
+        //                 ->limit(16)
+        //                 ->get();
 
-        $samples->load(['patient.facility']);
-        $data['dr_samples'] = $samples;
+        // $samples->load(['patient.facility']);
+        // $data['dr_samples'] = $samples;
+
+        $data = Lookup::get_dr();
+        $data = array_merge($data, MiscDr::get_worksheet_samples($extraction_worksheet_id));
         return view('forms.dr_worksheets', $data);
     }
 
@@ -75,23 +77,10 @@ class DrWorksheetController extends Controller
         $dr_worksheet->fill($request->except(['_token']));
         $dr_worksheet->save();
 
-        $samples = DrSample::selectRaw("dr_samples.*")
-                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-                        ->orderBy('drug_resistance_reasons.rank', 'asc')
-                        ->whereNull('worksheet_id')
-                        ->where('receivedstatus', 1)
-                        ->limit(14)
-                        ->get();
-        $data = Lookup::get_dr();
-        $dr_primers = $data['dr_primers'];
+        $data = MiscDr::get_worksheet_samples($dr_worksheet->extraction_worksheet_id);
+        $samples = $data['samples'];
 
         foreach ($samples as $sample) {
-            foreach ($dr_primers as $dr_primer) {
-                $dr_result = new DrResult;
-                $dr_result->sample_id = $sample->id;
-                $dr_result->dr_primer_id = $dr_primer->id;
-                $dr_result->save();
-            }
             $sample->worksheet_id = $dr_worksheet->id;
             $sample->save();
         }
@@ -107,15 +96,11 @@ class DrWorksheetController extends Controller
     public function show(DrWorksheet $drWorksheet, $print=false)
     {
         $data = Lookup::get_dr();
-
-        $samples = $drWorksheet->sample;
-        $sample_ids = $samples->pluck(['id'])->toArray();
-
-        $dr_results = DrResult::whereIn('sample_id', $sample_ids)->orderBy('sample_id', 'asc')->orderBy('dr_primer_id', 'asc')->get();
-        $data['dr_results'] = $dr_results;
+        // $data['samples'] = $drWorksheet->sample;
+        $data['samples'] = DrSample::where(['worksheet_id' => $drWorksheet->id])->orderBy('id', 'asc')->get();
         $data['date_created'] = $drWorksheet->my_date_format('created_at', "Y-m-d");
         if($print) $data['print'] = true;
-        return view('worksheets.dr', $data);
+        return view('worksheets.dr_worksheet', $data);
     }
 
     /**
@@ -186,9 +171,17 @@ class DrWorksheetController extends Controller
         if($zip->open($file) === TRUE){
             $zip->extractTo($path);
             $zip->close();
+            $worksheet->save();
+            session(['toast_message' => 'The worksheet results has been uploaded.']);
         }
-
-        session(['toast_message' => 'The worksheet results has been uploaded.']);
+        else{
+            session([
+                'toast_message' => 'The worksheet results could not be uploaded. Please try again.', 
+                'toast_error' => 1
+            ]);
+            return back();
+        }
+        
         return redirect('dr_worksheet');
     }
 
@@ -199,9 +192,6 @@ class DrWorksheetController extends Controller
             session(['toast_error' => 1]);
             return back();
         }
-        $samples = DrSample::where('worksheet_id', $worksheet->id)->get();
-        $samples_array = $samples->pluck('id')->toArray();
-        DrResult::whereIn('sample_id', $samples_array)->delete();
         DrSample::where('worksheet_id', $worksheet->id)->update(['worksheet_id' => null, 'datetested' => null, ]);
         $worksheet->dateuploaded = $worksheet->uploadedby = null;
         $worksheet->datecancelled = date('Y-m-d');
@@ -221,7 +211,7 @@ class DrWorksheetController extends Controller
             return back();
         }
 
-        if($worksheet->uploadedby != auth()->user()->id){
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
             session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             session(['toast_error' => 1]);
             return back();

@@ -78,6 +78,12 @@ Artisan::command('fix:noage', function(){
 })->describe('Fix no age.');
 
 
+Artisan::command('delete:delayed-batches', function(){
+    \App\Common::delete_delayed_batches('eid');
+    \App\Common::delete_delayed_batches('vl');
+})->describe('Delete batches that have not been received after 2 weeks.');
+
+
 Artisan::command('delete:empty-batches', function(){
     \App\Misc::delete_empty_batches();
     \App\MiscViral::delete_empty_batches();
@@ -263,4 +269,12 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
+Artisan::command('send:labtracker', function(){
+    $str = \App\Common::send_lab_tracker();
+    $this->info($str);
+})->describe('Send labtracker email to the program people');
 
+Artisan::command('edarp:approvesamples', function(){
+    $str = \App\MiscViral::edarpsamplesforapproval();
+    $this->info($str);
+})->describe('Send email of the EDARP samples that need approval');

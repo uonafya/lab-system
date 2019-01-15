@@ -9,6 +9,6 @@ class DrWarning extends BaseModel
 
     public function sample()
     {
-        return $this->belongsTo('App\DrResult', 'sample_id');
+        return $this->belongsTo('App\DrSample', 'sample_id');
     }
 }
