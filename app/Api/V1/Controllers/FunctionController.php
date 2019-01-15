@@ -136,7 +136,7 @@ class FunctionController extends Controller
                 'order_number' => $sample->order_no,                
                 'provider_identifier' => $sample->provider_identifier,
                 'facility_code' => $sample->facilitycode,
-                'AMRs_location' => $sample->amrs_location,
+                'AMRs_location' => Lookup::get_mrslocation($sample->amrs_location),
                 'full_names' => $sample->patient_name,
                 // 'date_collected' => Lookup::my_date_format($sample->datecollected),
                 // 'date_received' => Lookup::my_date_format($sample->datereceived),

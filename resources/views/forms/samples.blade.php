@@ -775,7 +775,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-2y",
+            startDate: "-3y",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });

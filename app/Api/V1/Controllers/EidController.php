@@ -55,9 +55,10 @@ class EidController extends BaseController
             if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
         }
 
-        
+        if(env('APP_LAB') == 5 && !$datereceived && in_array($facility, [4840, 5798, 4902, 4899, 4880])) $datereceived = date('Y-m-d');        
 
-        $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        // $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        $batch = Batch::eligible($facility, $datereceived)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
             unset($batch->sample_count);
@@ -74,12 +75,12 @@ class EidController extends BaseController
         $batch->lab_id = $lab;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
+        // if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
         $batch->user_id = 66;
         // if(env('APP_LAB') == 5) $batch->user_id = 66;
         $batch->input_complete = 1;
         $batch->site_entry = 1;
-        if($datereceived || $batch->facility_id == 4840) $batch->site_entry = 0;
+        if($datereceived) $batch->site_entry = 0;
         $batch->save();
 
         $patient = Patient::existing($facility, $hei_number)->get()->first();
@@ -143,7 +144,7 @@ class EidController extends BaseController
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
-        if($datereceived || $batch->facility_id == 4840) $sample->receivedstatus = 1;
+        if($datereceived) $sample->receivedstatus = 1;
         $sample->save();
 
         $sample->load(['patient.mother', 'batch']);
