@@ -41,19 +41,25 @@ class DrugResistance extends Mailable
         $this->sample->load(['patient.facility']);
         $user = User::where(['user_type_id' => 5, 'facility_id' => $this->sample->patient->facility->id])->first();
         $form_url = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $this->sample->id]);
-        $form_url2 = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $this->sample->id]);
 
         // This is because the application receives requests on http but forces it to https
 
         \Illuminate\Support\Facades\URL::forceScheme('http');
+
+        $base_url = url('');
+        if(env('APP_SECURE_PORT')) $base_url = str_before($base_url, ':' .  env('APP_SECURE_PORT'));
+
+        \Illuminate\Support\Facades\URL::forceRootUrl($base_url);
+
         $url = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $this->sample->id]);
-        \Illuminate\Support\Facades\URL::forceScheme('https');
 
-        $new_signature = str_after($url, 'signature=');
-        $old_signature = str_after($form_url, 'signature=');
-        $old_signature2 = str_after($form_url2, 'signature=');
+        if(env('APP_SECURE_PORT')) \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_SECURE_PORT'));
+        if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
 
-        // dd(['old_signature' => $old_signature, 'old_signature2' => $old_signature2, 'new_signature' => $new_signature]);
+        $new_signature = str_after($url, 'expires=');
+        $old_signature = str_after($form_url, 'expires=');
+
+        // dd(['old_signature' => $old_signature, 'old_url' => $form_url, 'new_signature' => $new_signature, 'new_url' => $url]);
 
         $this->form_url = str_replace($old_signature, $new_signature, $form_url);
 
