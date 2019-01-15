@@ -47,7 +47,7 @@ class DrSampleController extends Controller
         $sample = new DrSample;
         $sample->fill($data);
         $facility = $sample->patient->facility;
-        $sample->facility_id = $facility_id;
+        $sample->facility_id = $facility->id;
         $sample->save();      
 
         $patient->status_id=2;
