@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DrWorksheet;
 use App\DrPatient;
 use App\DrSample;
+use App\DrSampleView;
 use App\User;
 
 use App\Lookup;

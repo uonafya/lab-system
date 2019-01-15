@@ -18,6 +18,11 @@ class DrWorksheet extends BaseModel
         return $this->hasMany('App\DrWorksheetWarning', 'worksheet_id');
     }
 
+    public function extraction_worksheet()
+    {
+        return $this->belongsTo('App\DrExtractionWorksheet', 'extraction_worksheet_id');
+    }
+
     public function creator()
     {
     	return $this->belongsTo('App\User', 'createdby');

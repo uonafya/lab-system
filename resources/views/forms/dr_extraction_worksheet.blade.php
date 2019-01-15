@@ -50,7 +50,7 @@
                         </table>
                     </div>
 
-                    @if($create)
+                    @if(isset($create) && $create)
 
                         @if (isset($worksheet))
                             {{ Form::open(['url' => '/dr_extraction_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}

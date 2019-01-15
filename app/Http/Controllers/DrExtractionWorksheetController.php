@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DrExtractionWorksheet;
 use App\DrSample;
+use App\DrSampleView;
 use Illuminate\Http\Request;
 
 class DrExtractionWorksheetController extends Controller
@@ -101,9 +102,19 @@ class DrExtractionWorksheetController extends Controller
     }
 
 
+    public function gel_documentation_form(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $data = Lookup::get_dr();
+        $data['worksheet'] = $drExtractionWorksheet;
+        $data['samples'] = $drExtractionWorksheet->sample_view;
+        return view('forms.dr_gel_documentation', $data);
+    }
+
+
     public function gel_documentation(Request $request, DrExtractionWorksheet $drExtractionWorksheet)
     {
         $drExtractionWorksheet->date_gel_documentation = date('Y-m-d');
+        $drExtractionWorksheet->status_id = 3;
         $drExtractionWorksheet->save();
         $sample_ids = $request->input('samples');
         DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereIn('id', $sample_ids)->update(['passed_gel_documentation' => true]);
@@ -111,5 +122,21 @@ class DrExtractionWorksheetController extends Controller
 
         session(['toast_message' => 'Gel documentation has been submitted.']);
         redirect('dr_worksheet/create/' . $drExtractionWorksheet->id);
+    }
+
+
+    public function cancel(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        DrSample::where(['extraction_worksheet_id' => $drExtractionWorksheet->id])->update(['extraction_worksheet_id' => null]);
+        $drExtractionWorksheet->status_id = 4;
+        $drExtractionWorksheet->save();
+
+        session(['toast_message' => 'The worksheet has been cancelled.']);
+        return redirect("/worksheet");
     }
 }
