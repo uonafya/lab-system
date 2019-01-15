@@ -12,87 +12,84 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        
 
-  //       DB::table('user_types')->insert([
-		//     ['id' => '1', 'user_type' => 'Lab User'],
-		//     ['id' => '2', 'user_type' => 'System Administrator'],
-		//     ['id' => '3', 'user_type' => 'Program Officers'],
-		//     ['id' => '4', 'user_type' => 'Data Clerk'],
-		//     ['id' => '5', 'user_type' => 'Facility Users'],
-		//     ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
-		//     ['id' => '7', 'user_type' => 'POC Admin'],
-		//     ['id' => '8', 'user_type' => 'EDARP Admin'],
-		// ]);
-		   DB::table('user_types')->insert([
+        DB::table('user_types')->insert([
+		    ['id' => '1', 'user_type' => 'Lab User'],
+		    ['id' => '2', 'user_type' => 'System Administrator'],
+		    ['id' => '3', 'user_type' => 'Program Officers'],
+		    ['id' => '4', 'user_type' => 'Data Clerk'],
+		    ['id' => '5', 'user_type' => 'Facility Users'],
+		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
+		    ['id' => '7', 'user_type' => 'POC Admin'],
 		    ['id' => '8', 'user_type' => 'EDARP Admin'],
 		]);
 
-		// // $old_users = DB::connection('old')->table('users')->get();
+		// $old_users = DB::connection('old')->table('users')->get();
 
-		// // foreach ($old_users as $old_user) {
-		// // 	$user = new User;
-		// // 	$user->id = $old_user->ID;
-		// // 	$user->user_type_id = $old_user->account;
-		// // 	$user->lab_id = $old_user->lab;
-		// // 	$user->surname = $old_user->surname;
-		// // 	$user->oname = $old_user->oname;
-		// // 	$user->email = $old_user->email;
+		// foreach ($old_users as $old_user) {
+		// 	$user = new User;
+		// 	$user->id = $old_user->ID;
+		// 	$user->user_type_id = $old_user->account;
+		// 	$user->lab_id = $old_user->lab;
+		// 	$user->surname = $old_user->surname;
+		// 	$user->oname = $old_user->oname;
+		// 	$user->email = $old_user->email;
 
-		// // 	if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
+		// 	if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
 
-		// // 	$existing = User::withTrashed()->where('email', $old_user->email)->get()->first();
-		// // 	if($existing) $user->email = str_random(5) . $user->email;
+		// 	$existing = User::withTrashed()->where('email', $old_user->email)->get()->first();
+		// 	if($existing) $user->email = str_random(5) . $user->email;
 
-		// // 	$user->password = env('DEFAULT_PASSWORD', 12345678);
-		// // 	$user->save();
-		// // }
+		// 	$user->password = env('DEFAULT_PASSWORD', 12345678);
+		// 	$user->save();
+		// }
 
 
 
-  //       $users = factory(App\User::class, 1)->create([
-	 //        'user_type_id' => 0,
-	 //        'surname' => 'Kithinji',
-	 //        'oname' => 'Joel',
-	 //        'email' => 'joelkith@gmail.com',
-  //   	]);
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 0,
+	        'surname' => 'Kithinji',
+	        'oname' => 'Joel',
+	        'email' => 'joelkith@gmail.com',
+    	]);
 
-  //       $users = factory(App\User::class, 1)->create([
-	 //        'user_type_id' => 0,
-	 //        'surname' => 'Bakasa',
-	 //        'oname' => 'Joshua',
-	 //        'email' => 'bakasa@gmail.com',
-  //   	]);
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 0,
+	        'surname' => 'Bakasa',
+	        'oname' => 'Joshua',
+	        'email' => 'bakasa@gmail.com',
+    	]);
 
-  //       $users = factory(App\User::class, 1)->create([
-	 //        'user_type_id' => 0,
-	 //        'surname' => 'Ngugi',
-	 //        'oname' => 'Tim',
-	 //        'email' => 'tim@gmail.com',
-  //   	]);
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 0,
+	        'surname' => 'Ngugi',
+	        'oname' => 'Tim',
+	        'email' => 'tim@gmail.com',
+    	]);
 
-  //       $users = factory(App\User::class, 1)->create([
-	 //        'user_type_id' => 0,
-	 //        'surname' => 'Lusike',
-	 //        'oname' => 'Judy',
-	 //        'email' => 'judy@gmail.com',
-  //   	]);
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 0,
+	        'surname' => 'Lusike',
+	        'oname' => 'Judy',
+	        'email' => 'judy@gmail.com',
+    	]);
 
-  //       $users = factory(App\User::class, 1)->create([
-	 //        'user_type_id' => 2,
-	 //        'surname' => 'Default',
-	 //        'oname' => 'Admin',
-	 //        'email' => 'admin@admin.com',
-  //   	]);
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 2,
+	        'surname' => 'Default',
+	        'oname' => 'Admin',
+	        'email' => 'admin@admin.com',
+    	]);
 
-  //       $users = factory(App\User::class, 1)->create([
-	 //        'user_type_id' => 7,
-	 //        'surname' => 'POC',
-	 //        'oname' => 'Admin',
-	 //        'email' => 'poc@gmail.com',
-  //   	]);
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 7,
+	        'surname' => 'POC',
+	        'oname' => 'Admin',
+	        'email' => 'poc@gmail.com',
+    	]);
 
-  //       if (env('APP_LAB') == 2) // EDARP user to approve samples which are staged in Kisumu
+        if (env('APP_LAB') == 2) // EDARP user to approve samples which are staged in Kisumu
 	        $users = factory(App\User::class, 1)->create([
 		        'user_type_id' => 8,
 		        'surname' => 'EDARP',
@@ -101,38 +98,38 @@ class UsersTableSeeder extends Seeder
 		        'password' => encrypt(env('APP_KEY').'@edarp')
 	    	]);
 
-  //   	$facilitys = DB::table('facilitys')->get();
+    	$facilitys = DB::table('facilitys')->get();
 
-  //   	$i=0;
-  //   	$data= null;
+    	$i=0;
+    	$data= null;
 
-  //   	foreach ($facilitys as $key => $facility) {
-  //   		$fac = factory(App\User::class, 1)->create([
-		//         'user_type_id' => 5,
-		//         'surname' => '',
-		//         'oname' => '',
-		//         'facility_id' => $facility->id,
-		//         'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		//         'password' => encrypt($facility->name)
-	 //    	]);
+    	foreach ($facilitys as $key => $facility) {
+    		$fac = factory(App\User::class, 1)->create([
+		        'user_type_id' => 5,
+		        'surname' => '',
+		        'oname' => '',
+		        'facility_id' => $facility->id,
+		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		        'password' => encrypt($facility->name)
+	    	]);
 
-	 //    	// if($key==100) break;
+	    	// if($key==100) break;
 
-  //   		// $data[$i] = [
-		//     //     'user_type_id' => 5,
-		//     //     'surname' => '',
-		//     //     'oname' => '',
-		//     //     'facility_id' => $facility->id,
-		//     //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		//     //     'password' => bcrypt(encrypt($facility->name)),
-	 //    	// ];
+    		// $data[$i] = [
+		    //     'user_type_id' => 5,
+		    //     'surname' => '',
+		    //     'oname' => '',
+		    //     'facility_id' => $facility->id,
+		    //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		    //     'password' => bcrypt(encrypt($facility->name)),
+	    	// ];
 
-	 //    	// if($i == 200){
-	 //    	// 	DB::table('users')->insert($data);
-	 //    	// 	$i=0;
-	 //    	// 	$data = NULL;
-	 //    	// }
-  //   	}
-  //   	// DB::table('users')->insert($data);
+	    	// if($i == 200){
+	    	// 	DB::table('users')->insert($data);
+	    	// 	$i=0;
+	    	// 	$data = NULL;
+	    	// }
+    	}
+    	// DB::table('users')->insert($data);
     }
 }
