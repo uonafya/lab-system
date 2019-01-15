@@ -437,7 +437,7 @@ class MiscDr extends Common
 		->get();
 
 		if($samples->count() == $limit){
-			return ['samples' => $samples, 'create' => true];
+			return ['samples' => $samples, 'create' => true, 'limit' => true];
 		}
 		return ['samples' => $samples, 'create' => false];
 	}
