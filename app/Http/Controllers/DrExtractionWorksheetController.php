@@ -160,6 +160,7 @@ class DrExtractionWorksheetController extends Controller
         $drExtractionWorksheet->save();
 
         session(['toast_message' => 'The worksheet has been cancelled.']);
-        return redirect("/worksheet");
+        return back();
+        // return redirect("/worksheet");
     }
 }
