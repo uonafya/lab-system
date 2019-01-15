@@ -171,7 +171,8 @@ class DrSampleController extends Controller
             Arr::except($request->query(), 'signature')
         ), '?');
 
-        dd($original);
+        // dd($original);
+        dd($request->url());
 
         if(Auth::user()) Auth::logout();
         Auth::login($user);
