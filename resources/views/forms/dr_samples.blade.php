@@ -124,7 +124,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $proph->displaylabel }}
+                                        > {!! $proph->displaylabel !!}
                                         </option>
                                     @endforeach
                                 </select>
