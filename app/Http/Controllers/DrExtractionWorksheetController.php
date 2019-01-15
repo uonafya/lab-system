@@ -150,7 +150,7 @@ class DrExtractionWorksheetController extends Controller
 
     public function cancel(DrExtractionWorksheet $drExtractionWorksheet)
     {
-        if($worksheet->status_id != 1){
+        if($drExtractionWorksheet->status_id != 1){
             session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
             session(['toast_error' => 1]);
             return back();
