@@ -48,19 +48,23 @@ class DrSampleController extends Controller
         $sample->fill($data);
         $facility = $sample->patient->facility;
         $sample->facility_id = $facility_id;
-        $sample->save();
-
-        if($facility->email != null || $facility->email != '')
-        {
-            $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
-            // if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
-            Mail::to($mail_array)->send(new DrugResistance($sample));
-        }         
+        $sample->save();      
 
         $patient->status_id=2;
         $patient->save();
 
-        session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
+        // if($facility->email_array)
+        {
+            $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
+            // if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
+            Mail::to($mail_array)->send(new DrugResistance($sample));
+            session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
+        // }  
+        // else
+        // {
+        //     session(['toast_message' => 'The sample has been created but the email has not been sent to the facility because the facility does not have an email address in the system.'])
+        // } 
+
         return back();
     }
 
