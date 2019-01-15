@@ -167,11 +167,11 @@ class DrSampleController extends Controller
         // if (! $request->hasValidSignature()) dd("No valid signature.");
         // if ( $request->hasValidSignature()) dd("Valid signature.");
         // dd($request->query('signature', ''));
-        // $original = rtrim($request->url().'?'.http_build_query(
-        //     Arr::except($request->query(), 'signature')
-        // ), '?');
+        $original = rtrim($request->url().'?'.http_build_query(
+            Arr::except($request->query(), 'signature')
+        ), '?');
 
-        // // dd($original);
+        dd($original);
         // dd($request->url());
 
         if(Auth::user()) Auth::logout();
