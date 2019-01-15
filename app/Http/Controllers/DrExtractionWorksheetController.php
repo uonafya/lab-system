@@ -156,8 +156,11 @@ class DrExtractionWorksheetController extends Controller
             return back();
         }
         DrSample::where(['extraction_worksheet_id' => $drExtractionWorksheet->id])->update(['extraction_worksheet_id' => null]);
+        DrSample::where(['extraction_worksheet_id' => $drExtractionWorksheet->id])->delete();
         $drExtractionWorksheet->status_id = 4;
         $drExtractionWorksheet->save();
+
+
 
         session(['toast_message' => 'The worksheet has been cancelled.']);
         return back();
