@@ -1,10 +1,11 @@
 
-@if($sample)
-	@foreach($primers as $primer_key => $primer)
 
 		@if($column == 1)
 			<tr>
 		@endif
+		
+@if($sample)
+	@foreach($primers as $primer_key => $primer)
 				<td>
 					<?php
 						$col = $primer_key+1;
