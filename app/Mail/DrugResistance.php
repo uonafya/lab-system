@@ -41,15 +41,15 @@ class DrugResistance extends Mailable
         $this->sample->load(['patient.facility']);
         $user = User::where(['user_type_id' => 5, 'facility_id' => $this->sample->patient->facility->id])->first();
         $form_url = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $this->sample->id]);
-        
+
         // This is because the application receives requests on http but forces it to https
 
         \Illuminate\Support\Facades\URL::forceScheme('http');
         $url = URL::temporarySignedRoute('dr_sample.facility_edit', now()->addDays(3), ['user' => $user->id, 'sample' => $this->sample->id]);
         \Illuminate\Support\Facades\URL::forceScheme('https');
 
-        $new_signature = str_after($url, '?');
-        $old_signature = str_after($form_url, '?');
+        $new_signature = str_after($url, 'expires=');
+        $old_signature = str_after($form_url, 'expires=');
 
         // dd(['old_signature' => $old_signature, 'new_signature' => $new_signature]);
 
