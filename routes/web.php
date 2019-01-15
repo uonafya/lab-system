@@ -58,9 +58,9 @@ Route::post('facility/search/', 'FacilityController@search')->name('facility.sea
 Route::get('/synch', 'HomeController@test');
 Route::get('download_api', 'RandomController@download_api');
 
-// Route::middleware(['signed'])->group(function(){
+Route::middleware(['signed'])->group(function(){
 	Route::get('dr_sample/edit/{user}/{sample}', 'DrSampleController@facility_edit')->name('dr_sample.facility_edit');
-// });
+});
 
 Route::middleware(['auth'])->group(function(){
 	
