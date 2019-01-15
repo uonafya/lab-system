@@ -53,7 +53,7 @@ class DrugResistance extends Mailable
         $old_signature = str_after($form_url, 'signature=');
         $old_signature2 = str_after($form_url2, 'signature=');
 
-        dd(['old_signature' => $old_signature, 'old_signature2' => $old_signature2, 'new_signature' => $new_signature]);
+        // dd(['old_signature' => $old_signature, 'old_signature2' => $old_signature2, 'new_signature' => $new_signature]);
 
         $this->form_url = str_replace($old_signature, $new_signature, $form_url);
 
