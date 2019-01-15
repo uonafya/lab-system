@@ -144,7 +144,7 @@ class DrExtractionWorksheetController extends Controller
         DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->update(['passed_gel_documentation' => false]);
 
         session(['toast_message' => 'Gel documentation has been submitted.']);
-        redirect('dr_worksheet/create/' . $drExtractionWorksheet->id);
+        return redirect('dr_worksheet/create/' . $drExtractionWorksheet->id);
     }
 
 
