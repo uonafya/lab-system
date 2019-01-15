@@ -161,6 +161,7 @@ class DrSampleController extends Controller
 
     public function facility_edit(Request $request, User $user, DrSample $sample)
     {
+        dd($request->query('signature', ''));
         if(Auth::user()) Auth::logout();
         Auth::login($user);
 
