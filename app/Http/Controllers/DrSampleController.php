@@ -161,9 +161,15 @@ class DrSampleController extends Controller
 
     public function facility_edit(Request $request, User $user, DrSample $sample)
     {
-        if (! $request->hasValidSignature()) dd("No valid signature.");
-        if ( $request->hasValidSignature()) dd("Valid signature.");
-        dd($request->query('signature', ''));
+        // if (! $request->hasValidSignature()) dd("No valid signature.");
+        // if ( $request->hasValidSignature()) dd("Valid signature.");
+        // dd($request->query('signature', ''));
+        $original = rtrim($request->url().'?'.http_build_query(
+            Arr::except($request->query(), 'signature')
+        ), '?');
+
+        dd($original);
+        
         if(Auth::user()) Auth::logout();
         Auth::login($user);
 
