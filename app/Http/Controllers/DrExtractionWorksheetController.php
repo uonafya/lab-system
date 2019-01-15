@@ -53,7 +53,8 @@ class DrExtractionWorksheetController extends Controller
         $data = MiscDr::get_extraction_worksheet_samples($request->input('limit'));
         $samples = $data['samples'];
 
-        foreach ($samples as $sample) {
+        foreach ($samples as $s) {
+            $sample = DrSample::find($s->id);
             $sample->extraction_worksheet_id = $worksheet->id;
             $sample->save();
         }
