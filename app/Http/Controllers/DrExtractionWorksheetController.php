@@ -18,9 +18,27 @@ class DrExtractionWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        //
+        $worksheets = DrExtractionWorksheet::with(['creator'])->withCount(['sample'])
+            ->when($state, function ($query) use ($state){
+                return $query->where('status_id', $state);
+            })
+            ->when($date_start, function($query) use ($date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate('dr_extraction_worksheets.created_at', '>=', $date_start)
+                    ->whereDate('dr_extraction_worksheets.created_at', '<=', $date_end);
+                }
+                return $query->whereDate('dr_extraction_worksheets.created_at', $date_start);
+            })
+            ->orderBy('dr_extraction_worksheets.created_at', 'desc')
+            ->get();
+
+        $data = Lookup::get_dr();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
+        return view('tables.dr_extraction_worksheets', $data)->with('pageTitle', 'Worksheets'); 
     }
 
     /**
