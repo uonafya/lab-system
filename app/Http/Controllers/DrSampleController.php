@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistance;
 
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 class DrSampleController extends Controller
 {
     /**
@@ -169,7 +172,7 @@ class DrSampleController extends Controller
         ), '?');
 
         dd($original);
-        
+
         if(Auth::user()) Auth::logout();
         Auth::login($user);
 
