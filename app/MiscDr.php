@@ -458,4 +458,27 @@ class MiscDr extends Common
 	}
 
 
+	public static function generate_samples()
+	{
+		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(150)->get();
+
+		foreach ($potential_patients as $key => $value) {
+	        $data = $patient->only(['patient_id', 'dr_reason_id']);
+	        $data['user_id'] = 0;
+	        $data['receivedstatus'] = 1;
+	        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
+	        $data['datereceived'] = date('Y-m-d');
+	        // $sample = DrSample::create($data);
+	        $sample = new DrSample;
+	        $sample->fill($data);
+	        $facility = $sample->patient->facility;
+	        $sample->facility_id = $facility->id;
+	        $sample->save();      
+
+	        $patient->status_id=2;
+	        $patient->save();
+		}
+	}
+
+
 }
