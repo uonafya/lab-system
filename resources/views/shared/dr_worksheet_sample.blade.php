@@ -20,10 +20,6 @@
 
 					&nbsp;&nbsp;&nbsp;<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($bar, 'C128') }}" alt="barcode" height="30" width="80"  />
 				</td>
-		@if($column == 2)
-			</tr>
-		@endif
-
 	@endforeach
 
 @else
