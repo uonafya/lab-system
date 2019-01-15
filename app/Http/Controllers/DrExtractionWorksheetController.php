@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\DrExtractionWorksheet;
 use App\DrSample;
 use App\DrSampleView;
+
 use App\Lookup;
+use App\MiscDr;
+
 use Illuminate\Http\Request;
 
 class DrExtractionWorksheetController extends Controller
