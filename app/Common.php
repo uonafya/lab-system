@@ -524,42 +524,44 @@ class Common
         $c = \App\Synch::$synch_arrays[$type];
 
         $view_model = $c['sampleview_class'];
-        $patient_model = $c['patient_class'];
+        $sample_class = $c['sample_class'];
 
-        $samples = $view_model::where('user_id', 66)->where('created_at', '>', '2018-11-28')->get();
+        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-27', '2019-11-31'])->get();
 
-        foreach ($samples as $sample) {        	
-        	$facility = $sample->facility;
-
-        	if(starts_with($sample->patient, $facility->facilitycode)){
-        		$patient = $patient_model::find($sample->patient_id);
-
-        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
-        		$patient->pre_update();
-        	}
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
         }
     }
 
-    public static function mrs_two($type = 'vl')
+    public static function mrs_cd4()
+    {
+        ini_set("memory_limit", "-1");
+
+        $samples = \App\Cd4Sample::where('user_id', 66)->whereBetween('created_at', ['2018-11-27', '2019-01-15'])->get();
+
+        foreach ($samples as $sample) {
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
+    public static function mrs_reverse($type = 'vl')
     {
         ini_set("memory_limit", "-1");
 
         $c = \App\Synch::$synch_arrays[$type];
 
         $view_model = $c['sampleview_class'];
-        $patient_model = $c['patient_class'];
+        $sample_class = $c['sample_class'];
 
-        $samples = $view_model::where('facilitycode', 14020)->where('created_at', '>', '2018-11-01')->get();
+        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->whereDate('updated_at', '2019-01-13')->get();
 
-        foreach ($samples as $sample) {        	
-        	$facility = $sample->facility;
-
-        	if(starts_with($sample->patient, $facility->facilitycode)){
-        		$patient = $patient_model::find($sample->patient_id);
-
-        		$patient->patient = str_after($sample->patient, $facility->facilitycode);
-        		$patient->pre_update();
-        	}
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation_reverse($sample->amrs_location);
+        	$sample->save();
         }
     }
 

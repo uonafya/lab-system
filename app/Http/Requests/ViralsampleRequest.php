@@ -16,7 +16,7 @@ class ViralsampleRequest extends BaseRequest
      */
     public function rules()
     {
-        if($this->input('facility_id') == 7148 || $this->input('submit_type') == 'cancel') return [];
+        if($this->input('facility_id') == 7148 || $this->input('receivedstatus') == 2 || $this->input('submit_type') == 'cancel') return [];
 
         $base = Config::get('boilerplate.form_base'); 
         $specifics = Config::get('boilerplate.vl'); 
