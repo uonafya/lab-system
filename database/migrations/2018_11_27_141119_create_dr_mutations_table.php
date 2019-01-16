@@ -13,12 +13,12 @@ class CreateDrMutationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_mutations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('sample_id')->unsigned()->index();
+        // Schema::create('dr_mutations', function (Blueprint $table) {
+        //     $table->increments('id');
+        //     $table->integer('sample_id')->unsigned()->index();
             
-            $table->timestamps();
-        });
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -28,6 +28,6 @@ class CreateDrMutationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dr_mutations');
+        // Schema::dropIfExists('dr_mutations');
     }
 }

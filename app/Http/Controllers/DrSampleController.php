@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistance;
 
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 class DrSampleController extends Controller
 {
     /**
@@ -43,20 +46,28 @@ class DrSampleController extends Controller
     {        
         $data = $patient->only(['patient_id', 'dr_reason_id']);
         $data['user_id'] = auth()->user()->id;
-        $sample = DrSample::create($data);
+        // $sample = DrSample::create($data);
+        $sample = new DrSample;
+        $sample->fill($data);
         $facility = $sample->patient->facility;
-
-        if($facility->email != null || $facility->email != '')
-        {
-            $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
-            // if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
-            Mail::to($mail_array)->send(new DrugResistance($sample));
-        }         
+        $sample->facility_id = $facility->id;
+        $sample->save();      
 
         $patient->status_id=2;
         $patient->save();
 
-        session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
+        // if($facility->email_array)
+        // {
+            $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com', 'jlusike@clintonhealthaccess.org'];
+            // if(env('APP_ENV') == 'production') $mail_array = [$facility->email];
+            Mail::to($mail_array)->send(new DrugResistance($sample));
+            session(['toast_message' => 'The sample has been created and the email has been sent to the facility.']);
+        // }  
+        // else
+        // {
+        //     session(['toast_message' => 'The sample has been created but the email has not been sent to the facility because the facility does not have an email address in the system.'])
+        // } 
+
         return back();
     }
 
@@ -137,6 +148,7 @@ class DrSampleController extends Controller
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
+        if(auth()->user()->user_type_id == 5) return redirect('/viralbatch');
         return redirect('/dr_sample');
     }
 
@@ -153,13 +165,24 @@ class DrSampleController extends Controller
 
     public function facility_edit(Request $request, User $user, DrSample $sample)
     {
+        // if (! $request->hasValidSignature()) dd("No valid signature.");
+        // if ( $request->hasValidSignature()) dd("Valid signature.");
+        // dd($request->query('signature', ''));
+        // $original = rtrim($request->url().'?'.http_build_query(
+        //     Arr::except($request->query(), 'signature')
+        // ), '?');
+
+        // dd($original);
+        // dd($request->url());
+
         if(Auth::user()) Auth::logout();
         Auth::login($user);
 
-        $fac = \App\Facility::find($user->facility_id);
+        // $fac = \App\Facility::find($user->facility_id);
+        $fac = $user->facility;
         session(['logged_facility' => $fac]);
 
-        $sample->load(['patient.facility']);
+        $sample->load(['patient', 'facility']);
         $data = Lookup::get_dr();
         $data['sample'] = $sample;
         // dd($request);
