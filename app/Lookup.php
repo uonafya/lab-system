@@ -399,6 +399,7 @@ class Lookup
 
     public static function calculate_viralage($date_collected, $dob)
     {
+        if(!$dob) return 0;
         $dob = Carbon::parse( $dob );
         $dc = Carbon::parse( $date_collected );
         $years = $dc->diffInYears($dob, true);
