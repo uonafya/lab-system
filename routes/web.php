@@ -207,7 +207,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::resource('dr', 'DrPatientController');
 		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
-		Route::resource('dr_sample', 'DrSampleController');
+		Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
 
 
 		Route::prefix('dr_extraction_worksheet')->name('dr_extraction_worksheet.')->group(function () {

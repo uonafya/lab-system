@@ -1,10 +1,11 @@
 
-@if($sample)
-	@foreach($primers as $primer_key => $primer)
 
 		@if($column == 1)
 			<tr>
 		@endif
+
+@if($sample)
+	@foreach($primers as $primer_key => $primer)
 				<td>
 					<?php
 						$col = $primer_key+1;
@@ -19,10 +20,6 @@
 
 					&nbsp;&nbsp;&nbsp;<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($bar, 'C128') }}" alt="barcode" height="30" width="80"  />
 				</td>
-		@if($column == 2)
-			</tr>
-		@endif
-
 	@endforeach
 
 @else
@@ -49,6 +46,9 @@
 			<td></td>
 			<td></td>
 	@endif
-	</tr>
 
 @endif
+
+		@if($column == 2)
+			</tr>
+		@endif
