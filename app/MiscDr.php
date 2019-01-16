@@ -77,7 +77,7 @@ class MiscDr extends Common
 
 			Cache::store('file')->put('dr_api_token', $key, 60);
 
-			echo $key;
+			// echo $key;
 			return;
 		}
 		die();
@@ -100,7 +100,7 @@ class MiscDr extends Common
 				'included' => $sample_data,
 			];
 
-		self::dump_log($postData);
+		// self::dump_log($postData);
 
 		// die();
 
@@ -177,15 +177,15 @@ class MiscDr extends Common
 				// if($ab) $abs[] = $ab;
 				if($ab){
 					$abs[] = $ab;
-					$abs2[] = ['file_name' => $ab['file_name']];
+					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
 			}
 			if(!$abs) continue;
 			$s['attributes']['ab1s'] = $abs;
 			$sample_data[] = $s;
 
-			$s['attributes']['ab1s'] = $abs2;
-			$print_data[] = $s;
+			// $s['attributes']['ab1s'] = $abs2;
+			// $print_data[] = $s;
 		}
 		// self::dump_log($print_data);
 		// die();
@@ -430,14 +430,14 @@ class MiscDr extends Common
 		$samples = DrSampleView::whereNull('worksheet_id')
 		->whereNull('extraction_worksheet_id')
 		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
-		->where(['receivedstatus' => 1])
+		->where(['receivedstatus' => 1, 'control' => 0])
 		->orderBy('datereceived', 'asc')
 		->orderBy('id', 'asc')
 		->limit($limit)
 		->get();
 
 		if($samples->count() == $limit){
-			return ['samples' => $samples, 'create' => true];
+			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 		}
 		return ['samples' => $samples, 'create' => false];
 	}
@@ -455,6 +455,29 @@ class MiscDr extends Common
 			return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
 		}
 		return ['create' => false, 'extraction_worksheet_id' => $extraction_worksheet_id];
+	}
+
+
+	public static function generate_samples()
+	{
+		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(150)->get();
+
+		foreach ($potential_patients as $patient) {
+	        $data = $patient->only(['patient_id', 'dr_reason_id']);
+	        $data['user_id'] = 0;
+	        $data['receivedstatus'] = 1;
+	        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
+	        $data['datereceived'] = date('Y-m-d');
+	        // $sample = DrSample::create($data);
+	        $sample = new DrSample;
+	        $sample->fill($data);
+	        $facility = $sample->patient->facility;
+	        $sample->facility_id = $facility->id;
+	        $sample->save();      
+
+	        $patient->status_id=2;
+	        $patient->save();
+		}
 	}
 
 
