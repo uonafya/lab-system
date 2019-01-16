@@ -10,6 +10,7 @@ use App\User;
 
 use App\Lookup;
 use App\MiscDr;
+
 use Illuminate\Http\Request;
 
 class DrWorksheetController extends Controller
@@ -80,7 +81,8 @@ class DrWorksheetController extends Controller
         $data = MiscDr::get_worksheet_samples($dr_worksheet->extraction_worksheet_id);
         $samples = $data['samples'];
 
-        foreach ($samples as $sample) {
+        foreach ($samples as $s) {
+            $sample = DrSample::find($s->id);
             $sample->worksheet_id = $dr_worksheet->id;
             $sample->save();
         }

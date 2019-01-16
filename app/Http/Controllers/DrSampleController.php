@@ -148,6 +148,7 @@ class DrSampleController extends Controller
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
+        if(auth()->user()->user_type_id == 5) return redirect('/viralbatch');
         return redirect('/dr_sample');
     }
 
@@ -177,10 +178,11 @@ class DrSampleController extends Controller
         if(Auth::user()) Auth::logout();
         Auth::login($user);
 
-        $fac = \App\Facility::find($user->facility_id);
+        // $fac = \App\Facility::find($user->facility_id);
+        $fac = $user->facility;
         session(['logged_facility' => $fac]);
 
-        $sample->load(['patient.facility']);
+        $sample->load(['patient', 'facility']);
         $data = Lookup::get_dr();
         $data['sample'] = $sample;
         // dd($request);
