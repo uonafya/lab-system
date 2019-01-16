@@ -29,7 +29,7 @@
                 @endphp
                 
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                    <div class="alert alert-warning spacing bottom">
+                    <div class="alert alert-warning spacing bottom" id="choice">
                         <strong><a href="{{ url('performancelog') }}">Do you wish to perform the kits allocation for this month ({{ date("F", mktime(null, null, null, $currentmonth)) }}, {{ $year }})</a></strong>
                         <button class="btn btn-success btn-lg" id="yesBtn">YES</button>
                         <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#noAllocationModal">NO</button>
@@ -57,6 +57,40 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="allocationForm" style="display: none;">
+                    {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"><center>Machines:</center></label>
+                            <div class="col-sm-8">
+                                <select class="form-control input-sm" name="machine" required>
+                                    <option selected disabled value="">Select a machine for allocation</option>
+                                    @foreach($machines as $machine)
+                                        <option value="{{ $machine->id }}">{{ $machine->machine }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <center><button type="submit" name="machine-form" class="btn btn-primary btn-lg" value="true">Proceed to Allocate</button></center>
+                    {{ Form::close() }}
+                    </div>
+                    <!-- <div id="allocationForm" style="display: none;">
+                        <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
+                            <thead>               
+                                <tr>
+                                    <th>Name of Commodity</th>
+                                    <th>Average Monthly Consumption</th>
+                                    <th>Months of Stock</th>
+                                    <th>Ending Balance</th>
+                                    <th>Recommended Quantity to Allocate (by System)</th>
+                                    <th>Quantity Allocated by Lab</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -64,5 +98,12 @@
 @endsection
 
 @section('scripts')
-
+    <script type="text/javascript">
+        $(function(){
+            $("#yesBtn").click(function(){
+                $("#choice").hide();
+                $("#allocationForm").fadeIn();
+            });
+        });
+    </script>
 @endsection

@@ -287,7 +287,7 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('patient', 'PatientController');
 
-	Route::get('allocation/{answer?}', 'TaskController@allocation')->name('allocation');
+	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
 	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
 	Route::post('consumption', 'TaskController@consumption');

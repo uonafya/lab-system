@@ -13,6 +13,8 @@ use App\Requisition;
 use App\User;
 use App\SampleView;
 use App\ViralsampleView;
+use App\Kits;
+use App\Machine;
 
 use DB;
 
@@ -357,12 +359,19 @@ class TaskController extends Controller
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 
-    public function allocation(Request $request, $answer = null) {
+    public function allocation(Request $request) {
         if ($request->method() == "GET") {
-            if (!isset($answer))
-                return view('tasks.allocation')->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+            $machines = DB::table('machines')->where('id', '<>', 4)->get();
+            
+            return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
-            $saveAllocation = $this->saveAllocation($request);
+            if ($request->has(['machine-form'])){
+                $machine = Machine::find($request->input('machine'));
+                
+                return view('forms.allocation', compact('machine'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+            }
+            else
+                $saveAllocation = $this->saveAllocation($request);
         }
     }
 
