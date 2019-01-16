@@ -108,6 +108,7 @@ class Lookup
     public static function calculate_dob($datecollected, $years, $months=0)
     {
         if(!is_numeric($years) && !$months) return null;
+        if(!$years && !$months) return null;
         try {           
             $dc = Carbon::createFromFormat('Y-m-d', $datecollected);
             $dc->subYears($years);
@@ -398,6 +399,7 @@ class Lookup
 
     public static function calculate_viralage($date_collected, $dob)
     {
+        if(!$dob) return 0;
         $dob = Carbon::parse( $dob );
         $dc = Carbon::parse( $date_collected );
         $years = $dc->diffInYears($dob, true);

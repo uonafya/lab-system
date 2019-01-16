@@ -38,6 +38,12 @@
 
     @if(auth()->user()->user_type_id != 5)
 
+        <div class="row">
+            <a href="{{ url('sample/sms_log') }}">
+                SMS Log
+            </a>            
+        </div>
+
         {{ Form::open(['url' => '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
             @isset($to_print)
