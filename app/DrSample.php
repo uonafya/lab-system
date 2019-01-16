@@ -17,6 +17,11 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\DrWorksheet', 'worksheet_id');
     }
 
+    public function extraction_worksheet()
+    {
+        return $this->belongsTo('App\DrExtractionWorksheet', 'extraction_worksheet_id');
+    }
+
     public function receiver()
     {
         return $this->belongsTo('App\User', 'received_by');
@@ -25,6 +30,16 @@ class DrSample extends BaseModel
     public function creator()
     {
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
     }
 
 
@@ -125,6 +140,19 @@ class DrSample extends BaseModel
 
             
         }
+    }
+
+
+    /**
+     * Get the patient's gender
+     *
+     * @return string
+     */
+    public function getControlTypeAttribute()
+    {
+        if($this->control == 1){ return "Negative Control"; }
+        else if($this->control == 2){ return "Positive Control"; }
+        else{ return "Normal Sample"; }
     }
 
 

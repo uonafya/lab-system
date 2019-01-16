@@ -212,12 +212,12 @@
 
                         @if(!isset($viralsample))
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="reentry" value="1" />
                                 </div>
-                            </div>
+                            </div> -->
 
                         @endif
 
@@ -695,7 +695,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-2m",
+            startDate: "-6m",
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
@@ -716,7 +716,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: "-2m",
+            startDate: "-6m",
             endDate: "+7d",
             format: "yyyy-mm-dd"
         });
