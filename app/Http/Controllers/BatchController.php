@@ -89,12 +89,12 @@ class BatchController extends Controller
         $this->batches_transformer($batches);
 
         $p = Lookup::get_partners();
+        $fac = false;
+        if($facility_id) $fac = Facility::find($facility_id);
 
         $view = 'tables.batches';
         if($batch_complete == 1) $view = 'tables.dispatched_batches';
 
-        $fac = false;
-        if($facility_id) $fac = Facility::find($facility_id);
         return view($view, [
             'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
             'batch_complete' => $batch_complete, 
