@@ -981,11 +981,30 @@ class MiscViral extends Common
     public static function edarpsamplesforapproval() {
         $samples = Viralsample::selectRaw("count(if(date(created_at) = curdate(), 1, null)) as today, count(*) as total")->where('synched', 5)->first();
         $edarpUser = User::where('user_type_id', 8)->first();
-        if ($edarpUser->count())
-            $url = URL::temporarySignedRoute(
+        if ($edarpUser->count()){
+            $form_url = URL::temporarySignedRoute(
                 'nhrl', now()->addDays(1), ['user' => $edarpUser->id]
             );
-        $data = (object)['samples' => $samples, 'url' => $url];
+            // This is because the application receives requests on http but forces it to https
+
+            URL::forceScheme('http');
+
+            $base_url = url('');
+            if(env('APP_SECURE_PORT')) $base_url = str_before($base_url, ':' .  env('APP_SECURE_PORT'));
+
+            URL::forceRootUrl($base_url);
+
+            $url = URL::temporarySignedRoute('nhrl', now()->addDays(1), ['user' => $edarpUser->id]);
+
+            if(env('APP_SECURE_PORT')) URL::forceRootUrl(url('') . ':' .  env('APP_SECURE_PORT'));
+            if(env('APP_SECURE_URL')) URL::forceScheme('https');
+
+            $new_signature = str_after($url, 'expires=');
+            $old_signature = str_after($form_url, 'expires=');
+
+            $form_url = str_replace($old_signature, $new_signature, $form_url);
+        }
+        $data = (object)['samples' => $samples, 'url' => $form_url];
 
         
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
