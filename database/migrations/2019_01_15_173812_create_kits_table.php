@@ -14,7 +14,9 @@ class CreateKitsTable extends Migration
     public function up()
     {
         Schema::create('kits', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
+            $table->text('name');
+            $table->integer('machine_id');
             $table->timestamps();
         });
     }
