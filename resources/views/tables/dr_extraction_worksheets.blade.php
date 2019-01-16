@@ -109,13 +109,13 @@
 
                                     <td> {{ $worksheet->my_date_format('date_gel_documentation') }} </td>
                                     <td> 
-                                        <a href="{{ url('dr_worksheet/create/' . $worksheet_id) }}" title="Click to Create Worksheet">
+                                        <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
                                             Create Worksheet
                                         </a> | 
-                                        <a href="{{ url('dr_extraction_worksheet/create/' . $worksheet_id) }}" title="Click to Cancel Worksheet">
+                                        <a href="{{ url('dr_extraction_worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet">
                                             Cancel Worksheet
                                         </a> |
-                                        <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet_id) }}" title="Click to Submit the Gel Documentation">
+                                        <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet->id) }}" title="Click to Submit the Gel Documentation">
                                             Gel Documentation
                                         </a>  
                                     </td>

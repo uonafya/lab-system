@@ -58,6 +58,7 @@
                             {{ Form::open(['url'=>'/dr_extraction_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
                             <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
                             <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+                            <input type="hidden" value="{{ $limit }}" name="limit">
                         @endif
 
 
