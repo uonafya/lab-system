@@ -318,7 +318,7 @@ class TaskController extends Controller
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0) {
-            // return redirect()->route('pending');
+            return redirect()->route('allocation');
         }
         
         $data['taqmanKits'] = $this->taqmanKits;
@@ -355,6 +355,19 @@ class TaskController extends Controller
         $data = (object) $data;
         // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
+    }
+
+    public function allocation(Request $request, $answer = null) {
+        if ($request->method() == "GET") {
+            if (!isset($answer))
+                return view('tasks.allocation')->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+        } else if ($request->method() == "POST") {
+            $saveAllocation = $this->saveAllocation($request);
+        }
+    }
+
+    protected function saveAllocation($request) {
+
     }
 
     public function performancelog(Request $request)
