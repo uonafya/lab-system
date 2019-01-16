@@ -28,7 +28,10 @@
                 </a> |
                 <a href="{{ $myurl2 }}/5">
                     Batches Overdue for Receipt at Lab (10 days)
-                </a>
+                </a> |
+                <a href="{{ url('viralsample/sms_log') }}">
+                    SMS Log
+                </a>  
             </div>
         </div>
 
@@ -37,12 +40,6 @@
     <br />
 
     @if(auth()->user()->user_type_id != 5)
-
-        <div class="row">
-            <a href="{{ url('viralsample/sms_log') }}">
-                SMS Log
-            </a>            
-        </div>
 
         {{ Form::open(['url' => '/viralbatch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
