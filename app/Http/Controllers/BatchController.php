@@ -88,19 +88,33 @@ class BatchController extends Controller
 
         $this->batches_transformer($batches);
 
-        if($batch_complete == 1){
-            $p = Lookup::get_partners();
-            $fac = false;
-            if($facility_id) $fac = Facility::find($facility_id);
-            return view('tables.dispatched_batches', [
-                'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
-                'batch_complete' => $batch_complete, 
-                'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
-                'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
-                    ->with('pageTitle', 'Samples by Batch');
-        }
+        $p = Lookup::get_partners();
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
+        $view = 'tables.batches';
+        if($batch_complete == 1) $view = 'tables.dispatched_batches';
+
+        $fac = false;
+        if($facility_id) $fac = Facility::find($facility_id);
+        return view($view, [
+            'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
+            'batch_complete' => $batch_complete, 
+            'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+            'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
+                ->with('pageTitle', 'Samples by Batch');
+
+        // if($batch_complete == 1){
+        //     $p = Lookup::get_partners();
+        //     $fac = false;
+        //     if($facility_id) $fac = Facility::find($facility_id);
+        //     return view('tables.dispatched_batches', [
+        //         'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
+        //         'batch_complete' => $batch_complete, 
+        //         'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+        //         'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
+        //             ->with('pageTitle', 'Samples by Batch');
+        // }
+
+        // return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
     
     public function to_print($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
