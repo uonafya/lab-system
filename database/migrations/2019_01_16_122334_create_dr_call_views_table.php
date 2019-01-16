@@ -16,7 +16,8 @@ class CreateDrCallViewsTable extends Migration
         DB::statement("
         CREATE OR REPLACE VIEW dr_calls_view AS
         (
-          SELECT cd.*, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations
+          SELECT cd.*, c.sample_id, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations,
+          s.patient_id, s.facility_id 
 
           FROM dr_calls c
             LEFT JOIN dr_call_drugs cd ON c.id=cd.call_id

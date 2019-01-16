@@ -13,10 +13,18 @@ class CreateDrGenotypeViewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_genotype_views', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-        });
+        DB::statement("
+        CREATE OR REPLACE VIEW dr_genotypes_views AS
+        (
+          SELECT r.*, g.sample_id, g.locus, g.locus_id, 
+          s.patient_id, s.facility_id 
+
+          FROM dr_genotypes g
+            LEFT JOIN dr_residues r ON g.id=r.genotype_id
+            LEFT JOIN dr_samples s ON g.sample_id=s.id
+
+        );
+        ");
     }
 
     /**
@@ -26,6 +34,6 @@ class CreateDrGenotypeViewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dr_genotype_views');
+        // Schema::dropIfExists('dr_genotype_views');
     }
 }
