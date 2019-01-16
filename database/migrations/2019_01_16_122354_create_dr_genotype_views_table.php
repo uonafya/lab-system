@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDrMutationsTable extends Migration
+class CreateDrGenotypeViewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateDrMutationsTable extends Migration
      */
     public function up()
     {
-        // Schema::create('dr_mutations', function (Blueprint $table) {
-        //     $table->increments('id');
-        //     $table->integer('sample_id')->unsigned()->index();
-            
-        //     $table->timestamps();
-        // });
+        Schema::create('dr_genotype_views', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -28,6 +26,6 @@ class CreateDrMutationsTable extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('dr_mutations');
+        Schema::dropIfExists('dr_genotype_views');
     }
 }

@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateDrCallViewsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        DB::statement("
+        CREATE OR REPLACE VIEW dr_calls_view AS
+        (
+          SELECT cd.*, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations
+
+          FROM dr_calls c
+            LEFT JOIN dr_call_drugs cd ON c.id=cd.call_id
+            LEFT JOIN dr_samples s ON c.sample_id=s.id
+
+        );
+        ");
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        // Schema::dropIfExists('dr_call_views');
+    }
+}
