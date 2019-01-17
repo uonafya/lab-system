@@ -27,12 +27,12 @@
                     $currentmonth = date('m');
                     $year = date('Y');
                 @endphp
-                
+                {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                @foreach($machines as $machine)
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                     <div class="alert alert-info">
                         <center>Allocation for {{ $machine->machine}}</center>
                     </div>
-                {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
                     <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
                         <thead>               
                             <tr>
@@ -61,9 +61,10 @@
                         @endforeach
                         </tbody>
                     </table>
-                    <center><button type="submit" name="kits-form" class="btn btn-primary btn-lg" value="true">Allocate</button></center>
-                {{ Form::close() }}
                 </div>
+                @endforeach
+                <center><button type="submit" name="kits-form" class="btn btn-primary btn-lg" value="true">Allocate</button></center>
+                {{ Form::close() }}
             </div>
         </div>
     </div>

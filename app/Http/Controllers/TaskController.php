@@ -360,16 +360,15 @@ class TaskController extends Controller
     }
 
     public function allocation(Request $request) {
-        dd($request->all());
         if ($request->method() == "GET") {
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
             
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
             if ($request->has(['machine-form'])){
-                $machine = Machine::whereIn('id',$request->input('machine'));
-
-                return view('forms.allocation', compact('machine'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+                $machines = Machine::whereIn('id',$request->input('machine'))->get();
+                
+                return view('forms.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             }
             else
                 $saveAllocation = $this->saveAllocation($request);
