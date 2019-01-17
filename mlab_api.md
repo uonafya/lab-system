@@ -2,7 +2,7 @@
 
 All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.
 *Open the link in **POSTMAN** and then set the request to **POST** *
-- Get data by request type [click here](http://lab.test.nascop.org/api/function)
+- Get data by request type
 >Fields
 > - test, 1 for vl, 2 for eid **required**
 > - start_date (required when *end_date* is set). It filters using the date collected.
@@ -12,5 +12,5 @@ All links are **POST** requests. All post requests are validated using a header 
 > - patient_id *Either a single patient_id or a comma separated list of patient ids with no spaces. Patient id is hei number for eid and ccc number for vl*
 > - facility_code *The five digit MFL code*
 
-> This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
+> This link is paginated i.e. only 50 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 
