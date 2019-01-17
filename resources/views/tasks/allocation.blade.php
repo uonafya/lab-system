@@ -61,14 +61,15 @@
                     <div id="allocationForm" style="display: none;">
                     {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
                         <div class="form-group">
-                            <label class="col-sm-4 control-label"><center>Machines:</center></label>
+                            <label class="col-sm-4 control-label"><center>Machines:<br><small>(Select Multiple)</small></center></label>
                             <div class="col-sm-8">
-                                <select class="form-control input-sm" name="machine" required>
-                                    <option selected disabled value="">Select a machine for allocation</option>
+                                <select class="form-control input-sm" name="machine[]" id="machine" required style="width: 80%;">
                                     @foreach($machines as $machine)
                                         <option value="{{ $machine->id }}">{{ $machine->machine }}</option>
                                     @endforeach
                                 </select>
+                                <br>
+                                <p class="label label-info">Please note in the above drop down you need to select all the machines you wish to allocate for</p>
                             </div>
                         </div>
                         <center><button type="submit" name="machine-form" class="btn btn-primary btn-lg" value="true">Proceed to Allocate</button></center>
@@ -100,6 +101,11 @@
 @section('scripts')
     <script type="text/javascript">
         $(function(){
+            $("#machine").select2({
+              closeOnSelect: false,
+              multiple:true,
+              placeholder: "Select a machine for allocation"
+            });
             $("#yesBtn").click(function(){
                 $("#choice").hide();
                 $("#allocationForm").fadeIn();
