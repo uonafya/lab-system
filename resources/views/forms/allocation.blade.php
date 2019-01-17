@@ -18,7 +18,7 @@
 @section('content')
 <div class="row">
         <div class="col-md-12">
-            <div class="hpanel" style="margin-top: 1em;margin-right: 20%;">
+            <div class="hpanel" style="margin-top: 1em;margin-right: 20%;margin-bottom: 3em;">
             	<div class="alert alert-danger">
 	                <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
 	            </div>
@@ -28,7 +28,7 @@
                     $year = date('Y');
                 @endphp
                 {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
-                @foreach($machines as $machine)
+                @foreach($data->machines as $machine)
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                     <div class="alert alert-info">
                         <center>Allocation for {{ $machine->machine}}</center>

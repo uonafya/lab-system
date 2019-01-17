@@ -367,8 +367,11 @@ class TaskController extends Controller
         } else if ($request->method() == "POST") {
             if ($request->has(['machine-form'])){
                 $machines = Machine::whereIn('id',$request->input('machine'))->get();
-                
-                return view('forms.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+                $data = $this->getDataForAllocation($request->input('machine'), $machines);
+                $data['machines'] = $machines;
+                $data = (object) $data;
+                dd($data);
+                return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             }
             else
                 $saveAllocation = $this->saveAllocation($request);
@@ -377,6 +380,61 @@ class TaskController extends Controller
 
     protected function saveAllocation($request) {
 
+    }
+
+    protected function getDataForAllocation($machines, $machinesData) {
+        $eligibleMonths = self::__getEligibleMonths($this->previousMonth);
+        if (is_array($machines)){
+            // Get the necessary models
+            if (in_array(2, $machines))
+                $abbott = Abbotprocurement::orderBy('id');
+            if (array_intersect($machines, [1,3] ))
+                $taqman = Taqmanprocurement::orderBy('id');
+
+            // Factoring in the early year problems
+            if($this->previousMonth == 1) {
+                $taqman->whereRaw("((month = 1 and year = $this->year) or (month in (12,11) and year = $this->previousYear))");
+                $abbott->whereRaw("((month = 1 and year = $this->year) or (month in (12,11) and year = $this->previousYear))");
+            } else if ($this->previousMonth == 2) {
+                $taqman->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
+                $abbott->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
+            } else {
+                $year = $this->year;
+                if ($this->month == 1)
+                    $year = $this->previousYear;
+                $taqman->where('year', "=", $year)->whereIn("month", $eligibleMonths);
+                $abbott->where('year', "=", $year)->whereIn("month", $eligibleMonths);
+            }
+        }
+        
+        return self::__buildAllocationData(['taqman' => $taqman->get(), 'abbott' => $abbott->get()], $machinesData);
+    }
+
+    protected static function __getEligibleMonths($month) {
+        if (in_array($month, [1,2])) {
+            if ($month == 1)
+                $months = [1, 12, 11];
+            else
+                $months = [2, 1, 12];
+        } else {
+            $months = [$month, $month - 1, $month - 2];
+        }
+        return $months;
+    }
+
+    protected static function __buildAllocationData($data, $machinesData) {
+        //Build Taqman Data
+        if (!$data->taqman->isEmpty()) {
+            foreach ($machinesData as $key => $machine) {
+                if (in_array($machine->id, [1,3])) {
+                    
+                }
+            }
+        }
+        //Build Abbott Data
+        if (!$data->abbott->isEmpty()){
+
+        }
     }
 
     public function performancelog(Request $request)
