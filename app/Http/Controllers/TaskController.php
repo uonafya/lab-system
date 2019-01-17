@@ -383,7 +383,6 @@ class TaskController extends Controller
     }
 
     protected function getDataForAllocation($machines, $machinesData) {
-        $eligibleMonths = self::__getEligibleMonths($this->previousMonth);
         if (is_array($machines)){
             // Get the necessary models
             if (in_array(2, $machines))
@@ -399,6 +398,7 @@ class TaskController extends Controller
                 $taqman->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
                 $abbott->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
             } else {
+                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2]
                 $year = $this->year;
                 if ($this->month == 1)
                     $year = $this->previousYear;
@@ -407,34 +407,51 @@ class TaskController extends Controller
             }
         }
         
-        return self::__buildAllocationData(['taqman' => $taqman->get(), 'abbott' => $abbott->get()], $machinesData);
+        return self::__buildEndingData((object)['taqman' => $taqman->get(), 'abbott' => $abbott->get()], $machinesData);
     }
 
-    protected static function __getEligibleMonths($month) {
-        if (in_array($month, [1,2])) {
-            if ($month == 1)
-                $months = [1, 12, 11];
-            else
-                $months = [2, 1, 12];
-        } else {
-            $months = [$month, $month - 1, $month - 2];
-        }
-        return $months;
+    protected static function __buildEndingData($data, $machinesData) {
+        // Build Roche Data (Both Taqman and C8800)
+        $rocheData = self::__buildRocheEndingData($data->taqman, $machinesData);
+        //Build Abbott Data
+        $abbottData = self::__buildAbbottEndingData($data->abbott, $machinesData);
+        dd($abbottData);
     }
 
-    protected static function __buildAllocationData($data, $machinesData) {
+    protected static function __buildRocheEndingData($data, $machinesData) {
+        $return = [];
         //Build Taqman Data
-        if (!$data->taqman->isEmpty()) {
+        if (!$data->isEmpty()) {
             foreach ($machinesData as $key => $machine) {
                 if (in_array($machine->id, [1,3])) {
-                    
+                    foreach ($data as $key => $consumption) {
+                        foreach ($machine->kits as $key => $kit) {
+                            $column = 'ending'.$kit->alias;
+                            $return[$machine->id][$kit->alias] = ['ending' => ($consumption->$column)];
+                        }
+                    }
                 }
             }
         }
-        //Build Abbott Data
-        if (!$data->abbott->isEmpty()){
+        return $return;
+    }
 
+    protected static function __buildAbbottEndingData($data, $machinesData) {
+        $return = [];
+        //Build Abbott Data
+        if (!$data->isEmpty()) {
+            foreach ($machinesData as $key => $machine) {
+                if ($machine->id == 2) {
+                    foreach ($data as $key => $consumption) {
+                        foreach ($machine->kits as $key => $kit) {
+                            $column = 'ending'.$kit->alias;
+                            $return[$machine->id][$kit->alias] = ['ending' => ($consumption->$column / 2)];
+                        }
+                    }
+                }
+            }
         }
+        return $return;
     }
 
     public function performancelog(Request $request)
