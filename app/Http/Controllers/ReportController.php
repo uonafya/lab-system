@@ -538,7 +538,7 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "=", '2');
             $report .= 'rejected outcomes ';
         } else if ($request->input('types') == 'positives') {
-            $model = $model->where("$table.result", "=", 1);
+            $model = $model->where("$table.result", "=", 2);
             $report .= 'positive outcomes';
         } else if ($request->input('types') == 'poc') {
             $model = $model->where("$table.site_entry", '=', 2);
