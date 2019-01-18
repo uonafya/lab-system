@@ -28,7 +28,10 @@
                 </a> |
                 <a href="{{ $myurl2 }}/5">
                     Batches Overdue for Receipt at Lab (10 days)
-                </a>
+                </a> |
+                <a href="{{ url('viralsample/sms_log') }}">
+                    SMS Log
+                </a>  
             </div>
         </div>
 

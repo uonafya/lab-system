@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ViewModel;
 
-class DrCallView extends Model
+class DrCallView extends ViewModel
 {
-    //
+	protected $table = 'dr_calls_view';
 }

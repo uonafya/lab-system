@@ -70,7 +70,7 @@ class BaseModel extends Model
 
         $text = $this->$attr;
 
-        // if(str_contains($c, 'patient')) $text = $this->patient;
+        if(str_contains($c, 'patient')) $text = $this->patient;
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 

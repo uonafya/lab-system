@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ViewModel;
 
-class DrGenotypeView extends Model
+class DrGenotypeView extends ViewModel
 {
-    //
+	protected $table = 'dr_genotypes_view';
 }
