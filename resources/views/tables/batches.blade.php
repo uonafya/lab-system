@@ -8,7 +8,7 @@
 
 <div class="content">
 
-    @empty($site_approval)
+    @if(!isset($site_approval) && !isset($display_delayed))
 
         <div class="row">
             <div class="col-md-12">
@@ -25,6 +25,9 @@
                 </a> |
                 <a href="{{ $myurl2 }}/1">
                     Dispatched Batches
+                </a> |
+                <a href="{{ $myurl2 }}/5">
+                    Batches Overdue for Receipt at Lab (10 days)
                 </a>
             </div>
         </div>
@@ -75,7 +78,125 @@
             </div>
         </div>
 
-    @endempty
+        @if(auth()->user()->user_type_id != 5)
+
+            {{ Form::open(['url' => $pre . '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+
+                @isset($to_print)
+                    <input type="hidden" name="to_print" value="1">
+                @endisset
+
+                <input type="hidden" name="batch_complete" value="{{ $batch_complete }}">
+
+                <div class="row">
+
+                    <div class="alert alert-success">
+                        <center>
+                            Select facility and/or partner and/or subcounty. <br />
+                            If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
+                            Click on filter to get the list of batches based on selected criteria. <br />
+                            The Download As Excel depends on all the selected criteria.
+                        </center>
+                    </div>
+                    
+                    <br />
+
+                    <div class="col-md-4"> 
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Select Facility</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="facility_id" id="facility_id">
+                                    <option></option>
+                                    @if(isset($facility) && $facility)
+                                        <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
+                                    @endif
+                                </select>
+                            </div>                        
+                        </div> 
+                    </div>
+                    <div class="col-md-4"> 
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Select Subcounty</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="subcounty_id" id="subcounty_id">
+                                    <option></option>
+                                    @foreach ($subcounties as $subcounty)
+                                        <option value="{{ $subcounty->id }}"
+
+                                        @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $subcounty->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>                        
+                        </div> 
+                    </div>
+                    <div class="col-md-4"> 
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Select Partner</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="partner_id" id="partner_id">
+                                    <option></option>
+                                    @foreach ($partners as $partner)
+                                        <option value="{{ $partner->id }}"
+
+                                        @if (isset($partner_id) && $partner_id == $partner->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $partner->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>                        
+                        </div> 
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+
+                    <div class="col-md-9"> 
+                        <div class="form-group">
+
+                            <label class="col-sm-1 control-label">From:</label>
+                            <div class="col-sm-4">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="from_date" name="from_date" class="form-control">
+                                </div>
+                            </div> 
+
+                            <label class="col-sm-1 control-label">To:</label>
+                            <div class="col-sm-4">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="to_date" name="to_date" class="form-control">
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-2">                
+                                <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
+                            </div>                         
+                        </div> 
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">              
+                            <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
+                        </div>                
+                    </div>
+                </div>
+
+            {{ Form::close() }}
+
+        @endif
+
+    @endif
     
     <div class="row">
         <div class="col-lg-12">
@@ -89,11 +210,16 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <form  method="post" action="{{ url($pre . 'batch/summaries/') }}  " >
+                        @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                        <form  method="post" action="{{ url($pre . 'batch/destroy_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
                             {{ csrf_field() }}
-                            <table class="table table-striped table-bordered table-hover" >
+                        @endif
+                            <table class="table table-striped table-bordered table-hover @isset($datatable) data-table @endisset" >
                                 <thead>
                                     <tr class="colhead">
+                                        @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                                            <th rowspan="2"  id="check_all">CheckBox</th>
+                                        @endif
                                         <th rowspan="2">Batch No</th>
 
                                         @if(isset($batch_complete) && $batch_complete == 1)
@@ -126,7 +252,7 @@
 
                                         <th>Received</th>
                                         <th>Entered</th>
-                                        <th>Received</th>
+                                        <th>Total</th>
                                         <th>Rejected</th>
                                         <th>Results</th>
                                         <th>No Result</th>
@@ -142,7 +268,18 @@
 
                                     @foreach($batches as $batch)
                                         <tr>
-                                            <td> {{ $batch->id }} </td>
+                                            @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                                                <td>
+                                                    <div align='center'>
+                                                        <input name='batches[]' type='checkbox' class='checks' value='{{ $batch->id }}' />
+                                                    </div>
+                                                </td>  
+                                            @endif
+                                            <td>
+                                                <a href="{{ url($pre . 'batch/' . $batch->id) }} ">
+                                                    {{ $batch->id }}
+                                                </a>
+                                            </td>
 
                                             @if(isset($batch_complete) && $batch_complete == 1)
                                                 <td> 
@@ -155,7 +292,11 @@
                                             <td> {{ $batch->name }} </td>
                                             <td> {{ $batch->datereceived }} </td> 
                                             <td> {{ $batch->datecreated }} </td>
-                                            <td> {{ $batch->creator }} </td>
+                                            @if($batch->creator == ' ')
+                                                <td> {{ $batch->entered_by ?? '' }} </td>
+                                            @else
+                                                <td> {{ $batch->creator }} </td>
+                                            @endif
                                             <td> {{ $batch->total }} </td>
                                             <td> {{ $batch->rejected }} </td>
                                             <td> {{ $batch->result }} </td>
@@ -169,9 +310,9 @@
                                             <td> {{ $batch->tat() }} </td>
                                             <td> 
                                                 @if($batch->batch_complete)
-                                                    Complete
+                                                    <strong><div style='color: #00ff00;'>Complete</div></strong>
                                                 @else
-                                                    In-Process
+                                                    <strong><div style='color: #ff0000;'>In-Process</div></strong>
                                                 @endif
                                             </td>
 
@@ -224,14 +365,30 @@
                                             </td>
                                         </tr>
                                     @endif
+
+                                    @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
+                                        <tr>
+                                            <td colspan="1"> </td>  
+                                            <td colspan="5"> 
+                                                <center>
+                                                    <button class="btn btn-warning" type="submit" name="print_type" value="summary">Delete Selected Batches (This is permanent and cannot be reversed)</button>
+                                                </center>
+                                            </td>
+                                            <td colspan="10"> </td>                                            
+                                        </tr>
+
+                                    @endif
                                 </tbody>
                             </table>
+                        @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
                         </form>
+                        @endif
                     </div>
 
                     {{-- {!!  $links !!} --}}
-
-                    {{ $batches->links() }}
+                    @empty($datatable)
+                        {{ $batches->links() }}
+                    @endempty
                 </div>
             </div>
         </div>
@@ -253,6 +410,18 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
+
+            // $("#check_all").on('click', function(){
+            //     var str = $(this).html();
+            //     if(str == "Check All"){
+            //         $(this).html("Uncheck All");
+            //         $(".checks").prop('checked', true);
+            //     }
+            //     else{
+            //         $(this).html("Check All");
+            //         $(".checks").prop('checked', false);           
+            //     }
+            // });
 
             $(".date").datepicker({
                 startView: 0,

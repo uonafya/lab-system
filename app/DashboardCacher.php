@@ -14,10 +14,12 @@ use App\SampleView;
 use App\ViralsampleView;
 use App\Worksheet;
 use App\Viralworksheet;
+use App\Cd4Worksheet;
+use App\Cd4Sample;
 
 class DashboardCacher
 {
-
+    
     public static function tasks()
     {
     	self::tasks_cacher();
@@ -68,8 +70,20 @@ class DashboardCacher
     {
     	self::cacher();
 
+        $data['get_style'] = function($val=null)
+        {
+            if($val && $val > 0) return 'background-color: #FDE3A7';
+            return '';
+        };
+
+        $data['get_badge'] = function($val=null)
+        {
+            if($val && $val > 0) return 'danger';
+            return 'success';
+        };
+
         if (session('testingSystem') == 'Viralload') {            
-        	return [
+        	return array_merge($data, [
         		'pendingSamples' => Cache::get('vl_pendingSamples'),
         		'pendingSamplesOverTen' => Cache::get('vl_pendingSamplesOverTen'),
         		'batchesForApproval' => Cache::get('vl_batchesForApproval'),
@@ -80,10 +94,10 @@ class DashboardCacher
         		'resultsForUpdate' => Cache::get('vl_resultsForUpdate'),
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
-        	];
-        }
-        else{
-            return [
+                'delayed_batches' => Cache::get('vl_delayed_batches'),
+        	]);
+        } else if (session('testingSystem') == 'EID'){
+            return array_merge($data, [
                 'pendingSamples' => Cache::get('eid_pendingSamples'),
                 'pendingSamplesOverTen' => Cache::get('eid_pendingSamplesOverTen'),
                 'batchesForApproval' => Cache::get('eid_batchesForApproval'),
@@ -94,8 +108,15 @@ class DashboardCacher
                 'resultsForUpdate' => Cache::get('eid_resultsForUpdate'),
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
-            ];
-
+                'delayed_batches' => Cache::get('eid_delayed_batches'),
+            ]);
+        } else if (session('testingSystem') == 'CD4') {
+            return array_merge($data, [
+                'CD4samplesInQueue' => Cache::get('CD4samplesInQueue'),
+                'CD4resultsForUpdate' => Cache::get('CD4resultsForUpdate'),
+                'CD4resultsForDispatch' => Cache::get('CD4resultsForDispatch'),
+                'CD4worksheetFor2ndApproval' => Cache::get('CD4worksheetFor2ndApproval')
+            ]);
         }
     }
 
@@ -103,38 +124,47 @@ class DashboardCacher
 
 	public static function pendingSamplesAwaitingTesting($over = false, $testingSystem = 'Viralload')
 	{
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
+
         if ($testingSystem == 'Viralload') {
             if ($over == true) {
                 $model = ViralsampleView::selectRaw('COUNT(id) as total')->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
+                                ->whereRaw("datediff(datereceived, datetested) > 14")->where('lab_id', '=', env('APP_LAB'))
+                                ->where('site_entry', '<>', 2)
+                                ->whereNull('result')->get()->first()->total;
             } else {
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
                     $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')
-                        ->whereIn('receivedstatus', [1, 3])
+                        ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
-                        ->where('datereceived', '>', '2016-12-31')
+                        ->where('datereceived', '>', $date_str)
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '1')
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         ->where('flag', '1')->get()->first()->total; 
                 }
             }
         } else {
             if ($over == true) {
                 $model = SampleView::selectRaw('COUNT(id) as total')
-                                ->whereNull('worksheet_id')
-                                ->whereRaw("datediff(datereceived, datetested) > 10")
-                                ->whereRaw("(result is null or result = '0')")->get()->first()->total;
+                                ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
+                                ->whereRaw("datediff(datereceived, datetested) > 14")
+                                ->where('site_entry', '<>', 2)
+                                ->whereNull('result')->get()->first()->total;
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
-                    ->whereIn('receivedstatus', [1, 3])
                     ->whereNull('worksheet_id')
-                    ->where('datereceived', '>', '2016-12-31')
-                    ->whereNotIn('receivedstatus', ['0', '2', '4'])
+                    ->where('datereceived', '>', $date_str)
+                    ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
                     ->where('input_complete', '1')
+                    ->where('site_entry', '<>', 2)
+                    ->where('lab_id', '=', env('APP_LAB'))
                     ->where('flag', '1')->get()->first()->total;
             }
         }
@@ -142,22 +172,32 @@ class DashboardCacher
         return $model;
 	}
 
+    public static function CD4pendingSamplesAwaitingTesting(){
+        return Cd4Sample::selectRaw("COUNT(*) as total")->where('status_id', '=', 1)->where('repeatt', '=', 0)->first()->total;
+    }
+
 	public static function siteBatchesAwaitingApproval($testingSystem = 'Viralload')
 	{
         if ($testingSystem == 'Viralload') {
-            $model = ViralsampleView::selectRaw('COUNT(id) as total')
+            $model = ViralsampleView::selectRaw("COUNT(distinct batch_id) as total")
+                        // ->where('lab_id', '=', env('APP_LAB'))
+                        // ->where('flag', '=', '1')
+                        // ->where('repeatt', '=', '0')
+                        // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+                        // ->where('site_entry', '=', '1')
                         ->where('lab_id', '=', env('APP_LAB'))
-                        ->where('flag', '=', '1')
-                        ->where('repeatt', '=', '0')
                         ->whereNull('receivedstatus')
-                        ->where('site_entry', '=', '1');
+                        ->where('site_entry', 1);
         } else {
-            $model = SampleView::selectRaw('COUNT(id) as total')
+            $model = SampleView::selectRaw("COUNT(distinct batch_id) as total")
+                    // ->where('lab_id', '=', env('APP_LAB'))
+                    // ->where('flag', '=', '1')
+                    // ->where('repeatt', '=', '0')
+                    // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
+                    // ->where('site_entry', '=', '1')
                     ->where('lab_id', '=', env('APP_LAB'))
-                    ->where('flag', '=', '1')
-                    ->where('repeatt', '=', '0')
                     ->whereNull('receivedstatus')
-                    ->where('site_entry', '=', '1');
+                    ->where('site_entry', 1);
         }
         return $model->get()->first()->total ?? 0;
 	}
@@ -172,14 +212,29 @@ class DashboardCacher
         return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('batch_complete', '=', '2')->get()->first()->total;
 	}
 
+    public static function cd4samplesAwaitingDispatch(){
+        return Cd4Sample::selectRaw("COUNT(*) as total")->where('lab_id', '=', env('APP_LAB'))
+                            ->where('status_id', '=', 5)->where('repeatt', '=', 0)->first()->total;
+    }
+
+    public static function cd4worksheetFor2ndApproval() {
+        return Cd4Worksheet::selectRaw("COUNT(*) as total")->whereNotNull('reviewedby')->whereNull('reviewedby2')
+                            ->where('status_id', '<>', 2)->first()->total;
+    }
+
 	public static function samplesAwaitingRepeat($testingSystem = 'Viralload')
 	{
+        $year = date('Y') - 1;
+        if(date('m') < 7) $year --;
+        $date_str = $year . '-12-31';
+
         if($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('COUNT(*) as total')
                         ->whereBetween('sampletype', [1, 5])
-                        // ->where('receivedstatus', 3)
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->whereNull('worksheet_id')
-                        ->whereYear('datereceived', '>', '2015')
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('datereceived', '>', $date_str)
                         ->where('parentid', '>', 0)
                         // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
@@ -188,12 +243,14 @@ class DashboardCacher
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
-                        // ->where('receivedstatus', 3)
+                        ->where('datereceived', '>', $date_str)
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
                         })
                         // ->where(DB::raw(('samples.result is null or samples.result = 0')))
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->where('flag', '=', '1')
                         ->where('parentid', '>', '0');
         }
@@ -209,6 +266,8 @@ class DashboardCacher
                         ->where('flag', '=', 1)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('site_entry', '<>', 2)
                         ->whereNull('datedispatched');
                         // ->where('datedispatched', '=', '')
                         // ->orWhere('datedispatched', '=', '0000-00-00')
@@ -219,6 +278,8 @@ class DashboardCacher
                         ->where('receivedstatus', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
+                        ->where('site_entry', '<>', 2)
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('datedispatched');
         }
         
@@ -231,6 +292,7 @@ class DashboardCacher
         if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('count(distinct batch_id) as total')
                         ->where('receivedstatus', '=', '4')
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->orWhereNull('receivedstatus')->get()->first();
         } else {
             # code...
@@ -243,11 +305,13 @@ class DashboardCacher
     {
         if ($testingSystem == 'Viralload') {
             $model = Viralworksheet::with(['creator']);
-        } else {
+        } else if ($testingSystem == 'Eid') {
             $model = Worksheet::with(['creator']);
+        } else {
+            $model = Cd4Worksheet::with(['creator']);
         }
 
-        return $model->selectRaw('count(*) as total')->where('status_id', '=', '1')->get()->first()->total ?? 0;
+        return $model->selectRaw('count(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('status_id', '=', '1')->first()->total ?? 0;
     }
 
     public static function overdue($level = 'testing',$testingSystem = 'Viralload') {
@@ -267,16 +331,44 @@ class DashboardCacher
         }
 
         return $model->where('repeatt', 0)
+                        ->where('lab_id', '=', env('APP_LAB'))
                         ->whereYear('datereceived', '>', $year)
                         ->whereRaw("datediff(curdate(), datereceived) > 14")
                         ->get()->first()->total ?? 0;
+    }
+
+    public static function delayed_batches($pre = null)
+    {
+        if($pre){
+            $batch_class = \App\Viralbatch::class;
+            $res_query = "result IS NOT NULL AND result != 'Failed' AND result != ''";
+        }
+        else{
+            $batch_class = \App\Batch::class;
+            $res_query = "result > 0";            
+        }
+
+        $delayed = $batch_class::selectRaw("{$pre}batches.*, COUNT({$pre}samples.id) AS `samples_count`")
+            ->join("{$pre}samples", "{$pre}batches.id", '=', "{$pre}samples.batch_id")
+            ->where('batch_complete', 0)
+            ->when(true, function($query) use ($res_query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->whereRaw("( receivedstatus=2 OR  ({$res_query} AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
+                }
+                return $query->whereRaw("( receivedstatus=2 OR  ({$res_query} AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
+            })
+            ->groupBy("{$pre}batches.id")
+            ->havingRaw("COUNT({$pre}samples.id) > 0")
+            ->get();
+
+        return $delayed->count();
     }
 
     public static function cacher()
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 10;
+    	$minutes = 3;
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
@@ -288,6 +380,7 @@ class DashboardCacher
         $resultsForUpdate = self::resultsAwaitingpdate();
         $overduetesting = self::overdue('testing');
         $overduedispatched = self::overdue('dispatched');
+        $delayed_batches = self::delayed_batches('viral');
 
         $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
         $pendingSamplesOverTen2 = self::pendingSamplesAwaitingTesting(true, 'Eid');
@@ -299,7 +392,14 @@ class DashboardCacher
         $resultsForUpdate2 = self::resultsAwaitingpdate('Eid');
         $overduetesting2 = self::overdue('testing','Eid');
         $overduedispatched2 = self::overdue('dispatched','Eid');
+        $delayed_batches2 = self::delayed_batches();
 
+        if(env('APP_LAB') == 5){
+            $CD4samplesInQueue = self::CD4pendingSamplesAwaitingTesting();
+            $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
+            $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
+            $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
+        }
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
@@ -311,8 +411,8 @@ class DashboardCacher
         Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
         Cache::put('vl_overduetesting', $overduetesting, $minutes);
         Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
-
-        
+        Cache::put('vl_delayed_batches', $delayed_batches, $minutes);
+        // EID cache 
         Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
         Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
         Cache::put('eid_batchesForApproval', $batchesForApproval2, $minutes);
@@ -323,6 +423,15 @@ class DashboardCacher
         Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
         Cache::put('eid_overduetesting', $overduetesting2, $minutes);
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
+        Cache::put('eid_delayed_batches', $delayed_batches2, $minutes);
+        //CD4 Cache
+        if(env('APP_LAB') == 5){
+            Cache::put('CD4samplesInQueue', $CD4samplesInQueue, $minutes);
+            Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
+            Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
+            Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
+        }
+        
     }
 
     public static function clear_cache()
@@ -337,6 +446,7 @@ class DashboardCacher
     	Cache::forget('vl_resultsForUpdate');
         Cache::forget('vl_overduetesting');
         Cache::forget('vl_overduedispatched');
+        Cache::forget('vl_delayed_batches');
         
         Cache::forget('eid_pendingSamples');
         Cache::forget('eid_pendingSamplesOverTen');
@@ -348,6 +458,7 @@ class DashboardCacher
         Cache::forget('eid_resultsForUpdate');
         Cache::forget('eid_overduetesting');
         Cache::forget('eid_overduedispatched');
+        Cache::forget('eid_delayed_batches');
     }
 
 

@@ -48,7 +48,17 @@ class EidController extends BaseController
             return $this->response->errorBadRequest("EID HEI Number {$hei_number} collected on {$datecollected} already exists in database.");
         }
 
-        $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        $order_no = $request->input('order_no');
+
+        if($order_no){
+            $sample_exists = SampleView::where(['order_no' => $order_no])->first();
+            if($sample_exists) return $this->response->errorBadRequest("This sample already exists.");
+        }
+
+        if(env('APP_LAB') == 5 && !$datereceived && in_array($facility, [4840, 5798, 4902, 4899, 4880])) $datereceived = date('Y-m-d');        
+
+        // $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+        $batch = Batch::eligible($facility, $datereceived)->withCount(['sample'])->get()->first();
 
         if($batch && $batch->sample_count < 10){
             unset($batch->sample_count);
@@ -65,8 +75,12 @@ class EidController extends BaseController
         $batch->lab_id = $lab;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
-        $batch->user_id = 0;
-        $batch->site_entry = 0;
+        // if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');
+        $batch->user_id = 66;
+        // if(env('APP_LAB') == 5) $batch->user_id = 66;
+        $batch->input_complete = 1;
+        $batch->site_entry = 1;
+        if($datereceived) $batch->site_entry = 0;
         $batch->save();
 
         $patient = Patient::existing($facility, $hei_number)->get()->first();
@@ -93,11 +107,44 @@ class EidController extends BaseController
 
         $sample = new Sample;
         $sample->fill($request->only($fields['sample']));
+
+        if(!$sample->pcrtype){
+
+            $prev_samples = Sample::where(['patient_id' => $patient->id, 'repeatt' => 0])->orderBy('datetested', 'asc')->get();
+            $previous_positive = 0;
+            $recommended_pcr = 1;
+
+            if($prev_samples->count() > 0){
+                $pos_sample = $prev_samples->where('result', 2)->first();
+                if($pos_sample){
+                    $previous_positive = 1;
+                    $recommended_pcr = 4;
+
+                    $bool = false;
+                    foreach ($prev_samples as $key => $sample) {
+                        if($sample->result == 2) $bool = true;
+                        if($bool && $sample->result == 1) $recommended_pcr = 5;
+                    }
+                }
+                else{
+                    if($age < 12){
+                        $recommended_pcr = 2;
+                    }
+                    else{
+                        $recommended_pcr = 3;
+                    }
+                }                
+            }
+            $sample->pcrtype = $recommended_pcr;
+        }
+
+        $sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         $sample->regimen = Lookup::eid_regimen($sample->regimen);
         $sample->mother_prophylaxis = Lookup::eid_intervention($sample->mother_prophylaxis);
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
+        if($datereceived) $sample->receivedstatus = 1;
         $sample->save();
 
         $sample->load(['patient.mother', 'batch']);
@@ -124,6 +171,13 @@ class EidController extends BaseController
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_age($datecollected, $dob);
         // $sex = Lookup::get_gender($gender);
+
+        $order_no = $request->input('order_no');
+
+        if($order_no){
+            $sample_exists = SampleView::where(['order_no' => $order_no])->first();
+            if($sample_exists && !$editted) return $this->response->errorBadRequest("This sample already exists.");
+        }
 
         $sample_exists = SampleView::sample($facility, $patient_identifier, $datecollected)->first();
         $fields = Lookup::samples_arrays();
@@ -153,7 +207,7 @@ class EidController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
-            $batch->save();            
+            $batch->edarp();            
         }
 
         $patient = Patient::existing($facility, $patient_identifier)->get()->first();
@@ -170,16 +224,23 @@ class EidController extends BaseController
         $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
-        $mom->save();
+        $mom->edarp();
 
         $patient->fill($request->only($fields['patient']));
         $patient->mother_id = $mom->id;
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
-        $patient->save();
+        $patient->edarp();
 
         if($editted){
             $sample = Sample::find($sample_exists->id);
+
+            $batch = $sample->batch;
+            $batch->facility_id = $facility;
+            $batch->datereceived = $datereceived;
+            $batch->datedispatched = $datedispatched;
+            $batch->site_entry = 0;
+            $batch->pre_update();
         }
         else{
             $sample = new Sample;
@@ -193,8 +254,7 @@ class EidController extends BaseController
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;
-        $sample->synched = 5;
-        $sample->save();
+        $sample->edarp();
 
         $sample->load(['patient.mother', 'batch']);
         return $sample;

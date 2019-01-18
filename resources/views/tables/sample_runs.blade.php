@@ -71,7 +71,7 @@
                                         <td> {{ $samp->run }} </td>
                                         <td> {{ $samp->datecollected }} </td>
                                         <td> {{ $samp->datetested }} </td>
-                                        <td> {{ $samp->worksheet_id }} </td>
+                                        <td> {!! $samp->get_link('worksheet_id') !!} </td>
                                         <td> {{ $samp->interpretation }} </td>
                                         <td> {{ $samp->result }} </td>
                                     </tr>

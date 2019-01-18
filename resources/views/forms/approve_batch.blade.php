@@ -20,7 +20,9 @@
                 <div class="panel-body">
 
 
-                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
+                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put', 'id' => 'approve_batch_form', 'class'=>'form-horizontal', ]) }}
+
+                        <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
 
                         <div class="alert alert-warning">
                             <center>
@@ -60,13 +62,18 @@
                             </div>
                             <div class="col-md-4">
                                 <p><strong>Entered By:</strong> 
-                                    @if($batch->creator->full_name != ' ')
-                                        {{ $batch->creator->full_name }}
+                                    @if($batch->creator)
+                                        @if($batch->creator->full_name != ' ')
+                                            {{ $batch->creator->full_name }}
+                                        @else
+                                            {{ $batch->creator->facility->name ?? '' }} {{ $batch->entered_by ?? '' }}
+                                        @endif
                                     @else
-                                        {{ $batch->creator->facility->name ?? '' }}
+                                        {{ $batch->entered_by ?? '' }}
                                     @endif
                                 </p>
                             </div>
+                            
 
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Date Received
@@ -123,11 +130,11 @@
                                             <td> {{ $key+1 }} </td>
                                             <td>
                                                 <div align='center'>
-                                                    <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                                    <input name='samples[]' type='checkbox' class='checks sample_ids' value='{{ $sample->id }}' />
                                                 </div>
                                             </td>
 
-                                            <td> {{ $sample->patient->patient }} </td>
+                                            <td> {!! $sample->patient->hyperlink !!} </td>
                                             <td> {{ $sample->patient->gender }} </td>
                                             <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                             <td> {{ $sample->age }} </td>
@@ -173,9 +180,9 @@
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
                                             <td style="width: 1000px;">
-                                                <select class="form-control" name="rejectedreason" id="rejectedreason">
+                                                <select class="form-control" name="rejectedreason" id="rejectedreason_{{$sample->id}}">
 
-                                                    <option> Select One </option>
+                                                    <option></option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}
@@ -200,8 +207,8 @@
                             </div>
 
                             <div class="col-sm-10 col-sm-offset-1">
-                                <button class="btn btn-success" type="submit" name="submit_type" value="accepted">Mark Selected Samples As Accepted For Testing</button>
-                                <button class="btn btn-danger" type="submit" name="submit_type" value="rejected">Mark Selected Samples As Rejected [Ensure you selected the rejected reason]</button>
+                                <button class="btn btn-success" type="submit" id="accept_samples" name="submit_type" value="accepted">Mark Selected Samples As Accepted For Testing</button>
+                                <button class="btn btn-danger" type="submit" id="reject_samples" name="submit_type" value="rejected">Mark Selected Samples As Rejected [Ensure you selected the rejected reason]</button>
                             </div>                        
                         </div>
 
@@ -246,6 +253,39 @@
             }
         });
 
+        /*
+        $(".sample_ids").change(function() {
+            if(this.checked) {
+                val = this.value();
+                rej_id = 'rejectedreason_' + val;
+                $(rej_id).attr("required", "required");  
+                $(rej_id).addClass("requirable");  
+            }
+            else{
+                val = this.value();
+                rej_id = 'rejectedreason_' + val;
+                $(rej_id).removeAttr("required");  
+                $(rej_id).removeClass("requirable");              
+            }
+        });
+
+        $('#approve_batch_form').submit(function( event ){
+            event.preventDefault();
+        });
+
+        $('#accept_samples').submit(function( event ){
+            
+        });
+
+        */
+
     @endcomponent
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            
+        });
+        
+    </script>
 
 @endsection

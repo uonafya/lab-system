@@ -163,6 +163,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        Fideloper\Proxy\TrustedProxyServiceProvider::class,
+
         /*
          * Package Service Providers...
          */

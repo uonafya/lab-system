@@ -21,12 +21,13 @@ class CreateViralsamplesTable extends Migration
             $table->double('batch_id', 14, 2)->unsigned()->index();
             $table->tinyInteger('amrs_location')->nullable();
             $table->string('provider_identifier', 50)->nullable();
-            $table->string('order_no', 30)->nullable();
+            $table->string('order_no', 30)->nullable()->index();
             $table->tinyInteger('vl_test_request_no')->nullable();
-            $table->tinyInteger('receivedstatus')->unsigned()->nullable();            
+            $table->tinyInteger('receivedstatus')->unsigned()->nullable(); 
+            $table->integer('sample_received_by')->unsigned()->nullable();           
 
             // This will be used instead
-            $table->float('age', 5, 2)->unsigned()->nullable()->index();
+            $table->float('age', 6, 3)->unsigned()->nullable()->index();
             $table->tinyInteger('age_category')->unsigned()->default(0)->nullable();
             $table->tinyInteger('justification')->unsigned()->nullable();
             $table->string('other_justification', 50)->nullable();

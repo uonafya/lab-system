@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
-use App\Batch;
-use App\Patient;
-use App\Mother;
-use App\SampleView;
+use \App\Batch;
+use \App\Patient;
+use \App\Mother;
+use \App\SampleView;
 
 use DB;
 
@@ -43,25 +43,27 @@ class BatchObserver
         }
     }
 
-    // public function updated(Batch $batch)
-    // {
-    //     $update_array = [
-    //         'highpriority' => $batch->highpriority,
-    //         'inputcomplete' => $batch->input_complete,
-    //         'batchcomplete' => $batch->batch_complete,
-    //         'siteentry' => $batch->site_entry,
-    //         'sentemail' => $batch->sent_email,
-    //         'printedby' => $batch->printedby,
-    //         'userid' => $batch->user_id,
-    //         'labtestedin' => $batch->lab_id,
-    //         'facility' => $batch->facility_id,
-    //         'datedispatchedfromfacility' => $batch->datedispatchedfromfacility,
-    //         'datereceived' => $batch->datereceived,
-    //         'datebatchprinted' => $batch->datebatchprinted,
-    //         'datedispatched' => $batch->datedispatched,
-    //         'dateindividualresultprinted' => $batch->dateindividualresultprinted,
-    //     ];
+    public function updated(Batch $batch)
+    {
+        if(env('DOUBLE_ENTRY')){
+            $update_array = [
+                'highpriority' => $batch->highpriority,
+                'inputcomplete' => $batch->input_complete,
+                'batchcomplete' => $batch->batch_complete,
+                'siteentry' => $batch->site_entry,
+                'sentemail' => $batch->sent_email,
+                'printedby' => $batch->printedby,
+                'userid' => $batch->user_id,
+                'labtestedin' => $batch->lab_id,
+                'facility' => $batch->facility_id,
+                'datedispatchedfromfacility' => $batch->datedispatchedfromfacility,
+                'datereceived' => $batch->datereceived,
+                'datebatchprinted' => $batch->datebatchprinted,
+                'datedispatched' => $batch->datedispatched,
+                'dateindividualresultprinted' => $batch->dateindividualresultprinted,
+            ];
 
-    //     App\OldModels\Sample::where('batchno', $batch->id)->update($update_array);
-    // }
+            \App\OldModels\Sample::where('batchno', $batch->id)->update($update_array);
+        }
+    }
 }

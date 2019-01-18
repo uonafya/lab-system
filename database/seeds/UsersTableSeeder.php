@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        
 
         DB::table('user_types')->insert([
 		    ['id' => '1', 'user_type' => 'Lab User'],
@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '5', 'user_type' => 'Facility Users'],
 		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
 		    ['id' => '7', 'user_type' => 'POC Admin'],
+		    ['id' => '8', 'user_type' => 'EDARP Admin'],
 		]);
 
 		// $old_users = DB::connection('old')->table('users')->get();
@@ -35,10 +36,12 @@ class UsersTableSeeder extends Seeder
 		// 	$user->oname = $old_user->oname;
 		// 	$user->email = $old_user->email;
 
-		// 	$existing = User::where('email', $old_user->email)->get()->first();
-		// 	if($existing) $user->email = rand(1, 20) . $user->email;
+		// 	if($old_user->flag == 0) $user->deleted_at = date('Y-m-d H:i:s');
 
-		// 	$user->password = '12345678';
+		// 	$existing = User::withTrashed()->where('email', $old_user->email)->get()->first();
+		// 	if($existing) $user->email = str_random(5) . $user->email;
+
+		// 	$user->password = env('DEFAULT_PASSWORD', 12345678);
 		// 	$user->save();
 		// }
 
@@ -86,6 +89,15 @@ class UsersTableSeeder extends Seeder
 	        'email' => 'poc@gmail.com',
     	]);
 
+        if (env('APP_LAB') == 2) // EDARP user to approve samples which are staged in Kisumu
+	        $users = factory(App\User::class, 1)->create([
+		        'user_type_id' => 8,
+		        'surname' => 'EDARP',
+		        'oname' => 'Admin',
+		        'email' => 'edarp@gmail.com',
+		        'password' => encrypt(env('APP_KEY').'@edarp')
+	    	]);
+
     	$facilitys = DB::table('facilitys')->get();
 
     	$i=0;
@@ -119,6 +131,5 @@ class UsersTableSeeder extends Seeder
 	    	// }
     	}
     	// DB::table('users')->insert($data);
-
     }
 }

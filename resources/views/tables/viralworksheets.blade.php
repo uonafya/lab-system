@@ -25,6 +25,12 @@
             <a href="{{ url('viralworksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
             </a>
+            @if(env('APP_LAB') == 9)
+                |
+                <a href="{{ url('viralworksheet/index/11') }}" title="EMR (IQCare) Worksheets">
+                    EMR (IQCare) Worksheets
+                </a>
+            @endif
         </div>
     </div>
 
@@ -73,6 +79,29 @@
 
         </div>
     </div>
+
+    {{--<div class="row">
+        @foreach($status_count as $c)
+            <div class="col-sm-3">
+                <b>{!! $worksheet_statuses->where('id', $c->status_id)->first()->state ?? '' !!}: </b> {{ $c->total }}                
+            </div>
+        @endforeach        
+    </div>--}}
+
+    @foreach($worksheet_statuses as $worksheet_status)
+        @continue(!$status_count->where('status_id', $worksheet_status->id)->sum('total'))
+        <div class="row">
+            <div class="col-sm-2">
+                <b>{{ $worksheet_status->state }}:</b> {{ $status_count->where('status_id', $worksheet_status->id)->sum('total') }}
+            </div>
+
+            @foreach($status_count->where('status_id', $worksheet_status->id) as $mach)
+                <div class="col-sm-2">
+                    <b>{!! $machines->where('id', $mach->machine_type)->first()->machine !!}</b> : {{ $mach->total }}
+                </div>
+            @endforeach
+        </div>
+    @endforeach
         
     <div class="row">
         <div class="col-lg-12">
@@ -93,6 +122,10 @@
                                     <th> Created By </th>
                                     <th> Type </th>
                                     <th> Status </th>
+                                    <th> # Detected </th>
+                                    <th> # Undetected </th>
+                                    <th> # Failed </th>
+                                    <th> # No Result </th>
                                     <th> # Samples </th>
                                     <th> Date Run </th>
                                     <th> Date Updated </th>
@@ -116,12 +149,21 @@
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
 
-                                    <td> {{ $worksheet->samples_no }} </td>
+                                    <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $failed->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $noresult->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+
+                                    <td> {{ $worksheet->samples_no }} 
+                                        @if($reruns->where('worksheet_id', $worksheet->id)->first())
+                                            <span style="color: #ff0000;"> ({{ $reruns->where('worksheet_id', $worksheet->id)->first()->totals }}) </span>
+                                        @endif
+                                    </td>
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
-                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
+                                        @include('shared.viral_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id, 'machine_type' => $worksheet->machine_type, 'worksheet' => $worksheet])
                                     </td>
                                 </tr>
                             @endforeach

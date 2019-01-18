@@ -26,7 +26,6 @@ border : solid 1px black;
 width:1100px;
 width:1180px;
 }
- .style7 {font-size: medium}
 .style10 {font-size: 16px}
 </style>
 
@@ -42,6 +41,26 @@ width:1180px;
 	@endisset
 	>
 	<div align="center">
+			<tr class="odd">
+				<td colspan="8">
+					<center>
+						TAQMAN		
+
+						@if($worksheet->cdcworksheetno)
+							({{ $worksheet->cdcworksheetno }})
+						@endif										
+					</center>	
+				</td>			
+			</tr>
+			@if(get_class($worksheet) == "App\Viralworksheet")
+				<tr class="odd">
+					<td colspan="8">
+						<center>
+							[{{ $worksheet->sample_type_name }}]							
+						</center>						
+					</td>					
+				</tr>
+			@endif
 
 		<table border="0" class="data-table">
 			<tr >
@@ -100,37 +119,22 @@ width:1180px;
 					@endphp
 
 			<tr>
-				@php $count = 0; @endphp
+				<?php 
+					$count = 0;
+					if($vl){
+						echo "<td align='center' > HPC </td><td align='center' > LPC </td><td  align='center' > NC </td>";
+						$count += 3; 
+					}
+					else{
+						echo "<td align='center' > PC </td><td  align='center' > NC </td>";
+						$count += 2; 
+					}
+				?>
 
 
-				@foreach($samples->where('parentid', '!=', 0) as $sample)
+				@foreach($samples as $sample)
 
-					@php
-						$parent = "- {$sample->parentid}";
-						$rr = "
-								<div align='right'> 
-									<table>
-										<tr>
-											<td style='background-color:#FAF156'><small>R </small></td>
-										</tr>
-									</table> 
-								</div>
-								";
-					@endphp
-
-					<td > 
-						{!! $rr !!} 
-						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
-											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
-											<b>Sample ID:</b> {{ $sample->patient->patient }} <br />
-											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br /> 
-
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100"  />
-						<br />
-						{{ $sample->id }}
-
-					</td>
-
+					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@php $count++; @endphp
 
@@ -141,28 +145,9 @@ width:1180px;
 				@endforeach
 
 
-				@foreach($samples->where('parentid', 0) as $sample)
-					
+				{{--@foreach($samples->where('parentid', 0) as $sample)
 
-					@php
-						$parent = "";
-						$rr = "";
-					@endphp
-
-					<td > 
-						{{ $rr }} 
-						{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>--}}
-											<b>Facility:</b> {{ $sample->batch->facility->name }} <br />
-											<b>Sample ID:</b> {{ $sample->patient->patient }} <br />
-											<b>Date Collected:</b> {{ $sample->my_date_format('datecollected') }} <br />
-
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39+') }}" alt="barcode" height="30" width="100" />
-						<br />
-						{{ $sample->id }}
-
-					</td>
-
-
+					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@php $count++; @endphp
 
@@ -172,10 +157,10 @@ width:1180px;
 				@endforeach
 
 				@if($vl) 
-					<td align=center > LPC </td><td align=center > HPC </td><td  align=center > NC </td>
+					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
 				@else
-					<td align=center > PC </td><td  align=center > NC </td>
-				@endif
+					<td align='center' > PC </td><td  align='center' > NC </td>
+				@endif--}}
 			</tr>
 				
 		</table>

@@ -63,7 +63,7 @@ class LoginController extends Controller
         $batch = Batch::find($batch_no);
 
         if($batch){
-            if($batch->outdated()) return $this->outdated_batch_error(); 
+            if($batch->outdated() && !in_array(env('APP_LAB'), [2, 4])) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
                 
@@ -77,7 +77,7 @@ class LoginController extends Controller
         $batch = Viralbatch::find($batch_no);
 
         if($batch){
-            if($batch->outdated()) return $this->outdated_batch_error(); 
+            if($batch->outdated() && !in_array(env('APP_LAB'), [2, 4])) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
 
@@ -112,22 +112,37 @@ class LoginController extends Controller
         $user = auth()->user();
         $user->set_last_access();
 
+        if($user->user_type_id == 7) return "/sample/list_poc";
+
         if($facility){
             $fac = \App\Facility::find($user->facility_id);
             session(['logged_facility' => $fac]);
         }
 
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
-        if (auth()->user()->user_type_id == 1)
-        {
-            $tasks = $this->pendingTasks();
-            // dd($tasks);
-
-            if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
-                session(['pendingTasks' => true]);
-                return '/pending';
+        session(['testingSystem' => 'EID']);
+        if (env('APP_LAB') == 4) {
+            if(!($facility || $user->user_type_id == 4)){
+                $tasks = $this->pendingTasks();
+                
+                if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
+                    session(['pendingTasks' => true]);
+                    return '/pending';
+                }
+            }
+        } else {
+            if(!$facility){
+                $tasks = $this->pendingTasks();
+                // dd($tasks);
+                if ($tasks['submittedstatus'] == 0 OR $tasks['labtracker'] == 0) {
+                    session(['pendingTasks' => true]);
+                    return '/pending';
+                }
             }
         }
+
+        if(env('APP_LAB') == 8 || env('APP_LAB') == 9) session(['testingSystem' => 'Viralload']);
+        
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
 
         $batch = Batch::editing()->withCount(['sample'])->get()->first();
@@ -136,7 +151,7 @@ class LoginController extends Controller
                 $batch->full_batch();
             }
             else{
-                $fac = \App\Facility::find($batch->id);
+                $fac = \App\Facility::find($batch->facility_id);
                 session(['batch' => $batch, 'facility_name' => $fac->name]);
                 session(['toast_message' => "The batch {$batch->id} is still awaiting release. You can add more samples or release it."]);
                 return '/sample/create';
@@ -149,13 +164,16 @@ class LoginController extends Controller
                 $viralbatch->full_batch();
             }
             else{
-                $fac = \App\Facility::find($viralbatch->id);
+                $fac = \App\Facility::find($viralbatch->facility_id);
                 session(['viral_batch' => $viralbatch, 'viral_facility_name' => $fac->name]);
                 session(['toast_message' => "The batch {$viralbatch->id} is still awaiting release. You can add more samples or release it."]);
                 return '/viralsample/create';
             }
         }
-        if($facility) return '/sample/create';
+        if($facility){
+            session(['toast_message' => 'Please make sure that your contact information is up to date.']);
+            return "/facility/{$user->facility_id}/edit";
+        }
         return '/home';        
     }
 }

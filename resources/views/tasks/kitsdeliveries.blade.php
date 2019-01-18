@@ -55,8 +55,12 @@
                             <div class="col-sm-8">
                                 <select class="form-control input-sm" required name="platform" id="platform">
                                     <option value="" selected>Select Platform</option>
-                                    <option value="1">COBAS/TAQMAN</option>
-                                    <option value="2">ABBOTT</option>
+                                    {{-- @if($data->taqmandeliveries == 0) --}}
+                                    <option value="1">COBAS/TAQMAN @if($data->taqmandeliveries > 0) <i>(Entry made for current quarter)</i> @endif</option>
+                                    {{-- @endif
+                                    @if($data->abbottdeliveries == 0) --}}
+                                    <option value="2">ABBOTT @if($data->abbottdeliveries > 0) <i>(Entry made for current quarter)</i> @endif</option>
+                                    {{-- @endif --}}
                                 </select>
                             </div>
                         </div>
@@ -84,7 +88,7 @@
                                 <thead>               
                                     <tr>
                                         <th></th>
-                                        <th>HIV Quantitative Test Kits</th>
+                                        <th>HIV Qualitative Test Kits</th>
                                         <th>SPEX Agent</th>
                                         <th>Ampliprep Input s-tube</th>
                                         <th>Ampliprep flapless SPU</th>
@@ -173,7 +177,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control input-sm" required name="receivedby" id="receivedby">
                                         <option value="" selected disabled>Select a User</option>
-                                    @forelse ($users as $user)
+                                    @forelse ($data->users as $user)
                                         <option value="{{ $user->id }}">{{ $user->oname }} {{ $user->surname }}</option>
                                     @empty
                                         <option value="" disabled>No User</option>
@@ -300,7 +304,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control input-sm" required name="vreceivedby" id="vreceivedby">
                                         <option value="" selected disabled>Select a User</option>
-                                    @forelse ($users as $user)
+                                    @forelse ($data->users as $user)
                                         <option value="{{ $user->id }}">{{ $user->oname }} {{ $user->surname }}</option>
                                     @empty
                                         <option value="" disabled>No User</option>
@@ -563,7 +567,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control input-sm" required name="areceivedby" id="areceivedby">
                                         <option value="" selected disabled>Select a User</option>
-                                    @forelse ($users as $user)
+                                    @forelse ($data->users as $user)
                                         <option value="{{ $user->id }}">{{ $user->oname }} {{ $user->surname }}</option>
                                     @empty
                                         <option value="" disabled>No User</option>
@@ -602,7 +606,7 @@
                                 <tbody>
                                     <tr>
                                         <td>1</td>
-                                        <td><strong>ABBOTT RealTime HIV-1 Qualitative Amplification Reagent Kit</strong></td>
+                                        <td><strong>ABBOTT RealTime HIV-1 Quantitative Amplification Reagent Kit</strong></td>
                                         <td>
                                             <input class="form-control input-sm input-edit-empty" required id="vaqualkitlotno" name="vaqualkitlotno" type="text" value="">
                                         </td>
@@ -624,7 +628,7 @@
                                     </tr>
                                     <tr>
                                         <td>2</td>
-                                        <td><strong>ABBOTT RealTime HIV-1 Qualitative Control Kit </strong></td>
+                                        <td><strong>ABBOTT RealTime HIV-1 Quantitative Control Kit </strong></td>
                                         <td>
                                             <input class="form-control input-sm input-edit-empty" required id="vacontrollotno" name="vacontrollotno" type="text" value="">
                                         </td>
@@ -815,7 +819,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control input-sm" required name="vareceivedby" id="vareceivedby">
                                         <option value="" selected disabled>Select a User</option>
-                                    @forelse ($users as $user)
+                                    @forelse ($data->users as $user)
                                         <option value="{{ $user->id }}">{{ $user->oname }} {{ $user->surname }}</option>
                                     @empty
                                         <option value="" disabled>No User</option>
@@ -916,6 +920,12 @@
         ********************************/ 
         $("#rqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#kitlotno").removeAttr('required');
+                $("#expirydate").removeAttr('required');
+                $("#receivedby").removeAttr('required');
+                $("#datereceived").removeAttr('required');
+            }
             $("#rspexagent").val(Math.round(val* 0.15)); 
             $("#rampinput").val(Math.round(val * 0.2)); 
             $("#rampflapless").val(Math.round(val * 0.2)); 
@@ -956,6 +966,12 @@
 
         $("#vrqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#vkitlotno").removeAttr('required');
+                $("#vexpirydate").removeAttr('required');
+                $("#vreceivedby").removeAttr('required');
+                $("#vdatereceived").removeAttr('required');
+            }
             $("#vrspexagent").val(Math.round(val* 0.15)); 
             $("#vrampinput").val(Math.round(val * 0.2)); 
             $("#vrampflapless").val(Math.round(val * 0.2)); 
@@ -999,6 +1015,18 @@
         ********************************/ 
         $("#arqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#aqualkitlotno").removeAttr('required');
+                $("#aqualkitexpiry").removeAttr('required');
+                $("#acontrollotno").removeAttr('required');
+                $("#acontrolexpiry").removeAttr('required');
+                $("#abufferlotno").removeAttr('required');
+                $("#abufferexpiry").removeAttr('required');
+                $("#apreparationlotno").removeAttr('required');
+                $("#apreparationexpiry").removeAttr('required');
+                $("#areceivedby").removeAttr('required');
+                $("#adatereceived").removeAttr('required');
+            }
             $("#arcontrol").val(Math.round((val * 2)*(2/24)));
             $("#arbuffer").val(Math.round(val * 1));
             $("#arpreparation").val(Math.round(val * 1));
@@ -1064,6 +1092,18 @@
 
         $("#varqualkit").keyup(function(){
             val = $(this).val();
+            if (val == 0) {
+                $("#vaqualkitlotno").removeAttr('required');
+                $("#vaqualkitexpiry").removeAttr('required');
+                $("#vacontrollotno").removeAttr('required');
+                $("#vacontrolexpiry").removeAttr('required');
+                $("#vabufferlotno").removeAttr('required');
+                $("#vabufferexpiry").removeAttr('required');
+                $("#vapreparationlotno").removeAttr('required');
+                $("#vapreparationexpiry").removeAttr('required');
+                $("#vareceivedby").removeAttr('required');
+                $("#vadatereceived").removeAttr('required');
+            }
             $("#varcontrol").val(Math.round((val * 2)*(2/24)));
             $("#varbuffer").val(Math.round(val * 1));
             $("#varpreparation").val(Math.round(val * 1));

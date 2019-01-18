@@ -39,6 +39,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
+
+        // dd(url('') . ' ' . url()->full() . " " . url()->current() . " " . $_SERVER['HTTP_HOST'] . " " . $_SERVER['REQUEST_URI'] . " " . $_SERVER['SERVER_PORT']);
+        // if(env('APP_URL') == url('') && env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
+
+        // \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
+
+        if(env('APP_SECURE_PORT')) \Illuminate\Support\Facades\URL::forceRootUrl(url('') . ':' .  env('APP_SECURE_PORT'));
+
+
+
         Mother::observe(MotherObserver::class);
 
         Batch::observe(BatchObserver::class);
@@ -48,14 +59,17 @@ class AppServiceProvider extends ServiceProvider
         Viralpatient::observe(ViralpatientObserver::class);
 
 
+        if(env('DOUBLE_ENTRY')){
         
-        // Sample::observe(SampleObserver::class);
-        // Viralsample::observe(ViralsampleObserver::class);
+            Sample::observe(SampleObserver::class);
+            Viralsample::observe(ViralsampleObserver::class);
+            
+            Worksheet::observe(WorksheetObserver::class);
+            Viralworksheet::observe(ViralworksheetObserver::class);
+
+        }
         
-        // Worksheet::observe(WorksheetObserver::class);
-        // Viralworksheet::observe(ViralworksheetObserver::class);
-        
-        // Facility::observe(FacilityObserver::class);
+        Facility::observe(FacilityObserver::class);
     }
 
     /**

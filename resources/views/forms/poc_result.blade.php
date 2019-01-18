@@ -122,12 +122,20 @@
                         @else
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Result
+                                <label class="col-sm-4 control-label">Result (Check if result is Target Not Detected. If the result is numerical, fill the field below.)
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
 
-                                <div class="col-sm-8">
-                                    <label> <input type="checkbox" class="i-checks" name="result" value="< LDL copies/ml"/> &lt; ldl copies per ml (Check if result is Target Not Detected. If the result is numerical, fill the field below.)</label>
+                                <div class="col-sm-3">
+                                    <label> <input type="radio" class="i-checks" name="result" value="< LDL copies/ml"/> &lt; LDL copies/ml </label>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <label> <input type="radio" class="i-checks" name="result" value="Collect New Sample"/> Collect New Sample </label>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <label> <input type="radio" class="i-checks" name="result" value="< 40 Copies/ mL"/> &lt;40 </label>
                                 </div>
                             </div> 
 

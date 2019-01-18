@@ -26,29 +26,29 @@ class Controller extends BaseController
     // }
 
     public $taqmanKits = [
-        ['name'=>"Ampliprep, HIV-1 Qualitative Test kits HIVQCAP", 'alias'=>'qualkit', 'unit'=>'48 Tests'],
-        ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent', 'unit'=>'350 Tests' ,'factor'=>0.15],
-        ['name'=>"Ampliprep Input S-tube", 'alias'=>'ampinput', 'unit'=>'12 * 24' ,'factor'=>0.2],
-        ['name'=>"Ampliprep SPU", 'alias'=>'ampflapless', 'unit'=>'12 * 24' ,'factor'=>0.2],
-        ['name'=>"Ampliprep K-Tips", 'alias'=>'ampktips', 'unit'=>'5.1L' ,'factor'=>0.15],
-        ['name'=>"Ampliprep Wash Reagent", 'alias'=>'ampwash', 'unit'=>'1.2mm, 12 * 36' ,'factor'=>0.5],
-        ['name'=>"TAQMAN K-Tubes", 'alias'=>'ktubes', 'unit'=>'12 * 96Pcs' ,'factor'=>0.05],
-        ['name'=>"CAP/CTM Consumable Bundles", 'alias'=>'consumables', 'unit'=>'2 * 2.5ml' ,'factor'=>0.5]
+        ['EIDname'=>"Ampliprep, HIV-1 Qualitative Test kits HIVQCAP", 'VLname'=>"Ampliprep, HIV-1 Quantitative Test kits HIVQCAP", 'alias'=>'qualkit', 'unit'=>'48 Tests' ,'factor'=>1, 'testFactor' => ['EID'=>44,'VL'=>42]],
+        ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent', 'unit'=>'350 Tests' ,'factor'=>0.15, 'testFactor' => 0.15],
+        ['name'=>"Ampliprep Input S-tube", 'alias'=>'ampinput', 'unit'=>'12 * 24' ,'factor'=>0.2, 'testFactor' => 0.2],
+        ['name'=>"Ampliprep SPU", 'alias'=>'ampflapless', 'unit'=>'12 * 24' ,'factor'=>0.2, 'testFactor' => 0.2],
+        ['name'=>"Ampliprep K-Tips", 'alias'=>'ampktips', 'unit'=>'5.1L' ,'factor'=>0.15, 'testFactor' => 0.15],
+        ['name'=>"Ampliprep Wash Reagent", 'alias'=>'ampwash', 'unit'=>'1.2mm, 12 * 36' ,'factor'=>0.5, 'testFactor' => 0.5],
+        ['name'=>"TAQMAN K-Tubes", 'alias'=>'ktubes', 'unit'=>'12 * 96Pcs' ,'factor'=>0.05, 'testFactor' => 0.05],
+        ['name'=>"CAP/CTM Consumable Bundles", 'alias'=>'consumables', 'unit'=>'2 * 2.5ml' ,'factor'=>0.5, 'testFactor' => 0.5]
                         ];
     public $abbottKits = [
-        ['name'=>"ABBOTT RealTime HIV-1 Quantitative Amplification Reagent Kit", 'alias'=>'qualkit'],
-        ['name'=>"ABBOTT m2000rt Optical Calibration Kit", 'alias'=>'calibration','factor'=>['EID'=>0,'VL'=>0]],
-        ['name'=>"ABBOTT RealTime HIV-1 Quantitative Control Kit", 'alias'=>'control', 'factor'=>['EID'=>(2*(2/24)),'VL'=>(3/24)]],
-        ['name'=>"Bulk mLysisDNA Buffer (for DBS processing only)", 'alias'=>'buffer','factor'=>['EID'=>1,'VL'=>1]],
-        ['name'=>"ABBOTT mSample Preparation System RNA", 'alias'=>'Preparation','factor'=>['EID'=>1,'VL'=>1]],
-        ['name'=>"ABBOTT Optical Adhesive Covers", 'alias'=>'adhesive','factor'=>['EID'=>(2/100),'VL'=>(1/100)]],
-        ['name'=>"ABBOTT 96-Deep-Well Plate", 'alias'=>'deepplate','factor'=>['EID'=>(2*(2/4)),'VL'=>(3/4)]],
-        ['name'=>"Saarstet Master Mix Tube", 'alias'=>'mixtube','factor'=>['EID'=>(2*(1/25)),'VL'=>(1/25)]],
-        ['name'=>"Saarstet 5ml Reaction Vessels", 'alias'=>'reactionvessels','factor'=>['EID'=>(192/500),'VL'=>(192/500)]],
-        ['name'=>"200mL Reagent Vessels", 'alias'=>'reagent','factor'=>['EID'=>(2*(5/6)),'VL'=>(6/6)]],
-        ['name'=>"ABBOTT 96-Well Optical Reaction Plate", 'alias'=>'reactionplate','factor'=>['EID'=>(192/500),'VL'=>(1/20)]],
-        ['name'=>"1000 uL Eppendorf (Tecan) Disposable Tips (for 1000 tests)", 'alias'=>'1000disposable','factor'=>['EID'=>(2*(421/192)),'VL'=>(841/192)]],
-        ['name'=>"200 ML Eppendorf (Tecan) Disposable Tips", 'alias'=>'200disposable','factor'=>['EID'=>(2*(48/192)),'VL'=>(96/192)]]
+        ['EIDname'=>"ABBOTT RealTime HIV-1 Qualitative Amplification Reagent Kit", 'VLname'=>"ABBOTT RealTime HIV-1 Quantitative Amplification Reagent Kit", 'alias'=>'qualkit','factor'=>['EID'=>1,'VL'=>1], 'testFactor' => ['EID'=>94,'VL'=>93]],
+        ['name'=>"ABBOTT m2000rt Optical Calibration Kit", 'alias'=>'calibration','factor'=>['EID'=>0,'VL'=>0], 'testFactor' => ['EID'=>0,'VL'=>0]],
+        ['name'=>"ABBOTT RealTime HIV-1 Quantitative Control Kit", 'alias'=>'control', 'factor'=>['EID'=>(2*(2/24)),'VL'=>(3/24)], 'testFactor' => ['EID'=>(2*(2/24)),'VL'=>(3/24)]],
+        ['name'=>"Bulk mLysisDNA Buffer (for DBS processing only)", 'alias'=>'buffer','factor'=>['EID'=>1,'VL'=>1], 'testFactor' => ['EID'=>1,'VL'=>1]],
+        ['name'=>"ABBOTT mSample Preparation System RNA", 'alias'=>'preparation','factor'=>['EID'=>1,'VL'=>1], 'testFactor' => ['EID'=>1,'VL'=>1]],
+        ['name'=>"ABBOTT Optical Adhesive Covers", 'alias'=>'adhesive','factor'=>['EID'=>(2/100),'VL'=>(1/100)], 'testFactor' => ['EID'=>(2/100),'VL'=>(1/100)]],
+        ['name'=>"ABBOTT 96-Deep-Well Plate", 'alias'=>'deepplate','factor'=>['EID'=>(2*(2/4)),'VL'=>(3/4)], 'testFactor' => ['EID'=>(2*(2/4)),'VL'=>(3/4)]],
+        ['name'=>"Saarstet Master Mix Tube", 'alias'=>'mixtube','factor'=>['EID'=>(2*(1/25)),'VL'=>(1/25)], 'testFactor' => ['EID'=>(2*(1/25)),'VL'=>(1/25)]],
+        ['name'=>"Saarstet 5ml Reaction Vessels", 'alias'=>'reactionvessels','factor'=>['EID'=>(192/500),'VL'=>(192/500)], 'testFactor' => ['EID'=>(192/500),'VL'=>(192/500)]],
+        ['name'=>"200mL Reagent Vessels", 'alias'=>'reagent','factor'=>['EID'=>(2*(5/6)),'VL'=>(6/6)], 'testFactor' => ['EID'=>(2*(5/6)),'VL'=>(6/6)]],
+        ['name'=>"ABBOTT 96-Well Optical Reaction Plate", 'alias'=>'reactionplate','factor'=>['EID'=>(192/500),'VL'=>(1/20)], 'testFactor' => ['EID'=>(192/500),'VL'=>(1/20)]],
+        ['name'=>"1000 uL Eppendorf (Tecan) Disposable Tips (for 1000 tests)", 'alias'=>'1000disposable','factor'=>['EID'=>(2*(421/192)),'VL'=>(841/192)], 'testFactor' => ['EID'=>(2*(421/192)),'VL'=>(841/192)]],
+        ['name'=>"200 ML Eppendorf (Tecan) Disposable Tips", 'alias'=>'200disposable','factor'=>['EID'=>(2*(48/192)),'VL'=>(96/192)], 'testFactor' => ['EID'=>(2*(48/192)),'VL'=>(96/192)]]
                         ];
 
     public function _columnBuilder($columns = null)
@@ -67,10 +67,16 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
-        $month = date('m');
-        $prevmonth = $month-1;
-        $equipment = LabEquipmentTracker::where('year', date('Y'))->where('month', $prevmonth)->count();
-        $performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $prevmonth)->count();
+        $currentmonth = date('m');
+        $prevmonth = date('m')-1;
+        $year = date('Y');
+        $prevyear = $year;
+        if ($currentmonth == 1) {
+            $prevmonth = 12;
+            $prevyear -= 1;
+        }
+        $equipment = LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
+        $performance = LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
 
         $labtracker = 0;
         if ($performance > 0 &&  $equipment > 0) 
@@ -84,13 +90,13 @@ class Controller extends BaseController
         
         foreach ($testype as $key => $value) {
             if ($abbot == 1) {//Check for both abbot and taqman
-                $abbot[] = Abbotprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
+                $abbot[] = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                             }
                                
-            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
+            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                         
         }
-
+        // dd($abbot);
         if ($abbot == 1) {
             //..if both taqman and abbott have been submitted; set $submittedstatus > 0
             if ( ($taqman[0] > 0 && $taqman[1] >0 ) && ($abbot[0] > 0 && $abbot[1]>0) )
@@ -117,6 +123,7 @@ class Controller extends BaseController
                 $submittedstatus = 0;
             
         } else {
+            // dd($taqman);
             $submittedstatus = 1;
             if ($taqman[0] == 0 || $taqman[1] ==0)
                 $submittedstatus = 0;

@@ -26,6 +26,9 @@ class CreateViralWorksheetsTable extends Migration
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
             $table->tinyInteger('calibration')->unsigned()->nullable();
 
+            // 1
+            $table->tinyInteger('sampletype')->unsigned()->nullable();
+
             $table->integer('runby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();
             $table->integer('sortedby')->unsigned()->nullable();

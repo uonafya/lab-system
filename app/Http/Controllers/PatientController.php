@@ -157,7 +157,7 @@ class PatientController extends Controller
             $sample->pre_update();
         }
 
-        $patient_array = Patient::whereIn('id', $patients)->update(['synched' => 3]);
+        $patient_array = Patient::whereIn('id', $patients)->where('id', '!=', $patient->id)->update(['synched' => 3]);
 
         session(['toast_message' => "The patient records have been merged. The records will be propagated to the national database and then they will be removed."]);
 
@@ -194,6 +194,7 @@ class PatientController extends Controller
         $patients = Patient::select('patients.id', 'patients.patient', 'facilitys.name', 'facilitys.facilitycode')
             ->join('facilitys', 'facilitys.id', '=', 'patients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")
+            // ->where('patients.synched', '!=', 2)
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
@@ -201,6 +202,8 @@ class PatientController extends Controller
                 return $query->where('facility_id', $facility_id);
             })
             ->paginate(10);
+
+        $patients->setPath(url()->current());
         return $patients;
 
     }

@@ -7,7 +7,7 @@
 
 <div class="p-lg">
     <div class="content animate-panel" data-child="hpanel">
-    {{ Form::open(['url' => '/facility/update', 'method' => 'put', 'class'=>'form-horizontal']) }}
+    {{ Form::open(['url' => '/facility/' . $facility->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
         <input type="hidden" name="id" value="{{ $facility->id }}">
         <div class="row">
             <div class="col-lg-5">
@@ -16,16 +16,17 @@
                         <center>Facility Information</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
+
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Code</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" required name="facilitycode" type="text" value="{{ $facility->facilitycode }}" id="facilitycode" {{ $disabled }}>
+                                <input class="form-control editable" required name="facilitycode" type="text" value="{{ $facility->facilitycode }}" id="facilitycode" @if(Auth::user()->user_type_id == 5) disabled @else {{ $disabled }} @endif>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Name</label>
                             <div class="col-sm-8">
-                                <input class="form-control editable" required name="name" type="text" value="{{ $facility->facility }}" id="name" {{ $disabled }}>
+                                <input class="form-control editable" required name="name" type="text" value="{{ $facility->facility }}" id="name" @if(Auth::user()->user_type_id == 5) disabled @else {{ $disabled }} @endif>
                             </div>
                         </div>
                         <div class="form-group">
@@ -40,12 +41,12 @@
                                 <input class="form-control" required name="county" type="text" value="{{ $facility->county }}" id="county" disabled="true">
                             </div>
                         </div>
-                        <div class="form-group">
+                        {{--<div class="form-group">
                             <label class="col-sm-4 control-label">Laboratory</label>
                             <div class="col-sm-8">
                                 <input class="form-control" required name="lab" type="text" value="{{ $facility->lab }}" id="lab" disabled="true">
                             </div>
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
             </div>

@@ -52,8 +52,10 @@
                                     @if($batch->creator->full_name != ' ')
                                         {{ $batch->creator->full_name }}
                                     @else
-                                        {{ $batch->creator->facility->name ?? '' }}
+                                        {{ $batch->creator->facility->name ?? '' }} {{ $batch->entered_by ?? '' }}
                                     @endif
+                                @else
+                                    {{ $batch->entered_by ?? '' }}
                                 @endif
                             </p>
                         </div>
@@ -78,6 +80,15 @@
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
+                            @if(($batch->site_entry == 1 || ($batch->site_entry == 0 && $batch->user_id == 0 && !$batch->batch_complete )) && (!$batch->datereceived || 
+                            ($batch->datereceived && $samples->where('receivedstatus', null)->first())
+                            ) )
+                                <div class="col-md-4">
+                                    <a href="{{ url('viralbatch/site_approval_group/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Approve Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('viralbatch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
@@ -90,15 +101,16 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="14"><center> Sample Log</center></th>
+                                    <th colspan="16"><center> Sample Log</center></th>
                                 </tr>
                                 <tr>
-                                    <th colspan="5">Patient Information</th>
+                                    <th colspan="6">Patient Information</th>
                                     <th colspan="4">Sample Information</th>
-                                    <th colspan="5">History Information</th>
+                                    <th colspan="6">History Information</th>
                                 </tr>
                                 <tr>
                                     <th>#</th>
+                                    <th>Lab ID</th>
                                     <th>Patient CCC No</th>
                                     <th>Sex</th>
                                     <th>Age</th>
@@ -107,20 +119,24 @@
                                     <th>Sample Type</th>
                                     <th>Collection Date</th>
                                     <th>Received Status</th>
-                                    <th>High Priority</th>
+                                    <th>Worksheet</th>
 
                                     <th>Current Regimen</th>
                                     <th>ART Initiation Date</th>
                                     <th>Justification</th>
                                     <th>Viral Load</th>
                                     <th>Task</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody> 
+                                <?php $i=1; ?>
                                 @foreach($samples as $key => $sample)
+                                    @continue($sample->repeatt == 1)
                                     <tr>
-                                        <td> {{ $key+1 }} </td>
-                                        <td> {{ $sample->patient->patient }} </td>
+                                        <td> {{ $i++ }} </td>
+                                        <td> {{ $sample->id }} </td>
+                                        <td>  {!! $sample->patient->hyperlink !!} </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
@@ -139,7 +155,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td></td>
+                                        <td>{!! $sample->get_link('worksheet_id') !!} </td>
                                         <td>
                                             @foreach($prophylaxis as $proph)
                                                 @if($sample->prophylaxis == $proph->id)
@@ -155,17 +171,35 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td> {{ $sample->result }} </td>
+                                        <td> {{ $sample->result }}  
+                                            @if(is_numeric($sample->result))
+                                                {{ $sample->units }}
+                                            @endif
+                                        </td>
                                         <td>
+                                            @if(auth()->user()->user_type_id != 5 && $batch->batch_complete == 0 && env('APP_LAB') == 3 && !$sample->worksheet_id && $sample->receivedstatus == 1 && (($sample->sample_received_by && $sample->sample_received_by != auth()->user()->id) || 
+                                            (!$sample->sample_received_by && $batch->received_by != auth()->user()->id) ))
+                                                <a href="{{ url('/sample/transfer/' . $sample->id ) }}">Transfer To My Account</a> |
+                                            @endif
+                                            
                                             @if($batch->batch_complete == 1)
                                                 <a href="{{ url('/viralsample/print/' . $sample->id ) }} " target='_blank'>Print</a> |
                                             @endif
-                                            <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
+                                            <a href="{{ url('/viralsample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
-                                            {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
-                                                <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-                                            {{ Form::close() }}
+                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
+                                                | <a href="{{ url('/viralsample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->run < 2)
+                                            
+                                                {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
+                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                                {{ Form::close() }}
+                                            @endif                                            
                                         </td>
                                     </tr>
                                 @endforeach
@@ -174,6 +208,22 @@
                             </tbody>
                         </table>
                     </div>
+
+                    @if($batch->batch_complete == 1)
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a href="{{ url('viralbatch/summary/' . $batch->id) }}">
+                                    <button class="btn btn-primary">Download Batch Summary</button>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{{ url('viralbatch/individual/' . $batch->id) }}" target="_blank">
+                                    <button class="btn btn-primary">Print Individual Results</button>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

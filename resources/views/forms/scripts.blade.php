@@ -8,7 +8,10 @@
     	$(".form-control").attr('autocomplete', 'off');
 
         // $(".form-horizontal select").select2({ width: 'resolve' }); 
-        $(".form-horizontal select").select2(); 
+        $(".form-horizontal select").select2({
+            placeholder: "Select One",
+            allowClear: true
+        }); 
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }
@@ -107,46 +110,6 @@
             }
             {{ $val_rules ?? '' }}
         });
-
-        $("#sampleSearch").select2({
-                placeholder: "Search Sample",
-                width: '120px',
-                ajax: {
-                    url: "{{ url('/sample/new_patient') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                      q: params.term, // search term
-                      page: params.page
-                  };
-              },
-              processResults: function (data, params) {
-                console.log(params);
-                params.page = params.page || 1;
-                return {
-                    results: data.items,
-                    pagination: {
-                        more: (params.page * 30) < data.total_count
-                    }
-                };
-              },
-              cache: false
-            },
-            // escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-            minimumInputLength: 1,
-            templateResult: formatRepo,
-            templateSelection: formatRepoSelection
-        });
-
-        function formatRepo (repo) {
-            if (repo.loading) return repo.text;
-            return repo.desc;
-        }
-
-        function formatRepoSelection (repo) {
-            return repo.desc || repo.text;
-        }
         
         {{ $slot }}
 

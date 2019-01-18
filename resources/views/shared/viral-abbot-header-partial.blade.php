@@ -55,7 +55,7 @@
 	</tr>
 	<tr class="even">
 		<td><strong>Created By	</strong>    </td>
-		<td> {{ $worksheet->creator->full_name }} </td>
+		<td> {{ $worksheet->creator->full_name ?? '' }} </td>
 		<td><strong>Expiry Dates</strong>	</td>
 
 		<td> {{ $worksheet->my_date_format('sampleprepexpirydate') }} </td>
@@ -65,21 +65,40 @@
 		<td> {{ $worksheet->my_date_format('amplificationexpirydate') }} </td>
 
 
-		{{--<td> {{ $worksheet->sampleprepexpirydate }} </td>
-		<td> {{ $worksheet->bulklysisexpirydate }} </td>
-		<td> {{ $worksheet->controlexpirydate }} </td>
-		<td> {{ $worksheet->calibratorexpirydate }} </td>
-		<td> {{ $worksheet->amplificationexpirydate }} </td>--}}
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
-		<td> {{ $worksheet->sorter->full_name or '' }}</td>
+		<td> {{ $worksheet->sorter->full_name ?? '' }}</td>
 		<td><strong>Bulked By	</strong>    </td>
-		<td> {{ $worksheet->bulker->full_name or '' }} </td>
+		<td> {{ $worksheet->bulker->full_name ?? '' }} </td>
 		<td><strong>Run By	</strong>    </td>
-		<td> {{ $worksheet->runner->full_name or '' }}</td>
+		<td> {{ $worksheet->runner->full_name ?? '' }}</td>
 		<td></td>
 		<td></td>
 	</tr>
+	<tr class="even">
+		<td><strong>Updated By	</strong>    </td>
+		<td> {{ $worksheet->uploader->full_name ?? '' }} </td>
+		<td><strong>Date Updated	</strong>    </td>
+		<td> {{ $worksheet->my_date_format('dateuploaded') }}</td>
+		<td><strong>Reviewed By	</strong>    </td>
+		<td> {{ $worksheet->reviewer->full_name ?? '' }}</td>
+		<td><strong>Date Reviewed	</strong>    </td>
+		<td> {{ $worksheet->my_date_format('datereviewed') }}</td>
+	</tr>
+	
+	
+	@if(in_array(env('APP_LAB'), $double_approval))
+		<tr class="even">
+			<td>    </td>
+			<td> </td>
+			<td>    </td>
+			<td> </td>
+			<td><strong> Second Reviewer	</strong>    </td>
+			<td> {{ $worksheet->reviewer2->full_name ?? '' }}</td>
+			<td><strong>Date of Second Review	</strong>    </td>
+			<td> {{ $worksheet->my_date_format('datereviewed2') }}</td>
+		</tr>
+	@endif
 
 </table>

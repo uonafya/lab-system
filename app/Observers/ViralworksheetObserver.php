@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\OldModels\Viralworksheet as OldWorksheet;
-use App\Viralworksheet;
+use \App\OldModels\Viralworksheet as OldWorksheet;
+use \App\Viralworksheet;
 
 class ViralworksheetObserver
 {

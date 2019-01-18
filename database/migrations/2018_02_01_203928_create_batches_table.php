@@ -32,10 +32,12 @@ class CreateBatchesTable extends Migration
             $table->tinyInteger('site_entry')->unsigned()->default(0)->nullable();
 
             $table->boolean('sent_email')->default(false)->nullable();
+            $table->boolean('sent_to_mlab')->default(false)->nullable();
 
-            $table->integer('printedby')->unsigned()->nullable();
+            $table->string('entered_by', 20)->nullable();
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('received_by')->unsigned()->nullable();
+            $table->integer('printedby')->unsigned()->nullable();
 
             // In the event of a POC sample, it will be the facility where the sample was tested
             $table->integer('lab_id')->unsigned()->index();

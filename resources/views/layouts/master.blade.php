@@ -78,7 +78,7 @@
                     <p style="margin-top: .5em;margin-bottom: 0px;">{{ @Date("l, d F Y") }}</p>
                 </h6>
                 <div class="row">
-                    @if (Auth()->user()->user_type_id == 5 || Auth()->user()->user_type_id == 2)
+                    @if (Auth()->user()->user_type_id == 2 || Auth()->user()->user_type_id == 5 || Auth()->user()->user_type_id == 8)
                         <div class="col-md-3" style="margin-top: .7em;margin-bottom: .7em;">
                             <h2 class="font-light m-b-xs">
                                 {{ $pageTitle ?? '' }}
@@ -88,7 +88,7 @@
                             
                         </div>
                     @else
-                    <div class="col-md-3" style="margin-top: .7em;">
+                    <div class="col-md-2" style="margin-top: .7em;">
                         <h2 class="font-light m-b-xs">
                             {{ $pageTitle ?? '' }}
                         </h2>
@@ -107,6 +107,15 @@
                             </button>
                         </div>
                     </div>
+                        @if(env('APP_LAB') == 1)
+                            @if(Auth()->user()->user_type_id < 2)
+                            <div class="col-md-1">
+                                <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
+                                    Switch to DR
+                                </button>
+                            </div>
+                            @endif
+                        @endif
                     @endif
                 </div>
             </div>
@@ -180,9 +189,14 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'DR'){test = 'EID';text = '<strong>DRUG RESISTANCE</strong>';}
-            else if(current == 'EID'){test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
-            else if(current == 'Viralload'){test = 'DR';text = '<strong>VIRAL LOAD</strong>';}
+            if(current == 'DR') { test = 'EID';text = '<strong>DRUG RESISTANCE</strong>'; } 
+            else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
+            else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
+            else if (current == 'CD4'){ test = 'EID'; text = '<strong>CD4</strong>'; }
+
+            if(current == 'DR'){
+                $("#drswitch").hide();
+            }
             // else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
             $("#sysSwitch").val(test);
@@ -192,6 +206,18 @@
         $("#sysSwitch").click(function(){
             sys = $(this).val();
             $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
+                location.replace("<?= url('home'); ?>");
+            });
+        });
+
+        $("#drswitch").click(function(){
+            $.get("<?= url('sysswitch/DR'); ?>", function(data){
+                location.replace("<?= url('home'); ?>");
+            });
+        });
+
+        $("#cd4Switch").click(function(){
+            $.get("<?= url('sysswitch/CD4'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
@@ -209,6 +235,20 @@
                 preventDuplicates: true
             };
             toastr.error(message, "Warning!"); 
+        });
+    }
+
+    function set_message(message)
+    {
+        setTimeout(function(){
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                showMethod: 'slideDown',
+                timeOut: 10000,
+                preventDuplicates: true
+            };
+            toastr.warning(message); 
         });
     }
 

@@ -18,7 +18,8 @@ CREATE OR REPLACE VIEW old_samples_view AS
 
 
     s.batchno as original_batch_id, s.highpriority, s.inputcomplete as input_complete, s.batchcomplete as 
-    batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, s.printedby, s.userid as user_id, 
+    batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, 
+    s.printedby, s.userid as user_id, s.receivedby as received_by,
     s.labtestedin as lab_id, s.facility as facility_id, 
     s.datedispatchedfromfacility, s.datereceived, s.datebatchprinted, s.datedispatched, 
     s.dateindividualresultprinted,  
@@ -49,7 +50,8 @@ CREATE OR REPLACE VIEW old_viralsamples_view AS
     s.synched, s.datesynched, s.dateentered as created_at,
 
     s.batchno as original_batch_id, s.highpriority, s.inputcomplete as input_complete, s.batchcomplete as 
-    batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, s.printedby, s.userid as user_id, 
+    batch_complete, s.siteentry as site_entry, s.sentemail as sent_email, 
+    s.printedby, s.userid as user_id, s.receivedby as received_by,
     s.labtestedin as lab_id, s.facility as facility_id, 
     s.datedispatchedfromfacility, s.datereceived, s.datebatchprinted, s.datedispatched, 
     s.dateindividualresultprinted, 
@@ -120,6 +122,8 @@ CREATE OR REPLACE VIEW old_viralworksheets_view AS
     sample_prep_lot_no, bulklysislotno as bulklysis_lot_no, controllotno as control_lot_no, calibratorlotno as
     calibrator_lot_no, amplificationkitlotno as amplification_kit_lot_no,
 
+    worksheetsampletype as sampletype,
+
     negcontrolresult as neg_control_result, highposcontrolresult as highpos_control_result, 
     lowposcontrolresult as lowpos_control_result,
 
@@ -137,4 +141,34 @@ CREATE OR REPLACE VIEW old_viralworksheets_view AS
     synched
 
     FROM viralworksheets
+);
+
+CREATE OR REPLACE VIEW old_cd4_samples_view AS
+(
+    SELECT s.id, s.worksheet as worksheet_id, s.facility as facility_id, s.labtestedin as lab_id, s.parentid,
+    s.AMRSlocation as amrs_location, p.providerid as provider_identifier, 
+    # s.serialno as serial_no,
+    p.age, s.status as status_id, s.orderno as order_no, s.run, s.action as repeatt, s.receivedstatus, s.rejectedreason,
+    s.labcomment, `s`.`THelperSuppressor Ratio` AS THelperSuppressorRatio, s.AVGCD3percentLymph, s.AVGCD3AbsCnt, s.AVGCD3CD4percentLymph, s.AVGCD3CD4AbsCnt,
+    s.AVGCD3CD8percentLymph, s.AVGCD3CD8AbsCnt, s.AVGCD3CD4CD8percentLymph, s.AVGCD3CD4CD8AbsCnt, s.CD45AbsCnt, s.result,
+    s.approvedby, s.approved2by as approvedby2, s.registeredby as user_id, s.printedby, s.SentEmail as sent_email,
+    s.datecollected, s.datereceived, s.datetested, s.datemodified, s.dateapproved, s.dateapproved2, 
+    s.dateresultprinted, s.datedispatched,  
+    s.flag, s.dateregistered as created_at,
+
+
+    p.AutoID as original_patient_id, p.names as patient_name, p.medicalrecordno, p.dob, p.gender
+
+    FROM samples s
+    LEFT JOIN patients p  ON p.AutoID=s.patient
+);
+
+CREATE OR REPLACE VIEW old_cd4_worksheets_view AS
+(
+    SELECT id, status as status_id, lab as lab_id,
+    createdby, Updatedby as uploadedby, reviewedby, review2by as reviewedby2, cancelledby,
+    TruCountLotno, AntibodyLotno, MulticheckLowLotno, MulticheckNormalLotno,
+    daterun, dateupdated as dateuploaded, datereviewed, review2date as datereviewed2, datecancelled, dumped, flag
+
+    FROM worksheets 
 );

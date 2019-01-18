@@ -30,7 +30,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Facility Name</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="name" id="name" type="text" value="{{ $facility->name ?? '' }}" >
+                                    <input class="form-control" name="name" id="name" type="text" value="{{ $facility->name ?? '' }}" required >
                                 </div>
                             </div>
                             <div class="form-group">
@@ -48,9 +48,9 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Facility Type</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="ftype" id="ftype">
+                                    <select class="form-control" name="ftype" id="ftype">
                                         <option value="" selected disabled>Select Facility Type</option>
-                                    @foreach ($facilitytype as $ftype)
+                                    @foreach ($data->facilitytype as $ftype)
                                         <option value="{{ $ftype->name }}">{{ $ftype->name }}</option>
                                     @endforeach
                                     </select>
@@ -59,20 +59,21 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Ward</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="wardid" id="wardid">
+                                    <select class="form-control" name="ward_id" id="ward_id">
                                         <option value="" selected disabled>Select Ward</option>
-                                    @foreach ($wards as $ward)
+                                    @foreach ($data->wards as $ward)
                                         <option value="{{ $ward->id }}">{{ $ward->name }}</option>
                                     @endforeach
                                     </select>
                                 </div>
+                                <i>Optional</i>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Districts</label>
+                                <label class="col-sm-4 control-label">Sub County</label>
                                 <div class="col-sm-8">
                                     <select class="form-control" required name="district" id="district">
-                                        <option value="" selected disabled>Select District</option>
-                                    @foreach ($districts as $district)
+                                        <option value="" selected disabled>Select Sub County</option>
+                                    @foreach ($data->districts as $district)
                                         <option value="{{ $district->id }}">{{ $district->name }}</option>
                                     @endforeach
                                     </select>
@@ -81,86 +82,13 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Partners</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="partner" id="partner">
+                                    <select class="form-control" name="partner" id="partner">
                                         <option value="" selected disabled>Select Partner</option>
-                                    @foreach ($partners as $partner)
+                                    @foreach ($data->partners as $partner)
                                         <option value="{{ $partner->id }}">{{ $partner->name }}</option>
                                     @endforeach
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Longitude</label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" name="longitude" id="longitude" type="text" value="{{ $facility->longitude ?? '' }}" >
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Latitude</label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" name="latitude" id="latitude" type="text" value="{{ $facility->latitude ?? '' }}" >
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Burden</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="burden" id="burden" type="text" value="{{ $facility->burden ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Art Patients</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="artpatients" id="artpatients" type="text" value="{{ $facility->artpatients ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">PMTCT Nos.</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="pmtctnos" id="pmtctnos" type="text" value="{{ $facility->pmtctnos ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Male Less than 15</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="Mless15" id="Mless15" type="text" value="{{ $facility->Mless15 ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Male Greater than 15</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="Mmore15" id="Mmore15" type="text" value="{{ $facility->Mmore15 ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Female Less than 15</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="Fless15" id="Fless15" type="text" value="{{ $facility->Fless15 ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Female Greater than 15</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="Fmore15" id="Fmore15" type="text" value="{{ $facility->Fmore15 ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Total ART Patients</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="totalart" id="totalart" type="text" value="{{ $facility->totalart ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date</label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="asofdate" required class="form-control lockable" value="{{ $facility->asofdate ?? '' }}" name="asofdate">
-                                    </div>
-                                </div>                            
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Telephone</label>
@@ -172,12 +100,6 @@
                                 <label class="col-sm-4 control-label">Telephone 2</label>
                                 <div class="col-sm-8">
                                     <input class="form-control" name="telephone2" id="telephone2" type="text" value="{{ $facility->telephone2 ?? '' }}" >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Fax</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="fax" id="fax" type="text" value="{{ $facility->fax ?? '' }}" >
                                 </div>
                             </div>
                             <div class="form-group">
@@ -198,31 +120,13 @@
                                     <input class="form-control" name="contactperson" id="contactperson" type="text" value="{{ $facility->contactperson ?? '' }}" >
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">ART Site</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" name="ART" id="ART">
-                                        <option value="Y">YES</option>
-                                        <option value="N">NO</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">PMTCT Site</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" name="PMTCT" id="PMTCT">
-                                        <option value="Y">YES</option>
-                                        <option value="N">NO</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
                     <div class="form-group">
                         <center>
                             <div class="col-sm-10 col-sm-offset-1">
-                                <button class="btn btn-success submit" type="submit" name="submit_type" value="paswordreset">Save User</button>
+                                <button class="btn btn-success submit" type="submit" name="submit_type" value="paswordreset">Save Facility</button>
                                 <button class="btn btn-danger" type="reset" formnovalidate name="submit_type" value="cancel">Reset</button>
                             </div>
                         </center>

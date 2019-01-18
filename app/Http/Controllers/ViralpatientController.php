@@ -143,7 +143,7 @@ class ViralpatientController extends Controller
             $sample->pre_update();
         }
 
-        $patient_array = Viralpatient::whereIn('id', $patients)->update(['synched' => 3]);
+        $patient_array = Viralpatient::whereIn('id', $patients)->where('id', '!=', $patient->id)->update(['synched' => 3]);
 
         session(['toast_message' => "The patient records have been merged. The records will be propagated to the national database and then they will be removed."]);
 
@@ -180,6 +180,7 @@ class ViralpatientController extends Controller
         $patients = Viralpatient::select('viralpatients.id', 'viralpatients.patient', 'facilitys.name', 'facilitys.facilitycode')
             ->join('facilitys', 'facilitys.id', '=', 'viralpatients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")
+            // ->where('viralpatients.synched', '!=', 2)
             ->when($facility_user, function($query) use ($string){
                 return $query->whereRaw($string);
             })
@@ -190,6 +191,8 @@ class ViralpatientController extends Controller
                 return $query->where('sex', 2);
             })
             ->paginate(10);
+
+        $patients->setPath(url()->current());
         return $patients;
     }
 }

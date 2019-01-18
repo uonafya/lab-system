@@ -50,14 +50,64 @@ class Sample extends BaseModel
         return $this->belongsTo('App\User', 'cancelledby');
     }
 
-    public function reviewer()
-    {
-        return $this->belongsTo('App\User', 'reviewedby');
-    }
-
     public function approver()
     {
         return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
+    
+
+    public function remove_rerun()
+    {
+        if($this->parentid == 0) $this->remove_child();
+        else{
+            $this->remove_sibling();
+        }
+    }
+
+    public function remove_child()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete();
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function remove_sibling()
+    {
+        $parent = $this->parent;
+        $children = $parent->child;
+
+        foreach ($children as $s) {
+            if($s->run > $this->run) $s->delete();            
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function getIsReadyAttribute()
+    {
+        if($this->repeatt == 0){
+            if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                if(($this->dateapproved && $this->dateapproved2) || ($this->approvedby && $this->approvedby2)){
+                    return true;
+                }
+            }
+            else{
+                if($this->dateapproved || $this->approvedby) return true;
+            }
+        }
+        return false;
     }
 
 
@@ -70,17 +120,37 @@ class Sample extends BaseModel
     {
         if($this->result == 1){ return "Negative"; }
         else if($this->result == 2){ return "Positive"; }
+        else if($this->result == 3){ return "Failed"; }
         else{ return ""; }
+    }
+
+    /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\Sample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
     }
 
 
     public function scopeRuns($query, $sample)
     {
         if($sample->parentid == 0){
-            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}");
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}")->orderBy('run', 'asc');
         }
         else{
-            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}");
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}")->orderBy('run', 'asc');
         }
     }
 
@@ -103,6 +173,7 @@ class Sample extends BaseModel
                 })
                 ->where('repeatt', 0)
                 ->whereIn('result', [1, 2])
+                ->orderBy('id', 'desc')
                 ->get();
         $this->previous_tests = $samples;
     }

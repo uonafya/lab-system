@@ -1,9 +1,9 @@
 ## LAB API
 
-[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the field you need. Open this file using **POSTMAN**.
+[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**.
 
 
-All links are **POST** requests.
+All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.
 *Open the link in **POSTMAN** and then set the request to **POST** *
 - Get data by request type [click here](http://lab.test.nascop.org/api/function)
 >Fields
@@ -14,13 +14,17 @@ All links are **POST** requests.
 > - date_dispatched_end  *(greater than or equal to **date_dispatched_start**)*
 > - patient_id *Either a single patient_id or a comma separated list of patient ids with no spaces. Patient id is hei number for eid and ccc number for vl*
 > - facility_code *The five digit MFL code*
-> - order_numbers *Either a single order number or a comma separated list of order numbers with no spaces.*
+> - order_numbers *Either a single mrs order number or a comma separated list of mrs order numbers with no spaces.*
 > - location *AMRS location*
+> - dispatched *Boolean* When true, only samples that have been dispatched will be returned.
+
 > This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 
-- Post incomplete eid request [eid](http://lab.test.nascop.org/api/eid)
+
+For the links below, if the order number exists, it will not save it again.
+- Post incomplete eid request (EID order) [eid](http://lab.test.nascop.org/api/eid)
 - Post complete eid request [eid](http://lab.test.nascop.org/api/eid_complete)
-- Post incomplete vl request [vl](http://lab.test.nascop.org/api/vl)
+- Post incomplete vl request (Viralload order) [vl](http://lab.test.nascop.org/api/vl)
 - Post complete vl request [vl](http://lab.test.nascop.org/api/vl_complete)
 
 ---
@@ -30,16 +34,20 @@ For the last 4 links, the following fields are common to all
 > - patient_identifier  **required** (ccc_no for vl and hei number for eid)
 > - mflCode  **required**
 > - sex  **required** (1 for male, 2 for female, 3 for unknown)
-> - lab *If the lab is not filled it will be set to the lab where the sample is being sent*
+> - lab (This is the lab tested in.) *If the lab is not filled it will be set to the lab where the sample is being sent. It is however mandatory for complete requests.*
 
 ---
 The following fields are common to complete requests 
 >- receivedstatus **required**
->- datereceived**required**  *(greater than or equal to **datecollected**)*
+>- datereceived **required**  *(greater than or equal to **datecollected**)*
 >- rejectedreason *required if received status is 2*
 >- datetested *required if received status is 1*  *(greater than or equal to **datereceived**)*
 >- result *required if received status is 1*
 >- datedispatched *required if received status is 1*  *(greater than or equal to **datetested**)*
+>- amrs_location *the amrs location of the sample*
+>- provider_identifier *the provider identifier of the sample*
+>- order_no *this is the order number from mrs*
+>- patient_name *The name of the patient.*
 >- specimenlabelID *for use by the lab*
 >- editted *indicates whether the record is an update of an existing record*
 ` Editted may be removed so that editted records are sent to another route`
@@ -49,23 +57,25 @@ The following fields are common to eid requests
 > - entry_point **required**
 > - feeding **required**
 > - spots **integer**
-> - regimen **required**
-> - mother_prophylaxis **required**
+> - regimen **required** *The infant prophylaxis*
+> - mother_prophylaxis **required** *The pmtct intervention*
 > - mother_age **integer**
 > - ccc_no *(The ccc number of the mother)*
 > - mother_last_result *(The most recent vl of the mother)*
-> - pcrtype  **required**  *(**integer between 1 and 5**) *
+> - hiv_status *The HIV status of the mother. It was removed from the form but the system still supports it.* **integer**
+> - pcrtype  **required**  *(**integer between 1 and 5**)*
 > - redraw *(Fill with any non zero integer if the sample is a redraw)*
 > - enrollment_ccc_no *(ccc number of the infant if he/she is already enrolled)*
 
 ---
 The following fields are common to vl requests
 > - initiation_date *(date inititated on treatment)*
+> - dateinitiatedonregimen *(date inititated on current regimen)*
 > - prophylaxis **Required**
 > - regimenline **Required**
 > - sampletype **Required**
 > - justification **Required**
-> - pmtct *(**Required** if sex is **2** i.e. **female**. 3 is for none of the above)*
+> - pmtct *(**Required** if sex is **2** i.e. **female**. 1 for pregnant, 2 for breast-feeding and 3 is for none of the above)*
 
 
 ---

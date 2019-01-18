@@ -47,10 +47,10 @@
 		            				$badge = 'success';
 		            			@endphp
 		            		@endif
-	            		    <li class="list-group-item" style="{{ $style }}">
-	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['overduetesting'] }}</span>
+	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
+	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduetesting'] --}}</span>
 			                    <a href="{{ url('home/overdue/testing') }}">VL Samples Overdue for Testing ( > 14 Days since Receipt at Lab )</a>
-		                    </li>
+		                    </li> -->
 
 		                    @if ((int)$widgets['overduedispatched'] > 0)
 		            			@php
@@ -63,10 +63,10 @@
 		            				$badge = 'success';
 		            			@endphp
 		            		@endif
-	            		    <li class="list-group-item" style="{{ $style }}">
-	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['overduedispatched'] }}</span>
-			                    <a href="{{ url('home/overdue/dispatch') }}">VL Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
-		                    </li>
+	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
+	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduedispatched'] --}}</span>
+			                    <a href="{{-- url('home/overdue/dispatch') --}}">VL Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
+		                    </li> -->
 
 		                    @if ((int)$widgets['pendingSamples']['plasma'] > 0)
 		            			@php
@@ -139,10 +139,10 @@
 		            				$badge = 'success';
 		            			@endphp
 		            		@endif
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['batchesNotReceived'] }}</span>
+		                    <!-- <li class="list-group-item" style="{{-- $style --}}">
+		                        <span class="badge badge-{{-- $badge --}}">{{-- $widgets['batchesNotReceived'] --}}</span>
 		                        <a href="#">Batches Marked as Not Received at Lab</a>
-		                    </li>
+		                    </li> -->
 		            		@if ((int)$widgets['batchesForDispatch'] > 0)
 		            			@php
 		            				$style = 'background-color: #FDE3A7';
@@ -171,7 +171,7 @@
 		            		@endif
 		                    <li class="list-group-item" style="{{ $style }}">
 		                        <span class="badge badge-{{ $badge }}">{{ $widgets['samplesForRepeat'] }}</span>
-		                        <a href="#">Invalid/Failed Samples from Previous Runs to be Rerun</a>
+		                        <a href="{{ url('home/repeat') }}">Invalid/Failed Samples from Previous Runs to be Rerun</a>
 		                    </li>
 		            		@if ((int)$widgets['rejectedForDispatch'] > 0)
 		            			@php
@@ -204,7 +204,12 @@
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
-		            	@else
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['delayed_batches']) }}">
+		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['delayed_batches']) }}">{{ $widgets['delayed_batches'] }}</span>
+		                    	<a href="{{ url('viralbatch/delayed') }}">Incomplete Tested Batches </a>
+		                    </li>
+
+		            	@elseif(session('testingSystem') == 'EID')
 		            		@if ((int)$widgets['overduetesting'] > 0)
 		            			@php
 		            				$style = 'background-color: #FDE3A7';
@@ -216,10 +221,10 @@
 		            				$badge = 'success';
 		            			@endphp
 		            		@endif
-	            		    <li class="list-group-item" style="{{ $style }}">
-	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['overduetesting'] }}</span>
-			                    <a href="{{ url('home/overdue/testing') }}">EID Samples Overdue for Testing ( > 14 Days since Receipt at Lab )</a>
-		                    </li>
+	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
+	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduetesting'] --}}</span>
+			                    <a href="{{-- url('home/overdue/testing') --}}">EID Samples Overdue for Testing ( > 14 Days since Receipt at Lab )</a>
+		                    </li> -->
 
 		                    @if ((int)$widgets['overduedispatched'] > 0)
 		            			@php
@@ -232,10 +237,10 @@
 		            				$badge = 'success';
 		            			@endphp
 		            		@endif
-	            		    <li class="list-group-item" style="{{ $style }}">
-	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['overduedispatched'] }}</span>
-			                    <a href="{{ url('home/overdue/dispatch') }}">EID Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
-		                    </li>
+	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
+	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduedispatched'] --}}</span>
+			                    <a href="{{-- url('home/overdue/dispatch') --}}">EID Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
+		                    </li> -->
 
 		                    @if ((int)$widgets['pendingSamples'] > 0)
 		            			@php
@@ -296,7 +301,7 @@
 		            		@endif
 		                    <li class="list-group-item" style="{{ $style }}">
 		                        <span class="badge badge-{{ $badge }}">{{ $widgets['samplesForRepeat'] }}</span>
-		                        <a href="{{ url('home/repeat') }}">Samples to be repeated.</a>
+		                        <a href="{{ url('home/repeat') }}">Invalid/Failed Samples from previous runs to be rerun.</a>
 		                    </li>
 		            		@if ((int)$widgets['rejectedForDispatch'] > 0)
 		            			@php
@@ -327,6 +332,59 @@
 		                    <li class="list-group-item" style="{{ $style }}">
 		                    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['delayed_batches']) }}">
+		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['delayed_batches']) }}">
+			                    	{{ $widgets['delayed_batches'] }}
+			                    </span>
+		                    	<a href="{{ url('batch/delayed') }}">Incomplete Tested Batches </a>
+		                    </li>
+		                @elseif(Session('testingSystem') == 'CD4')
+		                	@if ((int)$widgets['CD4samplesInQueue'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+		                    <li class="list-group-item" style="{{ $style }}">
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4samplesInQueue'] }}</span>
+		                        <a href="{{ url('cd4/sample/dispatch/3') }}">Samples In-Queue.</a>
+		                    </li>
+		                    @if ((int)$widgets['CD4resultsForDispatch'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+		                    <li class="list-group-item" style="{{ $style }}">
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4resultsForDispatch'] }}</span>
+		                        <a href="{{ url('cd4/sample/dispatch/1') }}">Results Awaiting Printing for Dispatch.</a>
+		                    </li>
+		                    @if ((int)$widgets['CD4worksheetFor2ndApproval'] > 0)
+		            			@php
+		            				$style = 'background-color: #FDE3A7';
+		            				$badge = 'danger';
+		            			@endphp
+		            		@else
+		            			@php
+		            				$style = '';
+		            				$badge = 'success';
+		            			@endphp
+		            		@endif
+		                    <li class="list-group-item" style="{{ $style }}">
+		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4worksheetFor2ndApproval'] }}</span>
+		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
 		            	@endif
 		            	</ul>

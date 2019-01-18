@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\UserType;
 use App\User;
 
@@ -27,11 +28,11 @@ class UserController extends Controller
             $delete = url("user/delete/$id");
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
-            $row .= '<td>'.$value->getFullNameAttribute().'</td>';
+            $row .= '<td>'.$value->full_name.'</td>';
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
-            $row .= '<td>'.$value->created_at.'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Deactivate</a> | <a href="'.$delete.'">Delete</a></td>';
+            $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a></td>';
             $row .= '</tr>';
         }
 
@@ -64,7 +65,7 @@ class UserController extends Controller
         } else {
             $user = factory(User::class, 1)->create([
                         'user_type_id' => $request->user_type,
-                        'lab_id' => Auth()->user()->lab_id,
+                        'lab_id' => auth()->user()->lab_id,
                         'surname' => $request->surname,
                         'oname' => $request->oname,
                         'email' => $request->email,
@@ -88,9 +89,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
+    public function show(User $user) {
+
+        $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+
+        return view('forms.users', compact('accounts', 'user'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -113,14 +116,26 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = self::__unHashUser($id);
-        if (!empty($user)) {
-            $user->password = $request->password;
-            $user->update();
-            session(['toast_message'=>'User password succesfully updated']);
+        if($request->input('password') == "") { // No password for edit
+            $userData = $request->only(['user_type','email','surname','oname','telephone']);
+            $userData['user_type_id'] = $userData['user_type'];
+            unset($userData['user_type']);
+            
+            $user = User::find($id);
+            $user->fill($userData);
+            $user->save();
         } else {
-            session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+            $user = self::__unHashUser($id);
+
+            if (!empty($user)) {
+                $user->password = $request->password;
+                $user->update();
+                session(['toast_message'=>'User password succesfully updated']);
+            } else {
+                session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+            }
         }
+                
         if (isset($request->user)) {
             return back();
         } else {
@@ -137,6 +152,55 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function delete($id) {
+        $user = self::__unHashUser($id);
+        $user->delete();
+
+        return back();
+    }
+
+    public function activity($user_id = null, $year = null, $month = null) {
+        if ($year==null || $year=='null'){
+            if (session('activityYear')==null)
+                session(['activityYear' => Date('Y')]);
+        } else {
+            session(['activityYear'=>$year]);
+        }
+
+        if ($month==null || $month=='null'){
+            session()->forget('activityMonth');
+        } else {
+            session(['activityMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
+        }
+
+        $year = session('activityYear');
+        $month = session('activityMonth');
+        $monthName = "";
+        
+        if (null !== $month) 
+            $monthName = "- ".date("F", mktime(null, null, null, $month));
+
+        $data = (object)['year'=>$year,'monthName'=>$monthName, 'month'=>$month];
+        // dd($data);
+        // if (isset($user_id)) {
+        //     $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+        //     return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
+        // } else {
+        $users = User::whereNotIn('user_type_id', [2,5,6])->get();
+        return view('tables.users-activity', compact('users'), compact('data'))->with('pageTitle', 'Users Activity');
+        // }
+    }
+
+    public function switch_user($id)
+    {
+        $this->auth_user(0);
+        $user = User::findOrFail($id);
+        Auth::logout();
+        Auth::login($user);
+        return back();
     }
 
     public function passwordreset($id = null)

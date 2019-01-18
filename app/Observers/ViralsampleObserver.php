@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
-use App\OldModels\Viralpatient;
-use App\OldModels\Viralsample as OldSample;
+use \App\OldModels\Viralpatient;
+use \App\OldModels\Viralsample as OldSample;
 
-use App\Viralsample;
+use \App\Viralsample;
 
 
 class ViralsampleObserver
@@ -34,6 +34,7 @@ class ViralsampleObserver
 		$viralsample->load(['batch', 'patient']);
 
 		$old_sample = OldSample::find($viralsample->id);
+		// if()
 		$patient = $old_sample->patient;
 		$this->my_worker($viralsample, $patient, $old_sample);
 	}
@@ -53,15 +54,15 @@ class ViralsampleObserver
 	private function my_worker($viralsample, $patient, $old_sample)
 	{
 
-		$patient->age = $viralsample->age;
+		$patient->age = $viralsample->age ?? null;
 		$patient->pmtct = $viralsample->pmtct;
 		$patient->prophylaxis = $viralsample->prophylaxis;
 		$patient->gender = $viralsample->patient->sex;
 		$patient->dob = $viralsample->patient->dob;
 		$patient->initiationdate = $viralsample->patient->initiation_date;
-		$patient->entry_point = $viralsample->patient->mother->entry_point;
 		$patient->labtestedin = $viralsample->batch->lab_id;
 		$patient->save();
+
 
 
 

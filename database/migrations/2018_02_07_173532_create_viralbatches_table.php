@@ -24,10 +24,12 @@ class CreateViralbatchesTable extends Migration
 
             $table->tinyInteger('batch_complete')->unsigned()->default(0)->nullable();
             $table->boolean('sent_email')->default(false)->nullable();
+            $table->boolean('sent_to_mlab')->default(false)->nullable();
 
-            $table->integer('printedby')->unsigned()->nullable();
+            $table->string('entered_by', 20)->nullable();
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('received_by')->unsigned()->nullable();
+            $table->integer('printedby')->unsigned()->nullable();
 
             $table->integer('lab_id')->unsigned()->index();
             $table->integer('facility_id')->unsigned()->nullable()->index();

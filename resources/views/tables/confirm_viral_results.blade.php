@@ -57,7 +57,7 @@
                                     <th>Result</th>                
                                     <th>Dilution Factor</th>                
                                     <th>Interpretation</th>                
-                                    <th>Units</th>                
+                                    <th></th>                 
                                     <th>Action</th>               
                                     <th>Approved Date</th>                
                                     <th>Approved By</th>                
@@ -110,7 +110,7 @@
                                      </td>
                                     <td >&nbsp; </td>
                                     <td >&nbsp; </td>
-                                    <td >&nbsp; </td>  
+                                    <td >&nbsp; </td> 
                                     <td >&nbsp; </td>   
                                     <td >&nbsp; </td>   
                                 </tr>
@@ -130,15 +130,26 @@
 
                                     @php
 
-                                        if(in_array(env('APP_LAB'), $double_approval)  && $editable){
-                                            
-                                            if($sample->repeatt == 1){
+                                        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->status_id == 2){
+
+                                            if($sample->has_rerun){
                                                 $class = 'noneditable';
                                             }
                                             else{
                                                 $class = 'editable';
                                             }
+
+
+                                            
+                                            /*if($sample->repeatt == 1){
+                                                // $class = 'noneditable';
+                                                $class = 'editable';
+                                            }
+                                            else{
+                                                $class = 'editable';
+                                            }*/
                                         }
+
                                     @endphp
 
                                     <tr>
@@ -147,18 +158,19 @@
                                             <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
                                             <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
                                             <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
+                                            <input type="hidden" name="interpretations[]" value="{{ $sample->interpretation }}" class="{{ $class }}">
                                         </td>
-                                        <td> {{ $sample->id }}  </td>
+                                        <td>{{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
 
 
                                         <td> 
-                                            <select class="dilutionfactor {{ $class }}" name="dilutionfactors[]">
+                                            <select class="dilutionfactor {{ $class }} dilution-{{ $sample->dilutionfactor }}" name="dilutionfactors[]">
                                                 @foreach($dilutions as $dilution)
                                                     <option value="{{$dilution->dilutionfactor }}"
                                                         @if($sample->dilutionfactor == $dilution->dilutionfactor    )
-                                                            selected
+                                                            selected="selected"
                                                         @endif
                                                         > {{ $dilution->dilutiontype }} </option>
                                                 @endforeach
@@ -166,14 +178,14 @@
                                         </td>
 
                                         <td> 
-                                            @if($sample->approvedby)
-                                                {!! $sample->coloured_result !!}
-                                            @else
-                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
-                                            @endif
+                                            {!! $sample->coloured_result !!}
                                         </td>
 
-                                        <td></td>
+                                        <td>
+                                            @if(!$sample->approvedby)
+                                                <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
+                                            @endif                                            
+                                        </td>
 
                                         <td> 
                                             @if($sample->approvedby)
@@ -198,8 +210,14 @@
                                             @endif
                                         </td>
                                         
-                                        <td> {{ $sample->dateapproved }} </td>
-                                        <td> {{ $sample->approver->full_name ?? '' }} </td>
+                                        @if(in_array(env('APP_LAB'), $double_approval))
+                                            <td> {{ $sample->dateapproved2 }} </td>
+                                            <td> {{ $sample->final_approver->full_name ?? '' }} </td>
+                                        @else
+                                            <td> {{ $sample->dateapproved }} </td>
+                                            <td> {{ $sample->approver->full_name ?? '' }} </td>
+                                        @endif
+                                        
                                         <td> 
                                             <a href="{{ url('viralsample/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
                                             <a href="{{ url('viralsample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
@@ -207,6 +225,10 @@
                                     </tr>
 
                                 @endforeach
+
+                                {{--@foreach($samples->where('parentid', '=', 0) as $key => $sample)
+                                    @include('shared/confirm_viral_result_row', ['sample' => $sample])
+                                @endforeach--}}
 
                                 @if($worksheet->status_id != 3)
 
@@ -255,6 +277,9 @@
 
     @component('/tables/scripts')
         $(".editable.dilutionfactor").val(1).change();
+        $(".editable.dilution-2").val(2).change();
+        $(".editable.dilution-4").val(4).change();
+        $(".editable.dilution-8").val(8).change();
         $('.noneditable').attr("disabled", "disabled");     
     @endcomponent
 

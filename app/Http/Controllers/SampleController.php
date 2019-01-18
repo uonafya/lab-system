@@ -10,7 +10,9 @@ use App\Batch;
 use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
+use App\Misc;
 
+use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
@@ -27,8 +29,12 @@ class SampleController extends Controller
 
     public function list_poc()
     {
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->where(['site_entry' => 2])->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.poc_samples', $data)->with('pageTitle', 'Eid POC Samples');
@@ -36,8 +42,12 @@ class SampleController extends Controller
 
     public function list_sms()
     {
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
@@ -67,10 +77,11 @@ class SampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SampleRequest $request)
     {
         $samples_arrays = Lookup::samples_arrays();
         $submit_type = $request->input('submit_type');
+        $user = auth()->user();
 
         $batch = session('batch');
 
@@ -81,9 +92,35 @@ class SampleController extends Controller
             return redirect("batch/{$batch->id}");
         }   
 
-        $existing = SampleView::existing( $request->only(['facility_id', 'patient', 'datecollected']) )->get()->first();
-        if($existing){
-            session(['toast_message' => 'The sample already exists in the batch and has therefore not been saved again']);
+        $data_existing = $request->only(['facility_id', 'patient', 'datecollected']);
+        if(!isset($data_existing['facility_id'])){
+            session(['toast_message' => "Please set the facility before submitting.", 'toast_error' => 1]);
+            return back();   
+        }
+
+        $patient_string = trim($request->input('patient'));
+        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($data_existing['facility_id']);
+            $str = $fac->facilitycode . '/';
+            // if(env('APP_LAB') == 4) $str .= '/';
+            // if(env('APP_LAB') == 2) $str .= '-';
+            if(!starts_with($patient_string, $str)){
+                if(starts_with($patient_string, $fac->facilitycode)){
+                    $code = str_after($patient_string, $fac->facilitycode);
+                    $patient_string = $str . $code;
+                }
+                else{
+                    $patient_string = $str . $patient_string;
+                }
+            }
+        }
+
+        $data_existing['patient'] = $patient_string;
+
+        $existing = SampleView::existing( $data_existing )->get()->first();
+        if($existing && !$request->input('reentry')){
+            session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
             return back();            
         }     
@@ -93,12 +130,14 @@ class SampleController extends Controller
             $facility = Facility::find($facility_id);
             session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
-            $batch = new Batch;
-            $batch->user_id = auth()->user()->id;
-            $batch->lab_id = auth()->user()->lab_id;
+            $batch = Batch::eligible($facility_id, $request->input('datereceived'))->first();
 
-            if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4){
-                $batch->received_by = auth()->user()->id;
+            if(!$batch) $batch = new Batch;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
+
+            if($user->is_lab_user()){
+                $batch->received_by = $user->id;
                 $batch->site_entry = 0;
             }
             else{
@@ -115,7 +154,30 @@ class SampleController extends Controller
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        if($new_patient == 0){
+        $patient = Patient::existing($request->input('facility_id'), $patient_string)->first();
+        if(!$patient) $patient = new Patient;
+        $data = $request->only($samples_arrays['patient']);
+        $patient->fill($data);
+        $patient->patient = $patient_string;
+
+        $mother = $patient->mother;
+        if(!$mother) $mother = new Mother;
+        $data = $request->only($samples_arrays['mother']);
+        $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
+        $mother->fill($data);
+
+        if(env('APP_LAB') == 4) $mother->ccc_no = $fac->facilitycode . '/' . $mother->ccc_no;
+
+        $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->first();
+        if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        $mother->pre_update();
+
+        $patient->mother_id = $mother->id;
+        $patient->pre_update();
+
+
+        /*if($new_patient == 0){
             $patient_id = $request->input('patient_id');
             $repeat_test = Sample::where(['patient_id' => $patient_id, 'batch_id' => $batch->id])->first();
 
@@ -126,12 +188,14 @@ class SampleController extends Controller
             }
 
             $patient = Patient::find($patient_id);
+            if(!$patient) $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$patient) $patient = new Patient;
             $data = $request->only($samples_arrays['patient']);
             $patient->fill($data);
-            $patient->pre_update();
 
             $data = $request->only($samples_arrays['mother']);
             $mother = Mother::find($patient->mother_id);
+            if(!$mother) $mother = new Mother;
             $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
             $mother->fill($data);
 
@@ -139,6 +203,9 @@ class SampleController extends Controller
             if($viralpatient) $mother->patient_id = $viralpatient->id;
 
             $mother->pre_update();
+
+            $patient->mother_id = $mother->id;
+            $patient->pre_update();
         }
 
         else{
@@ -160,7 +227,7 @@ class SampleController extends Controller
             $patient->fill($data);
             $patient->mother_id = $mother->id;
             $patient->save();
-        }
+        }*/
 
         $data = $request->only($samples_arrays['sample']);
         $sample = new Sample;
@@ -182,25 +249,39 @@ class SampleController extends Controller
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->save();
 
-        session(['toast_message' => "The sample has been created in batch {$batch->id}."]);
+        $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
+
+        session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'batch_total' => $sample_count, 'last_patient' => $patient->patient]);
 
         $submit_type = $request->input('submit_type');
 
-        if($submit_type == "release"){
+        if($submit_type == "release" || $batch->site_entry == 2 || $sample_count > 9){
+            if($sample_count > 9) $batch->full_batch(); 
             $this->clear_session();
-            $batch->premature();
+            if($submit_type == "release" || $batch->site_entry == 2) $batch->premature();
+            else{
+                $batch->full_batch();
+                session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
+            }
+            if($batch->site_entry == 2) return back();
+            Misc::check_batch($batch->id); 
+
+            if($user->is_lab_user()){
+
+                $work_samples = Misc::get_worksheet_samples(2);
+                if($work_samples['count'] > 21) session(['toast_message' => 'You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+
+            }
+
             return redirect("batch/{$batch->id}");
         }
 
-        $sample_count = session('batch_total') + 1;
-        session(['batch_total' => $sample_count]);
-
-        if($sample_count == 10){
+        /*if($sample_count == 10){
             $this->clear_session();
             $batch->full_batch();
-            session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
+            Misc::check_batch($batch->id); 
             return redirect("batch/{$batch->id}");
-        }
+        }*/
 
         return back();
     }
@@ -219,10 +300,17 @@ class SampleController extends Controller
         // $data['batch'] = $batch;
         // $data['samples'] = $samples;
 
+        $s = Sample::find($sample->id);
+        $samples = Sample::runs($s)->get();
+
+        $patient = $s->patient; 
+
         $data = Lookup::get_lookups();
-        // dd($sample);
-        $data['samples'] = $sample;
+        $data['sample'] = $sample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
+
     }
 
     /**
@@ -233,7 +321,7 @@ class SampleController extends Controller
      */
     public function edit(Sample $sample)
     {
-        $sample->load(['patient.mother', 'batch.facility']);
+        // $sample->load(['patient.mother', 'batch.facility']);
         $data = Lookup::samples_form();
         $data['sample'] = $sample;
         return view('forms.samples', $data)->with('pageTitle', 'Samples');
@@ -266,55 +354,124 @@ class SampleController extends Controller
      */
     public function update(Request $request, Sample $sample)
     {
+        $submit_type = $request->input('submit_type');
+        $user = auth()->user();
+
+        $batch = $sample->batch;
+
+        if($batch->site_entry == 1 && !$sample->receivedstatus && $user->is_lab_user()){
+            $sample->sample_received_by = $user->id;
+        }
+
         $samples_arrays = Lookup::samples_arrays();
         $data = $request->only($samples_arrays['sample']);
         $sample->fill($data);
+
         
         $last_result = $request->input('last_result');
         $mother_last_result = $request->input('mother_last_result');
 
-        $batch = Batch::find($sample->batch_id);
+        // $new_batch = false;
+
+        /*if($submit_type == "new_batch" && $batch->facility_id != $request->input('facility_id')){
+            $batch = new Batch;
+            $new_batch = true;
+
+            $facility_id = $request->input('facility_id');
+            $facility = Facility::find($facility_id);
+            session(['facility_name' => $facility->name, 'batch_total' => 0]);
+
+            $batch = new Batch;
+            $batch->user_id = $user->id;
+            $batch->lab_id = $user->lab_id;
+
+            if($user->user_type_id == 1 || $user->user_type_id == 4){
+                $batch->received_by = $user->id;
+                $batch->site_entry = 0;
+            }
+            else{
+                $batch->site_entry = 1;
+            }
+        }*/
+
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
+        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
         $batch->pre_update();
 
-        $new_patient = $request->input('new_patient');
+        $patient = $sample->patient;
 
-        if($new_patient == 0){
-        
-            $data = $request->only($samples_arrays['patient']);
-            $patient = Patient::find($sample->patient_id);
-            $patient->fill($data);
-            $patient->pre_update();
+        if($patient->patient != $request->input('patient')){
+            $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
 
-            $data = $request->only($samples_arrays['mother']);
-            $mother = Mother::find($patient->mother_id);
-            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
-            $mother->fill($data);
-
-            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
-            if($viralpatient) $mother->patient_id = $viralpatient->id;
-
-            $mother->pre_update();
+            if(!$patient){
+                $patient = new Patient;
+                $created_patient = true;
+            }
         }
-        else
-        {
-            $data = $request->only($samples_arrays['mother']);
+
+
+
+        $data = $request->only($samples_arrays['patient']);
+        $patient->fill($data);
+
+        if(isset($created_patient)){
             $mother = new Mother;
-            $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
-            $mother->fill($data);
-
-            $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
-            if($viralpatient) $mother->patient_id = $viralpatient->id;
-
-            $mother->pre_update();
-            
-            $data = $request->only($samples_arrays['patient']);
-            $patient = new Patient;
-            $patient->fill($data);
-            $patient->mother_id = $mother->id;
-            $patient->pre_update();
+        }else{
+            $mother = $patient->mother;
         }
+
+        $data = $request->only($samples_arrays['mother']);
+        $mother->fill($data);
+
+        $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        $mother->pre_update();
+
+        $patient->mother_id = $mother->id;
+        $patient->pre_update();
+
+        
+
+
+        // $new_patient = $request->input('new_patient');
+
+        // if($new_patient == 0){
+        
+        //     $data = $request->only($samples_arrays['patient']);
+        //     $patient = Patient::find($sample->patient_id);
+        //     $patient->fill($data);
+        //     $patient->pre_update();
+
+        //     $data = $request->only($samples_arrays['mother']);
+        //     $mother = Mother::find($patient->mother_id);
+        //     $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
+        //     $mother->fill($data);
+
+        //     $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        //     if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        //     $mother->pre_update();
+        // }
+        // else
+        // {
+        //     $data = $request->only($samples_arrays['mother']);
+        //     $mother = new Mother;
+        //     $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age'));
+        //     $mother->fill($data);
+
+        //     $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->get()->first();
+        //     if($viralpatient) $mother->patient_id = $viralpatient->id;
+
+        //     $mother->pre_update();
+            
+        //     $data = $request->only($samples_arrays['patient']);
+        //     $patient = new Patient;
+        //     $patient->fill($data);
+        //     $patient->mother_id = $mother->id;
+        //     $patient->pre_update();
+        // }
         
         if($last_result){
             $sample->mother_last_result = $last_result;
@@ -328,10 +485,83 @@ class SampleController extends Controller
         }
         
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
-        $sample->patient_id = $patient->id;
-        $sample->pre_update();
+        $sample->patient_id = $patient->id; 
+        $sample->batch_id = $batch->id; 
 
         session(['toast_message' => 'The sample has been updated.']);
+
+        if($sample->receivedstatus == 2 && $sample->getOriginal('receivedstatus') == 1 && $sample->worksheet_id){
+            /*$worksheet = $sample->worksheet;
+            if($worksheet->status_id == 1){
+                $d = Misc::get_worksheet_samples($worksheet->machine_type, 1);
+                $s = $d['samples']->first();
+                if($s){
+                    $sample->worksheet_id = null;
+                    $replacement = Sample::find($s->id);
+
+                    $replacement->worksheet_id = $worksheet->id;
+                    $replacement->save();
+                    session(['toast_message' => 'The sample has been rejected and it has been replaced in worksheet ' . $worksheet->id]);
+                }
+                else{
+                    session([
+                        'toast_message' => 'The sample has been rejected but no sample could be found to replace it in the worksheet.',
+                        'toast_error' => 1
+                    ]);
+                }
+            }
+            else{
+                session([
+                    'toast_message' => 'The worksheet has already been run.',
+                    'toast_error' => 1
+                ]);
+            }*/
+            $sample->worksheet_id = null;
+            $sample->result = null;
+            $sample->interpretation = null;
+        }
+
+
+        $sample->pre_update(); 
+
+        if(isset($created_patient)){
+            if($sample->run == 1 && $sample->has_rerun){
+                $children = $sample->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $patient->id;
+                    $kid->pre_update();
+                }
+            }
+            else if($sample->run > 1){
+                $parent = $sample->parent;
+                $parent->pre_update();
+                
+                $children = $parent->child;
+
+                foreach ($children as $kid) {
+                    $kid->patient_id = $patient->id;
+                    $kid->pre_update();
+                }
+            }
+        }
+
+        Misc::check_batch($batch->id);  
+
+        if($sample->receivedstatus == 1 && $user->is_lab_user()){            
+            $work_samples = Misc::get_worksheet_samples(2);
+            if($work_samples['count'] > 21) session(['toast_message' => 'The sample have been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+        }
+
+        /*if($new_batch){
+            session(['batch' => $batch, 'batch_total' => 1,
+                'toast_message' => 'The sample has been saved to batch number ' . $batch->id]);
+            return redirect('sample/create');
+        } */    
+
+        if($sample->receivedstatus && !$sample->getOriginal('receivedstatus') && $batch->site_entry == 1){
+            return redirect('batch/site_approval_group/' . $batch->id);
+        }
 
         $site_entry_approval = session()->pull('site_entry_approval');
 
@@ -354,11 +584,15 @@ class SampleController extends Controller
     {
         $sample->fill($request->except(['_token', 'lab_id']));
         $sample->pre_update();
-        \App\Misc::check_batch($sample->batch_id);
-        \App\Common::check_worklist(SampleView::class, $sample->worksheet_id);
+        Misc::check_batch($sample->batch_id);
+        Misc::check_worklist(SampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
         $batch->lab_id = $request->input('lab_id');
+        if($batch->batch_complete == 2){
+            $batch->datedispatched = date('Y-m-d');
+            $batch->batch_complete = 1;
+        }
         $batch->pre_update();
         session(['toast_message' => 'The sample has been updated.']);
 
@@ -373,8 +607,14 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->worksheet_id == NULL && $sample->result == NULL){
+        if($sample->result == NULL && $sample->run < 2){
+            $batch = $sample->batch;
             $sample->delete();
+            $samples = $batch->sample;
+            if($samples->isEmpty()) $batch->delete();
+            else{
+                Misc::check_batch($batch->id);
+            }
             session(['toast_message' => 'The sample has been deleted.']);
         }  
         else{
@@ -384,16 +624,27 @@ class SampleController extends Controller
         return back();
     }
 
+
     public function new_patient(Request $request)
     {
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
 
+        if(!$facility_id || $facility_id == '') return null;
+
+        if(env('APP_LAB') == 4){
+            $fac = Facility::find($facility_id);
+            $str = $fac->facilitycode . '/';
+            if(!str_contains($patient, $str)) $patient = $str . $patient;
+        }
+
         // Add check for in process sample
 
         $patient = Patient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();
+
         $data;
         if($patient){
+            $patient->most_recent();
             $mother = $patient->mother;
             $mother->calc_age();
 
@@ -446,6 +697,11 @@ class SampleController extends Controller
             if($age > 24) $error_message = "The patient is over age.";
 
             $data[3] = ['previous_positive' => $previous_positive, 'recommended_pcr' => $recommended_pcr, 'message' => $message, 'error_message' => $error_message];
+
+            $data[4] = 0;
+            if($patient->most_recent){
+                $data[4] = "The date collected for the most recent test of the patient is " . $patient->most_recent->my_date_format('datecollected') . " in batch number " . $patient->most_recent->batch_id;
+            }
         }
         else{
             $data[0] = 1;
@@ -453,9 +709,18 @@ class SampleController extends Controller
         return $data;
     }
 
+
+    public function transfer(Sample $sample)
+    {
+        $sample->sample_received_by = auth()->user()->id;
+        $sample->save();
+        session(['toast_message' => "The sample has been tranferred to your account."]);
+        return back();
+    }
+
     public function runs(Sample $sample)
     {
-        $samples = Sample::runs($sample)->orderBy('run', 'asc')->get();
+        $samples = Sample::runs($sample)->get();
 
         $patient = $sample->patient; 
         return view('tables.sample_runs', ['patient' => $patient, 'samples' => $samples]); 
@@ -485,7 +750,8 @@ class SampleController extends Controller
 
     public function release_redraw(Sample $sample)
     {
-        if($sample->run == 1){
+        $batch = $sample->batch;
+        if($sample->run == 1 || $batch->batch_complete != 0 ){
             session(['toast_message' => 'The sample cannot be released as a redraw.']);
             session(['toast_error' => 1]);
             return back();
@@ -510,7 +776,7 @@ class SampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
-        \App\Misc::check_batch($prev_sample->batch_id);
+        Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
@@ -544,9 +810,117 @@ class SampleController extends Controller
         }
 
         foreach ($batches as $key => $value) {
-            \App\Misc::check_batch($value->batch_id);
+            Misc::check_batch($value->batch_id);
         } 
         return back();
+    }
+
+    public function site_sample_page()
+    {
+        return view('forms.upload_site_samples', ['type' => 'eid'])->with('pageTitle', 'Upload Facility Samples');
+    }
+
+    public function upload_site_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/eid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+
+            $facility = Facility::locate($row[5])->get()->first();
+            if(!$facility) continue;
+            $datecollected = Lookup::other_date($row[1]);
+            $datereceived = Lookup::other_date($row[20]);
+            if(!$datereceived) $datereceived = date('Y-m-d');
+            $existing = SampleView::existing(['facility_id' => $facility->id, 'patient' => $row[3], 'datecollected' => $datecollected])->get()->first();
+
+            // if($existing) continue;
+
+            $site_entry = Lookup::get_site_entry($row[19]);
+
+            $batch = Batch::withCount(['sample'])
+                                    ->where('received_by', auth()->user()->id)
+                                    ->where('datereceived', $datereceived)
+                                    ->where('input_complete', 0)
+                                    ->where('site_entry', $site_entry)
+                                    ->where('facility_id', $facility->id)
+                                    ->get()->first();
+
+            if($batch){
+                if($batch->sample_count > 9){
+                    unset($batch->sample_count);
+                    $batch->full_batch();
+                    $batch = null;
+                }
+            }
+
+            if(!$batch){
+                $batch = new Batch;
+                $batch->user_id = $facility->facility_user->id;
+                $batch->facility_id = $facility->id;
+                $batch->received_by = auth()->user()->id;
+                $batch->lab_id = auth()->user()->lab_id;
+                $batch->datereceived = $datereceived;
+                $batch->site_entry = $site_entry;
+                $batch->save();
+            }
+
+            $patient = Patient::existing($facility->id, $row[3])->get()->first();
+            if(!$patient){
+                $patient = new Patient;
+                $mother = new Mother;
+            }
+            else{
+                $mother = $patient->mother;
+            }
+            $dob = Lookup::other_date($row[8]);
+            if (!$dob && strlen($row[8]) == 4) $dob = $row[8] . '-01-01';
+
+            $mother->facility_id = $facility->id;
+            $mother->ccc_no = $row[15];
+            $mother->mother_dob = Lookup::calculate_dob($datecollected, $row[14]);
+            $mother->save();
+
+            if($dob) $patient->dob = $dob;            
+            $patient->facility_id = $facility->id;
+            $patient->mother_id = $mother->id;
+            $patient->patient = $row[3];
+            $patient->patient_name = $row[2];
+            $patient->entry_point = $row[10];
+            $patient->sex = $row[9];
+            $patient->ccc_no = $row[13];
+            $patient->pre_update();
+
+            $sample = new Sample;
+            $sample->batch_id = $batch->id;
+            $sample->patient_id = $patient->id;
+            $sample->datecollected = $datecollected;
+            $sample->age = Lookup::calculate_age($datecollected, $patient->dob);
+            $sample->redraw = $row[7];
+            $sample->pcrtype = $row[6];
+            $sample->regimen = Lookup::eid_regimen($row[11]);
+            $sample->feeding = $row[12];
+            $sample->mother_age = $row[14];
+            $sample->mother_prophylaxis = Lookup::eid_intervention($row[16]);
+            $sample->mother_last_result = $row[17];
+
+            $my = new \App\MiscViral;
+            $res = $my->set_rcategory($sample->mother_last_result);
+            $sample->mother_last_rcategory = $res['rcategory'] ?? null;
+
+            $sample->spots = $row[18];
+
+            $sample->receivedstatus = $row[21];
+            if(is_numeric($row[22])) $sample->rejectedreason = $row[22];
+            $sample->save();
+            $created_rows++;
+        }
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
     }
 
     public function search(Request $request)
@@ -564,13 +938,38 @@ class SampleController extends Controller
                 return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
             })
             ->paginate(10);
+
+        $samples->setPath(url()->current());
         return $samples;
     }
+
+    public function ord_no(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
+
+        $samples = SampleView::select(['id', 'order_no', 'patient'])
+            ->whereRaw("order_no like '%" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+
+
 
     private function clear_session(){
         session()->forget('batch');
         session()->forget('facility_name');
         session()->forget('batch_total');
+        session()->forget('last_patient');
         // session()->forget('batch_dispatch');
         // session()->forget('batch_dispatched');
         // session()->forget('batch_received');

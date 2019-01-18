@@ -19,28 +19,41 @@
 
    <div class="content">
             
-        @if($create)
+        @if($create || env('APP_LAB') == 8 || env('APP_LAB') == 9)
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hpanel">
-                        <div class="panel-heading">
-                            <center>Viralload Samples</center>
-                        </div>
-                        <div class="panel-body">
-                            @include('shared/viralsamples-partial')
-                        </div>
-                    </div>
-                </div>                
-            </div>
 
             @if (isset($worksheet))
                 {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
-                {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-            @endif
 
-            <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
+            
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hpanel">
+                            <div class="panel-heading">
+                                <center>Viralload Samples</center>
+                            </div>
+                            <div class="panel-body">
+                                @include('shared/viralsamples-partial')
+                            </div>
+                        </div>
+                    </div>                
+                </div>
+                
+                {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+
+                <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
+                <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
+
+                @if($calibration)
+                    <input type="hidden" value="1" name="calibration" >
+                @endif
+
+                @if($limit)
+                    <input type="hidden" value="{{ $limit }}" name="limit" >
+                @endif
+            @endif
 
             <div class="row">
                 <div class="col-lg-9 col-lg-offset-1">
@@ -53,61 +66,49 @@
                             @if($machine_type == 1)
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Lot No
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Lot No</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" required name="lot_no" type="text" value="{{ $worksheet->lot_no ?? '' }}">
+                                        <input class="form-control"  name="lot_no" type="text" value="{{ $worksheet->lot_no ?? '' }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Date Cut
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Date Cut</label>
                                     <div class="col-sm-8">
                                         <div class="input-group date date_cut">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->datecut ?? '' }}" name="datecut">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->datecut ?? '' }}" name="datecut">
                                         </div>
                                     </div>                            
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">HIQCAP Kit No
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">HIQCAP Kit No</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" required name="hiqcap_no" type="text" value="{{ $worksheet->hiqcap_no ?? '' }}">
+                                        <input class="form-control"  name="hiqcap_no" type="text" value="{{ $worksheet->hiqcap_no ?? '' }}">
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Rack No
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Rack No</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" required name="rack_no" type="text" value="{{ $worksheet->rack_no ?? '' }}">
+                                        <input class="form-control"  name="rack_no" type="text" value="{{ $worksheet->rack_no ?? '' }}">
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Spek Kit No
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Spek Kit No</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" required name="spekkit_no" type="text" value="{{ $worksheet->spekkit_no ?? '' }}">
+                                        <input class="form-control"  name="spekkit_no" type="text" value="{{ $worksheet->spekkit_no ?? '' }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">KIT EXP
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">KIT EXP</label>
                                     <div class="col-sm-8">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->kitexpirydate ?? '' }}" name="kitexpirydate">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->kitexpirydate ?? '' }}" name="kitexpirydate">
                                         </div>
                                     </div>                            
                                 </div>
@@ -115,76 +116,66 @@
                             @else
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Sample Prep
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Sample Prep</label>
                                     <div class="col-sm-3">
-                                        <input class="form-control" required name="sample_prep_lot_no" type="text" value="{{ $worksheet->sample_prep_lot_no ?? '' }}">
+                                        <input class="form-control"  name="sample_prep_lot_no" type="text" value="{{ $worksheet->sample_prep_lot_no ?? '' }}">
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->sampleprepexpirydate ?? '' }}" name="sampleprepexpirydate" placeholder="Expiry Date">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->sampleprepexpirydate ?? '' }}" name="sampleprepexpirydate" placeholder="Expiry Date">
                                         </div>
                                     </div>                            
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Bulk Lysis Buffer
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Bulk Lysis Buffer</label>
                                     <div class="col-sm-3">
-                                        <input class="form-control" required name="bulklysis_lot_no" type="text" value="{{ $worksheet->bulklysis_lot_no ?? '' }}">
+                                        <input class="form-control"  name="bulklysis_lot_no" type="text" value="{{ $worksheet->bulklysis_lot_no ?? '' }}">
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->bulklysisexpirydate ?? '' }}" name="bulklysisexpirydate" placeholder="Expiry Date">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->bulklysisexpirydate ?? '' }}" name="bulklysisexpirydate" placeholder="Expiry Date">
                                         </div>
                                     </div>                            
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Control
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Control</label>
                                     <div class="col-sm-3">
-                                        <input class="form-control" required name="control_lot_no" type="text" value="{{ $worksheet->control_lot_no ?? '' }}">
+                                        <input class="form-control"  name="control_lot_no" type="text" value="{{ $worksheet->control_lot_no ?? '' }}">
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->controlexpirydate ?? '' }}" name="controlexpirydate" placeholder="Expiry Date">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->controlexpirydate ?? '' }}" name="controlexpirydate" placeholder="Expiry Date">
                                         </div>
                                     </div>                            
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Calibrator
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Calibrator</label>
                                     <div class="col-sm-3">
-                                        <input class="form-control" required name="calibrator_lot_no" type="text" value="{{ $worksheet->calibrator_lot_no ?? '' }}">
+                                        <input class="form-control"  name="calibrator_lot_no" type="text" value="{{ $worksheet->calibrator_lot_no ?? '' }}">
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->calibratorexpirydate ?? '' }}" name="calibratorexpirydate" placeholder="Expiry Date">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->calibratorexpirydate ?? '' }}" name="calibratorexpirydate" placeholder="Expiry Date">
                                         </div>
                                     </div>                            
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">Amplification Kit
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-4 control-label">Amplification Kit</label>
                                     <div class="col-sm-3">
-                                        <input class="form-control" required name="amplification_kit_lot_no" type="text" value="{{ $worksheet->amplification_kit_lot_no ?? '' }}">
+                                        <input class="form-control"  name="amplification_kit_lot_no" type="text" value="{{ $worksheet->amplification_kit_lot_no ?? '' }}">
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="input-group date date_exp">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" required class="form-control" value="{{ $worksheet->amplificationexpirydate ?? '' }}" name="amplificationexpirydate" placeholder="Expiry Date">
+                                            <input type="text"  class="form-control" value="{{ $worksheet->amplificationexpirydate ?? '' }}" name="amplificationexpirydate" placeholder="Expiry Date">
                                         </div>
                                     </div>                            
                                 </div>
@@ -226,6 +217,19 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-heading">
+                            <center>Viralload Samples</center>
+                        </div>
+                        <div class="panel-body">
+                            @include('shared/viralsamples-partial')
+                        </div>
+                    </div>
+                </div>                
             </div>
 
         @endif

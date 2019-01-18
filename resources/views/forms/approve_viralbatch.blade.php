@@ -19,7 +19,9 @@
                 </div>
                 <div class="panel-body">
 
-                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put']) }}
+                    {{ Form::open(['url' => '/viralbatch/site_approval_group/' . $batch->id, 'method' => 'put', 'class'=>'form-horizontal' ]) }}
+
+                        <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
 
                         <div class="alert alert-warning">
                             <center>
@@ -60,10 +62,14 @@
                             </div>
                             <div class="col-md-4">
                                 <p><strong>Entered By:</strong> 
-                                    @if($batch->creator->full_name != ' ')
-                                        {{ $batch->creator->full_name }}
+                                    @if($batch->creator)
+                                        @if($batch->creator->full_name != ' ')
+                                            {{ $batch->creator->full_name }}
+                                        @else
+                                            {{ $batch->creator->facility->name ?? '' }} {{ $batch->entered_by ?? '' }}
+                                        @endif
                                     @else
-                                        {{ $batch->creator->facility->name ?? '' }}
+                                        {{ $batch->entered_by ?? '' }}
                                     @endif
                                 </p>
                             </div>
@@ -124,7 +130,8 @@
                                                     <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
                                                 </div>
                                             </td>
-                                            <td> {{ $sample->patient->patient }} </td>
+
+                                            <td> {!! $sample->patient->hyperlink !!} </td>
                                             <td> {{ $sample->patient->gender }} </td>
                                             <td> {{ $sample->age }} </td>
                                             <td> {{ $sample->patient->my_date_format('dob') }} </td>
@@ -160,7 +167,7 @@
                                             <td>
                                                 <select class="form-control" name="rejectedreason" id="rejectedreason">
 
-                                                    <option> Select One </option>
+                                                    <option></option>
                                                     @foreach ($rejectedreasons as $rejectedreason)
                                                         <option value="{{ $rejectedreason->id }}">
                                                             {{ $rejectedreason->name }}

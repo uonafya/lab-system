@@ -12,20 +12,40 @@ class DashboardController extends Controller
 {
     //
 
-    public function index()
+    public function index($year = null, $month = null)
     {
-        // dd(session('testingSystem));
-   		$monthly_test = (object) $this->lab_monthly_tests();
-    	$lab_stats = (object) $this->lab_statistics();
-    	$lab_tat_stats = (object) $this->lab_tat_statistics();
-    	// dd($lab_tat_stats);
-    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats'))->with('pageTitle', 'Lab Dashboard');
+        if ($year==null || $year=='null'){
+            if (session('dashboardYear')==null)
+                session(['dashboardYear' => Date('Y')]);
+        } else {
+            session(['dashboardYear'=>$year]);
+        }
+
+        if ($month==null || $month=='null'){
+            session()->forget('dashboardMonth');
+        } else {
+            session(['dashboardMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
+        }
+        
+   		$monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
+    	$lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
+    	$lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
+    	// dd($lab_stats);
+        $year = session('dashboardYear');
+        $month = session('dashboardMonth');
+        $monthName = "";
+        
+        if (null !== $month) 
+            $monthName = "- ".date("F", mktime(null, null, null, $month));
+
+        $data = (object)['year'=>$year,'month'=>$monthName];
+        // dd($data);
+    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard : $year $monthName");
     }
 
-    public function lab_monthly_tests()
+    public function lab_monthly_tests($year = null)
     {
         $currentTestingSystem = session('testingSystem');
-        // dd(session('testingSystem'));
         $result = ($currentTestingSystem == 'Viralload') ? 
                             ['received','tests','rejected','non_suppression'] : 
                             ['tests','positives','negatives','rejected'];
@@ -54,7 +74,7 @@ class DashboardController extends Controller
                                     }                
                                 })
                                 ->where('repeatt', '=', 0)
-                                ->whereYear($table, date('Y'))
+                                ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get() 
                             :
                             DB::table('samples')
@@ -74,13 +94,13 @@ class DashboardController extends Controller
                                     }                
                                 }) 
                                 ->where('repeatt', '=', 0)
-                                ->whereYear($table, date('Y'))
+                                ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get();
         }
         
         $chartData = self::__mergeMonthlyTests($data);
         $data = [];
-
+        
         if ($currentTestingSystem == 'Viralload') {
             $data['testtrends'][0]['name'] = 'Received';
             $data['testtrends'][1]['name'] = 'Tests';
@@ -117,40 +137,50 @@ class DashboardController extends Controller
                 $data['testtrends'][3]['data'][$key] = (int) $value['tests'];
             }
         }
-        dd($data);
         return $data;
-        
     }
 
-    public function lab_statistics()
+    public function lab_statistics($year = null, $month = null)
     {
         $data = [];
         $current = session('testingSystem');
 
-        $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
+        $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
+                                return $query->whereMonth('datetested', $month);
+                            })->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
-                                            ->where('SMS_printer_phoneNo', '<>', 0)
+                                            ->where('smsprinterphoneno', '<>', 0)
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
-                            ->when($current, function($query) use ($current){
+                            ->when($current, function($query) use ($current, $year, $month){
                                 if ($current == 'Viralload') {
                                     return $query->where('viralsamples.receivedstatus', '=', '2')
                                             ->where('viralsamples.repeatt', '=', '0')
-                                            ->whereRaw("YEAR(viralbatches.datereceived) = ".Date('Y'));
+                                            ->when($month, function($query) use ($month){
+                                                return $query->whereMonth('viralbatches.datereceived', $month);
+                                            })
+                                            ->whereRaw("YEAR(viralbatches.datereceived) = ".$year);
                                 } else {
                                     return $query->where('samples.receivedstatus', '=', '2')
                                             ->where('samples.repeatt', '=', '0')
-                                            ->whereRaw("YEAR(batches.datereceived) = ".Date('Y'));
+                                            ->when($month, function($query) use ($month){
+                                                return $query->whereMonth('batches.datereceived', $month);
+                                            })
+                                            ->whereRaw("YEAR(batches.datereceived) = ".$year);
                                 }
                             })->count();
         $received = self::__joinedToBatches()
-                            ->when($current, function ($query) use ($current) {
+                            ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
                                     return $query->whereRaw("((viralsamples.parentid=0)||(viralsamples.parentid IS NULL))")
-                                                ->whereRaw("YEAR(viralbatches.datereceived) = ".Date('Y'));
+                                                ->when($month, function($query) use ($month){
+                                                    return $query->whereMonth('viralbatches.datereceived', $month);
+                                                })->whereRaw("YEAR(viralbatches.datereceived) = ".$year);
                                 } else {
-                                    return $query->whereRaw("YEAR(batches.datereceived) = ".Date('Y'))
-                                                ->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
+                                    return $query->whereRaw("YEAR(batches.datereceived) = ".$year)
+                                                ->when($month, function($query) use ($month){
+                                                    return $query->whereMonth('batches.datereceived', $month);
+                                                })->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
                                 }
                             })->count();
 
@@ -160,6 +190,28 @@ class DashboardController extends Controller
 
         
         if (session('testingSystem') == 'Viralload') {
+            $typeData = [];
+            $types = ['received', 'tested', 'rejected'];
+            // $sample_types = DB::table('viralsampletypes')->get();
+            foreach ($types as $key => $value) {
+                $model = self::__joinedToBatches()->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples.sampletype')->when($value, function($query) use ($value, $year, $month){
+                        if ($value == 'received' || $value == 'rejected'){
+                            $column = 'datereceived';
+                            if ($value == 'rejected')
+                                $query = $query->where('receivedstatus', '=', 2);
+                        }
+                        if ($value == 'tested')
+                            $column = 'datetested';
+                        return $query->whereYear($column, $year)->when($month, function($query) use ($month){
+                                                return $query->whereMonth('datetested', $month);
+                                            });
+                    })->selectRaw("count(*) as `total`, IFNULL(LOWER(`viralsampletype`.`alias`), 'none') as `titles`")
+                    ->groupBy('titles')->get();
+                foreach ($model as $modelkey => $modelvalue) {
+                    $typeData[$value.$modelvalue->titles] = $modelvalue->total;
+                }
+            }
+            
             $data = [
                     'testedSamples' => $tests,
                     'rejectedSamples' => $rejection,
@@ -168,7 +220,11 @@ class DashboardController extends Controller
                     'redraws' => $redraws,
                     'nonsuppressed' => self::__getsampleResultByType(3),
                     'suppressed' => self::__getsampleResultByType(2),
-                    'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".Date('Y'))->count()
+                    'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".$year)
+                                            ->when($month, function($query) use ($month){
+                                                return $query->whereMonth('viralsamples.datetested', $month);
+                                            })->count(),
+                    'sampletypes' => (object)$typeData
                 ];
         } else {
             $data = [
@@ -187,7 +243,7 @@ class DashboardController extends Controller
     	return $data;
     }
 
-    public function lab_tat_statistics()
+    public function lab_tat_statistics($year=null, $month=null)
     {
         return [
         	'tat1' => self::__getTAT(1),
@@ -313,9 +369,14 @@ class DashboardController extends Controller
             $model = self::__getSamples()
                         ->where('result', '=', $type);
         }
-        
+        $year = session('dashboardYear');
+        $month = session('dashboardMonth');
+
     	return 	$model->where('repeatt', '=', '0')
-                        ->whereRaw("YEAR(datetested) = ".Date('Y'))->count();
+                        ->whereRaw("YEAR(datetested) = ".$year)
+                        ->when($month, function($query) use ($month){
+                            return $query->whereMonth('datetested', $month);
+                        })->count();
     }
 
     public static function __joinedToBatches()
@@ -333,7 +394,7 @@ class DashboardController extends Controller
     public static function __getSamples()
     {
         (session('testingSystem') == 'Viralload') ?
-            $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0) :
+            $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
             $model = Sample::with('batch')->where('flag', '=', 1);
 
         return $model;
@@ -350,144 +411,32 @@ class DashboardController extends Controller
 
     public static function __getTAT($tat = null)
     {
-    	if ($tat == null || !is_int($tat))
-    		return 0;
+        $year = session('dashboardYear');
+        $month = session('dashboardMonth');
 
-    	if ($tat == 1) {
-    		$d1 = "samples.datecollected";
-    		$d2 = "batches.datereceived";
-    	} else if ($tat == 2) {
-    		$d1 = "batches.datereceived";
-            $d2 = "samples.datetested";
-    	} else if ($tat == 3) {
-            $d1 = "samples.datetested";
-            $d2 = "batches.datedispatched";
-        } else if ($tat == 4) {
-            $d1 = "samples.datecollected";
-            $d2 = "batches.datedispatched";
-        } else if ($tat == 5) {
-            $d1 = "batches.datereceived";
-            $d2 = "batches.datedispatched";
-        } else {
-            return 0;
-        }
-    	
-    	return  self::__getActualTATDays(DB::table('samples')
-    					->select("$d1 as d1", "$d2 as d2", DB::RAW("TIMESTAMPDIFF(DAY,$d1,$d2) as daysdiff"))
-    					->join('batches', 'batches.id', '=', 'samples.batch_id')
-    					->where($d2, '<>', '0000-00-00')
-    					->where($d2, '<>', '1970-01-01')
-    					->where($d1, '<>', '0000-00-00')
-    					->where($d1, '<>', '1970-01-01')
-    					->where($d1, '<=', $d2)
-                        ->whereRaw("YEAR(samples.datetested) = ".Date('Y'))
-    					->where('repeatt', '=', 0)
-                        ->where('flag', '=', 1)
-    					->get());
-    }
-
-    public static function __getActualTATDays($data = null)
-    {
-        $sumdates=0;
-        if ($data == null)
-            return null;
-
-        $numsamples = $data->count();
-        if ($numsamples > 0) {
-            foreach ($data as $key => $value) {
-                $secondDate = date("d-m-Y",strtotime($value->d2));
-                $firstDate = date("d-m-Y",strtotime($value->d1));
-                $workingdays = self::__getWorkingDays($firstDate,$secondDate,0) ;
-                $month = Date('m');
-
-                if ($month > 0) {
-                    $totalholidays = self::__getTotalHolidaysinMonth($month);
-                }
-                else {
-                    $totalholidays=0;
-                }
-
-                $totaldays =$workingdays -$totalholidays;
-                if ($totaldays < 0) {
-                    $totaldays=1;
-                }
-                else {
-                    $totaldays=$totaldays;
-                }
-                $sumdates=$sumdates+$totaldays;
-            }
-            $ave=floor(($sumdates/$numsamples));
-        
-            if ($ave==0) { $ave=1; }
-            elseif ($ave < 0) { $ave=1; }
-            else { $ave=$ave; }
-
-            return $ave;
-        } else {
-            return 0;
-        }
-    }
-
-    public static function __getWorkingDays($startDate,$endDate,$holidays){
-        //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24
-        //We add one to inlude both dates in the interval.
-        $days = (strtotime($endDate) - strtotime($startDate)) / 86400 + 1;
-
-        $no_full_weeks = floor($days / 7);
-
-        $no_remaining_days = fmod($days, 7);
-
-        //It will return 1 if it's Monday,.. ,7 for Sunday
-        $the_first_day_of_week = date("N",strtotime($startDate));
-
-        $the_last_day_of_week = date("N",strtotime($endDate));
-        
-        //---->The two can be equal in leap years when february has 29 days, the equal sign is added here
-        //In the first case the whole interval is within a week, in the second case the interval falls in two weeks.
-        if ($the_first_day_of_week <= $the_last_day_of_week){
-            if ($the_first_day_of_week <= 6 && 6 <= $the_last_day_of_week) $no_remaining_days--;
-            if ($the_first_day_of_week <= 7 && 7 <= $the_last_day_of_week) $no_remaining_days--;
+        if(session('testingSystem') == 'Viralload'){
+            $model = Viralsample::where('flag', '=', 1);
+            $table = 'viralsamples';
+        } else if (session('testingSystem') == 'EID') {
+            $model = Sample::where('flag', '=', 1);
+            $table = 'samples';
         }
 
-        else{
-            if ($the_first_day_of_week <= 6) {
-            //In the case when the interval falls in two weeks, there will be a Sunday for sure
-                $no_remaining_days--;
-            }
-        }
+        $model = $model->when($tat, function($query) use ($tat) {
+                            if($tat == 1)
+                                return $query->selectRaw("AVG(tat1) as tatvalues");
+                            if($tat == 2)
+                                return $query->selectRaw("AVG(tat2) as tatvalues");
+                            if($tat == 3)
+                                return $query->selectRaw("AVG(tat3) as tatvalues");
+                            if($tat == 4)
+                                return $query->selectRaw("AVG(tat4) as tatvalues");
+                        })->whereYear("$table.datetested", $year)
+                        ->when($month, function($query) use ($month, $table){
+                            return $query->whereMonth("$table.datetested", $month);
+                        })->whereNotNull('tat1')->whereNotNull('tat2')->whereNotNull('tat3')->whereNotNull('tat4')
+                        ->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
 
-        //The no. of business days is: (number of weeks between the two dates) * (5 working days) + the remainder
-    //---->february in none leap years gave a remainder of 0 but still calculated weekends between first and last day, this is one way to fix it
-       $workingDays = $no_full_weeks * 5;
-        if ($no_remaining_days > 0 )
-        {
-          $workingDays += $no_remaining_days;
-        }
-
-        //We subtract the holidays
-    /*    foreach($holidays as $holiday){
-            $time_stamp=strtotime($holiday);
-            //If the holiday doesn't fall in weekend
-            if (strtotime($startDate) <= $time_stamp && $time_stamp <= strtotime($endDate) && date("N",$time_stamp) != 6 && date("N",$time_stamp) != 7)
-                $workingDays--;
-        }*/
-
-        return $workingDays;
-    } 
-
-    public static function __getTotalHolidaysinMonth($month)
-    {
-        if ($month==0) { $totalholidays=10; }
-        if ($month==1) { $totalholidays=1; }
-        else if ($month==4) { $totalholidays=2; }
-        else if ($month==5) { $totalholidays=1; }
-        else if ($month==6) { $totalholidays=1; }
-        else if ($month==8) { $totalholidays=1; }
-        else if ($month==10) { $totalholidays=1; }
-        else if ($month==12) { $totalholidays=3; }
-        else if ($month=="") { $totalholidays=10; }
-        else { $totalholidays=0; }
-
-        return $totalholidays;
+        return round($model);
     }
 }

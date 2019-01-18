@@ -8,30 +8,44 @@
 
 <div class="content">
 
-    <div class="row">
-        <div class="col-md-12">
-            Click To View: 
-            {{--<a href="{{ url($pre . 'batch/index') }}">--}}
-            <a href="{{ $myurl }}">
-                All Batches
-            </a> |
-            <a href="{{ $myurl2 }}/0">
-                In-Process Batches
-            </a> |
-            <a href="{{ $myurl2 }}/2">
-                Awaiting Dispatch
-            </a> |
-            <a href="{{ $myurl2 }}/1">
-                Dispatched Batches
-            </a>
+    @empty($to_print)
+
+        <div class="row">
+            <div class="col-md-12">
+                Click To View: 
+                {{--<a href="{{ url($pre . 'batch/index') }}">--}}
+                <a href="{{ $myurl }}">
+                    All Batches
+                </a> |
+                <a href="{{ $myurl2 }}/0">
+                    In-Process Batches
+                </a> |
+                <a href="{{ $myurl2 }}/2">
+                    Awaiting Dispatch
+                </a> |
+                <a href="{{ $myurl2 }}/1">
+                    Dispatched Batches
+                </a> |
+                <a href="{{ $myurl2 }}/5">
+                    Batches Overdue for Receipt at Lab (10 days)
+                </a> |
+                <a href="{{ url('sample/sms_log') }}">
+                    SMS Log
+                </a>      
+            </div>
         </div>
-    </div>
+
+    @endempty
 
     <br />
 
     @if(auth()->user()->user_type_id != 5)
 
         {{ Form::open(['url' => '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+
+            @isset($to_print)
+                <input type="hidden" name="to_print" value="1">
+            @endisset
 
             <div class="row">
 
@@ -51,6 +65,7 @@
                         <label class="col-sm-3 control-label">Select Facility</label>
                         <div class="col-sm-9">
                             <select class="form-control" name="facility_id" id="facility_id">
+                                <option></option>
                                 @if(isset($facility) && $facility)
                                     <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
                                 @endif
@@ -63,7 +78,7 @@
                         <label class="col-sm-3 control-label">Select Subcounty</label>
                         <div class="col-sm-9">
                             <select class="form-control" name="subcounty_id" id="subcounty_id">
-                                <option value=0>  Select One  </option>
+                                <option></option>
                                 @foreach ($subcounties as $subcounty)
                                     <option value="{{ $subcounty->id }}"
 
@@ -83,7 +98,7 @@
                         <label class="col-sm-3 control-label">Select Partner</label>
                         <div class="col-sm-9">
                             <select class="form-control" name="partner_id" id="partner_id">
-                                <option>  Select One  </option>
+                                <option></option>
                                 @foreach ($partners as $partner)
                                     <option value="{{ $partner->id }}"
 
@@ -166,6 +181,9 @@
                                         <th colspan="4">Test Outcomes</th>
                                         <th rowspan="1">Date</th>
                                         <th rowspan="1">TAT</th>
+                                        <th rowspan="2">Email</th>
+                                        <th rowspan="2">Individual Printed</th>
+                                        <th rowspan="2">Summary Printed</th>
                                         <th rowspan="2">Email</th>                                        
                                         <th rowspan="2">Task</th>
                                     </tr>
@@ -216,10 +234,25 @@
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 
 
+                                            @if($batch->dateindividualresultprinted)
+                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                            @else
+                                                <td><strong><div style='color: #ff0000;'>N</div></strong></td>
+                                            @endif 
+
+
+                                            @if($batch->datebatchprinted)
+                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                            @else
+                                                <td><strong><div style='color: #ff0000;'>N</div></strong></td>
+                                            @endif 
+
+
                                             <td> 
                                                 <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
                                                 | <a href="{{ url($pre . 'batch/summary/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Summary</a> 
                                                 | <a href="{{ url($pre . 'batch/individual/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Individual </a> 
+                                                {{--| <a href="{{ url($pre . 'batch/individual_pdf/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Individual PDF </a> --}}
                                                 | <a href="{{ url($pre . 'batch/envelope/' . $batch->id) }}" target="_blank"><i class='fa fa-envelope'></i> Envelope </a>
                                                 | <a href="{{ url($pre . 'batch/email/' . $batch->id) }}"><i class='fa fa-envelope'></i> Email </a>
                                             </td>
@@ -274,7 +307,11 @@
     <script type="text/javascript">
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
-            $(".my_form select").select2(); 
+
+            $(".my_form select").select2({
+                placeholder: "Select One",
+                allowClear: true
+            }); 
 
             set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 

@@ -4,17 +4,42 @@ namespace App;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use App\Mail\EidDispatch;
+use App\Mail\VlDispatch;
+use App\Mail\UrgentCommunication;
+use App\Mail\NoDataReport;
+use App\Mail\LabTracker;
 use Carbon\Carbon;
+use Exception;
 
 class Common
 {
 	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
+	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
+	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
 
     public static function test_email()
     {
         Mail::to(['joelkith@gmail.com'])->send(new TestMail());
     }
 
+    public static function get_misc_class($type)
+    {
+    	if($type == 'eid') return \App\Misc::class;
+    	 return \App\MiscViral::class;
+    }
+
+    public static function get_batch_class($type)
+    {
+    	if($type == 'eid') return \App\Batch::class;
+    	 return \App\Viralbatch::class;
+    }
+
+    public static function get_patient_class($type)
+    {
+    	if($type == 'eid') return \App\Patient::class;
+    	 return \App\Viralpatient::class;
+    }
 
 	public static function get_days($start, $finish)
 	{
@@ -22,7 +47,9 @@ class Common
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f);
+		$workingdays = $s->diffInWeekdays($f, false);
+
+		if($workingdays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
@@ -119,6 +146,7 @@ class Common
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
 	{
+        ini_set("memory_limit", "-1");
 		$samples = $view_model::where(['batch_complete' => 1])
 		->whereRaw("(synched = 0 or synched = 2)")
 		->when($batch_id, function($query) use ($batch_id){
@@ -143,6 +171,7 @@ class Common
 				$viral_data = array_merge($viral_data, $this->set_rcategory($sample->result, $sample->repeatt));
 				$data = array_merge($data, $viral_data);				
 			}
+			if($sample->synched == 1) $data['synched'] = 2;
 			$sample_model::where('id', $sample->id)->update($data);
 		}
 	}
@@ -154,6 +183,7 @@ class Common
 	public function compute_tat($view_model, $sample_model)
 	{
         ini_set("memory_limit", "-1");
+        // $offset_value = 50000;
         $offset_value = 0;
         while(true){
 
@@ -242,7 +272,447 @@ class Common
 			$batch_model = \App\Viralbatch::class;
 		}
 		$batch_model::where(['input_complete' => false])->update(['input_complete' => true]);
+		$batch_model::whereNull('input_complete')->update(['input_complete' => true]);
 		return "Batches of {$type} have been marked as input complete";
 	}
+
+	public static function check_batches($type)
+	{
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+			$misc_model = \App\Misc::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+			$misc_model = \App\MiscViral::class;
+		}
+
+		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
+		foreach ($batches as $key => $batch) {
+			$str = $misc_model::check_batch($batch->id);
+			// if($str) echo $str . "\n";
+		}
+	}
+
+	public static function delete_delayed_batches($type)
+	{
+		$batch_model = self::get_batch_class($type);
+        $min_time = strtotime("-14 days");
+
+		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
+
+		foreach ($batches as $batch) {
+			$batch->batch_delete();
+		}
+	}
+
+    public static function delete_folder($path)
+    {
+        if(!ends_with($path, '/')) $path .= '/';
+        $files = scandir($path);
+        if(!$files) rmdir($path);
+        else{
+            foreach ($files as $file) {
+            	if($file == '.' || $file == '..') continue;
+            	$a=true;
+                if(is_dir($path . $file)) self::delete_folder($path . $file);
+                else{
+                	unlink($path . $file);
+                }              
+            }
+            rmdir($path);
+        }
+    }
+
+    public static function dispatch_batch($batch, $view_name=null)
+    {
+    	$facility = $batch->facility; 
+    	
+        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(!$mail_array) return null;
+
+        if(get_class($batch) == "App\\Batch") $mail_class = EidDispatch::class; 
+
+        if(get_class($batch) == "App\\Viralbatch") $mail_class = VlDispatch::class;
+
+        try {
+        	if($view_name) $new_mail = new $mail_class($batch, $view_name);
+        	else{
+        		$new_mail = new $mail_class($batch);
+        	}
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	->send($new_mail);
+        	// $batch->save();
+        } catch (Exception $e) {
+        	
+        }
+    }
+
+    public static function dispatch_results($type = 'eid')
+    {
+    	ini_set('memory_limit', "-1");
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+		}
+
+		$min_date = date('Y-m-d', strtotime('-1 month'));
+
+		$batches = $batch_model::where('batch_complete', 1)
+		->where('sent_email', 0)
+		->where('datedispatched', '>', $min_date)
+		->get();
+
+		foreach ($batches as $batch) {
+
+            $batch->sent_email = true;
+            $batch->dateemailsent = date('Y-m-d');
+            $batch->save();
+
+		 	self::dispatch_batch($batch);
+		} 
+    }
+
+    public static function dispatch_delayed($type = 'eid')
+    {
+		if($type == 'eid'){
+			$batch_model = \App\Batch::class;
+		}else{
+			$batch_model = \App\Viralbatch::class;
+		}
+
+		$batches = $batch_model::where('batch_complete', 1)
+		->where('datedispatched', '>', '2018-08-27')
+		->where('datedispatched', '<', '2018-09-03')
+		->get();
+
+		foreach ($batches as $batch) {
+		 	self::dispatch_batch($batch);
+		 	break;
+		} 
+    }
+
+	public static function fix_no_age($type)
+	{
+    	ini_set('memory_limit', "-1");
+		if($type == 'eid'){
+			$sample_model = \App\Sample::class;
+			$view_model = \App\SampleView::class;
+			$func_name = 'calculate_age';
+		}else{
+			$sample_model = \App\Viralsample::class;
+			$view_model = \App\ViralsampleView::class;
+			$func_name = 'calculate_viralage';
+		}
+
+		$samples = $view_model::select('id', 'dob', 'datecollected')
+								->whereNotNull('dob')
+								->whereRaw("(age is null or age=0)")
+								->get();
+
+		foreach ($samples as $sample) {
+			$s = $sample_model::find($sample->id);
+			$s->age = \App\Lookup::$func_name($sample->datecollected, $sample->dob);
+			$s->pre_update();
+		}
+	}
+
+	public static function no_data_report($type)
+	{
+		$noage = self::no_data($type, 'age');
+		$nogender = self::no_data($type, 'gender');
+
+		$comm = new NoDataReport($type, $noage, $nogender);
+
+		Mail::to(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+	}
+
+	public static function no_data($type, $param)
+	{
+    	ini_set('memory_limit', "-1");
+
+		if($type == 'eid'){
+			$view_model = \App\SampleView::class;
+		}else{
+			$view_model = \App\ViralsampleView::class;
+		}
+
+		$samples = $view_model::selectRaw("id as 'Lab ID', site_entry, facilitycode as 'MFL Code', facilityname AS 'Facility', patient, sex, age, dob, datecollected, datereceived, datetested, datedispatched ")
+				->where('facility_id', '!=', 7148)
+				->where('repeatt', 0)
+				->where('datereceived', '>', '2018-01-01')
+				->where('lab_id', env('APP_LAB'))	
+				->when(true, function($query) use ($param){
+					if($param == 'age') return $query->whereRaw("(age is null or age=0)");
+					return $query->where('sex', 3);
+				})			
+				->get();
+
+		$filename = storage_path("app/" . $type . "_no_" . $param . "_data_report.csv");
+        if(file_exists($filename)) unlink($filename);
+
+        $fp = fopen($filename, 'w');
+
+        fputcsv($fp, ['Lab ID', 'Entry Type', 'MFL Code', 'Facility', 'Patient', 'Sex', 'Age', 'DOB', 'Date Collected', 'Date Received', 'Date Tested', 'Date Dispatched']);
+
+        foreach ($samples as $key => $value) {
+        	$val = $value->toArray();
+        	// $val = get_object_vars($value);
+        	$val['sex'] = $value->gender;
+        	$val['site_entry'] = 'Lab Entry';
+        	if($value->site_entry == 1) $val['site_entry'] = 'Site Entry';
+        	fputcsv($fp, $val);
+        }
+        fclose($fp);
+        return $filename;
+	}
+
+    // public static function send_communication()
+    // {
+    //     ini_set("memory_limit", "-1");
+    //     $facilities = \App\Facility::where('flag', 1)->get();
+
+    //     foreach ($facilities as $key => $facility) {
+    //     	$mail_array = $facility->email_array;
+    //     	// $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+    //     	$comm = new UrgentCommunication;
+    //     	try {
+	   //      	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@gmail.com'])
+	   //      	->send($comm);
+	   //      } catch (Exception $e) {
+        	
+	   //      }
+    //     	// break;
+    //     }
+    // }
+
+    public static function send_communication()
+    {
+        $emails = \App\Email::where('sent', false)->where('time_to_be_sent', '<', date('Y-m-d H:i:s'))->get();
+
+        foreach ($emails as $email) {
+        	$email->dispatch();
+        }
+    }
+
+    public static function ampath_all()
+    {
+    	self::ampath(\App\Batch::class);
+    	self::ampath(\App\Viralbatch::class);
+    }
+
+    public static function ampath($class)
+    {
+        ini_set("memory_limit", "-1");
+
+        $batches = $class::whereIn('batch_complete', ['0', '2'])->where('datereceived', '<', '2018-05-01')->get();
+        // $batches = $class::where(['batch_complete' => '0'])->where('created_at', '<', '2018-01-01')->get();
+
+        foreach ($batches as $key => $batch) {
+            // $batch->datereceived = date('Y-m-d', strtotime($batch->created_at . ' +1days'));
+            $batch->datedispatched = date('Y-m-d', strtotime($batch->datereceived . ' +5days'));
+            $batch->batch_complete = 1;
+            $batch->pre_update();
+        }
+    }
+
+    public static function mrs($type = 'vl')
+    {
+        ini_set("memory_limit", "-1");
+
+        $c = \App\Synch::$synch_arrays[$type];
+
+        $view_model = $c['sampleview_class'];
+        $sample_class = $c['sample_class'];
+
+        $samples = $view_model::where('user_id', 66)->whereIn('amrs_location', [13, 14, 15, ])->whereBetween('created_at', ['2018-11-27', '2019-11-31'])->get();
+
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
+    public static function mrs_cd4()
+    {
+        ini_set("memory_limit", "-1");
+
+        $samples = \App\Cd4Sample::where('user_id', 66)->whereBetween('created_at', ['2018-11-27', '2019-01-15'])->get();
+
+        foreach ($samples as $sample) {
+        	$sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
+    public static function mrs_reverse($type = 'vl')
+    {
+        ini_set("memory_limit", "-1");
+
+        $c = \App\Synch::$synch_arrays[$type];
+
+        $view_model = $c['sampleview_class'];
+        $sample_class = $c['sample_class'];
+
+        $samples = $view_model::where('user_id', 66)->whereBetween('created_at', ['2018-11-22', '2019-01-07'])->whereDate('updated_at', '2019-01-13')->get();
+
+        foreach ($samples as $s) {
+        	$sample = $sample_class::find($s->id)->first();
+        	$sample->amrs_location = Lookup::get_mrslocation_reverse($sample->amrs_location);
+        	$sample->save();
+        }
+    }
+
+    public static function batch_date()
+    {
+        ini_set("memory_limit", "-1");
+        $classes = \App\Synch::$synch_arrays;
+
+        foreach ($classes as $c) {
+
+	        $batch_class = $c['batch_class'];
+	        $sample_class = $c['sample_class'];
+
+	        $batches = $batch_class::whereDate('created_at', '2018-12-12')->get();
+
+	        foreach ($batches as $batch) {
+	        	$sample = $sample_class::where('batch_id', $batch->id)->first();
+	        	$batch->created_at = $sample->created_at;
+	        	$batch->pre_update();
+	        }
+	    }
+    }
+
+    public static function correct_facility($mfl)
+    {
+        ini_set("memory_limit", "-1");
+
+        $classes = \App\Synch::$synch_arrays;
+
+        $facility = \App\Facility::locate($mfl)->first();
+
+        foreach ($classes as $c) {
+
+	        $sampleview_class = $c['sampleview_class'];
+	        $patient_class = $c['patient_class'];
+	        $batch_class = $c['batch_class'];
+
+	        $samples = $sampleview_class::where('patient', 'like', "{mfl}%")->where('facility_id', '!=', $facility->id)->get();
+
+	        foreach ($samples as $sample) {
+	        	$batch = $batch_class::find($sample->batch_id);
+	        	$batch->facility_id = $facility->id;
+	        	$batch->pre_update();
+
+	        	$patient = $patient_class::find($sample->patient_id);
+	        	$patient->facility_id = $facility->id;
+	        	$patient->pre_update();
+	        }
+        }
+    }
+
+    public static function find_facility_mismatch()
+    {
+        ini_set("memory_limit", "-1");
+        $facilities = \App\OldModels\Facility::all();
+
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+        $conflict = [];
+
+        foreach ($facilities as $facility) {
+        	$fac = \App\Facility::locate($facility->facilitycode)->first();
+        	if(!$fac) continue;
+        	if($facility->facilitycode == 0) continue;
+         	// if($fac->id < 55000) continue;
+
+        	if($fac->id != $facility->ID){
+
+        		// dd([$fac->toArray(), $facility->toArray()]);
+
+        		$new_fac = \App\ViewFacility::find($facility->ID);
+        		// if($new_fac) dd([$fac->toArray(), $facility->toArray(), $new_fac->toArray()]);
+        		if($new_fac){
+        			$conflict[] = [
+        				'id' => $new_fac->id,
+        				'code' => $new_fac->facilitycode,
+        				'name' => $new_fac->name,
+        				'county' => $new_fac->county,
+        			];
+        			continue;
+        		}
+
+        		foreach ($classes as $class) {
+        			$class::where(['facility_id' => $facility->ID, 'synched' => 1])->update(['facility_id' => $fac->id, 'synched' => 2]);
+        			$class::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
+        		}
+
+        		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $facility->ID])->update(['facility_id' => $fac->id]);
+        	}
+        }
+
+        dd($conflict);
+    }
+
+    public static function change_facility_id($old_id, $new_id)
+    {
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+
+		foreach ($classes as $class) {
+			$class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
+			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
+
+		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+    }
+
+    public static function send_lab_tracker() {
+    	$year = date('Y');
+    	$month = date('m');
+    	$previousMonth =  $month - 1;
+    	if ($month == 1) {
+    		$previousMonth = 12;
+    		$year -= 1;
+    	}
+    	$data = Random::__getLablogsData($year, $month);
+
+    	// $facility = $batch->facility; 
+    	
+        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        if(env('APP_ENV') == 'production') 
+        	$mail_array = $facility->email_array;
+        if(!$mail_array) 
+        	return null;
+
+        try {
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	->send(new LabTracker($data));
+        } catch (Exception $e) {
+        	
+        }
+    }
+
+
+
+
 
 }
