@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'BatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
 			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
@@ -167,6 +168,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'ViralbatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
