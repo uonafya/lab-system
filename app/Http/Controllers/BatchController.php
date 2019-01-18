@@ -848,6 +848,18 @@ class BatchController extends Controller
 
     }
 
+    public function convert_to_site_entry(Batch $batch)
+    {
+        if($batch->site_entry == 2 && !$batch->datedispatched){
+            $batch->site_entry = 1;
+            $batch->save();
+            session(['toast_message' => 'The batch has been converted to a site entry']);
+            return back();
+        }
+        session(['toast_message' => 'The batch has not been converted to a site entry', 'toast_error' => 1]);
+        return back();
+    }
+
 
     public function search(Request $request)
     {
