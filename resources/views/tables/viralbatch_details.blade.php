@@ -89,6 +89,16 @@
                                     </a>
                                 </div>
                             @endif
+
+
+                            @if($batch->site_entry == 2)
+                                <div class="col-md-4">
+                                    <a href="{{ url('viralbatch/convert_from_poc/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Convert to Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
+
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('viralbatch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
