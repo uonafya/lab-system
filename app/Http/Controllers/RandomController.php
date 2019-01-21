@@ -131,7 +131,6 @@ class RandomController extends Controller
         $pageData = ['data' => $data, 'lab' => $lab];
         $view_data = view('exports.mpdf_labtracker', $pageData)->render();
         $mpdf->WriteHTML($view_data);
-        dd($mpdf);
         $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
 
 		// return view('exports.mpdf_labtracker', compact('data', 'lab'));
