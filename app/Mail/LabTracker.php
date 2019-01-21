@@ -36,7 +36,7 @@ class LabTracker extends Mailable
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
 
-        $this->title = $this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year;
+        $this->title = strtoupper($this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year);
     }
 
     /**
