@@ -250,6 +250,7 @@
 
                                     <option></option>
                                     @foreach ($pcrtypes as $pcrtype)
+                                        @continue($pcrtype->id == 5)
                                         <option value="{{ $pcrtype->id }}"
 
                                         @if (isset($sample) && $sample->pcrtype == $pcrtype->id)

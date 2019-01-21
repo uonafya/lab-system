@@ -922,6 +922,18 @@ class ViralbatchController extends Controller
 
     }
 
+    public function convert_to_site_entry(Viralbatch $batch)
+    {
+        if($batch->site_entry == 2 && !$batch->datedispatched){
+            $batch->site_entry = 1;
+            $batch->save();
+            session(['toast_message' => 'The batch has been converted to a site entry']);
+            return back();
+        }
+        session(['toast_message' => 'The batch has not been converted to a site entry', 'toast_error' => 1]);
+        return back();
+    }
+
     public function search(Request $request)
     {
         $user = auth()->user();
@@ -931,7 +943,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::whereRaw("id like '" . $search . "%'")
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id);
+                return $query->whereRaw("(lab_id={$user->lab_id} or site_entry=2)");
             })
             ->paginate(10);
 

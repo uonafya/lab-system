@@ -726,7 +726,7 @@ class MiscViral extends Common
             $limit -= $repeats->count();
         }
 
-        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname")
             ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
             ->where('datereceived', '>', $date_str)
@@ -1008,8 +1008,8 @@ class MiscViral extends Common
 
         
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        if(env('APP_ENV') == 'production') 
-            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
+        // if(env('APP_ENV') == 'production') 
+        //     $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
         if(!$mail_array) return null;
 
         try {

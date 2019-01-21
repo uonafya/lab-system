@@ -70,6 +70,14 @@
                                 </div>
                             @endif
 
+                            @if($batch->site_entry == 2)
+                                <div class="col-md-4">
+                                    <a href="{{ url('batch/convert_from_poc/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Convert to Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
+
 
 
                             <div class="col-md-4 pull-right">
