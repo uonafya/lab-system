@@ -35,7 +35,7 @@
 </head>
 <body>
 
-		<table class="table" border="0" style="width: 100%;">
+		<table class="table" border="0" style="width: 100%; border:none;">
 			<tr>
 				<td colspan="7" align="center">
 					<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">
