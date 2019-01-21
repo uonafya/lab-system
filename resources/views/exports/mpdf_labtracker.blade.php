@@ -73,21 +73,22 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ date("F", mktime(null, null, null, $performance->month)) }}, {{ $performance->year }}
+                            <center>{{ date("F", mktime(null, null, null, $performance->month)) }}, {{ $performance->year }}</center>
                         </th>
                         <td>
-                            {{ $performance->received }}
+                            <center>{{ $performance->received }}</center>
                         </td>
                         <td>
-                            {{ $performance->rejected }}
+                            <center>{{ $performance->rejected }}</center>
                         </td>
                         <td>
-                            {{ $performance->loggedin }}
+                            <center>{{ $performance->loggedin }}</center>
                         </td>
                         <td>
-                            {{ $performance->notlogged }}
+                            <center>{{ $performance->notlogged }}</center>
                         </td>
                         <td>
+                        	<center>
                         	@if($performance->testtype == 1)
 		                    	{{ $data->eidcount }}
 		                    @elseif($performance->testtype == 2)
@@ -97,9 +98,10 @@
 		                    		{{ $data->vldbscount }}
 		                    	@endif
 		                    @endif
+		                    </center>
                         </td>
                         <td>
-                            {{ $performance->reasonforbacklog }}
+                            <center>{{ $performance->reasonforbacklog }}</center>
                         </td>
                     </tr>
                     <tr>
@@ -147,16 +149,16 @@
                 </tr>
             @forelse($data->equipments as $key => $equipment)
                 <tr>
-                    <td>{{ $key+1 }}</td>
-                    <td>{{ $equipment->equipment->name ?? '' }}</td>
-                    <td>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }} @endisset</td>
-                    <td>@isset($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }} @endisset</td>
-                    <td>@isset($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }} @endisset</td>
-                    <td>{{ $equipment->downtime ?? '' }}</td>
-                    <td>{{ $equipment->samplesnorun ?? '' }}</td>
-                    <td>{{ $equipment->failedruns ?? '' }}</td>
-                    <td>{{ $equipment->reagentswasted ?? '' }}</td>
-                    <td>{{ $equipment->breakdownreason ?? '' }}</td>
+                    <td><center>{{ $key+1 }}</center></td>
+                    <td><center>{{ $equipment->equipment->name ?? '' }}</center></td>
+                    <td><center>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }} @end</isset</td>
+                    <td><center>@isset($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }} @endisset</center></td>
+                    <td><center>@isset($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }} @endisset</center></td>
+                    <td><center>{{ $equipment->downtime ?? '' }}</center></td>
+                    <td><center>{{ $equipment->samplesnorun ?? '' }}</center></td>
+                    <td><center>{{ $equipment->failedruns ?? '' }}</center></td>
+                    <td><center>{{ $equipment->reagentswasted ?? '' }}</center></td>
+                    <td><center>{{ $equipment->breakdownreason ?? '' }}</center></td>
                 </tr>
             @empty
             	<tr><td colspan="10"><center>No Data Available</center></td></tr>
