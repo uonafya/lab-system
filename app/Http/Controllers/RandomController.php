@@ -111,4 +111,18 @@ class RandomController extends Controller
         else
         	abort(401);
 	}
+
+	public function testlabtracker() {
+		$year = date('Y');
+    	$month = date('m');
+    	$previousMonth =  $month - 1;
+    	if ($month == 1) {
+    		$previousMonth = 12;
+    		$year -= 1;
+    	}
+    	$data = Random::__getLablogsData($year, $month);
+    	$lab = \App\Lab::find(env('APP_LAB'));
+    	dd($data);
+		return view('exports.mpdf_labtracker', compact('data', 'lab'));
+	}
 }
