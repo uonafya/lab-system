@@ -870,7 +870,8 @@ class BatchController extends Controller
         $batches = Batch::whereRaw("id like '" . $search . "%'")
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id);
+                // return $query->where('lab_id', $user->lab_id);
+                return $query->whereRaw("(lab_id={$user->lab_id} or site_entry=2)");
             })
             ->paginate(10);
 
