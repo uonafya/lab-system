@@ -111,8 +111,4 @@ class RandomController extends Controller
         else
         	abort(401);
 	}
-
-	public function testedarp() {
-		\App\MiscViral::edarpsamplesforapproval();
-	}
 }
