@@ -6,14 +6,15 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Mpdf\Mpdf;
 
 class LabTracker extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $lab;
-    protected $path;
-    protected $title;
+    public $lab;
+    public $path;
+    public $title;
     /**
      * Create a new message instance.
      *
@@ -21,16 +22,19 @@ class LabTracker extends Mailable
      */
     public function __construct($data)
     {
-         $this->path = storage_path('app/lablogs/monthlabtracker' . $data->year . ' - '. $data->month .'.pdf');\
+         $this->path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
 
         if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
 
         if(file_exists($this->path)) unlink($this->path);
-
+        
+        $mpdf = new Mpdf();
         $this->lab = \App\Lab::find(env('APP_LAB'));
         $lab = $this->lab;
-        $view_data = view('exports.mpdf_labtracker', compact('data', 'lab'))->render();
+        $pageData = ['data' => $data, 'lab' => $lab];
+        $view_data = view('exports.mpdf_labtracker', $pageData)->render();
         $mpdf->WriteHTML($view_data);
+        dd($mpdf);
         $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
 
         $this->title = $this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year;
