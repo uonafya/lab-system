@@ -685,15 +685,18 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    public static function send_lab_tracker() {
-    	$year = date('Y');
-    	$month = date('m');
-    	$previousMonth =  $month - 1;
-    	if ($month == 1) {
-    		$previousMonth = 12;
-    		$year -= 1;
+    public static function send_lab_tracker($year = null, $month = null) {
+    	if ($year == NULL) {
+    		$year = date('Y');
+	    	$month = date('m');
+	    	$previousMonth =  $month - 1;
+	    	if ($month == 1) {
+	    		$previousMonth = 12;
+	    		$year -= 1;
+	    	}
     	}
-    	$data = Random::__getLablogsData($year, $month);
+    	// dd($year. ' - ' .$previousMonth);
+    	$data = Random::__getLablogsData($year, $previousMonth);
 
     	// $facility = $batch->facility; 
     	
