@@ -685,7 +685,7 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    public static function send_lab_tracker($year = null, $month = null) {
+    public static function send_lab_tracker($year = null, $previousMonth = null) {
     	if ($year == NULL) {
     		$year = date('Y');
 	    	$month = date('m');
