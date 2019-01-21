@@ -150,7 +150,7 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
-            $this->__getExcel($data, $dateString);
+            $this->__getExcel($data, $dateString,$request);
         }else {
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
@@ -369,8 +369,8 @@ class ReportController extends Controller
         if($request->input('types') == 'eid') {
             $model->where('testtype', '=', 1);
             $kits->where('testtype', '=', 1);
-            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('samples.lab_id', '=', env('APP_LAB'))
-                        ->where('rejectedreason', '=', '0')
+            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('worksheets.lab_id', '=', env('APP_LAB'))
+                        ->where('receivedstatus', '=', '1')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("worksheets.machine_type", "=", 2);
@@ -382,8 +382,8 @@ class ReportController extends Controller
         if($request->input('types') == 'viralload') {
             $model->where('testtype', '=', 2);
             $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralsamples.lab_id', '=', env('APP_LAB'))
-                        ->where('rejectedreason', '=', '0')
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
+                        ->where('receivedstatus', '=', '1')
                         ->when($platform, function($query) use ($platform) {
                             if ($platform == 'abbott')
                                 return $query->where("viralworksheets.machine_type", "=", 2);
@@ -393,12 +393,17 @@ class ReportController extends Controller
             $type = 'VL';
         }
         $month = $request->input('month');
-        $previousMonth = $month -1;
+        $previousMonth = $month - 1;
+        if ($month == 1)
+            $previousMonth = 12;
         
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
+        $previousYear = $year;
+        if ($previousMonth == 12)
+            $previousYear = $year - 1;
 
-        $model->where('year', $year);
+        $model->whereRaw("(`year` = $year or `year` = $previousYear)");
         $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
         $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
@@ -411,6 +416,7 @@ class ReportController extends Controller
         $report = $model->get();
         $kits = $kits->get();
         $tests = $tests->first()->tests;
+        
         $data = json_decode(json_encode([
                     'parent' => self::$parent,
                     'child' => $sub,
@@ -464,7 +470,6 @@ class ReportController extends Controller
                         'month' => $monthName,
                         'year' => $year
                     ];
-        // $reports = $newdata;
         
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
@@ -477,7 +482,7 @@ class ReportController extends Controller
         $title = '';
     	if (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') {
     		$table = 'viralsamples_view';
-    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.partner', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')->where("$table.lab_id", '=', env('APP_LAB'))
+    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.partner', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsamples_view.age', 'viralpmtcttype.name as pmtct', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
     				->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -487,7 +492,8 @@ class ReportController extends Controller
     				->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
     				->leftJoin('viralrejectedreasons', 'viralrejectedreasons.id', '=', 'viralsamples_view.rejectedreason')
     				->leftJoin('viralprophylaxis', 'viralprophylaxis.id', '=', 'viralsamples_view.prophylaxis')
-    				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification');
+    				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
+                    ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct');
     	} else if (session('testingSystem') == 'EID' || $request->input('testtype') == 'EID'){
             $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname";
     		$table = 'samples_view';
@@ -532,11 +538,13 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "=", '2');
             $report .= 'rejected outcomes ';
         } else if ($request->input('types') == 'positives') {
-            $model = $model->where("$table.result", "=", 1);
+            $model = $model->where("$table.result", "=", 2);
             $report .= 'positive outcomes';
         } else if ($request->input('types') == 'poc') {
             $model = $model->where("$table.site_entry", '=', 2);
             $report .= 'poc tests';
+        } else {
+            $report .= 'samples log ';    
         }
 
         if(auth()->user()->user_type_id == 5) {
@@ -548,18 +556,27 @@ class ReportController extends Controller
         return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0);
     }
 
-    public static function __getExcel($data, $title)
+    public static function __getExcel($data, $title, $request = null)
     {
         $title = strtoupper($title);
         $dataArray = []; 
-        if (session('testingSystem') == 'Viralload') {
-            $dataArray[] = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'Age', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
-        } else if (session('testingSystem') == 'EID') {
-            $dataArray[] = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
-        } else if (session('testingSystem') == 'CD4') {
-            $dataArray[] = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'Age', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
+        $vlDataArray = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
+        $eidDataArray = ['Lab ID', 'Batch #', 'Sample Code', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
+        $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
+        if (auth()->user()->user_type_id == 5) {
+            if ($request->input('testtype') == 'VL')
+                $dataArray[] = $vlDataArray;
+            else if ($request->input('testtype') == 'EID')
+                $dataArray[] = $eidDataArray;
+        } else {
+            if (session('testingSystem') == 'Viralload')
+                $dataArray[] = $vlDataArray;
+            else if (session('testingSystem') == 'EID')
+                $dataArray[] = $eidDataArray;
+            else if (session('testingSystem') == 'CD4')
+                $dataArray[] = $cd4DataArray;
         }
-        
+                
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
         

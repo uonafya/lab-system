@@ -13,6 +13,8 @@ use App\Requisition;
 use App\User;
 use App\SampleView;
 use App\ViralsampleView;
+use App\Kits;
+use App\Machine;
 
 use DB;
 
@@ -63,6 +65,7 @@ class TaskController extends Controller
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
+        
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
@@ -240,10 +243,7 @@ class TaskController extends Controller
     public function consumption (Request $request, $guide=null)
     {
         if ($guide != null) {
-            $filename = 'CONSUMPTION_GUIDE.pdf';
-            $path = storage_path('app/downloads/' . $filename);
-
-            return response()->download($path);
+            return redirect('http://lab-2.test.nascop.org/download/consumption');
         }
 
         $data['testtypes'] = ['EID', 'VL'];
@@ -319,8 +319,9 @@ class TaskController extends Controller
         $taqproc = Taqmanprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
-        if ($taqproc > 0 && $abbottproc > 0)
-            return redirect()->route('pending');
+        if ($taqproc > 0 && $abbottproc > 0) {
+            return redirect()->route('allocation');
+        }
         
         $data['taqmanKits'] = $this->taqmanKits;
         $data['abbottKits'] = $this->abbottKits;
@@ -356,6 +357,101 @@ class TaskController extends Controller
         $data = (object) $data;
         // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
+    }
+
+    public function allocation(Request $request) {
+        if ($request->method() == "GET") {
+            $machines = DB::table('machines')->where('id', '<>', 4)->get();
+            
+            return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+        } else if ($request->method() == "POST") {
+            if ($request->has(['machine-form'])){
+                $machines = Machine::whereIn('id',$request->input('machine'))->get();
+                $data = $this->getDataForAllocation($request->input('machine'), $machines);
+                $data['machines'] = $machines;
+                $data = (object) $data;
+                dd($data);
+                return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
+            }
+            else
+                $saveAllocation = $this->saveAllocation($request);
+        }
+    }
+
+    protected function saveAllocation($request) {
+
+    }
+
+    protected function getDataForAllocation($machines, $machinesData) {
+        if (is_array($machines)){
+            // Get the necessary models
+            if (in_array(2, $machines))
+                $abbott = Abbotprocurement::orderBy('id');
+            if (array_intersect($machines, [1,3] ))
+                $taqman = Taqmanprocurement::orderBy('id');
+
+            // Factoring in the early year problems
+            if($this->previousMonth == 1) {
+                $taqman->whereRaw("((month = 1 and year = $this->year) or (month in (12,11) and year = $this->previousYear))");
+                $abbott->whereRaw("((month = 1 and year = $this->year) or (month in (12,11) and year = $this->previousYear))");
+            } else if ($this->previousMonth == 2) {
+                $taqman->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
+                $abbott->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
+            } else {
+                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2]
+                $year = $this->year;
+                if ($this->month == 1)
+                    $year = $this->previousYear;
+                $taqman->where('year', "=", $year)->whereIn("month", $eligibleMonths);
+                $abbott->where('year', "=", $year)->whereIn("month", $eligibleMonths);
+            }
+        }
+        
+        return self::__buildEndingData((object)['taqman' => $taqman->get(), 'abbott' => $abbott->get()], $machinesData);
+    }
+
+    protected static function __buildEndingData($data, $machinesData) {
+        // Build Roche Data (Both Taqman and C8800)
+        $rocheData = self::__buildRocheEndingData($data->taqman, $machinesData);
+        //Build Abbott Data
+        $abbottData = self::__buildAbbottEndingData($data->abbott, $machinesData);
+        dd($abbottData);
+    }
+
+    protected static function __buildRocheEndingData($data, $machinesData) {
+        $return = [];
+        //Build Taqman Data
+        if (!$data->isEmpty()) {
+            foreach ($machinesData as $key => $machine) {
+                if (in_array($machine->id, [1,3])) {
+                    foreach ($data as $key => $consumption) {
+                        foreach ($machine->kits as $key => $kit) {
+                            $column = 'ending'.$kit->alias;
+                            $return[$machine->id][$kit->alias] = ['ending' => ($consumption->$column)];
+                        }
+                    }
+                }
+            }
+        }
+        return $return;
+    }
+
+    protected static function __buildAbbottEndingData($data, $machinesData) {
+        $return = [];
+        //Build Abbott Data
+        if (!$data->isEmpty()) {
+            foreach ($machinesData as $key => $machine) {
+                if ($machine->id == 2) {
+                    foreach ($data as $key => $consumption) {
+                        foreach ($machine->kits as $key => $kit) {
+                            $column = 'ending'.$kit->alias;
+                            $return[$machine->id][$kit->alias] = ['ending' => ($consumption->$column / 2)];
+                        }
+                    }
+                }
+            }
+        }
+        return $return;
     }
 
     public function performancelog(Request $request)
@@ -488,10 +584,10 @@ class TaskController extends Controller
     public function getConsumption()
     {
         return [
-            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$this->previousMonth,$this->year),
-            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$this->previousMonth,$this->year),
-            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$this->previousMonth,$this->year),
-            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$this->previousMonth,$this->year)
+            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$this->previousMonth,$this->previousYear),
+            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$this->previousMonth,$this->previousYear),
+            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$this->previousMonth,$this->previousYear),
+            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$this->previousMonth,$this->previousYear)
         ];
     }
 

@@ -27,7 +27,7 @@ class ViralsampleController extends Controller
         //
     }
 
-    public function nhrl_samples()
+    public function nhrl_samples(Request $request)
     {
         $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get(); 
         $data['samples'] = $samples;

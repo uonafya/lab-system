@@ -67,10 +67,16 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
-        $month = date('m');
-        $prevmonth = $month-1;
-        $equipment = LabEquipmentTracker::where('year', date('Y'))->where('month', $prevmonth)->count();
-        $performance = LabPerformanceTracker::where('year', date('Y'))->where('month', $prevmonth)->count();
+        $currentmonth = date('m');
+        $prevmonth = date('m')-1;
+        $year = date('Y');
+        $prevyear = $year;
+        if ($currentmonth == 1) {
+            $prevmonth = 12;
+            $prevyear -= 1;
+        }
+        $equipment = LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
+        $performance = LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
 
         $labtracker = 0;
         if ($performance > 0 &&  $equipment > 0) 
@@ -84,10 +90,10 @@ class Controller extends BaseController
         
         foreach ($testype as $key => $value) {
             if ($abbot == 1) {//Check for both abbot and taqman
-                $abbot[] = Abbotprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
+                $abbot[] = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                             }
                                
-            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', date('Y'))->where('lab_id', Auth()->user()->lab_id)->where('testtype', $value)->count();
+            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                         
         }
         // dd($abbot);
