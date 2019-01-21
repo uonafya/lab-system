@@ -10,6 +10,7 @@ use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
 use App\Random;
+use Mpdf\Mpdf;
 
 class RandomController extends Controller
 {
@@ -123,6 +124,16 @@ class RandomController extends Controller
     	$data = Random::__getLablogsData($year, $month);
     	$lab = \App\Lab::find(env('APP_LAB'));
     	// dd($lab);
-		return view('exports.mpdf_labtracker', compact('data', 'lab'));
+
+    	$mpdf = new Mpdf();
+        $this->lab = \App\Lab::find(env('APP_LAB'));
+        $lab = $this->lab;
+        $pageData = ['data' => $data, 'lab' => $lab];
+        $view_data = view('exports.mpdf_labtracker', $pageData)->render();
+        $mpdf->WriteHTML($view_data);
+        dd($mpdf);
+        $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
+
+		// return view('exports.mpdf_labtracker', compact('data', 'lab'));
 	}
 }
