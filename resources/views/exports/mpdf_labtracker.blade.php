@@ -35,14 +35,14 @@
 </head>
 <body>
 
-		<table class="table" border="0">
+		<table class="table" border="0" style="width: 100%;">
 			<tr>
 				<td colspan="7" align="center">
 					<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="9" align="center">
+				<td colspan="7" align="center">
 					<h5>{{ $lab->name }}</h5>
 				</td>
 			</tr>
@@ -51,7 +51,7 @@
 		<br />
 
 		@forelse($data->performance as $performance)
-            <table>
+            <table style="width: 100%;">
                 <tbody>
                 	<tr>
                         <th colspan="7">
@@ -130,7 +130,7 @@
         	<tr><td colspan="7"><center>No Data Available</center></td></tr>
         @endforelse
 		<br />
-		<table>
+		<table style="width: 100%;">
             <tbody>
             	<tr>
             		<th colspan="10" align="center">EQUIPMENT LOG</th>
