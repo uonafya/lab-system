@@ -8,6 +8,21 @@ use App\Facilitys;
 class Random
 {
 
+
+
+	public static function add_amrs()
+	{
+		ini_set("memory_limit", "-1");
+        config(['excel.import.heading' => true]);
+		$path = public_path('obs2.csv');
+		$data = Excel::load($path, function($reader){})->get();
+
+		foreach ($data as $row) {
+			$amrs_location = \App\Lookup::get_mrslocation($row->location_id);
+			\App\Viralsample::where(['order_no' => $row->order_number])->update(['amrs_location' => $amrs_location]);
+		}
+	}
+
 	public static function facilitys()
 	{
 		self::alter_facilitys();

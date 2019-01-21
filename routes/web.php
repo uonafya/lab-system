@@ -27,6 +27,7 @@ Route::redirect('/knh', '/login');
 Route::redirect('/nyumbani', '/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
+Route::get('testedarp', 'RandomController@testedarp');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');
@@ -93,6 +94,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'BatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
 			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
@@ -168,6 +170,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'ViralbatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
@@ -287,7 +290,8 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('patient', 'PatientController');
 
-
+	Route::get('allocation', 'TaskController@allocation')->name('allocation');
+	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
 	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
 	Route::post('consumption', 'TaskController@consumption');
 	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');

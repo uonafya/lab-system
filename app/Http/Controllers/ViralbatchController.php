@@ -87,19 +87,32 @@ class ViralbatchController extends Controller
 
         $this->batches_transformer($batches, $batch_complete);
 
-        if($batch_complete == 1){
-            $p = Lookup::get_partners();
-            $fac = false;
-            if($facility_id) $fac = Facility::find($facility_id);
+        $p = Lookup::get_partners();
+        $fac = false;
+        if($facility_id) $fac = Facility::find($facility_id);
 
-            return view('tables.dispatched_viralbatches', [
-                'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 
-                'batch_complete' => $batch_complete, 
-                'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
-                'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])->with('pageTitle', 'Samples by Batch');
-        }
+        $view = 'tables.batches';
+        if($batch_complete == 1) $view = 'tables.dispatched_viralbatches';
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
+        return view($view, [
+            'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 
+            'batch_complete' => $batch_complete, 
+            'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+            'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])->with('pageTitle', 'Samples by Batch');
+
+        // if($batch_complete == 1){
+        //     $p = Lookup::get_partners();
+        //     $fac = false;
+        //     if($facility_id) $fac = Facility::find($facility_id);
+
+        //     return view('tables.dispatched_viralbatches', [
+        //         'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 
+        //         'batch_complete' => $batch_complete, 
+        //         'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+        //         'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])->with('pageTitle', 'Samples by Batch');
+        // }
+
+        // return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => 'viral', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
 
     public function to_print($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
@@ -198,6 +211,7 @@ class ViralbatchController extends Controller
 
     public function batch_search(Request $request)
     {
+        $batch_complete = $request->input('batch_complete', 1);
         $submit_type = $request->input('submit_type');
         $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
@@ -215,7 +229,7 @@ class ViralbatchController extends Controller
         if($subcounty_id == '') $subcounty_id = 0;
         if($facility_id == '') $facility_id = 0;
 
-        if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+        if($submit_type == 'excel') return $this->dispatch_report($batch_complete, $date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         if($to_print) return redirect("viralbatch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
@@ -831,7 +845,7 @@ class ViralbatchController extends Controller
         return back();
     }
 
-    public function dispatch_report($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $date_column = "viralbatches.datedispatched";
 
@@ -858,8 +872,22 @@ class ViralbatchController extends Controller
             ->when($partner_id, function($query) use ($partner_id){
                 return $query->where('facilitys.partner', $partner_id);
             })
-            ->where('batch_complete', 1)
-            ->orderBy($date_column, 'desc')
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
+
+                else if($batch_complete == 5){
+                    return $query->whereNull('datereceived')
+                        ->where(['site_entry' => 1, 'batch_complete' => 0])
+                        ->where('viralbatches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
+                }
+            })
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
+                return $query->orderBy('viralbatches.created_at', 'desc');
+            })
+            ->where('viralbatches.lab_id', env('APP_LAB'))
+            // ->where('batch_complete', 1)
+            // ->orderBy($date_column, 'desc')
             ->orderBy('batch_id', 'desc')
             ->get();
 
@@ -894,6 +922,18 @@ class ViralbatchController extends Controller
 
     }
 
+    public function convert_to_site_entry(Viralbatch $batch)
+    {
+        if($batch->site_entry == 2 && !$batch->datedispatched){
+            $batch->site_entry = 1;
+            $batch->save();
+            session(['toast_message' => 'The batch has been converted to a site entry']);
+            return back();
+        }
+        session(['toast_message' => 'The batch has not been converted to a site entry', 'toast_error' => 1]);
+        return back();
+    }
+
     public function search(Request $request)
     {
         $user = auth()->user();
@@ -903,7 +943,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::whereRaw("id like '" . $search . "%'")
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id);
+                return $query->whereRaw("(lab_id={$user->lab_id} or site_entry=2)");
             })
             ->paginate(10);
 

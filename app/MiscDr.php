@@ -77,7 +77,7 @@ class MiscDr extends Common
 
 			Cache::store('file')->put('dr_api_token', $key, 60);
 
-			echo $key;
+			// echo $key;
 			return;
 		}
 		die();
@@ -100,7 +100,7 @@ class MiscDr extends Common
 				'included' => $sample_data,
 			];
 
-		self::dump_log($postData);
+		// self::dump_log($postData);
 
 		// die();
 
@@ -177,15 +177,15 @@ class MiscDr extends Common
 				// if($ab) $abs[] = $ab;
 				if($ab){
 					$abs[] = $ab;
-					$abs2[] = ['file_name' => $ab['file_name']];
+					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
 			}
 			if(!$abs) continue;
 			$s['attributes']['ab1s'] = $abs;
 			$sample_data[] = $s;
 
-			$s['attributes']['ab1s'] = $abs2;
-			$print_data[] = $s;
+			// $s['attributes']['ab1s'] = $abs2;
+			// $print_data[] = $s;
 		}
 		// self::dump_log($print_data);
 		// die();
@@ -477,6 +477,20 @@ class MiscDr extends Common
 
 	        $patient->status_id=2;
 	        $patient->save();
+		}
+	}
+
+
+	public static function regimens()
+	{
+		$calls = \App\DrCallView::all();
+
+		foreach ($calls as $key => $value) {
+			$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
+
+			if(!$reg){
+				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name, 'call' => $value->call]);
+			}
 		}
 	}
 

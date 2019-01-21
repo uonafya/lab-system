@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDrMutationsTable extends Migration
+class AlterKitsAddUnits extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateDrMutationsTable extends Migration
      */
     public function up()
     {
-        // Schema::create('dr_mutations', function (Blueprint $table) {
-        //     $table->increments('id');
-        //     $table->integer('sample_id')->unsigned()->index();
-            
-        //     $table->timestamps();
-        // });
+        Schema::table('kits', function($table){
+            $table->string('unit')->after('alias')->nullable();
+        });
     }
 
     /**
@@ -28,6 +25,6 @@ class CreateDrMutationsTable extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('dr_mutations');
+        //
     }
 }
