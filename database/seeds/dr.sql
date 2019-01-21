@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS `regimen_classes`;
+-- Dumping structure for table apidb.age_bands
+CREATE TABLE IF NOT EXISTS `regimen_classes` (
+  `id`  TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
+  `drug_class` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
+  `short_name` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
+  `call` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `dr_plate_statuses`;
 CREATE TABLE  `dr_plate_statuses` (
   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
