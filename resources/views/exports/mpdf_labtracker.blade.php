@@ -51,7 +51,7 @@
 		<br />
 
 		@forelse($data->performance as $performance)
-            <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
+            <table style="margin-top: 1em; width: 100%;">
                 <tbody>
                 	<tr>
                         <th colspan="7">
@@ -128,7 +128,7 @@
         	
         @endforelse
 		<br />
-		<table style="font-size: 10px;margin-top: 1em; width: 100%;">
+		<table style="margin-top: 1em; width: 100%;">
             <tbody>
             	<tr>
             		<th colspan="10" align="center">EQUIPMENT LOG</th>
