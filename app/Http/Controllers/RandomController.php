@@ -122,7 +122,7 @@ class RandomController extends Controller
     	}
     	$data = Random::__getLablogsData($year, $month);
     	$lab = \App\Lab::find(env('APP_LAB'));
-    	dd($data);
+    	// dd($lab);
 		return view('exports.mpdf_labtracker', compact('data', 'lab'));
 	}
 }
