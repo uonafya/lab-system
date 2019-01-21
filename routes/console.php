@@ -269,6 +269,11 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
+Artisan::command('send:labtrackerspecific {year} {month}', function($year, $month){
+    $str = \App\Common::send_lab_tracker($year, $month);
+    $this->info($str);
+})->describe('Send labtracker email to the program people');
+
 Artisan::command('send:labtracker', function(){
     $str = \App\Common::send_lab_tracker();
     $this->info($str);
