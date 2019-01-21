@@ -8,6 +8,7 @@ use App\Mail\EidDispatch;
 use App\Mail\VlDispatch;
 use App\Mail\UrgentCommunication;
 use App\Mail\NoDataReport;
+use App\Mail\LabTracker;
 use Carbon\Carbon;
 use Exception;
 
@@ -682,6 +683,32 @@ class Common
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+    }
+
+    public static function send_lab_tracker() {
+    	$year = date('Y');
+    	$month = date('m');
+    	$previousMonth =  $month - 1;
+    	if ($month == 1) {
+    		$previousMonth = 12;
+    		$year -= 1;
+    	}
+    	$data = Random::__getLablogsData($year, $month);
+
+    	// $facility = $batch->facility; 
+    	
+        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        if(env('APP_ENV') == 'production') 
+        	$mail_array = $facility->email_array;
+        if(!$mail_array) 
+        	return null;
+
+        try {
+        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	->send(new LabTracker($data));
+        } catch (Exception $e) {
+        	
+        }
     }
 
 
