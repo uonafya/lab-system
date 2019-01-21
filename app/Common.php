@@ -699,8 +699,8 @@ class Common
     	
         // $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
         $mail_array = ['bakasajoshua09@gmail.com', 'baksajoshua09@gmail.com'];
-        if(env('APP_ENV') == 'production') 
-        	$mail_array = $facility->email_array;
+        // if(env('APP_ENV') == 'production') 
+        // 	$mail_array = $facility->email_array;
         if(!$mail_array) 
         	return null;
 
