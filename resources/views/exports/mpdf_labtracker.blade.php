@@ -127,7 +127,7 @@
                 </tbody>
             </table>
         @empty
-        	
+        	<tr><td colspan="7"><center>No Data Available</center></td></tr>
         @endforelse
 		<br />
 		<table style="margin-top: 1em; width: 100%;">
@@ -151,7 +151,7 @@
                 <tr>
                     <td><center>{{ $key+1 }}</center></td>
                     <td><center>{{ $equipment->equipment->name ?? '' }}</center></td>
-                    <td><center>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }} @end</isset</td>
+                    <td><center>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }} @endisset</center></td>
                     <td><center>@isset($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }} @endisset</center></td>
                     <td><center>@isset($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }} @endisset</center></td>
                     <td><center>{{ $equipment->downtime ?? '' }}</center></td>
