@@ -12,6 +12,8 @@ class LabTracker extends Mailable
     use Queueable, SerializesModels;
 
     protected $lab;
+    protected $path;
+    protected $title;
     /**
      * Create a new message instance.
      *
@@ -19,11 +21,19 @@ class LabTracker extends Mailable
      */
     public function __construct($data)
     {
+         $this->path = storage_path('app/lablogs/monthlabtracker' . $data->year . ' - '. $data->month .'.pdf');\
+
+        if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
+
+        if(file_exists($this->path)) unlink($this->path);
+
         $this->lab = \App\Lab::find(env('APP_LAB'));
         $lab = $this->lab;
         $view_data = view('exports.mpdf_labtracker', compact('data', 'lab'))->render();
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
+        $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
+
+        $this->title = $this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year;
     }
 
     /**
@@ -33,6 +43,8 @@ class LabTracker extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.labtracker');
+        $this->attach($this->path, ['as' => $this->title]);
+
+        return $this->subject($this->title)->view('emails.labtracker');
     }
 }
