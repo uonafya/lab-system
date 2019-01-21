@@ -1007,13 +1007,15 @@ class MiscViral extends Common
         $data = (object)['samples' => $samples, 'url' => $form_url];
 
         
-        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-        if(env('APP_ENV') == 'production') 
-            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
+        $mail_array = array('bakasajoshua09@gmail.com', 'baksajoshua09@gmail.com');
+        // $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        // if(env('APP_ENV') == 'production') 
+        //     $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
         if(!$mail_array) return null;
 
         try {
-            Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+            // Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+            Mail::to($mail_array)->bcc(['joshua.bakasa@dataposit.co.ke'])
             ->send(new Edarp($data));
             
         } catch (Exception $e) {
