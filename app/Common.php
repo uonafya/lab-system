@@ -697,14 +697,15 @@ class Common
 
     	// $facility = $batch->facility; 
     	
-        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        // $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        $mail_array = ['bakasajoshua09@gmail.com', 'baksajoshua09@gmail.com'];
         if(env('APP_ENV') == 'production') 
         	$mail_array = $facility->email_array;
         if(!$mail_array) 
         	return null;
 
         try {
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	Mail::to($mail_array)->bcc(['joshua.bakasa@dataposit.co.ke'])
         	->send(new LabTracker($data));
         } catch (Exception $e) {
         	

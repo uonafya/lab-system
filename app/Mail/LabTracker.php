@@ -21,7 +21,7 @@ class LabTracker extends Mailable
     {
         $this->lab = \App\Lab::find(env('APP_LAB'));
         $lab = $this->lab;
-        $view_data = view('exports.mpdf_samples', compact('data', 'lab'))->render();
+        $view_data = view('exports.mpdf_labtracker', compact('data', 'lab'))->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
     }
