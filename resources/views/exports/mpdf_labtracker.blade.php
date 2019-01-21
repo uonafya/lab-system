@@ -37,12 +37,12 @@
 
 		<table class="table" border="0" style="width: 100%; border:none;">
 			<tr>
-				<td colspan="7" align="center">
+				<td colspan="7" align="center" style="border: none;">
 					<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="7" align="center">
+				<td colspan="7" align="center" style="border: none;">
 					<h5>{{ $lab->name }}</h5>
 				</td>
 			</tr>
