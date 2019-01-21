@@ -35,7 +35,7 @@
 </head>
 <body>
 
-		<table class="table" border="0" style="border: 0px; width: 100%;">
+		<table class="table" border="0">
 			<tr>
 				<td colspan="7" align="center">
 					<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">
@@ -51,7 +51,7 @@
 		<br />
 
 		@forelse($data->performance as $performance)
-            <table style="margin-top: 1em; width: 100%;">
+            <table>
                 <tbody>
                 	<tr>
                         <th colspan="7">
@@ -130,7 +130,7 @@
         	<tr><td colspan="7"><center>No Data Available</center></td></tr>
         @endforelse
 		<br />
-		<table style="margin-top: 1em; width: 100%;">
+		<table>
             <tbody>
             	<tr>
             		<th colspan="10" align="center">EQUIPMENT LOG</th>
