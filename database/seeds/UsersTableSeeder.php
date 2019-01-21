@@ -15,13 +15,13 @@ class UsersTableSeeder extends Seeder
         
 
         DB::table('user_types')->insert([
-		    ['id' => '1', 'user_type' => 'Lab User'],
-		    ['id' => '2', 'user_type' => 'System Administrator'],
-		    ['id' => '3', 'user_type' => 'Program Officers'],
-		    ['id' => '4', 'user_type' => 'Data Clerk'],
-		    ['id' => '5', 'user_type' => 'Facility Users'],
-		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
-		    ['id' => '7', 'user_type' => 'POC Admin'],
+		    // ['id' => '1', 'user_type' => 'Lab User'],
+		    // ['id' => '2', 'user_type' => 'System Administrator'],
+		    // ['id' => '3', 'user_type' => 'Program Officers'],
+		    // ['id' => '4', 'user_type' => 'Data Clerk'],
+		    // ['id' => '5', 'user_type' => 'Facility Users'],
+		    // ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
+		    // ['id' => '7', 'user_type' => 'POC Admin'],
 		    ['id' => '8', 'user_type' => 'EDARP Admin'],
 		]);
 
@@ -47,47 +47,47 @@ class UsersTableSeeder extends Seeder
 
 
 
-        $users = factory(App\User::class, 1)->create([
-	        'user_type_id' => 0,
-	        'surname' => 'Kithinji',
-	        'oname' => 'Joel',
-	        'email' => 'joelkith@gmail.com',
-    	]);
+     //    $users = factory(App\User::class, 1)->create([
+	    //     'user_type_id' => 0,
+	    //     'surname' => 'Kithinji',
+	    //     'oname' => 'Joel',
+	    //     'email' => 'joelkith@gmail.com',
+    	// ]);
 
-        $users = factory(App\User::class, 1)->create([
-	        'user_type_id' => 0,
-	        'surname' => 'Bakasa',
-	        'oname' => 'Joshua',
-	        'email' => 'bakasa@gmail.com',
-    	]);
+     //    $users = factory(App\User::class, 1)->create([
+	    //     'user_type_id' => 0,
+	    //     'surname' => 'Bakasa',
+	    //     'oname' => 'Joshua',
+	    //     'email' => 'bakasa@gmail.com',
+    	// ]);
 
-        $users = factory(App\User::class, 1)->create([
-	        'user_type_id' => 0,
-	        'surname' => 'Ngugi',
-	        'oname' => 'Tim',
-	        'email' => 'tim@gmail.com',
-    	]);
+     //    $users = factory(App\User::class, 1)->create([
+	    //     'user_type_id' => 0,
+	    //     'surname' => 'Ngugi',
+	    //     'oname' => 'Tim',
+	    //     'email' => 'tim@gmail.com',
+    	// ]);
 
-        $users = factory(App\User::class, 1)->create([
-	        'user_type_id' => 0,
-	        'surname' => 'Lusike',
-	        'oname' => 'Judy',
-	        'email' => 'judy@gmail.com',
-    	]);
+     //    $users = factory(App\User::class, 1)->create([
+	    //     'user_type_id' => 0,
+	    //     'surname' => 'Lusike',
+	    //     'oname' => 'Judy',
+	    //     'email' => 'judy@gmail.com',
+    	// ]);
 
-        $users = factory(App\User::class, 1)->create([
-	        'user_type_id' => 2,
-	        'surname' => 'Default',
-	        'oname' => 'Admin',
-	        'email' => 'admin@admin.com',
-    	]);
+     //    $users = factory(App\User::class, 1)->create([
+	    //     'user_type_id' => 2,
+	    //     'surname' => 'Default',
+	    //     'oname' => 'Admin',
+	    //     'email' => 'admin@admin.com',
+    	// ]);
 
-        $users = factory(App\User::class, 1)->create([
-	        'user_type_id' => 7,
-	        'surname' => 'POC',
-	        'oname' => 'Admin',
-	        'email' => 'poc@gmail.com',
-    	]);
+     //    $users = factory(App\User::class, 1)->create([
+	    //     'user_type_id' => 7,
+	    //     'surname' => 'POC',
+	    //     'oname' => 'Admin',
+	    //     'email' => 'poc@gmail.com',
+    	// ]);
 
         if (env('APP_LAB') == 2) // EDARP user to approve samples which are staged in Kisumu
 	        $users = factory(App\User::class, 1)->create([
@@ -98,38 +98,38 @@ class UsersTableSeeder extends Seeder
 		        'password' => encrypt(env('APP_KEY').'@edarp')
 	    	]);
 
-    	$facilitys = DB::table('facilitys')->get();
+    	// $facilitys = DB::table('facilitys')->get();
 
-    	$i=0;
-    	$data= null;
+    	// $i=0;
+    	// $data= null;
 
-    	foreach ($facilitys as $key => $facility) {
-    		$fac = factory(App\User::class, 1)->create([
-		        'user_type_id' => 5,
-		        'surname' => '',
-		        'oname' => '',
-		        'facility_id' => $facility->id,
-		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		        'password' => encrypt($facility->name)
-	    	]);
+    	// foreach ($facilitys as $key => $facility) {
+    	// 	$fac = factory(App\User::class, 1)->create([
+		   //      'user_type_id' => 5,
+		   //      'surname' => '',
+		   //      'oname' => '',
+		   //      'facility_id' => $facility->id,
+		   //      'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		   //      'password' => encrypt($facility->name)
+	    // 	]);
 
-	    	// if($key==100) break;
+	    // 	// if($key==100) break;
 
-    		// $data[$i] = [
-		    //     'user_type_id' => 5,
-		    //     'surname' => '',
-		    //     'oname' => '',
-		    //     'facility_id' => $facility->id,
-		    //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		    //     'password' => bcrypt(encrypt($facility->name)),
-	    	// ];
+    	// 	// $data[$i] = [
+		   //  //     'user_type_id' => 5,
+		   //  //     'surname' => '',
+		   //  //     'oname' => '',
+		   //  //     'facility_id' => $facility->id,
+		   //  //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		   //  //     'password' => bcrypt(encrypt($facility->name)),
+	    // 	// ];
 
-	    	// if($i == 200){
-	    	// 	DB::table('users')->insert($data);
-	    	// 	$i=0;
-	    	// 	$data = NULL;
-	    	// }
-    	}
+	    // 	// if($i == 200){
+	    // 	// 	DB::table('users')->insert($data);
+	    // 	// 	$i=0;
+	    // 	// 	$data = NULL;
+	    // 	// }
+    	// }
     	// DB::table('users')->insert($data);
     }
 }
