@@ -241,6 +241,7 @@ class Synch
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
+				'http_errors' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
