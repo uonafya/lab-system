@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\Viralpatient;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Api\V1\Requests\ApiRequest;
 
 class ViralpatientController extends Controller
 {
@@ -25,7 +26,7 @@ class ViralpatientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ApiRequest $request)
     {
         //
     }
@@ -48,7 +49,7 @@ class ViralpatientController extends Controller
      * @param  \App\Viralpatient  $viralpatient
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Viralpatient $viralpatient)
+    public function update(ApiRequest $request, Viralpatient $viralpatient)
     {
         //
     }

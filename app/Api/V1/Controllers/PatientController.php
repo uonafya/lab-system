@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\Patient;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Api\V1\Requests\ApiRequest;
 
 class PatientController extends Controller
 {
@@ -24,7 +25,7 @@ class PatientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ApiRequest $request)
     {
         //
     }
@@ -47,7 +48,7 @@ class PatientController extends Controller
      * @param  \App\Patient  $patient
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Patient $patient)
+    public function update(ApiRequest $request, Patient $patient)
     {
         //
     }
