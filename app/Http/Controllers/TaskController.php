@@ -398,7 +398,7 @@ class TaskController extends Controller
                 $taqman->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
                 $abbott->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
             } else {
-                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2]
+                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2];
                 $year = $this->year;
                 if ($this->month == 1)
                     $year = $this->previousYear;
