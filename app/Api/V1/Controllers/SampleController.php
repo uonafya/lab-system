@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\Sample;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Api\V1\Requests\ApiRequest;
 
 class SampleController extends Controller
 {
@@ -25,7 +26,7 @@ class SampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ApiRequest $request)
     {
         //
     }
@@ -38,7 +39,9 @@ class SampleController extends Controller
      */
     public function show(Sample $sample)
     {
-        //
+        $sample->load(['patient.mother']);
+        $sample->batch;
+        return $sample;
     }
 
     /**
@@ -48,7 +51,7 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Sample $sample)
+    public function update(ApiRequest $request, Sample $sample)
     {
         //
     }
