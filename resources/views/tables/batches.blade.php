@@ -80,7 +80,7 @@
 
         @if(auth()->user()->user_type_id != 5)
 
-            {{ Form::open(['url' => $pre . '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+            {{ Form::open(['url' => $pre . 'batch/index', 'method' => 'post', 'class' => 'my_form']) }}
 
                 @isset($to_print)
                     <input type="hidden" name="to_print" value="1">
