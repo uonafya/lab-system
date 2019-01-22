@@ -27,6 +27,7 @@ Route::redirect('/knh', '/login');
 Route::redirect('/nyumbani', '/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
+Route::get('labtrackertest', 'RandomController@testlabtracker');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');
@@ -60,6 +61,7 @@ Route::get('download_api', 'RandomController@download_api');
 
 Route::middleware(['signed'])->group(function(){
 	Route::get('dr_sample/edit/{user}/{sample}', 'DrSampleController@facility_edit')->name('dr_sample.facility_edit');
+	Route::get('nhrl', 'RandomController@login_edarp')->name('nhrl');
 });
 
 Route::middleware(['auth'])->group(function(){
@@ -92,6 +94,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'BatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
 			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
@@ -167,6 +170,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'ViralbatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
@@ -286,7 +290,8 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('patient', 'PatientController');
 
-
+	Route::get('allocation', 'TaskController@allocation')->name('allocation');
+	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
 	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
 	Route::post('consumption', 'TaskController@consumption');
 	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
@@ -356,7 +361,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('create/{sampletype?}', 'ViralsampleController@create');
 
-		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
+		Route::get('nhrl', 'ViralsampleController@nhrl_samples')->name('nhrl');
 		Route::post('nhrl', 'ViralsampleController@approve_nhrl');
 
 		Route::get('upload', 'ViralsampleController@site_sample_page');

@@ -775,7 +775,7 @@ class BatchController extends Controller
     {
         $date_column = "batches.datedispatched";
 
-        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'batches.datedispatched'])
+        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'samples.datecollected', 'batches.datereceived', 'samples.datetested', 'batches.datedispatched'])
             ->leftJoin('patients', 'patients.id', '=', 'samples.patient_id')
             ->leftJoin('batches', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
@@ -826,6 +826,9 @@ class BatchController extends Controller
             $data[$key]['Sub County'] = $sample->subcounty;
             $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
             $data[$key]['Test Outcome'] = $sample->result_name;
+            $data[$key]['Date Collected'] = $sample->my_date_format('datecollected');
+            $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
+            $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
@@ -844,8 +847,20 @@ class BatchController extends Controller
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $sheet->fromArray($data);
             });
-        })->download('xls');
+        })->download('csv');
 
+    }
+
+    public function convert_to_site_entry(Batch $batch)
+    {
+        if($batch->site_entry == 2 && !$batch->datedispatched){
+            $batch->site_entry = 1;
+            $batch->save();
+            session(['toast_message' => 'The batch has been converted to a site entry']);
+            return back();
+        }
+        session(['toast_message' => 'The batch has not been converted to a site entry', 'toast_error' => 1]);
+        return back();
     }
 
 
@@ -858,7 +873,8 @@ class BatchController extends Controller
         $batches = Batch::whereRaw("id like '" . $search . "%'")
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id);
+                // return $query->where('lab_id', $user->lab_id);
+                return $query->whereRaw("(lab_id={$user->lab_id} or site_entry=2)");
             })
             ->paginate(10);
 

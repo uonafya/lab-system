@@ -849,7 +849,7 @@ class ViralbatchController extends Controller
     {
         $date_column = "viralbatches.datedispatched";
 
-        $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralbatches.datedispatched'])
+        $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralsamples.datecollected', 'viralbatches.datereceived', 'viralsamples.datetested', 'viralbatches.datedispatched'])
             ->leftJoin('viralpatients', 'viralpatients.id', '=', 'viralsamples.patient_id')
             ->leftJoin('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
@@ -900,6 +900,9 @@ class ViralbatchController extends Controller
             $data[$key]['Sub County'] = $sample->subcounty;
             $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
             $data[$key]['Test Outcome'] = $sample->result;
+            $data[$key]['Date Collected'] = $sample->my_date_format('datecollected');
+            $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
+            $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
@@ -918,8 +921,20 @@ class ViralbatchController extends Controller
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $sheet->fromArray($data);
             });
-        })->download('xls');
+        })->download('csv');
 
+    }
+
+    public function convert_to_site_entry(Viralbatch $batch)
+    {
+        if($batch->site_entry == 2 && !$batch->datedispatched){
+            $batch->site_entry = 1;
+            $batch->save();
+            session(['toast_message' => 'The batch has been converted to a site entry']);
+            return back();
+        }
+        session(['toast_message' => 'The batch has not been converted to a site entry', 'toast_error' => 1]);
+        return back();
     }
 
     public function search(Request $request)
@@ -931,7 +946,7 @@ class ViralbatchController extends Controller
         $batches = Viralbatch::whereRaw("id like '" . $search . "%'")
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id);
+                return $query->whereRaw("(lab_id={$user->lab_id} or site_entry=2)");
             })
             ->paginate(10);
 
