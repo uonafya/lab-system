@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\Viralsample;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Api\V1\Requests\ApiRequest;
 
 class ViralsampleController extends Controller
 {
@@ -25,7 +26,7 @@ class ViralsampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ApiRequest $request)
     {
         //
     }
@@ -38,7 +39,9 @@ class ViralsampleController extends Controller
      */
     public function show(Viralsample $viralsample)
     {
-        //
+        $viralsample->load(['patient']);
+        $viralsample->batch;
+        return $viralsample;
     }
 
     /**
@@ -48,7 +51,7 @@ class ViralsampleController extends Controller
      * @param  \App\Viralsample  $viralsample
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Viralsample $viralsample)
+    public function update(ApiRequest $request, Viralsample $viralsample)
     {
         //
     }

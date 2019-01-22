@@ -3,12 +3,14 @@
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Api\V1\Requests\BlankRequest;
+use App\Api\V1\Requests\ApiRequest;
 
 use App\Facility;
 
 class FacilityController extends Controller
 {
+    use Dingo\Api\Routing\Helpers;
+    
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +27,7 @@ class FacilityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(BlankRequest $request)
+    public function store(ApiRequest $request)
     {
         $data = json_decode($request->input('facility'));
         $facility = Facility::firstOrCreate($data);
@@ -53,7 +55,7 @@ class FacilityController extends Controller
      * @param  \App\Facility  $facility
      * @return \Illuminate\Http\Response
      */
-    public function update(BlankRequest $request, Facility $facility)
+    public function update(ApiRequest $request, Facility $facility)
     {
         $data = json_decode($request->input('facility'));
         $facility->fill($data);

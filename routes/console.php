@@ -264,6 +264,11 @@ Artisan::command('test:email', function(){
     $this->info($str);
 })->describe('Send test email.');
 
+Artisan::command('test:sms', function(){
+    $str = \App\Misc::sms_test();
+    $this->info($str);
+})->describe('Send test sms.');
+
 Artisan::command('test:connection', function(){
     $str = \App\Synch::test_connection();
     $this->info($str);
