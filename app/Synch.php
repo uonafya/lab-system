@@ -241,6 +241,7 @@ class Synch
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
+				'http_errors' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -253,6 +254,11 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+
+			if($response->getStatusCode() > 399)
+			{
+				dd($body);
+			}
 
 			foreach ($body->batches as $key => $value) {
 				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
