@@ -30,6 +30,8 @@ class TaskController extends Controller
         $this->year = date('Y');
         $this->month = date('m');
 
+        $this->previousYear = $this->year;
+        $this->previousMonth = $this->month - 1;
         if ($this->month == 1) {
             $this->previousMonth = 12;
             $this->previousYear = $this->year-1;
@@ -41,6 +43,7 @@ class TaskController extends Controller
         $tasks = $this->pendingTasks();
         // dd($tasks);
         if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
+            \App\Commen::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
             return redirect()->route('home');
         }
