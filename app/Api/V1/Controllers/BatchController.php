@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\Batch;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Api\V1\Requests\ApiRequest;
 
 class BatchController extends Controller
 {
@@ -25,7 +26,7 @@ class BatchController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ApiRequest $request)
     {
         //
     }
@@ -48,9 +49,9 @@ class BatchController extends Controller
      * @param  \App\Batch  $batch
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Batch $batch)
+    public function update(ApiRequest $request, Batch $batch)
     {
-        //
+
     }
 
     /**
