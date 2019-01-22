@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\Viralbatch;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Api\V1\Requests\ApiRequest;
 
 class ViralbatchController extends Controller
 {
@@ -25,7 +26,7 @@ class ViralbatchController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ApiRequest $request)
     {
         //
     }
@@ -48,7 +49,7 @@ class ViralbatchController extends Controller
      * @param  \App\Viralbatch  $viralbatch
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Viralbatch $viralbatch)
+    public function update(ApiRequest $request, Viralbatch $viralbatch)
     {
         //
     }
