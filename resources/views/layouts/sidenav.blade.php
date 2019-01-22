@@ -195,7 +195,11 @@
                 <hr />
                 <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
                 <hr />
-                <li><a href="{{ url('dr_worksheet/create') }}">Create Dr Worksheet</a></li>
+                <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
+                <hr />
+                <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
+                <hr />
+                <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Dr Worksheet List</a></li>
                 <hr />
@@ -405,11 +409,11 @@
             <hr />
         @endif
         --}}
-        @if (Auth::user()->user_type_id != 5)
+        @if (!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5))
+        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)

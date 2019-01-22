@@ -60,6 +60,7 @@ Route::get('download_api', 'RandomController@download_api');
 
 Route::middleware(['signed'])->group(function(){
 	Route::get('dr_sample/edit/{user}/{sample}', 'DrSampleController@facility_edit')->name('dr_sample.facility_edit');
+	Route::get('nhrl', 'RandomController@login_edarp')->name('nhrl');
 });
 
 Route::middleware(['auth'])->group(function(){
@@ -92,6 +93,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'BatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
 			
 			Route::get('dispatch/', 'BatchController@batch_dispatch');
@@ -167,6 +169,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
+			Route::get('convert_from_poc/{batch}', 'ViralbatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'ViralbatchController@destroy_multiple');
 
 			Route::get('dispatch/', 'ViralbatchController@batch_dispatch');
@@ -197,6 +200,8 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::resource('district', 'DistrictController');
 
+	// Start of Drug Resistance Routes
+
 	Route::group(['middleware' => ['utype:5']], function () {
 		Route::put('dr_sample/{drSample}', 'DrSampleController@update')->name('dr_sample.update');
 	});
@@ -204,13 +209,28 @@ Route::middleware(['auth'])->group(function(){
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::resource('dr', 'DrPatientController');
 		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
-		Route::resource('dr_sample', 'DrSampleController');
+		Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
+
+
+		Route::prefix('dr_extraction_worksheet')->name('dr_extraction_worksheet.')->group(function () {
+
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrExtractionWorksheetController@index')->name('list');
+
+			Route::get('create/{limit}', 'DrExtractionWorksheetController@create')->name('create_any');
+			Route::get('gel_documentation/{drExtractionWorksheet}', 'DrExtractionWorksheetController@gel_documentation_form')->name('upload');
+			Route::put('gel_documentation/{drExtractionWorksheet}', 'DrExtractionWorksheetController@gel_documentation')->name('upload');
+
+			Route::get('cancel/{drExtractionWorksheet}', 'DrExtractionWorksheetController@cancel')->name('cancel');
+
+		});
+		Route::resource('dr_extraction_worksheet', 'DrExtractionWorksheetController');
 
 
 		Route::prefix('dr_worksheet')->name('dr_worksheet.')->group(function () {
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrWorksheetController@index')->name('list');
 
+			Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
 			Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 			Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
 
@@ -221,6 +241,8 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('dr_worksheet', 'DrWorksheetController');
 	});
+
+	// End of Drug Resistance Routes
 
 	Route::group(['middleware' => ['only_utype:2']], function () {
 		Route::prefix('email')->name('email.')->group(function () {
@@ -267,7 +289,8 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('patient', 'PatientController');
 
-
+	Route::get('allocation', 'TaskController@allocation')->name('allocation');
+	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
 	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
 	Route::post('consumption', 'TaskController@consumption');
 	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
@@ -337,7 +360,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('create/{sampletype?}', 'ViralsampleController@create');
 
-		Route::get('nhrl', 'ViralsampleController@nhrl_samples');
+		Route::get('nhrl', 'ViralsampleController@nhrl_samples')->name('nhrl');
 		Route::post('nhrl', 'ViralsampleController@approve_nhrl');
 
 		Route::get('upload', 'ViralsampleController@site_sample_page');

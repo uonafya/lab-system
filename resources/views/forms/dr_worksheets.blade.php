@@ -22,6 +22,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Sample Type</th>
                                     <th>Sample Code / Patient ID</th>
                                     <th>Facility</th>
                                     <th>Lab ID</th>
@@ -31,16 +32,17 @@
                                 </tr>
                             </thead>
                             <tbody> 
-                                @foreach($dr_samples as $key => $dr_sample)
+                                @foreach($samples as $key => $dr_sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $dr_sample->patient->patient ?? '' }} </td>
-                                        <td> {{ $dr_sample->patient->facility->name ?? '' }} </td>
+                                        <td> {{ $dr_sample->control_type }} </td>
+                                        <td> {{ $dr_sample->patient ?? '' }} </td>
+                                        <td> {{ $dr_sample->facilityname ?? '' }} </td>
                                         <td> {{ $dr_sample->id }} </td>
-                                        <td> {{ $dr_sample->datereceived }} </td>
+                                        <td> {{ $dr_sample->my_date_format('datereceived') }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $dr_sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td>
-                                            <a href="{{ url('viralpatient/' . $dr_sample->patient->id) }}" target="_blank">
+                                            <a href="{{ url('viralpatient/' . $dr_sample->patient_id) }}" target="_blank">
                                                 View History 
                                             </a> 
                                         </td>
@@ -51,29 +53,47 @@
                     </div>
 
 
+                    @if($create)
 
-                    @if (isset($worksheet))
-                        {{ Form::open(['url' => '/dr_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                        @if (isset($worksheet))
+                            {{ Form::open(['url' => '/dr_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                        @else
+                            {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+
+                            <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
+                            <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+                            <input type="hidden" value="{{ $extraction_worksheet_id }}" name="extraction_worksheet_id">
+                        @endif
+
+                                <div class="form-group">
+                                    <div class="col-sm-8 col-sm-offset-4">
+                                        <button class="btn btn-success" type="submit"
+
+                                        >Save & Print Worksheet</button>
+                                    </div>
+                                </div>
+
+
+                        {{ Form::close() }}
+
                     @else
-                        {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-                    @endif
 
-                        <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
-                        <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
-
-                            <div class="form-group">
-                                <div class="col-sm-8 col-sm-offset-4">
-                                    <button class="btn btn-success" type="submit"
-                                        @if($dr_samples->count() < 14)
-                                            disabled="disabled"
-                                        @endif
-
-                                    >Save & Print Worksheet</button>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="hpanel">
+                                    <div class="panel-body"> 
+                                        <div class="alert alert-warning">
+                                            <center>
+                                                No worksheet could be created from extraction worksheet {{ $extraction_worksheet_id }}.
+                                            </center>
+                                        </div>
+                                    <br />
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-
-                    {{ Form::close() }}
+                    @endif
                 </div>
             </div>
         </div>

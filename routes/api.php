@@ -28,6 +28,17 @@ $api->version('v1', function (Router $api) {
             $api->group(['middleware' => 'jwt.refresh'], function(Router $api) {
                 $api->get('refresh', 'RandomController@refresh_route');
             });
+
+            $api->resource('facility', 'FacilityController');
+
+            $api->resource('batch', 'BatchController');
+            $api->resource('viralbatch', 'ViralbatchController');
+
+            $api->resource('patient', 'PatientController');
+            $api->resource('viralpatient', 'ViralpatientController');
+
+            $api->resource('sample', 'SampleController');
+            $api->resource('viralsample', 'ViralsampleController');
         });
 
         
@@ -45,7 +56,6 @@ $api->version('v1', function (Router $api) {
 
             $api->post('function', 'FunctionController@api');
 
-            $api->resource('facility', 'FacilityController');
         // });
     });
 

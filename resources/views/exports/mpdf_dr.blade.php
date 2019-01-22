@@ -171,7 +171,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections" value={{ $key }} 
+                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections"  
 
                                     @if(isset($sample) && $sample->has_tb)
                                         checked="checked"
@@ -196,7 +196,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections" value={{ $key }} 
+                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections"  
 
                                     @if(isset($sample) && $sample->has_tb)
                                         checked="checked"
@@ -229,7 +229,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections" value={{ $key }} 
+                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections"  
 
                                     @if(isset($sample) && $sample->has_tb)
                                         checked="checked"
@@ -247,7 +247,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections" value={{ $key }} 
+                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections"  
 
                                     @if(isset($sample) && $sample->has_tb)
                                         checked="checked"
@@ -265,7 +265,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-6">
-                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections" value={{ $key }} 
+                                <label><input type="checkbox" class="i-checks" name="has_opportunistic_infections"  
 
                                     @if(isset($sample) && $sample->has_tb)
                                         checked="checked"

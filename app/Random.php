@@ -8,6 +8,21 @@ use App\Facilitys;
 class Random
 {
 
+
+
+	public static function add_amrs()
+	{
+		ini_set("memory_limit", "-1");
+        config(['excel.import.heading' => true]);
+		$path = public_path('obs2.csv');
+		$data = Excel::load($path, function($reader){})->get();
+
+		foreach ($data as $row) {
+			$amrs_location = \App\Lookup::get_mrslocation($row->location_id);
+			\App\Viralsample::where(['order_no' => $row->order_number])->update(['amrs_location' => $amrs_location]);
+		}
+	}
+
 	public static function facilitys()
 	{
 		self::alter_facilitys();
@@ -1215,6 +1230,22 @@ class Random
 				DB::table('amrslocations')->insert(['identifier' => $location->location_id, 'name' => $location->name]);
 			}
 		}
+	}
+
+	public static function __getLablogsData($year, $month) {
+		
+		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
+		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', '=', 1)->first()->tests;
+		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->whereMonth('samples_view.datereceived', $month)->get();
+
+		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
+		$vlplasmarejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
+
+		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
+		$vldbsrejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
+		
+		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
+		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
 	}
 
 }

@@ -19,12 +19,12 @@ class LoginController extends Controller
      * @param JWTAuth $JWTAuth
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, JWTAuth $JWTAuth)
     {
         $credentials = $request->only(['email', 'password']);
 
         try {
-            $token = Auth::guard()->attempt($credentials);
+            $token = $JWTAuth->attempt($credentials);
 
             if(!$token) {
                 throw new AccessDeniedHttpException();
@@ -38,7 +38,7 @@ class LoginController extends Controller
             ->json([
                 'status' => 'ok',
                 'token' => $token,
-                'expires_in' => Auth::guard()->factory()->getTTL() * 60
+                'expires_in' => auth('api')->factory()->getTTL() * 60 * 60
             ]);
     }
 }

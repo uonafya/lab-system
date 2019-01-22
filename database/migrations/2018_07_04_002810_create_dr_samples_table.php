@@ -16,6 +16,7 @@ class CreateDrSamplesTable extends Migration
         Schema::create('dr_samples', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('patient_id')->unsigned()->index();
+            $table->integer('facility_id')->unsigned()->index();
 
             // 0 is for normal sample
             // 1 is negative control
