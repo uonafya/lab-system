@@ -27,7 +27,7 @@ Route::redirect('/knh', '/login');
 Route::redirect('/nyumbani', '/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
-Route::get('testedarp', 'RandomController@testedarp');
+Route::get('labtrackertest', 'RandomController@testlabtracker');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');
