@@ -520,11 +520,9 @@ class ReportController extends Controller
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            // $receivedOnly=false;
-            // if ($request->input('types') == 'rejected')
-            //     $receivedOnly=true;
-            
-            $receivedOnly=true;
+            $receivedOnly=false;
+            if ($request->input('types') == 'rejected')
+                $receivedOnly=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
     	}
@@ -552,7 +550,7 @@ class ReportController extends Controller
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
-
+        
         return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0);
     }
 
