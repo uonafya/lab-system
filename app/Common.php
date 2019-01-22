@@ -11,6 +11,7 @@ use App\Mail\NoDataReport;
 use App\Mail\LabTracker;
 use Carbon\Carbon;
 use Exception;
+use App\EquipmentMailingList as MailingList;
 
 class Common
 {
@@ -695,20 +696,21 @@ class Common
 	    		$year -= 1;
 	    	}
     	}
-    	// dd($year. ' - ' .$previousMonth);
+    	
     	$data = Random::__getLablogsData($year, $previousMonth);
 
-    	// $facility = $batch->facility; 
-    	
-        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
-        // $mail_array = ['bakasajoshua09@gmail.com', 'baksajoshua09@gmail.com'];
-        // if(env('APP_ENV') == 'production') 
-        // 	$mail_array = $facility->email_array;
-        if(!$mail_array) 
+    	$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        $mainRecepient = ['baksajoshua09@gmail.com'];
+        if(env('APP_ENV') == 'production') {
+      //   	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
+    		// $mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
+        }
+        
+        if(!$mainRecepient) 
         	return null;
 
         try {
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke','joshua.bakasa@dataposit.co.ke'])
+        	Mail::to($mainRecepient)->cc($mailinglist)
         	->send(new LabTracker($data));
         } catch (Exception $e) {
         	
