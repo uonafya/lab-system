@@ -17,6 +17,7 @@ class CreateEquipmentMailingListsTable extends Migration
             $table->increments('id');
             $table->string('email')->unique();
             $table->boolean('type')->comment('1:to; 2:cc');
+            $table->date('datesent')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
