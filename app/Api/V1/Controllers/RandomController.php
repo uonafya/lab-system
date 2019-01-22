@@ -24,6 +24,6 @@ class RandomController extends Controller
     {
         return response()->json([
                 'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
-            ], 400);
+            ]);
     }
 }
