@@ -702,8 +702,8 @@ class Common
     	$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
         $mainRecepient = ['baksajoshua09@gmail.com'];
         if(env('APP_ENV') == 'production') {
-      //   	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
-    		// $mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
+        	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
+    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
         }
         
         if(!$mainRecepient) 
