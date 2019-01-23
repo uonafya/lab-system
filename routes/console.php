@@ -284,6 +284,11 @@ Artisan::command('edarp:approvesamples', function(){
     $this->info($str);
 })->describe('Send email of the EDARP samples that need approval');
 
+Artisan::command('transfer:consumptions', function(){
+    $str = \App\Common::transferconsumptions();
+    $this->info($str);
+})->describe('Migrate from the old procurements tables');
+
 // Artisan::command('verify:list', function(){
 //     $str = \App\Misc::check_patients_list();
 //     $this->info($str);

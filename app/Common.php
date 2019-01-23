@@ -708,4 +708,44 @@ class Common
         	
         }
     }
+
+    public static function transferconsumptions() {
+    	$kits = \App\Kits::get();
+    	$kitArray = [];
+    	// Getting first the abbott consumptions
+    	$abbottconsumptions = \App\Abbotprocurement::get();
+    	foreach ($abbottconsumptions as $key => $consumption) {
+    		foreach ($kits as $key => $kit) {
+	    		if ($kit->machine_id == 2) {
+	    			$ending = 'ending'.$kit->alias;
+		    		$wasted = 'wasted'.$kit->alias;
+		    		$issued = 'issued'.$kit->alias;
+		    		$request = 'request'.$kit->alias;
+		    		$pos = 'pos'.$kit->alias;
+		    		$kitArray[] = [
+		    			'month' => $consumption->month,
+		    			'year' => $consumption->year,
+						'testtype' => $consumption->testtype,
+						'kit_id' => $kit->id,
+						'ending' => $consumption->$ending,
+						'wasted' => $consumption->$wasted,
+						'issued' => $consumption->$issued,
+						'pos' => $consumption->$pos,
+						'request' => $consumption->$request,
+						'datesubmitted' => $consumption->datesubmitted,
+						'submittedby' => $consumption->submittedby,
+						'lab_id' => $consumption->lab_id,
+						'comments' => $consumption->comments,
+						'issuedcomments' => $consumption->issuedcomments,
+						'approve' => $consumption->approve,
+						'disapprovereason' => $consumption->disapprovereason,
+						'synched' => $consumption->synched,
+						'datesynched' => $consumption->datesynched
+		    		];
+	    		}
+	    	}
+		}
+
+		// Finally getting the Roche consumptions
+    }
 }
