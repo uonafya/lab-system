@@ -39,8 +39,6 @@ class SampleController extends Controller
      */
     public function show(Sample $sample)
     {
-        dd($sample);
-        return $sample;
         $sample->load(['patient']);
         $sample->batch;
 
