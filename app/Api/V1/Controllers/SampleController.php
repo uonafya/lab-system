@@ -43,7 +43,7 @@ class SampleController extends Controller
         // $sample->batch;
 
         return [
-            'id' => $sample->id
+            'id' => $sample
         ];
 
         return $sample->toArray();
