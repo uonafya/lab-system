@@ -39,8 +39,10 @@ class SampleController extends Controller
      */
     public function show(Sample $sample)
     {
-        $sample->load(['patient.mother']);
+        $sample->load(['patient']);
         $sample->batch;
+
+        return $sample->toJson();
 
         return response()->json([
                 'sample' => $sample->toJson(),
