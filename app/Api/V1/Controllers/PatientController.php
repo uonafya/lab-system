@@ -48,8 +48,9 @@ class PatientController extends Controller
      * @param  \App\Patient  $patient
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Patient $patient)
+    public function update(ApiRequest $request, $id)
     {
+        $patient = Patient::findOrFail($id);
         $fields = $request->input('patient');
 
         if($fields->facility_id != $patient->facility_id) return $this->response->errorBadRequest("This patient does not exist here.");
