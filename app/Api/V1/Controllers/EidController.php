@@ -257,7 +257,13 @@ class EidController extends BaseController
         $sample->edarp();
 
         $sample->load(['patient.mother', 'batch']);
-        return $sample;
+        // return $sample;
+
+
+        return response()->json([
+                'message' => 'The sample was added successfully.',
+                'status_code' => 201,
+            ], 201);
     }
 
 

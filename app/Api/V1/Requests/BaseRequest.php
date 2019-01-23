@@ -9,9 +9,10 @@ class BaseRequest extends FormRequest
 
     public function authorize()
     {
-    	$apikey = $this->headers->get('apikey');
+        $apikey = $this->headers->get('apikey');
+    	$apikey2 = $this->input('apikey');
         $actual_key = env('API_KEY');
-    	if($apikey != $actual_key || !$actual_key) return false;
+    	if(($apikey != $actual_key && $apikey2 != $actual_key) || !$actual_key) return false;
     	else{
     		return true;
     	}    
