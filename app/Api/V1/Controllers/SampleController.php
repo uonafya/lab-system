@@ -37,13 +37,14 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Sample $sample)
+    // public function show(Sample $sample)
+    public function show($id)
     {
         // $sample->load(['patient']);
         // $sample->batch;
 
         return [
-            'id' => $sample
+            'id' => $id
         ];
 
         return $sample->toArray();
