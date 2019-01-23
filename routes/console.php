@@ -284,7 +284,7 @@ Artisan::command('edarp:approvesamples', function(){
     $this->info($str);
 })->describe('Send email of the EDARP samples that need approval');
 
-Artisan::command('verify:list', function(){
-    $str = \App\Misc::check_patients_list();
-    $this->info($str);
-})->describe('Checking for Chege');
+// Artisan::command('verify:list', function(){
+//     $str = \App\Misc::check_patients_list();
+//     $this->info($str);
+// })->describe('Checking for Chege');
