@@ -42,7 +42,7 @@ class SampleController extends Controller
         // $sample->load(['patient']);
         // $sample->batch;
 
-        return $sample;
+        return $sample->toArray();
 
         return response()->json([
                 'sample' => $sample->toJson(),
