@@ -45,12 +45,6 @@ class SampleController extends Controller
         $sample->batch;
 
         return $sample;
-
-        return response()->json([
-                'sample' => $sample->toJson(),
-                'message' => 'The fetch was successful.',
-                'status_code' => 200,
-            ], 200);
     }
 
     /**

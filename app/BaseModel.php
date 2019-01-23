@@ -13,7 +13,7 @@ class BaseModel extends Model
     
     // protected $guarded = ['created_at'];
     protected $guarded = [];
-    protected $hidden = [];
+    // protected $hidden = [];
 
     protected static function boot()
     {
