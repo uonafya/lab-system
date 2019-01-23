@@ -8,7 +8,7 @@ use App\Api\V1\Requests\ApiRequest;
 
 class ViralpatientController extends Controller
 {
-    use Dingo\Api\Routing\Helpers;
+    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
@@ -51,7 +51,26 @@ class ViralpatientController extends Controller
      */
     public function update(ApiRequest $request, Viralpatient $viralpatient)
     {
-        //
+        $fields = $request->input('patient');
+
+        if($fields->facility_id != $viralpatient->facility_id) return $this->response->errorBadRequest("This patient does not exist here.");
+
+        $unset_array = ['id', 'original_patient_id', 'mother_id', ];
+
+        foreach ($unset_array as $value) {
+            unset($fields->$value);
+        }
+
+        $viralpatient->fill(get_object_vars($fields));
+
+        $viralpatient->synched = 1;
+        $viralpatient->datesynched = date('Y-m-d');
+        $viralpatient->save();
+
+        return response()->json([
+                'message' => 'The update was successful.',
+                'status_code' => 200,
+            ], 200);
     }
 
     /**
