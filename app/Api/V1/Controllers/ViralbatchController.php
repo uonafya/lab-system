@@ -49,8 +49,9 @@ class ViralbatchController extends Controller
      * @param  \App\Viralbatch  $viralbatch
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Viralbatch $viralbatch)
+    public function update(ApiRequest $request, $id)
     {
+        $viralbatch = Viralbatch::findOrFail($id);
         $fields = $request->input('batch');
         $site_entry = $request->input('site_entry');
 
