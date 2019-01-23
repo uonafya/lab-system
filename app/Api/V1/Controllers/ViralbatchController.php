@@ -8,7 +8,7 @@ use App\Api\V1\Requests\ApiRequest;
 
 class ViralbatchController extends Controller
 {
-    use Dingo\Api\Routing\Helpers;
+    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
@@ -51,7 +51,27 @@ class ViralbatchController extends Controller
      */
     public function update(ApiRequest $request, Viralbatch $viralbatch)
     {
-        //
+        $fields = $request->input('batch');
+        $site_entry = $request->input('site_entry');
+
+        if($site_entry == 2 && $viralbatch->site_entry != 2) return $this->response->errorBadRequest("This batch does not exist here.");
+
+        $unset_array = ['id', 'original_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent', 'printedby'];
+
+        foreach ($unset_array as $value) {
+            unset($fields->$value);
+        }
+
+        $viralbatch->fill(get_object_vars($fields));
+
+        $viralbatch->synched = 1;
+        $viralbatch->datesynched = date('Y-m-d');
+        $viralbatch->save();
+
+        return response()->json([
+                'message' => 'The update was successful.',
+                'status_code' => 200,
+            ], 200);
     }
 
     /**
