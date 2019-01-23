@@ -40,20 +40,9 @@ class SampleController extends Controller
     // public function show(Sample $sample)
     public function show($id)
     {
-        // $sample->load(['patient']);
-        // $sample->batch;
-
-        return [
-            'id' => $id
-        ];
-
-        return $sample->toArray();
-
-        return [
-            'sample' => $sample->toJson(),
-            'message' => 'The fetch was successful.',
-            'status_code' => 200,
-        ];
+        $sample = Sample::findOrFail($id);
+        $sample->load(['patient']);
+        $sample->batch;
 
         return response()->json([
                 'sample' => $sample->toJson(),
