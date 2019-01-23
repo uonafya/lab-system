@@ -8,7 +8,7 @@ use App\Api\V1\Requests\ApiRequest;
 
 class SampleController extends Controller
 {
-    use \Dingo\Api\Routing\Helpers;
+    // use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
