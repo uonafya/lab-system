@@ -8,7 +8,7 @@ use App\Api\V1\Requests\ApiRequest;
 
 class ViralsampleController extends Controller
 {
-    use Dingo\Api\Routing\Helpers;
+    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
@@ -53,7 +53,29 @@ class ViralsampleController extends Controller
      */
     public function update(ApiRequest $request, Viralsample $viralsample)
     {
-        //
+        $fields = $request->input('sample');
+        $site_entry = $request->input('site_entry');
+
+        if($site_entry == 2 && $viralsample->batch->site_entry != 2) return $this->response->errorBadRequest("This sample does not exist here.");
+
+        $viralsample->national_sample_id = $fields->id;
+
+        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'amrs_location'];
+
+        foreach ($unset_array as $value) {
+            unset($fields->$value);
+        }
+
+        $viralsample->fill(get_object_vars($fields));
+
+        $viralsample->synched = 1;
+        $viralsample->datesynched = date('Y-m-d');
+        $viralsample->save();
+
+        return response()->json([
+                'message' => 'The update was successful.',
+                'status_code' => 200,
+            ], 200);
     }
 
     /**
