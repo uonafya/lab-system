@@ -8,7 +8,7 @@ use App\Api\V1\Requests\ApiRequest;
 
 class SampleController extends Controller
 {
-    // use \Dingo\Api\Routing\Helpers;
+    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
@@ -54,8 +54,9 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Sample $sample)
+    public function update(ApiRequest $request, $id)
     {
+        $sample = Sample::findOrFail($id);
         $fields = $request->input('sample');
         $site_entry = $request->input('site_entry');
 
