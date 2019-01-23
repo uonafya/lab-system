@@ -41,7 +41,14 @@ class ViralsampleController extends Controller
     {
         $viralsample->load(['patient']);
         $viralsample->batch;
-        return $viralsample;
+
+        return response()->json([
+                'sample' => $viralsample,
+                'message' => 'The fetch was successful.',
+                'status_code' => 200,
+            ], 200);
+        
+        // return $viralsample;
     }
 
     /**
