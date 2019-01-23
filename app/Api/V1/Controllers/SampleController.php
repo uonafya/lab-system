@@ -42,7 +42,17 @@ class SampleController extends Controller
         // $sample->load(['patient']);
         // $sample->batch;
 
+        return [
+            'id' => $sample->id
+        ];
+
         return $sample->toArray();
+
+        return [
+            'sample' => $sample->toJson(),
+            'message' => 'The fetch was successful.',
+            'status_code' => 200,
+        ];
 
         return response()->json([
                 'sample' => $sample->toJson(),
