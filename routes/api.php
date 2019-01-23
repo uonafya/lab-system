@@ -37,8 +37,8 @@ $api->version('v1', function (Router $api) {
             $api->resource('patient', 'PatientController');
             $api->resource('viralpatient', 'ViralpatientController');
 
-            $api->apiResource('sample', 'SampleController');
-            $api->apiResource('viralsample', 'ViralsampleController');
+            $api->resource('sample', 'SampleController');
+            $api->resource('viralsample', 'ViralsampleController');
         });
 
         
