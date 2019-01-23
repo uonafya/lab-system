@@ -726,7 +726,7 @@ class MiscViral extends Common
             $limit -= $repeats->count();
         }
 
-        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname")
             ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
             ->where('datereceived', '>', $date_str)

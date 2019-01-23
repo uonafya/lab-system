@@ -10,6 +10,7 @@ use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
 use App\Random;
+use Mpdf\Mpdf;
 
 class RandomController extends Controller
 {
@@ -110,5 +111,32 @@ class RandomController extends Controller
         	return redirect()->route('viralsample.nhrl');
         else
         	abort(401);
+	}
+
+	public function testlabtracker() {
+		$year = date('Y');
+    	$month = date('m');
+    	$previousMonth =  $month - 1;
+    	if ($month == 1) {
+    		$previousMonth = 12;
+    		$year -= 1;
+    	}
+    	$data = Random::__getLablogsData($year, $month);
+    	$lab = \App\Lab::find(env('APP_LAB'));
+    	// dd($lab);
+    	// $path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+
+     //    if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
+
+     //    if(file_exists($path)) unlink($path);
+    	// $mpdf = new Mpdf();
+     //    $this->lab = \App\Lab::find(env('APP_LAB'));
+     //    $lab = $this->lab;
+     //    $pageData = ['data' => $data, 'lab' => $lab];
+     //    $view_data = view('exports.mpdf_labtracker', $pageData)->render();
+     //    $mpdf->WriteHTML($view_data);
+     //    $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+
+		return view('exports.mpdf_labtracker', compact('data', 'lab'));
 	}
 }

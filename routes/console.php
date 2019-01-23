@@ -264,13 +264,18 @@ Artisan::command('test:email', function(){
     $this->info($str);
 })->describe('Send test email.');
 
+Artisan::command('test:sms', function(){
+    $str = \App\Misc::sms_test();
+    $this->info($str);
+})->describe('Send test sms.');
+
 Artisan::command('test:connection', function(){
     $str = \App\Synch::test_connection();
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
-Artisan::command('send:labtracker', function(){
-    $str = \App\Common::send_lab_tracker();
+Artisan::command('send:labtracker {year} {month}', function($year, $month){
+    $str = \App\Common::send_lab_tracker($year, $month);
     $this->info($str);
 })->describe('Send labtracker email to the program people');
 
