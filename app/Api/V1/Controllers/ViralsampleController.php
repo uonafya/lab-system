@@ -37,8 +37,10 @@ class ViralsampleController extends Controller
      * @param  \App\Viralsample  $viralsample
      * @return \Illuminate\Http\Response
      */
-    public function show(Viralsample $viralsample)
+    // public function show(Viralsample $viralsample)
+    public function show($id)
     {
+        $viralsample = Viralsample::findOrFail($id);
         $viralsample->load(['patient']);
         $viralsample->batch;
 
@@ -47,7 +49,7 @@ class ViralsampleController extends Controller
                 'message' => 'The fetch was successful.',
                 'status_code' => 200,
             ], 200);
-        
+
         // return $viralsample;
     }
 
