@@ -37,10 +37,13 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Sample $sample)
+    // public function show(Sample $sample)
+    public function show($id)
     {
-        $sample->load(['patient.mother']);
+        $sample = Sample::findOrFail($id);
+        $sample->load(['patient']);
         $sample->batch;
+
         return $sample;
     }
 
@@ -51,8 +54,9 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Sample $sample)
+    public function update(ApiRequest $request, $id)
     {
+        $sample = Sample::findOrFail($id);
         $fields = $request->input('sample');
         $site_entry = $request->input('site_entry');
 
