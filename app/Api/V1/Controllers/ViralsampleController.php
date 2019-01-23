@@ -44,13 +44,7 @@ class ViralsampleController extends Controller
         $viralsample->load(['patient']);
         $viralsample->batch;
 
-        return response()->json([
-                'sample' => $viralsample->toJson(),
-                'message' => 'The fetch was successful.',
-                'status_code' => 200,
-            ], 200);
-
-        // return $viralsample;
+        return $viralsample;
     }
 
     /**
@@ -60,8 +54,9 @@ class ViralsampleController extends Controller
      * @param  \App\Viralsample  $viralsample
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Viralsample $viralsample)
+    public function update(ApiRequest $request, $id)
     {
+        $viralsample = Viralsample::findOrFail($id);
         $fields = $request->input('sample');
         $site_entry = $request->input('site_entry');
 

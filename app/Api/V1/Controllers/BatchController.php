@@ -49,8 +49,9 @@ class BatchController extends Controller
      * @param  \App\Batch  $batch
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Batch $batch)
+    public function update(ApiRequest $request, $id)
     {
+        $batch = Batch::findOrFail($id);
         $fields = $request->input('batch');
         $site_entry = $request->input('site_entry');
 
