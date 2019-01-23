@@ -9,7 +9,7 @@ use App\Facility;
 
 class FacilityController extends Controller
 {
-    use Dingo\Api\Routing\Helpers;
+    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
