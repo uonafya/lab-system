@@ -8,7 +8,7 @@ use App\Api\V1\Requests\ApiRequest;
 
 class SampleController extends Controller
 {
-    use \Dingo\Api\Routing\Helpers;
+    // use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
@@ -37,10 +37,13 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Sample $sample)
+    // public function show(Sample $sample)
+    public function show($id)
     {
-        $sample->load(['patient.mother']);
+        $sample = Sample::findOrFail($id);
+        $sample->load(['patient']);
         $sample->batch;
+
         return $sample;
     }
 
