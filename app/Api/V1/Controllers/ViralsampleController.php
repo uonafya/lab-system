@@ -43,7 +43,7 @@ class ViralsampleController extends Controller
         $viralsample->batch;
 
         return response()->json([
-                'sample' => $viralsample,
+                'sample' => $viralsample->toJson(),
                 'message' => 'The fetch was successful.',
                 'status_code' => 200,
             ], 200);
