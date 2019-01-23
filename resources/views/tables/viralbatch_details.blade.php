@@ -73,8 +73,11 @@
                             <div class="col-md-4">
                                 <p><strong>Date Received:</strong> {{ $batch->my_date_format('datereceived')  ?? '' }}</p>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Date Dispatched:</strong> {{ $batch->my_date_format('datedispatched')  ?? '' }}</p>
                             </div>
                         @endif                        
                     </div>
