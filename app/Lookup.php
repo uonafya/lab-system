@@ -453,6 +453,8 @@ class Lookup
             'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
             'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
 
+            'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),
+            'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
         ];
     }
 

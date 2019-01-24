@@ -93,6 +93,7 @@
                                     <th> Created By </th>
                                     <th> Reviewed By </th>
                                     <th> Status </th>
+                                    <th> Hyrax Status </th>
                                     <th> # Samples </th>
                                     <!-- <th> Date Run </th> -->
                                     <th> Date Updated </th>
@@ -110,6 +111,7 @@
                                     <td> {{ $worksheet->reviewer->full_name ?? '' }} </td>
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
+                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->sanger_status_id)->first()->name !!} </td>
 
                                     <td> {{ $worksheet->samples_no }} </td>
 

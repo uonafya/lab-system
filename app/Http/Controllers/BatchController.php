@@ -465,6 +465,7 @@ class BatchController extends Controller
                 return $query->whereIn('batches.id', $batch_list);
             })
             ->where('batch_complete', 2)
+            ->where('lab_id', env('APP_LAB'))
             ->get();
 
         $subtotals = Misc::get_subtotals();
