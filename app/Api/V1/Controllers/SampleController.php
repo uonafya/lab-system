@@ -37,10 +37,13 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function show(Sample $sample)
+    // public function show(Sample $sample)
+    public function show($id)
     {
-        $sample->load(['patient.mother']);
+        $sample = Sample::findOrFail($id);
+        $sample->load(['patient']);
         $sample->batch;
+
         return $sample;
     }
 
@@ -51,8 +54,9 @@ class SampleController extends Controller
      * @param  \App\Sample  $sample
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Sample $sample)
+    public function update(ApiRequest $request, $id)
     {
+        $sample = Sample::findOrFail($id);
         $fields = $request->input('sample');
         $site_entry = $request->input('site_entry');
 
@@ -60,7 +64,7 @@ class SampleController extends Controller
 
         $sample->national_sample_id = $fields->id;
 
-        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'amrs_location'];
+        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'old_id', 'amrs_location'];
 
         foreach ($unset_array as $value) {
             unset($fields->$value);

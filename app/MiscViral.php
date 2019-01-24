@@ -247,6 +247,12 @@ class MiscViral extends Common
             return self::exponential_result($result);
         }
 
+        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error']) || strlen($error) > 10)
+        {
+            $res= "Failed";
+            $interpretation = $error ?? $result;       
+        }
+
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
         else if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
         {
@@ -271,12 +277,6 @@ class MiscViral extends Common
         {
             $res= "Collect New Sample";
             $interpretation="Collect New Sample";
-        }
-
-        else if($result == 'Failed' || $result == '' || str_contains($str, ['error']))
-        {
-            $res= "Failed";
-            $interpretation = $error;       
         }
 
         else if (str_contains($str, ['log'])) 

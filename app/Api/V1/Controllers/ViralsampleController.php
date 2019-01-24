@@ -37,10 +37,13 @@ class ViralsampleController extends Controller
      * @param  \App\Viralsample  $viralsample
      * @return \Illuminate\Http\Response
      */
-    public function show(Viralsample $viralsample)
+    // public function show(Viralsample $viralsample)
+    public function show($id)
     {
+        $viralsample = Viralsample::findOrFail($id);
         $viralsample->load(['patient']);
         $viralsample->batch;
+
         return $viralsample;
     }
 
@@ -51,8 +54,9 @@ class ViralsampleController extends Controller
      * @param  \App\Viralsample  $viralsample
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, Viralsample $viralsample)
+    public function update(ApiRequest $request, $id)
     {
+        $viralsample = Viralsample::findOrFail($id);
         $fields = $request->input('sample');
         $site_entry = $request->input('site_entry');
 
@@ -60,7 +64,7 @@ class ViralsampleController extends Controller
 
         $viralsample->national_sample_id = $fields->id;
 
-        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'amrs_location'];
+        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'old_id', 'amrs_location'];
 
         foreach ($unset_array as $value) {
             unset($fields->$value);
