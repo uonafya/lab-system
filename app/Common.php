@@ -282,10 +282,14 @@ class Common
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 			$misc_model = \App\Misc::class;
+			$sample_model = \App\Sample::class;
 		}else{
 			$batch_model = \App\Viralbatch::class;
 			$misc_model = \App\MiscViral::class;
+			$sample_model = \App\Viralsample::class;
 		}
+
+		$sample_model::whereNull('repeatt')->update(['repeatt' => 0]);
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
