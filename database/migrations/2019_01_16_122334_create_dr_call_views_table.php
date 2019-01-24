@@ -13,11 +13,20 @@ class CreateDrCallViewsTable extends Migration
      */
     public function up()
     {
+<<<<<<< HEAD
         // DB::statement("
         // CREATE OR REPLACE VIEW dr_calls_view AS
         // (
         //   SELECT cd.*, c.sample_id, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations,
         //   s.patient_id, s.facility_id 
+=======
+        DB::statement("
+        CREATE OR REPLACE VIEW dr_calls_view AS
+        (
+          SELECT cd.*, c.sample_id, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations,
+          s.patient_id, s.facility_id 
+          
+>>>>>>> 345b5bbfa25a64f1c41483ddab2d4166b1c54fc8
 
 <<<<<<< HEAD
         //   FROM dr_calls c
