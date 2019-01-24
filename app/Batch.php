@@ -123,6 +123,12 @@ class Batch extends BaseModel
         return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])->whereNull('datedispatched');
     }
 
+    public function scopeExistingEdarp($query, $facility, $datereceived, $lab)
+    {
+        if(!$datereceived) return $query->where(['facility_id' => $facility, 'lab_id' => $lab, 'batch_full' => 0])->whereNull('datereceived');
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab, 'batch_full' => 0]);
+    }
+
     public function scopeEditing($query)
     {
         return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0]);
