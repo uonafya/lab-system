@@ -13,19 +13,19 @@ class CreateDrCallViewsTable extends Migration
      */
     public function up()
     {
-        DB::statement("
-        CREATE OR REPLACE VIEW dr_calls_view AS
-        (
-          SELECT cd.*, c.sample_id, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations,
-          s.patient_id, s.facility_id 
-          
+        // DB::statement("
+        // CREATE OR REPLACE VIEW dr_calls_view AS
+        // (
+        //   SELECT cd.*, c.sample_id, c.drug_class, c.drug_class_id, c.other_mutations, c.major_mutations,
+        //   s.patient_id, s.facility_id 
 
-          FROM dr_call_drugs cd
-            LEFT JOIN  dr_calls c ON c.id=cd.call_id
-            LEFT JOIN dr_samples s ON c.sample_id=s.id
 
-        );
-        ");
+        //   FROM dr_call_drugs cd
+        //     LEFT JOIN  dr_calls c ON c.id=cd.call_id
+        //     LEFT JOIN dr_samples s ON c.sample_id=s.id
+
+        //  );
+        // ");
     }
 
     /**
@@ -35,6 +35,6 @@ class CreateDrCallViewsTable extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('dr_call_views');
+        Schema::dropIfExists('dr_call_views');
     }
 }
