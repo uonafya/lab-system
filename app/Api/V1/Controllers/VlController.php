@@ -159,6 +159,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->batch_complete = 1;
             $batch->edarp();            
         }
 
