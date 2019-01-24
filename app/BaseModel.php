@@ -13,6 +13,7 @@ class BaseModel extends Model
     
     // protected $guarded = ['created_at'];
     protected $guarded = [];
+    // protected $hidden = [];
 
     protected static function boot()
     {
@@ -62,6 +63,7 @@ class BaseModel extends Model
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
+            // if(str_contains($c, 'patient')) $url = url($pre . $a[0] . '/' . $this->patient_id);
         }
 
         if($attr == 'id' && (!$user || ($user && $user->user_type_id == 5))) return null;
@@ -70,7 +72,7 @@ class BaseModel extends Model
 
         $text = $this->$attr;
 
-        // if(str_contains($c, 'patient')) $text = $this->patient;
+        if(str_contains($c, 'patient')) $text = $this->patient;
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 

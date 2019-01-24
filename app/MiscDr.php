@@ -481,4 +481,18 @@ class MiscDr extends Common
 	}
 
 
+	public static function regimens()
+	{
+		$calls = \App\DrCallView::all();
+
+		foreach ($calls as $key => $value) {
+			$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
+
+			if(!$reg){
+				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name, 'call' => $value->call]);
+			}
+		}
+	}
+
+
 }

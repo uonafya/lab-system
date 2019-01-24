@@ -48,10 +48,11 @@
                                     <th>Result</th>
                                 </tr>
                             </thead>
+                            <!-- {{ $sample->patient }} -->
                             <tbody> 
                                 <tr>
                                     <td> {{ $sample->id }} </td>
-                                    <td> {{ $sample->patient }} </td>
+                                    <td> {!! $sample->get_link('patient_id') !!} </td>
                                     <td>
                                         @foreach($genders as $gender)
                                             @if($sample->sex == $gender->id)

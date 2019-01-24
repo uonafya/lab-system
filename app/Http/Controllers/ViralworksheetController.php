@@ -482,6 +482,7 @@ class ViralworksheetController extends Controller
                 $sample->save();
             }
         }
+        // Panther
         else if($worksheet->machine_type == 4){
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
@@ -522,6 +523,7 @@ class ViralworksheetController extends Controller
                 $sample->save();
             }
         }
+        // Taqman
         else
         {
             $handle = fopen($file, "r");

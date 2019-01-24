@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        
 
         DB::table('user_types')->insert([
 		    ['id' => '1', 'user_type' => 'Lab User'],
@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '5', 'user_type' => 'Facility Users'],
 		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
 		    ['id' => '7', 'user_type' => 'POC Admin'],
+		    ['id' => '8', 'user_type' => 'EDARP Admin'],
 		]);
 
 		// $old_users = DB::connection('old')->table('users')->get();
@@ -87,6 +88,15 @@ class UsersTableSeeder extends Seeder
 	        'oname' => 'Admin',
 	        'email' => 'poc@gmail.com',
     	]);
+
+        if (env('APP_LAB') == 2) // EDARP user to approve samples which are staged in Kisumu
+	        $users = factory(App\User::class, 1)->create([
+		        'user_type_id' => 8,
+		        'surname' => 'EDARP',
+		        'oname' => 'Admin',
+		        'email' => 'edarp@gmail.com',
+		        'password' => encrypt(env('APP_KEY').'@edarp')
+	    	]);
 
     	$facilitys = DB::table('facilitys')->get();
 

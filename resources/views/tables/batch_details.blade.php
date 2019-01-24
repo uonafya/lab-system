@@ -54,9 +54,12 @@
                         <div class="col-md-4">
                             <p><strong>Date Received:</strong> {{ $batch->my_date_format('datereceived')  ?? '' }}</p>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-4">
                             <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
-                        </div>                       
+                        </div>  
+                        <div class="col-md-4">
+                            <p><strong>Date Dispatched:</strong> {{ $batch->my_date_format('datedispatched')  ?? '' }}</p>
+                        </div>                     
                     </div>
                     @if(auth()->user()->user_type_id != 5)
                         <div class="row">
@@ -66,6 +69,14 @@
                                 <div class="col-md-4">
                                     <a href="{{ url('batch/site_approval_group/' . $batch->id) }} ">
                                         <button class="btn btn-primary">Approve Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
+
+                            @if($batch->site_entry == 2)
+                                <div class="col-md-4">
+                                    <a href="{{ url('batch/convert_from_poc/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Convert to Site Entry</button>
                                     </a>
                                 </div>
                             @endif
