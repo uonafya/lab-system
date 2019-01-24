@@ -359,7 +359,7 @@ class BatchController extends Controller
             session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
             return redirect('sample/' . $s->id . '/edit');
         }
-        return redirect('batch/' . $new_batch->id);
+        return redirect('batch/' . $new_id);
     }
 
     /**
