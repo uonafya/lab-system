@@ -345,11 +345,15 @@ class BatchController extends Controller
             $count++;
         }
         // $s = $new_batch->sample->first();
+        $datereceived = $batch->datereceived;
 
         if(!$has_received_status){
             $new_batch->datereceived = null;
             $new_batch->save();
         }
+
+        $batch->datereceived = $datereceived;
+        $batch->save();
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
