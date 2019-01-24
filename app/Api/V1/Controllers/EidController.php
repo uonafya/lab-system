@@ -187,7 +187,7 @@ class EidController extends BaseController
         }
 
         if(!$editted){
-            $batch = Batch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+            $batch = Batch::existing($facility, $datereceived, $lab)->where(['synched' => 5])->withCount(['sample'])->first();
 
             if($batch && $batch->sample_count < 10){
                 unset($batch->sample_count);
@@ -207,6 +207,7 @@ class EidController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->batch_complete = 1;
             $batch->edarp();            
         }
 

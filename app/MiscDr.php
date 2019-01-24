@@ -23,8 +23,7 @@ class MiscDr extends Common
 {
 
 	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
-
-
+	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
     public static function dump_log($postData, $encode_it=true)
     {
@@ -349,6 +348,7 @@ class MiscDr extends Common
 							$c = DrCall::firstOrCreate([
 								'sample_id' => $sample->id,
 								'drug_class' => $call->drug_class,
+								'drug_class_id' => self::get_drug_class($call->drug_class),
 								'other_mutations' => self::escape_null($call->other_mutations),
 								'major_mutations' => self::escape_null($call->major_mutations),
 							]);
@@ -416,6 +416,11 @@ class MiscDr extends Common
 	public static function get_sample_warning($id)
 	{
 		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
+	}
+
+	public static function get_drug_class($id)
+	{
+		return DB::table('regimen_classes')->where(['drug_class' => $id])->first()->drug_class_id ?? null;
 	}
 
 	public static function escape_null($var)
