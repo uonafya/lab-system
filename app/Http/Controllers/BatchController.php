@@ -345,11 +345,17 @@ class BatchController extends Controller
             $count++;
         }
         // $s = $new_batch->sample->first();
+        $data = $batch->only(['datereceived', 'received_by']);
 
         if(!$has_received_status){
             $new_batch->datereceived = null;
+            $new_batch->received_by = null;            
             $new_batch->save();
         }
+
+        $b = Batch::find($batch->id);
+        $b->fill($data);
+        $b->save();
 
         Misc::check_batch($batch->id);
         Misc::check_batch($new_id);
@@ -359,7 +365,7 @@ class BatchController extends Controller
             session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
             return redirect('sample/' . $s->id . '/edit');
         }
-        return redirect('batch/' . $new_batch->id);
+        return redirect('batch/' . $new_id);
     }
 
     /**
@@ -465,6 +471,7 @@ class BatchController extends Controller
                 return $query->whereIn('batches.id', $batch_list);
             })
             ->where('batch_complete', 2)
+            ->where('lab_id', env('APP_LAB'))
             ->get();
 
         $subtotals = Misc::get_subtotals();
