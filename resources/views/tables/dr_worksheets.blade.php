@@ -111,14 +111,14 @@
                                     <td> {{ $worksheet->reviewer->full_name ?? '' }} </td>
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
-                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->sanger_status_id)->first()->name !!} </td>
+                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->sanger_status_id)->first()->output ?? '' !!} </td>
 
                                     <td> {{ $worksheet->samples_no }} </td>
 
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
-                                        @include('shared.dr_links', ['worksheet_id' => $worksheet->id, 'worksheet_status' => $worksheet->status_id])
+                                        @include('shared.dr_links', ['worksheet' => $worksheet])
                                     </td>
                                 </tr>
                             @endforeach
