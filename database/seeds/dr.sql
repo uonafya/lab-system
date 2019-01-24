@@ -1,29 +1,19 @@
-DROP TABLE IF EXISTS `regimen_classes`;
--- Dumping structure for table apidb.age_bands
-CREATE TABLE IF NOT EXISTS `regimen_classes` (
-  `id`  TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
-  `drug_class` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
-  `short_name` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
-  `call` varchar(25) COLLATE utf8mb4_unicode_ci NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 DROP TABLE IF EXISTS `dr_plate_statuses`;
 CREATE TABLE  `dr_plate_statuses` (
   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `other_id` INT unsigned NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
+  `name` varchar(30) DEFAULT NULL,
+  `output` varchar(70) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `dr_plate_statuses` (`id`, `other_id`, `name`) VALUES
-	(1, 2100, 'completed'),
-	(2, 2101, 'error'),
-	(3, 2102, 'failed'),
-	(4, 2110, 'pending'),
-	(5, 2120, 'action_required');
+INSERT INTO `dr_plate_statuses` (`id`, `other_id`, `name`, `output`) VALUES
+	(1, 2100, 'completed','<strong><div style=\'color: #339900;\'>Completed</div></strong>'),
+	(2, 2101, 'error','<strong><div style=\'color: #FF0000;\'>Error</div></strong>'),
+	(3, 2102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
+	(4, 2110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
+	(5, 2120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>');
 
 
 DROP TABLE IF EXISTS `dr_sample_statuses`;
@@ -87,3 +77,116 @@ INSERT INTO `dr_warning_codes` (`id`, `error`, `name`, `description`) VALUES
 
 
 
+DROP TABLE IF EXISTS `dr_viralprophylaxis`;
+CREATE TABLE IF NOT EXISTS `dr_viralprophylaxis` (
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `displaylabel` varchar(50) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `regimen1` varchar(10) NULL,
+  `regimen1_class_id` TINYINT unsigned NULL,
+  `regimen2` varchar(10) NULL,
+  `regimen2_class_id` TINYINT unsigned NULL,
+  `regimen3` varchar(10) NULL,
+  `regimen3_class_id` TINYINT unsigned NULL,
+  `description` varchar(100) NULL,
+  `line` TINYINT unsigned NOT NULL,
+  `ptype` TINYINT unsigned NOT NULL DEFAULT '2',
+  `category` TINYINT unsigned NOT NULL DEFAULT '3',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+
+
+INSERT INTO `dr_viralprophylaxis` (`id`, `displaylabel`, `name`, `regimen1`, `regimen1_class_id`, `regimen2`, `regimen2_class_id`, `regimen3`, `regimen3_class_id`, `line`, `ptype`, `category`) VALUES
+	(1, '4 &nbsp;AZT+3TC+NVP', 'AZT+3TC+NVP', 'AZT', 12, '3TC', 10, 'NVP', 8, 0, 0, 4),
+	(2, '5 &nbsp;AZT+3TC+EFV', 'AZT+3TC+EFV', 'AZT', 12, '3TC', 10, 'EFV', 6, 0, 0, 5),
+	(3, '2 &nbsp;TDF+3TC+NVP', 'TDF+3TC+NVP', 'TDF', 16, '3TC', 10, 'NVP', 8, 0, 0, 2),
+	(4, '1 &nbsp;TDF+3TC+EFV', 'TDF+3TC+EFV', 'TDF', 16, '3TC', 10, 'EFV', 6, 0, 0, 1),
+	(5, '10 &nbsp;AZT+3TC+LPVr', 'AZT+3TC+LPVr', 'AZT', 12, '3TC', 10, 'LPVr', 21, 0, 0, 10),
+	(6, '17 &nbsp;AZT+3TC+ABC', 'AZT+3TC+ABC', 'AZT', 12, '3TC', 10, 'ABC', 11, 0, 0, 17),
+	(7, '18 &nbsp;TDF+3TC+LPVr', 'TDF+3TC+LPVr', 'TDF', 16, '3TC', 10, 'LPVr', 21, 0, 0, 18),
+	(8, '14 &nbsp;AZT+3TC+ATVr', 'AZT+3TC+ATVr', 'AZT', 12, '3TC', 10, 'ATVr', 17, 0, 0, 14),
+	(9, '11 &nbsp;TDF+3TC+ATVr', 'TDF+3TC+ATVr', 'TDF', 16, '3TC', 10, 'ATVr', 17, 0, 0, 11),
+	(10, '13 &nbsp;ABC+3TC+ATVr', 'ABC+3TC+ATVr', 'ABC', 11, '3TC', 10, 'ATVr', 17, 0, 0, 13),
+	(11, '6 &nbsp;ABC+3TC+NVP', 'ABC+3TC+NVP', 'ABC', 11, '3TC', 10, 'NVP', 8, 0, 0, 6),
+	(12, '7 &nbsp;ABC+3TC+EFV', 'ABC+3TC+EFV', 'ABC', 11, '3TC', 10, 'EFV', 6, 0, 0, 7),
+	(13, '9 &nbsp;ABC+3TC+LPVr', 'ABC+3TC+LPVr', 'ABC', 11, '3TC', 10, 'LPVr', 21, 0, 0, 9),
+	(14, '16 &nbsp;Other', 'Other', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 16),
+	(15, '19 &nbsp;None', 'None', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 19),
+	(16, '20 &nbsp;No Data', 'No Data', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 20),
+	(17, '3 &nbsp;TDF+3TC+DTG', 'TLD', 'TDF', 16, '3TC', 10, 'DTG', 2, 0, 0, 3),
+	(18, '8 &nbsp;ABC+3TC+DTG', 'ABC+3TC+DTG', 'ABC', 11, '3TC', 10, 'DTG', 2, 0, 0, 8),
+	(19, '15 &nbsp;AZT+3TC+DRV/r', 'AZT+3TC+DRV/r', 'AZT', 12, '3TC', 10, 'DRV/r', 18, 0, 0, 15);
+
+
+
+DROP TABLE IF EXISTS `regimen_classes`;
+CREATE TABLE `regimen_classes` (
+  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `drug_class` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `drug_class_id` tinyint(3) unsigned DEFAULT NULL,
+  `short_name` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `call` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+INSERT INTO `regimen_classes` VALUES 
+	(1,NULL,'INSTI',1,'BIC','LC'),
+	(2,NULL,'INSTI',1,'DTG','LC'),
+	(3,NULL,'INSTI',1,'EVG','LC'),
+	(4,NULL,'INSTI',1,'RAL','LC'),
+	(5,NULL,'NNRTI',2,'DOR','I'),
+	(6,NULL,'NNRTI',2,'EFV','R'),
+	(7,NULL,'NNRTI',2,'ETR','I'),
+	(8,NULL,'NNRTI',2,'NVP','R'),
+	(9,NULL,'NNRTI',2,'RPV','I'),
+	(10,NULL,'NRTI',3,'3TC','R'),
+	(11,NULL,'NRTI',3,'ABC','R'),
+	(12,NULL,'NRTI',3,'AZT','S'),
+	(13,NULL,'NRTI',3,'D4T','R'),
+	(14,NULL,'NRTI',3,'DDI','R'),
+	(15,NULL,'NRTI',3,'FTC','R'),
+	(16,NULL,'NRTI',3,'TDF','I'),
+	(17,NULL,'PI',4,'ATV/r','I'),
+	(18,NULL,'PI',4,'DRV/r','I'),
+	(19,NULL,'PI',4,'FPV/r','R'),
+	(20,NULL,'PI',4,'IDV/r','I'),
+	(21,NULL,'PI',4,'LPV/r','I'),
+	(22,NULL,'PI',4,'NFV','R'),
+	(23,NULL,'PI',4,'SQV/r','R'),
+	(24,NULL,'PI',4,'TPV/r','I');
+
+
+
+--
+-- Table structure for table `worksheetstatus`
+--
+
+DROP TABLE IF EXISTS `worksheetstatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `worksheetstatus` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `state` varchar(100) DEFAULT NULL,
+  `output` varchar(150) DEFAULT NULL,
+  `active` TINYINT UNSIGNED DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `worksheetstatus`
+--
+
+LOCK TABLES `worksheetstatus` WRITE;
+/*!40000 ALTER TABLE `worksheetstatus` DISABLE KEYS */;
+INSERT INTO `worksheetstatus` VALUES 
+(1,'In-Process','<strong><div style=\'color: #FFD324;\'>In-Process</div></strong>',1),
+(2,'Tested','<strong><div style=\'color: #0000FF;\'>Tested</div></strong>',1),
+(3,'Approved','<strong><div style=\'color: #339900;\'>Approved</div></strong>',1),
+(4,'Cancelled','<strong><div style=\'color: #FF0000;\'>Cancelled</div></strong>',1),
+(5,'Sent To Sanger','<strong><div style=\'color: #0000FF;\'>Sent To Sanger</div></strong>',1),
+(6,'Received From Sanger','<strong><div style=\'color: #0000FF;\'>Received From Sanger</div></strong>',1);
+/*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
+UNLOCK TABLES;

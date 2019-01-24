@@ -151,8 +151,10 @@ class Misc extends Common
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
                 $b->save();
+                return true;
             }
 		}
+        return false;
 	}
 
 	public static function check_previous($sample_id)
