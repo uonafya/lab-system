@@ -35,6 +35,6 @@ class CreateDrCallViewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dr_call_views');
+        // Schema::dropIfExists('dr_call_views');
     }
 }
