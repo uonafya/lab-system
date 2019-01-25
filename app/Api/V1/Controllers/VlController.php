@@ -172,7 +172,7 @@ class VlController extends BaseController
         $patient->fill($request->only($fields['patient'])); 
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
-        $patient->edarp();
+        $patient->pre_update();
 
         if($editted){
             $sample = Viralsample::find($sample_exists->id);
