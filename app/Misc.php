@@ -137,7 +137,7 @@ class Misc extends Common
 			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
 		}
 		else{
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
 		}
 		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
 		$tests = Sample::where('batch_id', $batch_id)
