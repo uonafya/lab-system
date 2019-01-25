@@ -58,6 +58,9 @@ class ViralsampleController extends Controller
     {
         $viralsample = Viralsample::findOrFail($id);
         $fields = $request->input('sample');
+
+        return ['field_type' => gettype($fields)];
+
         return $fields;
         $site_entry = $request->input('site_entry');
 
