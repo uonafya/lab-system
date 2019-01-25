@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Excel;
@@ -14,6 +16,8 @@ use App\Viralworksheet;
 
 use App\DrPatient;
 use App\Lookup;
+
+use App\Mail\EdarpValidation as Edarp;
 
 class MiscViral extends Common
 {
@@ -243,6 +247,12 @@ class MiscViral extends Common
             return self::exponential_result($result);
         }
 
+        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error']) || strlen($error) > 10)
+        {
+            $res= "Failed";
+            $interpretation = $error ?? $result;       
+        }
+
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
         else if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
         {
@@ -267,12 +277,6 @@ class MiscViral extends Common
         {
             $res= "Collect New Sample";
             $interpretation="Collect New Sample";
-        }
-
-        else if($result == 'Failed' || $result == '' || str_contains($str, ['error']))
-        {
-            $res= "Failed";
-            $interpretation = $error;       
         }
 
         else if (str_contains($str, ['log'])) 
@@ -722,7 +726,7 @@ class MiscViral extends Common
             $limit -= $repeats->count();
         }
 
-        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid IS NULL, 0, 1) AS isnull")
+        $samples = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname")
             ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
             ->where('datereceived', '>', $date_str)
@@ -953,8 +957,7 @@ class MiscViral extends Common
         }
     }
 
-    public static function find_not_dispatched()
-    {
+    public static function find_not_dispatched() {
         ini_set("memory_limit", "-1");
         $samples = ViralsampleView::where(['worksheet_id' => 148])->whereNull('datedispatched')
                         ->whereBetween('datetested', ['2018-01-01', '2018-10-31'])
@@ -974,5 +977,48 @@ class MiscViral extends Common
             }
         }
     } 
+
+    public static function edarpsamplesforapproval() {
+        $samples = Viralsample::selectRaw("count(if(date(created_at) = curdate(), 1, null)) as today, count(*) as total")->where('synched', 5)->first();
+        $edarpUser = User::where('user_type_id', 8)->first();
+        if ($edarpUser->count()){
+            $form_url = URL::temporarySignedRoute(
+                'nhrl', now()->addDays(1), ['user' => $edarpUser->id]
+            );
+            // This is because the application receives requests on http but forces it to https
+
+            URL::forceScheme('http');
+
+            $base_url = url('');
+            if(env('APP_SECURE_PORT')) $base_url = str_before($base_url, ':' .  env('APP_SECURE_PORT'));
+
+            URL::forceRootUrl($base_url);
+
+            $url = URL::temporarySignedRoute('nhrl', now()->addDays(1), ['user' => $edarpUser->id]);
+
+            if(env('APP_SECURE_PORT')) URL::forceRootUrl(url('') . ':' .  env('APP_SECURE_PORT'));
+            if(env('APP_SECURE_URL')) URL::forceScheme('https');
+
+            $new_signature = str_after($url, 'expires=');
+            $old_signature = str_after($form_url, 'expires=');
+
+            $form_url = str_replace($old_signature, $new_signature, $form_url);
+        }
+        $data = (object)['samples' => $samples, 'url' => $form_url];
+
+        
+        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        if(env('APP_ENV') == 'production') 
+            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
+        if(!$mail_array) return null;
+
+        try {
+            Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+            ->send(new Edarp($data));
+            
+        } catch (Exception $e) {
+            
+        }
+    }
     
 }

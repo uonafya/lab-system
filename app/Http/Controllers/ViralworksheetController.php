@@ -482,6 +482,7 @@ class ViralworksheetController extends Controller
                 $sample->save();
             }
         }
+        // Panther
         else if($worksheet->machine_type == 4){
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
@@ -522,6 +523,7 @@ class ViralworksheetController extends Controller
                 $sample->save();
             }
         }
+        // Taqman
         else
         {
             $handle = fopen($file, "r");
@@ -576,6 +578,7 @@ class ViralworksheetController extends Controller
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
         Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
+        Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
         $worksheet->neg_units = $nc_units;
         $worksheet->neg_control_interpretation = $nc_int;

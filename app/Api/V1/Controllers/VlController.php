@@ -139,7 +139,7 @@ class VlController extends BaseController
         }
 
         if(!$editted){
-            $batch = Viralbatch::existing($facility, $datereceived, $lab)->withCount(['sample'])->get()->first();
+            $batch = Viralbatch::existing($facility, $datereceived, $lab)->where(['synched' => 5])->withCount(['sample'])->first();
 
             if($batch && $batch->sample_count < 10){
                 unset($batch->sample_count);
@@ -159,6 +159,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->batch_complete = 1;
             $batch->edarp();            
         }
 
@@ -199,7 +200,13 @@ class VlController extends BaseController
         $sample->edarp();
 
         $sample->load(['patient', 'batch']);
-        return $sample;
+        // return $sample;
+
+
+        return response()->json([
+                'message' => 'The sample was added successfully.',
+                'status_code' => 201,
+            ], 201);
     }
 
 

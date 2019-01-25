@@ -13,6 +13,7 @@ class BaseModel extends Model
     
     // protected $guarded = ['created_at'];
     protected $guarded = [];
+    // protected $hidden = [];
 
     protected static function boot()
     {
@@ -62,6 +63,7 @@ class BaseModel extends Model
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
+            // if(str_contains($c, 'patient')) $url = url($pre . $a[0] . '/' . $this->patient_id);
         }
 
         if($attr == 'id' && (!$user || ($user && $user->user_type_id == 5))) return null;
@@ -70,7 +72,7 @@ class BaseModel extends Model
 
         $text = $this->$attr;
 
-        // if(str_contains($c, 'patient')) $text = $this->patient;
+        if(str_contains($c, 'patient')) $text = $this->patient;
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 
@@ -81,22 +83,25 @@ class BaseModel extends Model
     protected function date_modifier($value)
     {
     	if($value) return date('d-M-Y', strtotime($value));
-
     	return $value;
     }
 
     public function my_date_format($value, $format='d-M-Y')
     {
         if($this->$value) return date($format, strtotime($this->$value));
-
         return '';
     }
 
     public function my_time_format($value)
     {
         if($this->$value) return date('d-M-Y H:i:s', strtotime($this->$value));
-
         return '';
+    }
+
+    public function my_boolean_format($value)
+    {
+        if($this->$value) return "Yes";
+        return 'No';
     }
 
     public function my_string_format($value, $default='0')

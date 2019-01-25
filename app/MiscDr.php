@@ -23,8 +23,7 @@ class MiscDr extends Common
 {
 
 	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
-
-
+	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
     public static function dump_log($postData, $encode_it=true)
     {
@@ -77,7 +76,7 @@ class MiscDr extends Common
 
 			Cache::store('file')->put('dr_api_token', $key, 60);
 
-			echo $key;
+			// echo $key;
 			return;
 		}
 		die();
@@ -100,7 +99,7 @@ class MiscDr extends Common
 				'included' => $sample_data,
 			];
 
-		self::dump_log($postData);
+		// self::dump_log($postData);
 
 		// die();
 
@@ -177,15 +176,15 @@ class MiscDr extends Common
 				// if($ab) $abs[] = $ab;
 				if($ab){
 					$abs[] = $ab;
-					$abs2[] = ['file_name' => $ab['file_name']];
+					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
 			}
 			if(!$abs) continue;
 			$s['attributes']['ab1s'] = $abs;
 			$sample_data[] = $s;
 
-			$s['attributes']['ab1s'] = $abs2;
-			$print_data[] = $s;
+			// $s['attributes']['ab1s'] = $abs2;
+			// $print_data[] = $s;
 		}
 		// self::dump_log($print_data);
 		// die();
@@ -349,6 +348,7 @@ class MiscDr extends Common
 							$c = DrCall::firstOrCreate([
 								'sample_id' => $sample->id,
 								'drug_class' => $call->drug_class,
+								'drug_class_id' => self::get_drug_class($call->drug_class),
 								'other_mutations' => self::escape_null($call->other_mutations),
 								'major_mutations' => self::escape_null($call->major_mutations),
 							]);
@@ -418,6 +418,11 @@ class MiscDr extends Common
 		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
 	}
 
+	public static function get_drug_class($id)
+	{
+		return DB::table('regimen_classes')->where(['drug_class' => $id])->first()->drug_class_id ?? null;
+	}
+
 	public static function escape_null($var)
 	{
 		if($var) return $var;
@@ -430,14 +435,14 @@ class MiscDr extends Common
 		$samples = DrSampleView::whereNull('worksheet_id')
 		->whereNull('extraction_worksheet_id')
 		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
-		->where(['receivedstatus' => 1])
+		->where(['receivedstatus' => 1, 'control' => 0])
 		->orderBy('datereceived', 'asc')
 		->orderBy('id', 'asc')
 		->limit($limit)
 		->get();
 
 		if($samples->count() == $limit){
-			return ['samples' => $samples, 'create' => true];
+			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 		}
 		return ['samples' => $samples, 'create' => false];
 	}
@@ -455,6 +460,43 @@ class MiscDr extends Common
 			return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
 		}
 		return ['create' => false, 'extraction_worksheet_id' => $extraction_worksheet_id];
+	}
+
+
+	public static function generate_samples()
+	{
+		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(150)->get();
+
+		foreach ($potential_patients as $patient) {
+	        $data = $patient->only(['patient_id', 'dr_reason_id']);
+	        $data['user_id'] = 0;
+	        $data['receivedstatus'] = 1;
+	        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
+	        $data['datereceived'] = date('Y-m-d');
+	        // $sample = DrSample::create($data);
+	        $sample = new DrSample;
+	        $sample->fill($data);
+	        $facility = $sample->patient->facility;
+	        $sample->facility_id = $facility->id;
+	        $sample->save();      
+
+	        $patient->status_id=2;
+	        $patient->save();
+		}
+	}
+
+
+	public static function regimens()
+	{
+		$calls = \App\DrCallView::all();
+
+		foreach ($calls as $key => $value) {
+			$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
+
+			if(!$reg){
+				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name, 'call' => $value->call]);
+			}
+		}
 	}
 
 

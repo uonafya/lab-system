@@ -27,7 +27,7 @@ class ViralsampleController extends Controller
         //
     }
 
-    public function nhrl_samples()
+    public function nhrl_samples(Request $request)
     {
         $samples = Viralsample::where('synched', 5)->with(['batch.facility', 'patient'])->get(); 
         $data['samples'] = $samples;
@@ -221,7 +221,7 @@ class ViralsampleController extends Controller
             $viralsample->label_id = $request->input('label_id');
         }
         $viralsample->patient_id = $viralpatient->id;
-        $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
+        $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
@@ -342,7 +342,6 @@ class ViralsampleController extends Controller
         
         $batch = Viralbatch::find($viralsample->batch_id);
 
-        $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $request->input('dob'));
         if($batch->site_entry == 1 && !$viralsample->receivedstatus && $user->is_lab_user()){
             $viralsample->sample_received_by = $user->id;
         }
@@ -382,6 +381,7 @@ class ViralsampleController extends Controller
         $viralpatient->fill($data);
         $viralpatient->pre_update();
 
+        $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
         $viralsample->patient_id = $viralpatient->id;
 
         session(['toast_message' => 'The sample has been updated.']);

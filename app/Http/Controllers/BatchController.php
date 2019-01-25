@@ -88,19 +88,33 @@ class BatchController extends Controller
 
         $this->batches_transformer($batches);
 
-        if($batch_complete == 1){
-            $p = Lookup::get_partners();
-            $fac = false;
-            if($facility_id) $fac = Facility::find($facility_id);
-            return view('tables.dispatched_batches', [
-                'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
-                'batch_complete' => $batch_complete, 
-                'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
-                'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
-                    ->with('pageTitle', 'Samples by Batch');
-        }
+        $p = Lookup::get_partners();
+        $fac = false;
+        if($facility_id) $fac = Facility::find($facility_id);
 
-        return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
+        $view = 'tables.batches';
+        if($batch_complete == 1) $view = 'tables.dispatched_batches';
+
+        return view($view, [
+            'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
+            'batch_complete' => $batch_complete, 
+            'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+            'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
+                ->with('pageTitle', 'Samples by Batch');
+
+        // if($batch_complete == 1){
+        //     $p = Lookup::get_partners();
+        //     $fac = false;
+        //     if($facility_id) $fac = Facility::find($facility_id);
+        //     return view('tables.dispatched_batches', [
+        //         'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
+        //         'batch_complete' => $batch_complete, 
+        //         'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+        //         'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
+        //             ->with('pageTitle', 'Samples by Batch');
+        // }
+
+        // return view('tables.batches', ['batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 'batch_complete' => $batch_complete])->with('pageTitle', 'Samples by Batch');
     }
     
     public function to_print($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
@@ -196,6 +210,7 @@ class BatchController extends Controller
 
     public function batch_search(Request $request)
     {
+        $batch_complete = $request->input('batch_complete', 1);
         $submit_type = $request->input('submit_type');
         $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
@@ -213,7 +228,7 @@ class BatchController extends Controller
         if($subcounty_id == '') $subcounty_id = 0;
         if($facility_id == '') $facility_id = 0;
 
-        if($submit_type == 'excel') return $this->dispatch_report($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+        if($submit_type == 'excel') return $this->dispatch_report($batch_complete, $date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
@@ -332,8 +347,7 @@ class BatchController extends Controller
         // $s = $new_batch->sample->first();
 
         if(!$has_received_status){
-            $new_batch->datereceived = null;
-            $new_batch->save();
+            Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
         }
 
         Misc::check_batch($batch->id);
@@ -344,7 +358,7 @@ class BatchController extends Controller
             session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
             return redirect('sample/' . $s->id . '/edit');
         }
-        return redirect('batch/' . $new_batch->id);
+        return redirect('batch/' . $new_id);
     }
 
     /**
@@ -450,6 +464,7 @@ class BatchController extends Controller
                 return $query->whereIn('batches.id', $batch_list);
             })
             ->where('batch_complete', 2)
+            ->where('lab_id', env('APP_LAB'))
             ->get();
 
         $subtotals = Misc::get_subtotals();
@@ -756,11 +771,11 @@ class BatchController extends Controller
         return back();
     }
 
-    public function dispatch_report($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $date_column = "batches.datedispatched";
 
-        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'batches.datedispatched'])
+        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'samples.datecollected', 'batches.datereceived', 'samples.datetested', 'batches.datedispatched'])
             ->leftJoin('patients', 'patients.id', '=', 'samples.patient_id')
             ->leftJoin('batches', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
@@ -783,8 +798,22 @@ class BatchController extends Controller
             ->when($partner_id, function($query) use ($partner_id){
                 return $query->where('facilitys.partner', $partner_id);
             })
-            ->where('batch_complete', 1)
-            ->orderBy($date_column, 'desc')
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
+
+                else if($batch_complete == 5){
+                    return $query->whereNull('datereceived')
+                        ->where(['site_entry' => 1, 'batch_complete' => 0])
+                        ->where('batches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
+                }
+            })
+            ->when(true, function($query) use ($batch_complete){
+                if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
+                return $query->orderBy('batches.created_at', 'desc');
+            })
+            ->where('batches.lab_id', env('APP_LAB'))
+            // ->where('batch_complete', 1)
+            // ->orderBy($date_column, 'desc')
             ->orderBy('batch_id', 'desc')
             ->get();
 
@@ -797,6 +826,9 @@ class BatchController extends Controller
             $data[$key]['Sub County'] = $sample->subcounty;
             $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
             $data[$key]['Test Outcome'] = $sample->result_name;
+            $data[$key]['Date Collected'] = $sample->my_date_format('datecollected');
+            $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
+            $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
@@ -815,8 +847,20 @@ class BatchController extends Controller
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $sheet->fromArray($data);
             });
-        })->download('xls');
+        })->download('csv');
 
+    }
+
+    public function convert_to_site_entry(Batch $batch)
+    {
+        if($batch->site_entry == 2 && !$batch->datedispatched){
+            $batch->site_entry = 1;
+            $batch->save();
+            session(['toast_message' => 'The batch has been converted to a site entry']);
+            return back();
+        }
+        session(['toast_message' => 'The batch has not been converted to a site entry', 'toast_error' => 1]);
+        return back();
     }
 
 
@@ -829,7 +873,8 @@ class BatchController extends Controller
         $batches = Batch::whereRaw("id like '" . $search . "%'")
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
-                return $query->where('lab_id', $user->lab_id);
+                // return $query->where('lab_id', $user->lab_id);
+                return $query->whereRaw("(lab_id={$user->lab_id} or site_entry=2)");
             })
             ->paginate(10);
 

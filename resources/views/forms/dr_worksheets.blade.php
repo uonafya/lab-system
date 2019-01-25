@@ -22,6 +22,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Sample Type</th>
                                     <th>Sample Code / Patient ID</th>
                                     <th>Facility</th>
                                     <th>Lab ID</th>
@@ -34,6 +35,7 @@
                                 @foreach($samples as $key => $dr_sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
+                                        <td> {{ $dr_sample->control_type }} </td>
                                         <td> {{ $dr_sample->patient ?? '' }} </td>
                                         <td> {{ $dr_sample->facilityname ?? '' }} </td>
                                         <td> {{ $dr_sample->id }} </td>

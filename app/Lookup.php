@@ -108,6 +108,7 @@ class Lookup
     public static function calculate_dob($datecollected, $years, $months=0)
     {
         if(!is_numeric($years) && !$months) return null;
+        if(!$years && !$months) return null;
         try {           
             $dc = Carbon::createFromFormat('Y-m-d', $datecollected);
             $dc->subYears($years);
@@ -398,6 +399,7 @@ class Lookup
 
     public static function calculate_viralage($date_collected, $dob)
     {
+        if(!$dob) return 0;
         $dob = Carbon::parse( $dob );
         $dc = Carbon::parse( $date_collected );
         $years = $dc->diffInYears($dob, true);
@@ -451,6 +453,8 @@ class Lookup
             'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
             'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
 
+            'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),
+            'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
         ];
     }
 
@@ -469,7 +473,7 @@ class Lookup
 
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
-            'dr_sample' => ['patient_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications'],
+            'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications'],
         ];
     }
 

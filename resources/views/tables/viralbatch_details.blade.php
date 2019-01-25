@@ -73,8 +73,11 @@
                             <div class="col-md-4">
                                 <p><strong>Date Received:</strong> {{ $batch->my_date_format('datereceived')  ?? '' }}</p>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <p><strong>Received By:</strong> {{ $batch->receiver->full_name ?? '' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Date Dispatched:</strong> {{ $batch->my_date_format('datedispatched')  ?? '' }}</p>
                             </div>
                         @endif                        
                     </div>
@@ -89,6 +92,16 @@
                                     </a>
                                 </div>
                             @endif
+
+
+                            @if($batch->site_entry == 2)
+                                <div class="col-md-4">
+                                    <a href="{{ url('viralbatch/convert_from_poc/' . $batch->id) }} ">
+                                        <button class="btn btn-primary">Convert to Site Entry</button>
+                                    </a>
+                                </div>
+                            @endif
+
                             <div class="col-md-4 pull-right">
                                 <a href="{{ url('viralbatch/transfer/' . $batch->id) }} ">
                                     <button class="btn btn-primary">Transfer Samples To Another Batch</button>
