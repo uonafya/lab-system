@@ -86,11 +86,11 @@
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr>
-                                        <th colspan="15"><center> Sample Log</center></th>
+                                        <th colspan="14"><center> Sample Log</center></th>
                                     </tr>
                                     <tr>
                                         <th colspan="6">Patient Information</th>
-                                        <th colspan="4">Sample Information</th>
+                                        <th colspan="3">Sample Information</th>
                                         <th colspan="5">History Information</th>
                                     </tr>
                                     <tr>
@@ -104,7 +104,6 @@
                                         <th>Sample Type</th>
                                         <th>Collection Date</th>
                                         <th>Received Status</th>
-                                        <th>High Priority</th>
 
                                         <th>Current Regimen</th>
                                         <th>ART Initiation Date</th>
@@ -143,7 +142,6 @@
                                                     @endif
                                                 @endforeach
                                             </td>
-                                            <td></td>
                                             <td>
                                                 @foreach($prophylaxis as $proph)
                                                     @if($sample->prophylaxis == $proph->id)
