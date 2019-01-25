@@ -550,8 +550,8 @@ class ReportController extends Controller
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
-        
-        return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0);
+        // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0)->toSql());
+        return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
     }
 
     public static function __getExcel($data, $title, $request = null)
