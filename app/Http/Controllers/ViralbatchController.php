@@ -347,21 +347,13 @@ class ViralbatchController extends Controller
             $count++;
         }
 
-        $data = $batch->only(['datereceived', 'received_by']);
-
         if($count == 0){
             // $new_batch->delete();
         }
 
         if(!$has_received_status){
-            $new_batch->datereceived = null;
-            $new_batch->received_by = null;    
-            $new_batch->save();
+            Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
         }
-
-        $b = Viralbatch::find($batch->id);
-        $b->fill($data);
-        $b->save();
 
         MiscViral::check_batch($batch->id);
         MiscViral::check_batch($new_id);

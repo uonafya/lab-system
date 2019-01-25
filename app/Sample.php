@@ -10,7 +10,7 @@ class Sample extends BaseModel
 
     public function tat($datedispatched)
     {
-        return \App\Misc::working_days($this->datecollected, $datedispatched);
+        return \App\Misc::get_days($this->datecollected, $datedispatched, false);
     }
 
     public function patient()

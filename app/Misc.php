@@ -124,7 +124,7 @@ class Misc extends Common
 		}
 		$double_approval = \App\Lookup::$double_approval; 
 
-        Sample::whereNull('result')
+        Sample::whereRaw("(result is null or result = 5)")
             ->where('repeatt', 0)
             ->where('batch_id', $batch_id)
             ->whereNotNull('dateapproved')
