@@ -37,8 +37,8 @@
                         <thead>               
                             <tr>
                                 <th>Name of Commodity</th>
-                                <th>Average Monthly Consumption</th>
-                                <th>Months of Stock</th>
+                                <th>Average Monthly Consumption(AMC)</th>
+                                <th>Months of Stock(MOS)</th>
                                 <th>Ending Balance</th>
                                 <th>Recommended Quantity to Allocate (by System)</th>
                                 <th>Quantity Allocated by Lab</th>

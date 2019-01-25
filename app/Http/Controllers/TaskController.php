@@ -30,6 +30,8 @@ class TaskController extends Controller
         $this->year = date('Y');
         $this->month = date('m');
 
+        $this->previousYear = $this->year;
+        $this->previousMonth = $this->month - 1;
         if ($this->month == 1) {
             $this->previousMonth = 12;
             $this->previousYear = $this->year-1;
@@ -41,6 +43,7 @@ class TaskController extends Controller
         $tasks = $this->pendingTasks();
         // dd($tasks);
         if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
+            \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
             return redirect()->route('home');
         }
@@ -320,7 +323,8 @@ class TaskController extends Controller
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0) {
-            return redirect()->route('allocation');
+            // return redirect()->route('allocation');
+            return redirect()->route('pending');
         }
         
         $data['taqmanKits'] = $this->taqmanKits;
@@ -398,7 +402,7 @@ class TaskController extends Controller
                 $taqman->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
                 $abbott->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
             } else {
-                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2]
+                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2];
                 $year = $this->year;
                 if ($this->month == 1)
                     $year = $this->previousYear;
@@ -415,7 +419,8 @@ class TaskController extends Controller
         $rocheData = self::__buildRocheEndingData($data->taqman, $machinesData);
         //Build Abbott Data
         $abbottData = self::__buildAbbottEndingData($data->abbott, $machinesData);
-        dd($abbottData);
+        
+        return (object) ['roche' => $rocheData, 'abbot' => $abbottData];
     }
 
     protected static function __buildRocheEndingData($data, $machinesData) {

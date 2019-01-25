@@ -11,6 +11,7 @@ use App\Mail\NoDataReport;
 use App\Mail\LabTracker;
 use Carbon\Carbon;
 use Exception;
+use App\EquipmentMailingList as MailingList;
 
 class Common
 {
@@ -41,21 +42,21 @@ class Common
     	 return \App\Viralpatient::class;
     }
 
-	public static function get_days($start, $finish)
+	public static function get_days($start, $finish, $with_holidays=true)
 	{
 		if(!$start || !$finish) return null;
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f, false);
+		$totaldays = $s->diffInWeekdays($f, false);
 
-		if($workingdays < 0) return null;
+		if($totaldays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
 		$holidays = self::get_holidays($month);
-
-		$totaldays = $workingdays - $holidays;
+		
+		if($with_holidays) $totaldays -= $holidays;
 		if ($totaldays < 1)		$totaldays=1;
 		return $totaldays;
 	}
@@ -281,10 +282,14 @@ class Common
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 			$misc_model = \App\Misc::class;
+			$sample_model = \App\Sample::class;
 		}else{
 			$batch_model = \App\Viralbatch::class;
 			$misc_model = \App\MiscViral::class;
+			$sample_model = \App\Viralsample::class;
 		}
+
+		$sample_model::whereNull('repeatt')->update(['repeatt' => 0]);
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
@@ -298,7 +303,7 @@ class Common
 		$batch_model = self::get_batch_class($type);
         $min_time = strtotime("-14 days");
 
-		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
+		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0, 'lab_id' => env('APP_LAB')])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
 
 		foreach ($batches as $batch) {
 			$batch->batch_delete();
@@ -685,34 +690,26 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    public static function send_lab_tracker() {
-    	$year = date('Y');
-    	$month = date('m');
-    	$previousMonth =  $month - 1;
-    	if ($month == 1) {
-    		$previousMonth = 12;
-    		$year -= 1;
-    	}
-    	$data = Random::__getLablogsData($year, $month);
+    public static function send_lab_tracker($year, $previousMonth) {
+    	$data = Random::__getLablogsData($year, $previousMonth);
 
-    	// $facility = $batch->facility; 
-    	
-        $mail_array = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
-        if(env('APP_ENV') == 'production') 
-        	$mail_array = $facility->email_array;
-        if(!$mail_array) 
+    	$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+        $mainRecepient = ['baksajoshua09@gmail.com'];
+        if(env('APP_ENV') == 'production') {
+        	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
+    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
+        }
+        
+        if(!$mainRecepient) 
         	return null;
 
         try {
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	Mail::to($mainRecepient)->cc($mailinglist)
         	->send(new LabTracker($data));
+        	$allemails = array_merge($mainRecepient, $mailinglist);
+        	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
         } catch (Exception $e) {
         	
         }
     }
-
-
-
-
-
 }

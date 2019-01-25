@@ -274,8 +274,8 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
-Artisan::command('send:labtracker', function(){
-    $str = \App\Common::send_lab_tracker();
+Artisan::command('send:labtracker {year} {month}', function($year, $month){
+    $str = \App\Common::send_lab_tracker($year, $month);
     $this->info($str);
 })->describe('Send labtracker email to the program people');
 
@@ -283,3 +283,8 @@ Artisan::command('edarp:approvesamples', function(){
     $str = \App\MiscViral::edarpsamplesforapproval();
     $this->info($str);
 })->describe('Send email of the EDARP samples that need approval');
+
+// Artisan::command('verify:list', function(){
+//     $str = \App\Misc::check_patients_list();
+//     $this->info($str);
+// })->describe('Checking for Chege');
