@@ -289,6 +289,11 @@ Artisan::command('transfer:consumptions', function(){
     $this->info($str);
 })->describe('Migrate from the old procurements tables');
 
+Artisan::command('transfer:deliveries', function(){
+    $str = \App\Common::transferdeliveries();
+    $this->info($str);
+})->describe('Migrate from the old procurements tables');
+
 // Artisan::command('verify:list', function(){
 //     $str = \App\Misc::check_patients_list();
 //     $this->info($str);

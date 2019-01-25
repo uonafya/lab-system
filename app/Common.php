@@ -842,4 +842,8 @@ class Common
 			\App\Consumption::create($consumption);
 		}
     }
+
+    public static function transferdeliveries() {
+    	
+    }
 }
