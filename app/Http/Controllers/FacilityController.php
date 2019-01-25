@@ -107,9 +107,10 @@ class FacilityController extends Controller
             $table .= '<td>'.$facility->telephone.'</td>';
             $table .= '<td>'.$facility->telephone2.'</td>';
             $table .= '<td>'.$contact.'</td>';
+            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
             $table .= '</tr>';
         }
-        $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available']);
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available', 'Task']);
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilites Sending Samples');
     }
 
