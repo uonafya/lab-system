@@ -107,7 +107,7 @@ class FacilityController extends Controller
             $table .= '<td>'.$facility->telephone.'</td>';
             $table .= '<td>'.$facility->telephone2.'</td>';
             $table .= '<td>'.$contact.'</td>';
-            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
+            $table .= '<td><a href="'.route('facility.show',$facility->id).'">View</a>|<a href="'.route('facility.edit',$facility->id).'">Edit</a></td>';
             $table .= '</tr>';
         }
         $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available', 'Task']);
