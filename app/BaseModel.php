@@ -83,22 +83,25 @@ class BaseModel extends Model
     protected function date_modifier($value)
     {
     	if($value) return date('d-M-Y', strtotime($value));
-
     	return $value;
     }
 
     public function my_date_format($value, $format='d-M-Y')
     {
         if($this->$value) return date($format, strtotime($this->$value));
-
         return '';
     }
 
     public function my_time_format($value)
     {
         if($this->$value) return date('d-M-Y H:i:s', strtotime($this->$value));
-
         return '';
+    }
+
+    public function my_boolean_format($value)
+    {
+        if($this->$value) return "Yes";
+        return 'No';
     }
 
     public function my_string_format($value, $default='0')
