@@ -64,7 +64,7 @@ class ViralsampleController extends Controller
 
         $viralsample->national_sample_id = $fields->id;
 
-        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'old_id', 'amrs_location'];
+        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'old_id', 'amrs_location', 'nhrlpoceqa', 'previous_nonsuppressed'];
 
         foreach ($unset_array as $value) {
             unset($fields->$value);
