@@ -52,7 +52,7 @@ class BatchController extends Controller
     public function update(ApiRequest $request, $id)
     {
         $batch = Batch::findOrFail($id);
-        $fields = $request->input('batch');
+        $fields = json_decode($request->input('batch'));
         $site_entry = $request->input('site_entry');
 
         if($site_entry == 2 && $batch->site_entry != 2) return $this->response->errorBadRequest("This batch does not exist here.");
