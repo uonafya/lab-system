@@ -42,21 +42,21 @@ class Common
     	 return \App\Viralpatient::class;
     }
 
-	public static function get_days($start, $finish)
+	public static function get_days($start, $finish, $with_holidays=true)
 	{
 		if(!$start || !$finish) return null;
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f, false);
+		$totaldays = $s->diffInWeekdays($f, false);
 
-		if($workingdays < 0) return null;
+		if($totaldays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
 		$holidays = self::get_holidays($month);
-
-		$totaldays = $workingdays - $holidays;
+		
+		if($with_holidays) $totaldays -= $holidays;
 		if ($totaldays < 1)		$totaldays=1;
 		return $totaldays;
 	}
