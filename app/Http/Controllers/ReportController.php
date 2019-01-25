@@ -521,7 +521,7 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=false;
-            if ($request->input('types') == 'rejected')
+            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1)
                 $receivedOnly=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
