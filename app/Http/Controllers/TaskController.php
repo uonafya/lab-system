@@ -43,7 +43,7 @@ class TaskController extends Controller
         $tasks = $this->pendingTasks();
         // dd($tasks);
         if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
-            \App\Commen::send_lab_tracker($this->previousYear, $this->previousMonth);
+            \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
             return redirect()->route('home');
         }

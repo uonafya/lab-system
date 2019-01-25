@@ -36,6 +36,7 @@
                                     <tr>
                                         {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_dateSelect_form']) }}
                                         <td>Select Date:</td>
+                                        <input type="hidden" name="samples_log" value="1">
                                         <td>
                                             <div class="input-group date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -50,6 +51,7 @@
                                     <tr>
                                         {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'id' => 'reports_dateRange_form']) }}
                                         <td>Select Date Range From: </td>
+                                        <input type="hidden" name="samples_log" value="1">
                                         <td>
                                             <div class="input-group date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
