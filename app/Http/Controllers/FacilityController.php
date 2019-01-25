@@ -80,9 +80,17 @@ class FacilityController extends Controller
 
     public function lab()
     {
-        $facilities = ViewFacility::join('batches', 'batches.facility_id', '=', 'view_facilitys.id')
-                                    ->join('viralbatches', 'viralbatches.facility_id', '=', 'view_facilitys.id')
-                                    ->selectRaw("distinct view_facilitys.id, view_facilitys.name, view_facilitys.facilitycode, view_facilitys.county, view_facilitys.subcounty, view_facilitys.email, view_facilitys.telephone, view_facilitys.telephone2")->get();
+        // $facilities = ViewFacility::join('batches', 'batches.facility_id', '=', 'view_facilitys.id')
+        //                             ->join('viralbatches', 'viralbatches.facility_id', '=', 'view_facilitys.id')
+        //                             ->selectRaw("distinct view_facilitys.id, view_facilitys.name, view_facilitys.facilitycode, view_facilitys.county, view_facilitys.subcounty, view_facilitys.email, view_facilitys.telephone, view_facilitys.telephone2")->get();
+
+
+        $facilities = ViewFacility::selectRaw("view_facilitys.*, count(batches.id) as eid_batches, count(viralbatches.id) as vl_batches ")
+                                    ->leftJoin('batches', 'batches.facility_id', '=', 'view_facilitys.id')
+                                    ->leftJoin('viralbatches', 'viralbatches.facility_id', '=', 'view_facilitys.id')
+                                    ->groupBy('view_facilitys.id')
+                                    ->havingRaw("eid_batches > 0 or vl_batches > 0 ")
+                                    ->get();
         $table = '';
         foreach ($facilities as $key => $facility) {
             if ((!isset($facility->email) || $facility->email == '') || (!isset($facility->telephone) || $facility->telephone == '') || (!isset($facility->telephone2) || $facility->telephone2 == '')){
@@ -99,9 +107,10 @@ class FacilityController extends Controller
             $table .= '<td>'.$facility->telephone.'</td>';
             $table .= '<td>'.$facility->telephone2.'</td>';
             $table .= '<td>'.$contact.'</td>';
+            $table .= '<td><a href="'.route('facility.show',$facility->id).'">View</a>|<a href="'.route('facility.edit',$facility->id).'">Edit</a></td>';
             $table .= '</tr>';
         }
-        $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available']);
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name', 'County', 'Sub-county', 'Facility Email', 'Facility Phone 1', 'Facility Phone 2', 'Contacts Available', 'Task']);
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilites Sending Samples');
     }
 
