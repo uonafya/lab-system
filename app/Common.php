@@ -42,21 +42,21 @@ class Common
     	 return \App\Viralpatient::class;
     }
 
-	public static function get_days($start, $finish)
+	public static function get_days($start, $finish, $with_holidays=true)
 	{
 		if(!$start || !$finish) return null;
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f, false);
+		$totaldays = $s->diffInWeekdays($f, false);
 
-		if($workingdays < 0) return null;
+		if($totaldays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
 		$holidays = self::get_holidays($month);
-
-		$totaldays = $workingdays - $holidays;
+		
+		if($with_holidays) $totaldays -= $holidays;
 		if ($totaldays < 1)		$totaldays=1;
 		return $totaldays;
 	}
@@ -282,10 +282,14 @@ class Common
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 			$misc_model = \App\Misc::class;
+			$sample_model = \App\Sample::class;
 		}else{
 			$batch_model = \App\Viralbatch::class;
 			$misc_model = \App\MiscViral::class;
+			$sample_model = \App\Viralsample::class;
 		}
+
+		$sample_model::whereNull('repeatt')->update(['repeatt' => 0]);
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
@@ -707,5 +711,143 @@ class Common
         } catch (Exception $e) {
         	
         }
+    }
+
+    public static function transferconsumptions() {
+    	$kits = \App\Kits::get();
+    	$kitArray = [];
+    	// Getting first the abbott consumptions
+    	$abbottconsumptions = \App\Abbotprocurement::get();
+    	foreach ($abbottconsumptions as $key => $consumption) {
+    		foreach ($kits as $key => $kit) {
+	    		if ($kit->machine_id == 2) {
+	    			$ending = 'ending'.$kit->alias;
+		    		$wasted = 'wasted'.$kit->alias;
+		    		$issued = 'issued'.$kit->alias;
+		    		$request = 'request'.$kit->alias;
+		    		$pos = 'pos'.$kit->alias;
+		    		$kitArray[] = [
+		    			'month' => $consumption->month,
+		    			'year' => $consumption->year,
+						'testtype' => $consumption->testtype,
+						'kit_id' => $kit->id,
+						'ending' => $consumption->$ending,
+						'wasted' => $consumption->$wasted,
+						'issued' => $consumption->$issued,
+						'pos' => $consumption->$pos,
+						'request' => $consumption->$request,
+						'datesubmitted' => $consumption->datesubmitted,
+						'submittedby' => $consumption->submittedby,
+						'lab_id' => $consumption->lab_id,
+						'comments' => $consumption->comments,
+						'issuedcomments' => $consumption->issuedcomments,
+						'approve' => $consumption->approve,
+						'disapprovereason' => $consumption->disapprovereason,
+						'synched' => $consumption->synched,
+						'datesynched' => $consumption->datesynched
+		    		];
+	    		}
+	    	}
+		}
+
+		// Finally getting the Roche consumptions
+		$months = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$years = \App\Taqmanprocurement::selectRaw("max(year) as maximum, min(year) minimum")->first();
+		for ($i=$years->minimum; $i <=$years->maximum ; $i++) {
+			foreach ($months as $key => $month) {
+				$consumptions = \App\Taqmanprocurement::where('year', '=', $i)->where('month', '=', $month)->get();
+				$vlsamples = \App\Viralsample::selectRaw("count(if(viralworksheets.machine_type = 1, 1, null)) as `taqman`, count(if(viralworksheets.machine_type = 3, 1, null)) as `C8800`")
+							->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+							->whereIn('machine_type', [1,3])
+							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
+				$eidsamples = \App\Sample::selectRaw("count(if(worksheets.machine_type = 1, 1, null)) as `taqman`, count(if(worksheets.machine_type = 3, 1, null)) as `C8800`")
+							->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+							->whereIn('machine_type', [1,3])
+							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
+				foreach ($consumptions as $key => $consumption) {
+					if ($consumption->testtype == 1)
+		    			$model = $eidsamples;
+		    		else if ($consumption->testtype == 2)
+		    			$model = $eidsamples;
+		    		if ($model->taqman == 0 && $model->C8800 == 0) {
+
+		    		} else {
+		    			$total = $model->taqman + $model->C8800;
+		    			$taqmanratio = ($model->taqman / $total);
+		    			$C8800ratio = ($model->C8800 / $total);
+		    			if ($model->taqman > 0) {
+		    				foreach ($kits as $key => $kit) {
+								if ($kit->machine_id == 1) {
+									$ending = 'ending'.$kit->alias;
+						    		$wasted = 'wasted'.$kit->alias;
+						    		$issued = 'issued'.$kit->alias;
+						    		$request = 'request'.$kit->alias;
+						    		$pos = 'pos'.$kit->alias;
+
+						    		$kitArray[] = [
+						    			'month' => $consumption->month,
+						    			'year' => $consumption->year,
+										'testtype' => $consumption->testtype,
+										'kit_id' => $kit->id,
+										'ending' => ($consumption->$ending * $taqmanratio),
+										'wasted' => ($consumption->$wasted * $taqmanratio),
+										'issued' => ($consumption->$issued * $taqmanratio),
+										'pos' => ($consumption->$pos * $taqmanratio),
+										'request' => ($consumption->$request * $taqmanratio),
+										'datesubmitted' => $consumption->datesubmitted,
+										'submittedby' => $consumption->submittedby,
+										'lab_id' => $consumption->lab_id,
+										'comments' => $consumption->comments,
+										'issuedcomments' => $consumption->issuedcomments,
+										'approve' => $consumption->approve,
+										'disapprovereason' => $consumption->disapprovereason,
+										'synched' => $consumption->synched,
+										'datesynched' => $consumption->datesynched
+						    		];
+								}
+							}
+		    			} else if ($model->C8800 > 0) {
+		    				foreach ($kits as $key => $kit) {
+								if ($kit->machine_id == 3) {
+									$ending = 'ending'.$kit->alias;
+						    		$wasted = 'wasted'.$kit->alias;
+						    		$issued = 'issued'.$kit->alias;
+						    		$request = 'request'.$kit->alias;
+						    		$pos = 'pos'.$kit->alias;
+
+						    		$kitArray[] = [
+						    			'month' => $consumption->month,
+						    			'year' => $consumption->year,
+										'testtype' => $consumption->testtype,
+										'kit_id' => $kit->id,
+										'ending' => ($consumption->$ending * $C8800ratio),
+										'wasted' => ($consumption->$wasted * $C8800ratio),
+										'issued' => ($consumption->$issued * $C8800ratio),
+										'pos' => ($consumption->$pos * $C8800ratio),
+										'request' => ($consumption->$request * $C8800ratio),
+										'datesubmitted' => $consumption->datesubmitted,
+										'submittedby' => $consumption->submittedby,
+										'lab_id' => $consumption->lab_id,
+										'comments' => $consumption->comments,
+										'issuedcomments' => $consumption->issuedcomments,
+										'approve' => $consumption->approve,
+										'disapprovereason' => $consumption->disapprovereason,
+										'synched' => $consumption->synched,
+										'datesynched' => $consumption->datesynched
+						    		];
+								}
+							}
+		    			}		    				
+		    		}
+				}
+			}
+		}
+		foreach ($kitArray as $key => $consumption) {
+			\App\Consumption::create($consumption);
+		}
+    }
+
+    public static function transferdeliveries() {
+    	
     }
 }

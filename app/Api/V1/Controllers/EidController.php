@@ -225,13 +225,13 @@ class EidController extends BaseController
         $mom->mother_dob = Lookup::calculate_mother_dob($datecollected, $mother_age);
         $mom->facility_id = $facility;
         $mom->hiv_status = $hiv_status;
-        $mom->edarp();
+        $mom->pre_update();
 
         $patient->fill($request->only($fields['patient']));
         $patient->mother_id = $mom->id;
         $patient->patient = $patient_identifier;
         $patient->facility_id = $facility;
-        $patient->edarp();
+        $patient->pre_update();
 
         if($editted){
             $sample = Sample::find($sample_exists->id);

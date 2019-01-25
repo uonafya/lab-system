@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Allocation extends Model
+class Consumption extends Model
 {
     /**
      * The attributes that should be guarded from mass assignment.
@@ -12,4 +12,8 @@ class Allocation extends Model
      * @var array
      */
     protected $guarded = [];
+
+    public function kit() {
+    	return $this->belongsTo('App\Kits');
+    }
 }
