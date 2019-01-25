@@ -30,14 +30,9 @@ class Batch extends BaseModel
     {
         if(!$this->datereceived) return '';
 
-        $max;
-        if($this->batch_complete == 1){
-            $max = $this->datedispatched;
-        }
-        else{
-            $max = date('Y-m-d');
-        }
-        return \App\Misc::working_days($this->datereceived, $max);
+        $max = date('Y-m-d');
+        if($this->batch_complete == 1) $max = $this->datedispatched;
+        return \App\Misc::get_days($this->datereceived, $max, false);
     }
 
     public function full_batch()
