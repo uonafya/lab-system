@@ -138,13 +138,13 @@ class DashboardCacher
                 $sampletype = ['plasma'=>[1,1],'EDTA'=>[2,2],'DBS'=>[3,4],'all'=>[1,4]];
                 foreach ($sampletype as $key => $value) {
                     $model[$key] = ViralsampleView::selectRaw('COUNT(id) as total')
-                        ->whereNotIn('receivedstatus', ['0', '2'])
+                        // ->whereNotIn('receivedstatus', ['0', '2'])
                         ->whereBetween('sampletype', [$value[0], $value[1]])
                         ->whereNull('worksheet_id')
+                        ->whereNull('datedispatched')
                         ->where('datereceived', '>', $date_str)
                         ->whereRaw("(result is null or result = '0')")
-                        ->where('input_complete', '1')
-                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'input_complete' => 1])
                         ->where('site_entry', '<>', 2)
                         ->where('flag', '1')->get()->first()->total; 
                 }
@@ -159,12 +159,11 @@ class DashboardCacher
             } else {
                 $model = SampleView::selectRaw('COUNT(id) as total')
                     ->whereNull('worksheet_id')
+                    ->whereNull('datedispatched')
                     ->where('datereceived', '>', $date_str)
-                    ->whereNotIn('receivedstatus', ['0', '2'])
                     ->whereRaw("(result is null or result = '0')")
-                    ->where('input_complete', '1')
+                    ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'input_complete' => 1])
                     ->where('site_entry', '<>', 2)
-                    ->where('lab_id', '=', env('APP_LAB'))
                     ->where('flag', '1')->get()->first()->total;
             }
         }
