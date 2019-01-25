@@ -64,7 +64,7 @@ class SampleController extends Controller
 
         $sample->national_sample_id = $fields->id;
 
-        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'old_id', 'amrs_location'];
+        $unset_array = ['id', 'batch_id', 'patient_id', 'original_sample_id', 'old_id', 'amrs_location', 'previous_positive'];
 
         foreach ($unset_array as $value) {
             unset($fields->$value);
