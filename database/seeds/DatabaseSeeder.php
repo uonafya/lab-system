@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(FakerSeeder::class);        
         // $this->call(DrSeeder::class);
         // $this->call(KitsSeeder::class);    
-        $this->call(LabEquipmentMailingSeeder::class);    
+        // $this->call(LabEquipmentMailingSeeder::class);    
     }
 }
