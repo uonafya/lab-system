@@ -58,6 +58,7 @@ class ViralsampleController extends Controller
     {
         $viralsample = Viralsample::findOrFail($id);
         $fields = $request->input('sample');
+        return $fields;
         $site_entry = $request->input('site_entry');
 
         if($site_entry == 2 && $viralsample->batch->site_entry != 2) return $this->response->errorBadRequest("This sample does not exist here.");
