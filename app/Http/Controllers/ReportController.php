@@ -550,7 +550,7 @@ class ReportController extends Controller
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
-        // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->where('parentid', '=', 0)->toSql());
+        
         return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
     }
 
