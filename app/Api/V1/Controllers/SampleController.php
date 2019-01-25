@@ -57,7 +57,7 @@ class SampleController extends Controller
     public function update(ApiRequest $request, $id)
     {
         $sample = Sample::findOrFail($id);
-        $fields = $request->input('sample');
+        $fields = json_decode($request->input('sample'));
         $site_entry = $request->input('site_entry');
 
         if($site_entry == 2 && $sample->batch->site_entry != 2) return $this->response->errorBadRequest("This sample does not exist here.");
