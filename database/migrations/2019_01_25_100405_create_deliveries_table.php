@@ -15,6 +15,7 @@ class CreateDeliveriesTable extends Migration
     {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->increments('id');
+            $table->bigInteger('national_id')->nullable();
             $table->biginteger('kit_id');
             $table->tinyInteger('testtype');
             $table->tinyInteger('lab_id');

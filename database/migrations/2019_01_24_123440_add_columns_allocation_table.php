@@ -16,6 +16,7 @@ class AddColumnsAllocationTable extends Migration
         Schema::dropIfExists('allocations');
         Schema::create('allocations', function(Blueprint $table){
             $table->bigIncrements('id');
+            $table->bigInteger('national_id')->nullable();
             $table->integer('year');
             $table->tinyInteger('month');
             $table->tinyInteger('testtype');
