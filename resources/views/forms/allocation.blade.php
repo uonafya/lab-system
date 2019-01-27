@@ -86,7 +86,7 @@
                                         <td></td>
                                         <td></td>
                                     @endforelse
-                                    <td><input type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}"></td>
+                                    <td><input class="form-control input-edit" type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}" id="{{ $testtype }}-{{ $kit->id }}"></td>
                                     <td>
                                         <textarea name="comment-{{ $testtype }}-{{ $kit->id }}"></textarea>
                                     </td>
@@ -109,10 +109,41 @@
 @section('scripts')
     <script type="text/javascript">
         $(function(){
-            $("#yesBtn").click(function(){
-                $("#choice").hide();
-                $("#allocationForm").fadeIn();
-            });
+            @foreach($data->machines as $machine)
+                @foreach($data->testtypes as $testtypeKey => $testtype)
+                    qualkitval = 0;
+                    @foreach($machine->kits as $kit)
+                        @if($kit->alias == 'qualkit')
+                            $("#{{ $testtype }}-{{ $kit->id }}").change(function(){
+                                qualkitval = $(this).val();
+                                computevalues("{{ $testtype }}", "{{ $machine->id }}", qualkitval);
+                            });
+                        @endif
+                    @endforeach
+                @endforeach
+            @endforeach
         });
+
+        function computevalues(testtype, machine, qualvalue) {
+            @foreach($data->machines as $machine)
+                if ("{{ $machine->id }}" == machine) {
+                    @foreach($data->testtypes as $testtypeKey => $testtype)
+                        if("{{ $testtype }}" == testtype) {
+                            @foreach($machine->kits as $kit)
+                                @if($kit->alias != 'qualkit')
+                                    @php
+                                        $factor = json_decode($kit->factor);
+                                        if ($machine->id == 2)
+                                            $factor = $factor->$testtypeKey;
+                                    @endphp
+                                    $("#" + testtype + "-{{ $kit->id }}").val(qualvalue * {{ $factor }});
+                                @endif
+                            @endforeach
+                        }
+                    @endforeach
+                }
+            @endforeach
+        }
     </script>
 @endsection
+
