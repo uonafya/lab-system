@@ -23,7 +23,8 @@ class Synch
 {
 	// public static $base = 'http://127.0.0.1:9000/api/';
 	// public static $base = 'http://eid-dash.nascop.org/api/';
-	public static $base = 'http://lab-2.test.nascop.org/api/';
+	// public static $base = 'http://lab-2.test.nascop.org/api/';
+	public static $base = 'http://lab-nat.test/api/';
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -420,6 +421,38 @@ class Synch
 				}
 			}			
 		}
+	}
+
+	public static function synch_allocations() {
+		$client new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		$url = 'insert/allocations';
+
+		while (true) {
+			$allocations = Allocation::where('synched', 0)->limit(20)->get();
+			if($allocations->isEmpty())
+				break;
+
+			$response = $client->request('post', $url, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'allocations' => $allocations->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			foreach ($body->allocations as $key => $value) {
+				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
+				$worksheet_class::where('id', $value->original_id)->update($update_data);
+			}
+		}		
 	}
 
 	public static function labactivity($type)
