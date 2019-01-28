@@ -502,7 +502,7 @@ class Synch
 
 		while (true) {
 			echo "\n\t Getting deliveries data 20\n";
-			$deliveries = Deliveries::where()->limit(20)->get();
+			$deliveries = Deliveries::where('synched', 0)->limit(20)->get();
 			if($deliveries->isEmpty())
 				break;
 
@@ -519,7 +519,7 @@ class Synch
 			]);
 			echo "\t Receiving national db response\n";
 			$body =json_decode($response->getBody());
-			foreach ($body->allocations as $key => $value) {
+			foreach ($body->deliveries as $key => $value) {
 				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
 				Deliveries::where('id', $value->original_id)->update($update_data);
 			}
