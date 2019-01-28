@@ -213,8 +213,8 @@ class DashboardController extends Controller
                 ];
         } else {
             $data = [
-                    'testedsamples' =>  $tests,
-                    'rejectedsamples'=> $rejection,
+                    'testedSamples' =>  $tests,
+                    'rejectedSamples'=> $rejection,
                     'receivedSamples'=> $received,
                     'smsPrinters'   =>  $smsPrinters,
                     'redraws'       =>  $redraws,
