@@ -186,7 +186,7 @@ class ViralbatchController extends Controller
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->join('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->where('batch_complete', 0)
+            ->where(['batch_complete' => 0, 'viralbatches.lab_id' => env('APP_LAB')])
             ->when(true, function($query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
                     return $query->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");

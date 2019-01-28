@@ -146,7 +146,7 @@ class Viralbatch extends BaseModel
              ";
         }
         else{
-            return null;
+            return false;
         }
     }
 

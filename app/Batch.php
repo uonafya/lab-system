@@ -142,7 +142,7 @@ class Batch extends BaseModel
              ";
         }
         else{
-            return null;
+            return false;
         }
     }
 
