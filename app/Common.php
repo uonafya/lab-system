@@ -301,11 +301,9 @@ class Common
 	public static function delete_delayed_batches($type)
 	{
 		$batch_model = self::get_batch_class($type);
-        $min_time = strtotime("-28 days");
+        $min_time = date('Y-m-d', strtotime("-28 days"));
 
 		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0, 'lab_id' => env('APP_LAB')])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
-
-		dd($batches);
 
 		foreach ($batches as $batch) {
 			$batch->batch_delete();
