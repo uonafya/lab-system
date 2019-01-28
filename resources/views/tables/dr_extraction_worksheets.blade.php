@@ -111,7 +111,7 @@
                                     <td> 
                                         @if($worksheet->date_gel_documentation)
                                             <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
-                                                Create Worksheet
+                                                Create Sequencing Worksheet
                                             </a> | 
                                         @endif
                                         @if($worksheet->status_id == 1)
