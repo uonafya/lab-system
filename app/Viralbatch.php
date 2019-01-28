@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use App\BaseModel;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BatchDeletedNotification;
@@ -153,15 +154,15 @@ class Viralbatch extends BaseModel
 
     public function batch_delete()
     {
-        // if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
-        if(!$this->delete_button) {
-            echo "Batch {$this->id} cannot be deleted \n ";
-            die();
-        }
+        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            try {
+                if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            } catch (Exception $e) {
+                
+            }
         }
         \App\Viralsample::where(['batch_id' => $this->id])->delete();
         $this->delete();

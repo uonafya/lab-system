@@ -9,6 +9,24 @@ class Random
 {
 
 
+    public function delete_site_entry()
+    {
+        $min_time = date('Y-m-d', strtotime("-28 days"));
+
+        $batches = \App\Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count ")
+            ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->whereNull('receivedstatus')
+            ->where('site_entry', 1)
+            ->where('viralbatches.created_at', '<', $min_time)
+            ->groupBy('viralbatches.id')
+            ->get();
+
+        foreach ($batches as $key => $batch) {
+        	$sample = \App\Viralsample::where('batch_id', $batch->id)->whereNotNull('receivedstatus')->first();
+        	if(!$sample) $batch->batch_delete();
+        }
+    }
+
 
 	public static function add_amrs()
 	{
