@@ -142,13 +142,17 @@ class Batch extends BaseModel
              ";
         }
         else{
-            return null;
+            return false;
         }
     }
 
     public function batch_delete()
     {
-        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        // if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        if(!$this->delete_button) {
+            echo "Batch {$this->id} cannot be deleted \n ";
+            die();
+        }
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
