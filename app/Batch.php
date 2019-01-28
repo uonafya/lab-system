@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
@@ -142,17 +143,22 @@ class Batch extends BaseModel
              ";
         }
         else{
-            return null;
+            return false;
         }
     }
 
     public function batch_delete()
     {
-        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        if(!$this->delete_button) abort(409, "Batch number {$this->id} is not eligible for deletion.");
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            try {
+                if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            } catch (Exception $e) {
+                
+            }
+            
         }
         \App\Sample::where(['batch_id' => $this->id])->delete();
         $this->delete();
