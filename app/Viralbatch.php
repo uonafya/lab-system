@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use App\BaseModel;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BatchDeletedNotification;
@@ -157,7 +158,11 @@ class Viralbatch extends BaseModel
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            try {
+                if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            } catch (Exception $e) {
+                
+            }
         }
         \App\Viralsample::where(['batch_id' => $this->id])->delete();
         $this->delete();
