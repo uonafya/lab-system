@@ -73,7 +73,7 @@ class DashboardController extends Controller
                                         return $query->where('result', '< LDL copies/ml');
                                     }                
                                 })
-                                ->where('repeatt', '=', 0)
+                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                                 ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get() 
                             :
@@ -93,7 +93,7 @@ class DashboardController extends Controller
                                         return $query->where('receivedstatus', 2);
                                     }                
                                 }) 
-                                ->where('repeatt', '=', 0)
+                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                                 ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get();
         }
@@ -387,7 +387,7 @@ class DashboardController extends Controller
             $model = DB::table('samples')
                         ->join('batches', 'batches.id', '=', 'samples.batch_id')
                         ->where('samples.flag', '=', 1);
-    	return $model;
+    	return $model->where('lab_id', env('APP_LAB'));
     }
 
 
@@ -397,7 +397,7 @@ class DashboardController extends Controller
             $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
             $model = Sample::with('batch')->where('flag', '=', 1);
 
-        return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
     public static function __getTotalSamples()
@@ -406,7 +406,7 @@ class DashboardController extends Controller
             $model = Viralsample::where('result', '<>', '') :
             $model = Sample::with('batch');
 
-        return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
     public static function __getTAT($tat = null)
@@ -431,7 +431,7 @@ class DashboardController extends Controller
                                 return $query->selectRaw("AVG(tat3) as tatvalues");
                             if($tat == 4)
                                 return $query->selectRaw("AVG(tat4) as tatvalues");
-                        })->whereYear("$table.datetested", $year)
+                        })->whereYear("$table.datetested", $year)->where('lab_id', env('APP_LAB'))
                         ->when($month, function($query) use ($month, $table){
                             return $query->whereMonth("$table.datetested", $month);
                         })->whereNotNull('tat1')->whereNotNull('tat2')->whereNotNull('tat3')->whereNotNull('tat4')

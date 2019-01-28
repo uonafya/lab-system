@@ -424,16 +424,18 @@ class Synch
 	}
 
 	public static function synch_allocations() {
-		$client new Client(['base_uri' => self::$base]);
+		echo "==> Starting allocations synch";
+		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
 
 		while (true) {
+			echo "\n\t Getting allocations data 20\n";
 			$allocations = Allocation::where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
 				break;
-
+			echo "\t Pushing allocations data to national DB\n";
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
@@ -445,14 +447,84 @@ class Synch
 				],
 
 			]);
-
+			echo "\t Receiving national db respose\n";
 			$body = json_decode($response->getBody());
-
+			echo "\t Updating allocations data\n";
 			foreach ($body->allocations as $key => $value) {
-				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
-				$worksheet_class::where('id', $value->original_id)->update($update_data);
+				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
+				Allocation::where('id', $value->original_id)->update($update_data);
 			}
-		}		
+		}
+		echo "==> Completed allocations synch\n";	
+	}
+
+	public static function synch_consumptions() {
+		echo "==> Starting consumptions synch";
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		$url = 'insert/consumptions';
+
+		while (true) {
+			echo "\n\t Getting consumptions data 20\n";
+			$consumptions = Consumption::where('synched', 0)->limit(20)->get();
+			if($consumptions->isEmpty())
+				break;
+			echo "\t Pushing consumptions data to national DB\n";
+			$response = $client->request('post', $url, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'consumptions' => $consumptions->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+			echo "\t Receiving national db respose\n";
+			$body = json_decode($response->getBody());
+			echo "\t Updating consumptions data\n";
+			foreach ($body->consumptions as $key => $value) {
+				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
+				Consumption::where('id', $value->original_id)->update($update_data);
+			}
+		}
+		echo "==> Completed consumptions synch\n";
+	}
+
+	public static function synch_deliveries(){
+		echo "==> Starting deliveries synch";
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		$uri = 'insert/deliveries';
+
+		while (true) {
+			echo "\n\t Getting deliveries data 20\n";
+			$deliveries = Deliveries::where()->limit(20)->get();
+			if($deliveries->isEmpty())
+				break;
+
+			echo "\t Pushing deliveries data to national DB";
+			$response = $client->request('post', $uri, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'deliveries' => $deliveries->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+			]);
+			echo "\t Receiving national db response\n";
+			$body =json_decode($response->getBody());
+			foreach ($body->allocations as $key => $value) {
+				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
+				Deliveries::where('id', $value->original_id)->update($update_data);
+			}
+		}
+		echo "==> Completed deliveries synch\n";
 	}
 
 	public static function labactivity($type)
