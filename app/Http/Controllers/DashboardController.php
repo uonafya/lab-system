@@ -27,10 +27,10 @@ class DashboardController extends Controller
             session(['dashboardMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
         }
         
-   		$monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
-    	$lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
-    	$lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
-    	// dd($lab_stats);
+        $monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
+        $lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
+        $lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
+        // dd($lab_stats);
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
         $monthName = "";
@@ -40,7 +40,7 @@ class DashboardController extends Controller
 
         $data = (object)['year'=>$year,'month'=>$monthName];
         // dd($data);
-    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard : $year $monthName");
+        return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard : $year $monthName");
     }
 
     public function lab_monthly_tests($year = null)
@@ -73,7 +73,7 @@ class DashboardController extends Controller
                                         return $query->where('result', '< LDL copies/ml');
                                     }                
                                 })
-                                ->where('repeatt', '=', 0)
+                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                                 ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get() 
                             :
@@ -93,7 +93,7 @@ class DashboardController extends Controller
                                         return $query->where('receivedstatus', 2);
                                     }                
                                 }) 
-                                ->where('repeatt', '=', 0)
+                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                                 ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get();
         }
@@ -240,13 +240,13 @@ class DashboardController extends Controller
                 ];
         }
         
-    	return $data;
+        return $data;
     }
 
     public function lab_tat_statistics($year=null, $month=null)
     {
         return [
-        	'tat1' => self::__getTAT(1),
+            'tat1' => self::__getTAT(1),
             'tat2' => self::__getTAT(2),
             'tat3' => self::__getTAT(3),
             'tat4' => self::__getTAT(4),
@@ -372,7 +372,7 @@ class DashboardController extends Controller
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
 
-    	return 	$model->where('repeatt', '=', '0')
+        return  $model->where('repeatt', '=', '0')
                         ->whereRaw("YEAR(datetested) = ".$year)
                         ->when($month, function($query) use ($month){
                             return $query->whereMonth('datetested', $month);
@@ -387,7 +387,7 @@ class DashboardController extends Controller
             $model = DB::table('samples')
                         ->join('batches', 'batches.id', '=', 'samples.batch_id')
                         ->where('samples.flag', '=', 1);
-    	return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
 
@@ -397,7 +397,7 @@ class DashboardController extends Controller
             $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
             $model = Sample::with('batch')->where('flag', '=', 1);
 
-        return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
     public static function __getTotalSamples()
@@ -406,7 +406,7 @@ class DashboardController extends Controller
             $model = Viralsample::where('result', '<>', '') :
             $model = Sample::with('batch');
 
-        return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
     public static function __getTAT($tat = null)
@@ -431,7 +431,7 @@ class DashboardController extends Controller
                                 return $query->selectRaw("AVG(tat3) as tatvalues");
                             if($tat == 4)
                                 return $query->selectRaw("AVG(tat4) as tatvalues");
-                        })->whereYear("$table.datetested", $year)
+                        })->whereYear("$table.datetested", $year)->where('lab_id', env('APP_LAB'))
                         ->when($month, function($query) use ($month, $table){
                             return $query->whereMonth("$table.datetested", $month);
                         })->whereNotNull('tat1')->whereNotNull('tat2')->whereNotNull('tat3')->whereNotNull('tat4')
