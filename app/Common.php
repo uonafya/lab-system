@@ -42,21 +42,21 @@ class Common
     	 return \App\Viralpatient::class;
     }
 
-	public static function get_days($start, $finish)
+	public static function get_days($start, $finish, $with_holidays=true)
 	{
 		if(!$start || !$finish) return null;
 		// $workingdays= self::working_days($start, $finish);
 		$s = Carbon::parse($start);
 		$f = Carbon::parse($finish);
-		$workingdays = $s->diffInWeekdays($f, false);
+		$totaldays = $s->diffInWeekdays($f, false);
 
-		if($workingdays < 0) return null;
+		if($totaldays < 0) return null;
 
 		$start_time = strtotime($start);
 		$month = (int) date('m', $start_time);
 		$holidays = self::get_holidays($month);
-
-		$totaldays = $workingdays - $holidays;
+		
+		if($with_holidays) $totaldays -= $holidays;
 		if ($totaldays < 1)		$totaldays=1;
 		return $totaldays;
 	}
@@ -282,10 +282,14 @@ class Common
 		if($type == 'eid'){
 			$batch_model = \App\Batch::class;
 			$misc_model = \App\Misc::class;
+			$sample_model = \App\Sample::class;
 		}else{
 			$batch_model = \App\Viralbatch::class;
 			$misc_model = \App\MiscViral::class;
+			$sample_model = \App\Viralsample::class;
 		}
+
+		$sample_model::whereNull('repeatt')->update(['repeatt' => 0]);
 
 		$batches = $batch_model::select('id')->where(['input_complete' => true, 'batch_complete' => 0])->get();
 		foreach ($batches as $key => $batch) {
@@ -297,9 +301,9 @@ class Common
 	public static function delete_delayed_batches($type)
 	{
 		$batch_model = self::get_batch_class($type);
-        $min_time = strtotime("-14 days");
+        $min_time = date('Y-m-d', strtotime("-14 days"));
 
-		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
+		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0, 'lab_id' => env('APP_LAB')])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
 
 		foreach ($batches as $batch) {
 			$batch->batch_delete();

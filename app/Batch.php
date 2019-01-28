@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
@@ -30,14 +31,9 @@ class Batch extends BaseModel
     {
         if(!$this->datereceived) return '';
 
-        $max;
-        if($this->batch_complete == 1){
-            $max = $this->datedispatched;
-        }
-        else{
-            $max = date('Y-m-d');
-        }
-        return \App\Misc::working_days($this->datereceived, $max);
+        $max = date('Y-m-d');
+        if($this->batch_complete == 1) $max = $this->datedispatched;
+        return \App\Misc::get_days($this->datereceived, $max, false);
     }
 
     public function full_batch()
@@ -147,17 +143,22 @@ class Batch extends BaseModel
              ";
         }
         else{
-            return null;
+            return false;
         }
     }
 
     public function batch_delete()
     {
-        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        if(!$this->delete_button) abort(409, "Batch number {$this->id} is not eligible for deletion.");
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            try {
+                if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            } catch (Exception $e) {
+                
+            }
+            
         }
         \App\Sample::where(['batch_id' => $this->id])->delete();
         $this->delete();

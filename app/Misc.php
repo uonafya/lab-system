@@ -124,7 +124,7 @@ class Misc extends Common
 		}
 		$double_approval = \App\Lookup::$double_approval; 
 
-        Sample::whereNull('result')
+        Sample::whereRaw("(result is null or result = 5)")
             ->where('repeatt', 0)
             ->where('batch_id', $batch_id)
             ->whereNotNull('dateapproved')
@@ -134,10 +134,10 @@ class Misc extends Common
             ->update(['result' => 5, 'labcomment' => 'Failed Test']);
 
 		if(in_array(env('APP_LAB'), $double_approval)){
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
 		}
 		else{
-			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
 		}
 		$total = Sample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
 		$tests = Sample::where('batch_id', $batch_id)
@@ -151,8 +151,10 @@ class Misc extends Common
             if($b->batch_complete == 0){
                 $b->batch_complete = 2; 
                 $b->save();
+                return true;
             }
 		}
+        return false;
 	}
 
 	public static function check_previous($sample_id)
@@ -553,5 +555,20 @@ class Misc extends Common
     		$batch->save();
     		// break;
     	}
+    }
+
+    public static function check_patients_list(){
+        // $patientsList = ['13805-2018-E02288', '13576-2018-285', '13745-2018-644', '13582-EXP214/2018', '13718-00198/18', '14446/2018/002', '16707-2018-0002', '12976-2018-0014', '18515-2018-0015', '16273/00186/18', '13989/2018/0026', '15204-2018-136', '13528-2018-00093', '14379-2017-0027', '13897-18-647', '15758-2018-0057', '15758/2017/0074', '13960-2018-00137', '13897-18-648', '14061-2017-00081', '14586-2018-0017', 'E0890/18', '15197-18-002', '13740-2017-476', '14555-2018-0072', '14947-2018-0193', '15753-2018-0039', '15732-2018-005', '14555-2018-0084', '13897-18-650', '17979-HEI-389', 'HEI/2018/00450', '14103/2017/0110', '14720-2017-0008', '163642018014', '13576-2017-301', '19990-2018-0001', '14555-2018-0091', '14098-272', '16364-2018-0016', '13805-2018-E02366', '15301-2018-021', '14519-2018-004', '14203-2018-0013', '15758-2018-0074', '138052018-E02367', '13738-2018-E00066', '15758-2018-0079', '15783-2018-0006', '1360/04/18', '11634/2018/0/30', '14753-2018-0001', '15758-2018-0081', '14102/2018/282', '14102/2018/284', '13999/1/00254', '14058-2018-2590', '147792018-0034', '13467-2018-372', '15204-2018-0202', '15758-2018-0085', '13989-2018-0045', '139172017008', '13222-000084', '14082-2018-0385', '14701-2018-036', '13805-2018-E02396', '15138-2018-019', '1416620180064', '13640-2018-56', '13805-2018-E02401', '13576-2017-0299', '14872-2018-0024', '13752-11-011', '15204-2018-0233', '14607-2018-029', '12978-2017-0013', '15834-2018-0136', '14701-2018-0045', '13656-0937', '14506-2017-0003'];
+        // $found = [];
+        // $missmatch = [];
+        
+        // foreach ($patientsList as $key => $given) {
+        //     $patient = \App\Patient::where('patient', '=', $given)->first();
+        //     if ($patient)
+        //         $found[] = $given;
+        //     else
+        //         $missmatch[] = $given;
+        // }
+        // dd($found);        
     }
 }

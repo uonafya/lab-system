@@ -186,7 +186,7 @@ class ViralbatchController extends Controller
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->join('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->where('batch_complete', 0)
+            ->where(['batch_complete' => 0, 'viralbatches.lab_id' => env('APP_LAB')])
             ->when(true, function($query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
                     return $query->whereRaw("( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
@@ -352,8 +352,7 @@ class ViralbatchController extends Controller
         }
 
         if(!$has_received_status){
-            $new_batch->datereceived = null;
-            $new_batch->save();
+            Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
         }
 
         MiscViral::check_batch($batch->id);
@@ -468,7 +467,9 @@ class ViralbatchController extends Controller
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('viralbatches.id', $batch_list);
             })
-            ->where('batch_complete', 2)->get();
+            ->where('batch_complete', 2)
+            ->where('lab_id', env('APP_LAB'))
+            ->get();
 
         $noresult_a = MiscViral::get_totals(0);
         $redraw_a = MiscViral::get_totals(5);
@@ -590,6 +591,7 @@ class ViralbatchController extends Controller
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'users.facility_id')
             ->whereNull('receivedstatus')
+            ->whereNull('datedispatched')
             ->where('site_entry', 1)
             ->groupBy('viralbatches.id')
             ->get();

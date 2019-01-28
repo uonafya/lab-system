@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use App\Sample;
+use App\SampleView;
 use App\Viralsample;
+use App\ViralsampleView;
 use App\Facility;
 
 class DashboardController extends Controller
@@ -27,10 +29,10 @@ class DashboardController extends Controller
             session(['dashboardMonth'=>(strlen($month)==1) ? '0'.$month : $month]);
         }
         
-   		$monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
-    	$lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
-    	$lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
-    	// dd($lab_stats);
+        $monthly_test = (object) $this->lab_monthly_tests(session('dashboardYear'));
+        $lab_stats = (object) $this->lab_statistics(session('dashboardYear'), session('dashboardMonth'));
+        $lab_tat_stats = (object) $this->lab_tat_statistics(session('dashboardYear'), session('dashboardMonth'));
+        // dd($lab_stats);
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
         $monthName = "";
@@ -40,7 +42,7 @@ class DashboardController extends Controller
 
         $data = (object)['year'=>$year,'month'=>$monthName];
         // dd($data);
-    	return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard : $year $monthName");
+        return view('dashboard.home', ['chart'=>$monthly_test], compact('lab_tat_stats','lab_stats','data'))->with('pageTitle', "Lab Dashboard : $year $monthName");
     }
 
     public function lab_monthly_tests($year = null)
@@ -55,13 +57,8 @@ class DashboardController extends Controller
             ($value == 'received' || $value == 'rejected') ? $table = "datereceived" : $table = "datetested";
             
             $data[$value] = ($currentTestingSystem == 'Viralload') ? 
-                            DB::table('viralsamples')
+                            DB::table('viralsamples_view')
                                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
-                                ->when($value, function($query) use ($value){
-                                    if ($value == 'received' || $value == 'rejected') {
-                                        return $query->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id');
-                                    }
-                                })
                                 ->when($value, function($query) use ($value){
                                     if($value == 'received'){
                                         return $query->where('receivedstatus', 1);
@@ -73,15 +70,12 @@ class DashboardController extends Controller
                                         return $query->where('result', '< LDL copies/ml');
                                     }                
                                 })
-                                ->where('repeatt', '=', 0)
+                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                                 ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get() 
                             :
-                            DB::table('samples')
+                            DB::table('samples_view')
                                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
-                                ->when(($value == 'rejected'), function($query){
-                                    return $query->join('batches', 'batches.id', '=', 'samples.batch_id');
-                                })
                                 ->when($value, function($query) use ($value){
                                     if($value == 'tests'){
                                         return $query->whereRaw('result between 1 and 7');
@@ -93,7 +87,7 @@ class DashboardController extends Controller
                                         return $query->where('receivedstatus', 2);
                                     }                
                                 }) 
-                                ->where('repeatt', '=', 0)
+                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                                 ->whereYear($table, $year)
                                 ->groupBy('month', 'monthname')->get();
         }
@@ -145,7 +139,7 @@ class DashboardController extends Controller
         $data = [];
         $current = session('testingSystem');
 
-        $tests = self::__getSamples()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
+        $tests = self::__getsamples_view()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
                             })->count();
         $smsPrinters = Facility::where('smsprinter', '=', 1)
@@ -153,34 +147,25 @@ class DashboardController extends Controller
                                             ->where('lab', '=', Auth()->user()->lab_id)->count();
         $rejection = self::__joinedToBatches()
                             ->when($current, function($query) use ($current, $year, $month){
-                                if ($current == 'Viralload') {
-                                    return $query->where('viralsamples.receivedstatus', '=', '2')
-                                            ->where('viralsamples.repeatt', '=', '0')
+                                    return $query->where('receivedstatus', '=', '2')
+                                            ->where('repeatt', '=', '0')
                                             ->when($month, function($query) use ($month){
-                                                return $query->whereMonth('viralbatches.datereceived', $month);
+                                                return $query->whereMonth('datereceived', $month);
                                             })
-                                            ->whereRaw("YEAR(viralbatches.datereceived) = ".$year);
-                                } else {
-                                    return $query->where('samples.receivedstatus', '=', '2')
-                                            ->where('samples.repeatt', '=', '0')
-                                            ->when($month, function($query) use ($month){
-                                                return $query->whereMonth('batches.datereceived', $month);
-                                            })
-                                            ->whereRaw("YEAR(batches.datereceived) = ".$year);
-                                }
+                                            ->whereRaw("YEAR(datereceived) = ".$year);
                             })->count();
         $received = self::__joinedToBatches()
                             ->when($current, function ($query) use ($current, $year, $month) {
                                 if ($current == 'Viralload') {
-                                    return $query->whereRaw("((viralsamples.parentid=0)||(viralsamples.parentid IS NULL))")
+                                    return $query->whereRaw("((parentid=0)||(parentid IS NULL))")
                                                 ->when($month, function($query) use ($month){
-                                                    return $query->whereMonth('viralbatches.datereceived', $month);
-                                                })->whereRaw("YEAR(viralbatches.datereceived) = ".$year);
+                                                    return $query->whereMonth('datereceived', $month);
+                                                })->whereRaw("YEAR(datereceived) = ".$year);
                                 } else {
-                                    return $query->whereRaw("YEAR(batches.datereceived) = ".$year)
+                                    return $query->whereRaw("YEAR(datereceived) = ".$year)
                                                 ->when($month, function($query) use ($month){
-                                                    return $query->whereMonth('batches.datereceived', $month);
-                                                })->whereRaw("((samples.parentid=0)||(samples.parentid IS NULL))");
+                                                    return $query->whereMonth('datereceived', $month);
+                                                })->whereRaw("((samples_view.parentid=0)||(samples_view.parentid IS NULL))");
                                 }
                             })->count();
 
@@ -194,7 +179,7 @@ class DashboardController extends Controller
             $types = ['received', 'tested', 'rejected'];
             // $sample_types = DB::table('viralsampletypes')->get();
             foreach ($types as $key => $value) {
-                $model = self::__joinedToBatches()->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples.sampletype')->when($value, function($query) use ($value, $year, $month){
+                $model = self::__joinedToBatches()->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')->when($value, function($query) use ($value, $year, $month){
                         if ($value == 'received' || $value == 'rejected'){
                             $column = 'datereceived';
                             if ($value == 'rejected')
@@ -220,9 +205,9 @@ class DashboardController extends Controller
                     'redraws' => $redraws,
                     'nonsuppressed' => self::__getsampleResultByType(3),
                     'suppressed' => self::__getsampleResultByType(2),
-                    'totaltestsinlab' => self::__getTotalSamples()->whereRaw("YEAR(viralsamples.datetested) = ".$year)
+                    'totaltestsinlab' => self::__getTotalsamples_view()->whereRaw("YEAR(datetested) = ".$year)
                                             ->when($month, function($query) use ($month){
-                                                return $query->whereMonth('viralsamples.datetested', $month);
+                                                return $query->whereMonth('datetested', $month);
                                             })->count(),
                     'sampletypes' => (object)$typeData
                 ];
@@ -233,20 +218,20 @@ class DashboardController extends Controller
                     'receivedSamples'=> $received,
                     'smsPrinters'   =>  $smsPrinters,
                     'redraws'       =>  $redraws,
-                    'failedSamples' =>  self::__getsampleResultByType(3),
+                    'failedsamples' =>  self::__getsampleResultByType(3),
                     'inconclusive'  =>  self::__getsampleResultByType(5),
                     'positives'     =>  self::__getsampleResultByType(2),
                     'negatives'     =>  self::__getsampleResultByType(1)
                 ];
         }
         
-    	return $data;
+        return $data;
     }
 
     public function lab_tat_statistics($year=null, $month=null)
     {
         return [
-        	'tat1' => self::__getTAT(1),
+            'tat1' => self::__getTAT(1),
             'tat2' => self::__getTAT(2),
             'tat3' => self::__getTAT(3),
             'tat4' => self::__getTAT(4),
@@ -321,7 +306,7 @@ class DashboardController extends Controller
                 // $result = ['> 1000'];
             }
             
-            $model = self::__getSamples()
+            $model = self::__getsamples_view()
                         ->when($result, function($query) use ($result) {
                             $max = count($result);
                             $max -= 1;
@@ -329,35 +314,35 @@ class DashboardController extends Controller
                                 if ($key == 0){
                                     if (strpos($value, 'BETWEEN') !== false || strpos($value, '>') !== false || strpos($value, '<') !== false){
                                             if (strpos($value, 'LDL') !== false || strpos($value, '>10000000') !== false) {
-                                                $query->whereRaw("(viralsamples.result  = '". $value."'");
+                                                $query->whereRaw("(result  = '". $value."'");
                                             } else {
-                                                $query->whereRaw("(viralsamples.result ".$value);
+                                                $query->whereRaw("(result ".$value);
                                             }
                                         } else {
-                                            $query->whereRaw("(viralsamples.result  = '". $value."'");
+                                            $query->whereRaw("(result  = '". $value."'");
                                         }
                                 } else {
                                     if (strpos($value, 'BETWEEN') !== false || strpos($value, '>') !== false || strpos($value, '<') !== false)
                                     {
                                         if (strpos($value, 'LDL') !== false || strpos($value, '>10000000') !== false) {
-                                            $query->orwhereRaw("viralsamples.result  = '". $value."'");
+                                            $query->orwhereRaw("result  = '". $value."'");
                                         } else {
-                                            $query->orwhereRaw("viralsamples.result ".$value);
+                                            $query->orwhereRaw("result ".$value);
                                         }
                                     } else {
-                                        $query->orwhereRaw("viralsamples.result = '". $value."'");
+                                        $query->orwhereRaw("result = '". $value."'");
                                     }
                                 }
                                 if ($key == $max) {
                                     if (strpos($value, 'BETWEEN') !== false || strpos($value, '>') !== false || strpos($value, '<') !== false)
                                     {
                                         if (strpos($value, 'LDL') !== false || strpos($value, '>10000000') !== false) {
-                                            $query->orwhereRaw("viralsamples.result  = '". $value."')");
+                                            $query->orwhereRaw("result  = '". $value."')");
                                         } else {
-                                            $query->orwhereRaw("viralsamples.result ".$value.")");
+                                            $query->orwhereRaw("result ".$value.")");
                                         }
                                     } else {
-                                        $query->orwhereRaw("viralsamples.result = '".$value."')");
+                                        $query->orwhereRaw("result = '".$value."')");
                                     }
                                 } else {
                                     
@@ -366,13 +351,13 @@ class DashboardController extends Controller
                         });
             
         } else {
-            $model = self::__getSamples()
+            $model = self::__getsamples_view()
                         ->where('result', '=', $type);
         }
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
 
-    	return 	$model->where('repeatt', '=', '0')
+        return  $model->where('repeatt', '=', '0')
                         ->whereRaw("YEAR(datetested) = ".$year)
                         ->when($month, function($query) use ($month){
                             return $query->whereMonth('datetested', $month);
@@ -382,31 +367,29 @@ class DashboardController extends Controller
     public static function __joinedToBatches()
     {
         (session('testingSystem') == 'Viralload') ?
-            $model = DB::table('viralsamples')
-                        ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id') :
-            $model = DB::table('samples')
-                        ->join('batches', 'batches.id', '=', 'samples.batch_id')
-                        ->where('samples.flag', '=', 1);
-    	return $model;
+            $model = DB::table('viralsamples_view') :
+            $model = DB::table('samples_view')
+                        ->where('samples_view.flag', '=', 1);
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
 
-    public static function __getSamples()
+    public static function __getsamples_view()
     {
         (session('testingSystem') == 'Viralload') ?
-            $model = Viralsample::with('batch')->where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
-            $model = Sample::with('batch')->where('flag', '=', 1);
+            $model = ViralsampleView::where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
+            $model = SampleView::where('flag', '=', 1);
 
-        return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
-    public static function __getTotalSamples()
+    public static function __getTotalsamples_view()
     {
         (session('testingSystem') == 'Viralload') ?
-            $model = Viralsample::where('result', '<>', '') :
-            $model = Sample::with('batch');
+            $model = ViralsampleView::where('result', '<>', '') :
+            $model = SampleView::where('flag', '=', 1);
 
-        return $model;
+        return $model->where('lab_id', env('APP_LAB'));
     }
 
     public static function __getTAT($tat = null)
@@ -415,11 +398,11 @@ class DashboardController extends Controller
         $month = session('dashboardMonth');
 
         if(session('testingSystem') == 'Viralload'){
-            $model = Viralsample::where('flag', '=', 1);
-            $table = 'viralsamples';
+            $model = ViralsampleView::where('flag', '=', 1);
+            $table = 'viralsamples_view';
         } else if (session('testingSystem') == 'EID') {
-            $model = Sample::where('flag', '=', 1);
-            $table = 'samples';
+            $model = SampleView::where('flag', '=', 1);
+            $table = 'samples_view';
         }
 
         $model = $model->when($tat, function($query) use ($tat) {
@@ -431,9 +414,9 @@ class DashboardController extends Controller
                                 return $query->selectRaw("AVG(tat3) as tatvalues");
                             if($tat == 4)
                                 return $query->selectRaw("AVG(tat4) as tatvalues");
-                        })->whereYear("$table.datetested", $year)
+                        })->whereYear("datetested", $year)->where('lab_id', env('APP_LAB'))
                         ->when($month, function($query) use ($month, $table){
-                            return $query->whereMonth("$table.datetested", $month);
+                            return $query->whereMonth("datetested", $month);
                         })->whereNotNull('tat1')->whereNotNull('tat2')->whereNotNull('tat3')->whereNotNull('tat4')
                         ->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
 
