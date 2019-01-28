@@ -198,9 +198,9 @@ class DashboardController extends Controller
             }
             
             $data = [
-                    'testedsamples_view' => $tests,
-                    'rejectedsamples_view' => $rejection,
-                    'receivedsamples_view'=> $received,
+                    'testedSamples' => $tests,
+                    'rejectedSamples' => $rejection,
+                    'receivedSamples'=> $received,
                     'smsPrinters'   =>  $smsPrinters,
                     'redraws' => $redraws,
                     'nonsuppressed' => self::__getsampleResultByType(3),
@@ -213,12 +213,12 @@ class DashboardController extends Controller
                 ];
         } else {
             $data = [
-                    'testedsamples_view' =>  $tests,
-                    'rejectedsamples_view'=> $rejection,
-                    'receivedsamples_view'=> $received,
+                    'testedsamples' =>  $tests,
+                    'rejectedsamples'=> $rejection,
+                    'receivedSamples'=> $received,
                     'smsPrinters'   =>  $smsPrinters,
                     'redraws'       =>  $redraws,
-                    'failedsamples_view' =>  self::__getsampleResultByType(3),
+                    'failedsamples' =>  self::__getsampleResultByType(3),
                     'inconclusive'  =>  self::__getsampleResultByType(5),
                     'positives'     =>  self::__getsampleResultByType(2),
                     'negatives'     =>  self::__getsampleResultByType(1)
