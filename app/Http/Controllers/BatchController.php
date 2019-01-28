@@ -185,7 +185,7 @@ class BatchController extends Controller
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->join('samples', 'batches.id', '=', 'samples.batch_id')
-            ->where('batch_complete', 0)
+            ->where(['batch_complete' => 0, 'batches.lab_id' => env('APP_LAB')])
             ->when(true, function($query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
                     return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
@@ -509,6 +509,7 @@ class BatchController extends Controller
             ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'users.facility_id')
             ->whereNull('receivedstatus')
+            ->whereNull('datedispatched')
             ->where('site_entry', 1)
             ->groupBy('batches.id')
             ->get();
