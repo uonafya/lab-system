@@ -157,7 +157,7 @@ class Viralbatch extends BaseModel
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
         }
         \App\Viralsample::where(['batch_id' => $this->id])->delete();
         $this->delete();
