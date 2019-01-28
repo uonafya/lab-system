@@ -591,6 +591,7 @@ class ViralbatchController extends Controller
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->leftJoin('facilitys as creator', 'creator.id', '=', 'users.facility_id')
             ->whereNull('receivedstatus')
+            ->whereNull('datedispatched')
             ->where('site_entry', 1)
             ->groupBy('viralbatches.id')
             ->get();
