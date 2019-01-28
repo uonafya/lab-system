@@ -11,7 +11,7 @@ class Random
 
     public static function delete_site_entry()
     {
-        $min_time = date('Y-m-d', strtotime("-28 days"));
+        $min_time = date('Y-m-d', strtotime("-2 days"));
 
         $batches = \App\Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count ")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
@@ -26,7 +26,7 @@ class Random
         	if(!$sample){
         		$batch->datereceived = null;
         		$batch->save();
-        		$batch->batch_delete();
+        		// $batch->batch_delete();
         	}
         }
     }
