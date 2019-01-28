@@ -9,7 +9,7 @@ class Random
 {
 
 
-    public function delete_site_entry()
+    public static function delete_site_entry()
     {
         $min_time = date('Y-m-d', strtotime("-28 days"));
 
