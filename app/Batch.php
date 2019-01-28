@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
@@ -152,7 +153,12 @@ class Batch extends BaseModel
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            try {
+                if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            } catch (Exception $e) {
+                
+            }
+            
         }
         \App\Sample::where(['batch_id' => $this->id])->delete();
         $this->delete();
