@@ -357,6 +357,7 @@ class MiscDr extends Common
 								$d = DrCallDrug::firstOrCreate([
 									'call_id' => $c->id,
 									'short_name' => $drug->short_name,
+									'short_name_id' => self::get_short_name_id($drug->short_name),
 									'call' => $drug->call,
 								]);
 							}
@@ -423,10 +424,34 @@ class MiscDr extends Common
 		return DB::table('regimen_classes')->where(['drug_class' => $id])->first()->drug_class_id ?? null;
 	}
 
+	public static function get_short_name_id($id)
+	{
+		return DB::table('regimen_classes')->where(['short_name' => $id])->first()->id ?? null;
+	}
+
 	public static function escape_null($var)
 	{
 		if($var) return $var;
 		return null;
+	}
+
+	public static function set_drug_classes()
+	{
+		ini_set('memory_limit', '-1');
+
+		$calls = DrCall::all();
+
+		foreach ($calls as $key => $value) {
+			$value->drug_class_id = self::get_drug_class($value->drug_class);
+			$value->save();
+		}
+
+		$calls = DrCallDrug::all();
+
+		foreach ($calls as $key => $value) {
+			$value->short_name_id = self::get_short_name_id($value->short_name);
+			$value->save();
+		}
 	}
 
 
