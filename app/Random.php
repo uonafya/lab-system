@@ -23,7 +23,11 @@ class Random
 
         foreach ($batches as $key => $batch) {
         	$sample = \App\Viralsample::where('batch_id', $batch->id)->whereNotNull('receivedstatus')->first();
-        	if(!$sample) $batch->batch_delete();
+        	if(!$sample){
+        		$batch->datereceived = null;
+        		$batch->save();
+        		$batch->batch_delete();
+        	}
         }
     }
 
