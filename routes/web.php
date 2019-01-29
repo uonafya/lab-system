@@ -235,6 +235,9 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 			Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
 
+			Route::get('approve/{worksheet}', 'DrWorksheetController@approve_results')->name('approve_results');
+			Route::put('approve/{worksheet}', 'DrWorksheetController@approve')->name('approve');
+
 			Route::get('print/{worksheet}', 'DrWorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'DrWorksheetController@cancel')->name('cancel');
 			Route::get('cancel_upload/{worksheet}', 'DrWorksheetController@cancel_upload')->name('cancel_upload');
