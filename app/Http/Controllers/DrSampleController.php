@@ -105,7 +105,10 @@ class DrSampleController extends Controller
      */
     public function show(DrSample $drSample)
     {
-        //
+        $drSample->load(['patient.facility', 'warning', 'dr_call.call_drug', 'genotype']);
+        $data = Lookup::get_dr();
+        $data['sample'] = $drSample;
+        return view('tables.dr_sample', $data)->with('pageTitle', 'Drug Resistance Samples'); 
     }
 
     /**

@@ -585,6 +585,7 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
+        ini_set('memory_limit', "-1");
         $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')

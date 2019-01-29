@@ -201,7 +201,7 @@
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
                 <hr />
-                <li><a href="{{ url('dr_worksheet') }}">Dr Worksheet List</a></li>
+                <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet List</a></li>
                 <hr />
                 
             @endif
