@@ -37,7 +37,7 @@ class DrWorksheetController extends Controller
             ->orderBy('dr_worksheets.created_at', 'desc')
             ->get();
 
-        $data = Lookup::worksheet_lookups();
+        $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
         return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets');
@@ -223,5 +223,13 @@ class DrWorksheetController extends Controller
         MiscDr::delete_folder($path);
         session(['toast_message' => 'The worksheet upload has been reversed.']);
         return redirect('dr_worksheet/upload/' . $worksheet->id);
+    }
+
+    public function approve_results(DrWorksheet $worksheet)
+    {
+        $data = Lookup::worksheet_approve_lookups();
+        $data['samples'] = DrSampleView::where(['worksheet_id' => $worksheet->id])->orderBy('id', 'asc')->get();
+        $data['worksheet'] = $worksheet;
+        return view('tables.confirm_dr_results', $data);
     }
 }

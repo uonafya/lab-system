@@ -112,24 +112,6 @@ class UsersTableSeeder extends Seeder
 		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
 		        'password' => encrypt($facility->name)
 	    	]);
-
-	    	// if($key==100) break;
-
-    		// $data[$i] = [
-		    //     'user_type_id' => 5,
-		    //     'surname' => '',
-		    //     'oname' => '',
-		    //     'facility_id' => $facility->id,
-		    //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		    //     'password' => bcrypt(encrypt($facility->name)),
-	    	// ];
-
-	    	// if($i == 200){
-	    	// 	DB::table('users')->insert($data);
-	    	// 	$i=0;
-	    	// 	$data = NULL;
-	    	// }
     	}
-    	// DB::table('users')->insert($data);
     }
 }

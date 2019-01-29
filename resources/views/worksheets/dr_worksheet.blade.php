@@ -62,7 +62,10 @@ table td  {
 				<?php $i = $row + 8; ?>
 
 				@include('shared/dr_worksheet_sample', ['sample' => $sample, 'row' => $row, 'column' => 1])
-				@include('shared/dr_worksheet_sample', ['sample' => $samples[$i], 'row' => $row, 'column' => 2])
+
+				@isset($samples[$i])
+					@include('shared/dr_worksheet_sample', ['sample' => $samples[$i], 'row' => $row, 'column' => 2])
+				@endisset
 
 				@break($row == 7)
 
