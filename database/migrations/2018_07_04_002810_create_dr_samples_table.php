@@ -109,8 +109,6 @@ class CreateDrSamplesTable extends Migration
             $table->string('pdf_download_link', 100)->nullable(); 
             $table->string('exatype_version', 50)->nullable(); 
             $table->string('algorithm', 20)->nullable(); 
-
-
             
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();

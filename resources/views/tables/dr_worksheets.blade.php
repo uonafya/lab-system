@@ -113,7 +113,7 @@
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
                                     <td> {!! $dr_plate_statuses->where('id', $worksheet->sanger_status_id)->first()->output ?? '' !!} </td>
 
-                                    <td> {{ $worksheet->samples_no }} </td>
+                                    <td> {{ $worksheet->sample_count }} </td>
 
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
