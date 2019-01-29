@@ -17,6 +17,7 @@ use App\Kits;
 use App\Consumption;
 use App\Machine;
 use App\Allocation;
+use App\AllocationDetail;
 
 use DB;
 
