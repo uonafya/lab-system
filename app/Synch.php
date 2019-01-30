@@ -432,9 +432,10 @@ class Synch
 
 		while (true) {
 			echo "\n\t Getting allocations data 20\n";
-			$allocations = Allocation::where('synched', 0)->limit(20)->get();
+			$allocations = Allocation::with(['details'])->where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
 				break;
+			
 			echo "\t Pushing allocations data to national DB\n";
 			$response = $client->request('post', $url, [
 				'headers' => [
@@ -447,12 +448,18 @@ class Synch
 				],
 
 			]);
+			
 			echo "\t Receiving national db respose\n";
 			$body = json_decode($response->getBody());
+			
 			echo "\t Updating allocations data\n";
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
 				Allocation::where('id', $value->original_id)->update($update_data);
+				foreach ($value->details as $key => $detailvalue) {
+					$detail_update_data = ['national_id' => $detailvalue->national_id, 'synched' => 1, 'datesynched' => $today];
+					AllocationDetail::where('id', $detailvalue->original_id)->update($detail_update_data);
+				}
 			}
 		}
 		echo "==> Completed allocations synch\n";	

@@ -377,7 +377,7 @@ class TaskController extends Controller
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
                 $data = (object) $data;
-                // dd($data);
+                
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else {
                 $saveAllocation = $this->saveAllocation($request);
@@ -388,23 +388,59 @@ class TaskController extends Controller
 
     protected function saveAllocation($request) {
         $form = $request->except(['_token', 'kits-form']);
-        $data = [];
-        foreach ($form as $key => $datum) {
-            $column = explode('-', $key);
-            $data = [
-                'kit_id' => $column[2],
-                'testtype' => $column[1],
-                'year' => $this->year,
-                'month' => $this->month,
-                'datesubmitted' => date('Y-m-d'),
-                'submittedby' => auth()->user()->full_name,
-                'lab_id' => env('APP_LAB'),
-                'allocated' => $form['allocate-'.$column[1].'-'.$column[2]],
-                'allocationcomments' => $form['comment-'.$column[1].'-'.$column[2]],
-            ];
-            $allocation = Allocation::create($data);
+        $allocation_data = $this->getAllocationData($form);
+        foreach ($allocation_data as $allocationkey => $allocation) {
+            $allocations_details_data = array_pull($allocation, 'allocationDetails');
+            $allocations = Allocation::create($allocation);
+            foreach ($allocations_details_data as $detailkey => $detail) {
+                $allocation_details = new AllocationDetail();
+                $allocation_details->allocation_id = $allocations->id;
+                $allocation_details->fill($detail);
+                $allocation_details->save();
+            }
         }
         return $allocation;
+    }
+
+    protected function getAllocationData($form_data) {
+        $allocation_data = [];
+        foreach ($form_data as $key => $datum) {
+            $column = explode('-', $key);
+            if ($column[0] == 'allocation') { // Create a new allocation at this point
+                $machine_id = $column[1];
+                $testtype = $column[2];
+                $allocationcomments = 'allocationcomments-'.$machine_id.'-'.$testtype;
+                $allocation_data[] = [
+                    'machine_id' => $machine_id,
+                    'testtype' => $testtype,
+                    'year' => $this->year,
+                    'month' => $this->month,
+                    'datesubmitted' => date('Y-m-d'),
+                    'submittedby' => auth()->user()->full_name,
+                    'lab_id' => env('APP_LAB'),
+                    'allocationcomments' => $form_data[$allocationcomments],
+                    'allocationDetails' => $this->getAllocationDetailsData($machine_id, $testtype, $form_data)
+                ];
+            }
+        }
+        return $allocation_data;
+    }
+
+    protected function getAllocationDetailsData($machine, $testtype, $form_data) {
+        $kits = Kits::where('machine_id', '=', $machine)->get();
+        $allocation_details_array = [];
+        foreach ($kits as $key => $kit) {
+            foreach ($form_data as $formkey => $form) {
+                $column = 'allocate-'.$testtype.'-'.$kit->id;
+                if ($column == $formkey){
+                    $allocation_details_array[] = [
+                        'kit_id' => $kit->id,
+                        'allocated' => $form
+                    ];
+                }
+            }
+        }
+        return $allocation_details_array;
     }
 
     public function performancelog(Request $request)

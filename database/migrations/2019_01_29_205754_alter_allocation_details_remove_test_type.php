@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterAllocationsTableToAllocationDetails extends Migration
+class AlterAllocationDetailsRemoveTestType extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AlterAllocationsTableToAllocationDetails extends Migration
      */
     public function up()
     {
-        Schema::table('allocations', function(Blueprint $table){
-            $table->dropColumn('kit_id');
-            $table->dropColumn('allocated');
-            $table->dropColumn('issued');
+        Schema::table('allocation_details', function(Blueprint $table){
+            $table->dropColumn('testtype');
         });
     }
 

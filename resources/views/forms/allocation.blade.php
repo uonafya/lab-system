@@ -43,10 +43,10 @@
                                     <th>Ending Balance</th>
                                     <th>Recommended Quantity to Allocate (by System)</th>
                                     <th>Quantity Allocated by Lab</th>
-                                    <th>Comments</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <input type="hidden" name="allocation-{{ $machine->id }}-{{ $testtype }}" value="{{ $machine->id }}" />
                             @php
                                 $testtypeKey = $testtypeKey;
                                 $tests = $machine->testsforLast3Months()->$testtypeKey;
@@ -86,14 +86,19 @@
                                         <td></td>
                                         <td></td>
                                     @endforelse
-                                    <td><input class="form-control input-edit" type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}" id="{{ $testtype }}-{{ $kit->id }}"></td>
-                                    <td>
-                                        <textarea name="comment-{{ $testtype }}-{{ $kit->id }}"></textarea>
-                                    </td>
+                                    <td><input class="form-control input-edit" type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}" id="{{ $testtype }}-{{ $kit->id }}" required></td>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">{{ $testtypeKey }}, {{ $machine->machine}} Allocation Comments</label>
+                            <div class="col-md-8">
+                                <textarea name="allocationcomments-{{ $machine->id }}-{{ $testtype }}" class="form-control"></textarea>
+                            </div>                            
+                        </div>
                     </div>
                     @endforeach
                 @endforeach

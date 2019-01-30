@@ -17,7 +17,6 @@ class CreateAllocationDetailsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('national_id')->nullable();
             $table->bigInteger('allocation_id');
-            $table->tinyInteger('testtype');
             $table->bigInteger('kit_id');
             $table->integer('allocated')->default(0);
             $table->tinyInteger('synched')->default(0)->comment("0:Awaiting synching; 1:Synched; 2:Update awaiting synching;");
