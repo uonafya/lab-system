@@ -18,31 +18,22 @@
                     Confirm Results
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
+                    <form  method="post" action="{{ url('dr_worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
                         {{ method_field('PUT') }} {{ csrf_field() }}
 
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th>Sample ID</th>
                                     <th>Lab ID</th>
+                                    <th>Sample ID</th>
+                                    <th>Facility</th>
                                     <th>Control</th>
                                     <th>Has Errors</th>
                                     <th>Has Warnings</th>
                                     <th>Has Mutations</th>
-                                    <th>Has Calls</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th>Result</th>                
-                                    <th>Interpretation</th>                
-                                    <th>Action</th>                
-                                    <th>Approved Date</th>                
-                                    <th>Approved By</th>                
+                                    <th>Has Genotypes</th>
+                                    <th>Requires Manual Intervention</th>    
+                                    <th>View Chromatogram</th>         
                                     <th>Task</th>                
                                 </tr>
                             </thead>
@@ -70,15 +61,27 @@
                                 @endphp
 
                                 @foreach($samples as $key => $sample)
-                                    @include('shared/confirm_result_row', ['sample' => $sample])
+                                    <tr>
+                                        <td> {{ $sample->id }} </td>
+                                        <td> {{ $sample->patient }} </td>
+                                        <td> {{ $sample->facilityname }} </td>
+                                        <td> {{ $sample->control_type }} </td>
+                                        <td> {{ $sample->my_boolean_format('has_errors') }} </td>
+                                        <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
+                                        <td> {{ $sample->my_boolean_format('has_calls') }} </td>
+                                        <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
+                                        @if($sample->pending_manual_intervention && !$sample->had_manual_intervention)
+                                            <td> Yes </td>
+                                        @else
+                                            <td>  </td>
+                                        @endif                                        
+                                        <td> {!! $sample->view_chromatogram !!} </td>
+                                        <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
+                                    </tr>
+
                                 @endforeach
 
-
-                                {{--@foreach($samples->where('parentid', '=', 0) as $key => $sample)
-                                    @include('shared/confirm_result_row', ['sample' => $sample])
-                                @endforeach--}}
-
-                                @if($worksheet->status_id != 3)
+                                @if($worksheet->status_id == 3)
 
                                     @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
                                      (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use App\BaseModel;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BatchDeletedNotification;
@@ -115,11 +116,12 @@ class Viralbatch extends BaseModel
         $user = auth()->user();
         $user_id = $user->id ?? 66;
         $today = date('Y-m-d');
+        $min_date = date('Y-m-d', strtotime('-4 days'));
         if(!$datereceived){
             return $query->where(['facility_id' => $facility, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
                     ->whereDate('created_at', $today)->whereNull('datereceived')->whereNull('datedispatched');
         }
-        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])->whereNull('datedispatched');
+        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])->where('created_at', '>', $min_date)->whereNull('datedispatched');
     }
 
     public function scopeEditing($query)
@@ -146,18 +148,22 @@ class Viralbatch extends BaseModel
              ";
         }
         else{
-            return null;
+            return false;
         }
     }
 
 
     public function batch_delete()
     {
-        if(!$this->delete_button) abort(409, "This batch is not eligible for deletion.");
+        if(!$this->delete_button) abort(409, "Batch number {$this->id} is not eligible for deletion.");
         if(env('APP_LAB') != 4){
             $comm = new BatchDeletedNotification($this);
             $bcc_array = ['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'];
-            Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            try {
+                if($this->facility->email_array) Mail::to($this->facility->email_array)->bcc($bcc_array)->send($comm);
+            } catch (Exception $e) {
+                
+            }
         }
         \App\Viralsample::where(['batch_id' => $this->id])->delete();
         $this->delete();

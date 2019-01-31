@@ -21,4 +21,16 @@ class DrSampleView extends ViewModel
         else if($this->control == 2){ return "Positive Control"; }
         else{ return "Normal Sample"; }
     }
+
+    public function getChromatogramLinkAttribute()
+    {
+        $ui_url = 'http://sangelamerkel.exatype.co.za';
+        return $ui_url . $this->chromatogram_url;
+    }
+
+    public function getViewChromatogramAttribute()
+    {
+        $full_link = "<a href='{$this->chromatogram_link}' target='_blank'> View Chromatogram </a>";
+        return $full_link;
+    }
 }
