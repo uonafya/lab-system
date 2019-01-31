@@ -28,6 +28,8 @@ class CreateDrWorksheetsTable extends Migration
             // 5 is sent to sanger, awaiting response
             // 6 is result sent back by sanger
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
+
+            // Exatype status
             $table->tinyInteger('sanger_status_id')->unsigned()->default(4)->index();
 
             $table->date('dateuploaded')->nullable();
