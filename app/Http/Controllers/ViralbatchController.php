@@ -596,7 +596,7 @@ class ViralbatchController extends Controller
             ->where('site_entry', 1)
             ->groupBy('viralbatches.id')
             // ->get();
-            ->paginate(50);
+            ->paginate(20);
 
         // $batches->setPath(url()->current());
 
