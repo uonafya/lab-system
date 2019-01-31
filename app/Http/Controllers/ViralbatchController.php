@@ -598,7 +598,7 @@ class ViralbatchController extends Controller
 
         if(env('APP_LAB') == 9){
             $batches = $query->paginate(20);
-            $batches = $query->setPath(url()->current());
+            $batches->setPath(url()->current());
         }
         else{
             $batches = $query->get();
