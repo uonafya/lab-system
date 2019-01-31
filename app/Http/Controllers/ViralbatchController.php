@@ -586,7 +586,7 @@ class ViralbatchController extends Controller
     public function approve_site_entry()
     {
         // ini_set('memory_limit', "-1");
-        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
+        $query = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
@@ -597,11 +597,11 @@ class ViralbatchController extends Controller
             ->groupBy('viralbatches.id');
 
         if(env('APP_LAB') == 9){
-            $batches->paginate(20);
-            $batches->setPath(url()->current());
+            $batches = $query->paginate(20);
+            $batches = $query->setPath(url()->current());
         }
         else{
-            $batches->get();
+            $batches = $query->get();
         } 
 
         $batch_ids = $batches->pluck(['id'])->toArray();
