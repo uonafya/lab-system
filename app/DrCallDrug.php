@@ -11,4 +11,12 @@ class DrCallDrug extends BaseModel
     {
         return $this->belongsTo('App\DrCall', 'call_id');
     }
+
+
+
+    public function getResistanceAttribute()
+    {
+    	// if($this->)
+    }
+
 }

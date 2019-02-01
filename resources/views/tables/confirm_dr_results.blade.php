@@ -67,7 +67,7 @@
                                         <tr>
                                             <td> {{ $sample->id }} </td>
                                             <td> {{ $sample->patient }} </td>
-                                            <td> {{ $dr_sample_statuses->where('id', $sample->status_id)->first()->name }} </td>
+                                            <td> {{ $dr_sample_statuses->where('id', $sample->status_id)->first()->name ?? '' }} </td>
                                             <td> {{ $sample->facilityname }} </td>
                                             <td> {{ $sample->control_type }} </td>
                                             <td> {{ $sample->my_boolean_format('has_errors') }} </td>

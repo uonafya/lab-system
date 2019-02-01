@@ -87,7 +87,14 @@ class MiscDr extends Common
 	{
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
-		$sample_data = self::get_worksheet_files($worksheet);
+		$files = self::get_worksheet_files($worksheet);
+
+		$sample_data = $files['sample_data'];
+		$errors = $files['errors'];
+
+		if($errors){
+			return false;
+		}
 
 		$postData = [
 				'data' => [
@@ -192,7 +199,7 @@ class MiscDr extends Common
 		}
 		// self::dump_log($print_data);
 		// die();
-		return $sample_data;
+		return ['sample_data' => $sample_data, 'errors' => $errors];
 	}
 
 	public static function find_ab_file($path, $sample, $primer)
