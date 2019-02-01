@@ -540,7 +540,7 @@ class MiscDr extends Common
 	{		
     	\App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 1, 'date_gel_documentation' => date('Y-m-d')]);
 
-    	\App\DrWorksheet::create(['extraction_worksheet_id' => 1])->create();
+    	\App\DrWorksheet::create(['extraction_worksheet_id' => 1]);
 
     	DB::table('dr_samples')->insert([
     		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
