@@ -51,7 +51,6 @@
 						@endforeach
 
 					@endforeach--}}
-				</tr>
 			</table>
 			
 		</div>		
