@@ -674,6 +674,9 @@
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"],
                     lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
                 },
+                initiation_date:{
+                    lessThan: ["#datecollected", "Date of Initiating ART", "Date Collected"]
+                },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
                     lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
