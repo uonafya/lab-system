@@ -22,6 +22,16 @@ class ViewModel extends Model
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
     public function my_date_format($value)
     {
         if($this->$value) return date('d-M-Y', strtotime($this->$value));
@@ -128,5 +138,11 @@ class ViewModel extends Model
         if($this->receivedstatus == 1){ return "Accepted"; }
         else if($this->receivedstatus == 2){ return "Rejected"; }
         else{ return ""; }
+    }
+
+    public function my_boolean_format($value)
+    {
+        if($this->$value) return "Yes";
+        return '';
     }
 }

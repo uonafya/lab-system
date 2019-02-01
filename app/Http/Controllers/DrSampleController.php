@@ -105,7 +105,10 @@ class DrSampleController extends Controller
      */
     public function show(DrSample $drSample)
     {
-        //
+        $drSample->load(['patient.facility', 'warning', 'dr_call.call_drug', 'genotype']);
+        $data = Lookup::get_dr();
+        $data['sample'] = $drSample;
+        return view('tables.dr_sample', $data)->with('pageTitle', 'Drug Resistance Samples'); 
     }
 
     /**
@@ -188,4 +191,20 @@ class DrSampleController extends Controller
         // dd($request);
         return view('forms.dr_samples', $data)->with('pageTitle', 'Edit Drug Resistance Sample');
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\DrSample  $drSample
+     * @return \Illuminate\Http\Response
+     */
+    public function results(DrSample $drSample)
+    {
+        $drSample->load(['dr_call.call_drug']);
+        $data = Lookup::get_dr();
+        $data['sample'] = $drSample;
+        return view('exports.mpdf_dr_result', $data);  
+    }
+
+
 }
