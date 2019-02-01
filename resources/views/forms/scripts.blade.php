@@ -17,6 +17,21 @@
         var dynamicErrorMsg = function () { return msg; }
 
 
+        jQuery.validator.addMethod("GreaterThanSpecific", function(value, element, param) {
+
+            var start = value;
+            var finish = param[0];
+
+            var start_date = new Date(start);
+            var finish_date = new Date(finish);
+
+            msg =  param[1] + " cannot be set to a date less than " + param[0];
+
+            return this.optional(element) || (start_date <= finish_date);
+
+        }, dynamicErrorMsg);
+
+
         jQuery.validator.addMethod("lessThan", function(value, element, param) {
 
             var start = value;
@@ -36,10 +51,6 @@
 
                 // console.log("Start date is " + start_date);
                 // console.log("End date is " + finish_date);
-
-                var beginning = new Date("1900-01-01");
-
-                if(start_date < beginning) return true;
 
                 var start_date = new Date(start);
                 var finish_date = new Date(finish);
