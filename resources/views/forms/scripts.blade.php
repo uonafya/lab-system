@@ -37,6 +37,10 @@
                 // console.log("Start date is " + start_date);
                 // console.log("End date is " + finish_date);
 
+                var beginning = new Date("1900-01-01");
+
+                if(start_date < beginning) return true;
+
                 var start_date = new Date(start);
                 var finish_date = new Date(finish);
 
