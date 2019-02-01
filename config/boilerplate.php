@@ -94,7 +94,7 @@ return [
         'dateinitiatedonregimen' => ['date_format:Y-m-d', 'before_or_equal:today',],
         'prophylaxis' => ['required', 'integer', 'max:30'],
         'regimenline' => ['required', 'integer', 'max:10'],
-        'sampletype' => ['required', 'integer', 'between:1,4'],
+        'sampletype' => ['required', 'integer', 'between:1,5'],
         'justification' => ['required', 'integer', 'max:15'],
         'pmtct' => ['integer', 'between:1,3', 'required_if:sex,==,2'],
     ],
