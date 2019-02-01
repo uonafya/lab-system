@@ -20,7 +20,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach($sample->dr_call as $dr_call)
+					{{--@foreach($sample->dr_call as $dr_call)
 						<tr>
 							<td rowspan="{{ $dr_call->call_drug->count() }}">{{ $dr_call->drug_class }}  </td>
 
@@ -34,9 +34,9 @@
 							<tr/>	
 						@endforeach
 
-					@endforeach
+					@endforeach--}}
 
-					{{--@foreach($sample->dr_call as $dr_call)
+					@foreach($sample->dr_call as $dr_call)
 						<tr>
 							<td rowspan="{{ $dr_call->call_drug->count()+1 }}">{{ $dr_call->drug_class }}  </td>
 
@@ -50,7 +50,7 @@
 							<tr/>	
 						@endforeach
 
-					@endforeach--}}
+					@endforeach
 			</table>
 			
 		</div>		
