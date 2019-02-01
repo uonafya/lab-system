@@ -299,7 +299,7 @@ class ViralbatchController extends Controller
         }
 
         $new_batch = new Viralbatch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email'])->toArray());
+        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent'])->toArray());
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
             $new_id = $batch->id + 0.5;
@@ -585,7 +585,8 @@ class ViralbatchController extends Controller
 
     public function approve_site_entry()
     {
-        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
+        // ini_set('memory_limit', "-1");
+        $query = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
@@ -593,10 +594,15 @@ class ViralbatchController extends Controller
             ->whereNull('receivedstatus')
             ->whereNull('datedispatched')
             ->where('site_entry', 1)
-            ->groupBy('viralbatches.id')
-            ->get();
+            ->groupBy('viralbatches.id');
 
-        // $batches->setPath(url()->current());
+        if(env('APP_LAB') == 9){
+            $batches = $query->paginate(20);
+            $batches->setPath(url()->current());
+        }
+        else{
+            $batches = $query->get();
+        } 
 
         $batch_ids = $batches->pluck(['id'])->toArray();
 
@@ -621,7 +627,10 @@ class ViralbatchController extends Controller
             return $batch;
         });
 
+        if(env('APP_LAB') == 9) return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
+
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral', 'datatable'=>true]);
+        // return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
     }
 
     public function site_entry_approval(Viralbatch $batch)
