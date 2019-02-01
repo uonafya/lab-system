@@ -27,7 +27,7 @@
 
             msg =  param[1] + " cannot be set to a date less than " + param[0];
 
-            return this.optional(element) || (start_date <= finish_date);
+            return this.optional(element) || (start_date >= finish_date);
 
         }, dynamicErrorMsg);
 
