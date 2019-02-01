@@ -147,6 +147,7 @@ class MiscDr extends Common
 
 		$sample_data = [];
 		$print_data = [];
+		$errors = [];
 
 		foreach ($samples as $key => $sample) {
 
@@ -177,6 +178,9 @@ class MiscDr extends Common
 				if($ab){
 					$abs[] = $ab;
 					// $abs2[] = ['file_name' => $ab['file_name']];
+				}
+				else{
+					$errors[] = "Sample {$sample->id} Primer {$primer} could not be found.";
 				}
 			}
 			if(!$abs) continue;
@@ -252,8 +256,8 @@ class MiscDr extends Common
 						$e = DrWorksheetWarning::firstOrCreate([
 							'worksheet_id' => $worksheet->id,
 							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system,
-							'detail' => $error->detail,
+							'system' => $error->system ?? '',
+							'detail' => $error->detail ?? '',
 						]);
 					}
 				}
@@ -263,8 +267,8 @@ class MiscDr extends Common
 						$e = DrWorksheetWarning::firstOrCreate([
 							'worksheet_id' => $worksheet->id,
 							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system,
-							'detail' => $error->detail,
+							'system' => $error->system ?? '',
+							'detail' => $error->detail ?? '',
 						]);
 					}
 				}
