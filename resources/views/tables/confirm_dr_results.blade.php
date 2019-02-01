@@ -38,6 +38,7 @@
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
                                         <th>Task</th>                
+                                        <th>Print</th>                
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -81,6 +82,7 @@
                                             @endif                                        
                                             <td> {!! $sample->view_chromatogram !!} </td>
                                             <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
+                                            <td> <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Print</a> </td>
                                         </tr>
 
                                     @endforeach

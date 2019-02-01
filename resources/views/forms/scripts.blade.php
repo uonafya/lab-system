@@ -34,6 +34,9 @@
                 var start_date = new Date(s[0], s[1], s[2]);
                 var finish_date = new Date(f[0], f[1], f[2]);
 
+                console.log("Start date is " + $start_date);
+                console.log("End date is " + $finish_date);
+
                 msg =  param[1] + " cannot be set to a date greater than " + param[2];
 
                 return this.optional(element) || (start_date <= finish_date);
