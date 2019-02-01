@@ -266,6 +266,7 @@
                                 <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
                                 @endif                                
                                 <label> <input type="radio" name="types" value="tat" class="i-checks" required> TAT Report </label>
+                                <label><input type="radio" name="types" value="failed" class="i-checks" required> Failed Tests</label>
                             </div>
                         </div>
                         @if(Auth::user()->user_type_id == 5)
