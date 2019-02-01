@@ -87,7 +87,14 @@ class MiscDr extends Common
 	{
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
-		$sample_data = self::get_worksheet_files($worksheet);
+		$files = self::get_worksheet_files($worksheet);
+
+		$sample_data = $files['sample_data'];
+		$errors = $files['errors'];
+
+		if($errors){
+			return $errors;
+		}
 
 		$postData = [
 				'data' => [
@@ -147,6 +154,7 @@ class MiscDr extends Common
 
 		$sample_data = [];
 		$print_data = [];
+		$errors = [];
 
 		foreach ($samples as $key => $sample) {
 
@@ -178,6 +186,9 @@ class MiscDr extends Common
 					$abs[] = $ab;
 					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
+				else{
+					$errors[] = "Sample {$sample->id} Primer {$primer} could not be found.";
+				}
 			}
 			if(!$abs) continue;
 			$s['attributes']['ab1s'] = $abs;
@@ -188,7 +199,7 @@ class MiscDr extends Common
 		}
 		// self::dump_log($print_data);
 		// die();
-		return $sample_data;
+		return ['sample_data' => $sample_data, 'errors' => $errors];
 	}
 
 	public static function find_ab_file($path, $sample, $primer)
@@ -252,8 +263,8 @@ class MiscDr extends Common
 						$e = DrWorksheetWarning::firstOrCreate([
 							'worksheet_id' => $worksheet->id,
 							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system,
-							'detail' => $error->detail,
+							'system' => $error->system ?? '',
+							'detail' => $error->detail ?? '',
 						]);
 					}
 				}
@@ -263,8 +274,8 @@ class MiscDr extends Common
 						$e = DrWorksheetWarning::firstOrCreate([
 							'worksheet_id' => $worksheet->id,
 							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system,
-							'detail' => $error->detail,
+							'system' => $error->system ?? '',
+							'detail' => $error->detail ?? '',
 						]);
 					}
 				}
@@ -357,6 +368,7 @@ class MiscDr extends Common
 								$d = DrCallDrug::firstOrCreate([
 									'call_id' => $c->id,
 									'short_name' => $drug->short_name,
+									'short_name_id' => self::get_short_name_id($drug->short_name),
 									'call' => $drug->call,
 								]);
 							}
@@ -423,10 +435,34 @@ class MiscDr extends Common
 		return DB::table('regimen_classes')->where(['drug_class' => $id])->first()->drug_class_id ?? null;
 	}
 
+	public static function get_short_name_id($id)
+	{
+		return DB::table('regimen_classes')->where(['short_name' => $id])->first()->id ?? null;
+	}
+
 	public static function escape_null($var)
 	{
 		if($var) return $var;
 		return null;
+	}
+
+	public static function set_drug_classes()
+	{
+		ini_set('memory_limit', '-1');
+
+		$calls = DrCall::all();
+
+		foreach ($calls as $key => $value) {
+			$value->drug_class_id = self::get_drug_class($value->drug_class);
+			$value->save();
+		}
+
+		$calls = DrCallDrug::all();
+
+		foreach ($calls as $key => $value) {
+			$value->short_name_id = self::get_short_name_id($value->short_name);
+			$value->save();
+		}
 	}
 
 
@@ -497,6 +533,35 @@ class MiscDr extends Common
 				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name, 'call' => $value->call]);
 			}
 		}
+	}
+
+
+	public static function seed()
+	{		
+    	\App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 1, 'date_gel_documentation' => date('Y-m-d')]);
+
+    	\App\DrWorksheet::create(['extraction_worksheet_id' => 1]);
+
+    	DB::table('dr_samples')->insert([
+    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    	]);
+
+    	DB::table('dr_samples')->insert([
+    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 99, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 2009695759, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 2012693909, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 2012693911, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    	]);
 	}
 
 

@@ -204,7 +204,10 @@ Route::middleware(['auth'])->group(function(){
 	// Start of Drug Resistance Routes
 
 	Route::group(['middleware' => ['utype:5']], function () {
-		Route::put('dr_sample/{drSample}', 'DrSampleController@update')->name('dr_sample.update');
+		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
+			Route::put('{drSample}', 'DrSampleController@update')->name('update');
+			Route::get('results/{drSample}', 'DrSampleController@results')->name('results');
+		});
 	});
 
 	Route::group(['middleware' => ['utype:4']], function () {
@@ -234,6 +237,9 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
 			Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 			Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
+
+			Route::get('approve/{worksheet}', 'DrWorksheetController@approve_results')->name('approve_results');
+			Route::put('approve/{worksheet}', 'DrWorksheetController@approve')->name('approve');
 
 			Route::get('print/{worksheet}', 'DrWorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'DrWorksheetController@cancel')->name('cancel');
