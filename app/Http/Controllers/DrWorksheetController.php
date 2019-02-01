@@ -227,7 +227,7 @@ class DrWorksheetController extends Controller
 
     public function approve_results(DrWorksheet $worksheet)
     {
-        $data = Lookup::worksheet_approve_lookups();
+        $data = Lookup::get_dr();
         $data['samples'] = DrSampleView::where(['worksheet_id' => $worksheet->id])->orderBy('id', 'asc')->get();
         $data['worksheet'] = $worksheet;
         return view('tables.confirm_dr_results', $data);

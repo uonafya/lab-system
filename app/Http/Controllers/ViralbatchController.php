@@ -586,7 +586,7 @@ class ViralbatchController extends Controller
     public function approve_site_entry()
     {
         // ini_set('memory_limit', "-1");
-        $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
+        $query = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS sample_count, facilitys.name, creator.name as creator")
             ->leftJoin('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
@@ -594,11 +594,15 @@ class ViralbatchController extends Controller
             ->whereNull('receivedstatus')
             ->whereNull('datedispatched')
             ->where('site_entry', 1)
-            ->groupBy('viralbatches.id')
-            ->get();
-            // ->paginate(50);
+            ->groupBy('viralbatches.id');
 
-        // $batches->setPath(url()->current());
+        if(env('APP_LAB') == 9){
+            $batches = $query->paginate(20);
+            $batches->setPath(url()->current());
+        }
+        else{
+            $batches = $query->get();
+        } 
 
         $batch_ids = $batches->pluck(['id'])->toArray();
 
@@ -622,6 +626,8 @@ class ViralbatchController extends Controller
             $batch->approval = true;
             return $batch;
         });
+
+        if(env('APP_LAB') == 9) return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
 
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral', 'datatable'=>true]);
         // return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);

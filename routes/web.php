@@ -204,7 +204,10 @@ Route::middleware(['auth'])->group(function(){
 	// Start of Drug Resistance Routes
 
 	Route::group(['middleware' => ['utype:5']], function () {
-		Route::put('dr_sample/{drSample}', 'DrSampleController@update')->name('dr_sample.update');
+		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
+			Route::put('{drSample}', 'DrSampleController@update')->name('update');
+			Route::get('results/{drSample}', 'DrSampleController@results')->name('results');
+		});
 	});
 
 	Route::group(['middleware' => ['utype:4']], function () {
