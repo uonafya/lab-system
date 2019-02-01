@@ -27,7 +27,7 @@
 
             // console.log("length is " + f.length);
 
-            if(f.length < 3){
+            if(f.length < 3 || s.length < 3){
                 return true;
             }
             else{
