@@ -93,7 +93,7 @@ class MiscDr extends Common
 		$errors = $files['errors'];
 
 		if($errors){
-			return false;
+			return $errors;
 		}
 
 		$postData = [
