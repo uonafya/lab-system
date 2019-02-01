@@ -6,7 +6,7 @@
 	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
 	</a> | 
-	<a href="{{ url('dr_worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {$worksheet->id}?');">		
+	<a href="{{ url('dr_worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet->id}}?');">		
 		Cancel
 	</a> | 
 	<a href="{{ url('dr_worksheet/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
@@ -18,7 +18,7 @@
 	<a href="{{ url('dr_worksheet/approve/' . $worksheet->id) }}" title="Click to Approve Samples Results in worksheet for Rerun or Dispatch" target='_blank'>
 		Approve Worksheet Results
 	</a> | 
-	<a href="{{ url('dr_worksheet/cancel_upload/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {$worksheet->id}?');">		
+	<a href="{{ url('dr_worksheet/cancel_upload/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet->id}}?');">		
 		Cancel Upload
 	</a> | 
 	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
