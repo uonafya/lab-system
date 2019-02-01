@@ -31,13 +31,18 @@
                 return true;
             }
             else{
-                var start_date = new Date(s[0], s[1], s[2]);
-                var finish_date = new Date(f[0], f[1], f[2]);
+                // var start_date = new Date(s[0], s[1], s[2]);
+                // var finish_date = new Date(f[0], f[1], f[2]);
 
-                console.log("Start date is " + start_date);
-                console.log("End date is " + finish_date);
+                // console.log("Start date is " + start_date);
+                // console.log("End date is " + finish_date);
 
-                msg =  param[1] + " " + start_date + " cannot be set to a date greater than " + finish_date + " " + param[2];
+                var start_date = new Date(start);
+                var finish_date = new Date(finish);
+
+
+                msg =  param[1] + " cannot be set to a date less than " + param[2];
+                // msg =  param[1] + " " + start_date + " cannot be set to a date greater than " + finish_date + " " + param[2];
 
                 return this.optional(element) || (start_date <= finish_date);
 
@@ -64,16 +69,10 @@
                 return true;
             }
             else{
-                var start_date = new Date(s[0], s[1], s[2]);
-                var finish_date = new Date(f[0], f[1], f[2]);
+                var start_date = new Date(start);
+                var finish_date = new Date(finish);
 
-
-                console.log("Start date is " + start_date);
-                console.log("End date is " + finish_date);
-
-                msg =  param[1] + " " + start_date + " cannot be set to a date greater than " + finish_date + " " + param[2];
-
-                // msg =  param[1] + " cannot be set to a date less than " + param[2];
+                msg =  param[1] + " cannot be set to a date less than " + param[2];
 
                 return this.optional(element) || (start_date <= finish_date);
 
@@ -94,16 +93,10 @@
                 return true;
             }
             else{
-                var start_date = new Date(s[0], s[1], s[2]);
-                var finish_date = new Date(f[0], f[1], f[2]);
+                var start_date = new Date(start);
+                var finish_date = new Date(finish);
 
-
-                console.log("Start date is " + start_date);
-                console.log("End date is " + finish_date);
-
-                msg =  param[1] + " " + start_date + " cannot be set to a date greater than " + finish_date + " " + param[2];
-                
-                // msg =  param[1] + " cannot be set to a date greater than " + param[2];
+                msg =  param[1] + " cannot be set to a date greater than " + param[2];
 
                 return this.optional(element) || (start_date <= finish_date);
 
