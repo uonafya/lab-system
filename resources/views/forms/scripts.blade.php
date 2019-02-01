@@ -17,6 +17,21 @@
         var dynamicErrorMsg = function () { return msg; }
 
 
+        jQuery.validator.addMethod("GreaterThanSpecific", function(value, element, param) {
+
+            var start = value;
+            var finish = param[0];
+
+            var start_date = new Date(start);
+            var finish_date = new Date(finish);
+
+            msg =  param[1] + " cannot be set to a date less than " + param[0];
+
+            return this.optional(element) || (start_date >= finish_date);
+
+        }, dynamicErrorMsg);
+
+
         jQuery.validator.addMethod("lessThan", function(value, element, param) {
 
             var start = value;
@@ -27,14 +42,22 @@
 
             // console.log("length is " + f.length);
 
-            if(f.length < 3){
+            if(f.length < 3 || s.length < 3){
                 return true;
             }
             else{
-                var start_date = new Date(s[0], s[1], s[2]);
-                var finish_date = new Date(f[0], f[1], f[2]);
+                // var start_date = new Date(s[0], s[1], s[2]);
+                // var finish_date = new Date(f[0], f[1], f[2]);
 
-                msg =  param[1] + " cannot be set to a date greater than " + param[2];
+                // console.log("Start date is " + start_date);
+                // console.log("End date is " + finish_date);
+
+                var start_date = new Date(start);
+                var finish_date = new Date(finish);
+
+
+                msg =  param[1] + " cannot be set to a date less than " + param[2];
+                // msg =  param[1] + " " + start_date + " cannot be set to a date greater than " + finish_date + " " + param[2];
 
                 return this.optional(element) || (start_date <= finish_date);
 
@@ -61,8 +84,8 @@
                 return true;
             }
             else{
-                var start_date = new Date(s[0], s[1], s[2]);
-                var finish_date = new Date(f[0], f[1], f[2]);
+                var start_date = new Date(start);
+                var finish_date = new Date(finish);
 
                 msg =  param[1] + " cannot be set to a date less than " + param[2];
 
@@ -85,8 +108,8 @@
                 return true;
             }
             else{
-                var start_date = new Date(s[0], s[1], s[2]);
-                var finish_date = new Date(f[0], f[1], f[2]);
+                var start_date = new Date(start);
+                var finish_date = new Date(finish);
 
                 msg =  param[1] + " cannot be set to a date greater than " + param[2];
 
