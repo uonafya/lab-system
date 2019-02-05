@@ -758,18 +758,21 @@ class Synch
 
 		$data['pendingresults'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('site_entry', '!=', 2)
-								->where('receivedstatus', '!=', 2)
+								// ->where('receivedstatus', '!=', 2)
 								->whereNull('worksheet_id')
-								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->whereNull('datedispatched')
+								->whereRaw("(result is null or result=0)")
+								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->first()->totals;
 
 		$mindate = $sampleview_class::selectRaw('MIN(datereceived) as mindate')
 								->where('datereceived', '>', $minimum_date)
 								->whereNull('worksheet_id')
 								->whereNull('approvedby')
-								->where('receivedstatus', '!=', 2)
+								->whereNull('datedispatched')
+								// ->where('receivedstatus', '!=', 2)
 								->whereRaw("(result is null or result=0)")
-								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
+								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->get()->first()->mindate;
 
 		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
