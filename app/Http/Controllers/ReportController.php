@@ -201,7 +201,7 @@ class ReportController extends Controller
         }
 
         $majoritySelect = "$table.facilitycode, view_facilitys.name as facility, facilitys.name as enteredby,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples";
-        $minoritySelect = "view_facilitys.facilitycode AS `MFL Code`, Subcounty AS `Subcounty`, view_facilitys.name AS `Facility`, COUNT(DISTINCT {$table}.facility_id) AS `Facilities Supported`,  COUNT({$table}.id) AS `Samples Entered` ";
+        $minoritySelect = "view_facilitys.facilitycode AS `facilitycode`, Subcounty AS `subcounty`, view_facilitys.name AS `facility`, COUNT(DISTINCT {$table}.facility_id) AS `Facilities Supported`,  COUNT({$table}.id) AS `totalsamples` ";
 
         if($request->input('types') == 'remoteentry') {
             $sql = $majoritySelect;
@@ -219,7 +219,7 @@ class ReportController extends Controller
                         if ($request->input('types') == 'remoteentrydoing')
                             return $query->join('users', 'users.id', '=', "{$table}.user_id")
                                         ->join('view_facilitys', 'view_facilitys.id', '=', "users.facility_id")
-                                        ->groupBy(['Subcounty', 'MFL Code', 'Facility']);
+                                        ->groupBy(['subcounty', 'facilitycode', 'facility']);
                         else 
                             return $query->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
                                         ->leftJoin('users', 'users.id', '=', "$table.user_id")
