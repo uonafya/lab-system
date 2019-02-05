@@ -27,6 +27,8 @@ class Random
 			->groupBy("{$table}.user_id")
 			->get();
 
+		dd($data);
+
 		$file = $type . '_sites_doing_remote_entry_Kakamega';
 
 		$rows = [];
