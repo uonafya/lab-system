@@ -32,7 +32,8 @@ class TestMail extends Mailable
     {
         if($this->attachments && is_array($this->attachments)){
             foreach ($this->attachments as $key => $value) {
-                $this->attach($value, ['as' => $key]);
+                // $this->attach($value, ['as' => $key]);
+                $this->attach($value);
             }
         }
         return $this->view('emails.test');
