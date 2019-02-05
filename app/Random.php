@@ -20,11 +20,11 @@ class Random
 		$table = 'samples_view';
 		if($type == 'vl') $table = 'viralsamples_view';
 
-		$rows = $sample_class::join('users', 'users.id', '=', "{$sample_class}.user_id")
+		$rows = $sample_class::join('users', 'users.id', '=', "{$table}.user_id")
 			->join('view_facilitys', 'view_facilitys.id', '=', "users.facility_id")
-			->selectRaw("view_facilitys.facilitycode AS `MFL Code`, Subcounty, COUNT(DISTINCT {$sample_class}.facility_id) AS `Facilities Supported`,  COUNT({$sample_class}.id) AS `Samples Entered` ")
+			->selectRaw("view_facilitys.facilitycode AS `MFL Code`, Subcounty, COUNT(DISTINCT {$table}.facility_id) AS `Facilities Supported`,  COUNT({$sample_class}.id) AS `Samples Entered` ")
 			->where(['site_entry' => 1, 'parentid' => 0, 'user_type_id' => 5, 'county' => 38, ])
-			->groupBy("{$sample_class}.user_id")
+			->groupBy("{$table}.user_id")
 			->get()->toArray();
 
 		$file = $type . '_sites_doing_remote_entry_Kakamega';
