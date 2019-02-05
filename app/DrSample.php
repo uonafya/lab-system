@@ -67,6 +67,19 @@ class DrSample extends BaseModel
         return env('DR_PREFIX') . $this->id;
     }
 
+    public function getChromatogramLinkAttribute()
+    {
+        $ui_url = 'http://sangelamerkel.exatype.co.za';
+        return $ui_url . $this->chromatogram_url;
+    }
+
+    public function getViewChromatogramAttribute()
+    {
+        $full_link = "<a href='{$this->chromatogram_link}' target='_blank'> View Chromatogram </a>";
+        return $full_link;
+    }
+
+
 
     public function setArvToxicitiesAttribute($value)
     {

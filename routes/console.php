@@ -288,3 +288,10 @@ Artisan::command('edarp:approvesamples', function(){
 //     $str = \App\Misc::check_patients_list();
 //     $this->info($str);
 // })->describe('Checking for Chege');
+
+// Quick fix for deliveries
+Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
+    $str = \App\Random::adjust_deliveries($platform, $id, $quantity, $damaged);
+    $this->info($str);
+})->describe('Adjust deliveries');
+// Quick fix for deliveries

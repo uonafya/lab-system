@@ -23,6 +23,7 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
 		    ['id' => '7', 'user_type' => 'POC Admin'],
 		    ['id' => '8', 'user_type' => 'EDARP Admin'],
+		    ['id' => '9', 'user_type' => 'NHRL Admin'],
 		]);
 
 		// $old_users = DB::connection('old')->table('users')->get();
@@ -89,14 +90,22 @@ class UsersTableSeeder extends Seeder
 	        'email' => 'poc@gmail.com',
     	]);
 
-        if (env('APP_LAB') == 2) // EDARP user to approve samples which are staged in Kisumu
+        if (env('APP_LAB') == 2){ // EDARP user to approve samples which are staged in Kisumu
 	        $users = factory(App\User::class, 1)->create([
 		        'user_type_id' => 8,
 		        'surname' => 'EDARP',
 		        'oname' => 'Admin',
 		        'email' => 'edarp@gmail.com',
-		        'password' => encrypt(env('APP_KEY').'@edarp')
+		        'password' => encrypt('edarp'.env('APP_KEY').'@edarp')
 	    	]);
+	    	$users = factory(App\User::class, 1)->create([
+	    		'user_type_id' => 9,
+	    		'surname' => 'NHRL',
+	    		'oname' => 'Admin',
+	    		'email' => 'nhrl@gmail.com',
+	    		'password' => encrypt('nhrl'.env('APP_KEY').'@nhrl')
+	    	]);
+	    }
 
     	$facilitys = DB::table('facilitys')->get();
 
@@ -112,24 +121,6 @@ class UsersTableSeeder extends Seeder
 		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
 		        'password' => encrypt($facility->name)
 	    	]);
-
-	    	// if($key==100) break;
-
-    		// $data[$i] = [
-		    //     'user_type_id' => 5,
-		    //     'surname' => '',
-		    //     'oname' => '',
-		    //     'facility_id' => $facility->id,
-		    //     'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		    //     'password' => bcrypt(encrypt($facility->name)),
-	    	// ];
-
-	    	// if($i == 200){
-	    	// 	DB::table('users')->insert($data);
-	    	// 	$i=0;
-	    	// 	$data = NULL;
-	    	// }
     	}
-    	// DB::table('users')->insert($data);
     }
 }

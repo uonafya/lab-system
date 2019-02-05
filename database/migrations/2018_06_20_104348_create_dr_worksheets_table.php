@@ -28,16 +28,21 @@ class CreateDrWorksheetsTable extends Migration
             // 5 is sent to sanger, awaiting response
             // 6 is result sent back by sanger
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
-            $table->tinyInteger('sanger_status_id')->unsigned()->default(1)->index();
 
-            $table->date('datereviewed')->nullable();
+            // Exatype status
+            $table->tinyInteger('sanger_status_id')->unsigned()->default(4)->index();
+
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
+            $table->date('datereviewed')->nullable();
+            $table->date('datereviewed2')->nullable();
 
-            $table->integer('reviewedby')->unsigned()->nullable();
+            $table->integer('createdby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();
             $table->integer('cancelledby')->unsigned()->nullable();
-            $table->integer('createdby')->unsigned()->nullable();
+            $table->integer('reviewedby')->unsigned()->nullable();
+            $table->integer('reviewedby2')->unsigned()->nullable();
+
 
             $table->dateTime('time_sent_to_sanger')->nullable();
 
