@@ -33,6 +33,7 @@ class Random
 
 		foreach ($data as $key => $value) {
 			$rows[] = $value->toArray();
+			dd($value->toArray());
 		}
 
 		Excel::create($file, function($excel) use($rows){
