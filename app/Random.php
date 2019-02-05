@@ -35,7 +35,7 @@ class Random
 			});
 		})->store('csv');
 
-		$data = [$file . 'csv' => storage_path("exports/{$file}.csv")];
+		$data = [storage_path("exports/" . $file . ".csv")];
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
