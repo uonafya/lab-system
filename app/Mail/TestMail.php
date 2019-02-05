@@ -11,14 +11,16 @@ class TestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $attachments;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($attachments = null)
     {
-        //
+        $this->attachments = $attachments;
     }
 
     /**
@@ -28,6 +30,11 @@ class TestMail extends Mailable
      */
     public function build()
     {
+        if($this->attachents && is_array($this->attachents)){
+            foreach ($this->attachents as $key => $value) {
+                $this->attach($value, ['as' => $key]);
+            }
+        }
         return $this->view('emails.test');
     }
 }
