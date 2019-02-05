@@ -5,8 +5,40 @@ use Excel;
 use DB;
 use App\Facilitys;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
+
 class Random
 {
+
+
+	public static function site_entry_samples($type)
+	{
+		$classes = \App\Synch::$synch_arrays[$type];
+
+		$sample_class = $classes['sampleview_class'];
+		$table = 'samples_view';
+		if($type == 'vl') $table = 'viralsamples_view';
+
+		$rows = $sample_class::join('users', 'users.id', '=', "{$sample_class}.user_id")
+			->join('view_facilitys', 'view_facilitys.id', '=', "users.facility_id")
+			->selectRaw("view_facilitys.facilitycode AS `MFL Code`, Subcounty, COUNT(DISTINCT {$sample_class}.facility_id) AS `Facilities Supported`,  COUNT({$sample_class}.id) AS `Samples Entered` ")
+			->where(['site_entry' => 1, 'parentid' => 0, 'user_type_id' => 5, 'county' => 38, ])
+			->groupBy("{$sample_class}.user_id")
+			->get()->toArray();
+
+		$file = $type . '_sites_doing_remote_entry_Kakamega';
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [$file . 'csv' => storage_path("exports/{$file}.csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+	}
 
 
     public static function delete_site_entry()
