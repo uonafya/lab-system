@@ -211,7 +211,7 @@ class ReportController extends Controller
             $dateString .= ' suported sites ';
         } else if ($request->input('types') == 'remoteentrydoing') {
             $sql = $minoritySelect;
-            $dateString .= ' sites doing remote entry';
+            $dateString .= ' sites doing remote entry ';
         }
         
         $model = $model->selectRaw($sql)

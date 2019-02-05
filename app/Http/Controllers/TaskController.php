@@ -252,6 +252,12 @@ class TaskController extends Controller
         $data['testtypes'] = ['EID', 'VL'];
         $previousMonth = $this->previousMonth;
         $year = $this->previousYear;
+        $endingBalanceMonth = $previousMonth - 1;
+        $endingBalanceYear = $year;
+        if ($previousMonth == 1) {
+            $endingBalanceMonth = 12;
+            $endingBalanceYear = $year - 1;
+        }
 
         if ($request->saveTaqman || $request->saveAbbott)
         {
@@ -342,10 +348,11 @@ class TaskController extends Controller
             $data['taqmandeliveries'.$value] = NULL;
             $type = $key+1;
 
-            foreach(Abbotprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
+            foreach(Abbotprocurement::where('month', $endingBalanceMonth)->where('year', $endingBalanceYear)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevabbott'.$value] = $value1;
             }
-            foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
+
+            foreach(Taqmanprocurement::where('month', $endingBalanceMonth)->where('year', $endingBalanceYear)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevtaqman'.$value] = $value1;
             }
             foreach (Taqmandeliveries::whereRaw("YEAR(datereceived) = $year")->whereRaw("MONTH(datereceived) = $previousMonth")->where('testtype', $type)->get() as $key1 => $value1) {
