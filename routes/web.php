@@ -391,7 +391,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 
 		Route::post('search', 'ViralsampleController@search');		
-		Route::post('ord_no', 'ViralsampleController@ord_no');		
+		Route::post('ord_no', 'ViralsampleController@ord_no');
+
+		Route::group(['middleware' => ['utype:0']], function(){
+			Route::get('excelupload', 'ViralsampleController@excelupload');
+			Route::post('excelupload', 'ViralsampleController@excelupload');
+		});
 	});
 	Route::resource('viralsample', 'ViralsampleController');
 
