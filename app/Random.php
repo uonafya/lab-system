@@ -1383,7 +1383,7 @@ class Random
             $sample->worksheet_id = $worksheet->id;
             $sample->datetested = $sample->dateapproved = '2019-01-22';
             $results = \App\MiscViral::sample_result($row[14]);
-            $sample->fill($results)
+            $sample->fill($results);
 
             $sample->save();
 
