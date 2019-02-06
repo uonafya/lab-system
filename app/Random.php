@@ -1387,7 +1387,7 @@ class Random
 
             $sample->save();
 
-            $created_rows++;
+            // $created_rows++;
         }
         \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
