@@ -3,14 +3,14 @@
 namespace App;
 use Excel;
 use DB;
-use App\Facilitys;
+use App\Facility;
+use App\Lookup;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 
 class Random
 {
-
 
 	public static function site_entry_samples($type)
 	{
@@ -79,7 +79,7 @@ class Random
 		$data = Excel::load($path, function($reader){})->get();
 
 		foreach ($data as $row) {
-			$amrs_location = \App\Lookup::get_mrslocation($row->location_id);
+			$amrs_location = Lookup::get_mrslocation($row->location_id);
 			\App\Viralsample::where(['order_no' => $row->order_number])->update(['amrs_location' => $amrs_location]);
 		}
 	}
@@ -1291,6 +1291,105 @@ class Random
 				DB::table('amrslocations')->insert(['identifier' => $location->location_id, 'name' => $location->name]);
 			}
 		}
+	}
+
+	public static function nyumbani()
+	{
+		ini_set("memory_limit", "-1");
+		$file = public_path('vl_22-01-2019.csv');
+
+		$handle = fopen($file, "r");
+
+		$worksheet = \App\Viralworksheet::create([
+			'machine_type' => 2,
+			'lab_id' => env('APP_LAB'),
+			'datereviewed' => '2019-01-22',
+			'dateuploaded' => '2019-01-22',
+			'daterun' => '2019-01-22',
+			'status_id' => 3,
+			'sampletype' => 2,
+		]);
+
+		$batches = [];
+
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+            $facility = Facility::locate($row[4])->get()->first();
+            if(!$facility || !is_numeric($row[4])) continue;
+
+            $datecollected = Lookup::other_date($row[9]);
+            $datereceived = Lookup::other_date($row[13]);
+            if(!$datereceived) $datereceived = date('Y-m-d');
+            $patient_string = $row[2];
+            $existing = \App\ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
+
+            if($existing){
+                // $existing_rows[] = $existing->toArray();
+                continue;
+            }
+
+            $batch = \App\Viralbatch::withCount(['sample'])
+                                    // ->where('received_by', auth()->user()->id)
+                                    ->where('datereceived', $datereceived)
+                                    ->where('input_complete', 0)
+                                    ->where('site_entry', 1)
+                                    ->where('facility_id', $facility->id)
+                                    ->get()->first();
+
+            if($batch){
+                if($batch->sample_count > 9){
+                    unset($batch->sample_count);
+                    $batch->full_batch();
+                    $batch = null;
+                }
+            }
+
+            if(!$batch){
+                $batch = new \App\Viralbatch;
+                // $batch->user_id = auth()->user()->id;
+                $batch->facility_id = $facility->id;
+                // $batch->received_by = auth()->user()->id;
+                $batch->lab_id = env('APP_LAB');
+                $batch->datereceived = $datereceived;
+                $batch->site_entry = 1;
+                $batch->save();
+
+                $batches[] = $batch->id;
+            }
+
+            $patient = \App\Viralpatient::existing($facility->id, $patient_string)->first();
+            if(!$patient) $patient = new \App\Viralpatient;
+
+            $patient->patient = $patient_string;
+            $patient->facility_id = $facility->id;
+            $patient->dob = Lookup::calculate_dob($datecollected, $row[7]);
+            $patient->sex = Lookup::get_gender($row[6]);
+            $patient->initiation_date = Lookup::other_date($row[11]);
+            $patient->save();
+
+
+            $sample = new \App\Viralsample;
+            $sample->batch_id = $batch->id;
+            $sample->patient_id = $patient->id;
+            $sample->datecollected = $datecollected;
+            $sample->age = $row[7];
+            if(str_contains(strtolower($row[8]), ['edta'])) $sample->sampletype = 2; 
+
+            $sample->areaname = $row[5];
+            $sample->label_id = $row[1];
+            $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+            $sample->justification = Lookup::justification($row[12]);
+            $sample->pmtct = 3;
+            $sample->receivedstatus = 1;
+            $sample->worksheet_id = $worksheet->id;
+            $sample->datetested = $sample->dateapproved = '2019-01-22';
+            $results = \App\MiscViral::sample_result($row[14]);
+            $sample->fill($results);
+
+            $sample->save();
+
+            // $created_rows++;
+        }
+        \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
 
 	public static function __getLablogsData($year, $month) {
