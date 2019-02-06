@@ -4,7 +4,7 @@ namespace App;
 use Excel;
 use DB;
 use App\Facility;
-use App\\App\Lookup;
+use App\Lookup;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
