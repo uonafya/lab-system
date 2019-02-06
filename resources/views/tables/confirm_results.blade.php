@@ -191,7 +191,6 @@
 
                                             @else
                                                 <select name="actions[]" class="{{ $class }}">
-                                                    <option>Choose an action</option>
                                                     @foreach($actions as $action)
                                                         <option value="{{$action->id}}"
                                                             @if($sample->repeatt == $action->id)
