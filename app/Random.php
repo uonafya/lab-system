@@ -1328,7 +1328,7 @@ class Random
             }
 
             $batch = \App\Viralbatch::withCount(['sample'])
-                                    ->where('received_by', auth()->user()->id)
+                                    // ->where('received_by', auth()->user()->id)
                                     ->where('datereceived', $datereceived)
                                     ->where('input_complete', 0)
                                     ->where('site_entry', 1)
@@ -1345,10 +1345,10 @@ class Random
 
             if(!$batch){
                 $batch = new \App\Viralbatch;
-                $batch->user_id = auth()->user()->id;
+                // $batch->user_id = auth()->user()->id;
                 $batch->facility_id = $facility->id;
-                $batch->received_by = auth()->user()->id;
-                $batch->lab_id = auth()->user()->lab_id;
+                // $batch->received_by = auth()->user()->id;
+                $batch->lab_id = env('APP_LAB');
                 $batch->datereceived = $datereceived;
                 $batch->site_entry = 1;
                 $batch->save();
