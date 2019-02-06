@@ -79,7 +79,7 @@ class Random
 		$data = Excel::load($path, function($reader){})->get();
 
 		foreach ($data as $row) {
-			$amrs_location = \App\\App\Lookup::get_mrslocation($row->location_id);
+			$amrs_location = Lookup::get_mrslocation($row->location_id);
 			\App\Viralsample::where(['order_no' => $row->order_number])->update(['amrs_location' => $amrs_location]);
 		}
 	}
@@ -1316,8 +1316,8 @@ class Random
             $facility = Facility::locate($row[4])->get()->first();
             if(!$facility || !is_numeric($row[4])) continue;
 
-            $datecollected = \App\Lookup::other_date($row[9]);
-            $datereceived = \App\Lookup::other_date($row[13]);
+            $datecollected = Lookup::other_date($row[9]);
+            $datereceived = Lookup::other_date($row[13]);
             if(!$datereceived) $datereceived = date('Y-m-d');
             $patient_string = $row[2];
             $existing = \App\ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
@@ -1361,9 +1361,9 @@ class Random
 
             $patient->patient = $patient_string;
             $patient->facility_id = $facility->id;
-            $patient->dob = \App\Lookup::calculate_dob($datecollected, $row[7]);
-            $patient->sex = \App\Lookup::get_gender($row[6]);
-            $patient->initiation_date = \App\Lookup::other_date($row[11]);
+            $patient->dob = Lookup::calculate_dob($datecollected, $row[7]);
+            $patient->sex = Lookup::get_gender($row[6]);
+            $patient->initiation_date = Lookup::other_date($row[11]);
             $patient->save();
 
 
@@ -1376,8 +1376,8 @@ class Random
 
             $sample->areaname = $row[5];
             $sample->label_id = $row[1];
-            $sample->prophylaxis = \App\Lookup::viral_regimen($row[10]);
-            $sample->justification = \App\Lookup::justification($row[12]);
+            $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+            $sample->justification = Lookup::justification($row[12]);
             $sample->pmtct = 3;
             $sample->receivedstatus = 1;
             $sample->worksheet_id = $worksheet->id;
