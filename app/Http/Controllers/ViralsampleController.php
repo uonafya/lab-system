@@ -102,7 +102,8 @@ class ViralsampleController extends Controller
                 $reader->toArray();
             })->get();
             $excelsheetvalue = collect($excelData->flatten(1)->values()->all());
-            
+            $dataArray = [];
+            $dataArray = ['Viral Batches'];
             $countItem = $excelsheetvalue->count() - 1;
             if (!$excelsheetvalue->isEmpty()){
                 foreach ($excelsheetvalue as $samplekey => $samplevalue) {
@@ -155,7 +156,7 @@ class ViralsampleController extends Controller
                     $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
                     $sample->sampletype = $samplevalue[10];
                     $sample->save();
-
+                    $dataArray[] = $batch->id;
                     $sample_count = $batch->sample->count();
                     if((!$samplekey == 0) || (($samplekey%10) == 0)) {
                         $batch->full_batch();
@@ -165,7 +166,17 @@ class ViralsampleController extends Controller
                     }
                     // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
                 }
-                // dd($instersect);
+                $title = "EDARP Samples uploaded to KEMRI";
+                Excel::create($title, function($excel) use ($dataArray, $title) {
+                    $excel->setTitle($title);
+                    $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+                    $excel->setDescription($title);
+
+                    $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+                        $sheet->fromArray($dataArray, null, 'A1', false, false);
+                    });
+
+                })->download('csv');
             }
             return back();
         }
