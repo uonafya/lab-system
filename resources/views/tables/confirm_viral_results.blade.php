@@ -184,7 +184,7 @@
                                         </td>
 
                                         <td> 
-                                            @@if( $class == 'noneditable' )
+                                            @if( $class == 'noneditable' )
                                                 @foreach($actions as $action)
                                                     @if($sample->repeatt == $action->id)
                                                         {!! $action->name_colour !!}
