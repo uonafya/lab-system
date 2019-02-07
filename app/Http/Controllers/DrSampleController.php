@@ -212,7 +212,7 @@ class DrSampleController extends Controller
 
     public function susceptability()
     {
-        $regimen_classes = DB::table('regimen_classes')->get()
+        $regimen_classes = DB::table('regimen_classes')->get();
         $samples = DrSample::where(['status_id' => 1])->with(['dr_call.call_drug', 'patient'])->get();
 
         $top = ['', '', ];
