@@ -56,6 +56,11 @@ Artisan::command('dispatch:mlab', function(){
     $this->info($str);
 })->describe('Post dispatched results to mlab.');
 
+Artisan::command('dispatch:nhrl', function(){
+    \App\Common::nhrl('eid');
+    \App\Common::nhrl('vl');
+})->describe('Set NHRL samples to be dispatched.');
+
 
 Artisan::command('input-complete', function(){
     $str = \App\Common::input_complete_batches('eid');
