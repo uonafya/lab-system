@@ -25,6 +25,29 @@ class MiscDr extends Common
 	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
 	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
+    public static $call_array = [
+        'LC' => [
+            'resistance' => 'Low Coverage',
+            'resistance_colour' => "#595959",
+            'cells' => [],
+        ],
+        'R' => [
+            'resistance' => 'Resistant',
+            'resistance_colour' => "#ff0000",
+            'cells' => [],
+        ],
+        'I' => [
+            'resistance' => 'Intermediate Resistance',
+            'resistance_colour' => "#ff9900",
+            'cells' => [],
+        ],
+        'S' => [
+            'resistance' => 'Susceptible',
+            'resistance_colour' => "#00ff00",
+            'cells' => [],
+        ],
+    ];
+
     public static function dump_log($postData, $encode_it=true)
     {
     	if(!is_dir(storage_path('app/logs/'))) mkdir(storage_path('app/logs/'), 0777);

@@ -6,6 +6,7 @@ use App\DrSample;
 use App\DrPatient;
 use App\User;
 use App\Lookup;
+use App\MiscDr;
 
 use DB;
 use Excel;
@@ -212,36 +213,12 @@ class DrSampleController extends Controller
 
     public function susceptability()
     {
-        $call_array = [
-            'LC' => [
-                'resistance' => 'Low Coverage',
-                'resistance_colour' => "#595959",
-                'cells' => [],
-            ],
-            'R' => [
-                'resistance' => 'Resistant',
-                'resistance_colour' => "#ff0000",
-                'cells' => [],
-            ],
-            'I' => [
-                'resistance' => 'Intermediate Resistance',
-                'resistance_colour' => "#ff9900",
-                'cells' => [],
-            ],
-            'S' => [
-                'resistance' => 'Susceptible',
-                'resistance_colour' => "#00ff00",
-                'cells' => [],
-            ],
-        ];
-
+        $call_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
         $samples = DrSample::where(['status_id' => 1])->with(['dr_call.call_drug', 'patient'])->get();
 
         $top = ['', '', ];
         $second = ['Sequence ID', 'Original Sample ID', ];
-
-        $LC = $R = $I = $S = [];
 
         foreach ($regimen_classes as $key => $value) {
             $top[] = $value->drug_class;
