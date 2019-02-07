@@ -52,7 +52,7 @@ class Lookup
                 }
                 return null;
             }
-            
+
         }
 
         try {
@@ -60,7 +60,9 @@ class Lookup
             return $d->toDateString();            
         } catch (Exception $e) {
             
-        }        
+        }  
+
+        return null;      
     }
 
     public static function normal_date($value)
