@@ -90,7 +90,6 @@ class ViralsampleController extends Controller
 
     public function deleteexcelupload(Request $request) {
         if ($request->method() == "GET") {
-            
             return view('forms.viralsamplesexceldelete')->with('pageTitle', 'Add Sample');
         } else {
             $file = $request->excelupload->path();
@@ -136,7 +135,7 @@ class ViralsampleController extends Controller
                     
                     if ($existing)
                         $patient = $existing;
-                    else{
+                    else {
                         $patient = new Viralpatient();
                         $patient->patient = $samplevalue[3];
                         $patient->facility_id = $facility->id;
