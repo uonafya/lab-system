@@ -263,7 +263,7 @@ class DrSampleController extends Controller
                         if($call_drug->short_name_id == $regimen->id){
                             $call = $call_drug->call;
                             // $$call[] = chr(64 + 1 + $regimen_key) . ($sample_key + 4);
-                            $call_array[$call]['cells'][] = chr(64 + 1 + $regimen_key) . ($sample_key + 4);
+                            $call_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 4);
                         }
                     }
                 }
