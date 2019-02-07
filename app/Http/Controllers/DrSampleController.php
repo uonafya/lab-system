@@ -279,7 +279,7 @@ class DrSampleController extends Controller
                 foreach ($call_array as $my_call) {
                     foreach ($my_call['cells'] as $my_cell) {
                         $sheet->cell('A1', function($cell) use ($my_call) {
-                            $cells->setBackground($my_call['resistance_colour']);
+                            $cell->setBackground($my_call['resistance_colour']);
                         });
                     }
                 }
