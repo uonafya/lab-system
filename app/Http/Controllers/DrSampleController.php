@@ -217,7 +217,7 @@ class DrSampleController extends Controller
         $regimen_classes = DB::table('regimen_classes')->get();
         $samples = DrSample::where(['status_id' => 1])->with(['dr_call.call_drug', 'patient'])->get();
 
-        $top = ['', '', ];
+        $top = ['', 'Drug Classes', ];
         $second = ['Sequence ID', 'Original Sample ID', ];
 
         foreach ($regimen_classes as $key => $value) {
