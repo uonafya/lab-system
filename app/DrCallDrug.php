@@ -3,11 +3,12 @@
 namespace App;
 
 use App\BaseModel;
+use App\MiscDr;
 
 class DrCallDrug extends BaseModel
 {
 
-	private $call_array = [
+	/*private $call_array = [
 		'LC' => [
 			'resistance' => 'Low Coverage',
 			'resistance_colour' => "#595959",
@@ -24,7 +25,7 @@ class DrCallDrug extends BaseModel
 			'resistance' => 'Susceptible',
 			'resistance_colour' => "#00ff00",
 		],
-	];
+	];*/
 
     public function dr_call()
     {
@@ -35,18 +36,18 @@ class DrCallDrug extends BaseModel
 
     public function getResistanceAttribute()
     {
-    	return $this->call_array[$this->call]['resistance'];
+    	return MiscDr::$call_array[$this->call]['resistance'];
     }
 
     public function getResistanceColourAttribute()
     {
-    	return $this->call_array[$this->call]['resistance_colour'];
+    	return MiscDr::$call_array[$this->call]['resistance_colour'];
     }
 
 
     public function getResistanceCellAttribute()
     {
-    	$colour = $this->call_array[$this->call]['resistance_colour'];
+    	$colour = MiscDr::$call_array[$this->call]['resistance_colour'];
     	return "<div style='background-color:" . $colour . ";'><td bgcolor='" . $colour . "'></td></div>";
     }
 
