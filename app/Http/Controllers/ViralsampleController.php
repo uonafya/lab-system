@@ -137,13 +137,14 @@ class ViralsampleController extends Controller
                         $batch->site_entry = 0;
                         $batch->entered_by = $request->input('receivedby');
                         $batch->datereceived = $samplevalue[16];
+                        $batch->facility_id = $facility->id;
                         $batch->save();
                     }
+                    // dd($batch->full_batch());
                     
                     $sample = new Viralsample();
                     $sample->batch_id = $batch->id;
                     $sample->receivedstatus = $samplevalue[18];
-                    $sample->sample_received_by = $request->input('receivedby');
                     $sample->age = $samplevalue[8];
                     $sample->patient_id = $patient->id;
                     $sample->pmtct = $samplevalue[7];
@@ -156,7 +157,7 @@ class ViralsampleController extends Controller
                     $sample->save();
 
                     $sample_count = $batch->sample->count();
-                    if($sample_count > 9) {
+                    if((!$samplekey == 0) || (($samplekey%10) == 0)) {
                         $batch->full_batch();
                         $batch = null;
                     } else if ($countItem == $samplekey) {
