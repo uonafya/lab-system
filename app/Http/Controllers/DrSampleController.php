@@ -7,6 +7,9 @@ use App\DrPatient;
 use App\User;
 use App\Lookup;
 
+use DB;
+use Excel;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -206,5 +209,45 @@ class DrSampleController extends Controller
         return view('exports.mpdf_dr_result', $data);  
     }
 
+
+    public function susceptability()
+    {
+        $regimen_classes = DB::table('regimen_classes')->get()
+        $samples = DrSample::where(['status_id' => 1])->with(['dr_call.call_drug', 'patient'])->get();
+
+        $top = ['', '', ];
+        $second = ['Sequence ID', 'Original Sample ID', ];
+
+        foreach ($regimen_classes as $key => $value) {
+            $top[] = $value->drug_class;
+            $second[] = $value->short_name;
+        }
+
+        $rows[0] = $top;
+        $rows[1] = $second;
+
+        foreach ($samples as $sample) {
+            $patient_string = $sample->patient->patient ?? '';
+            $row = [$sample->id, $patient_string];
+
+            foreach ($regimen_classes as $regimen) {
+                $call = '';
+
+                foreach ($sample->dr_call as $dr_call) {
+                    foreach ($dr_call->call_drug as $call_drug) {
+                        if($call_drug->short_name_id == $regimen->id) $call = $call_drug->call;
+                    }
+                }
+                $row[] = $call;
+            }
+            $rows[] = $row;
+        }
+
+        Excel::create("susceptability_report", function($excel) use($rows) {
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->download('csv');
+    }
 
 }
