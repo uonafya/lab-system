@@ -212,11 +212,36 @@ class DrSampleController extends Controller
 
     public function susceptability()
     {
+        $call_array = [
+            'LC' => [
+                'resistance' => 'Low Coverage',
+                'resistance_colour' => "#595959",
+                'cells' => [],
+            ],
+            'R' => [
+                'resistance' => 'Resistant',
+                'resistance_colour' => "#ff0000",
+                'cells' => [],
+            ],
+            'I' => [
+                'resistance' => 'Intermediate Resistance',
+                'resistance_colour' => "#ff9900",
+                'cells' => [],
+            ],
+            'S' => [
+                'resistance' => 'Susceptible',
+                'resistance_colour' => "#00ff00",
+                'cells' => [],
+            ],
+        ];
+
         $regimen_classes = DB::table('regimen_classes')->get();
         $samples = DrSample::where(['status_id' => 1])->with(['dr_call.call_drug', 'patient'])->get();
 
         $top = ['', '', ];
         $second = ['Sequence ID', 'Original Sample ID', ];
+
+        $LC = $R = $I = $S = [];
 
         foreach ($regimen_classes as $key => $value) {
             $top[] = $value->drug_class;
@@ -226,16 +251,20 @@ class DrSampleController extends Controller
         $rows[0] = $top;
         $rows[1] = $second;
 
-        foreach ($samples as $sample) {
+        foreach ($samples as $sample_key => $sample) {
             $patient_string = $sample->patient->patient ?? '';
             $row = [$sample->id, $patient_string];
 
-            foreach ($regimen_classes as $regimen) {
+            foreach ($regimen_classes as  $regimen_key => $regimen) {
                 $call = '';
 
                 foreach ($sample->dr_call as $dr_call) {
                     foreach ($dr_call->call_drug as $call_drug) {
-                        if($call_drug->short_name_id == $regimen->id) $call = $call_drug->call;
+                        if($call_drug->short_name_id == $regimen->id){
+                            $call = $call_drug->call;
+                            // $$call[] = chr(64 + 1 + $regimen_key) . ($sample_key + 4);
+                            $call_array[$call]['cells'][] = chr(64 + 1 + $regimen_key) . ($sample_key + 4);
+                        }
                     }
                 }
                 $row[] = $call;
@@ -243,11 +272,19 @@ class DrSampleController extends Controller
             $rows[] = $row;
         }
 
-        Excel::create("susceptability_report", function($excel) use($rows) {
-            $excel->sheet('Sheetname', function($sheet) use($rows) {
+        Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
+            $excel->sheet('Sheetname', function($sheet) use($rows, $call_array) {
                 $sheet->fromArray($rows);
+
+                foreach ($call_array as $my_call) {
+                    foreach ($my_call['cells'] as $my_cell) {
+                        $sheet->cell('A1', function($cell) use ($my_call) {
+                            $cells->setBackground($my_call['resistance_colour']);
+                        });
+                    }
+                }
             });
-        })->download('csv');
+        })->download('xlsx');
     }
 
 }

@@ -38,6 +38,11 @@ class DrCallDrug extends BaseModel
     	return $this->call_array[$this->call]['resistance'];
     }
 
+    public function getResistanceColourAttribute()
+    {
+    	return $this->call_array[$this->call]['resistance_colour'];
+    }
+
 
     public function getResistanceCellAttribute()
     {
