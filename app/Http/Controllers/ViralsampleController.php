@@ -9,6 +9,7 @@ use App\Viralbatch;
 use App\Facility;
 use App\Lookup;
 use App\MiscViral;
+use App\User;
 
 use Excel;
 
@@ -69,6 +70,7 @@ class ViralsampleController extends Controller
     {
         $data = Lookup::viralsample_form();
         $data['form_sample_type'] = $sampletype;
+        $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
         return view('forms.viralsamples', $data)->with('pageTitle', 'Add Sample');
     }
 
@@ -85,6 +87,90 @@ class ViralsampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    public function excelupload(Request $request) {
+        if ($request->method() == "GET") {
+            $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
+            return view('forms.viralsamplesexcel', $data)->with('pageTitle', 'Add Sample');
+        } else {
+            $file = $request->excelupload->path();
+            $path = $request->excelupload->store('public/samples/otherlab');
+            $batch = null;
+            $lookups = Lookup::get_viral_lookups();
+            // dd($lookups);
+            $excelData = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+            $excelsheetvalue = collect($excelData->flatten(1)->values()->all());
+            
+            $countItem = $excelsheetvalue->count() - 1;
+            if (!$excelsheetvalue->isEmpty()){
+                foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+                    $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
+                    if (!isset($facility)){
+                        $nofacility[] = $samplevalue;
+                        continue;
+                    }
+                    $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
+                    
+                    if ($existing)
+                        $patient = $existing;
+                    else{
+                        $patient = new Viralpatient();
+                        $patient->patient = $samplevalue[3];
+                        $patient->facility_id = $facility->id;
+                        $patient->sex = $lookups['genders']->where('gender', $samplevalue[6])->first()->id;
+                        $patient->dob = $samplevalue[9];
+                        // $patient->initiation_date = $samplevalue[14];
+                        $patient->save();
+                    }
+                    
+                    if ((!isset($batch)) || (($samplekey%10) == 0)) {
+                        $batch = new Viralbatch();
+                        $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+                        
+                        if ($existingSample)
+                            continue;
+                        $batch->user_id = $request->input('receivedby');
+                        $batch->lab_id = env('APP_LAB');
+                        $batch->received_by = $request->input('receivedby');
+                        $batch->site_entry = 0;
+                        $batch->entered_by = $request->input('receivedby');
+                        $batch->datereceived = $samplevalue[16];
+                        $batch->facility_id = $facility->id;
+                        $batch->save();
+                    }
+                    // dd($batch->full_batch());
+                    
+                    $sample = new Viralsample();
+                    $sample->batch_id = $batch->id;
+                    $sample->receivedstatus = $samplevalue[18];
+                    $sample->age = $samplevalue[8];
+                    $sample->patient_id = $patient->id;
+                    $sample->pmtct = $samplevalue[7];
+                    $sample->dateinitiatedonregimen = $samplevalue[14];
+                    $sample->datecollected = $samplevalue[11];
+                    $sample->regimenline = $samplevalue[13];
+                    $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
+                    $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
+                    $sample->sampletype = $samplevalue[10];
+                    $sample->save();
+
+                    $sample_count = $batch->sample->count();
+                    if((!$samplekey == 0) || (($samplekey%10) == 0)) {
+                        $batch->full_batch();
+                        $batch = null;
+                    } else if ($countItem == $samplekey) {
+                        $batch->premature();
+                    }
+                    // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
+                }
+                // dd($instersect);
+            }
+            return back();
+        }
+        
+    }
     public function store(ViralsampleRequest $request)
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
