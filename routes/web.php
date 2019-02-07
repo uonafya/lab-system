@@ -452,6 +452,12 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
 				Route::put('approve/{worksheet}', 'ViralworksheetController@approve')->name('approve');
 			});
+			
+
+			Route::group(['middleware' => ['utype:0']], function() {
+				Route::get('exceluploadworksheet', 'ViralworksheetController@exceluploadworksheet');
+				Route::post('exceluploadworksheet', 'ViralworksheetController@exceluploadworksheet');
+			});
 
 			Route::post('search/', 'ViralworksheetController@search')->name('search');
 
