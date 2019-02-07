@@ -272,7 +272,7 @@ class DrSampleController extends Controller
             $rows[] = $row;
         }
 
-        dd($call_array);
+        // dd($call_array);
 
         Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
             $excel->sheet('Sheetname', function($sheet) use($rows, $call_array) {
@@ -284,6 +284,7 @@ class DrSampleController extends Controller
                             $cell->setBackground($my_call['resistance_colour']);
                         });
                     }
+                    break;
                 }
             });
         })->download('xlsx');
