@@ -38,25 +38,31 @@ class Lookup
             
         }
 
+        if(env('APP_LAB') == 1){
+
+            try {
+                $d = Carbon::createFromFormat('m/d/Y', $value);
+                return $d->toDateString();
+            } catch (Exception $e) {
+                try {
+                    $d = Carbon::createFromFormat('m/d/y', $value);
+                    return $d->toDateString();                
+                } catch (Exception $ee) {
+                    return null;
+                }
+                return null;
+            }
+
+        }
+
         try {
             $d = Carbon::createFromFormat('d/m/Y', $value);
             return $d->toDateString();            
         } catch (Exception $e) {
             
-        }
+        }  
 
-        try {
-            $d = Carbon::createFromFormat('m/d/Y', $value);
-            return $d->toDateString();
-        } catch (Exception $e) {
-            try {
-                $d = Carbon::createFromFormat('m/d/y', $value);
-                return $d->toDateString();                
-            } catch (Exception $ee) {
-                return null;
-            }
-            return null;
-        }        
+        return null;      
     }
 
     public static function normal_date($value)
