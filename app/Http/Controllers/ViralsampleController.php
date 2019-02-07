@@ -88,6 +88,24 @@ class ViralsampleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function deleteexcelupload(Request $request) {
+        if ($request->method() == "GET") {
+            
+            return view('forms.viralsamplesexceldelete')->with('pageTitle', 'Add Sample');
+        } else {
+            $file = $request->excelupload->path();
+            $path = $request->excelupload->store('public/samples/otherlab/delete');
+            $excelData = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+
+            $batches = collect($excelData->toArray())->first();
+            Viralsample::whereIn('batch_id', $batches)->delete();
+            Viralbatch::whereIn('id', $batches)->delete();
+            return back();
+        }
+    }
+
     public function excelupload(Request $request) {
         if ($request->method() == "GET") {
             $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
@@ -104,14 +122,16 @@ class ViralsampleController extends Controller
             $excelsheetvalue = collect($excelData->flatten(1)->values()->all());
             $dataArray = [];
             $dataArray = ['Viral Batches'];
-            $countItem = $excelsheetvalue->count() - 1;
+            $countItem = $excelsheetvalue->count();
+            $counter = 0;
             if (!$excelsheetvalue->isEmpty()){
                 foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+                    $counter++;
                     $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
-                    if (!isset($facility)){
-                        $nofacility[] = $samplevalue;
-                        continue;
-                    }
+                    // if (!isset($facility)){
+                    //     $nofacility[] = $samplevalue;
+                    //     continue;
+                    // }
                     $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
                     
                     if ($existing)
@@ -126,7 +146,7 @@ class ViralsampleController extends Controller
                         $patient->save();
                     }
                     
-                    if ((!isset($batch)) || (($samplekey%10) == 0)) {
+                    if ($counter == 1) {
                         $batch = new Viralbatch();
                         $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
                         
@@ -141,8 +161,7 @@ class ViralsampleController extends Controller
                         $batch->facility_id = $facility->id;
                         $batch->save();
                     }
-                    // dd($batch->full_batch());
-                    
+
                     $sample = new Viralsample();
                     $sample->batch_id = $batch->id;
                     $sample->receivedstatus = $samplevalue[18];
@@ -156,13 +175,23 @@ class ViralsampleController extends Controller
                     $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
                     $sample->sampletype = $samplevalue[10];
                     $sample->save();
-                    $dataArray[] = $batch->id;
+
                     $sample_count = $batch->sample->count();
-                    if((!$samplekey == 0) || (($samplekey%10) == 0)) {
+
+                    $countItem -= 1;
+                    if($counter == 10) {
+                        $dataArray[] = $batch->id;
                         $batch->full_batch();
                         $batch = null;
-                    } else if ($countItem == $samplekey) {
-                        $batch->premature();
+                        $counter = 0;
+                    } 
+
+                    if ($countItem == 1) {
+                        $sample_count = $batch->sample->count();
+                        if ($sample_count != 10) {
+                            $batch->premature();
+                            $dataArray[] = $batch->id;
+                        }
                     }
                     // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
                 }
