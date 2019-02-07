@@ -216,22 +216,22 @@ class DrSampleController extends Controller
             'LC' => [
                 'resistance' => 'Low Coverage',
                 'resistance_colour' => "#595959",
-                // 'cells' => [],
+                'cells' => [],
             ],
             'R' => [
                 'resistance' => 'Resistant',
                 'resistance_colour' => "#ff0000",
-                // 'cells' => [],
+                'cells' => [],
             ],
             'I' => [
                 'resistance' => 'Intermediate Resistance',
                 'resistance_colour' => "#ff9900",
-                // 'cells' => [],
+                'cells' => [],
             ],
             'S' => [
                 'resistance' => 'Susceptible',
                 'resistance_colour' => "#00ff00",
-                // 'cells' => [],
+                'cells' => [],
             ],
         ];
 
