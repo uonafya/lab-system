@@ -154,8 +154,6 @@
                                         <td> 
                                             {!! $sample->patient->hyperlink !!} 
 
-                                            <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
-                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
                                         </td>
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
@@ -169,6 +167,9 @@
                                                 @endforeach
 
                                             @else
+                                            <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
+                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
+                                            
                                                 <select name="results[]" class="{{ $class }}">
                                                     @foreach($results as $result)
                                                         <option value="{{$result->id}}"
@@ -191,7 +192,6 @@
 
                                             @else
                                                 <select name="actions[]" class="{{ $class }}">
-                                                    <option>Choose an action</option>
                                                     @foreach($actions as $action)
                                                         <option value="{{$action->id}}"
                                                             @if($sample->repeatt == $action->id)
