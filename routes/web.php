@@ -396,6 +396,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::group(['middleware' => ['utype:0']], function(){
 			Route::get('excelupload', 'ViralsampleController@excelupload');
 			Route::post('excelupload', 'ViralsampleController@excelupload');
+			Route::get('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
+			Route::post('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
 		});
 	});
 	Route::resource('viralsample', 'ViralsampleController');

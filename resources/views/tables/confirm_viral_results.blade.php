@@ -132,7 +132,7 @@
 
                                         if(in_array(env('APP_LAB'), $double_approval) && $worksheet->status_id == 2){
 
-                                            if($sample->has_rerun){
+                                            if((in_array(env('APP_LAB'), $double_approval) && $sample->approvedby && $sample->approvedby2) || (!in_array(env('APP_LAB'), $double_approval) && $sample->approvedby) || $sample->has_rerun){
                                                 $class = 'noneditable';
                                             }
                                             else{
@@ -178,13 +178,13 @@
                                         </td>
 
                                         <td>
-                                            @if(!$sample->approvedby)
+                                            @if( $class == 'editable' )
                                                 <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
                                             @endif                                            
                                         </td>
 
                                         <td> 
-                                            @if($sample->approvedby)
+                                            @@if( $class == 'noneditable' )
                                                 @foreach($actions as $action)
                                                     @if($sample->repeatt == $action->id)
                                                         {!! $action->name_colour !!}
