@@ -14,6 +14,7 @@
 				<thead>
 					<tr>
 						<th>Drug Class</th>
+						<th>Mutations</th>
 						<th>Drug</th>
 						<th>Resistance</th>
 						<th>Resistance Code</th>
@@ -24,6 +25,11 @@
 					@foreach($sample->dr_call as $dr_call)
 						<tr>
 							<td rowspan="{{ $dr_call->call_drug->count() }}">{{ $dr_call->drug_class }}  </td>
+							<td rowspan="{{ $dr_call->call_drug->count() }}">
+								@foreach($dr_call->mutations_array as $mutation)
+									{{ $mutation }} <br />
+								@endforeach
+							</td>
 
 						@foreach($dr_call->call_drug as $key => $call_drug)
 							@if (!$key)
