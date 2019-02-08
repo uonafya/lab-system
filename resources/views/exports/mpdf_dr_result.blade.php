@@ -26,7 +26,7 @@
 							<td>{{ $dr_call->drug_class }}  </td>
 
 						@foreach($dr_call->call_drug as $key => $call_drug)
-							@if (!$key)
+							@if ($key)
 								<tr>
 									<td></td>
 							@endif
