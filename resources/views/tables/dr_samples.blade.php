@@ -48,8 +48,8 @@
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
-                                        <td> {{ $sample->get_link('extraction_worksheet_id') }} </td>
-                                        <td> {{ $sample->get_link('worksheet_id') }} </td>
+                                        <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_boolean_format('has_errors') }} </td>
                                         <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
                                         <td> {{ $sample->my_boolean_format('has_calls') }} </td>
