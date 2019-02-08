@@ -18,9 +18,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistance;
 
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-
 class DrSampleController extends Controller
 {
     /**
@@ -28,10 +25,17 @@ class DrSampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($sample_status=null)
     {
+
         $data = Lookup::get_dr();
-        $data['dr_samples'] = DrSample::where(['control' => 0])->with(['patient.facility'])->paginate();
+        $data['dr_samples'] = DrSample::where(['control' => 0])
+        ->with(['patient.facility'])
+        ->when($sample_status, function($query) use ($user, $string){
+            if($user->user_type_id == 5) return $query->whereRaw($string);
+            return $query->where('batches.lab_id', $user->lab_id)->where('site_entry', '!=', 2);
+        })
+        ->paginate();
         $data['dr_samples']->setPath(url()->current());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
     }
@@ -173,20 +177,9 @@ class DrSampleController extends Controller
 
     public function facility_edit(Request $request, User $user, DrSample $sample)
     {
-        // if (! $request->hasValidSignature()) dd("No valid signature.");
-        // if ( $request->hasValidSignature()) dd("Valid signature.");
-        // dd($request->query('signature', ''));
-        // $original = rtrim($request->url().'?'.http_build_query(
-        //     Arr::except($request->query(), 'signature')
-        // ), '?');
-
-        // dd($original);
-        // dd($request->url());
-
         if(Auth::user()) Auth::logout();
         Auth::login($user);
 
-        // $fac = \App\Facility::find($user->facility_id);
         $fac = $user->facility;
         session(['logged_facility' => $fac]);
 
