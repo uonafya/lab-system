@@ -276,7 +276,7 @@
                                     @endif">Samples</a>
                             </li>
 
-                            {{--<li class=""> <a href="{{ url($prefix . $batch) }}">Samples</a></li>--}}
+                            <!-- <li class="find-me-here"> <a href="{{ url($widgets['prefix'] . $batch) }}">Samples</a></li> -->
                             
                             <li class="">
                                 <a href="
