@@ -31,7 +31,7 @@ class DrSampleController extends Controller
     public function index()
     {
         $data = Lookup::get_dr();
-        $data['dr_samples'] = DrSample::with(['patient.facility'])->paginate();
+        $data['dr_samples'] = DrSample::where(['control' => 0])->with(['patient.facility'])->paginate();
         $data['dr_samples']->setPath(url()->current());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
     }
