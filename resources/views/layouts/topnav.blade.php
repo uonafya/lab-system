@@ -267,16 +267,16 @@
                                     </span>
                                 </a>
                             </li>
-                            {{--<li class="">
+                            <li class="">
                                 <a href="
                                     @if(session('testingSystem') == 'Viralload')
                                         {{ url('viralbatch') }}
                                     @else
                                         {{ url('batch') }}
                                     @endif">Samples</a>
-                            </li>--}}
+                            </li>
 
-                            <li class=""> <a href="{{ url($prefix . $batch) }}">Samples</a></li>
+                            {{--<li class=""> <a href="{{ url($prefix . $batch) }}">Samples</a></li>--}}
                             
                             <li class="">
                                 <a href="
