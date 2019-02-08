@@ -116,31 +116,11 @@
                                 </li>
                             @else
                                 @if(!Session('pendingTasks') || env('APP_LAB') == 2)
-                                    <li class="">
-                                        <a href="
-                                            @if(session('testingSystem') == 'Viralload')
-                                                {{ url('viralbatch') }}
-                                            @else
-                                                {{ url('batch') }}
-                                            @endif">Samples</a>
-                                    </li>                                    
+
+                                    <li class=""> <a href="{{ url($widgets['prefix'] . 'batch') }}">Samples</a> </li>
+                                    <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
+                                    <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
                                     
-                                    <li class="">
-                                        <a href="
-                                            @if(session('testingSystem') == 'Viralload')
-                                                {{ url('viralworksheet') }}
-                                            @else
-                                                {{ url('worksheet') }}
-                                            @endif">Worksheets</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="
-                                            @if(session('testingSystem') == 'Viralload')
-                                                {{ url('viralbatch/index/4/1') }}
-                                            @else
-                                                {{ url('batch/index/4/1') }}
-                                            @endif">Dispatched Results</a>
-                                    </li>
                                     <li class="">
                                         <a href="{{ url('facility') }}">Facilities</a>
                                     </li>
@@ -267,35 +247,11 @@
                                     </span>
                                 </a>
                             </li>
-                            {{--<li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralbatch') }}
-                                    @else
-                                        {{ url('batch') }}
-                                    @endif">Samples</a>
-                            </li>--}}
 
-                            <!-- findmehere {{ $widgets['prefix'] ?? 'not found' }} -->
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'batch') }}">Samples</a> </li>
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
 
-                            <li class=""> <a href="{{ url($widgets['prefix'] . 'batch') }}">Samples</a></li>
-                            
-                            <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralworksheet') }}
-                                    @else
-                                        {{ url('worksheet') }}
-                                    @endif">Worksheets</a>
-                            </li>
-                            <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralbatch/index/1') }}
-                                    @else
-                                        {{ url('batch/index/1') }}
-                                    @endif">Dispatched Results</a>
-                            </li>
                             <li class="">
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
