@@ -215,7 +215,7 @@ class DrSampleController extends Controller
     {
         $call_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
-        $samples = DrSample::where(['status_id' => 1])->with(['dr_call.call_drug', 'patient'])->get();
+        $samples = DrSample::where(['status_id' => 1, 'control' => 0])->with(['dr_call.call_drug', 'patient'])->get();
 
         $top = ['', 'Drug Classes', ];
         $second = ['Sequence ID', 'Original Sample ID', ];
@@ -239,8 +239,18 @@ class DrSampleController extends Controller
                     foreach ($dr_call->call_drug as $call_drug) {
                         if($call_drug->short_name_id == $regimen->id){
                             $call = $call_drug->call;
-                            // $$call[] = chr(64 + 1 + $regimen_key) . ($sample_key + 4);
                             $call_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 4);
+                            
+                            // $beginning = '';
+
+                            // $char_key = $regimen_key + 3;
+                            // if($char_key > 26){
+                            //     $a = (int) ($char_key / 26);
+                            //     $beginning = chr(64 + $a);
+                            //     $char_key = $char_key % 26;
+                            // }
+
+                            // $call_array[$call]['cells'][] = $beginning . chr(64 + $char_key) . ($sample_key + 4);
                         }
                     }
                 }
