@@ -23,12 +23,11 @@
 
 					@foreach($sample->dr_call as $dr_call)
 						<tr>
-							<td>{{ $dr_call->drug_class }}  </td>
+							<td rowspan="{{ $dr_call->call_drug->count() }}">{{ $dr_call->drug_class }}  </td>
 
 						@foreach($dr_call->call_drug as $key => $call_drug)
 							@if (!$key)
-								<tr>
-									<td></td>
+								<!-- <tr> -->
 							@endif
 								<td>{{ $call_drug->short_name }} </td>
 								<td>{{ $call_drug->resistance }} </td>

@@ -56,7 +56,7 @@
                                         <td>
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
-                                            <a href="{{ url('dr_sample/results/' . $sample->id . '/edit') }}" target="_blank"> Print </a> | 
+                                            <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> Print </a> | 
                                             <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
                                         </td>
                                     </tr>
