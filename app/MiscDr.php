@@ -383,8 +383,9 @@ class MiscDr extends Common
 								'sample_id' => $sample->id,
 								'drug_class' => $call->drug_class,
 								'drug_class_id' => self::get_drug_class($call->drug_class),
-								'other_mutations' => self::escape_null($call->other_mutations),
-								'major_mutations' => self::escape_null($call->major_mutations),
+								'mutations' => self::escape_null($call->mutations),
+								// 'other_mutations' => self::escape_null($call->other_mutations),
+								// 'major_mutations' => self::escape_null($call->major_mutations),
 							]);
 
 							foreach ($call->drugs as $drug) {
