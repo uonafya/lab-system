@@ -212,6 +212,7 @@ class DrSampleController extends Controller
         $drSample->load(['dr_call.call_drug']);
         $data = Lookup::get_dr();
         $data['sample'] = $drSample;
+        $filename = "dr_result_printout_" . $drSample->id . ".pdf";
         $mpdf = new Mpdf();
         $view_data = view('exports.mpdf_dr_result', $data)->render();
         $mpdf->WriteHTML($view_data);
