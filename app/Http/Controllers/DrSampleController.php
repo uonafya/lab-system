@@ -6,6 +6,10 @@ use App\DrSample;
 use App\DrPatient;
 use App\User;
 use App\Lookup;
+use App\MiscDr;
+
+use DB;
+use Excel;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -206,5 +210,70 @@ class DrSampleController extends Controller
         return view('exports.mpdf_dr_result', $data);  
     }
 
+
+    public function susceptability()
+    {
+        $call_array = MiscDr::$call_array;
+        $regimen_classes = DB::table('regimen_classes')->get();
+        $samples = DrSample::where(['status_id' => 1, 'control' => 0])->with(['dr_call.call_drug', 'patient'])->get();
+
+        $top = ['', 'Drug Classes', ];
+        $second = ['Sequence ID', 'Original Sample ID', ];
+
+        foreach ($regimen_classes as $key => $value) {
+            $top[] = $value->drug_class;
+            $second[] = $value->short_name;
+        }
+
+        $rows[0] = $top;
+        $rows[1] = $second;
+
+        foreach ($samples as $sample_key => $sample) {
+            $patient_string = $sample->patient->patient ?? '';
+            $row = [$sample->id, $patient_string];
+
+            foreach ($regimen_classes as  $regimen_key => $regimen) {
+                $call = '';
+
+                foreach ($sample->dr_call as $dr_call) {
+                    foreach ($dr_call->call_drug as $call_drug) {
+                        if($call_drug->short_name_id == $regimen->id){
+                            $call = $call_drug->call;
+                            $call_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 4);
+                            
+                            // $beginning = '';
+
+                            // $char_key = $regimen_key + 3;
+                            // if($char_key > 26){
+                            //     $a = (int) ($char_key / 26);
+                            //     $beginning = chr(64 + $a);
+                            //     $char_key = $char_key % 26;
+                            // }
+
+                            // $call_array[$call]['cells'][] = $beginning . chr(64 + $char_key) . ($sample_key + 4);
+                        }
+                    }
+                }
+                $row[] = $call;
+            }
+            $rows[] = $row;
+        }
+
+        // dd($call_array);
+
+        Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
+            $excel->sheet('Sheetname', function($sheet) use($rows, $call_array) {
+                $sheet->fromArray($rows);
+
+                foreach ($call_array as $my_call) {
+                    foreach ($my_call['cells'] as $my_cell) {
+                        $sheet->cell($my_cell, function($cell) use ($my_call) {
+                            $cell->setBackground($my_call['resistance_colour']);
+                        });
+                    }
+                }
+            });
+        })->download('xlsx');
+    }
 
 }

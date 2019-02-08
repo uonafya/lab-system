@@ -203,8 +203,8 @@ Route::middleware(['auth'])->group(function(){
 
 	// Start of Drug Resistance Routes
 
-	Route::group(['middleware' => ['utype:5']], function () {
-		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
+	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
+		Route::group(['middleware' => ['utype:5']], function () {
 			Route::put('{drSample}', 'DrSampleController@update')->name('update');
 			Route::get('results/{drSample}', 'DrSampleController@results')->name('results');
 		});
@@ -212,7 +212,12 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::group(['middleware' => ['utype:4']], function () {
 		Route::resource('dr', 'DrPatientController');
-		Route::get('dr_sample/create/{patient}', 'DrSampleController@create_from_patient');
+
+		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
+			Route::get('create/{patient}', 'DrSampleController@create_from_patient');
+			Route::get('report', 'DrSampleController@susceptability')->name('report');
+		});
+
 		Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
 
 
