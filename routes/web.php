@@ -207,6 +207,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::group(['middleware' => ['utype:5']], function () {
 			Route::put('{drSample}', 'DrSampleController@update')->name('update');
 			Route::get('results/{drSample}', 'DrSampleController@results')->name('results');
+			Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
 		});
 	});
 
