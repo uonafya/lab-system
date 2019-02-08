@@ -267,18 +267,18 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="">
+                            {{--<li class="">
                                 <a href="
                                     @if(session('testingSystem') == 'Viralload')
                                         {{ url('viralbatch') }}
                                     @else
                                         {{ url('batch') }}
                                     @endif">Samples</a>
-                            </li>
+                            </li>--}}
 
                             <!-- findmehere {{ $widgets['prefix'] ?? 'not found' }} -->
 
-                            {{--<!-- <li class="find-me-here"> <a href="{{ url($widgets['prefix'] . $batch) }}">Samples</a></li> -->--}}
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'batch') }}">Samples</a></li>
                             
                             <li class="">
                                 <a href="
