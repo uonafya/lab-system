@@ -71,8 +71,7 @@
                             <thead>
                                 <tr>
                                     <th>Drug Class</th>
-                                    <th>Major Mutations</th>
-                                    <th>Minor Mutations</th>
+                                    <th>Mutations</th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -81,15 +80,8 @@
                                     <tr>
                                         <td> {{ $call->drug_class }} </td>
                                         <td>
-                                            @if($call->major_mutations_array)
-                                                @foreach($call->major_mutations_array as $key => $value)
-                                                    {{ ($key+1) }}. {{ $value }} <br />
-                                                @endforeach
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($call->other_mutations_array)
-                                                @foreach($call->other_mutations_array as $key => $value)
+                                            @if($call->mutations_array)
+                                                @foreach($call->mutations_array as $key => $value)
                                                     {{ ($key+1) }}. {{ $value }} <br />
                                                 @endforeach
                                             @endif
@@ -105,7 +97,7 @@
         </div>
     </div>
 
-    <div class="row">
+    {{--<div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-heading">
@@ -158,7 +150,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>--}}
 
 </div>
 
