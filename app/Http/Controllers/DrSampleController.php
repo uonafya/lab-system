@@ -10,6 +10,7 @@ use App\MiscDr;
 
 use DB;
 use Excel;
+use Mpdf\Mpdf;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -194,6 +195,27 @@ class DrSampleController extends Controller
         $data['sample'] = $sample;
         // dd($request);
         return view('forms.dr_samples', $data)->with('pageTitle', 'Edit Drug Resistance Sample');
+    }
+
+
+    public function results(DrSample $drSample)
+    {
+        $drSample->load(['dr_call.call_drug']);
+        $data = Lookup::get_dr();
+        $data['sample'] = $drSample;
+        return view('exports.mpdf_dr_result', $data);  
+    }
+
+    
+    public function download_results(DrSample $drSample)
+    {
+        $drSample->load(['dr_call.call_drug']);
+        $data = Lookup::get_dr();
+        $data['sample'] = $drSample;
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_dr_result', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
     }
 
     /**
