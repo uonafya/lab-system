@@ -218,20 +218,6 @@ class DrSampleController extends Controller
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\DrSample  $drSample
-     * @return \Illuminate\Http\Response
-     */
-    public function results(DrSample $drSample)
-    {
-        $drSample->load(['dr_call.call_drug']);
-        $data = Lookup::get_dr();
-        $data['sample'] = $drSample;
-        return view('exports.mpdf_dr_result', $data);  
-    }
-
 
     public function susceptability()
     {
