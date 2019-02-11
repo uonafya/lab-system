@@ -78,9 +78,13 @@ class ViralbatchController extends Controller
                         ->where(['site_entry' => 1, 'batch_complete' => 0])
                         ->where('viralbatches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
                 }
+
+                else if($batch_complete == 6){
+                    return $query->where('batch_complete', 1)->where('tat5', '<', 11);
+                }
             })
             ->when(true, function($query) use ($batch_complete){
-                if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
+                if(in_array($batch_complete, [1, 6])) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.created_at', 'desc');
             })
             ->paginate();
@@ -891,15 +895,19 @@ class ViralbatchController extends Controller
                         ->where(['site_entry' => 1, 'batch_complete' => 0])
                         ->where('viralbatches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
                 }
+
+                else if($batch_complete == 6){
+                    return $query->where('batch_complete', 1)->where('tat5', '<', 11);
+                }
             })
             ->when(true, function($query) use ($batch_complete){
-                if($batch_complete == 1) return $query->orderBy('viralbatches.datedispatched', 'desc');
+                if(in_array($batch_complete, [1, 6])) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.created_at', 'desc');
             })
             ->where('viralbatches.lab_id', env('APP_LAB'))
             // ->where('batch_complete', 1)
             // ->orderBy($date_column, 'desc')
-            ->orderBy('batch_id', 'desc')
+            // ->orderBy('batch_id', 'desc')
             ->get();
 
         $data = [];

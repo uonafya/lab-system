@@ -711,7 +711,7 @@ class MiscViral extends Common
                 ->where('datereceived', '>', $date_str)
                 ->when($sampletype, function($query) use ($sampletype){
                     if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
                 })
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
@@ -737,7 +737,7 @@ class MiscViral extends Common
             })
             ->when($sampletype, function($query) use ($sampletype){
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
