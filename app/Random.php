@@ -1504,7 +1504,8 @@ class Random
         );
         ");
 
-        
+        \App\Common::save_tat5('eid');
+        \App\Common::save_tat5('vl');
 	}
 
 }

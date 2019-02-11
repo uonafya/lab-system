@@ -22,6 +22,11 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:tat5', function(){
+    \App\Common::save_tat5('eid');
+    \App\Common::save_tat5('vl');
+})->describe('Compute Tat 5.');
+
 Artisan::command('compute:eid-tat', function(){
     $my = new \App\Misc;
     $str = $my->compute_tat(\App\SampleView::class, \App\Sample::class);

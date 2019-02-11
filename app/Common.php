@@ -167,6 +167,18 @@ class Common
 		return $totalholidays;
 	}
 
+	public static function save_tat5($type)
+	{
+        ini_set("memory_limit", "-1");
+        $batch_model = self::$my_classes[$type]['batch_class'];
+		$batches = $view_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+
+		foreach ($batches as $key => $batch) {
+			$batch->tat5 = self::get_days($sample->datereceived, $sample->datedispatched);
+			$batch->save();
+		}
+	}
+
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
