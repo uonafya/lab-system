@@ -171,10 +171,11 @@ class Common
 	{
         ini_set("memory_limit", "-1");
         $batch_model = self::$my_classes[$type]['batch_class'];
-		$batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+		// $batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+		$batches = $batch_model::where(['batch_complete' => 1])->get();
 
 		foreach ($batches as $key => $batch) {
-			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched);
+			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched, false);
 			$batch->save();
 		}
 	}
@@ -412,25 +413,6 @@ class Common
             $batch->save();
 
 		 	self::dispatch_batch($batch);
-		} 
-    }
-
-    public static function dispatch_delayed($type = 'eid')
-    {
-		if($type == 'eid'){
-			$batch_model = \App\Batch::class;
-		}else{
-			$batch_model = \App\Viralbatch::class;
-		}
-
-		$batches = $batch_model::where('batch_complete', 1)
-		->where('datedispatched', '>', '2018-08-27')
-		->where('datedispatched', '<', '2018-09-03')
-		->get();
-
-		foreach ($batches as $batch) {
-		 	self::dispatch_batch($batch);
-		 	break;
 		} 
     }
 
