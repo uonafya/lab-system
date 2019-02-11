@@ -464,6 +464,7 @@ class Lookup
             'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
             'warning_codes' => DB::table('dr_warning_codes')->get(),
             'regimens' => DB::table('dr_viralprophylaxis')->get(),
+            'regimen_classes' => DB::table('regimen_classes')->get(),
         ];
     }
 
