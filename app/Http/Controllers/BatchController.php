@@ -781,7 +781,7 @@ class BatchController extends Controller
         $date_column = "batches.datereceived";
         if(in_array($batch_complete, [1, 6])) $date_column = "batches.datedispatched";
 
-        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'samples.datecollected', 'batches.datereceived', 'samples.datetested', 'batches.datedispatched'])
+        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'samples.datecollected', 'batches.datereceived', 'samples.datetested', 'batches.datedispatched', 'batches.tat5'])
             ->leftJoin('patients', 'patients.id', '=', 'samples.patient_id')
             ->leftJoin('batches', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
@@ -840,6 +840,7 @@ class BatchController extends Controller
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
             $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Lab TAT'] = $sample->tat5;
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
             $data[$key]['Initials'] = '';
