@@ -865,7 +865,7 @@ class ViralbatchController extends Controller
         $date_column = "viralbatches.datereceived";
         if(in_array($batch_complete, [1, 6])) $date_column = "viralbatches.datedispatched";
 
-        $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralsamples.datecollected', 'viralbatches.datereceived', 'viralsamples.datetested', 'viralbatches.datedispatched'])
+        $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralsamples.datecollected', 'viralbatches.datereceived', 'viralsamples.datetested', 'viralbatches.datedispatched', 'viralbatches.tat5'])
             ->leftJoin('viralpatients', 'viralpatients.id', '=', 'viralsamples.patient_id')
             ->leftJoin('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
@@ -924,6 +924,7 @@ class ViralbatchController extends Controller
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
             $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Lab TAT'] = $sample->tat5;
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
             $data[$key]['Initials'] = '';
