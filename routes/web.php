@@ -397,7 +397,14 @@ Route::middleware(['auth'])->group(function(){
 		Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 
 		Route::post('search', 'ViralsampleController@search');		
-		Route::post('ord_no', 'ViralsampleController@ord_no');		
+		Route::post('ord_no', 'ViralsampleController@ord_no');
+
+		Route::group(['middleware' => ['utype:0']], function(){
+			Route::get('excelupload', 'ViralsampleController@excelupload');
+			Route::post('excelupload', 'ViralsampleController@excelupload');
+			Route::get('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
+			Route::post('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
+		});
 	});
 	Route::resource('viralsample', 'ViralsampleController');
 
@@ -450,6 +457,12 @@ Route::middleware(['auth'])->group(function(){
 				Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
 				Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
 				Route::put('approve/{worksheet}', 'ViralworksheetController@approve')->name('approve');
+			});
+			
+
+			Route::group(['middleware' => ['utype:0']], function() {
+				Route::get('exceluploadworksheet', 'ViralworksheetController@exceluploadworksheet');
+				Route::post('exceluploadworksheet', 'ViralworksheetController@exceluploadworksheet');
 			});
 
 			Route::post('search/', 'ViralworksheetController@search')->name('search');

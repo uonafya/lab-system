@@ -849,4 +849,75 @@ class ViralworksheetController extends Controller
     {
         return $var->first()->totals ?? 0;
     }
+
+    public function exceluploadworksheet(Request $request) {
+        if ($request->method() == "GET") {
+            $data = Lookup::get_viral_lookups();
+
+            return view('forms.viralworksheetsexcel', $data)->with('pageTitle', 'Add Worksheet');
+        } else {
+            $file = $request->excelupload->path();
+            $path = $request->excelupload->store('public/samples/otherlab/batches');
+            $excelData = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+
+            $batches = collect($excelData->toArray())->first();
+            $samples = Viralsample::whereIn('batch_id', $batches)->orderBy('id','asc')->get();
+            $sample_count = $samples->count();
+            
+            $dataArray = [];
+            $dataArray[] = ['Lab ID', 'Batch ID'];
+            $worksheet = null;
+            $counter = 0;
+            foreach ($samples as $key => $sample) {
+                $counter++;
+                if (($counter == 1) && ($sample_count > 93)) {
+                    $worksheet = new Viralworksheet();
+                    $worksheet->lab_id = env('APP_LAB');
+                    $worksheet->machine_type = 3;
+                    $worksheet->sampletype = $request->input('sampletype');
+                    $worksheet->createdby = $sample->batch->user_id;
+                    $worksheet->sample_prep_lot_no = 44444;
+                    $worksheet->bulklysis_lot_no = 44444;
+                    $worksheet->control_lot_no = 44444;
+                    $worksheet->calibrator_lot_no = 44444;
+                    $worksheet->amplification_kit_lot_no = 44444;
+                    $worksheet->sampleprepexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->bulklysisexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->controlexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->calibratorexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->amplificationexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->save();
+                }
+
+                if ($sample_count > 93){
+                    $sample->worksheet_id = $worksheet->id;
+                    $sample->save();
+                }
+                else 
+                    $dataArray[] = ['id' => $sample->id, 'batch' => $sample->batch_id];
+
+                if ($counter == 93){
+                    $worksheet = null;
+                    $sample_count -= $counter;
+                    $counter = 0;
+                }
+            }
+            $title = "EDARP Overflow samples";
+            Excel::create($title, function($excel) use ($dataArray, $title) {
+                $excel->setTitle($title);
+                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+                $excel->setDescription($title);
+
+                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+                    $sheet->fromArray($dataArray, null, 'A1', false, false);
+                });
+
+            })->download('csv');
+            
+            return back();
+        }
+    }
 }
+ 

@@ -152,9 +152,9 @@ class ReportController extends Controller
             $data = self::__getDateData($request,$dateString)->get();
             $this->__getExcel($data, $dateString,$request);
         }else {
-            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported') {
+            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
-                $this->__getSiteEntryExcel($data, $dateString);
+                $this->__getSiteEntryExcel($data, $dateString, $request);
             } else if ($request->input('types') == 'tat') {
                 $data = $this->__getTATData($request, $dateString)->get();
                 $this->__getTATExcel($data, $dateString);
@@ -200,23 +200,39 @@ class ReportController extends Controller
             $model = SampleView::orderBy('totalsamples', 'desc')->where('samples_view.lab_id', '=', env('APP_LAB'));
         }
 
+        $majoritySelect = "$table.facilitycode, view_facilitys.name as facility, facilitys.name as enteredby,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples";
+        $minoritySelect = "view_facilitys.facilitycode AS `facilitycode`, Subcounty AS `subcounty`, view_facilitys.name AS `facility`, COUNT(DISTINCT {$table}.facility_id) AS `Facilities Supported`,  COUNT({$table}.id) AS `totalsamples` ";
+
         if($request->input('types') == 'remoteentry') {
+            $sql = $majoritySelect;
             $dateString .= ' site entry ';
         } else if ($request->input('types') == 'sitessupported') {
+            $sql = $majoritySelect;
             $dateString .= ' suported sites ';
+        } else if ($request->input('types') == 'remoteentrydoing') {
+            $sql = $minoritySelect;
+            $dateString .= ' sites doing remote entry ';
         }
-        $model = $model->selectRaw("$table.facilitycode, view_facilitys.name as facility, facilitys.name as enteredby,view_facilitys.county, view_facilitys.subcounty, view_facilitys.partner,count(*) as totalsamples")
-                    ->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
-                    ->leftJoin('users', 'users.id', '=', "$table.user_id")
-                    ->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
-                    ->when(true, function($query) use ($request, $table){
+        
+        $model = $model->selectRaw($sql)
+                    ->when($request, function($query) use ($request, $table) {
+                        if ($request->input('types') == 'remoteentrydoing')
+                            return $query->join('users', 'users.id', '=', "{$table}.user_id")
+                                        ->join('view_facilitys', 'view_facilitys.id', '=', "users.facility_id")
+                                        ->groupBy(['subcounty', 'facilitycode', 'facility']);
+                        else 
+                            return $query->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")
+                                        ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                                        ->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
+                                        ->groupBy(['facilitycode', 'facility', 'county', 'subcounty', 'partner']);
+                    })->when(true, function($query) use ($request, $table){
                         if($request->input('types') == 'remoteentry')
                             return $query->where("$table.site_entry", "=", 1);
-                    })->where('repeatt', '=', 0)->where('parentid', '=', 0)
-                    ->groupBy(['facilitycode', 'facility', 'county', 'subcounty', 'partner']);
+                    })->where('repeatt', '=', 0)->where('parentid', '=', 0);
+        
         $model = self::__getBelongingTo($request, $model, $dateString);
         $model = self::__getDateRequested($request, $model, $table, $dateString);
-
+        
         return $model;
     }
 
@@ -598,10 +614,13 @@ class ReportController extends Controller
         }
     }
 
-    public function __getSiteEntryExcel($data, $title)
+    public function __getSiteEntryExcel($data, $title, $request)
     {
         $title = strtoupper($title);
-        $dataArray[] = ['MFL Code', 'Facility Name', 'Site Entered', 'County', 'Sub-County', 'Partner', 'Total Samples'];
+        if ($request->input('types') == 'remoteentrydoing')
+            $dataArray[] = ['MFL Code', 'Sub-county', 'Facility', 'Facilities Supported', 'Samples Entered'];
+        else
+            $dataArray[] = ['MFL Code', 'Facility Name', 'Site Entered', 'County', 'Sub-County', 'Partner', 'Total Samples'];
         $this->generate_excel($data, $dataArray, $title);
     }
 
