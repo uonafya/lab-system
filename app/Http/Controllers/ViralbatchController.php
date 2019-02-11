@@ -31,7 +31,7 @@ class ViralbatchController extends Controller
         $facility_user = false;
         $subtotals = $date_modified = $date_tested = null;
         $date_column = "viralbatches.datereceived";
-        if($batch_complete == 1) $date_column = "viralbatches.datedispatched";
+        if(in_array($batch_complete, [1, 6])) $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
         $s_facility_id = session()->pull('facility_search');
@@ -862,7 +862,8 @@ class ViralbatchController extends Controller
 
     public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
-        $date_column = "viralbatches.datedispatched";
+        $date_column = "viralbatches.datereceived";
+        if(in_array($batch_complete, [1, 6])) $date_column = "viralbatches.datedispatched";
 
         $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralsamples.datecollected', 'viralbatches.datereceived', 'viralsamples.datetested', 'viralbatches.datedispatched'])
             ->leftJoin('viralpatients', 'viralpatients.id', '=', 'viralsamples.patient_id')
