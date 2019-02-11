@@ -11,7 +11,6 @@ use App\DashboardCacher;
 class DashboardComposer
 {
 	
-
 	/**
      * Bind data to the view.
      *
