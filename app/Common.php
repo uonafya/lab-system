@@ -174,7 +174,7 @@ class Common
 		$batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
 
 		foreach ($batches as $key => $batch) {
-			$batch->tat5 = self::get_days($sample->datereceived, $sample->datedispatched);
+			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched);
 			$batch->save();
 		}
 	}
