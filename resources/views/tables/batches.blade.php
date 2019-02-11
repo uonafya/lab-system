@@ -28,6 +28,15 @@
                 </a> |
                 <a href="{{ $myurl2 }}/5">
                     Batches Overdue for Receipt at Lab (10 days)
+                </a> |
+                <a href="{{ $myurl2 }}/6">
+                    Batches Meeting Lab TAT 
+                    @if($pre == 'viral')
+                        (10 days)
+                    @else
+                        (5 days)
+                    @endif
+
                 </a>
             </div>
         </div>

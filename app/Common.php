@@ -171,8 +171,8 @@ class Common
 	{
         ini_set("memory_limit", "-1");
         $batch_model = self::$my_classes[$type]['batch_class'];
-		// $batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
-		$batches = $batch_model::where(['batch_complete' => 1])->get();
+		$batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+		// $batches = $batch_model::where(['batch_complete' => 1])->get();
 
 		foreach ($batches as $key => $batch) {
 			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched, false);
