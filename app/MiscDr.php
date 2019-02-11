@@ -25,6 +25,29 @@ class MiscDr extends Common
 	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
 	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
+    public static $call_array = [
+        'LC' => [
+            'resistance' => 'Low Coverage',
+            'resistance_colour' => "#595959",
+            'cells' => [],
+        ],
+        'R' => [
+            'resistance' => 'Resistant',
+            'resistance_colour' => "#ff0000",
+            'cells' => [],
+        ],
+        'I' => [
+            'resistance' => 'Intermediate Resistance',
+            'resistance_colour' => "#ff9900",
+            'cells' => [],
+        ],
+        'S' => [
+            'resistance' => 'Susceptible',
+            'resistance_colour' => "#00ff00",
+            'cells' => [],
+        ],
+    ];
+
     public static function dump_log($postData, $encode_it=true)
     {
     	if(!is_dir(storage_path('app/logs/'))) mkdir(storage_path('app/logs/'), 0777);
@@ -360,8 +383,9 @@ class MiscDr extends Common
 								'sample_id' => $sample->id,
 								'drug_class' => $call->drug_class,
 								'drug_class_id' => self::get_drug_class($call->drug_class),
-								'other_mutations' => self::escape_null($call->other_mutations),
-								'major_mutations' => self::escape_null($call->major_mutations),
+								'mutations' => self::escape_null($call->mutations),
+								// 'other_mutations' => self::escape_null($call->other_mutations),
+								// 'major_mutations' => self::escape_null($call->major_mutations),
 							]);
 
 							foreach ($call->drugs as $drug) {
@@ -530,7 +554,7 @@ class MiscDr extends Common
 			$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
 
 			if(!$reg){
-				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name, 'call' => $value->call]);
+				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name]);
 			}
 		}
 	}

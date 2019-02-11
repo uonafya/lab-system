@@ -126,36 +126,35 @@ CREATE TABLE `regimen_classes` (
   `drug_class` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `drug_class_id` tinyint(3) unsigned DEFAULT NULL,
   `short_name` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `call` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 INSERT INTO `regimen_classes` VALUES 
-	(1,NULL,'INSTI',1,'BIC','LC'),
-	(2,NULL,'INSTI',1,'DTG','LC'),
-	(3,NULL,'INSTI',1,'EVG','LC'),
-	(4,NULL,'INSTI',1,'RAL','LC'),
-	(5,NULL,'NNRTI',2,'DOR','I'),
-	(6,NULL,'NNRTI',2,'EFV','R'),
-	(7,NULL,'NNRTI',2,'ETR','I'),
-	(8,NULL,'NNRTI',2,'NVP','R'),
-	(9,NULL,'NNRTI',2,'RPV','I'),
-	(10,NULL,'NRTI',3,'3TC','R'),
-	(11,NULL,'NRTI',3,'ABC','R'),
-	(12,NULL,'NRTI',3,'AZT','S'),
-	(13,NULL,'NRTI',3,'D4T','R'),
-	(14,NULL,'NRTI',3,'DDI','R'),
-	(15,NULL,'NRTI',3,'FTC','R'),
-	(16,NULL,'NRTI',3,'TDF','I'),
-	(17,NULL,'PI',4,'ATV/r','I'),
-	(18,NULL,'PI',4,'DRV/r','I'),
-	(19,NULL,'PI',4,'FPV/r','R'),
-	(20,NULL,'PI',4,'IDV/r','I'),
-	(21,NULL,'PI',4,'LPV/r','I'),
-	(22,NULL,'PI',4,'NFV','R'),
-	(23,NULL,'PI',4,'SQV/r','R'),
-	(24,NULL,'PI',4,'TPV/r','I');
+	(1,NULL,'INSTI',1,'BIC'),
+	(2,NULL,'INSTI',1,'DTG'),
+	(3,NULL,'INSTI',1,'EVG'),
+	(4,NULL,'INSTI',1,'RAL'),
+	(5,NULL,'NNRTI',2,'DOR'),
+	(6,NULL,'NNRTI',2,'EFV'),
+	(7,NULL,'NNRTI',2,'ETR'),
+	(8,NULL,'NNRTI',2,'NVP'),
+	(9,NULL,'NNRTI',2,'RPV'),
+	(10,NULL,'NRTI',3,'3TC'),
+	(11,NULL,'NRTI',3,'ABC'),
+	(12,NULL,'NRTI',3,'AZT'),
+	(13,NULL,'NRTI',3,'D4T'),
+	(14,NULL,'NRTI',3,'DDI'),
+	(15,NULL,'NRTI',3,'FTC'),
+	(16,NULL,'NRTI',3,'TDF'),
+	(17,NULL,'PI',4,'ATV/r'),
+	(18,NULL,'PI',4,'DRV/r'),
+	(19,NULL,'PI',4,'FPV/r'),
+	(20,NULL,'PI',4,'IDV/r'),
+	(21,NULL,'PI',4,'LPV/r'),
+	(22,NULL,'PI',4,'NFV'),
+	(23,NULL,'PI',4,'SQV/r'),
+	(24,NULL,'PI',4,'TPV/r');
 
 
 
@@ -186,7 +185,7 @@ INSERT INTO `worksheetstatus` VALUES
 (2,'Tested','<strong><div style=\'color: #0000FF;\'>Tested</div></strong>',1),
 (3,'Approved','<strong><div style=\'color: #339900;\'>Approved</div></strong>',1),
 (4,'Cancelled','<strong><div style=\'color: #FF0000;\'>Cancelled</div></strong>',1),
-(5,'Sent To Sanger','<strong><div style=\'color: #0000FF;\'>Sent To Sanger</div></strong>',1),
-(6,'Received From Sanger','<strong><div style=\'color: #0000FF;\'>Received From Sanger</div></strong>',1);
+(5,'Sent To Exatype','<strong><div style=\'color: #0000FF;\'>Sent To Exatype</div></strong>',1),
+(6,'Received From Exatype','<strong><div style=\'color: #0000FF;\'>Received From Exatype</div></strong>',1);
 /*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
 UNLOCK TABLES;
