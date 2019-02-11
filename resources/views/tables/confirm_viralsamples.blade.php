@@ -17,64 +17,67 @@
                     VL EDARP Samples for Approval to go to Nascop 
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('viralsample/nhrl') }}"
-                        class="confirmSubmit">
-                        {{ csrf_field() }}
 
-                        <table class="table table-striped table-bordered table-hover data-table" >
-                            <thead>
-                                <tr>
-                                    <th id="check_all">Check All</th>
-                                    <th> Facility Code </th>
-                                    <th> Specimen Label ID </th>
-                                    <th> Client Code </th>
-                                    <th> Age </th>
-                                    <th> Gender </th>
-                                    <th> Regimen Code </th>
-                                    <th> Justification </th>
-                                    <th> Sample Type </th>
-                                    <th> ART Initiation </th>
-                                    <th> Date Collected </th>
-                                    <th> Date Received </th>
-                                    <th> Date Tested </th>
-                                    <th> Result </th>
-                                    <th> Date Dispatched </th>
-                                    <th> Date Uploaded On Nascop </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($samples as $sample)
+                    <div class="table-responsive">
+                        <form  method="post" action="{{ url('viralsample/nhrl') }}"
+                            class="confirmSubmit">
+                            {{ csrf_field() }}
+
+                            <table class="table table-striped table-bordered table-hover data-table" >
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <div align='center'>
-                                                <input name='samples[]' type='checkbox' class="checks" value='{{ $sample->id }}' />
-                                            </div>
-                                        </td>
-
-                                        <td> {{ $sample->batch->facility->facilitycode }} </td>
-                                        <td> {{ $sample->comment }} </td>
-                                        <td> {{ $sample->patient->patient }} </td>
-                                        <td> {{ $sample->age }} </td>
-                                        <td> {{ $sample->patient->gender }} </td>
-                                        <td> {{ $sample->prophylaxis }} </td>
-                                        <td> {{ $sample->justification }} </td>
-                                        <td> {{ $sample->sampletype }} </td>
-                                        <td> {{ $sample->patient->initiation_date }} </td>
-                                        <td> {{ $sample->datecollected }} </td>
-                                        <td> {{ $sample->datereceived }} </td>
-                                        <td> {{ $sample->datetested }} </td>
-                                        <td> {{ $sample->result }} </td>
-                                        <td> {{ $sample->datedispatched }} </td>
-                                        <td> {{ $sample->created_at->toDateString() }} </td>
+                                        <th id="check_all">Check All</th>
+                                        <th> Facility Code </th>
+                                        <th> Specimen Label ID </th>
+                                        <th> Client Code </th>
+                                        <th> Age </th>
+                                        <th> Gender </th>
+                                        <th> Regimen Code </th>
+                                        <th> Justification </th>
+                                        <th> Sample Type </th>
+                                        <th> ART Initiation </th>
+                                        <th> Date Collected </th>
+                                        <th> Date Received </th>
+                                        <th> Date Tested </th>
+                                        <th> Result </th>
+                                        <th> Date Dispatched </th>
+                                        <th> Date Uploaded On Nascop </th>
                                     </tr>
-                                @endforeach
+                                </thead>
+                                <tbody>
+                                    @foreach($samples as $sample)
+                                        <tr>
+                                            <td>
+                                                <div align='center'>
+                                                    <input name='samples[]' type='checkbox' class="checks" value='{{ $sample->id }}' />
+                                                </div>
+                                            </td>
 
-                            </tbody>
-                        </table>
+                                            <td> {{ $sample->batch->facility->facilitycode }} </td>
+                                            <td> {{ $sample->comment }} </td>
+                                            <td> {{ $sample->patient->patient }} </td>
+                                            <td> {{ $sample->age }} </td>
+                                            <td> {{ $sample->patient->gender }} </td>
+                                            <td> {{ $sample->prophylaxis }} </td>
+                                            <td> {{ $sample->justification }} </td>
+                                            <td> {{ $sample->sampletype }} </td>
+                                            <td> {{ $sample->patient->initiation_date }} </td>
+                                            <td> {{ $sample->datecollected }} </td>
+                                            <td> {{ $sample->datereceived }} </td>
+                                            <td> {{ $sample->datetested }} </td>
+                                            <td> {{ $sample->result }} </td>
+                                            <td> {{ $sample->datedispatched }} </td>
+                                            <td> {{ $sample->created_at->toDateString() }} </td>
+                                        </tr>
+                                    @endforeach
 
-                        <button class="btn btn-success" type="submit" name="submit_type" value="release">Approve Selected Samples as OK to go to NASCOP</button>
-                        <button class="btn btn-success" type="submit" name="submit_type" value="delete">Delete Selected Samples to be Resent Afresh from EDARP</button>
-                    </form>
+                                </tbody>
+                            </table>
+
+                            <button class="btn btn-success" type="submit" name="submit_type" value="release">Approve Selected Samples as OK to go to NASCOP</button>
+                            <button class="btn btn-success" type="submit" name="submit_type" value="delete">Delete Selected Samples to be Resent Afresh from EDARP</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
