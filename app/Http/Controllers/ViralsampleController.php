@@ -35,14 +35,23 @@ class ViralsampleController extends Controller
         return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
     }
 
-    public function list_poc()
+    public function list_poc($param=null)
     {
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         
         $data = Lookup::get_viral_lookups();
-        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->orderBy('id', 'desc')->paginate(50);
+
+        $samples = ViralsampleView::with(['facility'])
+            ->when($param, funnction($query){
+                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+            })
+            ->whereRaw($string)
+            ->where(['site_entry' => 2])
+            ->orderBy('id', 'desc')
+            ->paginate(50);
+            
         $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
