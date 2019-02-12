@@ -348,7 +348,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('sms/{sample}', 'SampleController@send_sms');
 
 		Route::get('create_poc', 'SampleController@create_poc');
-		Route::get('list_poc', 'SampleController@list_poc');
+		Route::get('list_poc/{param?}', 'SampleController@list_poc');
 		Route::get('{sample}/edit_result', 'SampleController@edit_poc');
 		Route::put('{sample}/edit_result', 'SampleController@save_poc');
 
@@ -392,7 +392,7 @@ Route::middleware(['auth'])->group(function(){
 		});
 
 		Route::get('create_poc', 'ViralsampleController@create_poc');
-		Route::get('list_poc', 'ViralsampleController@list_poc');
+		Route::get('list_poc/{param?}', 'ViralsampleController@list_poc');
 		Route::get('{sample}/edit_result', 'ViralsampleController@edit_poc');
 		Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 
