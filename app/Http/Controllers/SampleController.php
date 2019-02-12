@@ -27,7 +27,7 @@ class SampleController extends Controller
         //
     }
 
-    public function list_poc()
+    public function list_poc($param=null)
     {
         $user = auth()->user();
         $string = "1";
