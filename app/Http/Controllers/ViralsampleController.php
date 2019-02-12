@@ -44,14 +44,14 @@ class ViralsampleController extends Controller
         $data = Lookup::get_viral_lookups();
 
         $samples = ViralsampleView::with(['facility'])
-            ->when($param, funnction($query){
+            ->when($param, function($query){
                 return $query->whereNull('result')->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
             ->paginate(50);
-            
+
         $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
