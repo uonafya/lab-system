@@ -37,10 +37,10 @@ class ReportController extends Controller
         $dateString = '';
         if (session('testingSystem') == 'CD4') {
             $data = self::__getCD4Data($request, $dateString)->get();
-            $this->__getExcel($data, $dateString);
+            $this->__getExcel($data, $dateString, $request);
         } else {
             $data = self::__getDateData($request, $dateString)->get();
-            $this->__getExcel($data, $dateString);
+            $this->__getExcel($data, $dateString, $request);
         }
         
     	return back();
@@ -147,10 +147,10 @@ class ReportController extends Controller
         $dateString = '';
         if (session('testingSystem') == 'CD4') {
             $data = self::__getCD4Data($request, $dateString)->get();
-            $this->__getExcel($data, $dateString);
+            $this->__getExcel($data, $dateString, $request);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
-            $this->__getExcel($data, $dateString,$request);
+            $this->__getExcel($data, $dateString, $request);
         }else {
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
