@@ -149,8 +149,7 @@ class ReportController extends Controller
             $data = self::__getCD4Data($request, $dateString)->get();
             $this->__getExcel($data, $dateString);
         } else if (auth()->user()->user_type_id == 5) {
-            $data = self::__getDateData($request,$dateString)->toSql();
-            dd($data);
+            $data = self::__getDateData($request,$dateString)->get();
             $this->__getExcel($data, $dateString,$request);
         }else {
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
