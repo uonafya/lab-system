@@ -551,7 +551,7 @@ class ReportController extends Controller
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
     	}
 
-        $report = (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') ? 'VL ' : 'EID ';
+        $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
 
         if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
@@ -565,6 +565,8 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'poc') {
             $model = $model->where("$table.site_entry", '=', 2);
             $report .= 'poc tests';
+        } else if ($request->input('types') == 'manifest') {
+            $report .= 'sample manifest ';
         } else {
             $report .= 'samples log ';    
         }
