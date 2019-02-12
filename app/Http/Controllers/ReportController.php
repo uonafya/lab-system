@@ -255,7 +255,11 @@ class ReportController extends Controller
             $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
             $title .= $partner->name.' ';
         }
-        $dateString .= $title;
+        if ($request->input('types') == 'manifest') {
+            $facility = ViewFacility::find(auth()->user()->facility_id);
+            $title .= $facility->name;
+        }
+        $dateString .= $title . ' ';
         return $model;
     }
 
@@ -494,9 +498,17 @@ class ReportController extends Controller
     {
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
+        
+        $testtype = session('testingSystem');
+        if (auth()->user()->user_type_id == 5) {
+            if ($request->input('testtype') == 'VL')
+                $testtype = 'Viralload';
+            else if ($request->input('testtype') == 'EID')
+                $testtype = 'EID';
+        }
 
         $title = '';
-    	if (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') {
+    	if ($testtype == 'Viralload') {
     		$table = 'viralsamples_view';
     		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.partner', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'order_no as order_number', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsamples_view.age', 'viralpmtcttype.name as pmtct', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
@@ -510,7 +522,7 @@ class ReportController extends Controller
     				->leftJoin('viralprophylaxis', 'viralprophylaxis.id', '=', 'viralsamples_view.prophylaxis')
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
                     ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct');
-    	} else if (session('testingSystem') == 'EID' || $request->input('testtype') == 'EID'){
+    	} else if ($testtype == 'EID') {
             $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname";
     		$table = 'samples_view';
     		$model = SampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
@@ -543,7 +555,7 @@ class ReportController extends Controller
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
     	}
 
-        $report = (session('testingSystem') == 'Viralload' || $request->input('testtype') == 'VL') ? 'VL ' : 'EID ';
+        $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
 
         if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
@@ -557,6 +569,8 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'poc') {
             $model = $model->where("$table.site_entry", '=', 2);
             $report .= 'poc tests';
+        } else if ($request->input('types') == 'manifest') {
+            $report .= 'sample manifest ';
         } else {
             $report .= 'samples log ';    
         }
@@ -583,16 +597,21 @@ class ReportController extends Controller
         $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
         $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
+            $newArray = [];
             if ($request->input('types') == 'manifest') {
-                $data = [
-                    'lab_id' => $data->pluck('id'), 'patient' => $data->pluck('patient'), 'batch' => $data->pluck('batch_id'),
-                    'county' => $data->pluck('county'), 'subcounty' => $data->pluck('subcounty'), 'facility' => $data->pluck('facility'),
-                    'mfl' => $data->pluck('facilitycode'), 'gender' => $data->pluck('gender_description'),  'dob' => $data->pluck('dob'),
-                    'types' => ($request->input('testtype') == 'VL') ? $data->pluck('sampletype') : $data->pluck('pcrtype'),
-                    'jus-spots' => ($request->input('testtype') == 'VL') ? $data->pluck('justification') : $data->pluck('spots'),
-                    'datecollected' => $data->pluck('datecollected'), 'datetested' => $data->pluck('datetested')
-                ];
-                dd($data);
+                $dataArray[] = ($request->input('testtype') == 'VL') ? $VLfacilityManifestArray : $EIDfacilityManifestArray;
+
+                foreach ($data as $key => $new) {
+                    $newArray[] = [
+                        'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
+                        'county' => $new->county, 'subcounty' => $new->subcounty, 'facility' => $new->facility,
+                        'mfl' => $new->facilitycode, 'gender' => $new->gender_description,  'dob' => $new->dob,
+                        'types' => ($request->input('testtype') == 'VL') ? $new->sampletype : $new->pcrtype,
+                        'jus-spots' => ($request->input('testtype') == 'VL') ? $new->justification : $new->spots,
+                        'datecollected' => $new->datecollected, 'datetested' => $new->datetested
+                    ];
+                }
+                $data = collect($newArray);
             } else {
                 if ($request->input('testtype') == 'VL')
                     $dataArray[] = $vlDataArray;
@@ -613,7 +632,10 @@ class ReportController extends Controller
         
         if($data->isNotEmpty()) {
             foreach ($data as $report) {
-                $dataArray[] = $report->toArray();
+                if ($request->input('types') == 'manifest')
+                    $dataArray[] = $report;
+                else
+                    $dataArray[] = $report->toArray();
             }
             
             Excel::create($title, function($excel) use ($dataArray, $title) {
