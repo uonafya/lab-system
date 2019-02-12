@@ -255,6 +255,10 @@ class ReportController extends Controller
             $partner = ViewFacility::where('partner_id', '=', $request->input('partner'))->get()->first();
             $title .= $partner->name.' ';
         }
+        if ($request->input('types') == 'manifest') {
+            $facility = ViewFacility::find(auth()->user()->facility_id);
+            $title .= $facility->name;
+        }
         $dateString .= $title;
         return $model;
     }
