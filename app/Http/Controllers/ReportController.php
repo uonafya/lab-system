@@ -259,7 +259,7 @@ class ReportController extends Controller
             $facility = ViewFacility::find(auth()->user()->facility_id);
             $title .= $facility->name;
         }
-        $dateString .= $title;
+        $dateString .= $title . ' ';
         return $model;
     }
 
