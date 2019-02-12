@@ -306,9 +306,13 @@ class BatchController extends Controller
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
             $new_id = $batch->id + 0.5;
+            $existing_batch = Batch::find($new_id);
+            if($existing_batch){
+                session(['toast_message' => "Batch {$new_id} already exists.", 'toast_error' => 1]);
+                return back();
+            }
             if($new_batch->id == floor($new_batch->id)){
-                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
-                session(['toast_error' => 1]);
+                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred.", 'toast_error' => 1]);
                 return back();
             }    
         }
