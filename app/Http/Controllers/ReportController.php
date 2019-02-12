@@ -160,7 +160,7 @@ class ReportController extends Controller
                 $this->__getTATExcel($data, $dateString);
             }else {
                 $data = self::__getDateData($request,$dateString)->get();
-                $this->__getExcel($data, $dateString);
+                $this->__getExcel($data, $dateString, $request);
             }
         }
         return back();
