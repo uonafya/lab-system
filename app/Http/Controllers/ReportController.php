@@ -583,16 +583,19 @@ class ReportController extends Controller
         $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
         $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
+            $newArray = [];
             if ($request->input('types') == 'manifest') {
-                $data = [
-                    'lab_id' => $data->pluck('id'), 'patient' => $data->pluck('patient'), 'batch' => $data->pluck('batch_id'),
-                    'county' => $data->pluck('county'), 'subcounty' => $data->pluck('subcounty'), 'facility' => $data->pluck('facility'),
-                    'mfl' => $data->pluck('facilitycode'), 'gender' => $data->pluck('gender_description'),  'dob' => $data->pluck('dob'),
-                    'types' => ($request->input('testtype') == 'VL') ? $data->pluck('sampletype') : $data->pluck('pcrtype'),
-                    'jus-spots' => ($request->input('testtype') == 'VL') ? $data->pluck('justification') : $data->pluck('spots'),
-                    'datecollected' => $data->pluck('datecollected'), 'datetested' => $data->pluck('datetested')
-                ];
-                dd($data);
+                foreach ($data as $key => $new) {
+                    $newArray[] = [
+                        'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
+                        'county' => $new->county, 'subcounty' => $new->subcounty, 'facility' => $new->facility,
+                        'mfl' => $new->facilitycode, 'gender' => $new->gender_description,  'dob' => $new->dob,
+                        'types' => ($request->input('testtype') == 'VL') ? $new->sampletype : $new->pcrtype,
+                        'jus-spots' => ($request->input('testtype') == 'VL') ? $new->justification : $new->spots,
+                        'datecollected' => $new->datecollected, 'datetested' => $new->datetested
+                    ];
+                }
+                dd($newArray);
             } else {
                 if ($request->input('testtype') == 'VL')
                     $dataArray[] = $vlDataArray;
