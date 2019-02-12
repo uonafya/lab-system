@@ -141,8 +141,8 @@
 					<td>{{ $sample->second_approver->full_name ?? '' }}</td>
 					<th>Date Approved:</th>
 					<td>
-					@isset($sample->datapproved)
-						{{ gmdate('Y-m-d', strtotime($sample->datapproved)) }}
+					@isset($sample->dateapproved2)
+						{{ gmdate('Y-m-d', strtotime($sample->dateapproved2)) }}
 					@endisset
 					</td>
 				</tr>
