@@ -71,9 +71,13 @@
                                                 <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
                                                 <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
 
-                                                {{ Form::open(['url' => $pre . 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
-                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                                {{ Form::close() }}
+                                                @if(!$sample->result)
+
+                                                    {{ Form::open(['url' => $pre . 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
+                                                        <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
+                                                    {{ Form::close() }}
+
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
