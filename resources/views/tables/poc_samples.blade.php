@@ -22,7 +22,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover data-table" >
+                        <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
                                     <th>Lab #</th>
@@ -79,9 +79,9 @@
                                     </tr>
                                 @endforeach
 
-
                             </tbody>
                         </table>
+                        {{ $samples->links() }}
                     </div>
                 </div>
             </div>
