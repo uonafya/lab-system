@@ -494,7 +494,10 @@ class ReportController extends Controller
     {
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
+        dd(session('testingSystem'));
+        if (auth()->user()->user_type_id == 5) {
 
+        }
         $title = '';
     	if ((session('testingSystem') == 'Viralload') || ($request->input('testtype') == 'VL')) {
             dd('Something abou the VL');
