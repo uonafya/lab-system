@@ -591,7 +591,6 @@ class ReportController extends Controller
         $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
         $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
-            dd(($request->input('testtype') == 'VL') ? $data->first()->justification : $data->first()->spots);
             $newArray = [];
             if ($request->input('types') == 'manifest') {
                 foreach ($data as $key => $new) {
