@@ -242,7 +242,12 @@
 		
 		<br />
 
-		@if(env('APP_LAB') != 1)
+			<?php 
+				$sample = $batch->sample->where('receivedstatus', 1)->first();
+			?>
+
+		@if(env('APP_LAB') != 1 && $sample)
+
 
 			<p>Result Reviewed By: {{ $sample->approver->full_name ?? '' }}  Date Reviewed: {{ $sample->my_date_format('dateapproved') }}</p>
 

@@ -27,14 +27,24 @@ class SampleController extends Controller
         //
     }
 
-    public function list_poc()
+    public function list_poc($param=null)
     {
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
+
+        $samples = SampleView::with(['facility'])
+            ->when($param, function($query){
+                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+            })
+            ->whereRaw($string)
+            ->where(['site_entry' => 2])
+            ->orderBy('id', 'desc')
+            ->paginate(50);
+
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.poc_samples', $data)->with('pageTitle', 'Eid POC Samples');
@@ -582,6 +592,18 @@ class SampleController extends Controller
      */
     public function save_poc(Request $request, Sample $sample)
     {
+        if($sample->result){
+            $mintime = strtotime('now -5days');
+            if($sample->datemodified && strtotime($sample->datemodified) < $mintime){
+                session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
+                return back();
+            }
+            else if(strtotime($sample->datetested) < $mintime){
+                session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
+                return back();
+            }
+        }
+
         $sample->fill($request->except(['_token', 'lab_id']));
         $sample->pre_update();
         Misc::check_batch($sample->batch_id);

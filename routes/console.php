@@ -22,6 +22,11 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:tat5', function(){
+    \App\Common::save_tat5('eid');
+    \App\Common::save_tat5('vl');
+})->describe('Compute Tat 5.');
+
 Artisan::command('compute:eid-tat', function(){
     $my = new \App\Misc;
     $str = $my->compute_tat(\App\SampleView::class, \App\Sample::class);
@@ -55,6 +60,11 @@ Artisan::command('dispatch:mlab', function(){
     $str .= \App\MiscViral::send_to_mlab();
     $this->info($str);
 })->describe('Post dispatched results to mlab.');
+
+Artisan::command('dispatch:nhrl', function(){
+    \App\Common::nhrl('eid');
+    \App\Common::nhrl('vl');
+})->describe('Set NHRL samples to be dispatched.');
 
 
 Artisan::command('input-complete', function(){

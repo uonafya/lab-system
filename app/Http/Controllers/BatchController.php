@@ -31,7 +31,7 @@ class BatchController extends Controller
         $user = auth()->user();
         $facility_user = false;
         $date_column = "batches.datereceived";
-        if($batch_complete == 1) $date_column = "batches.datedispatched";
+        if(in_array($batch_complete, [1, 6])) $date_column = "batches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
 
         $s_facility_id = session()->pull('facility_search');
@@ -78,9 +78,13 @@ class BatchController extends Controller
                         ->where(['site_entry' => 1, 'batch_complete' => 0])
                         ->where('batches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
                 }
+
+                else if($batch_complete == 6){
+                    return $query->where('batch_complete', 1)->where('tat5', '<', 6);
+                }
             })
             ->when(true, function($query) use ($batch_complete){
-                if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
+                if(in_array($batch_complete, [1, 6])) return $query->orderBy('batches.datedispatched', 'desc');
                 return $query->orderBy('batches.created_at', 'desc');
             })
             ->where('batches.lab_id', env('APP_LAB'))
@@ -302,9 +306,13 @@ class BatchController extends Controller
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
             $new_id = $batch->id + 0.5;
+            $existing_batch = Batch::find($new_id);
+            if($existing_batch){
+                session(['toast_message' => "Batch {$new_id} already exists.", 'toast_error' => 1]);
+                return back();
+            }
             if($new_batch->id == floor($new_batch->id)){
-                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred."]);
-                session(['toast_error' => 1]);
+                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred.", 'toast_error' => 1]);
                 return back();
             }    
         }
@@ -774,9 +782,10 @@ class BatchController extends Controller
 
     public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
-        $date_column = "batches.datedispatched";
+        $date_column = "batches.datereceived";
+        if(in_array($batch_complete, [1, 6])) $date_column = "batches.datedispatched";
 
-        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'samples.datecollected', 'batches.datereceived', 'samples.datetested', 'batches.datedispatched'])
+        $samples = Sample::select(['samples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'patients.patient', 'samples.result', 'samples.receivedstatus', 'samples.datecollected', 'batches.datereceived', 'samples.datetested', 'batches.datedispatched', 'batches.tat5'])
             ->leftJoin('patients', 'patients.id', '=', 'samples.patient_id')
             ->leftJoin('batches', 'batches.id', '=', 'samples.batch_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
@@ -807,15 +816,19 @@ class BatchController extends Controller
                         ->where(['site_entry' => 1, 'batch_complete' => 0])
                         ->where('batches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
                 }
+
+                else if($batch_complete == 6){
+                    return $query->where('batch_complete', 1)->where('tat5', '<', 6);
+                }
             })
             ->when(true, function($query) use ($batch_complete){
-                if($batch_complete == 1) return $query->orderBy('batches.datedispatched', 'desc');
+                if(in_array($batch_complete, [1, 6])) return $query->orderBy('batches.datedispatched', 'desc');
                 return $query->orderBy('batches.created_at', 'desc');
             })
             ->where('batches.lab_id', env('APP_LAB'))
             // ->where('batch_complete', 1)
             // ->orderBy($date_column, 'desc')
-            ->orderBy('batch_id', 'desc')
+            // ->orderBy('batch_id', 'desc')
             ->get();
 
         $data = [];
@@ -831,6 +844,7 @@ class BatchController extends Controller
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
             $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Lab TAT'] = $sample->tat5;
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
             $data[$key]['Initials'] = '';

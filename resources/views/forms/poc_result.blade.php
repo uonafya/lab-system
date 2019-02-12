@@ -27,6 +27,7 @@
         <input type="hidden" value="{{ auth()->user()->id }}" name="approvedby2">
         <input type="hidden" value="{{ date('Y-m-d') }}" name="dateapproved">
         <input type="hidden" value="{{ date('Y-m-d') }}" name="dateapproved2">
+        <input type="hidden" value="{{ date('Y-m-d') }}" name="datemodified">
         <input type="hidden" value="{{ $sample->batch->datereceived }}" id="datereceived">
 
         <div class="row">
