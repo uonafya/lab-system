@@ -593,6 +593,8 @@ class ReportController extends Controller
         if (auth()->user()->user_type_id == 5) {
             $newArray = [];
             if ($request->input('types') == 'manifest') {
+                $dataArray[] = ($request->input('testtype') == 'VL') ? $VLfacilityManifestArray : $EIDfacilityManifestArray;
+
                 foreach ($data as $key => $new) {
                     $newArray[] = [
                         'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
