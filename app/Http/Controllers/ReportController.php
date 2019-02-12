@@ -603,7 +603,7 @@ class ReportController extends Controller
                         'datecollected' => $new->datecollected, 'datetested' => $new->datetested
                     ];
                 }
-                dd($newArray);
+                $data = collect($newArray);
             } else {
                 if ($request->input('testtype') == 'VL')
                     $dataArray[] = $vlDataArray;
