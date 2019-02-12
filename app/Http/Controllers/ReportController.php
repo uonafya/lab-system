@@ -626,7 +626,10 @@ class ReportController extends Controller
         
         if($data->isNotEmpty()) {
             foreach ($data as $report) {
-                $dataArray[] = $report->toArray();
+                if ($request->input('types') == 'manifest')
+                    $dataArray[] = $report;
+                else
+                    $dataArray[] = $report->toArray();
             }
             
             Excel::create($title, function($excel) use ($dataArray, $title) {
