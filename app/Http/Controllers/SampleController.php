@@ -592,6 +592,18 @@ class SampleController extends Controller
      */
     public function save_poc(Request $request, Sample $sample)
     {
+        if($sample->result){
+            $mintime = strtotime('now -5days');
+            if($sample->datemodified && strtotime($sample->datemodified) < $mintime){
+                session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
+                return back();
+            }
+            else if(strtotime($sample->datetested) < $mintime){
+                session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
+                return back();
+            }
+        }
+
         $sample->fill($request->except(['_token', 'lab_id']));
         $sample->pre_update();
         Misc::check_batch($sample->batch_id);
