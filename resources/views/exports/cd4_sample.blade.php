@@ -39,7 +39,7 @@
 					<th>REG. Date</th>
 					<td>
 					@isset($sample->created_at)
-						{{ gmdate('Y-m-d', strtotime($sample->created_at)) }}
+						{{ date('Y-m-d', strtotime($sample->created_at)) }}
 					@endisset
 					</td>
 				</tr>
@@ -132,7 +132,7 @@
 					<th>Date Tested</th>
 					<td>
 					@isset($sample->datetested)
-						{{ gmdate('Y-m-d', strtotime($sample->datetested)) }}
+						{{ date('Y-m-d', strtotime($sample->datetested)) }}
 					@endisset
 					</td>
 				</tr>
@@ -142,7 +142,7 @@
 					<th>Date Approved:</th>
 					<td>
 					@isset($sample->dateapproved2)
-						{{ gmdate('Y-m-d', strtotime($sample->dateapproved2)) }}
+						{{ date('Y-m-d', strtotime($sample->dateapproved2)) }}
 					@endisset
 					</td>
 				</tr>
