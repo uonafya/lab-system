@@ -83,7 +83,6 @@ class Controller extends BaseController
             $labtracker=1;
 
         $abbot = \App\Lab::select('abbott')->where('id', auth()->user()->lab_id)->first()->abbott;
-        
         $testype = [1,2];
         $taqman = [];
         $abbottproc = [];
@@ -96,31 +95,34 @@ class Controller extends BaseController
             $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
                         
         }
-        // dd($abbot);
+        // dd($abbottproc);
         if ($abbot == 1) {
             //..if both taqman and abbott have been submitted; set $submittedstatus > 0
-            if ( ($taqman[0] > 0 && $taqman[1] >0 ) && ($abbottproc[0] > 0 && $abbottproc[1]>0) )
+            if ( ($taqman[0] > 0 && $taqman[1] >0 ) && ($abbottproc[0] > 0 && $abbottproc[1]>0) ){
                 $submittedstatus = 1;
+            } else {
+                $submittedstatus = 0;
+            }
             
 
-            //..if only taqman has been submitted and not abbott; set $submittedstatus = 0; and only show the abbott link 
-            if ( ($taqman[0] > 0 && $taqman[1] >0) && ($abbottproc[0] == 0 || $abbottproc[1]==0 ) )
-                $submittedstatus = 0;
+            // //..if only taqman has been submitted and not abbott; set $submittedstatus = 0; and only show the abbott link 
+            // if ( ($taqman[0] > 0 && $taqman[1] >0) && ($abbottproc[0] == 0 || $abbottproc[1]==0 ) )
+            //     $submittedstatus = 0;
             
 
-            //..if only abbott has been submitted and not taqman; set $submittedstatus = 0; and only show the taqman link
-            if ( ($taqman[0] == 0 || $taqman[1] ==0) && ($abbottproc[0] > 0 || $abbottproc[1]>0) )
-                $submittedstatus = 0;
+            // //..if only abbott has been submitted and not taqman; set $submittedstatus = 0; and only show the taqman link
+            // if ( ($taqman[0] == 0 || $taqman[1] ==0) && ($abbottproc[0] > 0 || $abbottproc[1]>0) )
+            //     $submittedstatus = 0;
             
 
-            //..if only abbott has been submitted and not taqman; set $submittedstatus = 0; and only show the taqman link 
-            if ( ($taqman[0] == 0 && $taqman[1] ==0) && ($abbottproc[0] > 0 || $abbottproc[1]>0) )
-                $submittedstatus = 0;
+            // //..if only abbott has been submitted and not taqman; set $submittedstatus = 0; and only show the taqman link 
+            // if ( ($taqman[0] == 0 && $taqman[1] ==0) && ($abbottproc[0] > 0 || $abbottproc[1]>0) )
+            //     $submittedstatus = 0;
             
 
-            //..if none has been submitted; set $submittedstatus = 0; and only show the main link that requests both platforms to be submitted ***but also check whether lab has abbott machine*****
-            if ( ($taqman[0] == 0 || $taqman[1] ==0 ) && ($abbottproc[0] == 0  || $abbottproc[1]==0 ) )
-                $submittedstatus = 0;
+            // //..if none has been submitted; set $submittedstatus = 0; and only show the main link that requests both platforms to be submitted ***but also check whether lab has abbott machine*****
+            // if ( ($taqman[0] == 0 || $taqman[1] ==0 ) && ($abbottproc[0] == 0  || $abbottproc[1]==0 ) )
+            //     $submittedstatus = 0;
             
         } else {
             // dd($taqman);

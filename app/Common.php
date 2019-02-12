@@ -171,8 +171,8 @@ class Common
 	{
         ini_set("memory_limit", "-1");
         $batch_model = self::$my_classes[$type]['batch_class'];
-		// $batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
-		$batches = $batch_model::where(['batch_complete' => 1])->get();
+		$batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+		// $batches = $batch_model::where(['batch_complete' => 1])->get();
 
 		foreach ($batches as $key => $batch) {
 			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched, false);
@@ -738,7 +738,7 @@ class Common
         	return null;
 
         try {
-        	Mail::to($mainRecepient)->cc($mailinglist)
+        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke'])
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
