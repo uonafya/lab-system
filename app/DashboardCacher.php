@@ -95,6 +95,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
                 'delayed_batches' => Cache::get('vl_delayed_batches'),
+                'prefix' => 'viral',
         	]);
         } else if (session('testingSystem') == 'EID'){
             return array_merge($data, [
@@ -109,6 +110,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
                 'delayed_batches' => Cache::get('eid_delayed_batches'),
+                'prefix' => '',
             ]);
         } else if (session('testingSystem') == 'CD4') {
             return array_merge($data, [

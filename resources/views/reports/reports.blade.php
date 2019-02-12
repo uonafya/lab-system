@@ -268,6 +268,9 @@
                                 @endif                                
                                 <label> <input type="radio" name="types" value="tat" class="i-checks" required> TAT Report </label>
                                 <label><input type="radio" name="types" value="failed" class="i-checks" required> Failed Tests</label>
+                                @if(Auth::user()->user_type_id == 5)
+                                <label><input type="radio" name="types" value="manifest" class="i-checks" required> Sample Manifest</label>
+                                @endif
                             </div>
                         </div>
                         @if(Auth::user()->user_type_id == 5)
