@@ -255,11 +255,11 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('sample/list_poc') }}">Update POC EID Results</a>
+                <a href="{{ url('sample/list_poc/1') }}">Update POC EID Results</a>
             </li>
             <hr />
             <li>
-                <a href="{{ url('viralsample/list_poc') }}">Update POC VL Results</a>
+                <a href="{{ url('viralsample/list_poc/1') }}">Update POC VL Results</a>
             </li>
             <hr />
             <li>

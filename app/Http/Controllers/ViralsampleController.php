@@ -35,14 +35,24 @@ class ViralsampleController extends Controller
         return view('tables.confirm_viralsamples', $data)->with('pageTitle', 'Confirm Samples');
     }
 
-    public function list_poc()
+    public function list_poc($param=null)
     {
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         
         $data = Lookup::get_viral_lookups();
-        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->where(['site_entry' => 2])->get();
+
+        $samples = ViralsampleView::with(['facility'])
+            ->when($param, function($query){
+                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+            })
+            ->whereRaw($string)
+            ->where(['site_entry' => 2])
+            ->orderBy('id', 'desc')
+            ->paginate(50);
+
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
@@ -611,13 +621,24 @@ class ViralsampleController extends Controller
      */
     public function save_poc(Request $request, Viralsample $sample)
     {
+        if($sample->result){
+            $mintime = strtotime('now -5days');
+            if($sample->datemodified && strtotime($sample->datemodified) < $mintime){
+                session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
+                return back();
+            }
+            else if(strtotime($sample->datetested) < $mintime){
+                session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
+                return back();
+            }
+        }
+
         $sample->fill($request->except(['_token', 'lab_id', 'result_2']));
 
         if(!$sample->result) $sample->result = $request->input('result_2');
 
         if(!$sample->result){
-            session(['toast_message' => 'Please set a result value.']);
-            session(['toast_error' => 1]);
+            session(['toast_message' => 'Please set a result value.', 'toast_error' => 1]);
             return back();
         }
 
