@@ -379,6 +379,8 @@ class MiscDr extends Common
 
 							// $c->save();
 
+							dd($call);
+
 							$c = DrCall::firstOrCreate([
 								'sample_id' => $sample->id,
 								'drug_class' => $call->drug_class,

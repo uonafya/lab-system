@@ -41,7 +41,7 @@ class TaskController extends Controller
     public function index() 
     {
         $tasks = $this->pendingTasks();
-        // dd($tasks);
+        
         if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
             \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
@@ -68,7 +68,7 @@ class TaskController extends Controller
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
-        
+        // dd($data);
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
@@ -614,8 +614,7 @@ class TaskController extends Controller
     }
 
     public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
-
-    	if ($platform==1)
+        if ($platform==1)
             $model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
         if ($platform==2)
@@ -631,6 +630,7 @@ class TaskController extends Controller
         if ($platform==2)
             $model = Abbotprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
 
+        // return $model->toSql();
         return $model->count();
     }
 
