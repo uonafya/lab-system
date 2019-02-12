@@ -562,7 +562,10 @@ class ReportController extends Controller
         }
 
         if(auth()->user()->user_type_id == 5) {
-            $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
+            if ($request->input('types') == 'manifest')
+                $model = $model->where("$table.user_id", '=', auth()->user()->id);
+            else
+                $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
@@ -577,11 +580,25 @@ class ReportController extends Controller
         $vlDataArray = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
         $eidDataArray = ['Lab ID', 'Batch #', 'Sample Code', 'Infant Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
         $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
+        $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
+        $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
-            if ($request->input('testtype') == 'VL')
-                $dataArray[] = $vlDataArray;
-            else if ($request->input('testtype') == 'EID')
-                $dataArray[] = $eidDataArray;
+            if ($request->input('types') == 'manifest') {
+                $data = [
+                    'lab_id' => $data->pluck('id'), 'patient' => $data->pluck('patient'), 'batch' => $data->pluck('batch_id'),
+                    'county' => $data->pluck('county'), 'subcounty' => $data->pluck('subcounty'), 'facility' => $data->pluck('facility'),
+                    'mfl' => $data->pluck('facilitycode'), 'gender' => $data->pluck('gender_description'),  'dob' => $data->pluck('dob'),
+                    'types' => ($request->input('testtype') == 'VL') ? $data->pluck('sampletype') : $data->pluck('pcrtype'),
+                    'jus-spots' => ($request->input('testtype') == 'VL') ? $data->pluck('justification') : $data->pluck('spots'),
+                    'datecollected' => $data->pluck('datecollected'), 'datetested' => $data->pluck('datetested')
+                ];
+                dd($data);
+            } else {
+                if ($request->input('testtype') == 'VL')
+                    $dataArray[] = $vlDataArray;
+                else if ($request->input('testtype') == 'EID')
+                    $dataArray[] = $eidDataArray;
+            }
         } else {
             if (session('testingSystem') == 'Viralload')
                 $dataArray[] = $vlDataArray;

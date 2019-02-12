@@ -167,6 +167,19 @@ class Common
 		return $totalholidays;
 	}
 
+	public static function save_tat5($type)
+	{
+        ini_set("memory_limit", "-1");
+        $batch_model = self::$my_classes[$type]['batch_class'];
+		$batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+		// $batches = $batch_model::where(['batch_complete' => 1])->get();
+
+		foreach ($batches as $key => $batch) {
+			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched, false);
+			$batch->save();
+		}
+	}
+
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
 	// $sample_model will be \App\Sample::class || \App\Viralsample::class
 	public function save_tat($view_model, $sample_model, $batch_id = NULL)
@@ -400,25 +413,6 @@ class Common
             $batch->save();
 
 		 	self::dispatch_batch($batch);
-		} 
-    }
-
-    public static function dispatch_delayed($type = 'eid')
-    {
-		if($type == 'eid'){
-			$batch_model = \App\Batch::class;
-		}else{
-			$batch_model = \App\Viralbatch::class;
-		}
-
-		$batches = $batch_model::where('batch_complete', 1)
-		->where('datedispatched', '>', '2018-08-27')
-		->where('datedispatched', '<', '2018-09-03')
-		->get();
-
-		foreach ($batches as $batch) {
-		 	self::dispatch_batch($batch);
-		 	break;
 		} 
     }
 
@@ -744,7 +738,7 @@ class Common
         	return null;
 
         try {
-        	Mail::to($mainRecepient)->cc($mailinglist)
+        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke'])
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
