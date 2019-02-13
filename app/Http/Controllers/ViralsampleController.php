@@ -1081,8 +1081,8 @@ class ViralsampleController extends Controller
                 $sample[19] = $dbsample->rejectedreason;
                 $sample[20] = $dbsample->reason_for_repeat;
                 $sample[21] = $dbsample->labcomment;
-                $sample[22] = date('m/d/Y', $dbsample->datetested);
-                $sample[23] = date('m/d/Y', $dbsample->datedispatched);
+                $sample[22] = date('m/d/Y', strtotime($dbsample->datetested));
+                $sample[23] = date('m/d/Y', strtotime($dbsample->datedispatched));
                 // $sample[22] = $dbsample->datetested;
                 // $sample[23] = $dbsample->datedispatched;
                 $sample[24] = $dbsample->result;
