@@ -1074,7 +1074,7 @@ class ViralsampleController extends Controller
             $excelData = Excel::load($file, function($reader){
                 $reader->toArray();                
             })->get();
-            $data = $excelData->flatten(1);
+            $data = $excelData;
             dd($data);
             ini_set("memory_limit", "-1");
             ini_set("max_execution_time", "3000");
