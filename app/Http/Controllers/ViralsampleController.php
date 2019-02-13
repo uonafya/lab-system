@@ -1091,6 +1091,7 @@ class ViralsampleController extends Controller
 
                 $newData[] = $sample;
             }
+            dd($newData);
             $title = 'EDARP reffered sample';
             Excel::create($title, function($excel) use ($newData, $title) {
                 $excel->setTitle($title);
