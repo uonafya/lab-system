@@ -1077,7 +1077,7 @@ class ViralsampleController extends Controller
             // dd($data);
             foreach ($data as $key => $sample) {
                 // $sample = (array)$sample;
-                dd($sample[3]);
+                // dd($sample[3]);
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
                 $sample[19] = $dbsample->rejectedreason ?? null;
                 $sample[20] = $dbsample->reason_for_repeat ?? null;
