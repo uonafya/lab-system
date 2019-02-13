@@ -1068,30 +1068,27 @@ class ViralsampleController extends Controller
     public function extract_excel_results(Request $request) {
         if ($request->method() == 'POST') {
             $file = $request->excelupload->path();
-            $batch = null;
-            $newData = [];
-            $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
             $excelData = Excel::load($file, function($reader){
                 $reader->toArray();                
             })->get();
-            $data = $excelData;
             
-            foreach ($data as $key => $sample) {
+            $newData = [];
+            $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
+            
+            foreach ($excelData as $key => $sample) {
+                $loopkey = $key;
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
                 $sample[19] = $dbsample->rejectedreason;
                 $sample[20] = $dbsample->reason_for_repeat;
                 $sample[21] = $dbsample->labcomment;
-                // $sample[22] = date('m/d/Y', $dbsample->datetested);
-                // $sample[23] = date('m/d/Y', $dbsample->datedispatched);
-                $sample[22] = $dbsample->datetested;
-                $sample[23] = $dbsample->datedispatched;
-                $sample[22] = $dbsample->datetested;
-                $sample[23] = $dbsample->datedispatched;
+                $sample[22] = date('m/d/Y', $dbsample->datetested);
+                $sample[23] = date('m/d/Y', $dbsample->datedispatched);
+                // $sample[22] = $dbsample->datetested;
+                // $sample[23] = $dbsample->datedispatched;
                 $sample[24] = $dbsample->result;
 
                 $newData[] = $sample;
             }
-            dd($newData);
 
             ini_set("memory_limit", "-1");
             ini_set("max_execution_time", "3000");
@@ -1106,6 +1103,7 @@ class ViralsampleController extends Controller
                 });
 
             })->download('csv');
+            
         } else if ($request->method() == 'GET') {
             return view('forms.viralsamplesexcelextract')->with('pageTitle', 'Get Sample');
         }
