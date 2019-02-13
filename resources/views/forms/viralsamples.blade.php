@@ -410,7 +410,12 @@
 
                                         > {!! $proph->displaylabel !!}
                                         </option>
+                                        
+                                        @if($proph->id == 9)
+                                            <option value="18">12 &nbsp;ABC+3TC+DTG</option>
+                                        @endif
                                     @endforeach
+                                    
                                 </select>
                             </div>
                         </div>
