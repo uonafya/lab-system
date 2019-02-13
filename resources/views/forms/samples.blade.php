@@ -325,7 +325,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $entry_point->name }}
+                                        >{{ $entry_point->id }} &nbsp;  {{ $entry_point->name }}
                                         </option>
                                     @endforeach
 
@@ -348,7 +348,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $ip->name }}
+                                        >{{ $ip->rank }} &nbsp; {{ $ip->name }}
                                         </option>
                                     @endforeach
 
