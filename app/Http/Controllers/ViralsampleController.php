@@ -1071,24 +1071,26 @@ class ViralsampleController extends Controller
             $batch = null;
             $newData = [];
             $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
-            $excelData = Excel::load($file, function($reader) use (&$newData) {
-                $data = collect($reader->toArray())->flatten(1);
-                foreach ($data as $key => $sample) {
-                    $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
-                    $sample[19] = $dbsample->rejectedreason;
-                    $sample[20] = $dbsample->reason_for_repeat;
-                    $sample[21] = $dbsample->labcomment;
-                    // $sample[22] = date('m/d/Y', $dbsample->datetested);
-                    // $sample[23] = date('m/d/Y', $dbsample->datedispatched);
-                    $sample[22] = $dbsample->datetested;
-                    $sample[23] = $dbsample->datedispatched;
-                    $sample[22] = $dbsample->datetested;
-                    $sample[23] = $dbsample->datedispatched;
-                    $sample[24] = $dbsample->result;
+            $excelData = Excel::load($file, function($reader){
+                $reader->toArray();                
+            })->get();
+            $data = $excelData->flatten(1);
 
-                    $newData[] = $sample;
-                }
-            });
+            foreach ($data as $key => $sample) {
+                $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
+                $sample[19] = $dbsample->rejectedreason;
+                $sample[20] = $dbsample->reason_for_repeat;
+                $sample[21] = $dbsample->labcomment;
+                // $sample[22] = date('m/d/Y', $dbsample->datetested);
+                // $sample[23] = date('m/d/Y', $dbsample->datedispatched);
+                $sample[22] = $dbsample->datetested;
+                $sample[23] = $dbsample->datedispatched;
+                $sample[22] = $dbsample->datetested;
+                $sample[23] = $dbsample->datedispatched;
+                $sample[24] = $dbsample->result;
+
+                $newData[] = $sample;
+            }
             $title = 'EDARP reffered sample';
             Excel::create($title, function($excel) use ($newData, $title) {
                 $excel->setTitle($title);
