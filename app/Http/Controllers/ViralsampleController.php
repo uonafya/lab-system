@@ -1077,22 +1077,18 @@ class ViralsampleController extends Controller
             $data = $excelData;
             
             foreach ($data as $key => $sample) {
-                dd($sample);
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
                 $sample[19] = $dbsample->rejectedreason;
                 $sample[20] = $dbsample->reason_for_repeat;
                 $sample[21] = $dbsample->labcomment;
-                // $sample[22] = date('m/d/Y', $dbsample->datetested);
-                // $sample[23] = date('m/d/Y', $dbsample->datedispatched);
-                $sample[22] = $dbsample->datetested;
-                $sample[23] = $dbsample->datedispatched;
-                $sample[22] = $dbsample->datetested;
-                $sample[23] = $dbsample->datedispatched;
+                $sample[22] = date('m/d/Y', $dbsample->datetested);
+                $sample[23] = date('m/d/Y', $dbsample->datedispatched);
+                // $sample[22] = $dbsample->datetested;
+                // $sample[23] = $dbsample->datedispatched;
                 $sample[24] = $dbsample->result;
 
                 $newData[] = $sample;
             }
-            dd($newData);
 
             ini_set("memory_limit", "-1");
             ini_set("max_execution_time", "3000");
