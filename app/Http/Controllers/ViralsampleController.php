@@ -1075,7 +1075,9 @@ class ViralsampleController extends Controller
                 $reader->toArray();                
             })->get();
             $data = $excelData->flatten(1);
-
+            dd($data);
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             foreach ($data as $key => $sample) {
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
                 $sample[19] = $dbsample->rejectedreason;
@@ -1092,6 +1094,9 @@ class ViralsampleController extends Controller
                 $newData[] = $sample;
             }
             dd($newData);
+
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             $title = 'EDARP reffered sample';
             Excel::create($title, function($excel) use ($newData, $title) {
                 $excel->setTitle($title);
