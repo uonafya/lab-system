@@ -453,6 +453,7 @@ class MiscDr extends Common
 
 	public static function get_sample_warning($id)
 	{
+		if(!DB::table('dr_warning_codes')->where(['name' => $id])->first()) dd($id);
 		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
 	}
 
