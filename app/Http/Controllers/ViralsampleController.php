@@ -1088,9 +1088,9 @@ class ViralsampleController extends Controller
                 // $sample[23] = $dbsample->datedispatched;
                 $sample[24] = $dbsample->result ?? null;
 
-                $newData[] = $sample;
+                $newData[] = $sample->toArray();
             }
-            
+            // dd($newData);
             ini_set("memory_limit", "-1");
             ini_set("max_execution_time", "3000");
             $title = 'EDARP reffered sample';
