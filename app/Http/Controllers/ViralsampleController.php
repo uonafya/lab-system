@@ -1103,7 +1103,7 @@ class ViralsampleController extends Controller
                     $sheet->fromArray($newData, null, 'A1', false, false);
                 });
 
-            })->download('csv');
+            })->download('xlsx');
             
         } else if ($request->method() == 'GET') {
             return view('forms.viralsamplesexcelextract')->with('pageTitle', 'Get Sample');
