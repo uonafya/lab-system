@@ -444,10 +444,11 @@ class MiscDr extends Common
 						$sample->had_manual_intervention = true;
 					}				
 
-					$sample->assembled_sequence = $s->assembled_sequence;
-					$sample->chromatogram_url = $s->chromatogram_url;
-					$sample->exatype_version = $s->exatype_version;
-					$sample->algorithm = $s->algorithm;
+					$sample->assembled_sequence = $s->assembled_sequence ?? '';
+					$sample->chromatogram_url = $s->chromatogram_url ?? '';
+					$sample->exatype_version = $s->examap_version ?? '';
+					$sample->algorithm = $s->algorithm ?? '';
+					$sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
 					$sample->save();
 				}
 			}
