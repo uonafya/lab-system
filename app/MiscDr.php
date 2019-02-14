@@ -336,7 +336,7 @@ class MiscDr extends Common
 
 				if($sample){
 
-					echo " {$sample->id} ";
+					// echo " {$sample->id} ";
 
 					// if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
@@ -450,6 +450,8 @@ class MiscDr extends Common
 					$sample->algorithm = $s->algorithm ?? '';
 					$sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
 					$sample->save();
+
+					echo " {$sample->id} ";
 				}
 			}
 		}
