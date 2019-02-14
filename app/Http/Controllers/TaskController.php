@@ -44,7 +44,7 @@ class TaskController extends Controller
     public function index() 
     {
         $tasks = $this->pendingTasks();
-        // dd($tasks);
+        
         if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
             \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
@@ -71,7 +71,7 @@ class TaskController extends Controller
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
-        
+        // dd($data);
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
@@ -255,6 +255,12 @@ class TaskController extends Controller
         $data['testtypes'] = ['EID', 'VL'];
         $previousMonth = $this->previousMonth;
         $year = $this->previousYear;
+        $endingBalanceMonth = $previousMonth - 1;
+        $endingBalanceYear = $year;
+        if ($previousMonth == 1) {
+            $endingBalanceMonth = 12;
+            $endingBalanceYear = $year - 1;
+        }
 
         if ($request->saveTaqman || $request->saveAbbott)
         {
@@ -345,10 +351,11 @@ class TaskController extends Controller
             $data['taqmandeliveries'.$value] = NULL;
             $type = $key+1;
 
-            foreach(Abbotprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
+            foreach(Abbotprocurement::where('month', $endingBalanceMonth)->where('year', $endingBalanceYear)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevabbott'.$value] = $value1;
             }
-            foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
+
+            foreach(Taqmanprocurement::where('month', $endingBalanceMonth)->where('year', $endingBalanceYear)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevtaqman'.$value] = $value1;
             }
             foreach (Taqmandeliveries::whereRaw("YEAR(datereceived) = $year")->whereRaw("MONTH(datereceived) = $previousMonth")->where('testtype', $type)->get() as $key1 => $value1) {
@@ -591,8 +598,7 @@ class TaskController extends Controller
     }
 
     public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
-
-    	if ($platform==1)
+        if ($platform==1)
             $model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
         if ($platform==2)
@@ -608,6 +614,7 @@ class TaskController extends Controller
         if ($platform==2)
             $model = Abbotprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
 
+        // return $model->toSql();
         return $model->count();
     }
 

@@ -18,8 +18,9 @@ class CreateDrCallsTable extends Migration
             $table->integer('sample_id')->unsigned()->index();
             $table->string('drug_class', 50)->nullable(); 
             $table->tinyInteger('drug_class_id')->nullable()->unsigned()->index(); 
-            $table->string('other_mutations', 250)->nullable(); 
-            $table->string('major_mutations', 250)->nullable(); 
+            $table->string('mutations')->nullable(); 
+            // $table->string('other_mutations', 250)->nullable(); 
+            // $table->string('major_mutations', 250)->nullable(); 
             $table->timestamps();
         });
     }

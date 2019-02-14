@@ -19,6 +19,30 @@ class Common
 	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
 
+	public static $my_classes = [
+		'eid' => [
+			'misc_class' => \App\Misc::class,
+			'sample_class' => \App\Sample::class,
+			'sampleview_class' => \App\SampleView::class,
+			'batch_class' => \App\Batch::class,
+			'worksheet_class' => \App\Worksheet::class,
+			'patient_class' => \App\Patient::class,
+			'view_table' => 'samples_view',
+			'worksheets_table' => 'worksheets',
+		],
+
+		'vl' => [
+			'misc_class' => \App\MiscViral::class,
+			'sample_class' => \App\Viralsample::class,
+			'sampleview_class' => \App\ViralsampleView::class,
+			'batch_class' => \App\Viralbatch::class,
+			'worksheet_class' => \App\Viralworksheet::class,
+			'patient_class' => \App\Viralpatient::class,
+			'view_table' => 'viralsamples_view',
+			'worksheets_table' => 'viralworksheets',
+		],
+	];
+
     public static function test_email()
     {
         Mail::to(['joelkith@gmail.com'])->send(new TestMail());
@@ -141,6 +165,19 @@ class Common
 				break;
 		}
 		return $totalholidays;
+	}
+
+	public static function save_tat5($type)
+	{
+        ini_set("memory_limit", "-1");
+        $batch_model = self::$my_classes[$type]['batch_class'];
+		$batches = $batch_model::where(['batch_complete' => 1])->whereNull('tat5')->get();
+		// $batches = $batch_model::where(['batch_complete' => 1])->get();
+
+		foreach ($batches as $key => $batch) {
+			$batch->tat5 = self::get_days($batch->datereceived, $batch->datedispatched, false);
+			$batch->save();
+		}
 	}
 
 	// $view_model will be \App\SampleView::class || \App\ViralsampleView::class
@@ -379,23 +416,20 @@ class Common
 		} 
     }
 
-    public static function dispatch_delayed($type = 'eid')
+    public static function nhrl($type)
     {
-		if($type == 'eid'){
-			$batch_model = \App\Batch::class;
-		}else{
-			$batch_model = \App\Viralbatch::class;
-		}
+    	ini_set('memory_limit', "-1");
 
-		$batches = $batch_model::where('batch_complete', 1)
-		->where('datedispatched', '>', '2018-08-27')
-		->where('datedispatched', '<', '2018-09-03')
-		->get();
+    	$batch_model = self::$my_classes[$type]['batch_class'];
+    	$sample_model = self::$my_classes[$type]['sample_class'];
 
-		foreach ($batches as $batch) {
-		 	self::dispatch_batch($batch);
-		 	break;
-		} 
+    	$batches = $batch_model::where(['lab_id' => 7, 'synched' => 5])->get();
+
+    	foreach ($batches as $batch) {
+    		$sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
+    		$batch->synched=0;
+    		$batch->save();
+    	}
     }
 
 	public static function fix_no_age($type)
@@ -704,7 +738,7 @@ class Common
         	return null;
 
         try {
-        	Mail::to($mainRecepient)->cc($mailinglist)
+        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke'])
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);

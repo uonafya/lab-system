@@ -22,6 +22,11 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:tat5', function(){
+    \App\Common::save_tat5('eid');
+    \App\Common::save_tat5('vl');
+})->describe('Compute Tat 5.');
+
 Artisan::command('compute:eid-tat', function(){
     $my = new \App\Misc;
     $str = $my->compute_tat(\App\SampleView::class, \App\Sample::class);
@@ -55,6 +60,11 @@ Artisan::command('dispatch:mlab', function(){
     $str .= \App\MiscViral::send_to_mlab();
     $this->info($str);
 })->describe('Post dispatched results to mlab.');
+
+Artisan::command('dispatch:nhrl', function(){
+    \App\Common::nhrl('eid');
+    \App\Common::nhrl('vl');
+})->describe('Set NHRL samples to be dispatched.');
 
 
 Artisan::command('input-complete', function(){
@@ -311,3 +321,10 @@ Artisan::command('transfer:deliveries', function(){
 //     $str = \App\Misc::check_patients_list();
 //     $this->info($str);
 // })->describe('Checking for Chege');
+
+// Quick fix for deliveries
+Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
+    $str = \App\Random::adjust_deliveries($platform, $id, $quantity, $damaged);
+    $this->info($str);
+})->describe('Adjust deliveries');
+// Quick fix for deliveries
