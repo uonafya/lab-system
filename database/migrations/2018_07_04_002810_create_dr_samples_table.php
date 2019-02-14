@@ -58,6 +58,8 @@ class CreateDrSamplesTable extends Migration
             $table->string('other_medications', 100)->nullable();
 
 
+            $table->boolean('repeatt')->default(0);
+            $table->tinyInteger('run')->default(1)->unsigned();
 
             // startartdate
             $table->date('date_prev_regimen')->nullable(); 
@@ -110,6 +112,7 @@ class CreateDrSamplesTable extends Migration
             $table->string('exatype_version', 50)->nullable(); 
             $table->string('algorithm', 20)->nullable(); 
             
+
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();
 
