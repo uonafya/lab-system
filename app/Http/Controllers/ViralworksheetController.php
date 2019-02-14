@@ -158,6 +158,7 @@ class ViralworksheetController extends Controller
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         // if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                         if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })
                     ->orderBy('viralsamples.id', 'asc')
