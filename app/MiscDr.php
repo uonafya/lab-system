@@ -328,6 +328,8 @@ class MiscDr extends Common
 			$worksheet->status_id = 6;
 			$worksheet->save();
 
+			dd($body->included);
+
 			foreach ($body->included as $key => $value) {
 
 				$sample = DrSample::where(['sanger_id' => $value->attributes->id])->first();
@@ -390,7 +392,7 @@ class MiscDr extends Common
 
 							// $c->save();
 
-							dd($call);
+							// dd($call);
 
 							$c = DrCall::firstOrCreate([
 								'sample_id' => $sample->id,
