@@ -336,6 +336,8 @@ class MiscDr extends Common
 
 				if($sample){
 
+					echo " {$sample->id} ";
+
 					if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
 					$s = $value->attributes;
