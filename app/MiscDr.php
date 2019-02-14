@@ -262,6 +262,30 @@ class MiscDr extends Common
 		return false;
 	}
 
+	public static function create_warning($type, $model, $error)
+	{
+		if($type == 1){
+			$class = DrWorksheetWarning::class;
+			$column = 'worksheet_id';
+		}
+		else{
+			$class = DrWarning::class;
+			$column = 'sample_id';			
+		}
+
+		$e = $class::firstOrCreate([
+			$column => $model->id,
+			'warning_id' => self::get_sample_warning($error->title),
+			'system' => $error->system ?? '',
+			'detail' => $error->detail ?? '',
+		]);
+
+		if(!$e->warning_id){
+			$e->detail .= " error_name " . $error_title;
+			$e->save();
+		}
+	}
+
 	public static function get_plate_result($worksheet)
 	{
 		$client = new Client(['base_uri' => self::$hyrax_url]);
@@ -459,8 +483,8 @@ class MiscDr extends Common
 
 	public static function get_sample_warning($id)
 	{
-		if(!DB::table('dr_warning_codes')->where(['name' => $id])->first()) dd($id);
-		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
+		// if(!DB::table('dr_warning_codes')->where(['name' => $id])->first()) dd($id);
+		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id ?? null;
 	}
 
 	public static function get_drug_class($id)
