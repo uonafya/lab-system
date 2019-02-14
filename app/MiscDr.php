@@ -338,7 +338,7 @@ class MiscDr extends Common
 
 					echo " {$sample->id} ";
 
-					if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
+					// if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
 					$s = $value->attributes;
 					$sample->status_id = self::get_sample_status($s->status_id);	
@@ -446,7 +446,7 @@ class MiscDr extends Common
 
 					$sample->assembled_sequence = $s->assembled_sequence ?? '';
 					$sample->chromatogram_url = $s->chromatogram_url ?? '';
-					$sample->exatype_version = $s->examap_version ?? '';
+					$sample->exatype_version = $s->exatype_version ?? '';
 					$sample->algorithm = $s->algorithm ?? '';
 					$sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
 					$sample->save();
