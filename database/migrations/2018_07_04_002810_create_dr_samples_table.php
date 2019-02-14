@@ -58,6 +58,8 @@ class CreateDrSamplesTable extends Migration
             $table->string('other_medications', 100)->nullable();
 
 
+            $table->boolean('repeatt')->default(0);
+            $table->tinyInteger('run')->default(1)->unsigned();
 
             // startartdate
             $table->date('date_prev_regimen')->nullable(); 
@@ -70,6 +72,13 @@ class CreateDrSamplesTable extends Migration
             $table->date('datereceived')->nullable();
             $table->date('datetested')->nullable();
             $table->date('datedispatched')->nullable();
+
+
+            $table->integer('approvedby')->unsigned()->nullable();
+            $table->integer('approvedby2')->unsigned()->nullable();
+            
+            $table->date('dateapproved')->nullable();
+            $table->date('dateapproved2')->nullable();
 
             $table->tinyInteger('dr_reason_id')->nullable()->unsigned()->index();
 
@@ -106,10 +115,11 @@ class CreateDrSamplesTable extends Migration
 
             $table->text('assembled_sequence')->nullable(); 
             $table->string('chromatogram_url', 50)->nullable(); 
-            $table->string('pdf_download_link', 100)->nullable(); 
+            // $table->string('pdf_download_link')->nullable(); 
             $table->string('exatype_version', 50)->nullable(); 
             $table->string('algorithm', 20)->nullable(); 
             
+
             $table->tinyInteger('synched')->default(0)->nullable();
             $table->date('datesynched')->nullable();
 
