@@ -75,6 +75,7 @@ class MiscDr extends Common
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('POST', 'sanger/authorisations', [
+            'http_errors' => false,
 			'headers' => [
 				// 'Accept' => 'application/json',
 			],
@@ -89,10 +90,12 @@ class MiscDr extends Common
 			],
 		]);
 
-		$body = json_decode($response->getBody());
+		
 
 		if($response->getStatusCode() < 400)
 		{
+			$body = json_decode($response->getBody());
+
 			$key = $body->data->attributes->api_key ?? null;
 
 			if(!$key) dd($body);
@@ -102,7 +105,10 @@ class MiscDr extends Common
 			// echo $key;
 			return;
 		}
-		die();
+		else{
+			$body = json_decode($response->getBody());
+			dd($body);
+		}
 	}
 
 
