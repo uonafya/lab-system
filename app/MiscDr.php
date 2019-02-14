@@ -265,11 +265,11 @@ class MiscDr extends Common
 	public static function create_warning($type, $model, $error)
 	{
 		if($type == 1){
-			$class = DrWorksheetWarning::class;
+			$class = \App\DrWorksheetWarning::class;
 			$column = 'worksheet_id';
 		}
 		else{
-			$class = DrWarning::class;
+			$class = \App\DrWarning::class;
 			$column = 'sample_id';			
 		}
 
