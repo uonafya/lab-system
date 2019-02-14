@@ -273,17 +273,15 @@ class MiscDr extends Common
 			$column = 'sample_id';			
 		}
 
-		$title = $error->title ?? 0;
-
 		$e = $class::firstOrCreate([
 			$column => $model->id,
-			'warning_id' => self::get_sample_warning($title),
+			'warning_id' => self::get_sample_warning($error->title),
 			'system' => $error->system ?? '',
 			'detail' => $error->detail ?? '',
 		]);
 
 		if(!$e->warning_id){
-			$e->detail .= " error_name " . $error_title;
+			$e->detail .= " error_name " . $error->title;
 			$e->save();
 		}
 		return $e;
