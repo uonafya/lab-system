@@ -1068,29 +1068,31 @@ class ViralsampleController extends Controller
     public function extract_excel_results(Request $request) {
         if ($request->method() == 'POST') {
             $file = $request->excelupload->path();
-            $batch = null;
-            $newData = [];
-            $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
             $excelData = Excel::load($file, function($reader){
                 $reader->toArray();                
             })->get();
-            $data = $excelData->flatten(1);
-
+            $data = $excelData;
+            $newData = [];
+            $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
+            // dd($data);
             foreach ($data as $key => $sample) {
+                // $sample = (array)$sample;
+                // dd($sample[3]);
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
-                $sample[19] = $dbsample->rejectedreason;
-                $sample[20] = $dbsample->reason_for_repeat;
-                $sample[21] = $dbsample->labcomment;
-                // $sample[22] = date('m/d/Y', $dbsample->datetested);
-                // $sample[23] = date('m/d/Y', $dbsample->datedispatched);
-                $sample[22] = $dbsample->datetested;
-                $sample[23] = $dbsample->datedispatched;
-                $sample[22] = $dbsample->datetested;
-                $sample[23] = $dbsample->datedispatched;
-                $sample[24] = $dbsample->result;
+                $sample[19] = $dbsample->rejectedreason ?? null;
+                $sample[20] = $dbsample->reason_for_repeat ?? null;
+                $sample[21] = $dbsample->labcomment ?? null;
+                $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : null;
+                $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : null;
+                // $sample[22] = $dbsample->datetested;
+                // $sample[23] = $dbsample->datedispatched;
+                $sample[24] = $dbsample->result ?? null;
 
-                $newData[] = $sample;
+                $newData[] = $sample->toArray();
             }
+            // dd($newData);
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             $title = 'EDARP reffered sample';
             Excel::create($title, function($excel) use ($newData, $title) {
                 $excel->setTitle($title);
@@ -1101,7 +1103,8 @@ class ViralsampleController extends Controller
                     $sheet->fromArray($newData, null, 'A1', false, false);
                 });
 
-            })->download('csv');
+            })->download('xlsx');
+            
         } else if ($request->method() == 'GET') {
             return view('forms.viralsamplesexcelextract')->with('pageTitle', 'Get Sample');
         }
