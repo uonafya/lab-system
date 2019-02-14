@@ -73,6 +73,13 @@ class CreateDrSamplesTable extends Migration
             $table->date('datetested')->nullable();
             $table->date('datedispatched')->nullable();
 
+
+            $table->integer('approvedby')->unsigned()->nullable();
+            $table->integer('approvedby2')->unsigned()->nullable();
+            
+            $table->date('dateapproved')->nullable();
+            $table->date('dateapproved2')->nullable();
+
             $table->tinyInteger('dr_reason_id')->nullable()->unsigned()->index();
 
             $table->integer('user_id')->unsigned()->nullable()->index();
@@ -108,7 +115,7 @@ class CreateDrSamplesTable extends Migration
 
             $table->text('assembled_sequence')->nullable(); 
             $table->string('chromatogram_url', 50)->nullable(); 
-            $table->text('pdf_download_link')->nullable(); 
+            // $table->string('pdf_download_link')->nullable(); 
             $table->string('exatype_version', 50)->nullable(); 
             $table->string('algorithm', 20)->nullable(); 
             

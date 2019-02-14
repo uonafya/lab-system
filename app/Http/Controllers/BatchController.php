@@ -236,7 +236,7 @@ class BatchController extends Controller
 
         if($to_print) return redirect("batch/to_print/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
 
-        return redirect("batch/index/1/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        return redirect("batch/index/{$batch_complete}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**
