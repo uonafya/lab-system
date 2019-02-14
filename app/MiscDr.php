@@ -284,6 +284,7 @@ class MiscDr extends Common
 			$e->detail .= " error_name " . $error_title;
 			$e->save();
 		}
+		return $e;
 	}
 
 	public static function get_plate_result($worksheet)
@@ -313,23 +314,13 @@ class MiscDr extends Common
 
 				if($w->errors){
 					foreach ($w->errors as $error) {
-						$e = DrWorksheetWarning::firstOrCreate([
-							'worksheet_id' => $worksheet->id,
-							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system ?? '',
-							'detail' => $error->detail ?? '',
-						]);
+						self::create_warning(1, $worksheet, $error);
 					}
 				}
 
 				if($w->warnings){
 					foreach ($w->warnings as $error) {
-						$e = DrWorksheetWarning::firstOrCreate([
-							'worksheet_id' => $worksheet->id,
-							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system ?? '',
-							'detail' => $error->detail ?? '',
-						]);
+						self::create_warning(1, $worksheet, $error);
 					}
 				}
 			}
@@ -371,12 +362,7 @@ class MiscDr extends Common
 						$sample->has_errors = true;
 
 						foreach ($s->errors as $error) {
-							$e = DrWarning::firstOrCreate([
-								'sample_id' => $sample->id,
-								'warning_id' => self::get_sample_warning($error->title),
-								'system' => $error->system,
-								'detail' => $error->detail,
-							]);
+							self::create_warning(2, $sample, $error);
 						}
 					}
 
@@ -384,12 +370,7 @@ class MiscDr extends Common
 						$sample->has_warnings = true;
 
 						foreach ($s->warnings as $error) {
-							$e = DrWarning::firstOrCreate([
-								'sample_id' => $sample->id,
-								'warning_id' => self::get_sample_warning($error->title),
-								'system' => $error->system,
-								'detail' => $error->detail,
-							]);
+							self::create_warning(2, $sample, $error);
 						}
 					}
 
@@ -484,7 +465,7 @@ class MiscDr extends Common
 	public static function get_sample_warning($id)
 	{
 		// if(!DB::table('dr_warning_codes')->where(['name' => $id])->first()) dd($id);
-		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id ?? null;
+		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id ?? 0;
 	}
 
 	public static function get_drug_class($id)
