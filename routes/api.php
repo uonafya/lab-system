@@ -39,6 +39,8 @@ $api->version('v1', function (Router $api) {
 
             $api->resource('sample', 'SampleController');
             $api->resource('viralsample', 'ViralsampleController');
+
+            $api->resource('allocation', 'AllocationController');
         });
 
         
