@@ -380,6 +380,7 @@ class ViralworksheetController extends Controller
         $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
 
         $my = new MiscViral;
+        $sample_array = $doubles = [];
 
         // Abbott
         if($worksheet->machine_type == 2)
@@ -405,6 +406,8 @@ class ViralworksheetController extends Controller
                     $error = $value[10];
 
                     $result_array = MiscViral::sample_result($result, $error);
+
+                    MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                     if($sample_id == "HIV_NEG"){
                         $nc = $result_array['result'];
@@ -441,8 +444,10 @@ class ViralworksheetController extends Controller
             {
                 if(!isset($value[1])) break;
                 $sample_id = $value[1];
-                $result = $value[6];
-                $result_array = MiscViral::exponential_result($result);
+                $interpretation = $value[6];
+                $result_array = MiscViral::exponential_result($interpretation);
+
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
@@ -490,11 +495,13 @@ class ViralworksheetController extends Controller
             {
                 $sample_id = (int) trim($value[0]);
 
-                $result = $value[4];
+                $interpretation = $value[4];
+
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                 if($value[19] == "Control"){
                     $name = strtolower($value[20]);
-                    $result_array = MiscViral::sample_result($result);
+                    $result_array = MiscViral::sample_result($interpretation);
 
                     if(str_contains($name, 'low')){
                         $lpc = $result_array['result'];
@@ -514,7 +521,7 @@ class ViralworksheetController extends Controller
                     continue;
                 }
 
-                $result_array = MiscViral::sample_result($result);
+                $result_array = MiscViral::sample_result($interpretation);
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
 
                 $sample = Viralsample::find($sample_id);
@@ -533,10 +540,12 @@ class ViralworksheetController extends Controller
                 $datetested=date("Y-m-d", strtotime($value[3]));
 
                 $sample_id = trim($value[4]);
-                $result = $value[8];
+                $interpretation = $value[8];
                 $error = $value[10];
 
-                $result_array = MiscViral::sample_result($result, $error);
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                $result_array = MiscViral::sample_result($interpretation, $error);
 
                 $sample_type = $value[5];
 
@@ -575,6 +584,16 @@ class ViralworksheetController extends Controller
             }
             fclose($handle);
 
+        }
+
+        if($doubles){
+            $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
+        
+            Excel::create($file, function($excel) use($doubles){
+                $excel->sheet('Sheetname', function($sheet) use($doubles) {
+                    $sheet->fromArray($doubles);
+                });
+            })->download('csv');
         }
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
