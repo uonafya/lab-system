@@ -14,6 +14,7 @@
 				<thead>
 					<tr>
 						<th>Drug Class</th>
+						<th>Mutations</th>
 						<th>Drug</th>
 						<th>Resistance</th>
 						<th>Resistance Code</th>
@@ -21,15 +22,16 @@
 				</thead>
 				<tbody>
 
-					@foreach($sample->dr_call as $dr_call)
-						<tr>
-							<td>{{ $dr_call->drug_class }}  </td>
+					@foreach($sample->dr_call as $dr_call)	
 
 						@foreach($dr_call->call_drug as $key => $call_drug)
+							<tr>
 							@if ($key)
-								<tr>
-									<td></td>
+								<td></td>
+							@else
+								<td>{{ $dr_call->drug_class }}  </td>
 							@endif
+								<td>{{ $dr_call->mutations_array[$key] ?? '' }}  </td>
 								<td>{{ $call_drug->short_name }} </td>
 								<td>{{ $call_drug->resistance }} </td>
 								{!! $call_drug->resistance_cell_two !!}

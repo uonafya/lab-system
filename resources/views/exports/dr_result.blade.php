@@ -4,9 +4,11 @@
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
 </head>
 
-
-<!-- <body onLoad="JavaScript:window.print();"> -->
-<body >
+<body
+	@isset($print)
+		onLoad="JavaScript:window.print();"
+	@endisset
+ >
 
 	<div class="container">
 		<div class="row">
