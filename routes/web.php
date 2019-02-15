@@ -281,12 +281,13 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::get('reports', 'ReportController@index')->name('reports');
-	Route::get('reports/kits', 'ReportController@kits')->name('report.kits');
 	Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');
 	Route::post('reports', 'ReportController@generate')->name('reports');
-	Route::post('reports/kitdeliveries', 'ReportController@kits');
 	Route::post('reports/kitsconsumption', 'ReportController@consumption');
 	Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
+	Route::get('reports/kits', 'KitsController@kits')->name('report.kits');
+	Route::post('reports/kitdeliveries', 'KitsController@kits');
+	Route::get('report/allocation', 'KitsController@allocation')->name('report.allocation');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');

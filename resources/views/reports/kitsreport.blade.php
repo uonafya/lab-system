@@ -10,12 +10,16 @@
     }
 </style>
 @php
+    $rejected = 0;
     $viraltestingSys = '';
     $eidtestingSys = '';
     if(Session('testingSystem') == 'Viralload') {
         $viraltestingSys = 'checked';
     } else {
         $eidtestingSys = 'checked';
+    }
+    foreach($data['allocations'] as $allocation) {
+        $rejected += $allocation->rejected;
     }
 @endphp
 <div class="content">
@@ -25,6 +29,7 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#kits-deliveries"><strong>A.) KITS DELIVERIES (RECEIVED KITS ) REPORT</strong></a></li>
                     <li class=""><a data-toggle="tab" href="#kits-consumption"><strong>B.) SUBMITTED MONTHLY KITS CONSUMPTION REPORTS</strong></a></li>
+                    <li class=""><a data-toggle="tab" href="#kits-allocation"><strong>C.) KITS ALLOCATIONS <span class="label label-{{ $data['badge']($rejected,3) }}">{{ $rejected }}</span> </strong></a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="kits-deliveries" class="tab-pane active">
@@ -227,6 +232,55 @@
                             </div>
                         </div>
                     </div>
+                    <div id="kits-allocation" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="alert alert-warning">
+                                <!-- Please select the parameters from the options below to generate the Submitted Kits Consumption query. -->
+                            </div>
+                            <div class="table-responsive" style="margin-top: 2em;">
+                                <table class="table table-striped table-bordered table-hover" >
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Allocation Period</th>
+                                            <th>Test Type</th>
+                                            <th>Pending Approval</th>
+                                            <th>Approved</th>
+                                            <th>Rejected</th>
+                                            <th>Tasks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody> 
+                                    @foreach($data['allocations'] as $key => $allocation)
+                                        <tr>
+                                            <td> {{ $key + 1 }} </td>
+                                            <td> 
+                                                {{ date("F", mktime(null, null, null, $allocation->month)) }}, 
+                                                {{ $allocation->year }}
+                                            </td>
+                                            <td>
+                                            @if($allocation->testtype == 1)
+                                                EID
+                                            @elseif($allocation->testtype == 2)
+                                                VL
+                                            @endif
+                                            </td>
+                                            <td><center><span class="label label-{{ $data['badge']($allocation->pending, 1) }}">{{ $allocation->pending }}</span></center></td>
+                                            <td><center><span class="label label-{{ $data['badge']($allocation->approved, 2) }}">{{ $allocation->approved }}</span></center></td>
+                                            <td><center><span class="label label-{{ $data['badge']($allocation->rejected, 3) }}">{{ $allocation->rejected }}</span></center></td>
+                                            <td>
+                                                <a href="#">View</a>
+                                                @if($allocation->rejected > 0)
+                                                <a href="#"> | Update Rejected</a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -243,7 +297,6 @@
     @endcomponent
     <script type="text/javascript">
         $(document).ready(function(){
-            // $('.period').click(function(){
             $('input[name="period"]').change(function(){
                 period = $(this).val();
                 $('#periodSelection').show();
