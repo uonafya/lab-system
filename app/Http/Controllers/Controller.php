@@ -86,14 +86,20 @@ class Controller extends BaseController
         $testype = [1,2];
         $taqman = [];
         $abbottproc = [];
-        
+        $abbottoday = null;
+        $taqmantoday = null;
+        $today = false;
+
         foreach ($testype as $key => $value) {
             if ($abbot == 1) {//Check for both abbot and taqman
-                $abbottproc[] = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
-                            }
-                               
-            $taqman[] = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value)->count();
-                        
+                $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value);
+                $abbottproc[] = $abbottmodel->count();
+                $abbottoday = $abbottmodel->where('datesubmitted', '=', date('Y-m-d'))->count();
+            }
+                     
+            $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value);
+            $taqman[] = $taqmanmodel->count();
+            $taqmantoday = $taqmanmodel->where('datesubmitted', '=', date('Y-m-d'))->count();
         }
         // dd($abbottproc);
         if ($abbot == 1) {
@@ -131,7 +137,10 @@ class Controller extends BaseController
                 $submittedstatus = 0;
         }
 
-        return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker];
+        if ($abbottoday > 0 || $taqmantoday > 0)
+            $today = true;
+
+        return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker, 'filledtoday' => $today];
     }
 
     public static function _getMonthQuarter($month=1, &$range=null){

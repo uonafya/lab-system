@@ -369,12 +369,23 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
-        // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 
     public function allocation(Request $request) {
         if ($request->method() == "GET") {
+            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->count();
+            if ($currentMonthAllocation > 0){
+                session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
+                return back();
+            } else {
+                $tasks = (object) $this->pendingTasks();
+                if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
+                    session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
+                    return back();
+                }
+            }
+            
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
             
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
@@ -388,6 +399,7 @@ class TaskController extends Controller
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else {
                 $saveAllocation = $this->saveAllocation($request);
+                \App\Synch::synch_allocations();
                 return redirect()->route('pending');
             }
         }
