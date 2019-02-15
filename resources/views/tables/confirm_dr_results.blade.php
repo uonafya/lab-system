@@ -39,6 +39,7 @@
                                         <th>View Chromatogram</th>         
                                         <th>Task</th>                
                                         <th>Print</th>                
+                                        <th>Print</th>                
                                     </tr>
                                 </thead>
                                 <tbody>

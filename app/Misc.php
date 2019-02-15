@@ -22,6 +22,11 @@ class Misc extends Common
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {
+            if(!$sample->result){
+                $sample->result = 3;
+                $sample->save();
+            }
+            $a = true;
 			if($sample->parentid == 0){
 				if($sample->result == 2 || $sample->result == 3){
 					$sample->repeatt = 1;

@@ -75,6 +75,7 @@ class MiscDr extends Common
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('POST', 'sanger/authorisations', [
+            'http_errors' => false,
 			'headers' => [
 				// 'Accept' => 'application/json',
 			],
@@ -89,10 +90,12 @@ class MiscDr extends Common
 			],
 		]);
 
-		$body = json_decode($response->getBody());
+		
 
 		if($response->getStatusCode() < 400)
 		{
+			$body = json_decode($response->getBody());
+
 			$key = $body->data->attributes->api_key ?? null;
 
 			if(!$key) dd($body);
@@ -102,7 +105,10 @@ class MiscDr extends Common
 			// echo $key;
 			return;
 		}
-		die();
+		else{
+			$body = json_decode($response->getBody());
+			dd($body);
+		}
 	}
 
 
@@ -256,6 +262,31 @@ class MiscDr extends Common
 		return false;
 	}
 
+	public static function create_warning($type, $model, $error)
+	{
+		if($type == 1){
+			$class = \App\DrWorksheetWarning::class;
+			$column = 'worksheet_id';
+		}
+		else{
+			$class = \App\DrWarning::class;
+			$column = 'sample_id';			
+		}
+
+		$e = $class::firstOrCreate([
+			$column => $model->id,
+			'warning_id' => self::get_sample_warning($error->title),
+			'system' => $error->system ?? '',
+			'detail' => $error->detail ?? '',
+		]);
+
+		if(!$e->warning_id){
+			$e->detail .= " error_name " . $error->title;
+			$e->save();
+		}
+		return $e;
+	}
+
 	public static function get_plate_result($worksheet)
 	{
 		$client = new Client(['base_uri' => self::$hyrax_url]);
@@ -283,23 +314,13 @@ class MiscDr extends Common
 
 				if($w->errors){
 					foreach ($w->errors as $error) {
-						$e = DrWorksheetWarning::firstOrCreate([
-							'worksheet_id' => $worksheet->id,
-							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system ?? '',
-							'detail' => $error->detail ?? '',
-						]);
+						self::create_warning(1, $worksheet, $error);
 					}
 				}
 
 				if($w->warnings){
 					foreach ($w->warnings as $error) {
-						$e = DrWorksheetWarning::firstOrCreate([
-							'worksheet_id' => $worksheet->id,
-							'warning_id' => self::get_sample_warning($error->title),
-							'system' => $error->system ?? '',
-							'detail' => $error->detail ?? '',
-						]);
+						self::create_warning(1, $worksheet, $error);
 					}
 				}
 			}
@@ -307,13 +328,17 @@ class MiscDr extends Common
 			$worksheet->status_id = 6;
 			$worksheet->save();
 
+			// dd($body->included);
+
 			foreach ($body->included as $key => $value) {
 
 				$sample = DrSample::where(['sanger_id' => $value->attributes->id])->first();
 
 				if($sample){
 
-					if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
+					// echo " {$sample->id} ";
+
+					// if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
 					$s = $value->attributes;
 					$sample->status_id = self::get_sample_status($s->status_id);	
@@ -341,12 +366,7 @@ class MiscDr extends Common
 						$sample->has_errors = true;
 
 						foreach ($s->errors as $error) {
-							$e = DrWarning::firstOrCreate([
-								'sample_id' => $sample->id,
-								'warning_id' => self::get_sample_warning($error->title),
-								'system' => $error->system,
-								'detail' => $error->detail,
-							]);
+							self::create_warning(2, $sample, $error);
 						}
 					}
 
@@ -354,12 +374,7 @@ class MiscDr extends Common
 						$sample->has_warnings = true;
 
 						foreach ($s->warnings as $error) {
-							$e = DrWarning::firstOrCreate([
-								'sample_id' => $sample->id,
-								'warning_id' => self::get_sample_warning($error->title),
-								'system' => $error->system,
-								'detail' => $error->detail,
-							]);
+							self::create_warning(2, $sample, $error);
 						}
 					}
 
@@ -379,7 +394,7 @@ class MiscDr extends Common
 
 							// $c->save();
 
-							dd($call);
+							// dd($call);
 
 							$c = DrCall::firstOrCreate([
 								'sample_id' => $sample->id,
@@ -429,11 +444,14 @@ class MiscDr extends Common
 						$sample->had_manual_intervention = true;
 					}				
 
-					$sample->assembled_sequence = $s->assembled_sequence;
-					$sample->chromatogram_url = $s->chromatogram_url;
-					$sample->exatype_version = $s->exatype_version;
-					$sample->algorithm = $s->algorithm;
+					$sample->assembled_sequence = $s->assembled_sequence ?? '';
+					$sample->chromatogram_url = $s->chromatogram_url ?? '';
+					$sample->exatype_version = $s->exatype_version ?? '';
+					$sample->algorithm = $s->algorithm ?? '';
+					// $sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
 					$sample->save();
+
+					// echo " {$sample->id} ";
 				}
 			}
 		}
@@ -453,7 +471,8 @@ class MiscDr extends Common
 
 	public static function get_sample_warning($id)
 	{
-		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id;
+		// if(!DB::table('dr_warning_codes')->where(['name' => $id])->first()) dd($id);
+		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id ?? 0;
 	}
 
 	public static function get_drug_class($id)
@@ -589,6 +608,43 @@ class MiscDr extends Common
     		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
     	]);
 	}
+
+	public static function download_pdf()
+	{
+		$client = new Client();
+		// $url = "https://hyrax-development-sanger-sample.s3-eu-west-1.amazonaws.com/1550136209464705939/4569f586f6df15baf4cb92d8a94279bc?response-content-disposition=attachment%3B%20filename%3D22.pdf&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIARH5SJVFVYGFOJCHP%2F20190214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20190214T105733Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEJP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDIN78kttnR2IssO03SK3A1z0d2oC2zkwdgFx2rG5tluWSX6gOUawwS79leG0dgkxAuoZi3Du52z%2FgLTgeb0QIAilCWCGujyUXSeDojB%2FFeDyq7Tj%2FvfyvxQscXn%2BF%2FcD9Ts%2BRBWdlvbbpGh8%2Bo21%2B8JHkvDM4G4InWMi3RMtIvST%2BKhMJkUSZxkRgrCb2c%2BzX45sWuXhbkZngr7KEPDwCVABAWKgcKmKhauLlUXIl67D8Jg9QGKKYA2I%2B4yayCdF17NyWS3lysYciNvxIYXVBAWIF6UVLrk1X6rotjehkUYqysoq%2FuTAe99xR6TpT2eDX8EZR7KkbMbOib%2BYcSjfX1ybjabkB1u8YsDYyg7k6OOiTdA%2FerC4hi8xGcEJNrK1yhjpJlwX3UYr2kIj9UmzPRf6NQO0dkVkmjzRvKHGziYeynqgAhKlMdpAo8Zr6W5wOclULMUJpQ2BcYxKvk0G2SoV0Hn4sgOeVEy4sP81B9UjhK4q8RXyxqTbfJ%2FYlMUuJCjA2AGR6kmWY%2Bc1v2OTy9wi3FEwkTTjvNVKAY5t8rMPb6JNvxl3ftqta%2FPYvb3gs5PzWXvQ1m%2FrH0XTSD5ZyZbZLFu%2FWo0oueSU4wU%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=23421a4f7244956b86bcbbcf6b7d5a56163c1481be84a0a6e10c225d6c6efcf7";
+
+		$url = "https://hyrax-development-sanger-sample.s3-eu-west-1.amazonaws.com/1550136214181171526/d33cce822e88cb26f34a8ff0f7641af4?response-content-disposition=attachment%3B%20filename%3D2009695759.pdf&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIARH5SJVFVYGFOJCHP%2F20190214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20190214T105733Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEJP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDIN78kttnR2IssO03SK3A1z0d2oC2zkwdgFx2rG5tluWSX6gOUawwS79leG0dgkxAuoZi3Du52z%2FgLTgeb0QIAilCWCGujyUXSeDojB%2FFeDyq7Tj%2FvfyvxQscXn%2BF%2FcD9Ts%2BRBWdlvbbpGh8%2Bo21%2B8JHkvDM4G4InWMi3RMtIvST%2BKhMJkUSZxkRgrCb2c%2BzX45sWuXhbkZngr7KEPDwCVABAWKgcKmKhauLlUXIl67D8Jg9QGKKYA2I%2B4yayCdF17NyWS3lysYciNvxIYXVBAWIF6UVLrk1X6rotjehkUYqysoq%2FuTAe99xR6TpT2eDX8EZR7KkbMbOib%2BYcSjfX1ybjabkB1u8YsDYyg7k6OOiTdA%2FerC4hi8xGcEJNrK1yhjpJlwX3UYr2kIj9UmzPRf6NQO0dkVkmjzRvKHGziYeynqgAhKlMdpAo8Zr6W5wOclULMUJpQ2BcYxKvk0G2SoV0Hn4sgOeVEy4sP81B9UjhK4q8RXyxqTbfJ%2FYlMUuJCjA2AGR6kmWY%2Bc1v2OTy9wi3FEwkTTjvNVKAY5t8rMPb6JNvxl3ftqta%2FPYvb3gs5PzWXvQ1m%2FrH0XTSD5ZyZbZLFu%2FWo0oueSU4wU%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=52fac846320d254fe5094518e226701ba2c1a044da9247cdb8a24059251d3dee";
+
+
+		$response = $client->request('GET', $url, [
+			// 'headers' => [
+				// 'Accept' => 'application/json',
+				// 'X-Hyrax-Apikey' => self::get_hyrax_key(),
+			// ],
+		]);
+
+		$body = $response->getBody();
+		$headers = $response->getHeaders();
+
+		// dd($body);
+		dd($headers);
+	}
+
+	public static function columns()
+	{
+		DB::statement("ALTER TABLE `dr_samples`
+			ADD `approvedby` int unsigned NULL AFTER `datedispatched`,
+			ADD `approvedby2` int unsigned NULL AFTER `approvedby`,
+			ADD `dateapproved` date NULL AFTER `approvedby2`,
+			ADD `dateapproved2` date NULL AFTER `dateapproved`,
+
+			ADD `repeatt` tinyint unsigned NOT NULL DEFAULT 0 AFTER `other_medications`,
+			ADD `run` tinyint unsigned NOT NULL DEFAULT 1 AFTER `repeatt`
+		;")
+	}
+
+	
 
 
 }
