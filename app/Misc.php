@@ -15,7 +15,8 @@ class Misc extends Common
 
 	public static function requeue($worksheet_id)
 	{
-		$samples = Sample::where('worksheet_id', $worksheet_id)->get();
+        $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+		$samples = Sample::whereIn('id', $samples_array)->get();
 
         Sample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
 
