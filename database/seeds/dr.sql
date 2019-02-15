@@ -72,7 +72,8 @@ INSERT INTO `dr_warning_codes` (`id`, `error`, `name`, `description`) VALUES
 	(13, 0, 'WrnRecallUserApproved', 'The user manually approved a sample flagged by recall'),
 	(14, 0, 'WrnNoPositiveControl', 'The plate had no positive control'),
 	(15, 0, 'WrnNoNegativeControl', 'The plate had no negative control'),
-	(16, 0, 'WrnRecallManualReviewNeeded', 'Manual review is required by recall');
+	(16, 0, 'WrnRecallManualReviewNeeded', 'Manual review is required by recall'),
+	(17, 1, 'ErrInsufficientLicenses', 'The licenses are insufficient.');
 
 
 
