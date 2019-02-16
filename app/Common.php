@@ -416,6 +416,17 @@ class Common
 		} 
     }
 
+    public static function dup_worksheet_rows(&$doubles, &$sample_array, $sample_id, $interpretation)
+    {
+        if(isset($sample_array[$sample_id])){
+        	dd($sample_id);
+            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $sample_array[$sample_id]];
+            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $interpretation];
+        }else{
+            $sample_array[$sample_id] = $interpretation;
+        }
+    }
+
     public static function nhrl($type)
     {
     	ini_set('memory_limit', "-1");

@@ -22,17 +22,6 @@ use App\Mail\EdarpValidation as Edarp;
 class MiscViral extends Common
 {
 
-
-    public static function dup_worksheet_rows(&$doubles, &$sample_array, $sample_id, $interpretation)
-    {
-        if(isset($sample_array[$sample_id])){
-            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $sample_array[$sample_id]];
-            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $interpretation];
-        }else{
-            $sample_array[$sample_id] = $interpretation;
-        }
-    }
-    
     protected $rcategories = [
         '0' => [],
         '1' => [],
