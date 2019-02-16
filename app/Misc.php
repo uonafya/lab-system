@@ -13,6 +13,16 @@ use App\Lookup;
 class Misc extends Common
 {
 
+    public static function dup_worksheet_rows(&$doubles, &$sample_array, $sample_id, $interpretation)
+    {
+        if(isset($sample_array[$sample_id])){
+            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $sample_array[$sample_id]];
+            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $interpretation];
+        }else{
+            $sample_array[$sample_id] = $interpretation;
+        }
+    }
+
 	public static function requeue($worksheet_id)
 	{
         $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
