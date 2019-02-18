@@ -705,12 +705,14 @@ class Synch
 
 		$data['numsamplesreceived'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereBetween('datereceived', [$weekstartdate, $today])
+								->where('site_entry', '!=', 2)
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
 								->first()->totals;
 
 		$data['roche_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
 						->where('machine_type', 1)
+						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
 						->get()->first()->totals;
@@ -718,6 +720,7 @@ class Synch
 		$data['abbott_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
 						->where('machine_type', 2)
+						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
 						->get()->first()->totals;
@@ -725,6 +728,7 @@ class Synch
 		$data['pantha_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
 						->where('machine_type', 4)
+						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
 						->get()->first()->totals;
@@ -734,6 +738,7 @@ class Synch
 		$data['inprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
 						->where('status_id', 1)
+						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->get()->first()->totals;
 
@@ -758,7 +763,6 @@ class Synch
 
 		$data['pendingresults'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('site_entry', '!=', 2)
-								// ->where('receivedstatus', '!=', 2)
 								->whereNull('worksheet_id')
 								->whereNull('datedispatched')
 								->whereRaw("(result is null or result=0)")
@@ -771,6 +775,7 @@ class Synch
 								->whereNull('approvedby')
 								->whereNull('datedispatched')
 								// ->where('receivedstatus', '!=', 2)
+								->where('site_entry', '!=', 2)
 								->whereRaw("(result is null or result=0)")
 								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->get()->first()->mindate;
