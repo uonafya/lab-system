@@ -74,7 +74,7 @@ class Random
     {
 		$sampleview_class = \App\Synch::$synch_arrays[$type]['sampleview_class'];
 
-		$m = $sampleview_class::selectRaw('MIN(datereceived) as mindate, *')
+		$m = $sampleview_class::selectRaw('MIN(datereceived) as mindate')
 								->where('datereceived', '>', date('Y-m-d', strtotime("-1 year")))
 								->whereNull('worksheet_id')
 								->whereNull('approvedby')
