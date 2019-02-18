@@ -32,7 +32,7 @@
                                     <th>Sequencing Worksheet</th>
                                     <th>Has Errors</th>
                                     <th>Has Warnings</th>
-                                    <th>Has Mutations</th>
+                                    <th>Has Drug Data</th>
                                     <th>Has Genotypes</th>
                                     <th>Tasks</th>
                                 </tr>

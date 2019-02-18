@@ -428,14 +428,15 @@ class Common
         }
     }
 
-    public static function nhrl($type)
+    public static function nhrl($type, $lab=null)
     {
     	ini_set('memory_limit', "-1");
+    	if(!$lab) $lab=7;
 
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['lab_id' => 7, 'synched' => 5])->get();
+    	$batches = $batch_model::where(['lab_id' => $lab, 'synched' => 5])->get();
 
     	foreach ($batches as $batch) {
     		$sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
