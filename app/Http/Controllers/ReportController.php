@@ -154,7 +154,7 @@ class ReportController extends Controller
             if ($request->input('types') == 'manifest'){
                 $export['samples'] = $data;
                 $export['testtype'] = $request->input('testtype');
-                $filename = strtoupper("HIV " . $export['testtype'] . " sample manifest " . $dateString) . ".pdf";
+                $filename = strtoupper("HIV " . $dateString) . ".pdf";
                 $mpdf = new Mpdf();
                 $view_data = view('exports.mpdf_samples_manifest', $export)->render();
                 $mpdf->WriteHTML($view_data);
