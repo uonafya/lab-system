@@ -307,9 +307,6 @@ class DrWorksheetController extends Controller
             $worksheet->status_id = 3;
             $worksheet->save();
         }
-
-
-
     }
 
 
