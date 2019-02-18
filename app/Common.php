@@ -418,7 +418,7 @@ class Common
 
     public static function dup_worksheet_rows(&$doubles, &$sample_array, $sample_id, $interpretation)
     {
-    	if(is_numeric($sample_id)){
+    	if(is_numeric($sample_id) && $sample_id > 100){
 	        if(isset($sample_array[$sample_id])){
 	            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $sample_array[$sample_id]];
 	            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $interpretation];
@@ -428,14 +428,15 @@ class Common
         }
     }
 
-    public static function nhrl($type)
+    public static function nhrl($type, $lab=null)
     {
     	ini_set('memory_limit', "-1");
+    	if(!$lab) $lab=7;
 
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['lab_id' => 7, 'synched' => 5])->get();
+    	$batches = $batch_model::where(['lab_id' => $lab, 'synched' => 5])->get();
 
     	foreach ($batches as $batch) {
     		$sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);

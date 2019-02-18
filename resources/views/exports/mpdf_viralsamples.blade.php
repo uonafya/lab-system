@@ -151,11 +151,12 @@ p.breakhere {page-break-before: always}
 					</span>
 				</td>
 			</tr>
+			
 
 			<tr>
 				<td colspan="1" class="style4 style1 comment"><strong>Gender</strong></td>
 				<td colspan="3"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				@if($sample->patient->sex == 2)
+				@if(in_array($sample->pmtct, [1, 2]))
 					<td class="style4 style1 comment" colspan="1" ><strong>PMTCT</strong></td>
 					<td colspan="2" class="comment">
 						<span class="style5">
