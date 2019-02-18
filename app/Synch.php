@@ -592,32 +592,28 @@ class Synch
 		$data['oneweek'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
-								->where('receivedstatus', '!=', 0)
-								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0])
+								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 1 AND 7")
 								->get()->first()->totals;
 
 		$data['twoweeks'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
-								->where('receivedstatus', '!=', 0)
-								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0])
+								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 8 AND 14")
 								->get()->first()->totals;
 
 		$data['threeweeks'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
-								->where('receivedstatus', '!=', 0)
-								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0])
+								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 15 AND 28")
 								->get()->first()->totals;
 
 		$data['aboveamonth'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
-								->where('receivedstatus', '!=', 0)
-								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0])
+								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) > 28")
 								->get()->first()->totals;
 

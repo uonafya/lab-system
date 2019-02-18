@@ -418,7 +418,7 @@ class Common
 
     public static function dup_worksheet_rows(&$doubles, &$sample_array, $sample_id, $interpretation)
     {
-    	if(is_numeric($sample_id)){
+    	if(is_numeric($sample_id) && $sample_id > 100){
 	        if(isset($sample_array[$sample_id])){
 	            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $sample_array[$sample_id]];
 	            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $interpretation];
