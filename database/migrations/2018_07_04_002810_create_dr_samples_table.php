@@ -60,6 +60,9 @@ class CreateDrSamplesTable extends Migration
 
             $table->boolean('repeatt')->default(0);
             $table->tinyInteger('run')->default(1)->unsigned();
+            $table->integer('parentid')->unsigned()->default(0)->nullable()->index();
+            // Used for when the result is a collect new sample
+            $table->boolean('collect_new_sample')->default(0);
 
             // startartdate
             $table->date('date_prev_regimen')->nullable(); 

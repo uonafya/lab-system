@@ -13,6 +13,7 @@ use App\Taqmandeliveries;
 use App\Abbotprocurement;
 use App\Taqmanprocurement;
 use Excel;
+use Mpdf\Mpdf;
 use App\ViewFacility;
 
 class ReportController extends Controller
@@ -150,7 +151,16 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString, $request);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
-            $this->__getExcel($data, $dateString, $request);
+            if ($request->input('types') == 'manifest'){
+                $export['samples'] = $data;
+                $export['testtype'] = $request->input('testtype');
+                $filename = strtoupper("HIV " . $export['testtype'] . " sample manifest " . $dateString) . ".pdf";
+                $mpdf = new Mpdf();
+                $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+                $mpdf->WriteHTML($view_data);
+                $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+            } else 
+                $this->__getExcel($data, $dateString, $request);
         }else {
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
@@ -594,24 +604,24 @@ class ReportController extends Controller
         $vlDataArray = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
         $eidDataArray = ['Lab ID', 'Batch #', 'Sample Code', 'Infant Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
         $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
-        $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
-        $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
+        // $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
+        // $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
             $newArray = [];
             if ($request->input('types') == 'manifest') {
-                $dataArray[] = ($request->input('testtype') == 'VL') ? $VLfacilityManifestArray : $EIDfacilityManifestArray;
+                // $dataArray[] = ($request->input('testtype') == 'VL') ? $VLfacilityManifestArray : $EIDfacilityManifestArray;
 
-                foreach ($data as $key => $new) {
-                    $newArray[] = [
-                        'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
-                        'county' => $new->county, 'subcounty' => $new->subcounty, 'facility' => $new->facility,
-                        'mfl' => $new->facilitycode, 'gender' => $new->gender_description,  'dob' => $new->dob,
-                        'types' => ($request->input('testtype') == 'VL') ? $new->sampletype : $new->pcrtype,
-                        'jus-spots' => ($request->input('testtype') == 'VL') ? $new->justification : $new->spots,
-                        'datecollected' => $new->datecollected, 'datetested' => $new->datetested
-                    ];
-                }
-                $data = collect($newArray);
+                // foreach ($data as $key => $new) {
+                //     $newArray[] = [
+                //         'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
+                //         'county' => $new->county, 'subcounty' => $new->subcounty, 'facility' => $new->facility,
+                //         'mfl' => $new->facilitycode, 'gender' => $new->gender_description,  'dob' => $new->dob,
+                //         'types' => ($request->input('testtype') == 'VL') ? $new->sampletype : $new->pcrtype,
+                //         'jus-spots' => ($request->input('testtype') == 'VL') ? $new->justification : $new->spots,
+                //         'datecollected' => $new->datecollected, 'datetested' => $new->datetested
+                //     ];
+                // }
+                // $data = collect($newArray);
             } else {
                 if ($request->input('testtype') == 'VL')
                     $dataArray[] = $vlDataArray;
@@ -632,9 +642,9 @@ class ReportController extends Controller
         
         if($data->isNotEmpty()) {
             foreach ($data as $report) {
-                if ($request->input('types') == 'manifest')
-                    $dataArray[] = $report;
-                else
+                // if ($request->input('types') == 'manifest')
+                //     $dataArray[] = $report;
+                // else
                     $dataArray[] = $report->toArray();
             }
             

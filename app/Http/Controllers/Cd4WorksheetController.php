@@ -146,11 +146,11 @@ class Cd4WorksheetController extends Controller
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
             })->get();
-
+            // dd($data);
             foreach ($data as $key => $value) {
                 try {
                     $daterun = Carbon::parse($value[23]);
-                    $daterun = $daterun->toDateString();                
+                    $daterun = $daterun->toDateString() ?? date('Y-m-d');                
                 } catch (Exception $e) {
                     $daterun = null;
                 }
@@ -197,17 +197,18 @@ class Cd4WorksheetController extends Controller
                     $sample->AVGCD3CD4CD8percentLymph = $value[15];
                     $sample->AVGCD3CD4CD8AbsCnt = $value[16];
                     $sample->CD45AbsCnt = $value[21];
-                    $sample->datemodified = gmdate('Y-m-d');
+                    $sample->datemodified = date('Y-m-d');
                     $sample->datetested = $daterun;
                     $sample->status_id = 4;
                     $sample->repeatt = $repeatt;
+                    // dd($sample);
                     $sample->save();
                 }
             }
 
             $worksheet->uploadedby = auth()->user()->id;
-            $worksheet->daterun = gmdate('Y-m-d');
-            $worksheet->dateuploaded = gmdate('Y-m-d');
+            $worksheet->daterun = date('Y-m-d');
+            $worksheet->dateuploaded = date('Y-m-d');
             $worksheet->status_id = 2;
             $worksheet->save();
             
@@ -247,11 +248,11 @@ class Cd4WorksheetController extends Controller
             $sample = Cd4Sample::find($id[$value]);
             if(isset($sample->approvedby)){
                 $sample->approvedby2 = auth()->user()->id;
-                $sample->dateapproved2 = gmdate('Y-m-d');
+                $sample->dateapproved2 = date('Y-m-d');
                 $sample->status_id = 5;
             } else {
                 $sample->approvedby = auth()->user()->id;
-                $sample->dateapproved = gmdate('Y-m-d');
+                $sample->dateapproved = date('Y-m-d');
             }
             $sample->AVGCD3percentLymph = $AVGCD3percentLymph[$value];
             $sample->AVGCD3AbsCnt = $AVGCD3AbsCnt[$value];
@@ -283,11 +284,11 @@ class Cd4WorksheetController extends Controller
 
         if(isset($worksheet->reviewedby)){
             $worksheet->reviewedby2 = auth()->user()->id;    
-            $worksheet->datereviewed2 = gmdate('Y-m-d');
+            $worksheet->datereviewed2 = date('Y-m-d');
             $worksheet->status_id = 3;
         } else {
             $worksheet->reviewedby = auth()->user()->id;    
-            $worksheet->datereviewed = gmdate('Y-m-d');
+            $worksheet->datereviewed = date('Y-m-d');
         }
         $worksheet->save();
 
