@@ -1064,4 +1064,49 @@ class ViralsampleController extends Controller
         // session()->forget('viral_facility_id');
         // session()->forget('viral_facility_name');
     }
+
+    public function extract_excel_results(Request $request) {
+        if ($request->method() == 'POST') {
+            $file = $request->excelupload->path();
+            $excelData = Excel::load($file, function($reader){
+                $reader->toArray();                
+            })->get();
+            $data = $excelData;
+            $newData = [];
+            $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
+            // dd($data);
+            foreach ($data as $key => $sample) {
+                // $sample = (array)$sample;
+                // dd($sample[3]);
+                $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
+                $sample[19] = $dbsample->rejectedreason ?? null;
+                $sample[20] = $dbsample->reason_for_repeat ?? null;
+                $sample[21] = $dbsample->labcomment ?? null;
+                $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : null;
+                $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : null;
+                // $sample[22] = $dbsample->datetested;
+                // $sample[23] = $dbsample->datedispatched;
+                $sample[24] = $dbsample->result ?? null;
+
+                $newData[] = $sample->toArray();
+            }
+            // dd($newData);
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
+            $title = 'EDARP reffered sample';
+            Excel::create($title, function($excel) use ($newData, $title) {
+                $excel->setTitle($title);
+                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('EID/VL System');
+                $excel->setDescription($title);
+
+                $excel->sheet('Sheet1', function($sheet) use ($newData) {
+                    $sheet->fromArray($newData, null, 'A1', false, false);
+                });
+
+            })->download('xlsx');
+            
+        } else if ($request->method() == 'GET') {
+            return view('forms.viralsamplesexcelextract')->with('pageTitle', 'Get Sample');
+        }
+    }
 }

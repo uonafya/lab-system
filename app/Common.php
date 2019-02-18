@@ -51,19 +51,19 @@ class Common
     public static function get_misc_class($type)
     {
     	if($type == 'eid') return \App\Misc::class;
-    	 return \App\MiscViral::class;
+    	return \App\MiscViral::class;
     }
 
     public static function get_batch_class($type)
     {
     	if($type == 'eid') return \App\Batch::class;
-    	 return \App\Viralbatch::class;
+    	return \App\Viralbatch::class;
     }
 
     public static function get_patient_class($type)
     {
     	if($type == 'eid') return \App\Patient::class;
-    	 return \App\Viralpatient::class;
+    	return \App\Viralpatient::class;
     }
 
 	public static function get_days($start, $finish, $with_holidays=true)

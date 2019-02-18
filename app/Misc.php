@@ -111,7 +111,6 @@ class Misc extends Common
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();
 		$sample->fill($original->only($fields['sample_rerun']));
-        $sample->age = $original->age;
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 
