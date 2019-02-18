@@ -80,6 +80,7 @@ class Random
 								->whereNull('approvedby')
 								->whereNull('datedispatched')
 								// ->where('receivedstatus', '!=', 2)
+								->where('site_entry', '!=', 2)
 								->whereRaw("(result is null or result=0)")
 								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
 								->get()->first();
