@@ -20,6 +20,20 @@
 
    <div class="content">
         <div>
+            
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="panel-body" style="padding-bottom: 6px;">
+                        <div class="alert alert-warning">
+                            <center>
+                                If the worksheet contains duplicate results (the same lab id with more than one result) the system will automatically download an excel with the duplicate results. Please download the file and see the lab id which has repeated itself in the results excel. Fix the results excel and then upload the fixed results excel.
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>                
+        </div>
 
         @if(isset($type))
             {{ Form::open(['url'=>'/viralworksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}

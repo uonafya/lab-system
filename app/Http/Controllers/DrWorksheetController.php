@@ -233,5 +233,71 @@ class DrWorksheetController extends Controller
         return view('tables.confirm_dr_results', $data);
     }
 
+
+
+    public function approve(Request $request, DrWorksheet $worksheet)
+    {
+        $double_approval = Lookup::$double_approval;
+        $approved = $request->input('approved');
+        $cns = $request->input('cns');
+        $rerun = $request->input('rerun');
+
+        $today = date('Y-m-d');
+        $approver = auth()->user()->id;
+
+        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->reviewedby != $approver){                
+            $data = [
+                'approvedby2' => $approver,
+                'dateapproved2' => $today,
+            ];              
+            $w_data = [
+                'reviewedby2' => $approver,
+                'datereviewed2' => $today,
+            ];
+            $column = 'dateapproved2';
+        }
+        else{
+            $data = [
+                'approvedby' => $approver,
+                'datereviewed' => $today,
+            ];             
+            $w_data = [
+                'reviewedby' => $approver,
+                'datereviewed' => $today,
+            ];
+            $column = 'dateapproved';
+        }
+
+        if(in_array(env('APP_LAB'), $double_approval)){
+            if(isset($data['approvedby2'])) $data['datedispatched'] = $today;
+        }else{
+            $data['datedispatched'] = $today;
+        }
+
+        $cns_data = array_merge($data, ['collect_new_sample' => 1]);
+
+        if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
+        if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
+
+        $samples = DrSample::whereIn('id', $rerun)->get();
+        unset($data['datedispatched']);
+
+        foreach ($samples as $key => $sample){
+            $sample->create_rerun($data);
+        }
+
+        $total = DrSample::where(['worksheet_id' => $worksheet_id, 'parentid' => 0])->count();
+        $dispatched = DrSample::whereNotNull('datedispatched')->where(['worksheet_id' => $worksheet_id])->count();
+        $reruns = DrSample::where(['worksheet_id' => $worksheet_id, 'repeatt' => 1])->count();
+
+        if($total == ($dispatched + $reruns)){
+            $worksheet->fill($w_data);
+            $worksheet->status_id = 3;
+            $worksheet->save();
+        }
+    }
+
+
+
     
 }
