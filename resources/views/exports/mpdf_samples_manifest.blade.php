@@ -43,12 +43,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="3" align="center">Facility Name:</td>
-			<td colspan="2" align="center">{{ session('logged_facility')->name ?? ''  }}</td>
-			<td colspan="2" align="center">MFL Code:</td>
-			<td colspan="2" align="center"></td>
-			<td colspan="2" align="center">County:</td>
-			<td colspan="2" align="center"></td>
+			<td colspan="4" align="center">Facility Name:</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->name ?? ''  }}</td>
+			<td colspan="3" align="center">MFL Code:</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->facilitycode ?? ''  }}</td>
 		</tr>
 	</table>
 	<br />
