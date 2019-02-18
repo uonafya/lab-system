@@ -135,7 +135,7 @@ class DrSample extends BaseModel
         $this->save();
     }
 
-    
+
 
 
     // mid being my id
@@ -231,6 +231,24 @@ class DrSample extends BaseModel
 
             
         }
+    }
+
+    public function create_rerun($data=null)
+    {
+        $fields = \App\Lookup::viralsamples_arrays();
+
+        if(!$this->has_rerun){
+            $child = new DrSample;
+            $child->fill($original->only($fields['dr_sample_rerun']));                
+            $child->run++;
+            if($child->parentid == 0) $child->parentid = $this->id;
+            $child->save();
+
+            if($data) $this->fill($data);
+            $this->collect_new_sample = 0;
+            $this->repeatt = 1;
+            $this->pre_update();
+        }            
     }
 
 

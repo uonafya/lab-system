@@ -484,6 +484,8 @@ class Lookup
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
             'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications'],
+
+            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'run', 'parentid', 'age'],
         ];
     }
 
