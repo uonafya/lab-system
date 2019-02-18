@@ -281,8 +281,6 @@ class DrWorksheetController extends Controller
 
         $samples = DrSample::whereIn('id', $rerun)->get();
         unset($data['datedispatched']);
-        $data['repeatt'] = 1;
-        $fields = Lookup::viralsamples_arrays();
 
         foreach ($samples as $key => $sample){
             $sample->create_rerun($data);
