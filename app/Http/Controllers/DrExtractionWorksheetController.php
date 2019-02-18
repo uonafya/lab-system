@@ -139,9 +139,19 @@ class DrExtractionWorksheetController extends Controller
         $drExtractionWorksheet->date_gel_documentation = date('Y-m-d');
         $drExtractionWorksheet->status_id = 3;
         $drExtractionWorksheet->save();
+
         $sample_ids = $request->input('samples');
+        $cns = $request->input('cns');
+
         DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereIn('id', $sample_ids)->update(['passed_gel_documentation' => true]);
-        DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->update(['passed_gel_documentation' => false]);
+        DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->whereIn('id', $cns)->update(['passed_gel_documentation' => false, 'collect_new_sample' => 1]);
+
+        $samples = DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->whereNotIn('id', $cns)->get();
+
+        foreach ($samples as $key => $sample){
+            $sample->passed_gel_documentation = 0;
+            $sample->create_rerun($data);
+        }
 
         session(['toast_message' => 'Gel documentation has been submitted.']);
         return redirect('dr_worksheet/create/' . $drExtractionWorksheet->id);
