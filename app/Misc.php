@@ -15,7 +15,8 @@ class Misc extends Common
 
 	public static function requeue($worksheet_id)
 	{
-		$samples = Sample::where('worksheet_id', $worksheet_id)->get();
+        $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+		$samples = Sample::whereIn('id', $samples_array)->get();
 
         Sample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
 
@@ -110,7 +111,6 @@ class Misc extends Common
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();
 		$sample->fill($original->only($fields['sample_rerun']));
-        $sample->age = $original->age;
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 

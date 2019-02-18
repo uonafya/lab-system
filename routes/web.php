@@ -404,6 +404,8 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('excelupload', 'ViralsampleController@excelupload');
 			Route::get('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
 			Route::post('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
+			Route::get('extractexcelresult', 'ViralsampleController@extract_excel_results');
+			Route::post('extractexcelresult', 'ViralsampleController@extract_excel_results');
 		});
 	});
 	Route::resource('viralsample', 'ViralsampleController');

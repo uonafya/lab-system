@@ -390,6 +390,8 @@ class WorksheetController extends Controller
         $today = $dateoftest = date("Y-m-d");
         $positive_control = $negative_control = null;
 
+        $sample_array = $doubles = [];
+
         if($worksheet->machine_type == 2)
         {
             $dateoftest = $today;
@@ -413,6 +415,9 @@ class WorksheetController extends Controller
                     $sample_id = $value[1];
                     $interpretation = $value[5];
                     $error = $value[10];
+
+
+                    Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                     $data_array = Misc::sample_result($interpretation, $error);
 
@@ -454,7 +459,10 @@ class WorksheetController extends Controller
 
                 $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $dateoftest]);
 
-                $sample_id = (int) trim($data[4]);                  
+                $sample_id = (int) trim($data[4]);  
+
+                Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
                 // $sample_id = substr($sample_id, 0, -1);
                 $sample = Sample::find($sample_id);
                 if(!$sample) continue;
@@ -464,6 +472,17 @@ class WorksheetController extends Controller
 
             }
             fclose($handle);
+        }
+
+        if($doubles){
+            session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
+            $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
+        
+            Excel::create($file, function($excel) use($doubles){
+                $excel->sheet('Sheetname', function($sheet) use($doubles) {
+                    $sheet->fromArray($doubles);
+                });
+            })->download('csv');
         }
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
