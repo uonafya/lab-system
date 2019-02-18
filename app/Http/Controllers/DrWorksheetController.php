@@ -285,17 +285,7 @@ class DrWorksheetController extends Controller
         $fields = Lookup::viralsamples_arrays();
 
         foreach ($samples as $key => $sample){
-            if(!$sample->has_rerun){
-                $child = new DrSample;
-                $child->fill($original->only($fields['dr_sample']));                
-                $child->run++;
-                if($child->parentid == 0) $child->parentid = $sample->id;
-                $child->save();
-
-                $sample->fill($data);
-                $sample->collect_new_sample = 0;
-                $sample->pre_update();
-            }            
+            $sample->create_rerun($data);
         }
 
         $total = DrSample::where(['worksheet_id' => $worksheet_id, 'parentid' => 0])->count();
