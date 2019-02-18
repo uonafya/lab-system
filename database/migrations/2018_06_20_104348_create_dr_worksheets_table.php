@@ -23,10 +23,10 @@ class CreateDrWorksheetsTable extends Migration
 
             // 1 is in process
             // 2 is tested, results uploaded
-            // 3 is results from sanger approved
+            // 3 is results from exatype approved
             // 4 is cancelled
-            // 5 is sent to sanger, awaiting response
-            // 6 is result sent back by sanger
+            // 5 is sent to exatype, awaiting response
+            // 6 is result sent back by exatype
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
 
             // Exatype status
