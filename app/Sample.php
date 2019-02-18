@@ -112,7 +112,7 @@ class Sample extends BaseModel
 
 
     /**
-     * Get the sample's received status name
+     * Get the sample's result name
      *
      * @return string
      */
@@ -121,6 +121,7 @@ class Sample extends BaseModel
         if($this->result == 1){ return "Negative"; }
         else if($this->result == 2){ return "Positive"; }
         else if($this->result == 3){ return "Failed"; }
+        else if($this->result == 5){ return "Collect New Sample"; }
         else{ return ""; }
     }
 

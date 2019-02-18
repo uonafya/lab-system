@@ -13,6 +13,7 @@ use App\Taqmandeliveries;
 use App\Abbotprocurement;
 use App\Taqmanprocurement;
 use Excel;
+use Mpdf\Mpdf;
 use App\ViewFacility;
 
 class ReportController extends Controller
@@ -150,7 +151,16 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString, $request);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
-            $this->__getExcel($data, $dateString, $request);
+            if ($request->input('types') == 'manifest'){
+                $export['samples'] = $data;
+                $export['testtype'] = $request->input('testtype');
+                $filename = strtoupper("HIV " . $export['testtype'] . " sample manifest " . $dateString) . ".pdf";
+                $mpdf = new Mpdf();
+                $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+                $mpdf->WriteHTML($view_data);
+                $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+            } else 
+                $this->__getExcel($data, $dateString, $request);
         }else {
             if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();

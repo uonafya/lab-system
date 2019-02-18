@@ -43,6 +43,19 @@ class DrSample extends BaseModel
     }
 
 
+    // Parent sample
+    public function parent()
+    {
+        return $this->belongsTo('App\DrSample', 'parentid');
+    }
+
+    // Child samples
+    public function child()
+    {
+        return $this->hasMany('App\DrSample', 'parentid');
+    }
+
+
 
     public function warning()
     {
@@ -58,6 +71,71 @@ class DrSample extends BaseModel
     {
         return $this->hasMany('App\DrGenotype', 'sample_id');
     }
+
+    /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\DrSample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
+    }
+
+
+    public function scopeRuns($query, $sample)
+    {
+        if($sample->parentid == 0){
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}")->orderBy('run', 'asc');
+        }
+        else{
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}")->orderBy('run', 'asc');
+        }
+    }
+
+    public function remove_rerun()
+    {
+        if($this->parentid == 0) $this->remove_child();
+        else{
+            $this->remove_sibling();
+        }
+    }
+
+    public function remove_child()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete();
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function remove_sibling()
+    {
+        $parent = $this->parent;
+        $children = $parent->child;
+
+        foreach ($children as $s) {
+            if($s->run > $this->run) $s->delete();            
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    
 
 
     // mid being my id

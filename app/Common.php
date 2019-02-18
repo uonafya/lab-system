@@ -51,19 +51,19 @@ class Common
     public static function get_misc_class($type)
     {
     	if($type == 'eid') return \App\Misc::class;
-    	 return \App\MiscViral::class;
+    	return \App\MiscViral::class;
     }
 
     public static function get_batch_class($type)
     {
     	if($type == 'eid') return \App\Batch::class;
-    	 return \App\Viralbatch::class;
+    	return \App\Viralbatch::class;
     }
 
     public static function get_patient_class($type)
     {
     	if($type == 'eid') return \App\Patient::class;
-    	 return \App\Viralpatient::class;
+    	return \App\Viralpatient::class;
     }
 
 	public static function get_days($start, $finish, $with_holidays=true)
@@ -414,6 +414,18 @@ class Common
 
 		 	self::dispatch_batch($batch);
 		} 
+    }
+
+    public static function dup_worksheet_rows(&$doubles, &$sample_array, $sample_id, $interpretation)
+    {
+    	if(is_numeric($sample_id)){
+	        if(isset($sample_array[$sample_id])){
+	            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $sample_array[$sample_id]];
+	            $doubles[] = ['duplicate lab id' => $sample_id, 'duplicate result' => $interpretation];
+	        }else{
+	            $sample_array[$sample_id] = $interpretation;
+	        }
+        }
     }
 
     public static function nhrl($type)
