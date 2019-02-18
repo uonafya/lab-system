@@ -60,7 +60,8 @@ class MiscViral extends Common
 
 	public static function requeue($worksheet_id)
 	{
-		$samples = Viralsample::where('worksheet_id', $worksheet_id)->get();
+        $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
         Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
 
@@ -78,12 +79,15 @@ class MiscViral extends Common
 	public static function save_repeat($sample_id)
 	{
         $original = Viralsample::find($sample_id);
-        if($original->run == 5) return false;
+        if($original->run == 5){
+            $original->repeatt=0;
+            $original->save();
+            return false;
+        }
 
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
         $sample->fill($original->only($fields['sample_rerun']));
-        $sample->age = $original->age;
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
