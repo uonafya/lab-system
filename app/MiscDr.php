@@ -161,7 +161,7 @@ class MiscDr extends Common
 
 			foreach ($body->data->attributes->samples as $key => $value) {
 				$sample = DrSample::find($value->sample_name);
-				$sample->sanger_id = $value->id;
+				$sample->exatype_id = $value->id;
 				$sample->save();
 			}
 		}
@@ -332,7 +332,7 @@ class MiscDr extends Common
 
 			foreach ($body->included as $key => $value) {
 
-				$sample = DrSample::where(['sanger_id' => $value->attributes->id])->first();
+				$sample = DrSample::where(['exatype_id' => $value->attributes->id])->first();
 
 				if($sample){
 
@@ -634,14 +634,22 @@ class MiscDr extends Common
 	public static function columns()
 	{
 		DB::statement("ALTER TABLE `dr_samples`
+			ADD `age` tinyint unsigned NULL AFTER `sample_type`,
+
 			ADD `approvedby` int unsigned NULL AFTER `datedispatched`,
 			ADD `approvedby2` int unsigned NULL AFTER `approvedby`,
 			ADD `dateapproved` date NULL AFTER `approvedby2`,
 			ADD `dateapproved2` date NULL AFTER `dateapproved`,
 
 			ADD `repeatt` tinyint unsigned NOT NULL DEFAULT 0 AFTER `other_medications`,
-			ADD `run` tinyint unsigned NOT NULL DEFAULT 1 AFTER `repeatt`
-		;")
+			ADD `run` tinyint unsigned NOT NULL DEFAULT 1 AFTER `repeatt`,
+			ADD `parentid` int unsigned NOT NULL DEFAULT 0 AFTER `run`,
+			ADD `collect_new_sample` tinyint unsigned NOT NULL DEFAULT 0 AFTER `parentid`,
+
+			CHANGE `sanger_id` `exatype_id` int(10) unsigned NULL DEFAULT '0' AFTER `control`
+		;");
+
+
 	}
 
 	
