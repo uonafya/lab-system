@@ -95,12 +95,12 @@
 
         $("#check_all").on('click', function(){
             var str = $(this).html();
-            if(str == "Check All"){
+            if(str == "Passed (Check All)"){
                 $(this).html("Uncheck All");
                 $(".checks").prop('checked', true);
             }
             else{
-                $(this).html("Check All");
+                $(this).html("Passed (Check All)");
                 $(".checks").prop('checked', false);           
             }
         });
