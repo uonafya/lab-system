@@ -539,7 +539,7 @@ class ReportController extends Controller
                     ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct');
     	} else if ($testtype == 'EID') {
             $table = 'samples_view';
-            $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,"
+            $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,";
             if($request->input('types') == 'manifest')
                 $columns .= " $table.datedispatchedfromfacility,";
             $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, rec.surname as receiver";
