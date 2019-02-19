@@ -43,12 +43,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="3" align="center">Facility Name:</td>
-			<td colspan="2" align="center">{{ session('logged_facility')->name ?? ''  }}</td>
-			<td colspan="2" align="center">MFL Code:</td>
-			<td colspan="2" align="center"></td>
-			<td colspan="2" align="center">County:</td>
-			<td colspan="2" align="center"></td>
+			<td colspan="4" align="center">Facility Name:</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->name ?? ''  }}</td>
+			<td colspan="3" align="center">MFL Code:</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->facilitycode ?? ''  }}</td>
 		</tr>
 	</table>
 	<br />
@@ -79,6 +77,12 @@
 				@endif
 				</th>
 				<th>Date Collected</th>
+				<th>Date Entered</th>
+				<th>Entered By</th>
+				<th>Date Dispatched from Facility</th>
+				<th>Date Received</th>
+				<th>Received By</th>
+				<th>Received Status</th>
 				<th>Date Tested</th>
 			</tr>
 		</thead>
@@ -109,6 +113,12 @@
 				@endif
 				</td>
 				<td>{{ $sample->datecollected }}</td>
+				<td>{{ date('Y-m-d', strtotime($sample->created_at)) }}</td>
+				<td>{{ $smaple->entered_by }}</td>
+				<td>{{ $sample->datedispatchedfromfacility }}</td>
+				<td>{{ $sample->datereceived }}</td>
+				<td>{{ $sample->receiver }}</td>
+				<td>{{ $sample->receivedstatus }}</td>
 				<td>{{ $sample->datetested }}</td>
 			</tr>
 		@endforeach

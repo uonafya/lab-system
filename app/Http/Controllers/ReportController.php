@@ -154,7 +154,7 @@ class ReportController extends Controller
             if ($request->input('types') == 'manifest'){
                 $export['samples'] = $data;
                 $export['testtype'] = $request->input('testtype');
-                $filename = strtoupper("HIV " . $export['testtype'] . " sample manifest " . $dateString) . ".pdf";
+                $filename = strtoupper("HIV " . $dateString) . ".pdf";
                 $mpdf = new Mpdf();
                 $view_data = view('exports.mpdf_samples_manifest', $export)->render();
                 $mpdf->WriteHTML($view_data);
@@ -520,8 +520,9 @@ class ReportController extends Controller
         $title = '';
     	if ($testtype == 'Viralload') {
     		$table = 'viralsamples_view';
-    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.partner', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'order_no as order_number', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsamples_view.age', 'viralpmtcttype.name as pmtct', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname')->where("$table.lab_id", '=', env('APP_LAB'))
+    		$model = ViralsampleView::select('viralsamples_view.id','viralsamples_view.batch_id','viralsamples_view.patient','viralsamples_view.patient_name','viralsamples_view.provider_identifier', 'labs.labdesc', 'view_facilitys.partner', 'view_facilitys.county', 'view_facilitys.subcounty', 'view_facilitys.name as facility', 'view_facilitys.facilitycode', 'order_no as order_number', 'amrslocations.name as amrs_location', 'gender.gender_description', 'viralsamples_view.dob', 'viralsamples_view.age', 'viralpmtcttype.name as pmtct', 'viralsampletype.name as sampletype', 'viralsamples_view.datecollected', 'viralsamples_view.datedispatchedfromfacility', 'viralsamples_view.entered_by', 'receivedstatus.name as receivedstatus', 'viralrejectedreasons.name as rejectedreason', 'viralprophylaxis.name as regimen', 'viralsamples_view.initiation_date', 'viraljustifications.name as justification', 'viralsamples_view.datereceived', 'viralsamples_view.created_at', 'viralsamples_view.datetested', 'viralsamples_view.dateapproved', 'viralsamples_view.datedispatched', 'viralsamples_view.result', 'users.surname', 'users.surname', 'rec.surname as receiver')->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                    ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
     				->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                     ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
@@ -533,10 +534,11 @@ class ReportController extends Controller
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
                     ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct');
     	} else if ($testtype == 'EID') {
-            $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname";
-    		$table = 'samples_view';
+            $table = 'samples_view';
+            $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, $table.datedispatchedfromfacility, $table.entered_by, gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult, users.surname, rec.surname as receiver";
     		$model = SampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                    ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
     				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
     				->leftJoin('gender', 'gender.id', '=', 'samples_view.sex')
@@ -604,24 +606,24 @@ class ReportController extends Controller
         $vlDataArray = ['Lab ID', 'Batch #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By'];
         $eidDataArray = ['Lab ID', 'Batch #', 'Sample Code', 'Infant Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
         $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
-        $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
-        $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
+        // $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
+        // $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
             $newArray = [];
             if ($request->input('types') == 'manifest') {
-                $dataArray[] = ($request->input('testtype') == 'VL') ? $VLfacilityManifestArray : $EIDfacilityManifestArray;
+                // $dataArray[] = ($request->input('testtype') == 'VL') ? $VLfacilityManifestArray : $EIDfacilityManifestArray;
 
-                foreach ($data as $key => $new) {
-                    $newArray[] = [
-                        'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
-                        'county' => $new->county, 'subcounty' => $new->subcounty, 'facility' => $new->facility,
-                        'mfl' => $new->facilitycode, 'gender' => $new->gender_description,  'dob' => $new->dob,
-                        'types' => ($request->input('testtype') == 'VL') ? $new->sampletype : $new->pcrtype,
-                        'jus-spots' => ($request->input('testtype') == 'VL') ? $new->justification : $new->spots,
-                        'datecollected' => $new->datecollected, 'datetested' => $new->datetested
-                    ];
-                }
-                $data = collect($newArray);
+                // foreach ($data as $key => $new) {
+                //     $newArray[] = [
+                //         'lab_id' => $new->id, 'patient' => $new->patient, 'batch' => $new->batch_id,
+                //         'county' => $new->county, 'subcounty' => $new->subcounty, 'facility' => $new->facility,
+                //         'mfl' => $new->facilitycode, 'gender' => $new->gender_description,  'dob' => $new->dob,
+                //         'types' => ($request->input('testtype') == 'VL') ? $new->sampletype : $new->pcrtype,
+                //         'jus-spots' => ($request->input('testtype') == 'VL') ? $new->justification : $new->spots,
+                //         'datecollected' => $new->datecollected, 'datetested' => $new->datetested
+                //     ];
+                // }
+                // $data = collect($newArray);
             } else {
                 if ($request->input('testtype') == 'VL')
                     $dataArray[] = $vlDataArray;
@@ -642,9 +644,9 @@ class ReportController extends Controller
         
         if($data->isNotEmpty()) {
             foreach ($data as $report) {
-                if ($request->input('types') == 'manifest')
-                    $dataArray[] = $report;
-                else
+                // if ($request->input('types') == 'manifest')
+                //     $dataArray[] = $report;
+                // else
                     $dataArray[] = $report->toArray();
             }
             
