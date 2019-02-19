@@ -239,7 +239,7 @@ class DrSample extends BaseModel
 
         if(!$this->has_rerun && !$this->control){
             $child = new DrSample;
-            $child->fill($original->only($fields['dr_sample_rerun']));                
+            $child->fill($this->only($fields['dr_sample_rerun']));                
             $child->run++;
             if($child->parentid == 0) $child->parentid = $this->id;
             $child->save();
@@ -249,7 +249,7 @@ class DrSample extends BaseModel
             $this->repeatt = 1;
             $this->pre_update();
         }
-        
+
         if($this->control) $this->save();           
     }
 
