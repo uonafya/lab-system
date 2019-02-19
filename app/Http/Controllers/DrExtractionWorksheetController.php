@@ -148,10 +148,10 @@ class DrExtractionWorksheetController extends Controller
 
         $samples = DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)
             ->when($sample_ids, function($query) use($sample_ids){
-                return $query->whereNotIn('id', $sample_ids)
+                return $query->whereNotIn('id', $sample_ids);
             })
             ->when($cns, function($query) use($cns){
-                return $query->whereNotIn('id', $cns)
+                return $query->whereNotIn('id', $cns);
             })
             ->get();
 
