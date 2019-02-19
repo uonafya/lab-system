@@ -60,7 +60,7 @@
                                         </td>
                                         <td>
                                             <div align='center'>
-                                                <input name='cns[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                                <input name='cns[]' type='checkbox' class='other_checks' value='{{ $sample->id }}' />
                                             </div>
                                         </td>
                                         <td> {{ $sample->control_type }} </td>
