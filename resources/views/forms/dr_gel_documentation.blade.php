@@ -58,6 +58,11 @@
                                                 />
                                             </div>
                                         </td>
+                                        <td>
+                                            <div align='center'>
+                                                <input name='cns[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                            </div>
+                                        </td>
                                         <td> {{ $sample->control_type }} </td>
                                         <td> {{ $sample->patient ?? '' }} </td>
                                         <td> {{ $sample->facilityname ?? '' }} </td>
