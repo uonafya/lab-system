@@ -161,11 +161,16 @@ class DrSample extends BaseModel
 
     public function setArvToxicitiesAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['arv_toxicities'] = $val . ']';
         }
-        $this->attributes['arv_toxicities'] = $val . ']';
+        else{
+            $this->attributes['arv_toxicities'] = "[]";
+        }
     }
 
     public function getArvToxicitiesArrayAttribute()
@@ -175,11 +180,16 @@ class DrSample extends BaseModel
 
     public function setClinicalIndicationsAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['clinical_indications'] = $val . ']';
         }
-        $this->attributes['clinical_indications'] = $val . ']';
+        else{
+            $this->attributes['clinical_indications'] = "[]";
+        }
     }
 
     public function getClinicalIndicationsArrayAttribute()
@@ -189,11 +199,16 @@ class DrSample extends BaseModel
 
     public function setOtherMedicationsAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['other_medications'] = $val . ']';
         }
-        $this->attributes['other_medications'] = $val . ']';
+        else{
+            $this->attributes['other_medications'] = "[]";
+        }
     }
 
     public function getOtherMedicationsArrayAttribute()
