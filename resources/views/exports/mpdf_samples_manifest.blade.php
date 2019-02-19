@@ -114,7 +114,7 @@
 				</td>
 				<td>{{ $sample->datecollected }}</td>
 				<td>{{ date('Y-m-d', strtotime($sample->created_at)) }}</td>
-				<td>{{ $smaple->entered_by }}</td>
+				<td>{{ $sample->entered_by }}</td>
 				<td>{{ $sample->datedispatchedfromfacility }}</td>
 				<td>{{ $sample->datereceived }}</td>
 				<td>{{ $sample->receiver }}</td>
