@@ -40,7 +40,7 @@
                     		</tr>
                     		<tr>
                     			<th>Date Created</th>
-                    			<td>{{ gmdate('d-M-Y', strtotime($data->worksheet->created_at)) }}</td>
+                    			<td>{{ date('d-M-Y', strtotime($data->worksheet->created_at)) }}</td>
                     			<th>Antibody Lot #</th>
                     			<td>{{ $data->worksheet->AntibodyLotno ?? '' }}</td>
                     			<th>Multicheck Low Lot #</th>
@@ -50,25 +50,25 @@
                                 <th>Date Run</th>
                                 <td>
                                     @isset($data->worksheet->daterun)
-                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->daterun)) }}
+                                        {{ date('d-M-Y', strtotime($data->worksheet->daterun)) }}
                                     @endisset
                                 </td>
                                 <th>Date Updated</th>
                                 <td>
                                     @isset($data->worksheet->dateuploaded)
-                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->dateuploaded)) }}
+                                        {{ date('d-M-Y', strtotime($data->worksheet->dateuploaded)) }}
                                     @endisset
                                 </td>
                                 <th>Date Reviewed (1st)</th>
                                 <td>
                                     @isset($data->worksheet->datereviewed)
-                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed)) }}
+                                        {{ date('d-M-Y', strtotime($data->worksheet->datereviewed)) }}
                                     @endisset
                                 </td>
                                 <th>Date Reviewed (2nd)</th>
                                 <td>
                                     @isset($data->worksheet->datereviewed2)
-                                        {{ gmdate('d-M-Y', strtotime($data->worksheet->datereviewed2)) }}
+                                        {{ date('d-M-Y', strtotime($data->worksheet->datereviewed2)) }}
                                     @endisset
                                 </td>
                             </tr>
@@ -161,7 +161,7 @@
                                     </td>
                                     <td>
                                     @isset($sample->dateapproved)
-                                        {{ gmdate('d-M-Y', strtotime($sample->dateapproved)) }}
+                                        {{ date('d-M-Y', strtotime($sample->dateapproved)) }}
                                     @endisset
                                     </td>
                                     <td>{{ $sample->first_approver->full_name ?? '' }}</td>
@@ -174,7 +174,7 @@
                                     </td>
                                     <td>
                                     @isset($sample->dateapproved2)
-                                        {{ gmdate('d-M-Y', strtotime($sample->dateapproved2)) }}
+                                        {{ date('d-M-Y', strtotime($sample->dateapproved2)) }}
                                     @endisset
                                     </td>
                                     <td>{{ $sample->second_approver->full_name ?? '' }}</td>
