@@ -523,8 +523,8 @@ class ReportController extends Controller
             $columns = "$table.id,$table.batch_id,$table.patient,$table.patient_name,$table.provider_identifier, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, amrslocations.name as amrs_location, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
             
             if ($request->input('types') == 'manifest')
-                $columns .= "$table.datedispatchedfromfacility";
-            $columns .= "$table.entered_by, receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
+                $columns .= "$table.datedispatchedfromfacility,";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
             $model = ViralsampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
                     ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
