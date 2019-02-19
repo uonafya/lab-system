@@ -62,7 +62,7 @@
 				<th>HEI # / Patient CCC #</th>
 				<th>Batch #</th>
 				<th>County</th>
-				<th>Sub-County</th>
+				{{-- <th>Sub-County</th> --}}
 				<th>Facility Name</th>
 				<th>Facility Code</th>
 				<th>Gender</th>
@@ -88,7 +88,7 @@
 				<th>Date Received</th>
 				<th>Received By</th>
 				<th>Received Status</th>
-				<th>Date Tested</th>
+				{{-- <th>Date Tested</th> --}}
 			</tr>
 		</thead>
 		<tbody>
@@ -98,7 +98,7 @@
 				<td>{{ $sample->patient }}</td>
 				<td>{{ $sample->batch_id }}</td>
 				<td>{{ $sample->county }}</td>
-				<td>{{ $sample->subcounty }}</td>
+				{{-- <td>{{ $sample->subcounty }}</td> --}}
 				<td>{{ $sample->facility }}</td>
 				<td>{{ $sample->facilitycode }}</td>
 				<td>{{ $sample->gender_description }}</td>
@@ -124,7 +124,7 @@
 				<td>{{ $sample->datereceived }}</td>
 				<td>{{ $sample->receiver }}</td>
 				<td>{{ $sample->receivedstatus }}</td>
-				<td>{{ $sample->datetested }}</td>
+				{{-- <td>{{ $sample->datetested }}</td> --}}
 			</tr>
 		@endforeach
 		</tbody>
