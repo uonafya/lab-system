@@ -143,10 +143,17 @@ class DrExtractionWorksheetController extends Controller
         $sample_ids = $request->input('samples');
         $cns = $request->input('cns');
 
-        DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereIn('id', $sample_ids)->update(['passed_gel_documentation' => true]);
-        DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->whereIn('id', $cns)->update(['passed_gel_documentation' => false, 'collect_new_sample' => 1]);
+        if($cns && is_array($sample_ids)) DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereIn('id', $sample_ids)->update(['passed_gel_documentation' => true]);
+        if($cns && is_array($cns)) DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->whereIn('id', $cns)->update(['passed_gel_documentation' => false, 'collect_new_sample' => 1]);
 
-        $samples = DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->whereNotIn('id', $cns)->get();
+        $samples = DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)
+            ->when($sample_ids, function($query) use($sample_ids){
+                return $query->whereNotIn('id', $sample_ids)
+            })
+            ->when($cns, function($query) use($cns){
+                return $query->whereNotIn('id', $cns)
+            })
+            ->get();
 
         foreach ($samples as $key => $sample){
             $sample->passed_gel_documentation = 0;
