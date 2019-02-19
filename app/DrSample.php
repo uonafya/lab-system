@@ -237,7 +237,7 @@ class DrSample extends BaseModel
     {
         $fields = \App\Lookup::viralsamples_arrays();
 
-        if(!$this->has_rerun){
+        if(!$this->has_rerun && !$this->control){
             $child = new DrSample;
             $child->fill($original->only($fields['dr_sample_rerun']));                
             $child->run++;
@@ -248,7 +248,9 @@ class DrSample extends BaseModel
             $this->collect_new_sample = 0;
             $this->repeatt = 1;
             $this->pre_update();
-        }            
+        }
+        
+        if($this->control) $this->save();           
     }
 
 
