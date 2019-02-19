@@ -37,10 +37,20 @@
 	<table class="table" border="0" style="border: none; width: 100%;">
 		<tr>
 			<td colspan="13" align="center">
+				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP LOGO">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="13" align="center">
 				{{-- <img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
 				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">--}}
 				HIV {{ strtoupper($testtype) }} SAMPLE MANIFEST
 			</td>
+		</tr>		
+		<tr>
+			<td colspan="4" align="center">Receiving Lab:</td>
+			<td colspan="6" align="center">{{ $lab->name ?? ''  }}</td>
+			<td colspan="3" align="center"></td>
 		</tr>
 		<tr>
 			<td colspan="4" align="center">Facility Name:</td>
@@ -57,7 +67,7 @@
 				<th>HEI # / Patient CCC #</th>
 				<th>Batch #</th>
 				<th>County</th>
-				<th>Sub-County</th>
+				{{-- <th>Sub-County</th> --}}
 				<th>Facility Name</th>
 				<th>Facility Code</th>
 				<th>Gender</th>
@@ -83,7 +93,7 @@
 				<th>Date Received</th>
 				<th>Received By</th>
 				<th>Received Status</th>
-				<th>Date Tested</th>
+				{{-- <th>Date Tested</th> --}}
 			</tr>
 		</thead>
 		<tbody>
@@ -93,7 +103,7 @@
 				<td>{{ $sample->patient }}</td>
 				<td>{{ $sample->batch_id }}</td>
 				<td>{{ $sample->county }}</td>
-				<td>{{ $sample->subcounty }}</td>
+				{{-- <td>{{ $sample->subcounty }}</td> --}}
 				<td>{{ $sample->facility }}</td>
 				<td>{{ $sample->facilitycode }}</td>
 				<td>{{ $sample->gender_description }}</td>
@@ -119,7 +129,7 @@
 				<td>{{ $sample->datereceived }}</td>
 				<td>{{ $sample->receiver }}</td>
 				<td>{{ $sample->receivedstatus }}</td>
-				<td>{{ $sample->datetested }}</td>
+				{{-- <td>{{ $sample->datetested }}</td> --}}
 			</tr>
 		@endforeach
 		</tbody>
