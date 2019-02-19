@@ -15,6 +15,7 @@ use App\Taqmanprocurement;
 use Excel;
 use Mpdf\Mpdf;
 use App\ViewFacility;
+use App\Lab;
 
 class ReportController extends Controller
 {
@@ -154,6 +155,7 @@ class ReportController extends Controller
             if ($request->input('types') == 'manifest'){
                 $export['samples'] = $data;
                 $export['testtype'] = $request->input('testtype');
+                $export['lab'] = Lab::find(env('APP_LAB'));
                 $filename = strtoupper("HIV " . $dateString) . ".pdf";
                 $mpdf = new Mpdf();
                 $view_data = view('exports.mpdf_samples_manifest', $export)->render();
