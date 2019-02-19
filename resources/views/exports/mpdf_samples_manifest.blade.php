@@ -41,6 +41,11 @@
 				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">--}}
 				HIV {{ strtoupper($testtype) }} SAMPLE MANIFEST
 			</td>
+		</tr>		
+		<tr>
+			<td colspan="4" align="center">Receiving Lab:</td>
+			<td colspan="6" align="center">{{ $lab->name ?? ''  }}</td>
+			<td colspan="3" align="center"></td>
 		</tr>
 		<tr>
 			<td colspan="4" align="center">Facility Name:</td>
