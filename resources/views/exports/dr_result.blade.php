@@ -7,6 +7,7 @@
 <body
 	@if($print)
 		onLoad="JavaScript:window.print();"
+		style="-webkit-print-color-adjust:exact;"
 	@endif
  >
 
