@@ -259,7 +259,7 @@ class DrWorksheetController extends Controller
         else{
             $data = [
                 'approvedby' => $approver,
-                'datereviewed' => $today,
+                'dateapproved' => $today,
             ];             
             $w_data = [
                 'reviewedby' => $approver,
