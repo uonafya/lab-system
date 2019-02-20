@@ -11,9 +11,30 @@
 	<div class="container">
 
 		<div class="row" style="text-align: center;">
-				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
+			<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
+			<b>
 				MINISTRY OF HEALTH <br />
 				NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
+			</b>
+
+			<h2>HIV-1 Drug Resistance Genotype Report</h2>
+			<br />
+			<br />
+		</div>
+
+		<div class="row">
+			<div class="col-md-4"><b>Specimen ID:</b> </div>
+			<div class="col-md-4"><b>Collection Date:</b> {{ $sample->my_date_format('datecollected') }} </div>
+			<div class="col-md-4"><b>Sample Type:</b> {{ $sample->sample_type_output }} </div>
+			
+			<div class="col-md-4"><b>NHRL ID:</b> {{ $sample->mid }} </div>
+			<div class="col-md-4"><b>Received Date:</b> {{ $sample->my_date_format('datereceived') }} </div>
+			<div class="col-md-4"><b>Report Date:</b> {{ date('d-M-Y') }} </div>
+			
+			<div class="col-md-4"><b>Tested By:</b> {{ $sample->worksheet->creator->full_name ?? '' }} </div>
+			<div class="col-md-4"><b></b> </div>
+			<div class="col-md-4"><b>Report ID:</b> </div>
+			
 		</div>
 
 
