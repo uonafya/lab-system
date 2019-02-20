@@ -27,6 +27,9 @@
                                 <thead>
                                     <tr>
                                         <th>Lab ID</th>
+                                        <th>Approve</th>
+                                        <th>Rerun</th>
+                                        <th>Collect New Sample</th>
                                         <th>Sample ID</th>
                                         <th>Exatype Status</th>
                                         <th>Facility</th>
@@ -68,6 +71,31 @@
                                     @foreach($samples as $key => $sample)
                                         <tr>
                                             <td> {{ $sample->id }} </td>
+                                            <td>
+                                                @if(in_array($sample->status_id, [1, 2, 3]) && !$sample->dateapproved)                                                
+                                                    <div align='center'>
+                                                        <input name='approved[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @elseif($sample->dateapproved)
+                                                    {{ $sample->my_date_format('dateapproved') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
+                                                    <div align='center'>
+                                                        <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($sample->has_rerun)
+                                                    Has Rerun
+                                                @elseif(in_array($sample->status_id, [2, 3]))                                                
+                                                    <div align='center'>
+                                                        <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td> {{ $sample->patient }} </td>
                                             <td> {{ $dr_sample_statuses->where('id', $sample->status_id)->first()->name ?? '' }} </td>
                                             <td> {{ $sample->facilityname }} </td>
