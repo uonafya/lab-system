@@ -161,7 +161,7 @@ class MiscDr extends Common
 
 			foreach ($body->data->attributes->samples as $key => $value) {
 				$sample = DrSample::find($value->sample_name);
-				$sample->sanger_id = $value->id;
+				$sample->exatype_id = $value->id;
 				$sample->save();
 			}
 		}
@@ -332,7 +332,7 @@ class MiscDr extends Common
 
 			foreach ($body->included as $key => $value) {
 
-				$sample = DrSample::where(['sanger_id' => $value->attributes->id])->first();
+				$sample = DrSample::where(['exatype_id' => $value->attributes->id])->first();
 
 				if($sample){
 
@@ -517,6 +517,7 @@ class MiscDr extends Common
 		->whereNull('extraction_worksheet_id')
 		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
 		->where(['receivedstatus' => 1, 'control' => 0])
+		->orderBy('run', 'desc')
 		->orderBy('datereceived', 'asc')
 		->orderBy('id', 'asc')
 		->limit($limit)
@@ -533,6 +534,7 @@ class MiscDr extends Common
 		$samples = DrSampleView::whereNull('worksheet_id')
 		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
 		->orderBy('control', 'desc')
+		->orderBy('run', 'desc')
 		->orderBy('id', 'asc')
 		->limit(16)
 		->get();
@@ -546,7 +548,7 @@ class MiscDr extends Common
 
 	public static function generate_samples()
 	{
-		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(150)->get();
+		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(300)->get();
 
 		foreach ($potential_patients as $patient) {
 	        $data = $patient->only(['patient_id', 'dr_reason_id']);
@@ -634,14 +636,22 @@ class MiscDr extends Common
 	public static function columns()
 	{
 		DB::statement("ALTER TABLE `dr_samples`
+			ADD `age` tinyint unsigned NULL AFTER `sample_type`,
+
 			ADD `approvedby` int unsigned NULL AFTER `datedispatched`,
 			ADD `approvedby2` int unsigned NULL AFTER `approvedby`,
 			ADD `dateapproved` date NULL AFTER `approvedby2`,
 			ADD `dateapproved2` date NULL AFTER `dateapproved`,
 
 			ADD `repeatt` tinyint unsigned NOT NULL DEFAULT 0 AFTER `other_medications`,
-			ADD `run` tinyint unsigned NOT NULL DEFAULT 1 AFTER `repeatt`
-		;")
+			ADD `run` tinyint unsigned NOT NULL DEFAULT 1 AFTER `repeatt`,
+			ADD `parentid` int unsigned NOT NULL DEFAULT 0 AFTER `run`,
+			ADD `collect_new_sample` tinyint unsigned NOT NULL DEFAULT 0 AFTER `parentid`,
+
+			CHANGE `sanger_id` `exatype_id` int(10) unsigned NULL DEFAULT '0' AFTER `control`
+		;");
+
+
 	}
 
 	

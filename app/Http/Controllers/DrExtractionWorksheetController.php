@@ -139,9 +139,36 @@ class DrExtractionWorksheetController extends Controller
         $drExtractionWorksheet->date_gel_documentation = date('Y-m-d');
         $drExtractionWorksheet->status_id = 3;
         $drExtractionWorksheet->save();
+
         $sample_ids = $request->input('samples');
-        DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereIn('id', $sample_ids)->update(['passed_gel_documentation' => true]);
-        DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereNotIn('id', $sample_ids)->update(['passed_gel_documentation' => false]);
+        $cns = $request->input('cns');
+        $reruns = $request->input('reruns');
+
+        if($sample_ids && is_array($sample_ids)) DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)->whereIn('id', $sample_ids)->update(['passed_gel_documentation' => true]);
+
+        if($cns && is_array($cns)){
+            DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)
+                ->whereNotIn('id', $sample_ids)
+                ->whereIn('id', $cns)
+                ->update([
+                    'passed_gel_documentation' => false, 'collect_new_sample' => 1,
+                    'approvedby' => auth()->user()->id, 'dateapproved' => date('Y-m-d') 
+                ]);
+        }
+
+        $samples = DrSample::where('extraction_worksheet_id', $drExtractionWorksheet->id)
+            ->when($sample_ids, function($query) use($sample_ids){
+                return $query->whereNotIn('id', $sample_ids);
+            })
+            ->when($cns, function($query) use($cns){
+                return $query->whereNotIn('id', $cns);
+            })
+            ->get();
+
+        foreach ($samples as $key => $sample){
+            $sample->passed_gel_documentation = 0;
+            $sample->create_rerun();
+        }
 
         session(['toast_message' => 'Gel documentation has been submitted.']);
         return redirect('dr_worksheet/create/' . $drExtractionWorksheet->id);
