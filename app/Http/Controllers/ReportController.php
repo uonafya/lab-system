@@ -282,7 +282,12 @@ class ReportController extends Controller
 
         if (!$request->input('period') || $request->input('period') == 'range') {
             $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
-            $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+            $model = $model->when(true, function($query) use ($request, $table, $column) {
+                                if ($request->input('fromDate') == $request->input('toDate'))
+                                    return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
+                                else
+                                    return $query->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+                            });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."' AND MONTH($table.$column) = '".$request->input('month')."'");
@@ -309,7 +314,7 @@ class ReportController extends Controller
             $dateString .= $request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
         }
-
+        
         return $model;
     }
 
