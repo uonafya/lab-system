@@ -22,7 +22,7 @@
 		</div>
 
 		<div class="row">
-			<table>
+			<table class="table">
 				<tr>			
 					<td><b>Specimen ID:</b> </td>
 					<td><b>Collection Date:</b> {{ $sample->my_date_format('datecollected') }} </td>
@@ -41,6 +41,8 @@
 			</table>			
 		</div>
 
+		<br />
+		<br />
 
 		<div class="row">
 			<table class="table table-bordered table-hover">
