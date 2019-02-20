@@ -80,6 +80,10 @@ class WorklistController extends Controller
         if($submit_type == "rejected") return redirect('worklist');
 
         $samples = $request->input('samples');
+        if(!is_array($samples)){
+            session(['toast_error' => 1, 'toast_message' => 'Please select samples before attempting to create a worklist.']);
+            return back();
+        }
         $testtype = $request->input('testtype');
         $worklist = new Worklist;
         $worklist->facility_id = auth()->user()->facility_id;
@@ -92,6 +96,7 @@ class WorklistController extends Controller
             $model = Viralsample::class; 
         }
         $model::whereIn('id', $samples)->update(['worksheet_id' => $worklist->id]);
+        session(['toast_message' => 'The worklist has been created.']);
         return redirect('worklist');
     }
 
