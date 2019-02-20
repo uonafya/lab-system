@@ -72,7 +72,7 @@
                                         <tr>
                                             <td> {{ $sample->id }} </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [1, 2, 3]) && !$sample->dateapproved)                                                
+                                                @if(in_array($sample->status_id, [1]) && !$sample->dateapproved)                                                
                                                     <div align='center'>
                                                         <input name='approved[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
                                                     </div>

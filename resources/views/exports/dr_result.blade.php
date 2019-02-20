@@ -5,12 +5,16 @@
 </head>
 
 <body
-	@isset($print)
+	@if($print)
 		onLoad="JavaScript:window.print();"
-	@endisset
+	@endif
  >
 
+
 	<div class="container">
+		<div class="row">
+			
+		</div>
 		<div class="row">
 			<table class="table table-bordered table-hover">
 				<thead>
