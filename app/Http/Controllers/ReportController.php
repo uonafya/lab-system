@@ -282,7 +282,7 @@ class ReportController extends Controller
 
         if (!$request->input('period') || $request->input('period') == 'range') {
             $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
-            $model = $model->when(true, function($query) use ($request) {
+            $model = $model->when(true, function($query) use ($request, $table, $column) {
                                 if ($request->input('fromDate') == $request->input('toDate'))
                                     return $query->whereRaw("date($table.$column) = " . $request->input('fromDate'));
                                 else
