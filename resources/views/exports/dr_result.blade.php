@@ -2,6 +2,11 @@
 
 <head>
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
+    <style type="text/css">
+    	body{
+		  -webkit-print-color-adjust:exact;
+		}
+	</style>
 </head>
 
 <body
