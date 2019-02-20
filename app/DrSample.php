@@ -161,11 +161,16 @@ class DrSample extends BaseModel
 
     public function setArvToxicitiesAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['arv_toxicities'] = $val . ']';
         }
-        $this->attributes['arv_toxicities'] = $val . ']';
+        else{
+            $this->attributes['arv_toxicities'] = "[]";
+        }
     }
 
     public function getArvToxicitiesArrayAttribute()
@@ -175,11 +180,16 @@ class DrSample extends BaseModel
 
     public function setClinicalIndicationsAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['clinical_indications'] = $val . ']';
         }
-        $this->attributes['clinical_indications'] = $val . ']';
+        else{
+            $this->attributes['clinical_indications'] = "[]";
+        }
     }
 
     public function getClinicalIndicationsArrayAttribute()
@@ -189,11 +199,16 @@ class DrSample extends BaseModel
 
     public function setOtherMedicationsAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['other_medications'] = $val . ']';
         }
-        $this->attributes['other_medications'] = $val . ']';
+        else{
+            $this->attributes['other_medications'] = "[]";
+        }
     }
 
     public function getOtherMedicationsArrayAttribute()
@@ -237,9 +252,9 @@ class DrSample extends BaseModel
     {
         $fields = \App\Lookup::viralsamples_arrays();
 
-        if(!$this->has_rerun){
+        if(!$this->has_rerun && !$this->control){
             $child = new DrSample;
-            $child->fill($original->only($fields['dr_sample_rerun']));                
+            $child->fill($this->only($fields['dr_sample_rerun']));                
             $child->run++;
             if($child->parentid == 0) $child->parentid = $this->id;
             $child->save();
@@ -248,7 +263,9 @@ class DrSample extends BaseModel
             $this->collect_new_sample = 0;
             $this->repeatt = 1;
             $this->pre_update();
-        }            
+        }
+
+        if($this->control) $this->save();           
     }
 
 
