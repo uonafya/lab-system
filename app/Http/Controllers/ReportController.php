@@ -284,7 +284,7 @@ class ReportController extends Controller
             $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
             $model = $model->when(true, function($query) use ($request, $table, $column) {
                                 if ($request->input('fromDate') == $request->input('toDate'))
-                                    return $query->whereRaw("date($table.$column) = " . $request->input('fromDate'));
+                                    return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
                                 else
                                     return $query->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
                             });
@@ -314,7 +314,7 @@ class ReportController extends Controller
             $dateString .= $request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
         }
-
+        // dd($model->toSql());
         return $model;
     }
 
