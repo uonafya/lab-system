@@ -24,7 +24,7 @@
 		<div class="row">
 			<table class="table">
 				<tr>			
-					<td><b>Specimen ID:</b> </td>
+					<td><b>Specimen ID:</b> {{ $sample->patient->patient ?? '' }} </td>
 					<td><b>Collection Date:</b> {{ $sample->my_date_format('datecollected') }} </td>
 					<td><b>Sample Type:</b> {{ $sample->sample_type_output }} </td>					
 				</tr>
@@ -76,7 +76,13 @@
 					@endforeach
 			</table>
 			
-		</div>		
+		</div>	
+
+		<div class="row">
+			<b>Approved By: </b> {{ $sample->approver->full_name ?? '' }}
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<b>Date Approved: </b> {{ $sample->my_date_format('dateapproved') }}
+		</div>	
 	</div>
 
 </body>
