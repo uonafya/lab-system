@@ -276,7 +276,9 @@ class ReportController extends Controller
     }
 
     public static function __getDateRequested($request, $model, $table, &$dateString, $receivedOnly=true) {
-        if ($receivedOnly) { $column = 'datereceived'; } else { $column = 'datetested'; }
+        if($request->input('types') == 'manifest') { $column = 'created_at'; } 
+        else if ($receivedOnly) { $column = 'datereceived'; } 
+        else { $column = 'datetested'; }
 
         if (!$request->input('period') || $request->input('period') == 'range') {
             $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
@@ -571,7 +573,7 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=false;
-            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1)
+            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
                 $receivedOnly=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
