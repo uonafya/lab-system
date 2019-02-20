@@ -58,6 +58,11 @@
                                                 />
                                             </div>
                                         </td>
+                                        <td>
+                                            <div align='center'>
+                                                <input name='cns[]' type='checkbox' class='other_checks' value='{{ $sample->id }}' />
+                                            </div>
+                                        </td>
                                         <td> {{ $sample->control_type }} </td>
                                         <td> {{ $sample->patient ?? '' }} </td>
                                         <td> {{ $sample->facilityname ?? '' }} </td>
@@ -90,12 +95,12 @@
 
         $("#check_all").on('click', function(){
             var str = $(this).html();
-            if(str == "Check All"){
+            if(str == "Passed (Check All)"){
                 $(this).html("Uncheck All");
                 $(".checks").prop('checked', true);
             }
             else{
-                $(this).html("Check All");
+                $(this).html("Passed (Check All)");
                 $(".checks").prop('checked', false);           
             }
         });

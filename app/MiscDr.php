@@ -517,6 +517,7 @@ class MiscDr extends Common
 		->whereNull('extraction_worksheet_id')
 		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
 		->where(['receivedstatus' => 1, 'control' => 0])
+		->orderBy('run', 'desc')
 		->orderBy('datereceived', 'asc')
 		->orderBy('id', 'asc')
 		->limit($limit)
@@ -533,6 +534,7 @@ class MiscDr extends Common
 		$samples = DrSampleView::whereNull('worksheet_id')
 		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
 		->orderBy('control', 'desc')
+		->orderBy('run', 'desc')
 		->orderBy('id', 'asc')
 		->limit(16)
 		->get();
@@ -546,7 +548,7 @@ class MiscDr extends Common
 
 	public static function generate_samples()
 	{
-		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(150)->get();
+		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(300)->get();
 
 		foreach ($potential_patients as $patient) {
 	        $data = $patient->only(['patient_id', 'dr_reason_id']);
