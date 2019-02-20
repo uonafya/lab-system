@@ -72,6 +72,16 @@ class DrSample extends BaseModel
         return $this->hasMany('App\DrGenotype', 'sample_id');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
     /**
      * Get if rerun has been created
      *
