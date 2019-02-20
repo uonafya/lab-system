@@ -9,6 +9,16 @@
 <body >
 
 	<div class="container">
+
+		<div class="row">
+			<center>
+				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
+				MINISTRY OF HEALTH <br />
+				NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
+			</center>	
+		</div>
+		
+
 		<div class="row">
 			<table class="table table-bordered table-hover">
 				<thead>
