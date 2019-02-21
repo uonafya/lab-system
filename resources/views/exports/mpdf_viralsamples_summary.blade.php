@@ -38,7 +38,7 @@
 
 	@foreach($batches as $batch)
 		<?php 
-			if(!$batch->sample) unset($batch->sample);
+			if(!$batch->sample->count() == 0) unset($batch->sample);
 		?>
 
 		<table border="0" style="border: 0px; width: 100%;">
