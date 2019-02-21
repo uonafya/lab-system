@@ -9,7 +9,60 @@ use App\Allocation;
 use App\AllocationDetail;
 
 class KitsController extends Controller
-{
+{    
+	/**
+     * The test types available.
+     *
+     * @var array
+     */
+	public $testtypes = NULL;
+
+	/**
+     * The months for allocations.
+     *
+     * @var array
+     */
+	public $allocation_months = NULL;
+
+    /**
+     * The last month of consumption.
+     *
+     * @var array
+     */
+    public $last_month = NULL;
+
+
+	/**
+     * The years for allocations.
+     *
+     * @var array
+     */
+	public $allocation_years = NULL;
+
+    /**
+     * The last year of consumption.
+     *
+     * @var array
+     */
+    public $last_year = NULL;
+
+	/**
+     * The years for allocations.
+     *
+     * @var array
+     */
+	public $years = NULL;
+
+	public function __construct() {
+		$this->testtypes = ['EID' => 1, 'VL' => 2];
+		$this->years = [date('Y'), date('Y')-1];
+        $this->last_month = date('m')-1;
+        $this->last_year = date('Y');
+        if (date('m') == 1) {
+            $this->last_year -= 1;
+            $this->last_month = 12;
+        }
+    }
     
     public function kits(Request $request)
     {
@@ -110,14 +163,30 @@ class KitsController extends Controller
                                     ->when($approval, function($query) use ($approval) {
                                         return $query->where('approve', '=', 2);
                                     })->get();
-
         $data = (object)[
             'allocations' => $allocations,
-            'year' => $year,
+            'year' => $year, 
+            'last_year' => $this->last_year,
+            'last_month' => $this->last_month,
             'month' => $month,
-            'testtype' => $testtype,
+            'testtype' => ($testtype == 1) ? 'EID' : 'VL',
+            'approval' => $approval,
         ];
-        return view('reports.kitreports-allocations-details', compact($data))->with('pageTitle', 'Kits Allocations');
+        return view('reports.kitreports-allocations-details', compact('data'))->with('pageTitle', $data->testtype . ' Kits Allocations');
+    }
+
+    public function editallocation(Request $request, Allocation $allocation) {
+        $details = $allocation->details;
+        foreach ($details as $key => $detail) {
+            $detail->allocated = $request->input($detail->id);
+            $detail->pre_update();
+        }
+        $allocation->allocationcomments = $request->input('allocationcomments');
+        $allocation->approve = 0;
+        $allocation->submissions = $allocation->submissions + 1;
+        $allocation->pre_update();
+        session(['toast_message' => 'Allocation(s) edited successfully.']);
+        return back();
     }
 
     // public function 
