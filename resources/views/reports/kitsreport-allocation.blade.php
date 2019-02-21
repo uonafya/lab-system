@@ -34,9 +34,14 @@
                     <td><center><span class="label label-{{ $data['badge']($allocation->approved, 2) }}">{{ $allocation->approved }}</span></center></td>
                     <td><center><span class="label label-{{ $data['badge']($allocation->rejected, 3) }}">{{ $allocation->rejected }}</span></center></td>
                     <td>
-                        <a href="#">View</a>
+                        <a href="{{ url('report/allocation/'.$allocation->testtype.'/'.$allocation->year.'/'.$allocation->month) }}" class="btn btn-default">
+                            View
+                        </a>
                         @if($allocation->rejected > 0)
-                        <a href="#"> | Update Rejected</a>
+                         | 
+                        <a href="{{ url('report/allocation/'.$allocation->testtype.'/'.$allocation->year.'/'.$allocation->month.'/1') }}" class="btn btn-warning">
+                            Update Rejected
+                        </a>
                         @endif
                     </td>
                 </tr>

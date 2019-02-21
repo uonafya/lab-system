@@ -285,9 +285,10 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('reports', 'ReportController@generate')->name('reports');
 	Route::post('reports/kitsconsumption', 'ReportController@consumption');
 	Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
+
 	Route::get('reports/kits', 'KitsController@kits')->name('report.kits');
 	Route::post('reports/kitdeliveries', 'KitsController@kits');
-	Route::get('report/allocation', 'KitsController@allocation')->name('report.allocation');
+	Route::get('report/allocation/{testtype?}/{year}/{month}/{approval?}', 'KitsController@allocation')->name('report.allocation');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');

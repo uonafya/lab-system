@@ -83,27 +83,42 @@ class KitsController extends Controller
 						COUNT(IF(approve=1, 1, NULL)) AS `approved`,
 						COUNT(IF(approve=2, 1, NULL)) AS `rejected`";
         $data = [
-        				'allocations' => Allocation::selectRaw($allocationSQL)->groupBy(['year','month', 'testtype'])->orderBy('year', 'desc')->orderBy('month', 'desc')->get(),
-        				'badge' => function($value, $type) {
-        					$badge = "success";
-        					if ($type == 1) {// Pending approval
-        						if ($value > 0)
-        							$badge = "warning";
-        					} else if ($type == 2) { //Approved
-        						if ($value == 0)
-        							$badge = "warning";
-        					} else if ($type == 3) { // Rejected
-        						if ($value > 0)
-        							$badge = "danger";
-        					}
-        					return $badge;
-        				}
-        			];
+                'allocations' => Allocation::selectRaw($allocationSQL)->groupBy(['year','month', 'testtype'])->orderBy('year', 'desc')->orderBy('month', 'desc')->get(),
+                'badge' => function($value, $type) {
+                    $badge = "success";
+                    if ($type == 1) {// Pending approval
+                        if ($value > 0)
+                            $badge = "warning";
+                    } else if ($type == 2) { //Approved
+                        if ($value == 0)
+                            $badge = "warning";
+                    } else if ($type == 3) { // Rejected
+                        if ($value > 0)
+                            $badge = "danger";
+                    }
+                    return $badge;
+                }
+            ];
+            // dd($data);
         // dd($data->badge{(1,1)});
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 
-    public function allocation(Allocation $allocation) {
+    public function allocation($testtype = 1, $year, $month, $approval = null) {
+        if (!($testtype == 1 || $testtype == 2)) abort(404);
+        $allocations = Allocation::where('testtype', '=', $testtype)->where(['year' => $year, 'month' => $month])
+                                    ->when($approval, function($query) use ($approval) {
+                                        return $query->where('approve', '=', 2);
+                                    })->get();
 
+        $data = (object)[
+            'allocations' => $allocations,
+            'year' => $year,
+            'month' => $month,
+            'testtype' => $testtype,
+        ];
+        return view('reports.kitreports-allocations-details', compact($data))->with('pageTitle', 'Kits Allocations');
     }
+
+    // public function 
 }
