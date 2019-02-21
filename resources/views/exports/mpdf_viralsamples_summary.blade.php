@@ -37,6 +37,9 @@
 <body>
 
 	@foreach($batches as $batch)
+		<?php 
+			if(!$batch->sample) unset($batch->sample);
+		?>
 
 		<table border="0" style="border: 0px; width: 100%;">
 			<tr>

@@ -636,7 +636,7 @@ class MiscDr extends Common
 	public static function columns()
 	{
 		DB::statement("ALTER TABLE `dr_samples`
-			ADD `age` tinyint unsigned NULL AFTER `sample_type`,
+			ADD `age` tinyint unsigned NULL AFTER `sampletype`,
 
 			ADD `approvedby` int unsigned NULL AFTER `datedispatched`,
 			ADD `approvedby2` int unsigned NULL AFTER `approvedby`,

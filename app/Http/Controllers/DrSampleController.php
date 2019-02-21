@@ -201,15 +201,9 @@ class DrSampleController extends Controller
         $drSample->load(['dr_call.call_drug']);
         $data = Lookup::get_dr();
         $data['sample'] = $drSample;
+        $data['print'] = $print;
         return view('exports.dr_result', $data);  
     }
-
-    public function print(DrSample $drSample)
-    {
-        return $this->results($drSample, 1);
-    }
-
-
     
     public function download_results(DrSample $drSample)
     {
