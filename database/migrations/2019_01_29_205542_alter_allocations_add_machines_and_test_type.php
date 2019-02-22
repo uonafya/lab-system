@@ -14,10 +14,10 @@ class AlterAllocationsAddMachinesAndTestType extends Migration
     public function up()
     {
         Schema::table('allocations', function(Blueprint $table){
-            $table->integer('machine_id')->after('national_id');
-            $table->dropColumn('kit_id');
-            $table->dropColumn('allocated');
-            $table->dropColumn('issued');
+            // $table->integer('machine_id')->after('national_id');
+            // $table->dropColumn('kit_id');
+            // $table->dropColumn('allocated');
+            // $table->dropColumn('issued');
         });
     }
 
