@@ -15,7 +15,7 @@ class NewAbbotDeliveries extends Migration
      */
     public function up()
     {
-        Schema::table('', function(Blueprint $table){
+        Schema::table('abbotdeliveries', function(Blueprint $table){
             $table->softDeletes()->after('datesynched');
         });
         // Schema::create('abbotdeliveries', function (Blueprint $table) {
