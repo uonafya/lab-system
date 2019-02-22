@@ -13,7 +13,7 @@ class NewLabPerformanceTrackers extends Migration
      */
     public function up()
     {
-        Schema::create('lab_performance_trackers', function (Blueprint $table) {
+        Schema::table('lab_performance_trackers', function (Blueprint $table) {
             $table->softDeletes()->after('datesynched');
         });
         // Schema::create('lab_performance_trackers', function (Blueprint $table) {
