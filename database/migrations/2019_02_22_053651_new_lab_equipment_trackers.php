@@ -13,7 +13,7 @@ class NewLabEquipmentTrackers extends Migration
      */
     public function up()
     {
-        Schema::create('lab_equipment_trackers', function (Blueprint $table) {
+        Schema::table('lab_equipment_trackers', function (Blueprint $table) {
             $table->softDeletes()->after('datesynched');
         });
         // Schema::create('lab_equipment_trackers', function (Blueprint $table) {
