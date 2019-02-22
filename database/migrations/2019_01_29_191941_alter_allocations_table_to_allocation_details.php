@@ -14,9 +14,9 @@ class AlterAllocationsTableToAllocationDetails extends Migration
     public function up()
     {
         Schema::table('allocations', function(Blueprint $table){
-            $table->dropColumn('kit_id');
-            $table->dropColumn('allocated');
-            $table->dropColumn('issued');
+            // $table->dropColumn('kit_id');
+            // $table->dropColumn('allocated');
+            // $table->dropColumn('issued');
         });
     }
 

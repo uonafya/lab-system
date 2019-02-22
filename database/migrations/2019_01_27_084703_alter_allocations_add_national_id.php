@@ -14,7 +14,7 @@ class AlterAllocationsAddNationalId extends Migration
     public function up()
     {
         Schema::table('allocations', function(Blueprint $table){
-            $table->bigInteger('national_id')->nullable()->after('id');
+            // $table->bigInteger('national_id')->nullable()->after('id');
         });
     }
 
