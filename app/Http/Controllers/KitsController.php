@@ -186,6 +186,7 @@ class KitsController extends Controller
         $allocation->submissions = $allocation->submissions + 1;
         $allocation->pre_update();
         session(['toast_message' => 'Allocation(s) edited successfully.']);
+        \App\Synch::synch_allocations_updates();
         return back();
     }
 

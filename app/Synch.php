@@ -101,6 +101,15 @@ class Synch
 				'delete_url' => 'delete/viralsamples',
 			],
 		],
+
+		'allocations' => [
+			'allocations' => [
+				'class' => Allocation::class,
+				'child_class' => AllocationDetail::class,
+				'update_url' => 'update/allocations',
+				'delete_url' => 'delete/allocations',
+			]
+		]
 	];
 
 	public static $column_array = [
@@ -109,6 +118,7 @@ class Synch
 		'patients' => 'national_patient_id',
 		'batches' => 'national_batch_id',
 		'samples' => 'national_sample_id',
+		'allocations' => 'national_id'
 	];
 
 	public static function test_connection()
@@ -316,42 +326,47 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
-		$c = self::$synch_arrays[$type];
+		if ($type != 'allocations') {
+			$c = self::$synch_arrays[$type];
 
-		$misc_class = $c['misc_class'];
-		$sample_class = $c['sample_class'];
-		$sampleview_class = $c['sampleview_class'];
+			$misc_class = $c['misc_class'];
+			$sample_class = $c['sample_class'];
+			$sampleview_class = $c['sampleview_class'];
 
-		$my = new $misc_class;
-		$my->save_tat($sampleview_class, $sample_class);
-
+			$my = new $misc_class;
+			$my->save_tat($sampleview_class, $sample_class);
+		}
+		
 		$updates = self::$update_arrays[$type];
-
+		
 		foreach ($updates as $key => $value) {
 			$update_class = $value['class'];
+			if (isset($value['child_class']))
+				$update_child_class = $value['child_class'];
 			$column = self::$column_array[$key];
 
 			$sheet = $sample = $eid_patient = false;
 			if($key == 'worksheets') $sheet = true;
 			if($key == 'samples') $sample = true;
 			if($key == 'patients' && $type == 'eid') $eid_patient = true;
+			if($key == 'allocations') $allocate = true;
 
 			while(true){
 				$models = $update_class::where('synched', 2)
 										->when($sample, function($query){
 							                return $query->with(['batch', 'patient']);
-							            })
-										->when($sheet, function($query){
+										})->when($allocate, function($query){
+											return $query->with(['details']);
+										})->when($sheet, function($query){
 							                return $query->where('status_id', 3);
-							            })->limit(20)->get();
+										})->limit(20)->get();
 				if($models->isEmpty()) break;
-
+				
 				if($key == 'batches'){
 					foreach ($models as $batch) {
 						$my->save_tat($sampleview_class, $sample_class, $batch->id);
 					}
 				}
-
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
@@ -365,16 +380,28 @@ class Synch
 				]);
 
 				$body = json_decode($response->getBody());
-
+				
 				foreach ($body->$key as $row) {
 					$update_data = [$column => $row->$column, 'synched' => 1, 'datesynched' => $today,];
 					$update_class::where('id', $row->original_id)->update($update_data);
+					if ($type == 'allocations') {
+						foreach ($row->details as $key => $new) {
+								$update_child_data = ['national_id' => $row->$column, 'synched' => 1, 'datesynched' => $today];
+								$update_child_class::where('id', $new->original_id)->update($update_child_data);
+						}
+					}
 				}
 
 				if($body->errors_array){
 					foreach ($body->errors_array as $row) {
 						$update_data = ['synched' => 1, 'datesynched' => $today,];
 						$update_class::where('id', $row->id)->update($update_data);
+						if ($type == 'allocations') {
+							foreach ($row->details as $key => $new) {
+									$update_child_data = ['synched' => 1, 'datesynched' => $today];
+									$update_child_class::where('id', $new->id)->update($update_child_data);
+							}
+						}
 					}
 				}
 			}			
@@ -463,6 +490,10 @@ class Synch
 			}
 		}
 		echo "==> Completed allocations synch\n";	
+	}
+
+	public static function synch_allocations_updates() {
+		return self::synch_updates('allocations');
 	}
 
 	public static function synch_consumptions() {

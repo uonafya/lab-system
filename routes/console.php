@@ -194,6 +194,11 @@ Artisan::command('synch:allocations', function(){
     $this->info($str);
 })->describe('Synch allocations from lab to national database');
 
+Artisan::command('synch:allocationsupdates', function(){
+    $str = \App\Synch::synch_allocations_updates();
+    $this->insteadOf($str);
+})->describe('Synch Allocation updates');
+
 Artisan::command('synch:consumptions', function(){
     $str = \App\Synch::synch_consumptions();
     $this->info($str);
