@@ -113,16 +113,20 @@
                                             <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
                                                 Create Sequencing Worksheet
                                             </a> | 
-                                        @endif
-                                        @if($worksheet->status_id == 1)
+                                        @else
+
+                                            <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet->id) }}" title="Click to Submit the Gel Documentation">
+                                                Proceed to Gel Documentation
+                                            </a> |  
+
                                             <a href="{{ url('dr_extraction_worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet">
                                                 Cancel Worksheet
-                                            </a> |
+                                            </a>
                                         @endif
 
-                                        <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet->id) }}" title="Click to Submit the Gel Documentation">
-                                            Proceed to Gel Documentation
-                                        </a>  
+                                        @if($worksheet->status_id == 1)
+
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

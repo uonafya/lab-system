@@ -112,6 +112,14 @@ Artisan::command('delete:pdfs', function(){
 Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');
 	$str = \App\Synch::labactivity('vl');
+
+    if(env('APP_LAB') == 2){
+        $str = \App\Synch::labactivity('eid', 7);
+        $str = \App\Synch::labactivity('vl', 7);
+
+        $str = \App\Synch::labactivity('eid', 10);
+        $str = \App\Synch::labactivity('vl', 10);
+    }
     $this->info($str);
 })->describe('Send lablog data to national.');
 

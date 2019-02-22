@@ -27,15 +27,20 @@ class DrSampleController extends Controller
      */
     public function index($sample_status=null)
     {
+        $user = auth()->user();
+        $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
-        $data['dr_samples'] = DrSample::where(['control' => 0])
-        ->with(['patient.facility'])
-        ->when($sample_status, function($query) use ($user, $string){
-            if($user->user_type_id == 5) return $query->whereRaw($string);
-            return $query->where('batches.lab_id', $user->lab_id)->where('site_entry', '!=', 2);
-        })
-        ->paginate();
+        $data['dr_samples'] = DrSample::with(['patient.facility'])
+            ->where(['control' => 0])
+            ->when(true, function($query) use ($user, $string){
+                if($user->user_type_id == 5) return $query->whereRaw($string);
+            })
+            ->when($sample_status, function($query) use ($sample_status){
+                return $query->where('status_id', $sample_status);
+            })
+            ->paginate();
+
         $data['dr_samples']->setPath(url()->current());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
     }
@@ -196,15 +201,9 @@ class DrSampleController extends Controller
         $drSample->load(['dr_call.call_drug']);
         $data = Lookup::get_dr();
         $data['sample'] = $drSample;
+        $data['print'] = $print;
         return view('exports.dr_result', $data);  
     }
-
-    public function print(DrSample $drSample)
-    {
-        return $this->results($drSample, 1);
-    }
-
-
     
     public function download_results(DrSample $drSample)
     {

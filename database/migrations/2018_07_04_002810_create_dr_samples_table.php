@@ -22,7 +22,7 @@ class CreateDrSamplesTable extends Migration
             // 1 is negative control
             // 2 is positive control
             $table->tinyInteger('control')->unsigned()->nullable()->default(0);
-            $table->integer('sanger_id')->unsigned()->index()->nullable()->default(0);
+            $table->integer('exatype_id')->unsigned()->index()->nullable()->default(0);
 
             $table->tinyInteger('prev_prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();
@@ -30,7 +30,8 @@ class CreateDrSamplesTable extends Migration
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
 
 
-            $table->tinyInteger('sample_type')->unsigned()->nullable();
+            $table->tinyInteger('sampletype')->unsigned()->nullable();
+            $table->tinyInteger('age')->unsigned()->nullable();
             // Multiple
             $table->string('clinical_indications', 50)->nullable(); 
 
@@ -60,6 +61,9 @@ class CreateDrSamplesTable extends Migration
 
             $table->boolean('repeatt')->default(0);
             $table->tinyInteger('run')->default(1)->unsigned();
+            $table->integer('parentid')->unsigned()->default(0)->nullable()->index();
+            // Used for when the result is a collect new sample
+            $table->boolean('collect_new_sample')->default(0);
 
             // startartdate
             $table->date('date_prev_regimen')->nullable(); 
