@@ -232,12 +232,12 @@
 
                         @if(!isset($sample))
                             
-                            <!-- <div class="form-group">
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="reentry" value="1" />
                                 </div>
-                            </div> -->
+                            </div>
 
                         @endif
 
@@ -325,7 +325,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $entry_point->name }}
+                                        >{{ $entry_point->id }} &nbsp;  {{ $entry_point->name }}
                                         </option>
                                     @endforeach
 
@@ -348,7 +348,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $ip->name }}
+                                        >{{ $ip->rank }} &nbsp; {{ $ip->name }}
                                         </option>
                                     @endforeach
 

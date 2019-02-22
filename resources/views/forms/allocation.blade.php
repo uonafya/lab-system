@@ -43,10 +43,10 @@
                                     <th>Ending Balance</th>
                                     <th>Recommended Quantity to Allocate (by System)</th>
                                     <th>Quantity Allocated by Lab</th>
-                                    <th>Comments</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <input type="hidden" name="allocation-{{ $machine->id }}-{{ $testtype }}" value="{{ $machine->id }}" />
                             @php
                                 $testtypeKey = $testtypeKey;
                                 $tests = $machine->testsforLast3Months()->$testtypeKey;
@@ -86,14 +86,19 @@
                                         <td></td>
                                         <td></td>
                                     @endforelse
-                                    <td><input type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}"></td>
-                                    <td>
-                                        <textarea name="comment-{{ $testtype }}-{{ $kit->id }}"></textarea>
-                                    </td>
+                                    <td><input class="form-control input-edit" type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}" id="{{ $testtype }}-{{ $kit->id }}" required></td>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">{{ $testtypeKey }}, {{ $machine->machine}} Allocation Comments</label>
+                            <div class="col-md-8">
+                                <textarea name="allocationcomments-{{ $machine->id }}-{{ $testtype }}" class="form-control"></textarea>
+                            </div>                            
+                        </div>
                     </div>
                     @endforeach
                 @endforeach
@@ -109,10 +114,41 @@
 @section('scripts')
     <script type="text/javascript">
         $(function(){
-            $("#yesBtn").click(function(){
-                $("#choice").hide();
-                $("#allocationForm").fadeIn();
-            });
+            @foreach($data->machines as $machine)
+                @foreach($data->testtypes as $testtypeKey => $testtype)
+                    qualkitval = 0;
+                    @foreach($machine->kits as $kit)
+                        @if($kit->alias == 'qualkit')
+                            $("#{{ $testtype }}-{{ $kit->id }}").change(function(){
+                                qualkitval = $(this).val();
+                                computevalues("{{ $testtype }}", "{{ $machine->id }}", qualkitval);
+                            });
+                        @endif
+                    @endforeach
+                @endforeach
+            @endforeach
         });
+
+        function computevalues(testtype, machine, qualvalue) {
+            @foreach($data->machines as $machine)
+                if ("{{ $machine->id }}" == machine) {
+                    @foreach($data->testtypes as $testtypeKey => $testtype)
+                        if("{{ $testtype }}" == testtype) {
+                            @foreach($machine->kits as $kit)
+                                @if($kit->alias != 'qualkit')
+                                    @php
+                                        $factor = json_decode($kit->factor);
+                                        if ($machine->id == 2)
+                                            $factor = $factor->$testtypeKey;
+                                    @endphp
+                                    $("#" + testtype + "-{{ $kit->id }}").val(qualvalue * {{ $factor }});
+                                @endif
+                            @endforeach
+                        }
+                    @endforeach
+                }
+            @endforeach
+        }
     </script>
 @endsection
+

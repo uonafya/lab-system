@@ -116,32 +116,11 @@
                                 </li>
                             @else
                                 @if(!Session('pendingTasks') || env('APP_LAB') == 2)
-                                    <li class="">
-                                        <a href="
-                                            @if(session('testingSystem') == 'Viralload')
-                                                {{ url('viralbatch') }}
-                                            @else
-                                                {{ url('batch') }}
-                                            @endif">Samples</a>
-                                    </li>
-                                    
-                                    
-                                    <li class="">
-                                        <a href="
-                                            @if(session('testingSystem') == 'Viralload')
-                                                {{ url('viralworksheet') }}
-                                            @else
-                                                {{ url('worksheet') }}
-                                            @endif">Worksheets</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="
-                                            @if(session('testingSystem') == 'Viralload')
-                                                {{ url('viralbatch/index/4/1') }}
-                                            @else
-                                                {{ url('batch/index/4/1') }}
-                                            @endif">Dispatched Results</a>
-                                    </li>
+
+                                    <li class=""> <a href="{{ url($widgets['prefix'] . 'batch') }}">Samples</a> </li>
+                                    <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
+                                    <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
+
                                     <li class="">
                                         <a href="{{ url('facility') }}">Facilities</a>
                                     </li>
@@ -155,7 +134,10 @@
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
                                     <li class="">
-                                        <a href="#">Kits</a>
+                                        <a href="{{ url('reports/kits') }}">Kits
+                                            <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                               {{ $widgets['rejectedAllocations'] }}
+                                            </span></a>
                                     </li>
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
@@ -186,7 +168,7 @@
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
                         <i class="pe-7s-home" style="font-size: 25px;"></i>
-                            <span class="label label-danger"> </span>
+                            <span class="label label-danger"></span>
                         </a>
                     </li>
                     <li class="">
@@ -204,6 +186,10 @@
                     <li class="">
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
+                @elseif(session('testingSystem') == 'DR')
+                    <li class="">
+                        <a href="{{ url('dr_sample/report') }}">Report</a>
+                    </li>                
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
@@ -268,31 +254,11 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralbatch') }}
-                                    @else
-                                        {{ url('batch') }}
-                                    @endif">Samples</a>
-                            </li>
-                            
-                            <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralworksheet') }}
-                                    @else
-                                        {{ url('worksheet') }}
-                                    @endif">Worksheets</a>
-                            </li>
-                            <li class="">
-                                <a href="
-                                    @if(session('testingSystem') == 'Viralload')
-                                        {{ url('viralbatch/index/1') }}
-                                    @else
-                                        {{ url('batch/index/1') }}
-                                    @endif">Dispatched Results</a>
-                            </li>
+
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'batch') }}">Samples</a> </li>
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
+                            <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
+
                             <li class="">
                                 <a href="{{ url('facility') }}">Facilities</a>
                             </li>
@@ -314,7 +280,10 @@
                                     @endif">Nascop Dashboard</a>
                             </li>
                             <li class="">
-                                <a href="{{ url('reports/kits') }}">Kits</a>
+                                <a href="{{ url('reports/kits') }}">Kits
+                                    <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                       {{ $widgets['rejectedAllocations'] }}
+                                    </span></a>
                             </li>
                             @if(Auth::user()->user_type_id == 0)
                                 <li>

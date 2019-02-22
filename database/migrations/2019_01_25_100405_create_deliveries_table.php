@@ -15,6 +15,7 @@ class CreateDeliveriesTable extends Migration
     {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->increments('id');
+            $table->bigInteger('national_id')->nullable();
             $table->biginteger('kit_id');
             $table->tinyInteger('testtype');
             $table->tinyInteger('lab_id');
@@ -26,8 +27,8 @@ class CreateDeliveriesTable extends Migration
             $table->date('expiry')->nullable();
             $table->integer('received')->default(0);
             $table->integer('damaged')->default(0);
-            $table->integer('receivedby');
-            $table->date('datereceived');
+            $table->integer('receivedby')->nullable();
+            $table->date('datereceived')->nullable();
             $table->integer('enteredby');
             $table->date('dateentered');
             $table->tinyInteger('synched');

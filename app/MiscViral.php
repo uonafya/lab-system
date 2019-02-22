@@ -60,14 +60,15 @@ class MiscViral extends Common
 
 	public static function requeue($worksheet_id)
 	{
-		$samples = Viralsample::where('worksheet_id', $worksheet_id)->get();
+        $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
         Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
 
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {
-			if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == ""){
+			if($sample->result == "Failed" || $sample->result == "Invalid" || $sample->result == "" || !$sample->result){
 				$sample->repeatt = 1;
 				$sample->save();
 			}
@@ -78,12 +79,15 @@ class MiscViral extends Common
 	public static function save_repeat($sample_id)
 	{
         $original = Viralsample::find($sample_id);
-        if($original->run == 5) return false;
+        if($original->run == 5){
+            $original->repeatt=0;
+            $original->save();
+            return false;
+        }
 
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
         $sample->fill($original->only($fields['sample_rerun']));
-        $sample->age = $original->age;
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
@@ -711,7 +715,7 @@ class MiscViral extends Common
                 ->where('datereceived', '>', $date_str)
                 ->when($sampletype, function($query) use ($sampletype){
                     if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+                    if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
                 })
                 ->where('site_entry', '!=', 2)
                 ->where('parentid', '>', 0)
@@ -737,7 +741,7 @@ class MiscViral extends Common
             })
             ->when($sampletype, function($query) use ($sampletype){
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
-                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2]);                    
+                if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
@@ -763,6 +767,7 @@ class MiscViral extends Common
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
+        if(in_array(env('APP_LAB'), [8])) $create = true;
 
         return [
             'count' => $count, 'limit' => $temp_limit,

@@ -36,6 +36,7 @@
                                     <tr>
                                         {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_dateSelect_form']) }}
                                         <td>Select Date:</td>
+                                        <input type="hidden" name="samples_log" value="1">
                                         <td>
                                             <div class="input-group date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -50,6 +51,7 @@
                                     <tr>
                                         {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'id' => 'reports_dateRange_form']) }}
                                         <td>Select Date Range From: </td>
+                                        <input type="hidden" name="samples_log" value="1">
                                         <td>
                                             <div class="input-group date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -260,10 +262,15 @@
                                 @if(Auth::user()->user_type_id == 5)
                                 <label> <input type="radio" name="types" value="poc" class="i-checks" required> All POC Samples Tested </label>
                                 @else
-                                <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
+                                <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
+                                <label> <input type="radio" name="types" value="remoteentrydoing" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
                                 <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
                                 @endif                                
                                 <label> <input type="radio" name="types" value="tat" class="i-checks" required> TAT Report </label>
+                                <label><input type="radio" name="types" value="failed" class="i-checks" required> Failed Tests</label>
+                                @if(Auth::user()->user_type_id == 5)
+                                <label><input type="radio" name="types" value="manifest" class="i-checks" required> Sample Manifest</label>
+                                @endif
                             </div>
                         </div>
                         @if(Auth::user()->user_type_id == 5)

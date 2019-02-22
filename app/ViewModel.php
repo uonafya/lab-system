@@ -57,6 +57,8 @@ class ViewModel extends Model
 
     public function scopeExisting($query, $data_array)
     {
+        // return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient'], 'datecollected' => $data_array['datecollected'], ]);
+
         $min_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' -3 days'));
         $max_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' +3 days'));
         return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient']])

@@ -132,7 +132,7 @@
 
                                         if(in_array(env('APP_LAB'), $double_approval) && $worksheet->status_id == 2){
 
-                                            if($sample->has_rerun){
+                                            if((in_array(env('APP_LAB'), $double_approval) && $sample->approvedby && $sample->approvedby2) || (!in_array(env('APP_LAB'), $double_approval) && $sample->approvedby) || $sample->has_rerun){
                                                 $class = 'noneditable';
                                             }
                                             else{
@@ -155,10 +155,6 @@
                                     <tr>
                                         <td> 
                                             {!! $sample->patient->hyperlink !!}  
-                                            <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
-                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
-                                            <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
-                                            <input type="hidden" name="interpretations[]" value="{{ $sample->interpretation }}" class="{{ $class }}">
                                         </td>
                                         <td>{{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
@@ -182,13 +178,13 @@
                                         </td>
 
                                         <td>
-                                            @if(!$sample->approvedby)
+                                            @if( $class == 'editable' )
                                                 <div><label> <input type="checkbox" class="i-checks {{ $class }}"  name="redraws[]" value="{{ $sample->id }}"> Collect New Sample </label></div>
                                             @endif                                            
                                         </td>
 
                                         <td> 
-                                            @if($sample->approvedby)
+                                            @if( $class == 'noneditable' )
                                                 @foreach($actions as $action)
                                                     @if($sample->repeatt == $action->id)
                                                         {!! $action->name_colour !!}
@@ -196,8 +192,12 @@
                                                 @endforeach
 
                                             @else
+                                            <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
+                                            <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
+                                            <input type="hidden" name="results[]" value="{{ $sample->result }}" class="{{ $class }}">
+                                            <input type="hidden" name="interpretations[]" value="{{ $sample->interpretation }}" class="{{ $class }}">
+                                            
                                                 <select name="actions[]" class="{{ $class }}">
-                                                    <option>Choose Action</option>
                                                     @foreach($actions as $action)
                                                         <option value="{{$action->id}}"
                                                             @if($sample->repeatt == $action->id)

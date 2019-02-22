@@ -38,25 +38,31 @@ class Lookup
             
         }
 
+        if(env('APP_LAB') == 1){
+
+            try {
+                $d = Carbon::createFromFormat('m/d/Y', $value);
+                return $d->toDateString();
+            } catch (Exception $e) {
+                try {
+                    $d = Carbon::createFromFormat('m/d/y', $value);
+                    return $d->toDateString();                
+                } catch (Exception $ee) {
+                    return null;
+                }
+                return null;
+            }
+
+        }
+
         try {
             $d = Carbon::createFromFormat('d/m/Y', $value);
             return $d->toDateString();            
         } catch (Exception $e) {
             
-        }
+        }  
 
-        try {
-            $d = Carbon::createFromFormat('m/d/Y', $value);
-            return $d->toDateString();
-        } catch (Exception $e) {
-            try {
-                $d = Carbon::createFromFormat('m/d/y', $value);
-                return $d->toDateString();                
-            } catch (Exception $ee) {
-                return null;
-            }
-            return null;
-        }        
+        return null;      
     }
 
     public static function normal_date($value)
@@ -349,7 +355,7 @@ class Lookup
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
 
-            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid'],
+            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid', 'age'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
@@ -458,6 +464,7 @@ class Lookup
             'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
             'warning_codes' => DB::table('dr_warning_codes')->get(),
             'regimens' => DB::table('dr_viralprophylaxis')->get(),
+            'regimen_classes' => DB::table('regimen_classes')->get(),
         ];
     }
 
@@ -470,13 +477,15 @@ class Lookup
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated'],
 
-            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid'],
+            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid', 'age'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
             'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications'],
+
+            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'run', 'parentid', 'age'],
         ];
     }
 

@@ -43,6 +43,19 @@ class DrSample extends BaseModel
     }
 
 
+    // Parent sample
+    public function parent()
+    {
+        return $this->belongsTo('App\DrSample', 'parentid');
+    }
+
+    // Child samples
+    public function child()
+    {
+        return $this->hasMany('App\DrSample', 'parentid');
+    }
+
+
 
     public function warning()
     {
@@ -58,6 +71,81 @@ class DrSample extends BaseModel
     {
         return $this->hasMany('App\DrGenotype', 'sample_id');
     }
+
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
+    /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\DrSample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
+    }
+
+
+    public function scopeRuns($query, $sample)
+    {
+        if($sample->parentid == 0){
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}")->orderBy('run', 'asc');
+        }
+        else{
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}")->orderBy('run', 'asc');
+        }
+    }
+
+    public function remove_rerun()
+    {
+        if($this->parentid == 0) $this->remove_child();
+        else{
+            $this->remove_sibling();
+        }
+    }
+
+    public function remove_child()
+    {
+        $children = $this->child;
+
+        foreach ($children as $s) {
+            $s->delete();
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+    public function remove_sibling()
+    {
+        $parent = $this->parent;
+        $children = $parent->child;
+
+        foreach ($children as $s) {
+            if($s->run > $this->run) $s->delete();            
+        }
+
+        $this->repeatt=0;
+        $this->save();
+    }
+
+
 
 
     // mid being my id
@@ -83,11 +171,16 @@ class DrSample extends BaseModel
 
     public function setArvToxicitiesAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['arv_toxicities'] = $val . ']';
         }
-        $this->attributes['arv_toxicities'] = $val . ']';
+        else{
+            $this->attributes['arv_toxicities'] = "[]";
+        }
     }
 
     public function getArvToxicitiesArrayAttribute()
@@ -97,11 +190,16 @@ class DrSample extends BaseModel
 
     public function setClinicalIndicationsAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['clinical_indications'] = $val . ']';
         }
-        $this->attributes['clinical_indications'] = $val . ']';
+        else{
+            $this->attributes['clinical_indications'] = "[]";
+        }
     }
 
     public function getClinicalIndicationsArrayAttribute()
@@ -111,11 +209,16 @@ class DrSample extends BaseModel
 
     public function setOtherMedicationsAttribute($value)
     {
-        $val = '[';
-        foreach ($value as $v) {
-            $val .= "'" . $v . "',";
+        if($value){
+            $val = '[';
+            foreach ($value as $v) {
+                $val .= "'" . $v . "',";
+            }
+            $this->attributes['other_medications'] = $val . ']';
         }
-        $this->attributes['other_medications'] = $val . ']';
+        else{
+            $this->attributes['other_medications'] = "[]";
+        }
     }
 
     public function getOtherMedicationsArrayAttribute()
@@ -155,6 +258,26 @@ class DrSample extends BaseModel
         }
     }
 
+    public function create_rerun($data=null)
+    {
+        $fields = \App\Lookup::viralsamples_arrays();
+
+        if(!$this->has_rerun && !$this->control){
+            $child = new DrSample;
+            $child->fill($this->only($fields['dr_sample_rerun']));                
+            $child->run++;
+            if($child->parentid == 0) $child->parentid = $this->id;
+            $child->save();
+
+            if($data) $this->fill($data);
+            $this->collect_new_sample = 0;
+            $this->repeatt = 1;
+            $this->pre_update();
+        }
+
+        if($this->control) $this->save();           
+    }
+
 
     /**
      * Get the patient's gender
@@ -168,6 +291,20 @@ class DrSample extends BaseModel
         else{ return "Normal Sample"; }
     }
 
+
+    /**
+     * Get the sample's Sample Type
+     *
+     * @return string
+     */
+    public function getSampleTypeOutputAttribute()
+    {
+        if($this->sampletype == 1) return "PLASMA";
+        else if($this->sampletype == 2) return "EDTA";
+        else if($this->sampletype == 3) return "DBS Capillary";
+        else if($this->sampletype == 4) return "DBS Venous";
+        return "";
+    }
 
 
 

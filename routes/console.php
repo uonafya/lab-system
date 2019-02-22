@@ -22,6 +22,11 @@ Artisan::command('generate:dr-list', function(){
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
 
+Artisan::command('compute:tat5', function(){
+    \App\Common::save_tat5('eid');
+    \App\Common::save_tat5('vl');
+})->describe('Compute Tat 5.');
+
 Artisan::command('compute:eid-tat', function(){
     $my = new \App\Misc;
     $str = $my->compute_tat(\App\SampleView::class, \App\Sample::class);
@@ -55,6 +60,11 @@ Artisan::command('dispatch:mlab', function(){
     $str .= \App\MiscViral::send_to_mlab();
     $this->info($str);
 })->describe('Post dispatched results to mlab.');
+
+Artisan::command('dispatch:nhrl', function(){
+    \App\Common::nhrl('eid');
+    \App\Common::nhrl('vl');
+})->describe('Set NHRL samples to be dispatched.');
 
 
 Artisan::command('input-complete', function(){
@@ -102,6 +112,14 @@ Artisan::command('delete:pdfs', function(){
 Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');
 	$str = \App\Synch::labactivity('vl');
+
+    if(env('APP_LAB') == 2){
+        $str = \App\Synch::labactivity('eid', 7);
+        $str = \App\Synch::labactivity('vl', 7);
+
+        $str = \App\Synch::labactivity('eid', 10);
+        $str = \App\Synch::labactivity('vl', 10);
+    }
     $this->info($str);
 })->describe('Send lablog data to national.');
 
@@ -179,7 +197,25 @@ Artisan::command('synch:deletes', function(){
     $this->info($str);
 })->describe('Synch deletes to the national database.');
 
+Artisan::command('synch:allocations', function(){
+    $str = \App\Synch::synch_allocations();
+    $this->info($str);
+})->describe('Synch allocations from lab to national database');
 
+Artisan::command('synch:allocationsupdates', function(){
+    $str = \App\Synch::synch_allocations_updates();
+    $this->insteadOf($str);
+})->describe('Synch Allocation updates');
+
+Artisan::command('synch:consumptions', function(){
+    $str = \App\Synch::synch_consumptions();
+    $this->info($str);
+})->describe('Synch consumptions from lab to national databases');
+
+Artisan::command('synch:deliveries', function(){
+    $str = \App\Synch::synch_deliveries();
+    $this->info($str);
+})->describe('Synch deliveries from lab to national database');
 
 
 
@@ -298,3 +334,10 @@ Artisan::command('transfer:deliveries', function(){
 //     $str = \App\Misc::check_patients_list();
 //     $this->info($str);
 // })->describe('Checking for Chege');
+
+// Quick fix for deliveries
+Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
+    $str = \App\Random::adjust_deliveries($platform, $id, $quantity, $damaged);
+    $this->info($str);
+})->describe('Adjust deliveries');
+// Quick fix for deliveries

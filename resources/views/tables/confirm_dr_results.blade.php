@@ -21,96 +21,113 @@
                     <form  method="post" action="{{ url('dr_worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
                         {{ method_field('PUT') }} {{ csrf_field() }}
 
-                        <table class="table table-striped table-bordered table-hover" >
-                            <thead>
-                                <tr>
-                                    <th>Lab ID</th>
-                                    <th>Sample ID</th>
-                                    <th>Facility</th>
-                                    <th>Control</th>
-                                    <th>Has Errors</th>
-                                    <th>Has Warnings</th>
-                                    <th>Has Mutations</th>
-                                    <th>Has Genotypes</th>
-                                    <th>Requires Manual Intervention</th>    
-                                    <th>View Chromatogram</th>         
-                                    <th>Task</th>                
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <div class="table-responsive">
 
-                                @php
-                                    $class = '';
-                                    /*if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2){
-
-                                        $class = 'editable';
-                                        $editable = true;
-                                    }
-                                    else if(!in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby){
-                                        $class = 'editable';
-                                        $editable = true;
-                                    }*/
-                                    if($worksheet->status_id != 3){
-                                        $class = 'editable';
-                                        $editable = true;                                    
-                                    }
-                                    else{
-                                        $class = 'noneditable';
-                                        $editable = false;
-                                    }
-                                @endphp
-
-                                @foreach($samples as $key => $sample)
+                            <table class="table table-striped table-bordered table-hover" >
+                                <thead>
                                     <tr>
-                                        <td> {{ $sample->id }} </td>
-                                        <td> {{ $sample->patient }} </td>
-                                        <td> {{ $sample->facilityname }} </td>
-                                        <td> {{ $sample->control_type }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_errors') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_calls') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
-                                        @if($sample->pending_manual_intervention && !$sample->had_manual_intervention)
-                                            <td> Yes </td>
-                                        @else
-                                            <td>  </td>
-                                        @endif                                        
-                                        <td> {!! $sample->view_chromatogram !!} </td>
-                                        <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
+                                        <th>Lab ID</th>
+                                        <th>Approve</th>
+                                        <th>Rerun</th>
+                                        <th>Collect New Sample</th>
+                                        <th>Sample ID</th>
+                                        <th>Exatype Status</th>
+                                        <th>Facility</th>
+                                        <th>Control</th>
+                                        <th>Has Errors</th>
+                                        <th>Has Warnings</th>
+                                        <th>Has Mutations</th>
+                                        <th>Has Genotypes</th>
+                                        <th>Requires Manual Intervention</th>    
+                                        <th>View Chromatogram</th>         
+                                        <th>Task</th>                
+                                        <th>Print</th>                
+                                        <th>Print</th>                
                                     </tr>
+                                </thead>
+                                <tbody>
 
-                                @endforeach
+                                    @php
+                                        $class = '';
+                                        /*if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2){
 
-                                @if($worksheet->status_id == 3)
+                                            $class = 'editable';
+                                            $editable = true;
+                                        }
+                                        else if(!in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby){
+                                            $class = 'editable';
+                                            $editable = true;
+                                        }*/
+                                        if($worksheet->status_id != 3){
+                                            $class = 'editable';
+                                            $editable = true;                                    
+                                        }
+                                        else{
+                                            $class = 'noneditable';
+                                            $editable = false;
+                                        }
+                                    @endphp
 
-                                    @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
-                                     (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )
-
-                                        <tr bgcolor="#999999">
-                                            <td  colspan="10" bgcolor="#00526C" >
-                                                <center>
-                                                    <!-- <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  /> -->
-                                                    <button class="btn btn-success" type="submit">Confirm & Approve Results</button>
-                                                </center>
-                                            </td>
-                                        </tr>
-
-                                    @else
-
+                                    @foreach($samples as $key => $sample)
                                         <tr>
-                                            <td  colspan="10">
-                                                <center>
-                                                    You are not permitted to complete the approval. Another user should be the one to complete the approval process.
-                                                </center>
+                                            <td> {{ $sample->id }} </td>
+                                            <td>
+                                                @if(in_array($sample->status_id, [1]) && $sample->dateapproved)                                                
+                                                    <div align='center'>
+                                                        <input name='approved[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @elseif($sample->dateapproved)
+                                                    {{ $sample->my_date_format('dateapproved') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
+                                                    <div align='center'>
+                                                        <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($sample->has_rerun)
+                                                    Has Rerun
+                                                @elseif(in_array($sample->status_id, [2, 3]))                                                
+                                                    <div align='center'>
+                                                        <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td> {{ $sample->patient }} </td>
+                                            <td> {{ $dr_sample_statuses->where('id', $sample->status_id)->first()->name ?? '' }} </td>
+                                            <td> {{ $sample->facilityname }} </td>
+                                            <td> {{ $sample->control_type }} </td>
+                                            <td> {{ $sample->my_boolean_format('has_errors') }} </td>
+                                            <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
+                                            <td> {{ $sample->my_boolean_format('has_calls') }} </td>
+                                            <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
+                                            @if($sample->pending_manual_intervention && !$sample->had_manual_intervention)
+                                                <td> Yes </td>
+                                            @else
+                                                <td>  </td>
+                                            @endif                                        
+                                            <td> {!! $sample->view_chromatogram !!} </td>
+                                            <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
+                                            <td> 
+                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> |
+                                                <a href="{{ url('dr_sample/results/' . $sample->id . '/1') }}" target="_blank">Print</a> |
+                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
                                             </td>
                                         </tr>
 
-                                    @endif
+                                    @endforeach
 
-                                @endif
+                                </tbody>
+                            </table>
 
-                            </tbody>
-                        </table>
+                            @if($worksheet->status_id == 6)
+                                <button class="btn btn-success" type="submit">Proceed to Submit Gel Documentation</button>
+                            @endif
+
+                        </div>
 
                     </form>
                 </div>

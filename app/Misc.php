@@ -15,13 +15,19 @@ class Misc extends Common
 
 	public static function requeue($worksheet_id)
 	{
-		$samples = Sample::where('worksheet_id', $worksheet_id)->get();
+        $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+		$samples = Sample::whereIn('id', $samples_array)->get();
 
         Sample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
 
 		// Default value for repeatt is 0
 
 		foreach ($samples as $sample) {
+            if(!$sample->result){
+                $sample->result = 3;
+                $sample->save();
+            }
+            $a = true;
 			if($sample->parentid == 0){
 				if($sample->result == 2 || $sample->result == 3){
 					$sample->repeatt = 1;
@@ -105,7 +111,6 @@ class Misc extends Common
 		$sample = new Sample;
 		$fields = \App\Lookup::samples_arrays();
 		$sample->fill($original->only($fields['sample_rerun']));
-        $sample->age = $original->age;
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 
@@ -489,6 +494,7 @@ class Misc extends Common
         $create = false;
         if($count == $machine->eid_limit) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
+        if(in_array(env('APP_LAB'), [9])) $create = true;
 
         return [
         	'count' => $count, 'limit' => $temp_limit,

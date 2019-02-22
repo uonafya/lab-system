@@ -82,6 +82,8 @@ class DashboardCacher
             return 'success';
         };
 
+        $data['rejectedAllocations'] = Cache::get('rejectedAllocations');
+
         if (session('testingSystem') == 'Viralload') {            
         	return array_merge($data, [
         		'pendingSamples' => Cache::get('vl_pendingSamples'),
@@ -95,6 +97,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
                 'delayed_batches' => Cache::get('vl_delayed_batches'),
+                'prefix' => 'viral',
         	]);
         } else if (session('testingSystem') == 'EID'){
             return array_merge($data, [
@@ -109,6 +112,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
                 'delayed_batches' => Cache::get('eid_delayed_batches'),
+                'prefix' => '',
             ]);
         } else if (session('testingSystem') == 'CD4') {
             return array_merge($data, [
@@ -363,6 +367,10 @@ class DashboardCacher
         return $delayed->count();
     }
 
+    public static function rejectedAllocations() {
+        return Allocation::where('approve', '=', 2)->count();
+    }
+
     public static function cacher()
     {
     	if(Cache::has('vl_pendingSamples')) return true;
@@ -399,6 +407,8 @@ class DashboardCacher
             $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
             $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
         }
+
+        $rejectedAllocations = self::rejectedAllocations();
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
@@ -430,6 +440,8 @@ class DashboardCacher
             Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
             Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
         }
+        // Neutral Cache
+        Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
         
     }
 

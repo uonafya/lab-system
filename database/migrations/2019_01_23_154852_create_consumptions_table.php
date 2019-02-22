@@ -15,6 +15,7 @@ class CreateConsumptionsTable extends Migration
     {
         Schema::create('consumptions', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('national_id')->nullable();
             $table->tinyInteger('month')->nullable();
             $table->integer('year')->nullable();
             $table->tinyInteger('testtype')->nullable();

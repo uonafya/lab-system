@@ -17,6 +17,7 @@ use App\Kits;
 use App\Consumption;
 use App\Machine;
 use App\Allocation;
+use App\AllocationDetail;
 
 use DB;
 
@@ -43,7 +44,7 @@ class TaskController extends Controller
     public function index() 
     {
         $tasks = $this->pendingTasks();
-        // dd($tasks);
+        
         if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
             \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
@@ -70,7 +71,7 @@ class TaskController extends Controller
         $data['requisitions'] = count($this->getRequisitions());
 
         $data = (object) $data;
-        
+        // dd($data);
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
@@ -254,6 +255,12 @@ class TaskController extends Controller
         $data['testtypes'] = ['EID', 'VL'];
         $previousMonth = $this->previousMonth;
         $year = $this->previousYear;
+        $endingBalanceMonth = $previousMonth - 1;
+        $endingBalanceYear = $year;
+        if ($previousMonth == 1) {
+            $endingBalanceMonth = 12;
+            $endingBalanceYear = $year - 1;
+        }
 
         if ($request->saveTaqman || $request->saveAbbott)
         {
@@ -344,10 +351,11 @@ class TaskController extends Controller
             $data['taqmandeliveries'.$value] = NULL;
             $type = $key+1;
 
-            foreach(Abbotprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
+            foreach(Abbotprocurement::where('month', $endingBalanceMonth)->where('year', $endingBalanceYear)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevabbott'.$value] = $value1;
             }
-            foreach(Taqmanprocurement::where('month', $previousMonth-1)->where('year', $year)->where('testtype', $type)->get() as $key1 => $value1) {
+
+            foreach(Taqmanprocurement::where('month', $endingBalanceMonth)->where('year', $endingBalanceYear)->where('testtype', $type)->get() as $key1 => $value1) {
                 $data['prevtaqman'.$value] = $value1;
             }
             foreach (Taqmandeliveries::whereRaw("YEAR(datereceived) = $year")->whereRaw("MONTH(datereceived) = $previousMonth")->where('testtype', $type)->get() as $key1 => $value1) {
@@ -361,12 +369,23 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
-        // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 
     public function allocation(Request $request) {
         if ($request->method() == "GET") {
+            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->count();
+            if ($currentMonthAllocation > 0){
+                session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
+                return back();
+            } else {
+                $tasks = (object) $this->pendingTasks();
+                if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
+                    session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
+                    return back();
+                }
+            }
+            
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
             
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
@@ -376,10 +395,11 @@ class TaskController extends Controller
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
                 $data = (object) $data;
-                // dd($data);
+                
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else {
                 $saveAllocation = $this->saveAllocation($request);
+                \App\Synch::synch_allocations();
                 return redirect()->route('pending');
             }
         }
@@ -387,23 +407,59 @@ class TaskController extends Controller
 
     protected function saveAllocation($request) {
         $form = $request->except(['_token', 'kits-form']);
-        $data = [];
-        foreach ($form as $key => $datum) {
-            $column = explode('-', $key);
-            $data = [
-                'kit_id' => $column[2],
-                'testtype' => $column[1],
-                'year' => $this->year,
-                'month' => $this->month,
-                'datesubmitted' => date('Y-m-d'),
-                'submittedby' => auth()->user()->full_name,
-                'lab_id' => env('APP_LAB'),
-                'allocated' => $form['allocate-'.$column[1].'-'.$column[2]],
-                'allocationcomments' => $form['comment-'.$column[1].'-'.$column[2]],
-            ];
-            $allocation = Allocation::create($data);
+        $allocation_data = $this->getAllocationData($form);
+        foreach ($allocation_data as $allocationkey => $allocation) {
+            $allocations_details_data = array_pull($allocation, 'allocationDetails');
+            $allocations = Allocation::create($allocation);
+            foreach ($allocations_details_data as $detailkey => $detail) {
+                $allocation_details = new AllocationDetail();
+                $allocation_details->allocation_id = $allocations->id;
+                $allocation_details->fill($detail);
+                $allocation_details->save();
+            }
         }
         return $allocation;
+    }
+
+    protected function getAllocationData($form_data) {
+        $allocation_data = [];
+        foreach ($form_data as $key => $datum) {
+            $column = explode('-', $key);
+            if ($column[0] == 'allocation') { // Create a new allocation at this point
+                $machine_id = $column[1];
+                $testtype = $column[2];
+                $allocationcomments = 'allocationcomments-'.$machine_id.'-'.$testtype;
+                $allocation_data[] = [
+                    'machine_id' => $machine_id,
+                    'testtype' => $testtype,
+                    'year' => $this->year,
+                    'month' => $this->month,
+                    'datesubmitted' => date('Y-m-d'),
+                    'submittedby' => auth()->user()->full_name,
+                    'lab_id' => env('APP_LAB'),
+                    'allocationcomments' => $form_data[$allocationcomments],
+                    'allocationDetails' => $this->getAllocationDetailsData($machine_id, $testtype, $form_data)
+                ];
+            }
+        }
+        return $allocation_data;
+    }
+
+    protected function getAllocationDetailsData($machine, $testtype, $form_data) {
+        $kits = Kits::where('machine_id', '=', $machine)->get();
+        $allocation_details_array = [];
+        foreach ($kits as $key => $kit) {
+            foreach ($form_data as $formkey => $form) {
+                $column = 'allocate-'.$testtype.'-'.$kit->id;
+                if ($column == $formkey){
+                    $allocation_details_array[] = [
+                        'kit_id' => $kit->id,
+                        'allocated' => $form
+                    ];
+                }
+            }
+        }
+        return $allocation_details_array;
     }
 
     public function performancelog(Request $request)
@@ -554,8 +610,7 @@ class TaskController extends Controller
     }
 
     public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
-
-    	if ($platform==1)
+        if ($platform==1)
             $model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
         if ($platform==2)
@@ -571,6 +626,7 @@ class TaskController extends Controller
         if ($platform==2)
             $model = Abbotprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
 
+        // return $model->toSql();
         return $model->count();
     }
 

@@ -125,7 +125,7 @@ class ViralworksheetController extends Controller
 
         $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'));
 
-        if(!$data || (!$data['create']) && env('APP_LAB') != 8){
+        if(!$data || (!$data['create'])){
             dd($data);
             $worksheet->delete();
             session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
@@ -158,6 +158,7 @@ class ViralworksheetController extends Controller
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         // if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                         if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })
                     ->orderBy('viralsamples.id', 'asc')
@@ -379,6 +380,7 @@ class ViralworksheetController extends Controller
         $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
 
         $my = new MiscViral;
+        $sample_array = $doubles = [];
 
         // Abbott
         if($worksheet->machine_type == 2)
@@ -404,6 +406,8 @@ class ViralworksheetController extends Controller
                     $error = $value[10];
 
                     $result_array = MiscViral::sample_result($result, $error);
+
+                    MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                     if($sample_id == "HIV_NEG"){
                         $nc = $result_array['result'];
@@ -440,8 +444,10 @@ class ViralworksheetController extends Controller
             {
                 if(!isset($value[1])) break;
                 $sample_id = $value[1];
-                $result = $value[6];
-                $result_array = MiscViral::exponential_result($result);
+                $interpretation = $value[6];
+                $result_array = MiscViral::exponential_result($interpretation);
+
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
@@ -489,11 +495,13 @@ class ViralworksheetController extends Controller
             {
                 $sample_id = (int) trim($value[0]);
 
-                $result = $value[4];
+                $interpretation = $value[4];
+
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                 if($value[19] == "Control"){
                     $name = strtolower($value[20]);
-                    $result_array = MiscViral::sample_result($result);
+                    $result_array = MiscViral::sample_result($interpretation);
 
                     if(str_contains($name, 'low')){
                         $lpc = $result_array['result'];
@@ -513,7 +521,7 @@ class ViralworksheetController extends Controller
                     continue;
                 }
 
-                $result_array = MiscViral::sample_result($result);
+                $result_array = MiscViral::sample_result($interpretation);
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
 
                 $sample = Viralsample::find($sample_id);
@@ -532,10 +540,12 @@ class ViralworksheetController extends Controller
                 $datetested=date("Y-m-d", strtotime($value[3]));
 
                 $sample_id = trim($value[4]);
-                $result = $value[8];
+                $interpretation = $value[8];
                 $error = $value[10];
 
-                $result_array = MiscViral::sample_result($result, $error);
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                $result_array = MiscViral::sample_result($interpretation, $error);
 
                 $sample_type = $value[5];
 
@@ -574,6 +584,17 @@ class ViralworksheetController extends Controller
             }
             fclose($handle);
 
+        }
+
+        if($doubles){
+            session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
+            $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
+        
+            Excel::create($file, function($excel) use($doubles){
+                $excel->sheet('Sheetname', function($sheet) use($doubles) {
+                    $sheet->fromArray($doubles);
+                });
+            })->download('csv');
         }
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
@@ -849,4 +870,75 @@ class ViralworksheetController extends Controller
     {
         return $var->first()->totals ?? 0;
     }
+
+    public function exceluploadworksheet(Request $request) {
+        if ($request->method() == "GET") {
+            $data = Lookup::get_viral_lookups();
+
+            return view('forms.viralworksheetsexcel', $data)->with('pageTitle', 'Add Worksheet');
+        } else {
+            $file = $request->excelupload->path();
+            $path = $request->excelupload->store('public/samples/otherlab/batches');
+            $excelData = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+
+            $batches = collect($excelData->toArray())->first();
+            $samples = Viralsample::whereIn('batch_id', $batches)->orderBy('id','asc')->get();
+            $sample_count = $samples->count();
+            
+            $dataArray = [];
+            $dataArray[] = ['Lab ID', 'Batch ID'];
+            $worksheet = null;
+            $counter = 0;
+            foreach ($samples as $key => $sample) {
+                $counter++;
+                if (($counter == 1) && ($sample_count > 93)) {
+                    $worksheet = new Viralworksheet();
+                    $worksheet->lab_id = env('APP_LAB');
+                    $worksheet->machine_type = 3;
+                    $worksheet->sampletype = $request->input('sampletype');
+                    $worksheet->createdby = $sample->batch->user_id;
+                    $worksheet->sample_prep_lot_no = 44444;
+                    $worksheet->bulklysis_lot_no = 44444;
+                    $worksheet->control_lot_no = 44444;
+                    $worksheet->calibrator_lot_no = 44444;
+                    $worksheet->amplification_kit_lot_no = 44444;
+                    $worksheet->sampleprepexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->bulklysisexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->controlexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->calibratorexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->amplificationexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+                    $worksheet->save();
+                }
+
+                if ($sample_count > 93){
+                    $sample->worksheet_id = $worksheet->id;
+                    $sample->save();
+                }
+                else 
+                    $dataArray[] = ['id' => $sample->id, 'batch' => $sample->batch_id];
+
+                if ($counter == 93){
+                    $worksheet = null;
+                    $sample_count -= $counter;
+                    $counter = 0;
+                }
+            }
+            $title = "EDARP Overflow samples";
+            Excel::create($title, function($excel) use ($dataArray, $title) {
+                $excel->setTitle($title);
+                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+                $excel->setDescription($title);
+
+                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+                    $sheet->fromArray($dataArray, null, 'A1', false, false);
+                });
+
+            })->download('csv');
+            
+            return back();
+        }
+    }
 }
+ 

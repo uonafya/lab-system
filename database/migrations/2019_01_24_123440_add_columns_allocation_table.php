@@ -16,12 +16,11 @@ class AddColumnsAllocationTable extends Migration
         Schema::dropIfExists('allocations');
         Schema::create('allocations', function(Blueprint $table){
             $table->bigIncrements('id');
+            $table->bigInteger('national_id')->nullable();
+            $table->integer('machine_id');
+            $table->tinyInteger('testtype');
             $table->integer('year');
             $table->tinyInteger('month');
-            $table->tinyInteger('testtype');
-            $table->bigInteger('kit_id');
-            $table->integer('allocated')->default(0);
-            $table->integer('issued')->default(0);
             $table->date('datesubmitted')->nullable();
             $table->string('submittedby', 100)->nullable();
             $table->tinyInteger('lab_id')->nullable();

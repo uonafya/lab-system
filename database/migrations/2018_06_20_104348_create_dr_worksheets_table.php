@@ -17,17 +17,19 @@ class CreateDrWorksheetsTable extends Migration
             $table->increments('id');
             $table->tinyInteger('lab_id')->unsigned();
 
-            // This is the sanger id
+            // This is the exatype id
             $table->integer('plate_id')->unsigned()->nullable()->index();
             $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
 
             // 1 is in process
             // 2 is tested, results uploaded
-            // 3 is results from sanger approved
+            // 3 is results from exatype approved
             // 4 is cancelled
-            // 5 is sent to sanger, awaiting response
-            // 6 is result sent back by sanger
+            // 5 is sent to exatype, awaiting response
+            // 6 is result sent back by exatype
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
+
+            // Exatype status
             $table->tinyInteger('sanger_status_id')->unsigned()->default(4)->index();
 
             $table->date('dateuploaded')->nullable();

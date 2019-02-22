@@ -212,12 +212,12 @@
 
                         @if(!isset($viralsample))
 
-                            <!-- <div class="form-group">
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="reentry" value="1" />
                                 </div>
-                            </div> -->
+                            </div>
 
                         @endif
 
@@ -332,7 +332,7 @@
                                                 selected
                                             @endif
 
-                                            > {{ $sampletype->name }}
+                                            >{{ $sampletype->id }} &nbsp; {{ $sampletype->name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -410,7 +410,12 @@
 
                                         > {!! $proph->displaylabel !!}
                                         </option>
+
+                                        @if($proph->id == 9)
+                                            <option value="18">12 &nbsp;ABC+3TC+DTG</option>
+                                        @endif
                                     @endforeach
+                                    
                                 </select>
                             </div>
                         </div>
@@ -673,6 +678,9 @@
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"],
                     lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
+                },
+                initiation_date:{
+                    GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
