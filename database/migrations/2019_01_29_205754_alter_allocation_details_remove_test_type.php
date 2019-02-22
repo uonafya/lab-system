@@ -14,7 +14,7 @@ class AlterAllocationDetailsRemoveTestType extends Migration
     public function up()
     {
         Schema::table('allocation_details', function(Blueprint $table){
-            $table->dropColumn('testtype');
+            // $table->dropColumn('testtype');
         });
     }
 
