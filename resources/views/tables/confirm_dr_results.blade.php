@@ -41,8 +41,7 @@
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
                                         <th>Task</th>                
-                                        <th>Print</th>                
-                                        <th>Print</th>                
+                                        <th>Print</th>               
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,7 +71,7 @@
                                         <tr>
                                             <td> {{ $sample->id }} </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [1]) && $sample->dateapproved)                                                
+                                                @if(in_array($sample->status_id, [1]) && !$sample->dateapproved)                                                
                                                     <div align='center'>
                                                         <input name='approved[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
                                                     </div>
