@@ -49,10 +49,10 @@
 				<thead>
 					<tr>
 						<th>Drug Class</th>
-						<th>Mutations</th>
+						<th>Detected Mutations</th>
 						<th>Drug</th>
-						<th>Resistance</th>
-						<th>Resistance Code</th>
+						<th>Susceptability</th>
+						<th>Susceptability Code</th>
 					</tr>
 				</thead>
 				<tbody>
