@@ -169,12 +169,12 @@ class ReportController extends Controller
             $data = self::__getDateData($request,$dateString)->get();
             if ($request->input('types') == 'manifest'){
                 $batches = $data->unique('batch_id')->pluck('batch_id');
-                dd($batches);
                 if ($request->input('testtype') == 'EID')
                     $model = Batch::class;
                 else
                     $model = Viralbatch::class;
                 $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility');
+                dd($dbbatches);
                 foreach($dbbatches as $batch) {
                     $batch->datedispatchedfromfacility = date('Y-m-d');
                     $batch->pre_update();
