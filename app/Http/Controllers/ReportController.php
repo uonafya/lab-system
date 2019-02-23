@@ -173,7 +173,7 @@ class ReportController extends Controller
                     $model = Batch::class;
                 else
                     $model = Viralbatch::class;
-                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility');
+                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
                 dd($dbbatches);
                 foreach($dbbatches as $batch) {
                     $batch->datedispatchedfromfacility = date('Y-m-d');
