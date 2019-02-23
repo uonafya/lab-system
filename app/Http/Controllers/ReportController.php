@@ -16,6 +16,8 @@ use Excel;
 use Mpdf\Mpdf;
 use App\ViewFacility;
 use App\Lab;
+use App\Batch;
+use App\Viralbatch;
 
 class ReportController extends Controller
 {
@@ -168,6 +170,15 @@ class ReportController extends Controller
             if ($request->input('types') == 'manifest'){
                 $batches = $data->unique('batch_id')->pluck('batch_id');
                 dd($batches);
+                if ($request->input('testtype') == 'EID')
+                    $model = Batch::class;
+                else
+                    $model = Viralbatch::class;
+                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility');
+                foreach($dbbatches as $batch) {
+                    $batch->datedispatchedfromfacility = date('Y-m-d');
+                    $batch->pre_update();
+                }
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
