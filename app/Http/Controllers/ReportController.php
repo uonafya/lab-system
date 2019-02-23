@@ -144,6 +144,19 @@ class ReportController extends Controller
         return $model;
     }// This is in the working tree
 
+    protected function generate_samples_manifest($request, $data, $dateString) {
+        $export['samples'] = $data;
+        $export['testtype'] = $request->input('testtype');
+        $export['lab'] = Lab::find(env('APP_LAB'));
+        $export['period'] = strtoupper($dateString);
+        $filename = strtoupper("HIV MANIFEST " . $dateString) . ".pdf";
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
+
     public function generate(Request $request)
     {
         $dateString = '';
@@ -151,17 +164,11 @@ class ReportController extends Controller
             $data = self::__getCD4Data($request, $dateString)->get();
             $this->__getExcel($data, $dateString, $request);
         } else if (auth()->user()->user_type_id == 5) {
-            $data = self::__getDateData($request,$dateString)->get();
+            $data = self::__getDateData($request,$dateString)->toSql();
             if ($request->input('types') == 'manifest'){
-                $export['samples'] = $data;
-                $export['testtype'] = $request->input('testtype');
-                $export['lab'] = Lab::find(env('APP_LAB'));
-                $export['period'] = strtoupper($dateString);
-                $filename = strtoupper("HIV " . $dateString) . ".pdf";
-                $mpdf = new Mpdf();
-                $view_data = view('exports.mpdf_samples_manifest', $export)->render();
-                $mpdf->WriteHTML($view_data);
-                $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+                $batches = $data->unique('batch_id')->pluck('batch_id');
+                dd($batches);
+                $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
         }else {
