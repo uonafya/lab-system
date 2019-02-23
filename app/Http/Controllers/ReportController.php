@@ -173,10 +173,14 @@ class ReportController extends Controller
                     $model = Batch::class;
                 else
                     $model = Viralbatch::class;
-                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility');
+                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
                 dd($dbbatches);
                 foreach($dbbatches as $batch) {
-                    $batch->datedispatchedfromfacility = date('Y-m-d');
+                    $firstSample = $batch->samples->first();
+                    $datedispatched = date('Y-m-d');
+                    if (null !== $firstSample->datetested && $firstSample->datetested < $datedispatched)
+                        $datedispatched = $firstSample->created_at;
+                    $batch->datedispatchedfromfacility = $datedispatched;
                     $batch->pre_update();
                 }
                 $this->generate_samples_manifest($request, $data, $dateString);
