@@ -168,7 +168,8 @@ class ReportController extends Controller
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             if ($request->input('types') == 'manifest'){
-                // $batches = $data->unique('batch_id')->pluck('batch_id');
+                $batches = $data->unique('batch_id')->pluck('batch_id');
+                dd($batches);
                 // if ($request->input('testtype') == 'EID')
                 //     $model = Batch::class;
                 // else
