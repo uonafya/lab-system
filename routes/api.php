@@ -37,7 +37,10 @@ $api->version('v1', function (Router $api) {
             $api->resource('patient', 'PatientController');
             $api->resource('viralpatient', 'ViralpatientController');
 
+            $api->post('sample/transfer', 'SampleController@transfer');
             $api->resource('sample', 'SampleController');
+            
+            $api->post('viralsample/transfer', 'ViralsampleController@transfer');
             $api->resource('viralsample', 'ViralsampleController');
         });
 
@@ -53,6 +56,9 @@ $api->version('v1', function (Router $api) {
 
             $api->post('cd4', 'Cd4Controller@partial');
             $api->post('cd4_complete', 'Cd4Controller@complete_result');
+
+            $api->post('crag', 'CragController@partial');
+            // $api->post('crag_complete', 'CragController@complete_result');
 
             $api->post('function', 'FunctionController@api');
 

@@ -12,6 +12,7 @@ use App\Lookup;
 use App\SampleView;
 use App\ViralsampleView;
 use App\Cd4SampleView;
+use App\CragSampleView;
 
 class FunctionController extends Controller
 {
@@ -50,6 +51,7 @@ class FunctionController extends Controller
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
         else if($test == 3) $class = Cd4SampleView::class;
+        else if($test == 4) $class = CragSampleView::class;
 
         if($patients){
             $patients = str_replace(' ', '', $patients);
@@ -75,11 +77,12 @@ class FunctionController extends Controller
                 // return $query->whereNotNull('datedispatched');
                 return $query->whereRaw("(datedispatched is not null OR (dateapproved is not null and dateapproved2 is not null))");
             })
-            ->when(($sample_status && $test == 3), function($query) use($sample_status){
+            ->when(($sample_status && in_array($test, [3, 4])), function($query) use($sample_status){
                 return $query->where('status_id', $sample_status);
             })
             ->when($patients, function($query) use($patients, $test){
                 if($test == 3) return $query->whereIn('medicalrecordno', $patients);
+                if($test == 4) return $query->whereIn('patient_number', $patients);
                 return $query->whereIn('patient', $patients);
             })
             ->when($orders, function($query) use($orders){

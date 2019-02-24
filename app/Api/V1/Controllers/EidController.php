@@ -160,6 +160,7 @@ class EidController extends BaseController
         $patient_identifier = $request->input('patient_identifier');
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
+        $datetested = $request->input('datetested');
         $datedispatched = $request->input('datedispatched');
         // $gender = $request->input('gender');
         $dob = $request->input('dob');
@@ -185,6 +186,10 @@ class EidController extends BaseController
         if($sample_exists && !$editted){
             return $this->response->errorBadRequest("EID HEI Number {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
+
+        if($lab == 7 && strtotime($datetested) < strtotime("2019-02-01") ){
+            return $this->response->errorBadRequest("This sample is unacceptable.");            
+        }        
 
         if(!$editted){
             $batch = Batch::existing($facility, $datereceived, $lab)->where(['synched' => 5])->withCount(['sample'])->first();

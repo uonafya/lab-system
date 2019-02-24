@@ -1,4 +1,21 @@
 
+
+DROP TABLE IF EXISTS `cragpatients`;
+CREATE TABLE IF NOT EXISTS `cragpatients` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `patient_name` varchar(50) DEFAULT NULL,
+  `patient_number` varchar(50) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `sex` tinyint(4) unsigned DEFAULT NULL,
+
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `patient_number` (`patient_number`)
+) ENGINE=InnoDB;
+
+
+
 DROP TABLE IF EXISTS `cragsamples`;
 CREATE TABLE IF NOT EXISTS `cragsamples` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -62,3 +79,15 @@ CREATE TABLE IF NOT EXISTS `cragsamples` (
   KEY `facility_id` (`facility_id`),
   KEY `parentid` (`parentid`)
 ) ENGINE=InnoDB;
+
+
+
+CREATE OR REPLACE VIEW crag_samples_view AS
+(
+  SELECT s.*, f.facilitycode, p.sex, p.dob, p.patient_number, p.patient_name 
+
+  FROM cragsamples s
+  JOIN cragpatients p ON p.id=s.patient_id
+  LEFT JOIN facilitys f ON f.id=s.facility_id
+
+);
