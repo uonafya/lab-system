@@ -1011,7 +1011,7 @@ class ViralsampleController extends Controller
     }
 
 
-    public function transfer_samples($facility_id=null)
+    public function transfer_samples_form($facility_id=null)
     {
         $samples = ViralsampleView::whereNull('receivedstatus')
                     ->where('site_entry', '!=', 2)
