@@ -874,6 +874,7 @@ class Synch
 				'samples' => $samples->toJson(),
 				'lab_id' => env('APP_LAB', null),
 				'to_lab' => $to_lab,
+				'type' => $type,
 			],
 		]);
 
@@ -882,7 +883,7 @@ class Synch
 
 
 
-	
+
 
 
 	public static function match_eid_patients()
