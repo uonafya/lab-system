@@ -396,6 +396,11 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('transfer/{sample}', 'ViralsampleController@transfer');		
 		});
 
+		Route::group(['middleware' => ['only_utype:2']], function () {	
+			Route::get('transfer_samples/{facility_id?}', 'ViralsampleController@transfer_samples_form');	
+			Route::post('transfer_samples', 'ViralsampleController@transfer_samples');	
+		});
+
 		Route::get('create_poc', 'ViralsampleController@create_poc');
 		Route::get('list_poc/{param?}', 'ViralsampleController@list_poc');
 		Route::get('{sample}/edit_result', 'ViralsampleController@edit_poc');
