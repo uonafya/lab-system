@@ -2,13 +2,20 @@
 
 <head>
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
+    <style type="text/css">
+    	body{
+		  -webkit-print-color-adjust:exact;
+		}
+	</style>
 </head>
 
 <body
-	@isset($print)
+	@if($print)
 		onLoad="JavaScript:window.print();"
-	@endisset
+		style="-webkit-print-color-adjust:exact;"
+	@endif
  >
+
 
 	<div class="container">
 		<div class="row">
@@ -18,8 +25,8 @@
 						<th>Drug Class</th>
 						<th>Mutations</th>
 						<th>Drug</th>
-						<th>Resistance</th>
-						<th>Resistance Code</th>
+						<th>Susceptability</th>
+						<th>Susceptability Code</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -39,7 +46,7 @@
 							@endif
 								<td>{{ $call_drug->short_name }} </td>
 								<td>{{ $call_drug->resistance }} </td>
-								{!! $call_drug->resistance_cell !!}
+								{!! $call_drug->resistance_cell_two !!}
 							<tr/>	
 						@endforeach
 
