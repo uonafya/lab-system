@@ -1041,9 +1041,9 @@ class ViralsampleController extends Controller
     {
         $samples = $request->input('samples');
         $lab = $request->input('lab');
-        dd($samples);
-        // \App\Synch::transfer_sample('vl', $lab, $samples);
-        // return back();
+        // dd($samples);
+        \App\Synch::transfer_sample('vl', $lab, $samples);
+        return back();
     }
 
     public function search(Request $request)
