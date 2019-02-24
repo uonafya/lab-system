@@ -1019,6 +1019,8 @@ class ViralsampleController extends Controller
                         return $query->where('facility_id', $facility_id);
                     })
                     ->whereNull('datetested')
+                    ->where(['repeatt' => 0])
+                    ->where('created_at', '>', date('Y-m-d', strtotime("-3 months")))
                     ->paginate(25);
 
         $samples->setPath(url()->current());
@@ -1033,6 +1035,15 @@ class ViralsampleController extends Controller
         ];
 
         return view('forms.transfer_samples', $data);
+    }
+
+    public function transfer_samples(Request $request)
+    {
+        $samples = $request->input('samples');
+        $lab = $request->input('lab');
+        dd($samples);
+        // \App\Synch::transfer_sample('vl', $lab, $samples);
+        // return back();
     }
 
     public function search(Request $request)

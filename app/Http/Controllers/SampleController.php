@@ -977,6 +977,8 @@ class SampleController extends Controller
         $samples = $request->input('samples');
         $lab = $request->input('lab');
         dd($samples);
+        // \App\Synch::transfer_sample('eid', $lab, $samples);
+        // return back();
     }
 
     public function search(Request $request)
