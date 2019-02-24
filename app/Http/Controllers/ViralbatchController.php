@@ -641,6 +641,10 @@ class ViralbatchController extends Controller
         // return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
     }
 
+    public function sample_manifest() {
+        return view('forms.sample_manifest_form')->with('pageTitle', 'Generate Sample Manifest');
+    }
+
     public function site_entry_approval(Viralbatch $batch)
     {
         $viralsample = Viralsample::where('batch_id', $batch->id)->whereNull('receivedstatus')->get()->first();
