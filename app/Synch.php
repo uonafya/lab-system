@@ -863,9 +863,9 @@ class Synch
 
 		$client = new Client(['base_uri' => self::$base]);
 
-		$url = 'transfer/' . $type;
+		// $url = 'transfer/' . $type;
 
-		$response = $client->request('post', $url, [
+		$response = $client->request('post', 'transfer', [
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
