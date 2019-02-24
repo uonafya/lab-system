@@ -289,7 +289,7 @@
                             </li>
                             @if(Auth::user()->user_type_id == 0)
                                 <li>
-                                    <a href="{{ url($widgets['prefix'] . 'sample/transfer_samples') }}">Transfer Samples</a>
+                                    <a href="{{ url($widgets['prefix'] . 'sample/transfer_samples') }}">Transfer</a>
                                 </li>
                                 <li>
                                     <a href="{{ url('user') }}">Users</a>
