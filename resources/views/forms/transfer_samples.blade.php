@@ -119,8 +119,9 @@
                             </table>
                         </div>
 
-                        <div class="row">
+                        {{ $samples->links() }}
 
+                        <div class="row">
                             <div class="col-sm-10 col-sm-offset-1">
                                 <button class="btn btn-success" type="submit" id="accept_samples" name="submit_type" value="accepted">Transfer Samples</button>
                             </div>                        
