@@ -15,6 +15,9 @@ use App\Taqmanprocurement;
 use Excel;
 use Mpdf\Mpdf;
 use App\ViewFacility;
+use App\Lab;
+use App\Batch;
+use App\Viralbatch;
 
 class ReportController extends Controller
 {
@@ -141,7 +144,20 @@ class ReportController extends Controller
             $title .= " for $set ";
         }
         return $model;
+    }// This is in the working tree
+
+    protected function generate_samples_manifest($request, $data, $dateString) {
+        $export['samples'] = $data;
+        $export['testtype'] = $request->input('testtype');
+        $export['lab'] = Lab::find(env('APP_LAB'));
+        $export['period'] = strtoupper($dateString);
+        $filename = strtoupper("HIV MANIFEST " . $dateString) . ".pdf";
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
     }
+
 
     public function generate(Request $request)
     {
@@ -152,13 +168,20 @@ class ReportController extends Controller
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             if ($request->input('types') == 'manifest'){
-                $export['samples'] = $data;
-                $export['testtype'] = $request->input('testtype');
-                $filename = strtoupper("HIV " . $dateString) . ".pdf";
-                $mpdf = new Mpdf();
-                $view_data = view('exports.mpdf_samples_manifest', $export)->render();
-                $mpdf->WriteHTML($view_data);
-                $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+                $batches = $data->unique('batch_id')->pluck('batch_id');
+                if ($request->input('testtype') == 'EID')
+                    $model = Batch::class;
+                else
+                    $model = Viralbatch::class;
+                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
+                foreach($dbbatches as $batch) {
+                    $datedispatched = date('Y-m-d');
+                    if (null !== $batch->datereceived && $batch->datereceived < $datedispatched)
+                        $datedispatched = $batch->created_at;
+                    $batch->datedispatchedfromfacility = $datedispatched;
+                    $batch->pre_update();
+                }
+                $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
         }else {
@@ -274,11 +297,18 @@ class ReportController extends Controller
     }
 
     public static function __getDateRequested($request, $model, $table, &$dateString, $receivedOnly=true) {
-        if ($receivedOnly) { $column = 'datereceived'; } else { $column = 'datetested'; }
+        if($request->input('types') == 'manifest') { $column = 'created_at'; } 
+        else if ($receivedOnly) { $column = 'datereceived'; } 
+        else { $column = 'datetested'; }
 
         if (!$request->input('period') || $request->input('period') == 'range') {
             $dateString .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
-            $model = $model->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+            $model = $model->when(true, function($query) use ($request, $table, $column) {
+                                if ($request->input('fromDate') == $request->input('toDate'))
+                                    return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
+                                else
+                                    return $query->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+                            });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."' AND MONTH($table.$column) = '".$request->input('month')."'");
@@ -305,7 +335,7 @@ class ReportController extends Controller
             $dateString .= $request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
         }
-
+        
         return $model;
     }
 
@@ -569,7 +599,7 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=false;
-            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1)
+            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
                 $receivedOnly=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
@@ -597,7 +627,7 @@ class ReportController extends Controller
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
-                $model = $model->where("$table.user_id", '=', auth()->user()->id);
+                $model = $model->where('site_entry', '=', 1)->where("$table.facility_id", '=', auth()->user()->facility_id);
             else
                 $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
