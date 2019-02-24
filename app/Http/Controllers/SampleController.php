@@ -954,6 +954,7 @@ class SampleController extends Controller
                         return $query->where('facility_id', $facility_id);
                     })
                     ->whereNull('datetested')
+                    ->where(['repeatt' => 0])
                     ->where('created_at', '>', date('Y-m-d', strtotime("-3 months")))
                     ->paginate(25);
 
