@@ -11,11 +11,6 @@
     	margin-top: 4px;
 	}
 </style>
-@php
-	$prefix = '';
-	if (Session('testingSystem') == 'Viralload')
-		$prefix = 'viral';
-@endphp
 <div class="p-lg">
 	<div class="content animate-panel" data-child="hpanel" style="background-color: white;">
 	<!-- <div class="animate-panel"  data-child="hpanel" data-effect="fadeInDown"> -->
@@ -394,11 +389,11 @@
 						@endif
 						@if(Session('testingSystem') != 'CD4')
 							@if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
-								<li class="list-group-item" style="{{ $widgets['get_style']($widgets['sample_manifest']) }}">
+								<li class="list-group-item alert alert-danger" style="background-color: #d9534f">
 									<span class="badge badge-{{ $widgets['get_badge']($widgets['sample_manifest']) }}">
 										{{ $widgets['sample_manifest'] }}
 									</span>
-									<a href="{{ url($prefix . 'batch/sample_manifest') }}">Generate Sample Manifest </a>
+									<a href="{{ url($widgets['prefix'] . 'batch/sample_manifest') }}" style="color:honeydew;">Print Sample Manifest </a>
 								</li>
 							@endif
 						@endif
