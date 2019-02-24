@@ -859,11 +859,14 @@ class Synch
     	$sample_model = self::$synch_arrays[$type]['sample_class'];
     	$with_array = self::$synch_arrays[$type]['with_array'];
 
+    	if(!$sample_ids){
+    		session(['toast_message' => 'Please select the samples to transfer.', 'toast_error' => 1]);
+    		return;
+    	}
+
     	$samples = $sample_model::whereIn('id', $sample_ids)->with($with_array)->get();
 
 		$client = new Client(['base_uri' => self::$base]);
-
-		// $url = 'transfer/' . $type;
 
 		$response = $client->request('post', 'transfer', [
 			'headers' => [
@@ -879,7 +882,20 @@ class Synch
 		]);
 
 		$body = json_decode($response->getBody());
-		print_r($body);
+
+		$status_code = $response->getStatusCode();
+
+		if($status_code < 400){
+			$ok = $body->ok ?? null;
+
+			if($ok) $sample_model::whereIn('id', $ok)->delete();
+			session(['toast_message' => 'The transfer has been made.']);
+		}
+		else{
+			session(['toast_message' => "An error has occured. Status code {$status_code}.", 'toast_error' => 1]);
+		}
+		return;
+		// print_r($body);
 	}
 
 
