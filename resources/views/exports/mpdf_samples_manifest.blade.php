@@ -51,13 +51,13 @@
 			<td colspan="4" align="center">Receiving Lab:</td>
 			<td colspan="3" align="center">{{ $lab->name ?? ''  }}</td>
 			<td colspan="3" align="center">Date Dispatched From Facility</td>
-			<td colspan="3" align="center">{{ $samples->first()->datedispatchedfromfacility }}</td>
+			<td colspan="3" align="center">{{ $samples->first()->datedispatchedfromfacility ?? '' }}</td>
 		</tr>
 		<tr>
 			<td colspan="4" align="center">Hub / Facility Name:</td>
-			<td colspan="3" align="center">{{ session('logged_facility')->name ?? ''  }}</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->name ?? $samples->first()->facility ?? ''  }}</td>
 			<td colspan="3" align="center">MFL Code:</td>
-			<td colspan="3" align="center">{{ session('logged_facility')->facilitycode ?? ''  }}</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->facilitycode ?? $samples->first()->facilitycode ?? ''  }}</td>
 		</tr>
 	</table>
 	<br />
@@ -153,7 +153,7 @@
 			<td align="center">Receiving Officer:</td>
 			<td align="center" style="width: 20%;"></td>
 			<td align="center" style="width: 20%;"></td>
-			<td align="center" style="width: 20%;"></td>
+			<td align="center" style="width: 20%;">{{ $sample->datereceived ?? '' }}</td>
 		</tr>
 	</table>
 </body>

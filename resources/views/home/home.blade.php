@@ -386,7 +386,17 @@
 		                        <span class="badge badge-{{ $badge }}">{{ $widgets['CD4worksheetFor2ndApproval'] }}</span>
 		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
-		            	@endif
+						@endif
+						@if(Session('testingSystem') != 'CD4')
+							@if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
+								<li class="list-group-item alert alert-danger" style="background-color: #d9534f">
+									<span class="badge badge-{{ $widgets['get_badge']($widgets['sample_manifest']) }}">
+										{{ $widgets['sample_manifest'] }}
+									</span>
+									<a href="{{ url($widgets['prefix'] . 'batch/sample_manifest') }}" style="color:honeydew;">Print Sample Manifest </a>
+								</li>
+							@endif
+						@endif
 		            	</ul>
 		            </div>
 		        </div>
