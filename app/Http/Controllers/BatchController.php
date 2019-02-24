@@ -549,7 +549,9 @@ class BatchController extends Controller
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '', 'datatable'=>true])->with('pageTitle','Site Approval');
     }
 
-
+    public function sample_manifest() {
+        return view('forms.sample_manifest_form')->with('pageTitle', 'Generate Sample Manifest');
+    }
 
     public function site_entry_approval(Batch $batch)
     {
