@@ -236,6 +236,14 @@
                                 <li>
                                     <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
+                                <li>
+                                    <a href="{{ url('sample/transfer_samples') }}">Transfer EID Samples</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url('viralsample/transfer_samples') }}">Transfer VL Samples</a>
+                                </li>
+
+
                         @else
                             <li class="">
                                 <a class="label-menu-corner" href="{{ url('home') }}">
@@ -280,6 +288,9 @@
                                 <a href="{{ url('reports/kits') }}">Kits</a>
                             </li>
                             @if(Auth::user()->user_type_id == 0)
+                                <li>
+                                    <a href="{{ url($widgets['prefix'] . 'sample/transfer_samples') }}">Transfer</a>
+                                </li>
                                 <li>
                                     <a href="{{ url('user') }}">Users</a>
                                 </li>

@@ -37,6 +37,9 @@
 <body>
 
 	@foreach($batches as $batch)
+		<?php 
+			if($batch->sample->count() == 0) unset($batch->sample);
+		?>
 
 		<table border="0" style="border: 0px; width: 100%;">
 			<tr>
@@ -98,7 +101,7 @@
 
 		<table style="width: 100%;">
 			<tr>
-				<th colspan="15" style="text-align: center;"><b>SAMPLE LOG</b></td>
+				<th colspan="15" style="text-align: center;"><b>SAMPLE LOG</b> </td>
 			</tr>
 			<tr>
 				<th colspan="4"><b> Patient Information</b></td>

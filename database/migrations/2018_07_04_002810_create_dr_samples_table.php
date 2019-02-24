@@ -30,7 +30,7 @@ class CreateDrSamplesTable extends Migration
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
 
 
-            $table->tinyInteger('sample_type')->unsigned()->nullable();
+            $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->tinyInteger('age')->unsigned()->nullable();
             // Multiple
             $table->string('clinical_indications', 50)->nullable(); 
