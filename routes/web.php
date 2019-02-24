@@ -104,6 +104,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('transfer/{batch}', 'BatchController@transfer_to_new_batch')->name('post.transfer');
 
 			Route::get('sample_manifest', 'BatchController@sample_manifest')->name('sample_manifest');
+			Route::post('sample_manifest', 'BatchController@sample_manifest')->name('post.sample_manifest');
 		});
 
 		Route::get('summary/{batch}', 'BatchController@summary');
@@ -182,6 +183,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('transfer/{batch}', 'ViralbatchController@transfer_to_new_batch')->name('post.transfer');
 
 			Route::get('sample_manifest', 'ViralbatchController@sample_manifest')->name('sample_manifest');
+			Route::post('sample_manifest', 'ViralbatchController@sample_manifest')->name('post.sample_manifest');
 		});
 		
 		Route::get('summary/{batch}', 'ViralbatchController@summary');

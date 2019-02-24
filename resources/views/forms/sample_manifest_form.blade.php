@@ -15,13 +15,17 @@
         }
     </style>
 @endsection
-
+@php
+    $prefix = '';
+    if(Session('testingSystem') == 'Viralload')
+        $prefix = 'viral';
+@endphp
 @section('content')
 
     <div class="content">
         <div>
 
-        {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_manifest_form']) }}
+        {{ Form::open(['url'=>'/'. $prefix .'batch/sample_manifest', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_manifest_form']) }}
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
