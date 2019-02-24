@@ -168,17 +168,20 @@ class ReportController extends Controller
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             if ($request->input('types') == 'manifest'){
-                $batches = $data->unique('batch_id')->pluck('batch_id');
-                dd($batches);
-                if ($request->input('testtype') == 'EID')
-                    $model = Batch::class;
-                else
-                    $model = Viralbatch::class;
-                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility');
-                foreach($dbbatches as $batch) {
-                    $batch->datedispatchedfromfacility = date('Y-m-d');
-                    $batch->pre_update();
-                }
+                // $batches = $data->unique('batch_id')->pluck('batch_id');
+                // dd($batches);
+                // if ($request->input('testtype') == 'EID')
+                //     $model = Batch::class;
+                // else
+                //     $model = Viralbatch::class;
+                // $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
+                // foreach($dbbatches as $batch) {
+                //     $datedispatched = date('Y-m-d');
+                //     if (null !== $batch->datereceived && $batch->datereceived < $datedispatched)
+                //         $datedispatched = $batch->created_at;
+                //     $batch->datedispatchedfromfacility = $datedispatched;
+                //     $batch->pre_update();
+                // }
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
@@ -333,7 +336,7 @@ class ReportController extends Controller
             $dateString .= $request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
         }
-        // dd($model->toSql());
+        
         return $model;
     }
 
@@ -625,7 +628,7 @@ class ReportController extends Controller
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
-                $model = $model->where("$table.user_id", '=', auth()->user()->id);
+                $model = $model->where('site_entry', '=', 1)->where("$table.facility_id", '=', auth()->user()->facility_id);
             else
                 $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
