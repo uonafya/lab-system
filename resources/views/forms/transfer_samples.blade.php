@@ -98,11 +98,12 @@
 
                                             <td> {{ $sample->id }} </td>
                                             <td> {!! $sample->get_link('patient') !!} </td>
-                                            <td> {{ $sample->facilityname }} </td>
-                                            <td> {{ $sample->creator->full_name ?? '' }} </td>
+                                            <td> {{ $sample->facilitycode . ' ' . $sample->facilityname }} </td>
                                             @if($sample->site_entry)
+                                                <td> {{ $sample->creator->facility->name ?? '' }} </td>
                                                 <td>Site Entry</td>
                                             @else
+                                                <td> {{ $sample->creator->full_name ?? '' }} </td>
                                                 <td>Lab Entry</td>
                                             @endif
                                             <td> {{ $sample->gender }} </td>
