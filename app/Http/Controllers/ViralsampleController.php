@@ -1010,6 +1010,31 @@ class ViralsampleController extends Controller
         return redirect('/viralbatch');        
     }
 
+
+    public function transfer_samples($facility_id=null)
+    {
+        $samples = ViralsampleView::whereNull('receivedstatus')
+                    ->where('site_entry', '!=', 2)
+                    ->when($facility_id, function($query) use($facility_id){
+                        return $query->where('facility_id', $facility_id);
+                    })
+                    ->whereNull('datetested')
+                    ->paginate(25);
+
+        $samples->setPath(url()->current());
+
+        if($facility_id) $facility = \App\Facility::find($facility_id);
+
+        $data = [
+            'samples' => $samples,
+            'labs' => \App\Lab::all(),
+            'facility' => $facility ?? null,
+            'pre' => 'viral',
+        ];
+
+        return view('forms.transfer_samples', $data);
+    }
+
     public function search(Request $request)
     {
         $user = auth()->user();
