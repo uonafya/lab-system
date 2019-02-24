@@ -55,7 +55,7 @@
                                     <select class="form-control requirable" required name="lab">
                                         <option></option>
                                         @foreach ($labs as $lab)
-                                            @continue(in_array($lab->id, [env('APP_LAB'), 7, 10]))
+                                            @continue(in_array($lab->id, [env('APP_LAB'), 7, 10, 8, 9]))
                                             <option value="{{ $lab->id }}"> {{ $lab->name }}  </option>
                                         @endforeach
 
