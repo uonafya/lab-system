@@ -1112,6 +1112,7 @@ class ViralsampleController extends Controller
             $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
             // dd($data);
             foreach ($data as $key => $sample) {
+                dd($sample);
                 $sample = collect($sample)->flatten(1)->toArray();
                 // dd($sample[3]);
                 // $sample = (array)$sample;
