@@ -11,6 +11,7 @@
     <div class="row">
         <div class="col-md-12">
             Click To View:
+            <a href="{{ $myurl2 }}"> all samples</a> | 
             @foreach($dr_sample_statuses as $dr_sample_status)
                 <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
             @endforeach
