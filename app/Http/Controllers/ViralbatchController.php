@@ -661,6 +661,7 @@ class ViralbatchController extends Controller
                     $sample->pre_update();
                 }
             }
+            Refresh::refresh_cache();
             $this->generate_sampleManifest($request);
             return back();
         }else 
@@ -751,7 +752,7 @@ class ViralbatchController extends Controller
             if($sample->batch_id != $batch->id) continue;
 
             $sample->labcomment = $request->input('labcomment');
-            $sample->sample_received_by = $request->input('received_by');
+            // $sample->sample_received_by = $request->input('received_by');
 
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;
@@ -761,9 +762,9 @@ class ViralbatchController extends Controller
             }
             $sample->save();
         }
-        // $batch->received_by = auth()->user()->id;
-        $batch->received_by = auth()->user()->id ?? $request->input('received_by');
-        $batch->datereceived = $request->input('datereceived');
+        // // $batch->received_by = auth()->user()->id;
+        // $batch->received_by = auth()->user()->id ?? $request->input('received_by');
+        // $batch->datereceived = $request->input('datereceived');
         $batch->save();
         Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
