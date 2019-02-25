@@ -19,6 +19,9 @@
         </div>
     </div>
 
+    <br />
+    <br />
+
     <div class="row">
         <div class="col-md-4"> 
             <div class="form-group">
@@ -263,6 +266,8 @@
         
         $(document).ready(function(){
             localStorage.setItem("base_url", "{{ $myurl ?? '' }}/");
+            
+            set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
             // $("#check_all").on('click', function(){
             //     var str = $(this).html();
