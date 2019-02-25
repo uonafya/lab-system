@@ -14,7 +14,7 @@
             <div class="col-md-12">
                 Click To View: 
                 {{--<a href="{{ url($pre . 'batch/index') }}">--}}
-                <a href="{{ $myurl }}">
+                <a href="{{ $myurl2 }}">
                     All Batches
                 </a> |
                 <a href="{{ $myurl2 }}/0">
