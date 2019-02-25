@@ -223,6 +223,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 			Route::get('create/{patient}', 'DrSampleController@create_from_patient');
 			Route::get('report', 'DrSampleController@susceptability')->name('report');
+			Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
 		});
 
 		Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
