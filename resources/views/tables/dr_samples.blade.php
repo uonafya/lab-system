@@ -10,7 +10,7 @@
 
     <div class="row">
         @foreach($dr_sample_statuses as $dr_sample_status)
-            <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} </a>
+            <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples </a> | 
         @endforeach
     </div>
 
