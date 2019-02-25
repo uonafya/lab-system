@@ -211,6 +211,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 		Route::group(['middleware' => ['utype:5']], function () {
+			Route::post('index', 'DrSampleController@sample_search');
 			Route::put('{drSample}', 'DrSampleController@update')->name('update');
 			Route::get('results/{drSample}/{print?}', 'DrSampleController@results')->name('results');
 			Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
