@@ -21,49 +21,94 @@
 
     <br />
 
-    <div class="row">
-        <div class="col-md-4"> 
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Select Date</label>
-                <div class="col-sm-8">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="filter_date" required class="form-control">
-                    </div>
+    {{ Form::open(['url' => $pre . 'batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+
+        <div class="row">
+            <div class="col-md-4"> 
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Select Date</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" id="filter_date" required class="form-control">
+                        </div>
+                    </div> 
+
+                    <div class="col-sm-2">                
+                        <button class="btn btn-primary" id="submit_date">Filter</button>  
+                    </div>                         
+                </div> 
+            </div>
+
+            <div class="col-md-8"> 
+                <div class="form-group">
+
+                    <label class="col-sm-1 control-label">From:</label>
+                    <div class="col-sm-4">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" id="from_date" required class="form-control">
+                        </div>
+                    </div> 
+
+                    <label class="col-sm-1 control-label">To:</label>
+                    <div class="col-sm-4">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" id="to_date" required class="form-control">
+                        </div>
+                    </div> 
+
+                    <div class="col-sm-2">                
+                        <button class="btn btn-primary" id="date_range">Filter</button>  
+                    </div>                         
                 </div> 
 
-                <div class="col-sm-2">                
-                    <button class="btn btn-primary" id="submit_date">Filter</button>  
-                </div>                         
-            </div> 
+            </div>
         </div>
 
-        <div class="col-md-8"> 
-            <div class="form-group">
+        <br />
+        <br />
 
-                <label class="col-sm-1 control-label">From:</label>
-                <div class="col-sm-4">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="from_date" required class="form-control">
-                    </div>
+
+        <div class="row">
+
+            <div class="col-md-9"> 
+                <div class="form-group">
+
+                    <label class="col-sm-1 control-label">From:</label>
+                    <div class="col-sm-4">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" id="from_date" name="from_date" class="form-control">
+                        </div>
+                    </div> 
+
+                    <label class="col-sm-1 control-label">To:</label>
+                    <div class="col-sm-4">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" id="to_date" name="to_date" class="form-control">
+                        </div>
+                    </div> 
+
+                    <div class="col-sm-2">                
+                        <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
+                    </div>                         
                 </div> 
+            </div>
 
-                <label class="col-sm-1 control-label">To:</label>
-                <div class="col-sm-4">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="to_date" required class="form-control">
-                    </div>
-                </div> 
-
-                <div class="col-sm-2">                
-                    <button class="btn btn-primary" id="date_range">Filter</button>  
-                </div>                         
-            </div> 
-
+            <div class="col-md-3">
+                <div class="form-group">              
+                    <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download Susceptability Report</button> 
+                </div>                
+            </div>
         </div>
-    </div>
+
+        <br />
+        <br />
+
+    {{ Form::close() }}
 
     <div class="row">
         <div class="col-lg-12">
@@ -115,8 +160,11 @@
                                         <td>
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
-                                            <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> Print </a> | 
-                                            <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
+
+                                            @if(in_array($sample, [1, 2, 3]))
+                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
+                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
