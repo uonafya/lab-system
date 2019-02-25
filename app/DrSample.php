@@ -299,10 +299,9 @@ class DrSample extends BaseModel
      */
     public function getSampleTypeOutputAttribute()
     {
-        if($this->sampletype == 1) return "PLASMA";
-        else if($this->sampletype == 2) return "EDTA";
-        else if($this->sampletype == 3) return "DBS Capillary";
-        else if($this->sampletype == 4) return "DBS Venous";
+        if($this->sample_type == 1) return "Public";
+        if($this->sample_type == 2) return "Surveillance";
+        if($this->sample_type == 3) return "Study";
         return "";
     }
 
