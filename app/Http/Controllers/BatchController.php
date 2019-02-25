@@ -570,6 +570,7 @@ class BatchController extends Controller
                     $sample->pre_update();
                 }
             }
+            Refresh::refresh_cache();
             $this->generate_sampleManifest($request);
             return back();
         }else 
