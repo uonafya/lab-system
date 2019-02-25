@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Facility;
 use App\Batch;
 use App\Sample;
+use App\SampleView;
 use App\Misc;
 use App\Lookup;
 use App\DashboardCacher as Refresh;
@@ -549,7 +550,62 @@ class BatchController extends Controller
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => '', 'datatable'=>true])->with('pageTitle','Site Approval');
     }
 
+    public function sample_manifest(Request $request) {
+        if ($request->method() == 'POST'){
+            // dd($request->all());
+            $batches = Batch::where('facility_id', '=', $request->input('facility_id'))
+                            ->where('site_entry', '=', 1)
+                            ->when(true, function($query) use ($request) {
+                                if ($request->input('from') == $request->input('to'))
+                                    return $query->whereRaw("date(`created_at`) = " . date('Y-m-d', strtotime($request->input('from'))));
+                                else
+                                    return $query->whereRaw("date(`created_at`) BETWEEN " . date('Y-m-d', strtotime($request->input('from'))) . " AND " . date('Y-m-d', strtotime($request->input('to'))));
+                            })->get();
+            foreach ($batches as $batch) {
+                $batch->received_by = auth()->user()->id;
+                $batch->datereceived = date('Y-m-d');
+                $batch->pre_update();
+                foreach ($batch->samples as $sample) {
+                    $sample->sample_received_by = auth()->user()->id;
+                    $sample->pre_update();
+                }
+            }
+            $this->generate_sampleManifest($request);
+            return back();
+        }else 
+            return view('forms.sample_manifest_form')->with('pageTitle', 'Generate Sample Manifest');
+    }
 
+    protected function generate_sampleManifest($request) {
+        $dateString = 'for date(s)';
+        if ($request->input('from') == $request->input('to'))
+            $dateString .= date('Y-m-d', strtotime($request->input('from')));
+        else
+            $dateString .= date('Y-m-d', strtotime($request->input('from'))) . ' to ' . date('Y-m-d', strtotime($request->input('to')));
+            
+        $column = "samples_view.patient, samples_view.batch_id, facilitys.name as facility, facilitys.facilitycode, pcrtype.alias as pcrtype, samples_view.datecollected, samples_view.created_at, samples_view.entered_by, samples_view.datedispatchedfromfacility, samples_view.datereceived, rec.surname as receiver";
+        $data = SampleView::selectRaw($column)
+                        ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
+                        ->leftJoin('pcrtype', 'pcrtype.id', '=', 'samples_view.pcrtype')
+                        ->leftJoin('users as rec', 'rec.id', '=', "samples_view.received_by")
+                        ->where('samples_view.facility_id', '=', $request->input('facility_id'))
+                        ->where('samples_view.site_entry', '=', 1)
+                        ->when(true, function($query) use ($request) {
+                            if ($request->input('from') == $request->input('to'))
+                                return $query->whereRaw("date(`samples_view`.`created_at`) = " . date('Y-m-d', strtotime($request->input('from'))));
+                            else
+                                return $query->whereRaw("date(`samples_view`.`created_at`) BETWEEN " . date('Y-m-d', strtotime($request->input('from'))) . " AND " . date('Y-m-d', strtotime($request->input('to'))));
+                        })->get();
+        $export['samples'] = $data;
+        $export['testtype'] = 'EID';
+        $export['lab'] = \App\Lab::find(env('APP_LAB'));
+        $export['period'] = strtoupper($dateString);
+        $filename = strtoupper("HIV EID MANIFEST " . $dateString) . ".pdf";
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
 
     public function site_entry_approval(Batch $batch)
     {
@@ -606,7 +662,7 @@ class BatchController extends Controller
 
             $sample->spots = $spots_array[$key] ?? 5;
             $sample->labcomment = $request->input('labcomment');
-            $sample->sample_received_by = $request->input('received_by');
+            // $sample->sample_received_by = $request->input('received_by');
 
             if($submit_type == "accepted"){
                 $sample->receivedstatus = 1;
@@ -617,8 +673,8 @@ class BatchController extends Controller
             $sample->save();
         }
         // $batch->received_by = auth()->user()->id;
-        $batch->received_by = $request->input('received_by');
-        $batch->datereceived = $request->input('datereceived');
+        // $batch->received_by = $request->input('received_by');
+        // $batch->datereceived = $request->input('datereceived');
         $batch->save();
         Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);

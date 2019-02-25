@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Facility;
 use App\Viralbatch;
 use App\Viralsample;
+use App\ViralsampleView;
 use App\MiscViral;
 use App\Lookup;
 use App\DashboardCacher as Refresh;
@@ -639,6 +640,62 @@ class ViralbatchController extends Controller
 
         return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral', 'datatable'=>true]);
         // return view('tables.batches', ['batches' => $batches, 'site_approval' => true, 'pre' => 'viral']);
+    }
+
+    public function sample_manifest(Request $request) {
+        if ($request->method() == 'POST') {
+            $batches = Viralbatch::where('facility_id', '=', $request->input('facility_id'))
+                            ->where('site_entry', '=', 1)
+                            ->when(true, function($query) use ($request) {
+                                if ($request->input('from') == $request->input('to'))
+                                    return $query->whereRaw("date(`created_at`) = " . date('Y-m-d', strtotime($request->input('from'))));
+                                else
+                                    return $query->whereRaw("date(`created_at`) BETWEEN " . date('Y-m-d', strtotime($request->input('from'))) . " AND " . date('Y-m-d', strtotime($request->input('to'))));
+                            })->get();
+            foreach ($batches as $batch) {
+                $batch->received_by = auth()->user()->id;
+                $batch->datereceived = date('Y-m-d');
+                $batch->pre_update();
+                foreach ($batch->samples as $sample) {
+                    $sample->sample_received_by = auth()->user()->id;
+                    $sample->pre_update();
+                }
+            }
+            $this->generate_sampleManifest($request);
+            return back();
+        }else 
+            return view('forms.sample_manifest_form')->with('pageTitle', 'Generate Sample Manifest');
+    }
+
+    protected function generate_sampleManifest($request) {
+        $dateString = 'for date(s)';
+        if ($request->input('from') == $request->input('to'))
+            $dateString .= date('Y-m-d', strtotime($request->input('from')));
+        else
+            $dateString .= date('Y-m-d', strtotime($request->input('from'))) . ' to ' . date('Y-m-d', strtotime($request->input('to')));
+            
+        $column = "viralsamples_view.patient, viralsamples_view.batch_id, facilitys.name as facility, facilitys.facilitycode, viralsampletype.name as sampletype, viralsamples_view.datecollected, viralsamples_view.created_at, viralsamples_view.entered_by, viralsamples_view.datedispatchedfromfacility, viralsamples_view.datereceived, rec.surname as receiver";
+        $data = ViralsampleView::selectRaw($column)
+                        ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
+                        ->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
+                        ->leftJoin('users as rec', 'rec.id', '=', "viralsamples_view.received_by")
+                        ->where('viralsamples_view.facility_id', '=', $request->input('facility_id'))
+                        ->where('viralsamples_view.site_entry', '=', 1)
+                        ->when(true, function($query) use ($request) {
+                            if ($request->input('from') == $request->input('to'))
+                                return $query->whereRaw("date(`viralsamples_view`.`created_at`) = " . date('Y-m-d', strtotime($request->input('from'))));
+                            else
+                                return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN " . date('Y-m-d', strtotime($request->input('from'))) . " AND " . date('Y-m-d', strtotime($request->input('to'))));
+                        })->get();
+        $export['samples'] = $data;
+        $export['testtype'] = 'VL';
+        $export['lab'] = \App\Lab::find(env('APP_LAB'));
+        $export['period'] = strtoupper($dateString);
+        $filename = strtoupper("HIV VL MANIFEST " . $dateString) . ".pdf";
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
     }
 
     public function site_entry_approval(Viralbatch $batch)
