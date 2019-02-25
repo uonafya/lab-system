@@ -4,8 +4,16 @@
     @endcomponent
 
 @section('content')
+
  
 <div class="content">
+
+    <div class="row">
+        @foreach($dr_sample_statuses as $dr_sample_status)
+            <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} </a>
+        @endforeach
+    </div>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
