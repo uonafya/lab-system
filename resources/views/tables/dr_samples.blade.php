@@ -229,7 +229,7 @@
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
 
-                                            @if(in_array($sample, [1, 2, 3]))
+                                            @if(in_array($sample->status_id, [1, 2, 3]))
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
                                             @endif
