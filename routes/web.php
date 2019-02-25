@@ -102,6 +102,9 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('transfer/{batch}', 'BatchController@transfer')->name('get.transfer');
 			Route::post('transfer/{batch}', 'BatchController@transfer_to_new_batch')->name('post.transfer');
+
+			Route::get('sample_manifest', 'BatchController@sample_manifest')->name('sample_manifest');
+			Route::post('sample_manifest', 'BatchController@sample_manifest')->name('post.sample_manifest');
 		});
 
 		Route::get('summary/{batch}', 'BatchController@summary');
@@ -178,6 +181,9 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('transfer/{viralbatch}', 'ViralbatchController@transfer')->name('get.transfer');
 			Route::post('transfer/{batch}', 'ViralbatchController@transfer_to_new_batch')->name('post.transfer');
+
+			Route::get('sample_manifest', 'ViralbatchController@sample_manifest')->name('sample_manifest');
+			Route::post('sample_manifest', 'ViralbatchController@sample_manifest')->name('post.sample_manifest');
 		});
 		
 		Route::get('summary/{batch}', 'ViralbatchController@summary');
@@ -344,6 +350,11 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('transfer/{sample}', 'SampleController@transfer');	
 		});
 
+		Route::group(['middleware' => ['only_utype:2']], function () {	
+			Route::get('transfer_samples/{facility_id?}', 'SampleController@transfer_samples_form');	
+			Route::post('transfer_samples', 'SampleController@transfer_samples');	
+		});
+
 		Route::get('upload', 'SampleController@site_sample_page');
 		Route::post('upload', 'SampleController@upload_site_samples');
 
@@ -392,6 +403,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::group(['middleware' => ['utype:4']], function () {
 			Route::get('runs/{sample}', 'ViralsampleController@runs');		
 			Route::get('transfer/{sample}', 'ViralsampleController@transfer');		
+		});
+
+		Route::group(['middleware' => ['only_utype:2']], function () {	
+			Route::get('transfer_samples/{facility_id?}', 'ViralsampleController@transfer_samples_form');	
+			Route::post('transfer_samples', 'ViralsampleController@transfer_samples');	
 		});
 
 		Route::get('create_poc', 'ViralsampleController@create_poc');

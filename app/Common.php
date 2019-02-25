@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
 
+use App\Synch;
+
 class Common
 {
 	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
@@ -469,6 +471,19 @@ class Common
 			$s->pre_update();
 		}
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	public static function no_data_report($type)
 	{

@@ -1010,6 +1010,42 @@ class ViralsampleController extends Controller
         return redirect('/viralbatch');        
     }
 
+
+    public function transfer_samples_form($facility_id=null)
+    {
+        $samples = ViralsampleView::whereNull('receivedstatus')
+                    ->where('site_entry', '!=', 2)
+                    ->when($facility_id, function($query) use($facility_id){
+                        return $query->where('facility_id', $facility_id);
+                    })
+                    ->whereNull('datetested')
+                    ->where(['repeatt' => 0])
+                    ->where('created_at', '>', date('Y-m-d', strtotime("-3 months")))
+                    ->paginate(25);
+
+        $samples->setPath(url()->current());
+
+        if($facility_id) $facility = \App\Facility::find($facility_id);
+
+        $data = [
+            'samples' => $samples,
+            'labs' => \App\Lab::all(),
+            'facility' => $facility ?? null,
+            'pre' => 'viral',
+        ];
+
+        return view('forms.transfer_samples', $data);
+    }
+
+    public function transfer_samples(Request $request)
+    {
+        $samples = $request->input('samples');
+        $lab = $request->input('lab');
+        // dd($samples);
+        \App\Synch::transfer_sample('vl', $lab, $samples);
+        return back();
+    }
+
     public function search(Request $request)
     {
         $user = auth()->user();
@@ -1076,8 +1112,10 @@ class ViralsampleController extends Controller
             $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
             // dd($data);
             foreach ($data as $key => $sample) {
-                // $sample = (array)$sample;
+                // dd($sample);
+                // $sample = collect($sample)->flatten(1)->toArray();
                 // dd($sample[3]);
+                // $sample = (array)$sample;
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->first();
                 $sample[19] = $dbsample->rejectedreason ?? null;
                 $sample[20] = $dbsample->reason_for_repeat ?? null;
