@@ -109,11 +109,18 @@ class ViralsampleController extends Controller
                 continue;
             }
 
+            $user = $new_sample->batch->user ?? null;
+            $user_id = 20000;
+            if($new_sample->batch->site_entry && $user){
+                $user_id = \App\User::where('facility_id', $user->facility_id)->first()->id ?? 20000;
+            }
+            unset($new_sample->batch->user); 
+
             $b = new Viralbatch;
             $b->fill(get_object_vars($new_sample->batch));
-            $b->user_id = 20000;
+            $b->user_id = $user_id;
             unset($b->id);
-            $b->pre_update();
+            // $b->pre_update();
             unset($new_sample->batch);
 
             $new_patient = false;
@@ -124,7 +131,7 @@ class ViralsampleController extends Controller
             }
             $p->fill(get_object_vars($new_sample->patient));
             if($new_patient) unset($p->id);
-            $p->pre_update();
+            // $p->pre_update();
             unset($new_sample->patient);
 
             $s = new Viralsample;
@@ -132,7 +139,7 @@ class ViralsampleController extends Controller
             $s->batch_id = $b->id;
             $s->patient_id = $p->id;
             unset($s->id);
-            $s->pre_update();
+            // $s->pre_update();
 
             $patients[] = $p;
             $batches[] = $b;
