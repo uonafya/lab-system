@@ -19,6 +19,51 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-md-4"> 
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Select Date</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" id="filter_date" required class="form-control">
+                    </div>
+                </div> 
+
+                <div class="col-sm-2">                
+                    <button class="btn btn-primary" id="submit_date">Filter</button>  
+                </div>                         
+            </div> 
+        </div>
+
+        <div class="col-md-8"> 
+            <div class="form-group">
+
+                <label class="col-sm-1 control-label">From:</label>
+                <div class="col-sm-4">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" id="from_date" required class="form-control">
+                    </div>
+                </div> 
+
+                <label class="col-sm-1 control-label">To:</label>
+                <div class="col-sm-4">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" id="to_date" required class="form-control">
+                    </div>
+                </div> 
+
+                <div class="col-sm-2">                
+                    <button class="btn btn-primary" id="date_range">Filter</button>  
+                </div>                         
+            </div> 
+
+        </div>
+    </div>
+
+    <br />
     <br />
 
     {{ Form::open(['url' => 'dr_sample/index', 'method' => 'post', 'class' => 'my_form']) }}
@@ -90,53 +135,6 @@
                 </div> 
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Select Date</label>
-                    <div class="col-sm-8">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="filter_date" required class="form-control">
-                        </div>
-                    </div> 
-
-                    <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="submit_date">Filter</button>  
-                    </div>                         
-                </div> 
-            </div>
-
-            <div class="col-md-8"> 
-                <div class="form-group">
-
-                    <label class="col-sm-1 control-label">From:</label>
-                    <div class="col-sm-4">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="from_date" required class="form-control">
-                        </div>
-                    </div> 
-
-                    <label class="col-sm-1 control-label">To:</label>
-                    <div class="col-sm-4">
-                        <div class="input-group date">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="to_date" required class="form-control">
-                        </div>
-                    </div> 
-
-                    <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="date_range">Filter</button>  
-                    </div>                         
-                </div> 
-
-            </div>
-        </div>
-
-        <br />
-        <br />
 
 
         <div class="row">
