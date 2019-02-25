@@ -29,11 +29,13 @@ class DrSampleController extends Controller
     {
         $user = auth()->user();
         $date_column = "datereceived";
-        $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
+        if(in_array($sample_status, [1, 6])) $date_column = "datedispatched";
+        // $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::with(['patient.facility'])
-            ->where(['control' => 0])
+            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->where(['control' => 0, 'repeatt' => 0])
             ->when(true, function($query) use ($user, $string){
                 if($user->user_type_id == 5) return $query->whereRaw($string);
             })
@@ -48,12 +50,46 @@ class DrSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
             ->paginate();
 
         $data['dr_samples']->setPath(url()->current());
         $data['myurl'] = url('dr_sample/index/' . $sample_status);
         $data['myurl2'] = url('dr_sample/index/');
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
+    }
+
+    public function sample_search(Request $request)
+    {
+        $sample_status = $request->input('sample_status', 1);
+        $submit_type = $request->input('submit_type');
+        $to_print = $request->input('to_print');
+        $date_start = $request->input('from_date', 0);
+        if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
+        $date_end = $request->input('to_date', 0);
+
+        if($date_start == '') $date_start = 0;
+        if($date_end == '') $date_end = 0;
+
+        $partner_id = $request->input('partner_id', 0);
+        $subcounty_id = $request->input('subcounty_id', 0);
+        $facility_id = $request->input('facility_id', 0);
+
+        if($partner_id == '') $partner_id = 0;
+        if($subcounty_id == '') $subcounty_id = 0;
+        if($facility_id == '') $facility_id = 0;
+
+        if($submit_type == 'excel') return $this->susceptability($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+
+        return redirect("dr_sample/index/{$sample_status}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**
@@ -229,11 +265,33 @@ class DrSampleController extends Controller
     }
 
 
-    public function susceptability()
+    public function susceptability($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $call_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
-        $samples = DrSample::where(['status_id' => 1, 'control' => 0])->with(['dr_call.call_drug', 'patient'])->get();
+        $date_column = "datedispatched";
+
+        $samples = DrSample::where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
+            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->with(['dr_call.call_drug', 'patient'])
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
+            ->get();
 
         $top = ['', 'Drug Classes', ];
         $second = ['Sequence ID', 'Original Sample ID', ];
