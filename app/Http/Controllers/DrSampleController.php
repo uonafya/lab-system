@@ -30,14 +30,14 @@ class DrSampleController extends Controller
         $user = auth()->user();
         $date_column = "datereceived";
         if(in_array($sample_status, [1, 6])) $date_column = "datedispatched";
-        // $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::with(['patient.facility'])
             ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->where(['control' => 0, 'repeatt' => 0])
-            ->when(true, function($query) use ($user, $string){
-                if($user->user_type_id == 5) return $query->whereRaw($string);
+            ->when(($user->user_type_id == 5), function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
                 return $query->where('status_id', $sample_status);
@@ -270,10 +270,14 @@ class DrSampleController extends Controller
         $call_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
         $date_column = "datedispatched";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $samples = DrSample::where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
             ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->with(['dr_call.call_drug', 'patient'])
+            ->when(($user->user_type_id == 5), function($query) use ($string){
+                return $query->whereRaw($string);
+            })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
