@@ -76,6 +76,7 @@
                                         <th id="check_all">Check</th>
 
                                         <th>Lab ID</th>
+                                        <th>Batch ID</th>
                                         <th>Patient ID</th>
                                         <th>Facility</th>
                                         <th>Entered By</th>
@@ -84,6 +85,7 @@
                                         <th>DOB</th>
                                         <th>Age</th>
                                         <th>Date Collected</th>
+                                        <th>Date Entered</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
@@ -97,6 +99,7 @@
                                             </td>
 
                                             <td> {{ $sample->id }} </td>
+                                            <td> {!! $sample->get_link('batch_id') !!} </td>
                                             <td> {!! $sample->get_link('patient_id') !!} </td>
                                             <td> {{ $sample->facilitycode . ' ' . $sample->facilityname }} </td>
                                             @if($sample->site_entry)
@@ -110,6 +113,7 @@
                                             <td> {{ $sample->my_date_format('dob') }} </td>
                                             <td> {{ $sample->age }} </td>
                                             <td> {{ $sample->my_date_format('datecollected') }} </td>
+                                            <td> {{ $sample->my_date_format('created_at') }} </td>
 
                                         </tr>
                                     @endforeach

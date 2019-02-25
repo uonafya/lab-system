@@ -44,34 +44,35 @@
 			<td colspan="13" align="center">
 				{{-- <img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
 				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">--}}
-				HIV {{ strtoupper($testtype) }} SAMPLE MANIFEST
+				HIV {{ strtoupper($testtype) }} SAMPLE MANIFEST {{ $period }}
 			</td>
 		</tr>		
 		<tr>
 			<td colspan="4" align="center">Receiving Lab:</td>
-			<td colspan="6" align="center">{{ $lab->name ?? ''  }}</td>
-			<td colspan="3" align="center"></td>
+			<td colspan="3" align="center">{{ $lab->name ?? ''  }}</td>
+			<td colspan="3" align="center">Date Dispatched From Facility</td>
+			<td colspan="3" align="center">{{ $samples->first()->datedispatchedfromfacility ?? '' }}</td>
 		</tr>
 		<tr>
-			<td colspan="4" align="center">Facility Name:</td>
-			<td colspan="3" align="center">{{ session('logged_facility')->name ?? ''  }}</td>
+			<td colspan="4" align="center">Hub / Facility Name:</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->name ?? $samples->first()->facility ?? ''  }}</td>
 			<td colspan="3" align="center">MFL Code:</td>
-			<td colspan="3" align="center">{{ session('logged_facility')->facilitycode ?? ''  }}</td>
+			<td colspan="3" align="center">{{ session('logged_facility')->facilitycode ?? $samples->first()->facilitycode ?? ''  }}</td>
 		</tr>
 	</table>
 	<br />
 	<table class="table" border="0" style="border: 0px;width: 100%;">
 		<thead>
 			<tr>
-				<th>Lab ID</th>
+				{{-- <th>Lab ID</th> --}}
 				<th>HEI # / Patient CCC #</th>
 				<th>Batch #</th>
-				<th>County</th>
+				{{-- <th>County</th> --}}
 				{{-- <th>Sub-County</th> --}}
 				<th>Facility Name</th>
 				<th>Facility Code</th>
-				<th>Gender</th>
-				<th>DOB</th>
+				{{-- <th>Gender</th>
+				<th>DOB</th> --}}
 				<th>
 				@if(strtoupper($testtype) == 'EID')
 					PCR Type
@@ -79,35 +80,35 @@
 					Sample Type
 				@endif
 				</th>
-				<th>
+				{{-- <th>
 				@if(strtoupper($testtype) == 'EID')
 					Spots
 				@else
 					Justification
 				@endif
-				</th>
+				</th> --}}
 				<th>Date Collected</th>
 				<th>Date Entered</th>
 				<th>Entered By</th>
-				<th>Date Dispatched from Facility</th>
+				{{-- <th>Date Dispatched from Facility</th>
 				<th>Date Received</th>
 				<th>Received By</th>
-				<th>Received Status</th>
+				<th>Received Status</th> --}}
 				{{-- <th>Date Tested</th> --}}
 			</tr>
 		</thead>
 		<tbody>
 		@foreach($samples as $sample)
 			<tr>
-				<td>{{ $sample->id }}</td>
+				{{-- <td>{{ $sample->id }}</td> --}}
 				<td>{{ $sample->patient }}</td>
 				<td>{{ $sample->batch_id }}</td>
-				<td>{{ $sample->county }}</td>
+				{{-- <td>{{ $sample->county }}</td> --}}
 				{{-- <td>{{ $sample->subcounty }}</td> --}}
 				<td>{{ $sample->facility }}</td>
 				<td>{{ $sample->facilitycode }}</td>
-				<td>{{ $sample->gender_description }}</td>
-				<td>{{ $sample->dob }}</td>
+				{{-- <td>{{ $sample->gender_description }}</td>
+				<td>{{ $sample->dob }}</td> --}}
 				<td>
 				@if(strtoupper($testtype) == 'EID')
 					{{ $sample->pcrtype }}
@@ -115,20 +116,20 @@
 					{{ $sample->sampletype }}
 				@endif
 				</td>
-				<td>
+				{{-- <td>
 				@if(strtoupper($testtype) == 'EID')
 					{{ $sample->spots }}
 				@else
 					{{ $sample->justification }}
 				@endif
-				</td>
+				</td> --}}
 				<td>{{ $sample->datecollected }}</td>
 				<td>{{ date('Y-m-d', strtotime($sample->created_at)) }}</td>
 				<td>{{ $sample->entered_by }}</td>
-				<td>{{ $sample->datedispatchedfromfacility }}</td>
+				{{-- <td>{{ $sample->datedispatchedfromfacility }}</td>
 				<td>{{ $sample->datereceived }}</td>
 				<td>{{ $sample->receiver }}</td>
-				<td>{{ $sample->receivedstatus }}</td>
+				<td>{{ $sample->receivedstatus }}</td> --}}
 				{{-- <td>{{ $sample->datetested }}</td> --}}
 			</tr>
 		@endforeach
@@ -152,7 +153,7 @@
 			<td align="center">Receiving Officer:</td>
 			<td align="center" style="width: 20%;"></td>
 			<td align="center" style="width: 20%;"></td>
-			<td align="center" style="width: 20%;"></td>
+			<td align="center" style="width: 20%;">{{ $sample->datereceived ?? '' }}</td>
 		</tr>
 	</table>
 </body>
