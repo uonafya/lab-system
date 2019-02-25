@@ -25,9 +25,10 @@ class DrSampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($sample_status=null)
+    public function index($sample_status=null, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $user = auth()->user();
+        $date_column = "datereceived";
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
@@ -38,6 +39,14 @@ class DrSampleController extends Controller
             })
             ->when($sample_status, function($query) use ($sample_status){
                 return $query->where('status_id', $sample_status);
+            })
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
             })
             ->paginate();
 
