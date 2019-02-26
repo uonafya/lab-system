@@ -96,8 +96,9 @@ class SampleController extends Controller
         $batch = session('batch');
 
         if($submit_type == "cancel"){
-            $batch->premature();
+            if($batch) $batch->premature();
             $this->clear_session();
+            if(!$batch) return back();
             session(['toast_message' => "The batch {$batch->id} has been released."]);
             return redirect("batch/{$batch->id}");
         }   
