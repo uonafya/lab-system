@@ -107,7 +107,7 @@
                             </button>
                         </div>
                     </div>
-                        @if(in_array(env('APP_LAB') [1, 7]))
+                        @if(in_array(env('APP_LAB'), [1, 7]))
                             @if(Auth()->user()->user_type_id < 2)
                             <div class="col-md-1">
                                 <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
