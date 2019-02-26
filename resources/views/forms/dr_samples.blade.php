@@ -160,7 +160,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control requirable" required name="clinical_indications" id="clinical_indications">
+                                <select class="form-control requirable" required name="sample_type" id="sample_type">
                                     <option value=""> Select One </option>
                                     @foreach ($dr_sample_types as $sample_type)
                                         <option value="{{ $sample_type->id }}"
