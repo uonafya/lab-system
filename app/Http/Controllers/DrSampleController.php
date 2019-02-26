@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\DrSample;
+use App\DrSampleView;
 use App\DrPatient;
+use App\Viralpatient;
 use App\User;
 use App\Lookup;
 use App\MiscDr;
@@ -141,13 +143,38 @@ class DrSampleController extends Controller
      */
     public function store(Request $request)
     {
-        $drSample = new DrSample;
         if($request->input('submit_type') == 'cancel') return back();
         $viralsamples_arrays = Lookup::viralsamples_arrays();
+
+        $data_existing = $request->only(['facility_id', 'patient', 'datecollected']);
+        $existing = DrSampleView::existing( $data_existing )->first();
+
+        if($existing && !$request->input('reentry')){
+            session(['toast_error' => 1, 'toast_message' => "The sample already exists and has therefore not been saved again."]);
+            return back();            
+        }
+
+        if(env('APP_LAB') == 7){
+            $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$viralpatient) $viralpatient = new Viralpatient;
+
+            $data = $request->only($viralsamples_arrays['patient']);
+            if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+            $viralpatient->fill($data);
+            $viralpatient->save();
+        }
+
+        $drSample = new DrSample;
         $data = $request->only($viralsamples_arrays['dr_sample']);
         $data['user_id'] = auth()->user()->id;
         if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) $data['received_by'] = auth()->user()->id;
         $drSample->fill($data);
+
+        if(env('APP_LAB') == 7) $drSample->patient_id = $viralpatient->id;
+
+        if(!$viralpatient) $viralpatient = $drSample->patient;
+
+        $drSample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
 
         $others = $request->input('other_medications_text');
         $other_medications = $request->input('other_medications');
@@ -198,6 +225,17 @@ class DrSampleController extends Controller
     {
         if($request->input('submit_type') == 'cancel') return redirect('/dr_sample');
         $viralsamples_arrays = Lookup::viralsamples_arrays();
+
+        $viralpatient = $drSample->patient;
+
+        if(env('APP_LAB') == 7){
+            $data = $request->only($viralsamples_arrays['patient']);
+            if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+            $viralpatient->fill($data);
+            $viralpatient->save();
+        }
+
+
         $data = $request->only($viralsamples_arrays['dr_sample']);
 
         if((auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) && !$drSample->received_by){
