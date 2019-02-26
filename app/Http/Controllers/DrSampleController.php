@@ -35,7 +35,8 @@ class DrSampleController extends Controller
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
-        $data['dr_samples'] = DrSample::with(['patient.facility'])
+        $data['dr_samples'] = DrSample::select(['dr_samples.*'])
+            ->with(['patient.facility'])
             ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->where(['control' => 0, 'repeatt' => 0])
             ->when(($user->user_type_id == 5), function($query) use ($string){
@@ -312,7 +313,8 @@ class DrSampleController extends Controller
         $user = auth()->user();
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
-        $samples = DrSample::where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
+        $samples = DrSample::select('dr.samples.*')
+            ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
             ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->with(['dr_call.call_drug', 'patient'])
             ->when(($user->user_type_id == 5), function($query) use ($string){
@@ -379,7 +381,7 @@ class DrSampleController extends Controller
             $rows[] = $row;
         }
 
-        dd($rows);
+        // dd($rows);
         dd($call_array);
 
         Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
