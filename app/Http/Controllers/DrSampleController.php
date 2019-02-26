@@ -313,7 +313,7 @@ class DrSampleController extends Controller
         $user = auth()->user();
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
-        $samples = DrSample::select('dr.samples.*')
+        $samples = DrSample::select('dr_samples.*')
             ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
             ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->with(['dr_call.call_drug', 'patient'])
