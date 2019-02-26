@@ -386,6 +386,8 @@ class ViralworksheetController extends Controller
         if($worksheet->machine_type == 2)
         {
             $datetested = $today;
+            $date_tested = $request->input('daterun');
+            if(strtotime($date_tested) > strtotime($worksheet->created_at)) $datetested = $date_tested;
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
