@@ -184,7 +184,6 @@
             <script src="{{ asset('js/jasny/jasny-bootstrap.min.js') }}"></script>
             <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
         @endslot
-    @endcomponent
 
         $(".date").datepicker({
             startView: 0,
@@ -196,6 +195,8 @@
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
+        
+    @endcomponent
 
 
 @endsection
