@@ -675,11 +675,8 @@ class BatchController extends Controller
             $sample->save();
         }
         // $batch->received_by = auth()->user()->id;
-        if ($sample->received_by == NULL) {
-            $batch->received_by = $request->input('received_by');
-            $batch->datereceived = $request->input('datereceived');
-        }
-        
+        // $batch->received_by = $request->input('received_by');
+        // $batch->datereceived = $request->input('datereceived');
         $batch->save();
         Refresh::refresh_cache();
         session(['toast_message' => 'The selected samples have been ' . $submit_type]);
