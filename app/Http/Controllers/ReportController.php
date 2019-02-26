@@ -627,7 +627,8 @@ class ReportController extends Controller
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
-                $model = $model->where('site_entry', '=', 1)->where("$table.facility_id", '=', auth()->user()->facility_id)->whereNull('received_by');
+                $model = $model->where('site_entry', '=', 1)->where("$table.user_id", "=", auth()->user()->facility_id)
+                            ->whereNull('received_by')->orderBy('created_at', 'asc');
             else
                 $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
