@@ -168,19 +168,19 @@ class ReportController extends Controller
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             if ($request->input('types') == 'manifest'){
-                // $batches = $data->unique('batch_id')->pluck('batch_id');
-                // if ($request->input('testtype') == 'EID')
-                //     $model = Batch::class;
-                // else
-                //     $model = Viralbatch::class;
-                // $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
-                // foreach($dbbatches as $batch) {
-                //     $datedispatched = date('Y-m-d');
-                //     if (null !== $batch->datereceived && $batch->datereceived < $datedispatched)
-                //         $datedispatched = $batch->created_at;
-                //     $batch->datedispatchedfromfacility = $datedispatched;
-                //     $batch->pre_update();
-                // }
+                $batches = $data->unique('batch_id')->pluck('batch_id');
+                if ($request->input('testtype') == 'EID')
+                    $model = Batch::class;
+                else
+                    $model = Viralbatch::class;
+                $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
+                foreach($dbbatches as $batch) {
+                    $datedispatched = date('Y-m-d');
+                    if (null !== $batch->datereceived && $batch->datereceived < $datedispatched)
+                        $datedispatched = $batch->created_at;
+                    $batch->datedispatchedfromfacility = $datedispatched;
+                    $batch->pre_update();
+                }
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
@@ -307,7 +307,7 @@ class ReportController extends Controller
                                 if ($request->input('fromDate') == $request->input('toDate'))
                                     return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
                                 else
-                                    return $query->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+                                    return $query->whereRaw("date($table.$column) BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
                             });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
