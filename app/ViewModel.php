@@ -94,9 +94,11 @@ class ViewModel extends Model
 
         $pre = '';
         if(str_contains($c, 'viral')) $pre = 'viral';
+        if(str_contains($c, 'dr')) $pre = 'dr_';
         $user = auth()->user();
 
-        if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
+        if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
+        else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
         else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);

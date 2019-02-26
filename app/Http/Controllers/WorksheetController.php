@@ -387,14 +387,15 @@ class WorksheetController extends Controller
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
-        $today = $dateoftest = date("Y-m-d");
+        $today = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
         $sample_array = $doubles = [];
 
         if($worksheet->machine_type == 2)
         {
-            $dateoftest = $today;
+            $date_tested = $request->input('daterun');
+            if(strtotime($date_tested) > strtotime($worksheet->created_at)) $datetested = $date_tested;
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -449,7 +450,7 @@ class WorksheetController extends Controller
 
                 $error = $data[10];
 
-                $dateoftest=date("Y-m-d", strtotime($data[3]));
+                $datetested=date("Y-m-d", strtotime($data[3]));
 
                 $data_array = Misc::sample_result($interpretation, $error);
 
@@ -457,7 +458,7 @@ class WorksheetController extends Controller
 
                 if($control == "LPC" || $control == "PC") $positive_control = $data_array;
 
-                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $dateoftest]);
+                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
 
                 $sample_id = (int) trim($data[4]);  
 
@@ -495,7 +496,7 @@ class WorksheetController extends Controller
 
         $worksheet->pos_control_interpretation = $positive_control['interpretation'];
         $worksheet->pos_control_result = $positive_control['result'];
-        $worksheet->daterun = $dateoftest;
+        $worksheet->daterun = $datetested;
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
