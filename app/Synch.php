@@ -36,7 +36,7 @@ class Synch
 			'patient_class' => Patient::class,
 			'view_table' => 'samples_view',
 			'worksheets_table' => 'worksheets',
-			'with_array' => ['batch', 'patient.mother'],
+			'with_array' => ['batch.creator', 'patient.mother'],
 		],
 
 		'vl' => [
@@ -48,7 +48,7 @@ class Synch
 			'patient_class' => Viralpatient::class,
 			'view_table' => 'viralsamples_view',
 			'worksheets_table' => 'viralworksheets',
-			'with_array' => ['batch', 'patient'],
+			'with_array' => ['batch.creator', 'patient'],
 		],
 	];
 
