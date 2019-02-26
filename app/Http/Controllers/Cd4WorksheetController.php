@@ -328,7 +328,7 @@ class Cd4WorksheetController extends Controller
 
     public function get_samples_for_run($limit){
         return Cd4Sample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->where('status_id', '=', 1)
-                                    ->orderBy('datereceived', 'asc')->orderBy('parentid', 'asc')->orderBy('id', 'asc')
+                                    ->orderBy('datereceived', 'asc')->orderBy('parentid', 'desc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
     }
 
