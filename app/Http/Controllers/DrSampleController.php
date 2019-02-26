@@ -309,6 +309,7 @@ class DrSampleController extends Controller
         $call_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
         $date_column = "datedispatched";
+        $user = auth()->user();
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $samples = DrSample::where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
