@@ -229,8 +229,9 @@ class ViralsampleController extends Controller
         $batch = session('viral_batch');
 
         if($submit_type == "cancel"){
-            $batch->premature();
+            if($batch) $batch->premature();
             $this->clear_session();
+            if(!$batch) return back();
             session(['toast_message' => "The batch {$batch->id} has been released."]);
             return redirect("viralbatch/{$batch->id}");
         }
