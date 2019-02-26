@@ -379,6 +379,7 @@ class DrSampleController extends Controller
             $rows[] = $row;
         }
 
+        dd($rows);
         dd($call_array);
 
         Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
