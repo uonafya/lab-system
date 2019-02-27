@@ -229,8 +229,9 @@ class ViralsampleController extends Controller
         $batch = session('viral_batch');
 
         if($submit_type == "cancel"){
-            $batch->premature();
+            if($batch) $batch->premature();
             $this->clear_session();
+            if(!$batch) return back();
             session(['toast_message' => "The batch {$batch->id} has been released."]);
             return redirect("viralbatch/{$batch->id}");
         }
@@ -1112,7 +1113,8 @@ class ViralsampleController extends Controller
             $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
             // dd($data);
             foreach ($data as $key => $sample) {
-                $sample = collect($sample)->flatten(1)->toArray();
+                // dd($sample);
+                // $sample = collect($sample)->flatten(1)->toArray();
                 // dd($sample[3]);
                 // $sample = (array)$sample;
                 $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->last();
