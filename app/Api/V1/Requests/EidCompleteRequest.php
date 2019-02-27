@@ -16,7 +16,7 @@ class EidCompleteRequest extends BaseRequest
 
         $semi = array_merge($base, $eid);
         $val = array_merge($semi, $complete);
-        $val['pcrtype'] = array_merge($val['pcrtype'], 'required');
+        $val['pcrtype'] = array_merge($val['pcrtype'], ['required']);
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
         $val['datecollected'] = array_merge($val['datecollected'], [new BeforeOrEqual($this->input('datereceived'), 'datereceived')]);
         $val['datereceived'] = array_merge($val['datereceived'], [new BeforeOrEqual($this->input('datetested'), 'datetested')]);
