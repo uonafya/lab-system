@@ -16,6 +16,8 @@ use Excel;
 use Mpdf\Mpdf;
 use App\ViewFacility;
 use App\Lab;
+use App\Batch;
+use App\Viralbatch;
 
 class ReportController extends Controller
 {
@@ -144,6 +146,19 @@ class ReportController extends Controller
         return $model;
     }// This is in the working tree
 
+    protected function generate_samples_manifest($request, $data, $dateString) {
+        $export['samples'] = $data;
+        $export['testtype'] = $request->input('testtype');
+        $export['lab'] = Lab::find(env('APP_LAB'));
+        $export['period'] = strtoupper($dateString);
+        $filename = strtoupper("HIV MANIFEST " . $dateString) . ".pdf";
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_samples_manifest', $export)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
+
     public function generate(Request $request)
     {
         $dateString = '';
@@ -153,14 +168,20 @@ class ReportController extends Controller
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             if ($request->input('types') == 'manifest'){
-                $export['samples'] = $data;
-                $export['testtype'] = $request->input('testtype');
-                $export['lab'] = Lab::find(env('APP_LAB'));
-                $filename = strtoupper("HIV " . $dateString) . ".pdf";
-                $mpdf = new Mpdf();
-                $view_data = view('exports.mpdf_samples_manifest', $export)->render();
-                $mpdf->WriteHTML($view_data);
-                $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+                // $batches = $data->unique('batch_id')->pluck('batch_id');
+                // if ($request->input('testtype') == 'EID')
+                //     $model = Batch::class;
+                // else
+                //     $model = Viralbatch::class;
+                // $dbbatches = $model::whereIn('id', $batches)->whereNull('datedispatchedfromfacility')->get();
+                // foreach($dbbatches as $batch) {
+                //     $datedispatched = date('Y-m-d');
+                //     if (null !== $batch->datereceived && $batch->datereceived < $datedispatched)
+                //         $datedispatched = $batch->created_at;
+                //     $batch->datedispatchedfromfacility = $datedispatched;
+                //     $batch->pre_update();
+                // }
+                $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
         }else {
@@ -606,7 +627,7 @@ class ReportController extends Controller
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
-                $model = $model->where("$table.user_id", '=', auth()->user()->id);
+                $model = $model->where('site_entry', '=', 1)->where("$table.facility_id", '=', auth()->user()->facility_id);
             else
                 $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }

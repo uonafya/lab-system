@@ -35,7 +35,7 @@ class Synch
 			'patient_class' => Patient::class,
 			'view_table' => 'samples_view',
 			'worksheets_table' => 'worksheets',
-			'with_array' => ['batch', 'patient.mother'],
+			'with_array' => ['batch.creator', 'patient.mother'],
 		],
 
 		'vl' => [
@@ -47,7 +47,7 @@ class Synch
 			'patient_class' => Viralpatient::class,
 			'view_table' => 'viralsamples_view',
 			'worksheets_table' => 'viralworksheets',
-			'with_array' => ['batch', 'patient'],
+			'with_array' => ['batch.creator', 'patient'],
 		],
 	];
 
@@ -273,6 +273,75 @@ class Synch
 			}
 		}
 	}
+
+
+	public static function synch_batches_odd($type)
+	{
+        ini_set("memory_limit", "-1");
+		$classes = self::$synch_arrays[$type];
+
+		$misc_class = $classes['misc_class'];
+		$sample_class = $classes['sample_class'];
+		$sampleview_class = $classes['sampleview_class'];
+		$batch_class = $classes['batch_class'];
+
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+		$my = new $misc_class;
+		$my->save_tat($sampleview_class, $sample_class);
+
+		if($batch_class == "App\\Batch"){
+			$url = 'insert/batches';
+		}else{
+			$url = 'insert/viralbatches';
+		}
+
+		$batch_ids = $sampleview_class::selectRaw("distinct batch_id")->where(['synched' => 0, 'batch_complete' => 1])->where('batch_id', 'like', "%.5%")->get()->pluck('batch_id');
+
+		while (true) {
+			$batches = $batch_class::whereIn('id', $batch_ids)->limit(20)->get();
+			// dd($batches);
+			if($batches->isEmpty()) break;
+
+			foreach ($batches as $batch) {
+				foreach ($batch->sample as $sample) {
+					$p = $sample->patient;
+				}
+			}
+
+			$response = $client->request('post', $url, [
+				'http_errors' => false,
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'batches' => $batches->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+
+			$body = json_decode($response->getBody());
+
+			if($response->getStatusCode() > 399)
+			{
+				dd($body);
+			}
+
+			foreach ($body->batches as $key => $value) {
+				$update_data = ['national_batch_id' => $value->national_batch_id, 'synched' => 1, 'datesynched' => $today,];
+				$batch_class::where('id', $value->original_id)->update($update_data);
+			}
+
+			foreach ($body->samples as $key => $value) {
+				$update_data = ['national_sample_id' => $value->national_sample_id, 'synched' => 1, 'datesynched' => $today,];
+				$sample_class::where('id', $value->original_id)->update($update_data);
+			}
+		}
+	}
+
+
 
 	public static function synch_worksheets($type)
 	{
