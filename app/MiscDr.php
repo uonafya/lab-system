@@ -196,7 +196,8 @@ class MiscDr extends Common
 				'attributes' => [
 					'sample_name' => "{$sample->mid}",
 					'pathogen' => 'hiv',
-					'assay' => 'cdc-hiv',
+					'assay' => 'thermo_PR_RT',
+					// 'assay' => 'cdc-hiv',
 					'enforce_recall' => false,
 					'sample_type' => 'data',
 				],

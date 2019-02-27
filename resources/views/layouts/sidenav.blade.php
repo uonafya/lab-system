@@ -193,8 +193,10 @@
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
                 <hr />
-                <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
-                <hr />
+                @if(env('APP_LAB') != 7)
+                    <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
@@ -314,44 +316,43 @@
                 <hr />
             @endif
         --}}
-        @if(Session('testingSystem') != 'CD4')
-            @if (Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 0)
-                <li>
-                    <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
-                </li>
-                <hr />
-            @endif
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 7]))
+            <li>
+                <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
+            </li>
+            <hr />
+        @endif
             
-            <!-- Admin Side Bar -->
-            @if (Auth::user()->user_type_id == 2 || Auth::user()->user_type_id == 0)
+        <!-- Admin Side Bar -->
+        @if (in_array(Auth::user()->user_type_id, [0, 2]))
+            <li>
+                <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('users/activity') }}"><span class="nav-label">Users Activity</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
+            </li>
+            <hr />
+            @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
                 <li>
-                    <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
+                    <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('users/activity') }}"><span class="nav-label">Users Activity</span></a>
+                    <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
                 </li>
                 <hr />
-                <li>
-                    <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
-                </li>
-                <hr />
-                @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
-                    <li>
-                        <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
-                    </li>
-                    <hr />
-                    <li>
-                        <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
-                    </li>
-                    <hr />
-                @endif
             @endif
         @endif
+
         @if(Session('testingSystem') == 'CD4')
             <li>
                 <a href="{{ url('cd4/sample/create') }}"><span class="nav-label">Add Sample</span></a>
@@ -413,7 +414,7 @@
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
+        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR']) || in_array(Auth::user()->user_type_id, [5, 8]) ))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)
@@ -425,7 +426,7 @@
             </li>
             <hr />
         @endif
-        @if(Session('testingSystem') != 'CD4' && Auth::user()->user_type_id == 0)
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && Auth::user()->user_type_id == 0)
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <hr />
         @endif
