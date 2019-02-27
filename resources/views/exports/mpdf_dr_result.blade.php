@@ -6,7 +6,7 @@
 	<style type="text/css">
 		table, th, td {
 			padding: 6px;
-			font-size: 8px;
+			font-size: 10px;
 		}
 
 	</style>
@@ -30,7 +30,6 @@
 
 			<h2>HIV-1 Drug Resistance Genotype Report</h2>
 			<br />
-			<br />
 		</div>
 
 		<div class="row">
@@ -53,7 +52,6 @@
 			</table>			
 		</div>
 
-		<br />
 		<br />
 
 		<div class="row">
@@ -95,9 +93,8 @@
 
 						@endforeach
 				</table>
-				<br />
 
-				 <div class="hr-line-dashed"></div>
+				<br />
 
 				<h4><b> Notes on Susceptability </b> </h4>
 
@@ -128,6 +125,11 @@
 						<td>Inconclusive.</td>
 					</tr>							
 				</table>
+
+				<p>
+					* Assessment of drug susceptability is based upon detected mutations and interpreted using the Stanford Genotypic Resistance Interpretation Algorithm <br />
+					* The protease inhibitor (PI) interpretations estimate the expected virological response to standard doses of protease inhibitors with pharmacokinetic boosting by ritonavir. Boosted PIs are more active in the presence of resistance than non-boosted PIs.
+				</p>
 
 			@endif
 			
