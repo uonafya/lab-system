@@ -10,7 +10,7 @@
 	<div class="container">
 
 		<div class="row" style="text-align: center;">
-			@if(env('APP_LAB') == 7 || env('APP_LAB') == 1)
+			@if(env('APP_LAB') == 7)
 				<img src="http://lab-2.test.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP"> <br />
 			@else
 				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
@@ -70,9 +70,7 @@
 						</tr>
 					</thead>
 					<tbody>
-
-						@foreach($sample->dr_call as $dr_call)	
-
+						@foreach($sample->dr_call as $dr_call)
 							@foreach($dr_call->call_drug as $key => $call_drug)
 								<tr>
 								@if ($key)
@@ -89,6 +87,35 @@
 
 						@endforeach
 				</table>
+				<br />
+
+				 <div class="hr-line-dashed"></div>
+
+				<h4>Notes on Susceptability</h4>
+
+				<table class="table">
+					<tr>
+						<td style="background-color:{{ $resistance_colours['R']['resistance_colour'] }};" bgcolor="{{ $resistance_colours['R']['resistance_colour'] }}"> </td>
+						<td>High-Level </td>
+						<td>Mutations detected constitute a high level of genetic evidence for viral resistance.</td>
+					</tr>	
+					<tr>
+						<td style="background-color:{{ $resistance_colours['I']['resistance_colour'] }};" bgcolor="{{ $resistance_colours['I']['resistance_colour'] }}"> </td>
+						<td>Intermediate </td>
+						<td>Mutations detected constitute an intermediate level of genetic evidence for viral resistance.</td>
+					</tr>			
+					<tr>
+						<td style="background-color:{{ $resistance_colours['S']['resistance_colour'] }};" bgcolor="{{ $resistance_colours['S']['resistance_colour'] }}"> </td>
+						<td>Susceptible </td>
+						<td>Insufficient evidence for viral resistance.</td>
+					</tr>			
+					<tr>
+						<td style="background-color:{{ $resistance_colours['LC']['resistance_colour'] }};" bgcolor="{{ $resistance_colours['LC']['resistance_colour'] }}"> </td>
+						<td>Low Coverage </td>
+						<td>Inconclusive.</td>
+					</tr>							
+				</table>
+
 			@endif
 			
 		</div>	
