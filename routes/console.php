@@ -172,7 +172,10 @@ Artisan::command('synch:patients', function(){
 
 Artisan::command('synch:batches', function(){
     $str = \App\Synch::synch_batches('eid');
-	$str = \App\Synch::synch_batches('vl');
+    $str = \App\Synch::synch_batches('vl');
+    
+    $str = \App\Synch::synch_batches_odd('eid');
+	$str = \App\Synch::synch_batches_odd('vl');
     $this->info($str);
 })->describe('Synch batches to the national database.');
 

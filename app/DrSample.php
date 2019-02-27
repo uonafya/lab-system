@@ -72,6 +72,16 @@ class DrSample extends BaseModel
         return $this->hasMany('App\DrGenotype', 'sample_id');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
     /**
      * Get if rerun has been created
      *
@@ -281,6 +291,19 @@ class DrSample extends BaseModel
         else{ return "Normal Sample"; }
     }
 
+
+    /**
+     * Get the sample's Sample Type
+     *
+     * @return string
+     */
+    public function getSampleTypeOutputAttribute()
+    {
+        if($this->sample_type == 1) return "Public";
+        if($this->sample_type == 2) return "Surveillance";
+        if($this->sample_type == 3) return "Study";
+        return "";
+    }
 
 
 

@@ -46,9 +46,9 @@ class Cd4WorksheetController extends Controller
      */
     public function create($limit)
     {
-        $rerunsamples = $this->get_samples_for_rerun();
+        // $rerunsamples = $this->get_samples_for_rerun();
 
-        if ($rerunsamples == 0) { // No rerun samples are available
+        // if ($rerunsamples == 0) { // No rerun samples are available
             $samples = $this->get_samples_for_run($limit);
             $sampleCount = $samples->count();
             $worksheetCount = Cd4Worksheet::max('id')+1;
@@ -58,9 +58,9 @@ class Cd4WorksheetController extends Controller
             $data = (object) $data;
             // dd($data->samples->first()->patient->patient_name);
             return view('forms.cd4worksheet', compact('data'))->with('pageTitle', "Create Worksheet ($limit)");
-        } else {
+        // } else {
             
-        }
+        // }
     }
 
     /**
@@ -266,19 +266,16 @@ class Cd4WorksheetController extends Controller
             }
             $sample->save();
             if($sample->repeatt == 1){
-                $repeatSamples = Cd4Sample::where('parentid', '=', $sample->id)->count();
-                if($repeatSamples > 0){
-                    $sample = new Cd4Sample();
-                    $repeatSample->parentid = $sample->id;
-                    $repeatSample->patient_id = $sample->patient_id;
-                    $repeatSample->facility_id = $sample->facility_id;
-                    $repeatSample->lab_id = $sample->lab_id;
-                    $repeatSample->serial_no = $sample->serial_no;
-                    $repeatSample->amrs_location = $sample->amrs_location;
-                    $repeatSample->provider_identifier = $sample->provider_identifier;
-                    $repeatSample->order_no = $sample->order_no;
-                    $repeatSample->save();
-                }
+                $repeatSample = new Cd4Sample();
+                $repeatSample->parentid = $sample->id;
+                $repeatSample->patient_id = $sample->patient_id;
+                $repeatSample->facility_id = $sample->facility_id;
+                $repeatSample->lab_id = $sample->lab_id;
+                $repeatSample->serial_no = $sample->serial_no;
+                $repeatSample->amrs_location = $sample->amrs_location;
+                $repeatSample->provider_identifier = $sample->provider_identifier;
+                $repeatSample->order_no = $sample->order_no;
+                $repeatSample->save();
             }
         }
 
@@ -331,7 +328,7 @@ class Cd4WorksheetController extends Controller
 
     public function get_samples_for_run($limit){
         return Cd4Sample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->where('status_id', '=', 1)
-                                    ->orderBy('datereceived', 'asc')->orderBy('parentid', 'asc')->orderBy('id', 'asc')
+                                    ->orderBy('datereceived', 'asc')->orderBy('parentid', 'desc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
     }
 

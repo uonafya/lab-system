@@ -41,8 +41,7 @@
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
                                         <th>Task</th>                
-                                        <th>Print</th>                
-                                        <th>Print</th>                
+                                        <th>Print</th>               
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,7 +71,7 @@
                                         <tr>
                                             <td> {{ $sample->id }} </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [1, 2, 3]) && !$sample->dateapproved)                                                
+                                                @if(in_array($sample->status_id, [1]) && !$sample->dateapproved)                                                
                                                     <div align='center'>
                                                         <input name='approved[]' type='checkbox' class='checks' value='{{ $sample->id }}' />
                                                     </div>
@@ -112,43 +111,20 @@
                                             <td> {!! $sample->view_chromatogram !!} </td>
                                             <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
                                             <td> 
-                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Print</a> |
+                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> |
+                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank">View Results</a> |
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
                                             </td>
                                         </tr>
 
                                     @endforeach
 
-                                    @if($worksheet->status_id == 3)
-
-                                        @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
-                                         (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )
-
-                                            <tr bgcolor="#999999">
-                                                <td  colspan="10" bgcolor="#00526C" >
-                                                    <center>
-                                                        <!-- <input type="submit" name="approve" value="Confirm & Approve Results" class="button"  /> -->
-                                                        <button class="btn btn-success" type="submit">Confirm & Approve Results</button>
-                                                    </center>
-                                                </td>
-                                            </tr>
-
-                                        @else
-
-                                            <tr>
-                                                <td  colspan="10">
-                                                    <center>
-                                                        You are not permitted to complete the approval. Another user should be the one to complete the approval process.
-                                                    </center>
-                                                </td>
-                                            </tr>
-
-                                        @endif
-
-                                    @endif
-
                                 </tbody>
                             </table>
+
+                            @if($worksheet->status_id == 6)
+                                <button class="btn btn-success" type="submit">Confirm Approval</button>
+                            @endif
 
                         </div>
 

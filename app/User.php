@@ -101,6 +101,12 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function is_admin()
+    {
+        if($this->user_type_id == 0 || $this->user_type_id == 2) return true;
+        return false;
+    }
+
     public function samples_entered($testtype, $year, $month=null) {
         $id = $this->id;
         if ($testtype == 'EID') {

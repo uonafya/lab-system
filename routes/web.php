@@ -102,6 +102,9 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('transfer/{batch}', 'BatchController@transfer')->name('get.transfer');
 			Route::post('transfer/{batch}', 'BatchController@transfer_to_new_batch')->name('post.transfer');
+
+			Route::get('sample_manifest', 'BatchController@sample_manifest')->name('sample_manifest');
+			Route::post('sample_manifest', 'BatchController@sample_manifest')->name('post.sample_manifest');
 		});
 
 		Route::get('summary/{batch}', 'BatchController@summary');
@@ -178,6 +181,9 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('transfer/{viralbatch}', 'ViralbatchController@transfer')->name('get.transfer');
 			Route::post('transfer/{batch}', 'ViralbatchController@transfer_to_new_batch')->name('post.transfer');
+
+			Route::get('sample_manifest', 'ViralbatchController@sample_manifest')->name('sample_manifest');
+			Route::post('sample_manifest', 'ViralbatchController@sample_manifest')->name('post.sample_manifest');
 		});
 		
 		Route::get('summary/{batch}', 'ViralbatchController@summary');
@@ -205,8 +211,9 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 		Route::group(['middleware' => ['utype:5']], function () {
+			Route::post('index', 'DrSampleController@sample_search');
 			Route::put('{drSample}', 'DrSampleController@update')->name('update');
-			Route::get('results/{drSample}', 'DrSampleController@results')->name('results');
+			Route::get('results/{drSample}/{print?}', 'DrSampleController@results')->name('results');
 			Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
 		});
 	});
@@ -217,6 +224,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 			Route::get('create/{patient}', 'DrSampleController@create_from_patient');
 			Route::get('report', 'DrSampleController@susceptability')->name('report');
+			Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
 		});
 
 		Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
@@ -341,6 +349,11 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('transfer/{sample}', 'SampleController@transfer');	
 		});
 
+		Route::group(['middleware' => ['only_utype:2']], function () {	
+			Route::get('transfer_samples/{facility_id?}', 'SampleController@transfer_samples_form');	
+			Route::post('transfer_samples', 'SampleController@transfer_samples');	
+		});
+
 		Route::get('upload', 'SampleController@site_sample_page');
 		Route::post('upload', 'SampleController@upload_site_samples');
 
@@ -389,6 +402,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::group(['middleware' => ['utype:4']], function () {
 			Route::get('runs/{sample}', 'ViralsampleController@runs');		
 			Route::get('transfer/{sample}', 'ViralsampleController@transfer');		
+		});
+
+		Route::group(['middleware' => ['only_utype:2']], function () {	
+			Route::get('transfer_samples/{facility_id?}', 'ViralsampleController@transfer_samples_form');	
+			Route::post('transfer_samples', 'ViralsampleController@transfer_samples');	
 		});
 
 		Route::get('create_poc', 'ViralsampleController@create_poc');
