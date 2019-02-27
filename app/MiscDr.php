@@ -658,7 +658,7 @@ class MiscDr extends Common
 	public static function w_columns()
 	{
 		DB::statement("ALTER TABLE `dr_worksheets`
-			CHANGE `sanger_status_id` `exatype_status_id` int(10) unsigned NULL DEFAULT '0' AFTER `status_id`
+			CHANGE `sanger_status_id` `exatype_status_id` int(10) unsigned NULL DEFAULT '0' AFTER `status_id`,
 			ADD `daterun` DATE NULL AFTER `exatype_status_id`,
 		;");
 
