@@ -193,8 +193,10 @@
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
                 <hr />
-                <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
-                <hr />
+                @if(env('APP_LAB') != 7)
+                    <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
@@ -314,7 +316,7 @@
                 <hr />
             @endif
         --}}
-        @if(Session('testingSystem') != 'CD4')
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']))
             @if (Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 0)
                 <li>
                     <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
@@ -425,7 +427,7 @@
             </li>
             <hr />
         @endif
-        @if(Session('testingSystem') != 'CD4' && Auth::user()->user_type_id == 0)
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && Auth::user()->user_type_id == 0)
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <hr />
         @endif
