@@ -413,7 +413,7 @@
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(Session('testingSystem') == 'CD4' || Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
+        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR']) || in_array(Auth::user()->user_type_id, [5, 8]) ))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)
