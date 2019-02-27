@@ -124,7 +124,7 @@
            ,
             rules: {
                 daterun: {
-                    greaterThan: ["#datecreated", "Date Created", "Date of Testing"]
+                    greaterThan: ["#datecreated", "Date of Testing", "Date Created"]
                 }                               
             }
         @endslot
