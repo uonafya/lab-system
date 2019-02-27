@@ -80,7 +80,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun && !$sample->dateapproved )                                                
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun && !$sample->dateapproved && !$sample->control )                                                
                                                     <div align='center'>
                                                         <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
                                                     </div>
@@ -89,7 +89,7 @@
                                             <td>
                                                 @if($sample->has_rerun)
                                                     Has Rerun
-                                                @elseif(in_array($sample->status_id, [2, 3]) && !$sample->dateapproved)                                                
+                                                @elseif(in_array($sample->status_id, [2, 3]) && !$sample->dateapproved && !$sample->control )                                                
                                                     <div align='center'>
                                                         <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
                                                     </div>

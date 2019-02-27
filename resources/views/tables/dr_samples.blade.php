@@ -16,6 +16,7 @@
             @foreach($dr_sample_statuses as $dr_sample_status)
                 <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
             @endforeach
+                Dispatched Samples
         </div>
     </div>
 
@@ -230,9 +231,11 @@
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
 
-                                            @if(in_array($sample->status_id, [1, 2, 3]))
-                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
-                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
+                                            @if(in_array($sample->status_id, [1, 2, 3]) || $sample->receivedstatus == 2)
+                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> |
+                                                @if($sample->dateapproved || $sample->receivedstatus == 2) 
+                                                    <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
