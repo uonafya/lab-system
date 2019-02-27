@@ -387,7 +387,7 @@ class TaskController extends Controller
             }
             
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
-            dd($machines);
+            
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
             if ($request->has(['machine-form'])){
@@ -395,7 +395,7 @@ class TaskController extends Controller
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
                 $data = (object) $data;
-                
+                dd($data);
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else {
                 $saveAllocation = $this->saveAllocation($request);
