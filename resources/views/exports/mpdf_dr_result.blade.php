@@ -45,36 +45,47 @@
 		<br />
 
 		<div class="row">
-			<table class="table table-bordered table-hover">
-				<thead>
-					<tr>
-						<th>Drug Class</th>
-						<th>Detected Mutations</th>
-						<th>Drug</th>
-						<th>Susceptability</th>
-						<th>Susceptability Code</th>
-					</tr>
-				</thead>
-				<tbody>
+			@if($sample->receivedstatus == 2)
+				<p>
+					Sample Unfit For Testing For the following reason: <br />
+					{{ $dr_rejected_reasons->where('id', $sample->id)->first()->name ?? '' }}
+				</p>
+			@elseif($sample->collect_new_sample)
+				<p>
+					Sample Test Has Failed. Please collect a new sample.
+				</p>
+			@else
+				<table class="table table-bordered table-hover">
+					<thead>
+						<tr>
+							<th>Drug Class</th>
+							<th>Detected Mutations</th>
+							<th>Drug</th>
+							<th>Susceptability</th>
+							<th>Susceptability Code</th>
+						</tr>
+					</thead>
+					<tbody>
 
-					@foreach($sample->dr_call as $dr_call)	
+						@foreach($sample->dr_call as $dr_call)	
 
-						@foreach($dr_call->call_drug as $key => $call_drug)
-							<tr>
-							@if ($key)
-								<td></td>
-							@else
-								<td>{{ $dr_call->drug_class }}  </td>
-							@endif
-								<td>{{ $dr_call->mutations_array[$key] ?? '' }}  </td>
-								<td>{{ $call_drug->short_name }} </td>
-								<td>{{ $call_drug->resistance }} </td>
-								{!! $call_drug->resistance_cell_two !!}
-							<tr/>	
+							@foreach($dr_call->call_drug as $key => $call_drug)
+								<tr>
+								@if ($key)
+									<td></td>
+								@else
+									<td>{{ $dr_call->drug_class }}  </td>
+								@endif
+									<td>{{ $dr_call->mutations_array[$key] ?? '' }}  </td>
+									<td>{{ $call_drug->short_name }} </td>
+									<td>{{ $call_drug->resistance }} </td>
+									{!! $call_drug->resistance_cell_two !!}
+								<tr/>	
+							@endforeach
+
 						@endforeach
-
-					@endforeach
-			</table>
+				</table>
+			@endif
 			
 		</div>	
 

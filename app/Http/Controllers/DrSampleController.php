@@ -45,7 +45,7 @@ class DrSampleController extends Controller
             ->when($sample_status, function($query) use ($sample_status){
                 if($sample_status > 10){
                     $query->whereNotNull('dateapproved');
-                    $sample_status != 10;
+                    $sample_status -= 10;
                 }
                 return $query->where('status_id', $sample_status);
             })
