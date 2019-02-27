@@ -38,7 +38,7 @@ class DrExtractionWorksheetController extends Controller
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
-        return view('tables.dr_extraction_worksheets', $data)->with('pageTitle', 'Worksheets'); 
+        return view('tables.dr_extraction_worksheets', $data)->with('pageTitle', 'Extraction Worksheets'); 
     }
 
     /**
