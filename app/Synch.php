@@ -524,19 +524,16 @@ class Synch
 	}
 
 	public static function synch_allocations() {
-		echo "==> Starting allocations synch";
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
 
 		while (true) {
-			echo "\n\t Getting allocations data 20\n";
 			$allocations = Allocation::with(['details'])->where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
 				break;
 			
-			echo "\t Pushing allocations data to national DB\n";
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
@@ -549,10 +546,8 @@ class Synch
 
 			]);
 			
-			echo "\t Receiving national db respose\n";
 			$body = json_decode($response->getBody());
 			
-			echo "\t Updating allocations data\n";
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
 				Allocation::where('id', $value->original_id)->update($update_data);
@@ -561,8 +556,7 @@ class Synch
 					AllocationDetail::where('id', $detailvalue->original_id)->update($detail_update_data);
 				}
 			}
-		}
-		echo "==> Completed allocations synch\n";	
+		}	
 	}
 
 	public static function synch_allocations_updates() {
