@@ -118,7 +118,7 @@
                                     <td> {!! $dr_plate_statuses->where('id', $worksheet->exatype_status_id)->first()->output ?? '' !!} </td>
 
                                     <td> {{ $worksheet->sample_count }} </td>
-                                    <td> {{ $worksheet->sample->whereNull('dateapproved')->count() }} </td>
+                                    <td> {{ $worksheet->sample->where('dateapproved', null)->count() }} </td>
 
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
