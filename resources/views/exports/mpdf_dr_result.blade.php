@@ -19,7 +19,7 @@
 
 		<div class="row" style="text-align: center;">
 			@if(env('APP_LAB') == 7)
-				<img src="http://lab-2.test.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP"> <br />
+				<img src="http://lab-2.test.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP">
 			@else
 				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
 				<b>
@@ -29,7 +29,6 @@
 			@endif
 
 			<h2>HIV-1 Drug Resistance Genotype Report</h2>
-			<br />
 		</div>
 
 		<div class="row">
