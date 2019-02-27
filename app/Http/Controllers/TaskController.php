@@ -395,9 +395,7 @@ class TaskController extends Controller
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
                 $data = (object) $data;
-                foreach($machines as $machine) {
-                    dd($machine->kits);
-                }
+                
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else {
                 $saveAllocation = $this->saveAllocation($request);
