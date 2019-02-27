@@ -28,15 +28,15 @@
                                     <tr>
                                         <th>Lab ID</th>
                                         <th>Approve</th>
-                                        <th>Rerun</th>
                                         <th>Collect New Sample</th>
+                                        <th>Rerun</th>
                                         <th>Sample ID</th>
                                         <th>Exatype Status</th>
                                         <th>Facility</th>
                                         <th>Control</th>
                                         <th>Has Errors</th>
                                         <th>Has Warnings</th>
-                                        <th>Has Mutations</th>
+                                        <th>Has Drug Data</th>
                                         <th>Has Genotypes</th>
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
@@ -111,9 +111,10 @@
                                             <td> {!! $sample->view_chromatogram !!} </td>
                                             <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
                                             <td> 
-                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> |
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank">View Results</a> |
-                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
+                                                @if($sample->dateapproved && $sample->repeatt == 0)
+                                                    <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
+                                                @endif
                                             </td>
                                         </tr>
 

@@ -104,7 +104,7 @@ class DrWorksheetController extends Controller
     {
         $data = Lookup::get_dr();
         // $data['samples'] = $drWorksheet->sample;
-        $data['samples'] = DrSample::where(['worksheet_id' => $drWorksheet->id])->orderBy('id', 'asc')->get();
+        $data['samples'] = DrSample::where(['worksheet_id' => $drWorksheet->id])->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
         $data['date_created'] = $drWorksheet->my_date_format('created_at', "Y-m-d");
         if($print) $data['print'] = true;
         return view('worksheets.dr_worksheet', $data);
