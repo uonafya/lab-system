@@ -5,7 +5,7 @@
 
 	<style type="text/css">
 		table, th, td {
-			padding: 10px;
+			padding: 6px;
 		}
 
 	</style>
@@ -98,7 +98,7 @@
 
 				 <div class="hr-line-dashed"></div>
 
-				<h4>Notes on Susceptability</h4>
+				<h4><b> Notes on Susceptability </b> </h4>
 
 				<table class="table table-bordered">
 					<tr>
