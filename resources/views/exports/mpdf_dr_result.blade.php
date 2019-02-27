@@ -2,6 +2,13 @@
 
 <head>
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
+
+	<style type="text/css">
+		table, th, td {
+			padding: 10px;
+		}
+
+	</style>
 </head>
 
 
@@ -93,7 +100,7 @@
 
 				<h4>Notes on Susceptability</h4>
 
-				<table class="table">
+				<table class="table table-bordered">
 					<tr>
 						<td> Colour </td>
 						<td> Degree </td>
