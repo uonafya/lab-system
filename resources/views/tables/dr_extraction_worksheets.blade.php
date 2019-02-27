@@ -85,13 +85,14 @@
                     Worksheets
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover data-table" >
+                    <table class="table table-striped table-bordered table-hover" >
                         <thead>
                             <tr>
                                     <th> W No </th>
                                     <th> Date Created </th>
                                     <th> Created By </th>
                                     <th> # Samples </th>
+                                    <th> # Samples Not In Sequencing Worksheet </th>
                                     <!-- <th> Date Run </th> -->
                                     <th> Date of Gel Documentation </th>
                                     <th> Task </th>                 
@@ -106,6 +107,7 @@
                                     <td> {{ $worksheet->creator->full_name ?? '' }} </td>
 
                                     <td> {{ $worksheet->sample_count }} </td>
+                                    <td> {{ $worksheet->sample->where('worksheet_id', null)->count() }} </td>
 
                                     <td> {{ $worksheet->my_date_format('date_gel_documentation') }} </td>
                                     <td> 
@@ -134,6 +136,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    {{ $worksheets->links() }}
                 </div>
             </div>
         </div>
