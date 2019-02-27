@@ -20,7 +20,7 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet->id=NULL)
     {
         $worksheets = DrWorksheet::with(['creator', 'reviewer', 'sample'])->withCount(['sample'])
             ->when($state, function ($query) use ($state){
@@ -281,8 +281,8 @@ class DrWorksheetController extends Controller
 
         $cns_data = array_merge($data, ['collect_new_sample' => 1]);
 
-        if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
-        if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
+        if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet->id])->update($data);
+        if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet->id])->update($cns_data);
 
         $samples = DrSample::whereIn('id', $rerun)->get();
         unset($data['datedispatched']);
@@ -291,9 +291,9 @@ class DrWorksheetController extends Controller
             $sample->create_rerun($data);
         }
 
-        $total = DrSample::where(['worksheet_id' => $worksheet_id, 'parentid' => 0])->count();
-        $dispatched = DrSample::whereNotNull('datedispatched')->where(['worksheet_id' => $worksheet_id])->count();
-        $reruns = DrSample::where(['worksheet_id' => $worksheet_id, 'repeatt' => 1])->count();
+        $total = DrSample::where(['worksheet_id' => $worksheet->id, 'parentid' => 0])->count();
+        $dispatched = DrSample::whereNotNull('datedispatched')->where(['worksheet_id' => $worksheet->id])->count();
+        $reruns = DrSample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->count();
 
         if($total == ($dispatched + $reruns)){
             $worksheet->fill($w_data);
