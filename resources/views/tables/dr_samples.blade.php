@@ -16,7 +16,8 @@
             @foreach($dr_sample_statuses as $dr_sample_status)
                 <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
             @endforeach
-                Dispatched Samples
+                <a href="{{ $myurl2 . '/10' }}"> approved samples</a> |
+                <a href="{{ $myurl2 . '/11' }}"> approved completed samples</a> |
         </div>
     </div>
 
