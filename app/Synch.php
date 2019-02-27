@@ -297,9 +297,11 @@ class Synch
 		}
 
 		$batch_ids = $sampleview_class::selectRaw("distinct batch_id")->where(['synched' => 0, 'batch_complete' => 1])->where('batch_id', 'like', "%.5%")->get()->pluck('batch_id');
+		$offset = 0;
 
 		while (true) {
-			$batches = $batch_class::whereIn('id', $batch_ids)->limit(20)->get();
+			$batches = $batch_class::whereIn('id', $batch_ids)->limit(20)->offset($offset)->get();
+			$offset+=20;
 			// dd($batches);
 			if($batches->isEmpty()) break;
 
