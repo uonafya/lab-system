@@ -2,7 +2,11 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\SampleView;
 use App\Sample;
+use App\Batch;
+use App\Patient;
+use App\Mother;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
 
@@ -91,5 +95,78 @@ class SampleController extends Controller
     public function destroy(Sample $sample)
     {
         //
+    }
+
+    public function transfer(ApiRequest $request)
+    {        
+        $new_samples = json_decode($request->input('samples'));
+
+        $ok = $samples = $batches = $patients = $mothers = [];
+
+        foreach ($new_samples as $key => $new_sample) {
+            $existing = SampleView::sample($new_sample->batch->facility_id, $new_sample->patient->patient, $new_sample->datecollected)->first();
+            if($existing){
+                $ok[] = $new_sample->id;
+                continue;
+            }
+
+            $user = $new_sample->batch->user ?? null;
+            $user_id = 20000;
+            if($new_sample->batch->site_entry && $user){
+                $user_id = \App\User::where('facility_id', $user->facility_id)->first()->id ?? 20000;
+            }
+            unset($new_sample->batch->user); 
+
+            $b = new Batch;
+            $b->fill(get_object_vars($new_sample->batch));
+            $b->user_id = $user_id;
+            unset($b->id);
+            $b->pre_update();
+            unset($new_sample->batch);
+
+            $m = new Mother;
+            $m->fill(get_object_vars($new_sample->patient->mother));
+            unset($m->id);
+            $m->pre_update();
+            unset($new_sample->patient->mother);
+
+
+            $new_patient = false;
+            $p = Patient::existing($new_sample->patient->facility_id, $new_sample->patient->patient)->first();
+            if(!$p){
+                $p = new Patient;
+                $new_patient = true;
+            }
+            $p->fill(get_object_vars($new_sample->patient));
+            $p->mother_id = $m->id;
+            if($new_patient) unset($p->id);
+            $p->pre_update();
+            unset($new_sample->patient);
+
+            $s = new Sample;
+            $s->fill(get_object_vars($new_sample));
+            $s->batch_id = $b->id;
+            $s->patient_id = $p->id;
+            unset($s->id);
+            $s->pre_update();
+
+            $mothers[] = $m;
+            $patients[] = $p;
+            $batches[] = $b;
+            $samples[] = $s;
+
+            $ok[] = $new_sample->id;
+        }
+
+        return response()->json([
+                'ok' => $ok,
+                'samples' => $samples,
+                'batches' => $batches,
+                'patients' => $patients,
+                'mothers' => $mothers,
+                'message' => 'The transfer was successful.',
+                'status_code' => 201,
+            ], 201);
+
     }
 }
