@@ -35,7 +35,9 @@ class DrWorksheetController extends Controller
                 return $query->whereDate('dr_worksheets.created_at', $date_start);
             })
             ->orderBy('dr_worksheets.created_at', 'desc')
-            ->get();
+            ->paginate();
+
+        $worksheets->setPath(url()->current());
 
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
