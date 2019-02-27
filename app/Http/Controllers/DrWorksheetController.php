@@ -174,8 +174,8 @@ class DrWorksheetController extends Controller
             $zip->extractTo($path);
             $zip->close();
             $worksheet->save();
-            
-            DrSample::where(['worksheet_id' => $worksheet_id])->update(['datetested' => $worksheet->daterun]);
+
+            DrSample::where(['worksheet_id' => $worksheet->id])->update(['datetested' => $worksheet->daterun]);
 
             session(['toast_message' => 'The worksheet results has been uploaded.']);
         }
