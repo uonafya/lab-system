@@ -341,7 +341,7 @@
                 <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
             </li>
             <hr />
-            @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
+            @if(in_array(env('APP_LAB'), [1, 5])
                 <li>
                     <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                 </li>

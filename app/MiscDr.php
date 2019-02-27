@@ -586,29 +586,29 @@ class MiscDr extends Common
 
 	public static function seed()
 	{		
-    	\App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 1, 'date_gel_documentation' => date('Y-m-d')]);
+    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 2, 'date_gel_documentation' => date('Y-m-d')]);
 
-    	\App\DrWorksheet::create(['extraction_worksheet_id' => 1]);
+    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
 
     	DB::table('dr_samples')->insert([
-    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 
     	DB::table('dr_samples')->insert([
-    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 99, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2009695759, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2012693909, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2012693911, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 99, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2009695759, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2012693909, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2012693911, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 	}
 
