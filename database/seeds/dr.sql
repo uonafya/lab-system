@@ -33,17 +33,17 @@ INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`) VALUES
 	(5, 1111, 'processing'),
 	(6, 1120, 'action_required');
 
-DROP TABLE IF EXISTS `calls`;
-CREATE TABLE  `calls` (
-  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+-- DROP TABLE IF EXISTS `calls`;
+-- CREATE TABLE  `calls` (
+--   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+--   `name` varchar(50) DEFAULT NULL,
+--   PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `calls` (`id`, `name`) VALUES
-	(1, 'S'),
-	(2, 'LC');
+-- INSERT INTO `calls` (`id`, `name`) VALUES
+-- 	(1, 'S'),
+-- 	(2, 'LC');
 
 
 DROP TABLE IF EXISTS `dr_warning_codes`;
@@ -190,3 +190,138 @@ INSERT INTO `worksheetstatus` VALUES
 (6,'Received From Exatype','<strong><div style=\'color: #0000FF;\'>Received From Exatype</div></strong>',1);
 /*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+DROP TABLE IF EXISTS `drug_resistance_reasons`;
+
+CREATE TABLE `drug_resistance_reasons` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `rank` TINYINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`, `rank`) VALUES
+(1, 'Consistent Non-Suppression',  'Two consecutive tests with viralloads above 1000.', 1),
+(2, 'Paed Non-Suppression',  'Patient aged 19 and under with a viralload above 1000.', 2),
+(3, 'PMTCT Non-Suppression',  'PMTCT patient viralload above 1000.', 3);
+
+DROP TABLE IF EXISTS `dr_primers`;
+
+CREATE TABLE `dr_primers` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `full_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_primers` (`id`, `name`, `full_name`) VALUES
+(1, 'F1', 'Forward Primer 1'),
+(2, 'F2', 'Forward Primer 2'),
+(3, 'F3', 'Forward Primer 3'),
+(4, 'R1', 'Reverse Primer 1'),
+(5, 'R2', 'Reverse Primer 2'),
+(6, 'R3', 'Reverse Primer 3');
+
+
+DROP TABLE IF EXISTS `dr_patient_statuses`;
+CREATE TABLE `dr_patient_statuses` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
+(1, 'Awaiting Test'),
+(2, 'Sample Created'),
+(3, 'Completed Test'),
+(4, 'Insufficient sample'),
+(5, 'Failed Test');
+
+
+DROP TABLE IF EXISTS `dr_sample_types`;
+CREATE TABLE `dr_sample_types` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_sample_types` (`id`, `name`) VALUES
+(1, 'Public'),
+(2, 'Surveillance'),
+(3, 'Study');
+
+
+DROP TABLE IF EXISTS `dr_rejected_reasons`;
+CREATE TABLE `dr_rejected_reasons` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `dr_rejected_reasons` (`id`, `name`) VALUES
+(1, 'Insufficient sample volumes'),
+(2, 'EID sample over 3 weeks old from time collected'),
+(3, 'Haemolysed sample');
+
+
+DROP TABLE IF EXISTS `tb_treatment_phases`;
+CREATE TABLE `tb_treatment_phases` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `tb_treatment_phases` (`id`, `name`) VALUES
+(1, 'None'),
+(2, 'Intensive'),
+(3, 'Continuation');
+
+
+DROP TABLE IF EXISTS `clinical_indications`;
+CREATE TABLE `clinical_indications` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `clinical_indications` (`id`, `name`) VALUES
+(1, 'New or recurrent WHO stage 3 or 4 conditions after >= 6 months of ART'),
+(2, 'New or recurrent papular pruritic eruptions (PPE) after >= 6 months of ART'),
+(3, 'Poor or decline in growth despite giving ART over a period of >=6 months and after treating for and excluding other causes e.g. TB, malnutrition'),
+(4, 'Failure to meet neuro-development milestones after >=6 months of art'), 
+(5, 'Recurrence of infections that are severe, persistent or refractory to treatment after >=6 months of ART');
+
+
+
+DROP TABLE IF EXISTS `arv_toxicities`;
+CREATE TABLE `arv_toxicities` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `arv_toxicities` (`id`, `name`) VALUES
+(1, 'Renal'),
+(2, 'Lipid'),
+(3, 'Liver');
+
+
+
+DROP TABLE IF EXISTS `other_medications`;
+CREATE TABLE `other_medications` (
+  `id` TINYINT UNSIGNED NOT NULL,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `other_medications` (`id`, `name`) VALUES
+(1, 'Rifampicin based TB  drugs'),
+(2, 'Ketoconazole'),
+(3, 'Cotrimoxazole'),
+(4, 'Fluconazole'),
+(5, 'Dapsone'),
+(6, 'Multivitamin'),
+(7, 'Hormonal contraceptives');
+

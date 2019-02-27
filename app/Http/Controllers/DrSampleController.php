@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\DrSample;
+use App\DrSampleView;
 use App\DrPatient;
+use App\Viralpatient;
 use App\User;
 use App\Lookup;
 use App\MiscDr;
@@ -29,13 +31,16 @@ class DrSampleController extends Controller
     {
         $user = auth()->user();
         $date_column = "datereceived";
-        $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
+        if(in_array($sample_status, [1, 6])) $date_column = "datedispatched";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
-        $data['dr_samples'] = DrSample::with(['patient.facility'])
-            ->where(['control' => 0])
-            ->when(true, function($query) use ($user, $string){
-                if($user->user_type_id == 5) return $query->whereRaw($string);
+        $data['dr_samples'] = DrSample::select(['dr_samples.*'])
+            ->with(['patient.facility'])
+            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->where(['control' => 0, 'repeatt' => 0])
+            ->when(($user->user_type_id == 5), function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
                 return $query->where('status_id', $sample_status);
@@ -48,10 +53,47 @@ class DrSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
             ->paginate();
 
         $data['dr_samples']->setPath(url()->current());
+        $data['myurl'] = url('dr_sample/index/' . $sample_status);
+        $data['myurl2'] = url('dr_sample/index/');
+        $data = array_merge($data, Lookup::get_partners());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
+    }
+
+    public function sample_search(Request $request)
+    {
+        $sample_status = $request->input('sample_status', 1);
+        $submit_type = $request->input('submit_type');
+        $to_print = $request->input('to_print');
+        $date_start = $request->input('from_date', 0);
+        if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
+        $date_end = $request->input('to_date', 0);
+
+        if($date_start == '') $date_start = 0;
+        if($date_end == '') $date_end = 0;
+
+        $partner_id = $request->input('partner_id', 0);
+        $subcounty_id = $request->input('subcounty_id', 0);
+        $facility_id = $request->input('facility_id', 0);
+
+        if($partner_id == '') $partner_id = 0;
+        if($subcounty_id == '') $subcounty_id = 0;
+        if($facility_id == '') $facility_id = 0;
+
+        if($submit_type == 'excel') return $this->susceptability($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+
+        return redirect("dr_sample/index/{$sample_status}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**
@@ -102,13 +144,38 @@ class DrSampleController extends Controller
      */
     public function store(Request $request)
     {
-        $drSample = new DrSample;
         if($request->input('submit_type') == 'cancel') return back();
         $viralsamples_arrays = Lookup::viralsamples_arrays();
+
+        $data_existing = $request->only(['facility_id', 'patient', 'datecollected']);
+        $existing = DrSampleView::existing( $data_existing )->first();
+
+        if($existing && !$request->input('reentry')){
+            session(['toast_error' => 1, 'toast_message' => "The sample already exists and has therefore not been saved again."]);
+            return back();            
+        }
+
+        if(env('APP_LAB') == 7){
+            $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            if(!$viralpatient) $viralpatient = new Viralpatient;
+
+            $data = $request->only($viralsamples_arrays['patient']);
+            if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+            $viralpatient->fill($data);
+            $viralpatient->save();
+        }
+
+        $drSample = new DrSample;
         $data = $request->only($viralsamples_arrays['dr_sample']);
         $data['user_id'] = auth()->user()->id;
         if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) $data['received_by'] = auth()->user()->id;
         $drSample->fill($data);
+
+        if(env('APP_LAB') == 7) $drSample->patient_id = $viralpatient->id;
+
+        if(!$viralpatient) $viralpatient = $drSample->patient;
+
+        $drSample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
 
         $others = $request->input('other_medications_text');
         $other_medications = $request->input('other_medications');
@@ -159,6 +226,17 @@ class DrSampleController extends Controller
     {
         if($request->input('submit_type') == 'cancel') return redirect('/dr_sample');
         $viralsamples_arrays = Lookup::viralsamples_arrays();
+
+        $viralpatient = $drSample->patient;
+
+        if(env('APP_LAB') == 7){
+            $data = $request->only($viralsamples_arrays['patient']);
+            if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+            $viralpatient->fill($data);
+            $viralpatient->save();
+        }
+
+
         $data = $request->only($viralsamples_arrays['dr_sample']);
 
         if((auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) && !$drSample->received_by){
@@ -227,11 +305,39 @@ class DrSampleController extends Controller
     }
 
 
-    public function susceptability()
+    public function susceptability($date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         $call_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
-        $samples = DrSample::where(['status_id' => 1, 'control' => 0])->with(['dr_call.call_drug', 'patient'])->get();
+        $date_column = "datedispatched";
+        $user = auth()->user();
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+
+        $samples = DrSample::select('dr_samples.*')
+            ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
+            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->with(['dr_call.call_drug', 'patient'])
+            ->when(($user->user_type_id == 5), function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('facilitys.district', $subcounty_id);
+            })
+            ->when($partner_id, function($query) use ($partner_id){
+                return $query->where('facilitys.partner', $partner_id);
+            })
+            ->get();
 
         $top = ['', 'Drug Classes', ];
         $second = ['Sequence ID', 'Original Sample ID', ];
@@ -275,6 +381,7 @@ class DrSampleController extends Controller
             $rows[] = $row;
         }
 
+        // dd($rows);
         // dd($call_array);
 
         Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
