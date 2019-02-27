@@ -66,7 +66,7 @@
                         </li>
                     @elseif(session('testingSystem') == 'DR')
                         <li class="">
-                            <a href="{{ url('dr_sample/index/10') }}">Dispatched Sampless</a>
+                            <a href="{{ url('dr_sample/index/10') }}">Dispatched Samples</a>
                         </li>                
                         <li class="">
                             <a href="{{ url('dr_sample/report') }}">Report</a>
@@ -192,7 +192,7 @@
                     </li>
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">
-                        <a href="{{ url('dr_sample/index/10') }}">Dispatched Sampless</a>
+                        <a href="{{ url('dr_sample/index/10') }}">Dispatched Samples</a>
                     </li>                
                     <li class="">
                         <a href="{{ url('dr_sample/report') }}">Report</a>
