@@ -10,11 +10,15 @@
 	<div class="container">
 
 		<div class="row" style="text-align: center;">
-			<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
-			<b>
-				MINISTRY OF HEALTH <br />
-				NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
-			</b>
+			@if(env('APP_LAB') == 7 || env('APP_LAB') == 1)
+				<img src="http://lab-2.test.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP"> <br />
+			@else
+				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
+				<b>
+					MINISTRY OF HEALTH <br />
+					NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
+				</b>
+			@endif
 
 			<h2>HIV-1 Drug Resistance Genotype Report</h2>
 			<br />
