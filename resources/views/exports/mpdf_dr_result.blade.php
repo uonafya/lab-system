@@ -95,6 +95,11 @@
 
 				<table class="table">
 					<tr>
+						<td> Colour </td>
+						<td> Degree </td>
+						<td> Explanation </td>
+					</tr>
+					<tr>
 						<td style="background-color:{{ $resistance_colours['R']['resistance_colour'] }};" bgcolor="{{ $resistance_colours['R']['resistance_colour'] }}"> </td>
 						<td>High-Level </td>
 						<td>Mutations detected constitute a high level of genetic evidence for viral resistance.</td>
