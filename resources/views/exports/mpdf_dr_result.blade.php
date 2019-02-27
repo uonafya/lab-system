@@ -6,6 +6,7 @@
 	<style type="text/css">
 		table, th, td {
 			padding: 6px;
+			font-size: 8px;
 		}
 
 	</style>
