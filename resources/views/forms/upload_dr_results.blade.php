@@ -61,7 +61,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Testing</label>
+                            <label class="col-sm-4 control-label">Date of Testing
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
