@@ -287,11 +287,13 @@ class DrWorksheetController extends Controller
         if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet->id])->update($data);
         if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet->id])->update($cns_data);
 
-        $samples = DrSample::whereIn('id', $rerun)->get();
-        unset($data['datedispatched']);
+        if($rerun && is_array($rerun)) {
+            $samples = DrSample::whereIn('id', $rerun)->get();
+            unset($data['datedispatched']);
 
-        foreach ($samples as $key => $sample){
-            $sample->create_rerun($data);
+            foreach ($samples as $key => $sample){
+                $sample->create_rerun($data);
+            }
         }
 
         $total = DrSample::where(['worksheet_id' => $worksheet->id, 'parentid' => 0])->count();
