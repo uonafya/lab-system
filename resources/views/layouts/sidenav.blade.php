@@ -316,44 +316,43 @@
                 <hr />
             @endif
         --}}
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']))
-            @if (Auth::user()->user_type_id == 7 || Auth::user()->user_type_id == 0)
-                <li>
-                    <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
-                </li>
-                <hr />
-            @endif
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 7]))
+            <li>
+                <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('viralsample/list_poc') }}">View POC VL Samples</a>
+            </li>
+            <hr />
+        @endif
             
-            <!-- Admin Side Bar -->
-            @if (Auth::user()->user_type_id == 2 || Auth::user()->user_type_id == 0)
+        <!-- Admin Side Bar -->
+        @if (in_array(Auth::user()->user_type_id, [0, 2]))
+            <li>
+                <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('users/activity') }}"><span class="nav-label">Users Activity</span></a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
+            </li>
+            <hr />
+            @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
                 <li>
-                    <a href="{{ url('user/create') }}"><span class="nav-label">Add Users</span></a>
+                    <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('users/activity') }}"><span class="nav-label">Users Activity</span></a>
+                    <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
                 </li>
                 <hr />
-                <li>
-                    <a href="{{ url('facility/create') }}"><span class="nav-label">Add Facilty</span></a>
-                </li>
-                <hr />
-                @if(env('APP_LAB') == 1 || env('APP_LAB') == 5)
-                    <li>
-                        <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
-                    </li>
-                    <hr />
-                    <li>
-                        <a href="{{ url('email') }}"><span class="nav-label">View Emails</span></a>
-                    </li>
-                    <hr />
-                @endif
             @endif
         @endif
+
         @if(Session('testingSystem') == 'CD4')
             <li>
                 <a href="{{ url('cd4/sample/create') }}"><span class="nav-label">Add Sample</span></a>
