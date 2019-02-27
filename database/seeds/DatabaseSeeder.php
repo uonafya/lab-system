@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
         // $this->call(FakerSeeder::class);        
         // $this->call(DrSeeder::class);
-        // $this->call(KitsSeeder::class);    
+        $this->call(KitsSeeder::class);    
         // $this->call(LabEquipmentMailingSeeder::class);    
     }
 }
