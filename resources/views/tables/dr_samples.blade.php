@@ -214,7 +214,7 @@
                                 @foreach($dr_samples as $key => $sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {!! $sample->patient->hyper_link !!} </td>
+                                        <td> {!! $sample->patient->hyper_link ?? '' !!} </td>
                                         <td> {{ $sample->patient->facility->name ?? '' }} </td>
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->datecollected }} </td>
