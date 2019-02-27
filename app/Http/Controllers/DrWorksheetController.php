@@ -22,7 +22,7 @@ class DrWorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        $worksheets = DrWorksheet::with(['creator', 'reviewer'])->withCount(['sample'])
+        $worksheets = DrWorksheet::with(['creator', 'reviewer', 'sample'])->withCount(['sample'])
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
