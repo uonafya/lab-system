@@ -51,8 +51,6 @@
 			</table>			
 		</div>
 
-		<br />
-
 		<div class="row">
 			@if($sample->receivedstatus == 2)
 				<p>
