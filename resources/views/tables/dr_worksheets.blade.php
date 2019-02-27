@@ -88,17 +88,21 @@
                     <table class="table table-striped table-bordered table-hover data-table" >
                         <thead>
                             <tr>
-                                    <th> W No </th>
-                                    <th> Date Created </th>
-                                    <th> Created By </th>
-                                    <th> Reviewed By </th>
-                                    <th> Status </th>
-                                    <th> Hyrax Status </th>
-                                    <th> # Samples </th>
-                                    <!-- <th> Date Run </th> -->
-                                    <th> Date Updated </th>
-                                    <th> Date Reviewed </th>
-                                    <th> Task </th>                 
+                                <th rowspan="2"> W No </th>
+                                <th rowspan="2"> Date Created </th>
+                                <th rowspan="2"> Created By </th>
+                                <th rowspan="2"> Reviewed By </th>
+                                <th rowspan="2"> Status </th>
+                                <th rowspan="2"> Hyrax Status </th>
+                                <th colspan="2"> Samples </th>
+                                <th rowspan="2"> Date Run </th>
+                                <th rowspan="2"> Date Updated </th>
+                                <th rowspan="2"> Date Reviewed </th>
+                                <th rowspan="2"> Task </th>                 
+                            </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>Pending Approval</th>                                
                             </tr>
                         </thead>
                         <tbody>
@@ -111,10 +115,12 @@
                                     <td> {{ $worksheet->reviewer->full_name ?? '' }} </td>
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
-                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->sanger_status_id)->first()->output ?? '' !!} </td>
+                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->exatype_status_id)->first()->output ?? '' !!} </td>
 
                                     <td> {{ $worksheet->sample_count }} </td>
+                                    <td> {{ $worksheet->sample->whereNull('dateapproved')->count() }} </td>
 
+                                    <td> {{ $worksheet->my_date_format('daterun') }} </td>
                                     <td> {{ $worksheet->my_date_format('dateuploaded') }} </td>
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
