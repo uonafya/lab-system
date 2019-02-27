@@ -305,6 +305,9 @@ class DrWorksheetController extends Controller
             $worksheet->status_id = 3;
             $worksheet->save();
         }
+
+        session(['toast_message' => 'The selected samples have been approved.']);
+        return redirect('dr_worksheet');
     }
 
 
