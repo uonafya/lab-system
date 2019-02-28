@@ -668,7 +668,7 @@ class Common
 
 	        foreach ($batches as $batch) {
 	        	$dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
-	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +2days'));
+	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +3days'));
 	        	$batch->batch_complete = 1;
 	        	$batch->sent_email = 1;
 	        	$batch->save();
