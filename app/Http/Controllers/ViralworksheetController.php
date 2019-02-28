@@ -578,8 +578,7 @@ class ViralworksheetController extends Controller
 
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
-                // if($sample->worksheet_id != $worksheet->id) continue;
-                $sample->worksheet_id = $worksheet->id;
+                if($sample->worksheet_id != $worksheet->id) continue;
                 $sample->fill($data_array);
                 $sample->save();
 
