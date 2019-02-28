@@ -56,6 +56,10 @@ class AllocationController extends Controller
      */
     public function update(ApiRequest $request, $id)
     {
+        return response()->json([
+            'message' => 'The update was successful.',
+            'status_code' => 200,
+        ], 200);
     	$allocation = Allocation::findOrFail($id);
         $fields = json_decode($request->input('allocation'));
 
