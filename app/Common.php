@@ -652,6 +652,30 @@ class Common
 	    }
     }
 
+    public static function old_batches_dispatch()
+    {
+        ini_set("memory_limit", "-1");
+        $classes = \App\Synch::$synch_arrays;
+
+        foreach ($classes as $c) {
+
+	        $batch_class = $c['batch_class'];
+	        $misc_class = $c['misc_class'];
+
+	        $batches = $batch_class::where('batch_complete', 2)->get();
+	        $batch_ids = $batches->pluck(['id'])->toArray();
+	        $date_tested = $misc_class::get_maxdatetested($batch_ids, false);
+
+	        foreach ($batches as $batch) {
+	        	$dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
+	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +2days'));
+	        	$batch->batch_complete = 1;
+	        	$batch->sent_email = 1;
+	        	$batch->save();
+	        }
+	    }
+    }
+
     public static function correct_facility($mfl)
     {
         ini_set("memory_limit", "-1");
