@@ -307,7 +307,7 @@ class ReportController extends Controller
                                 if ($request->input('fromDate') == $request->input('toDate'))
                                     return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
                                 else
-                                    return $query->whereRaw("date($table.$column) BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+                                    return $query->whereRaw("$table.$column > '".$request->input('fromDate')."'");
                             });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
@@ -554,10 +554,11 @@ class ReportController extends Controller
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
-            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by";
+            // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
             $model = ViralsampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
-                    ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
+                    // ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
     				->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                     ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
@@ -573,10 +574,11 @@ class ReportController extends Controller
             $columns = "samples_view.id,samples_view.batch_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,";
             if($request->input('types') == 'manifest')
                 $columns .= " $table.datedispatchedfromfacility,";
-            $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, rec.surname as receiver";
+            $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by";
+            // $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, rec.surname as receiver";
     		$model = SampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
-                    ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
+                    // ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
     				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
     				->leftJoin('gender', 'gender.id', '=', 'samples_view.sex')
