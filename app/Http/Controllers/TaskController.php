@@ -14,7 +14,10 @@ use App\User;
 use App\SampleView;
 use App\ViralsampleView;
 use App\Kits;
+use App\Consumption;
 use App\Machine;
+use App\Allocation;
+use App\AllocationDetail;
 
 use DB;
 
@@ -329,8 +332,8 @@ class TaskController extends Controller
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0) {
-            // return redirect()->route('allocation');
-            return redirect()->route('pending');
+            return redirect()->route('allocation');
+            // return redirect()->route('pending');
         }
         
         $data['taqmanKits'] = $this->taqmanKits;
@@ -366,104 +369,97 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
-        // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 
     public function allocation(Request $request) {
         if ($request->method() == "GET") {
+            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->count();
+            if ($currentMonthAllocation > 0){
+                session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
+                return back();
+            } else {
+                $tasks = (object) $this->pendingTasks();
+                if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
+                    session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
+                    return back();
+                }
+            }
+            
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
             
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
             if ($request->has(['machine-form'])){
                 $machines = Machine::whereIn('id',$request->input('machine'))->get();
-                $data = $this->getDataForAllocation($request->input('machine'), $machines);
                 $data['machines'] = $machines;
+                $data['testtypes'] = $this->testtypes;
                 $data = (object) $data;
-                dd($data);
+                
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
-            }
-            else
+            } else {
                 $saveAllocation = $this->saveAllocation($request);
+                \App\Synch::synch_allocations();
+                return redirect()->route('pending');
+            }
         }
     }
 
     protected function saveAllocation($request) {
-
-    }
-
-    protected function getDataForAllocation($machines, $machinesData) {
-        if (is_array($machines)){
-            // Get the necessary models
-            if (in_array(2, $machines))
-                $abbott = Abbotprocurement::orderBy('id');
-            if (array_intersect($machines, [1,3] ))
-                $taqman = Taqmanprocurement::orderBy('id');
-
-            // Factoring in the early year problems
-            if($this->previousMonth == 1) {
-                $taqman->whereRaw("((month = 1 and year = $this->year) or (month in (12,11) and year = $this->previousYear))");
-                $abbott->whereRaw("((month = 1 and year = $this->year) or (month in (12,11) and year = $this->previousYear))");
-            } else if ($this->previousMonth == 2) {
-                $taqman->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
-                $abbott->whereRaw("((month = 12 and year = $this->previousYear) or (month in (2,1) and year = $this->year))");
-            } else {
-                $eligibleMonths = [$this->previousMonth, $this->previousMonth - 1, $this->previousMonth - 2];
-                $year = $this->year;
-                if ($this->month == 1)
-                    $year = $this->previousYear;
-                $taqman->where('year', "=", $year)->whereIn("month", $eligibleMonths);
-                $abbott->where('year', "=", $year)->whereIn("month", $eligibleMonths);
+        $form = $request->except(['_token', 'kits-form']);
+        $allocation_data = $this->getAllocationData($form);
+        foreach ($allocation_data as $allocationkey => $allocation) {
+            $allocations_details_data = array_pull($allocation, 'allocationDetails');
+            $allocations = Allocation::create($allocation);
+            foreach ($allocations_details_data as $detailkey => $detail) {
+                $allocation_details = new AllocationDetail();
+                $allocation_details->allocation_id = $allocations->id;
+                $allocation_details->fill($detail);
+                $allocation_details->save();
             }
         }
-        
-        return self::__buildEndingData((object)['taqman' => $taqman->get(), 'abbott' => $abbott->get()], $machinesData);
+        return $allocation;
     }
 
-    protected static function __buildEndingData($data, $machinesData) {
-        // Build Roche Data (Both Taqman and C8800)
-        $rocheData = self::__buildRocheEndingData($data->taqman, $machinesData);
-        //Build Abbott Data
-        $abbottData = self::__buildAbbottEndingData($data->abbott, $machinesData);
-        
-        return (object) ['roche' => $rocheData, 'abbot' => $abbottData];
+    protected function getAllocationData($form_data) {
+        $allocation_data = [];
+        foreach ($form_data as $key => $datum) {
+            $column = explode('-', $key);
+            if ($column[0] == 'allocation') { // Create a new allocation at this point
+                $machine_id = $column[1];
+                $testtype = $column[2];
+                $allocationcomments = 'allocationcomments-'.$machine_id.'-'.$testtype;
+                $allocation_data[] = [
+                    'machine_id' => $machine_id,
+                    'testtype' => $testtype,
+                    'year' => $this->year,
+                    'month' => $this->month,
+                    'datesubmitted' => date('Y-m-d'),
+                    'submittedby' => auth()->user()->full_name,
+                    'lab_id' => env('APP_LAB'),
+                    'allocationcomments' => $form_data[$allocationcomments],
+                    'allocationDetails' => $this->getAllocationDetailsData($machine_id, $testtype, $form_data)
+                ];
+            }
+        }
+        return $allocation_data;
     }
 
-    protected static function __buildRocheEndingData($data, $machinesData) {
-        $return = [];
-        //Build Taqman Data
-        if (!$data->isEmpty()) {
-            foreach ($machinesData as $key => $machine) {
-                if (in_array($machine->id, [1,3])) {
-                    foreach ($data as $key => $consumption) {
-                        foreach ($machine->kits as $key => $kit) {
-                            $column = 'ending'.$kit->alias;
-                            $return[$machine->id][$kit->alias] = ['ending' => ($consumption->$column)];
-                        }
-                    }
+    protected function getAllocationDetailsData($machine, $testtype, $form_data) {
+        $kits = Kits::where('machine_id', '=', $machine)->get();
+        $allocation_details_array = [];
+        foreach ($kits as $key => $kit) {
+            foreach ($form_data as $formkey => $form) {
+                $column = 'allocate-'.$testtype.'-'.$kit->id;
+                if ($column == $formkey){
+                    $allocation_details_array[] = [
+                        'kit_id' => $kit->id,
+                        'allocated' => $form
+                    ];
                 }
             }
         }
-        return $return;
-    }
-
-    protected static function __buildAbbottEndingData($data, $machinesData) {
-        $return = [];
-        //Build Abbott Data
-        if (!$data->isEmpty()) {
-            foreach ($machinesData as $key => $machine) {
-                if ($machine->id == 2) {
-                    foreach ($data as $key => $consumption) {
-                        foreach ($machine->kits as $key => $kit) {
-                            $column = 'ending'.$kit->alias;
-                            $return[$machine->id][$kit->alias] = ['ending' => ($consumption->$column / 2)];
-                        }
-                    }
-                }
-            }
-        }
-        return $return;
+        return $allocation_details_array;
     }
 
     public function performancelog(Request $request)
