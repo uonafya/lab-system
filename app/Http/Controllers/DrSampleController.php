@@ -43,13 +43,17 @@ class DrSampleController extends Controller
                 return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
+                if($sample_status > 9){
+                    $query->whereNotNull('dateapproved');
+                    $sample_status -= 10;
+                    if(!$sample_status) return $query;
+                }
                 return $query->where('status_id', $sample_status);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
-                    return $query->whereDate($date_column, '>=', $date_start)
-                    ->whereDate($date_column, '<=', $date_end);
+                    return $query->whereBetween($date_column, [$date_start, $date_end]);
                 }
                 return $query->whereDate($date_column, $date_start);
             })

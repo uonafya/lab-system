@@ -76,17 +76,17 @@
 
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Patient Names</label>
-                                <div class="col-sm-8">
+                                <label class="col-sm-3 control-label">Patient Names</label>
+                                <div class="col-sm-9">
                                     <input class="form-control" name="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Of Birth
+                                <label class="col-sm-3 control-label">Date Of Birth
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-9">
                                     <div class="input-group date date-dob">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         <input type="text" id="dob" class="form-control lockable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
@@ -96,17 +96,17 @@
 
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Age (In Years)</label>
-                                <div class="col-sm-8">
+                                <label class="col-sm-3 control-label">Age (In Years)</label>
+                                <div class="col-sm-9">
                                     <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $sample->age ?? '' }}">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Sex
+                                <label class="col-sm-3 control-label">Sex
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-9">
                                     <select class="form-control lockable requirable" required name="sex" id="sex">
 
                                         <option></option>
@@ -128,10 +128,10 @@
 
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Started on ART
+                                <label class="col-sm-3 control-label">Date Started on ART
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-9">
                                     <div class="input-group date date-art">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         <input type="text" id="initiation_date" 
