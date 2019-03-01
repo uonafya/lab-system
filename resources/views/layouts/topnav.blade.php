@@ -295,10 +295,7 @@
                                     @endif">Nascop Dashboard</a>
                             </li>
                             <li class="">
-                                <a href="{{ url('reports/kits') }}">Kits
-                                    <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
-                                       {{ $widgets['rejectedAllocations'] }}
-                                    </span></a>
+                                <a href="{{ url('reports/kits') }}">Kits</a>
                             </li>
                             @if(Auth::user()->user_type_id == 0)
                                 <li>
