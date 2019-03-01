@@ -30,8 +30,10 @@ class CreateDrWorksheetsTable extends Migration
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
 
             // Exatype status
-            $table->tinyInteger('sanger_status_id')->unsigned()->default(4)->index();
+            $table->tinyInteger('exatype_status_id')->unsigned()->default(4)->index();
 
+
+            $table->date('daterun')->nullable();
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
             $table->date('datereviewed')->nullable();
