@@ -676,7 +676,7 @@ class ViralworksheetController extends Controller
         $approver = auth()->user()->id;
 
         $batch = array();
-        dd($samples);
+        // dd($samples);
         foreach ($samples as $key => $value) {
 
             if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2){
