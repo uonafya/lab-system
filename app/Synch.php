@@ -964,6 +964,7 @@ class Synch
 			session(['toast_message' => 'The transfer has been made.']);
 		}
 		else{
+			dd($body);
 			session(['toast_message' => "An error has occured. Status code {$status_code}.", 'toast_error' => 1]);
 		}
 		return;
