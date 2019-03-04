@@ -940,6 +940,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'transfer', [
+            'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
