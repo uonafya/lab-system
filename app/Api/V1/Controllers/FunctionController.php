@@ -69,6 +69,8 @@ class FunctionController extends Controller
             $facilities = str_replace(' ', '', $facilities);
             $facilities = explode(',', $facilities);
         }
+
+        if($test == 3 && env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not provide CD4.");
  
         $result = $class::when($facilities, function($query) use($facilities){
                 return $query->whereIn('facilitycode', $facilities);
