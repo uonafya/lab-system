@@ -940,6 +940,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'transfer', [
+            'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
@@ -954,6 +955,10 @@ class Synch
 
 		$body = json_decode($response->getBody());
 
+		// echo "<pre>" . print_r($body) . "</pre>";
+		// die();
+		// dd($body);
+
 		$status_code = $response->getStatusCode();
 
 		if($status_code < 400){
@@ -963,6 +968,7 @@ class Synch
 			session(['toast_message' => 'The transfer has been made.']);
 		}
 		else{
+			dd($body);
 			session(['toast_message' => "An error has occured. Status code {$status_code}.", 'toast_error' => 1]);
 		}
 		return;
