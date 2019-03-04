@@ -118,6 +118,7 @@ class ViralsampleController extends Controller
 
             $b = new Viralbatch;
             $others[] = get_object_vars($new_sample->batch);
+            $others[] = gettype(get_object_vars($new_sample->batch));
             $b->fill(get_object_vars($new_sample->batch));
             $b->user_id = $user_id;
             unset($b->id);
@@ -131,6 +132,7 @@ class ViralsampleController extends Controller
                 $new_patient = true;
             }
             $others[] = get_object_vars($new_sample->patient);
+            $others[] = gettype(get_object_vars($new_sample->patient));
             $p->fill(get_object_vars($new_sample->patient));
             if($new_patient) unset($p->id);
             // $p->save();
@@ -138,6 +140,7 @@ class ViralsampleController extends Controller
 
             $s = new Viralsample;
             $others[] = get_object_vars($new_sample);
+            $others[] = gettype(get_object_vars($new_sample));
             $s->fill(get_object_vars($new_sample));
             $s->batch_id = $b->id;
             $s->patient_id = $p->id;
