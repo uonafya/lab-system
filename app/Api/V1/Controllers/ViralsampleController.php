@@ -117,12 +117,12 @@ class ViralsampleController extends Controller
             unset($new_sample->batch->user); 
 
             $b = new Viralbatch;
-            $others[] = get_object_vars($new_sample->batch);
-            $others[] = gettype(get_object_vars($new_sample->batch));
+            // $others[] = get_object_vars($new_sample->batch);
+            // $others[] = gettype(get_object_vars($new_sample->batch));
             $b->fill(get_object_vars($new_sample->batch));
             $b->user_id = $user_id;
             unset($b->id);
-            // $b->save();
+            $b->save();
             unset($new_sample->batch);
 
             $new_patient = false;
@@ -131,21 +131,21 @@ class ViralsampleController extends Controller
                 $p = new Viralpatient;
                 $new_patient = true;
             }
-            $others[] = get_object_vars($new_sample->patient);
-            $others[] = gettype(get_object_vars($new_sample->patient));
+            // $others[] = get_object_vars($new_sample->patient);
+            // $others[] = gettype(get_object_vars($new_sample->patient));
             $p->fill(get_object_vars($new_sample->patient));
             if($new_patient) unset($p->id);
-            // $p->save();
+            $p->save();
             unset($new_sample->patient);
 
             $s = new Viralsample;
-            $others[] = get_object_vars($new_sample);
-            $others[] = gettype(get_object_vars($new_sample));
+            // $others[] = get_object_vars($new_sample);
+            // $others[] = gettype(get_object_vars($new_sample));
             $s->fill(get_object_vars($new_sample));
             $s->batch_id = $b->id;
             $s->patient_id = $p->id;
             unset($s->id);
-            // $s->save();
+            $s->save();
 
             $patients[] = $p;
             $batches[] = $b;
