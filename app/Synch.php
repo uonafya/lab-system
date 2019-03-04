@@ -957,7 +957,7 @@ class Synch
 
 		// echo "<pre>" . print_r($body) . "</pre>";
 		// die();
-		dd($body);
+		// dd($body);
 
 		$status_code = $response->getStatusCode();
 

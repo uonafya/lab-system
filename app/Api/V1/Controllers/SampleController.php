@@ -110,12 +110,12 @@ class SampleController extends Controller
                 continue;
             }
 
-            $user = $new_sample->batch->user ?? null;
+            $user = $new_sample->batch->creator ?? null;
             $user_id = 20000;
             if($new_sample->batch->site_entry && $user){
                 $user_id = \App\User::where('facility_id', $user->facility_id)->first()->id ?? 20000;
             }
-            unset($new_sample->batch->user); 
+            unset($new_sample->batch->creator); 
 
             $b = new Batch;
             $b->fill(get_object_vars($new_sample->batch));
