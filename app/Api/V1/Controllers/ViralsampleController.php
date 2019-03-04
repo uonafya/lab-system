@@ -106,7 +106,8 @@ class ViralsampleController extends Controller
 
             $new_sample = json_decode(json_encode($new_sample), true);
             $others[] = $new_sample;
-            // break; 
+            $others[] = $new_sample['batch'];
+            break; 
 
             $existing = ViralsampleView::sample($new_sample->batch->facility_id, $new_sample->patient->patient, $new_sample->datecollected)->first();
             if($existing){
