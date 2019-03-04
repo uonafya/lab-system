@@ -152,6 +152,9 @@ class ViralsampleController extends Controller
             $samples[] = $s;
 
             $ok[] = $new_sample->id;
+            $others[] = get_class($b);
+            $others[] = get_class($p);
+            $others[] = get_class($s);
         }
 
         return response()->json([
