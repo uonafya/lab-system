@@ -119,10 +119,11 @@ class ViralsampleController extends Controller
             $b = new Viralbatch;
             // $others[] = get_object_vars($new_sample->batch);
             // $others[] = gettype(get_object_vars($new_sample->batch));
-            $b->fill(get_object_vars($new_sample->batch));
+            // $b->fill(get_object_vars($new_sample->batch));
+            $b->facility_id = $new_sample->batch->facility_id;
             $b->user_id = $user_id;
-            unset($b->id);
-            // $b->save();
+            // unset($b->id);
+            $b->save();
             unset($new_sample->batch);
 
             $new_patient = false;
