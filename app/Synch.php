@@ -955,6 +955,7 @@ class Synch
 
 		$body = json_decode($response->getBody());
 
+		print_r($body); die();
 		dd($body);
 
 		$status_code = $response->getStatusCode();
