@@ -645,7 +645,9 @@ class ViralbatchController extends Controller
     public function sample_manifest(Request $request) {
         if ($request->method() == 'POST') {
             $facility_user = \App\User::where('facility_id', '=', $request->input('facility_id'));
-            $batches = Viralbatch::whereRaw("(facility_id = $facility_user->facility_id or user_id = $facility_user->id)")
+            $facilityID = $request->input('facility_id');
+            $user = $facility_user->id;
+            $batches = Viralbatch::whereRaw("(facility_id = $facilityID or user_id = $user)")
                             ->where('site_entry', '=', 1)
                             ->when(true, function($query) use ($request) {
                                 if ($request->input('from') == $request->input('to'))
