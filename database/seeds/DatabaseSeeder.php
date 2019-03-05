@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        dd('What the hell do you think you are doing!! We see you!!!');
         // $this->call(UsersTableSeeder::class);
         // $this->call(FakerSeeder::class);        
         // $this->call(DrSeeder::class);

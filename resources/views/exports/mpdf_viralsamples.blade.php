@@ -41,10 +41,21 @@ width:1000px;
 	text-decoration: underline;
 }
 p.breakhere {page-break-before: always}
+
+#pageFooter {
+    display: table-footer-group;
+}
+
+#pageFooter:after {
+    counter-increment: page;
+    content: counter(page);
+}
+
 </style>
 
 
 <body onLoad="JavaScript:window.print();">
+	<div id="pageFooter">Page </div>
 
 	<?php $count = 0; ?>
 
@@ -54,7 +65,7 @@ p.breakhere {page-break-before: always}
 			$count++;
 			if(!isset($current_batch)) $current_batch = $sample->batch_id;
 			if(!$sample->batch) unset($sample->batch);
-			if($sample->batch_id != $current_batch){
+			if($sample->batch->facility_id != $current_batch->facility_id){
 				echo "<p class='breakhere'></p> <pagebreak sheet-size='A4'>";
 				$current_batch = $sample->batch_id;
 			}
