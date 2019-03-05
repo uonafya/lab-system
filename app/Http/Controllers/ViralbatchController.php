@@ -657,7 +657,7 @@ class ViralbatchController extends Controller
                 $batch->received_by = auth()->user()->id;
                 $batch->datereceived = date('Y-m-d');
                 $batch->pre_update();
-                if(!$batch->samples->isEmpty()){
+                if(!empty($batch->samples)){
                     foreach ($batch->samples as $sample) {
                         $sample->sample_received_by = auth()->user()->id;
                         $sample->pre_update();
