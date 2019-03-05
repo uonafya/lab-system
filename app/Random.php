@@ -1539,7 +1539,7 @@ class Random
 			  PRIMARY KEY (`id`),
 			  KEY `old_facility_id` (`old_facility_id`),
 			  KEY `new_facility_id` (`new_facility_id`),
-			  KEY `temp_facility_id` (`temp_facility_id`),
+			  KEY `temp_facility_id` (`temp_facility_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 	}
