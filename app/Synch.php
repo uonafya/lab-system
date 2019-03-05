@@ -257,7 +257,7 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			dd($body);
+			// dd($body);
 
 			if($response->getStatusCode() > 399)
 			{
