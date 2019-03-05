@@ -591,7 +591,7 @@ class BatchController extends Controller
                         ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
                         ->leftJoin('pcrtype', 'pcrtype.id', '=', 'samples_view.pcrtype')
                         ->leftJoin('users as rec', 'rec.id', '=', "samples_view.received_by")
-                        ->whereRaw("(`samples_view`.`facility_id` = $request->input('facility_id') or `samples_view`.`user_id` = $facility_user->id )")
+                        ->whereRaw("(`samples_view`.`facility_id` = $facility_user->facility_id or `samples_view`.`user_id` = $facility_user->id )")
                         ->where('samples_view.site_entry', '=', 1)
                         ->when(true, function($query) use ($request) {
                             if ($request->input('from') == $request->input('to'))

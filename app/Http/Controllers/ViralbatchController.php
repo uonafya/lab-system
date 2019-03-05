@@ -684,15 +684,15 @@ class ViralbatchController extends Controller
                         ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
                         ->leftJoin('users as rec', 'rec.id', '=', "viralsamples_view.received_by")
-                        ->whereRaw("(`viralsamples_view`.`facility_id` = $request->input('facility_id') or `viralsamples_view`.`user_id` = $facility_user->id )")
+                        ->whereRaw("(`viralsamples_view`.`facility_id` = $facility_user->facility_id or `viralsamples_view`.`user_id` = $facility_user->id )")
                         ->where('viralsamples_view.site_entry', '=', 1)
                         ->when(true, function($query) use ($request) {
                             if ($request->input('from') == $request->input('to'))
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))). "'");
                             else
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
-                        })->toSql();
-        dd($data);
+                        })->get();
+        // dd($data);
         $export['samples'] = $data;
         $export['testtype'] = 'VL';
         $export['lab'] = \App\Lab::find(env('APP_LAB'));
