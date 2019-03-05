@@ -100,27 +100,41 @@ class ViralsampleController extends Controller
     {        
         $new_samples = json_decode($request->input('samples'));
 
-        $ok = $samples = $batches = $patients = [];
+        $ok = $samples = $batches = $patients = $others = [];
 
         foreach ($new_samples as $key => $new_sample) {
+
             $existing = ViralsampleView::sample($new_sample->batch->facility_id, $new_sample->patient->patient, $new_sample->datecollected)->first();
             if($existing){
                 $ok[] = $new_sample->id;
                 continue;
             }
 
-            $user = $new_sample->batch->user ?? null;
+            $user = $new_sample->batch->creator ?? null;
             $user_id = 20000;
             if($new_sample->batch->site_entry && $user){
                 $user_id = \App\User::where('facility_id', $user->facility_id)->first()->id ?? 20000;
             }
-            unset($new_sample->batch->user); 
+            unset($new_sample->batch->creator); 
 
-            $b = new Viralbatch;
+            $b = Viralbatch::whereDate('created_at', date('Y-m-d'))
+                ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
+                ->get();
+
+            if($b){
+                $s = $b->sample->count();
+                if($s > 9) $b->full_batch();
+                $b = new Viralbatch;
+            }
+            else{
+                $b = new Viralbatch;
+            }
+            
             $b->fill(get_object_vars($new_sample->batch));
+            // $b->facility_id = $new_sample->batch->facility_id;
             $b->user_id = $user_id;
             unset($b->id);
-            $b->pre_update();
+            $b->save();
             unset($new_sample->batch);
 
             $new_patient = false;
@@ -129,9 +143,10 @@ class ViralsampleController extends Controller
                 $p = new Viralpatient;
                 $new_patient = true;
             }
+
             $p->fill(get_object_vars($new_sample->patient));
             if($new_patient) unset($p->id);
-            $p->pre_update();
+            $p->save();
             unset($new_sample->patient);
 
             $s = new Viralsample;
@@ -139,13 +154,16 @@ class ViralsampleController extends Controller
             $s->batch_id = $b->id;
             $s->patient_id = $p->id;
             unset($s->id);
-            $s->pre_update();
+            $s->save();
 
             $patients[] = $p;
             $batches[] = $b;
             $samples[] = $s;
 
             $ok[] = $new_sample->id;
+            $others[] = get_class($b);
+            $others[] = get_class($p);
+            $others[] = get_class($s);
         }
 
         return response()->json([
@@ -153,6 +171,7 @@ class ViralsampleController extends Controller
                 'samples' => $samples,
                 'batches' => $batches,
                 'patients' => $patients,
+                'others' => $others,
                 'message' => 'The transfer was successful.',
                 'status_code' => 201,
             ], 201);

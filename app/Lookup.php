@@ -441,7 +441,7 @@ class Lookup
     public static function get_dr()
     {
         self::cacher();
-        return [
+        $data =  [
             'drug_resistance_reasons' => Cache::get('drug_resistance_reasons'),
             'dr_primers' => Cache::get('dr_primers'),
             'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
@@ -458,6 +458,7 @@ class Lookup
 
             'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
             'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+            'resistance_colours' => \App\MiscDr::$call_array,
             'double_approval' => self::$double_approval,
 
             'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),
@@ -466,6 +467,13 @@ class Lookup
             'regimens' => DB::table('dr_viralprophylaxis')->get(),
             'regimen_classes' => DB::table('regimen_classes')->get(),
         ];
+
+        if(env('APP_LAB') == 7){
+            $data = array_merge($data, [
+                'genders' => Cache::get('genders'),
+            ]);
+        }
+        return $data;
     }
 
     public static function viralsamples_arrays()

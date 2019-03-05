@@ -196,7 +196,8 @@ class MiscDr extends Common
 				'attributes' => [
 					'sample_name' => "{$sample->mid}",
 					'pathogen' => 'hiv',
-					'assay' => 'cdc-hiv',
+					'assay' => 'thermo_PR_RT',
+					// 'assay' => 'cdc-hiv',
 					'enforce_recall' => false,
 					'sample_type' => 'data',
 				],
@@ -303,14 +304,14 @@ class MiscDr extends Common
 		if($response->getStatusCode() == 200)
 		{
 			$w = $body->data->attributes;
-			$worksheet->sanger_status_id = self::get_worksheet_status($w->status);
+			$worksheet->exatype_status_id = self::get_worksheet_status($w->status);
 			$worksheet->plate_controls_pass = $w->plate_controls_pass;
 			$worksheet->qc_run = $w->plate_qc_run;
 			$worksheet->qc_pass = $w->plate_qc;
 
-			if($worksheet->sanger_status_id == 4) return null;
+			if($worksheet->exatype_status_id == 4) return null;
 
-			if($worksheet->sanger_status_id != 5){
+			if($worksheet->exatype_status_id != 5){
 
 				if($w->errors){
 					foreach ($w->errors as $error) {
@@ -338,7 +339,7 @@ class MiscDr extends Common
 
 					// echo " {$sample->id} ";
 
-					// if($worksheet->sanger_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
+					// if($worksheet->exatype_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
 					$s = $value->attributes;
 					$sample->status_id = self::get_sample_status($s->status_id);	
@@ -585,29 +586,29 @@ class MiscDr extends Common
 
 	public static function seed()
 	{		
-    	\App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 1, 'date_gel_documentation' => date('Y-m-d')]);
+    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 2, 'date_gel_documentation' => date('Y-m-d')]);
 
-    	\App\DrWorksheet::create(['extraction_worksheet_id' => 1]);
+    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    	DrSample::create([
+    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 99, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2009695759, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2012693909, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2012693911, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
-    		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => 1, 'extraction_worksheet_id' => 1],
+    	DrSample::create('dr_samples')->insert([
+    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 99, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2009695759, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2012693909, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2012693911, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 	}
 
@@ -649,6 +650,16 @@ class MiscDr extends Common
 			ADD `collect_new_sample` tinyint unsigned NOT NULL DEFAULT 0 AFTER `parentid`,
 
 			CHANGE `sanger_id` `exatype_id` int(10) unsigned NULL DEFAULT '0' AFTER `control`
+		;");
+
+
+	}
+
+	public static function w_columns()
+	{
+		DB::statement("ALTER TABLE `dr_worksheets`
+			CHANGE `sanger_status_id` `exatype_status_id` int(10) unsigned NULL DEFAULT '0' AFTER `status_id`,
+			ADD `daterun` DATE NULL AFTER `exatype_status_id`
 		;");
 
 
