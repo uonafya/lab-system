@@ -692,6 +692,7 @@ class ViralbatchController extends Controller
                             else
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
                         })->toSql();
+        dd($data);
         $export['samples'] = $data;
         $export['testtype'] = 'VL';
         $export['lab'] = \App\Lab::find(env('APP_LAB'));
