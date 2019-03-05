@@ -26,4 +26,13 @@ class DrExtractionWorksheet extends BaseModel
     {
     	return $this->belongsTo('App\User', 'createdby');
     }
+
+
+    public function getCanCreateSequencingAttribute()
+    {
+        $sample = \App\DrSample::where('extraction_worksheet_id', $this->id)->whereNull('worksheet_id')->first();
+        if($sample) return true;
+        return false;
+    }
+
 }
