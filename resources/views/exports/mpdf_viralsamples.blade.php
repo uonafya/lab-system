@@ -55,7 +55,7 @@ p.breakhere {page-break-before: always}
 
 
 <body onLoad="JavaScript:window.print();">
-	<div id="pageFooter">Page </div>
+	<!-- <div id="pageFooter">Page </div> -->
 
 	<?php $count = 0; ?>
 

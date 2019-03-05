@@ -39,11 +39,21 @@ width:1000px;
 	font-weight: bold;
 }
 p.breakhere {page-break-before: always}
+
+#pageFooter {
+    display: table-footer-group;
+}
+
+#pageFooter:after {
+    counter-increment: page;
+    content: counter(page);
+}
+
 </style>
 
 <!-- Naslogo dimensions height=64 width=80 -->
 <body onLoad="JavaScript:window.print();">
-	<div id="pageFooter">Page </div>
+	<!-- <div id="pageFooter">Page </div> -->
 
 	<?php $count = 0; ?>
 
