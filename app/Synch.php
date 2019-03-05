@@ -239,11 +239,11 @@ class Synch
 		while (true) {
 			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
 			->where('synched', 0)->where('batch_complete', 1)->limit(20)->get();
-			dd($batches);
+			// dd($batches);
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
-				'http_errors' => false,
+				// 'http_errors' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -257,7 +257,7 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			// dd($body);
+			dd($body);
 
 			if($response->getStatusCode() > 399)
 			{
