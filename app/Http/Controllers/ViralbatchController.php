@@ -657,10 +657,13 @@ class ViralbatchController extends Controller
                 $batch->received_by = auth()->user()->id;
                 $batch->datereceived = date('Y-m-d');
                 $batch->pre_update();
-                foreach ($batch->samples as $sample) {
-                    $sample->sample_received_by = auth()->user()->id;
-                    $sample->pre_update();
+                if(!$batch->samples->isEmpty()){
+                    foreach ($batch->samples as $sample) {
+                        $sample->sample_received_by = auth()->user()->id;
+                        $sample->pre_update();
+                    }
                 }
+                
             }
             Refresh::refresh_cache();
             $this->generate_sampleManifest($request);
@@ -687,7 +690,7 @@ class ViralbatchController extends Controller
                             if ($request->input('from') == $request->input('to'))
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) = " . date('Y-m-d', strtotime($request->input('from'))));
                             else
-                                return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN " . date('Y-m-d', strtotime($request->input('from'))) . " AND " . date('Y-m-d', strtotime($request->input('to'))));
+                                return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
                         })->get();
         $export['samples'] = $data;
         $export['testtype'] = 'VL';
