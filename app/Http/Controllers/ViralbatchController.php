@@ -649,9 +649,9 @@ class ViralbatchController extends Controller
                             ->where('site_entry', '=', 1)
                             ->when(true, function($query) use ($request) {
                                 if ($request->input('from') == $request->input('to'))
-                                    return $query->whereRaw("date(`created_at`) = '" . date('Y-m-d', strtotime($request->input('from')) . "'"));
+                                    return $query->whereRaw("date(`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))) . "'");
                                 else
-                                    return $query->whereRaw("date(`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to')) . "'"));
+                                    return $query->whereRaw("date(`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
                             })->get();
             foreach ($batches as $batch) {
                 $batch->received_by = auth()->user()->id;
