@@ -117,7 +117,19 @@ class ViralsampleController extends Controller
             }
             unset($new_sample->batch->creator); 
 
-            $b = new Viralbatch;
+            $b = Viralbatch::whereDate('created_at', date('Y-m-d'))
+                ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
+                ->get();
+
+            if($b){
+                $s = $b->sample->count();
+                if($s > 9) $b->full_batch();
+                $b = new Viralbatch;
+            }
+            else{
+                $b = new Viralbatch;
+            }
+            
             $b->fill(get_object_vars($new_sample->batch));
             // $b->facility_id = $new_sample->batch->facility_id;
             $b->user_id = $user_id;

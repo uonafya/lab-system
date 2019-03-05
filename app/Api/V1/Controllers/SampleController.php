@@ -115,7 +115,20 @@ class SampleController extends Controller
             if($new_sample->batch->site_entry && $user){
                 $user_id = \App\User::where('facility_id', $user->facility_id)->first()->id ?? 20000;
             }
-            unset($new_sample->batch->creator); 
+            unset($new_sample->batch->creator);  
+
+            $b = Batch::whereDate('created_at', date('Y-m-d'))
+                ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
+                ->get();
+
+            if($b){
+                $s = $b->sample->count();
+                if($s > 9) $b->full_batch();
+                $b = new Batch;
+            }
+            else{
+                $b = new Batch;
+            }
 
             $b = new Batch;
             $b->fill(get_object_vars($new_sample->batch));
