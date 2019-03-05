@@ -18,12 +18,14 @@ use App\Viralpatient;
 use App\Viralworksheet;
 
 use App\Facility;
+use App\FacilityChange;
 
 class Synch
 {
 	// public static $base = 'http://127.0.0.1:9000/api/';
 	// public static $base = 'http://eid-dash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	// public static $base = 'http://lab-nat.test/api/';
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -102,6 +104,15 @@ class Synch
 				'delete_url' => 'delete/viralsamples',
 			],
 		],
+
+		'allocations' => [
+			'allocations' => [
+				'class' => Allocation::class,
+				'child_class' => AllocationDetail::class,
+				'update_url' => 'update/allocations',
+				'delete_url' => 'delete/allocations',
+			]
+		]
 	];
 
 	public static $column_array = [
@@ -110,6 +121,7 @@ class Synch
 		'patients' => 'national_patient_id',
 		'batches' => 'national_batch_id',
 		'samples' => 'national_sample_id',
+		'allocations' => 'national_id'
 	];
 
 	public static function test_connection()
@@ -243,7 +255,7 @@ class Synch
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
-				'http_errors' => false,
+				// 'http_errors' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -256,6 +268,8 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+
+			dd($body);
 
 			if($response->getStatusCode() > 399)
 			{
@@ -388,42 +402,47 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
-		$c = self::$synch_arrays[$type];
+		if ($type != 'allocations') {
+			$c = self::$synch_arrays[$type];
 
-		$misc_class = $c['misc_class'];
-		$sample_class = $c['sample_class'];
-		$sampleview_class = $c['sampleview_class'];
+			$misc_class = $c['misc_class'];
+			$sample_class = $c['sample_class'];
+			$sampleview_class = $c['sampleview_class'];
 
-		$my = new $misc_class;
-		$my->save_tat($sampleview_class, $sample_class);
-
+			$my = new $misc_class;
+			$my->save_tat($sampleview_class, $sample_class);
+		}
+		
 		$updates = self::$update_arrays[$type];
-
+		
 		foreach ($updates as $key => $value) {
 			$update_class = $value['class'];
+			if (isset($value['child_class']))
+				$update_child_class = $value['child_class'];
 			$column = self::$column_array[$key];
 
 			$sheet = $sample = $eid_patient = false;
 			if($key == 'worksheets') $sheet = true;
 			if($key == 'samples') $sample = true;
 			if($key == 'patients' && $type == 'eid') $eid_patient = true;
+			if($key == 'allocations') $allocate = true;
 
 			while(true){
 				$models = $update_class::where('synched', 2)
 										->when($sample, function($query){
 							                return $query->with(['batch', 'patient']);
-							            })
-										->when($sheet, function($query){
+										})->when($allocate, function($query){
+											return $query->with(['details']);
+										})->when($sheet, function($query){
 							                return $query->where('status_id', 3);
-							            })->limit(20)->get();
+										})->limit(20)->get();
 				if($models->isEmpty()) break;
-
+				
 				if($key == 'batches'){
 					foreach ($models as $batch) {
 						$my->save_tat($sampleview_class, $sample_class, $batch->id);
 					}
 				}
-
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
@@ -437,16 +456,28 @@ class Synch
 				]);
 
 				$body = json_decode($response->getBody());
-
+				
 				foreach ($body->$key as $row) {
 					$update_data = [$column => $row->$column, 'synched' => 1, 'datesynched' => $today,];
 					$update_class::where('id', $row->original_id)->update($update_data);
+					if ($type == 'allocations') {
+						foreach ($row->details as $key => $new) {
+								$update_child_data = ['national_id' => $row->$column, 'synched' => 1, 'datesynched' => $today];
+								$update_child_class::where('id', $new->original_id)->update($update_child_data);
+						}
+					}
 				}
 
 				if($body->errors_array){
 					foreach ($body->errors_array as $row) {
 						$update_data = ['synched' => 1, 'datesynched' => $today,];
 						$update_class::where('id', $row->id)->update($update_data);
+						if ($type == 'allocations') {
+							foreach ($row->details as $key => $new) {
+									$update_child_data = ['synched' => 1, 'datesynched' => $today];
+									$update_child_class::where('id', $new->id)->update($update_child_data);
+							}
+						}
 					}
 				}
 			}			
@@ -495,8 +526,122 @@ class Synch
 		}
 	}
 
+	public static function synch_allocations() {
+		echo "==> Starting allocations synch";
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
 
-	public static function labactivity($type, $lab_id=null)
+		$url = 'insert/allocations';
+
+		while (true) {
+			echo "\n\t Getting allocations data 20\n";
+			$allocations = Allocation::with(['details'])->where('synched', 0)->limit(20)->get();
+			if($allocations->isEmpty())
+				break;
+			
+			echo "\t Pushing allocations data to national DB\n";
+			$response = $client->request('post', $url, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'allocations' => $allocations->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+			
+			echo "\t Receiving national db respose\n";
+			$body = json_decode($response->getBody());
+			
+			echo "\t Updating allocations data\n";
+			foreach ($body->allocations as $key => $value) {
+				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
+				Allocation::where('id', $value->original_id)->update($update_data);
+				foreach ($value->details as $key => $detailvalue) {
+					$detail_update_data = ['national_id' => $detailvalue->national_id, 'synched' => 1, 'datesynched' => $today];
+					AllocationDetail::where('id', $detailvalue->original_id)->update($detail_update_data);
+				}
+			}
+		}
+		echo "==> Completed allocations synch\n";	
+	}
+
+	public static function synch_allocations_updates() {
+		return self::synch_updates('allocations');
+	}
+
+	public static function synch_consumptions() {
+		echo "==> Starting consumptions synch";
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		$url = 'insert/consumptions';
+
+		while (true) {
+			echo "\n\t Getting consumptions data 20\n";
+			$consumptions = Consumption::where('synched', 0)->limit(20)->get();
+			if($consumptions->isEmpty())
+				break;
+			echo "\t Pushing consumptions data to national DB\n";
+			$response = $client->request('post', $url, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'consumptions' => $consumptions->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+
+			]);
+			echo "\t Receiving national db respose\n";
+			$body = json_decode($response->getBody());
+			echo "\t Updating consumptions data\n";
+			foreach ($body->consumptions as $key => $value) {
+				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
+				Consumption::where('id', $value->original_id)->update($update_data);
+			}
+		}
+		echo "==> Completed consumptions synch\n";
+	}
+
+	public static function synch_deliveries(){
+		echo "==> Starting deliveries synch";
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		$uri = 'insert/deliveries';
+
+		while (true) {
+			echo "\n\t Getting deliveries data 20\n";
+			$deliveries = Deliveries::where('synched', 0)->limit(20)->get();
+			if($deliveries->isEmpty())
+				break;
+
+			echo "\t Pushing deliveries data to national DB";
+			$response = $client->request('post', $uri, [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'deliveries' => $deliveries->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+			]);
+			echo "\t Receiving national db response\n";
+			$body =json_decode($response->getBody());
+			foreach ($body->deliveries as $key => $value) {
+				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
+				Deliveries::where('id', $value->original_id)->update($update_data);
+			}
+		}
+		echo "==> Completed deliveries synch\n";
+	}
+
+	public static function labactivity($type)
 	{
 		if(!$lab_id) $lab_id = env('APP_LAB', null);
 		
@@ -1236,13 +1381,16 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
+		$max_temp = FacilityChange::selectRaw("max(temp_facility_id) as maximum ")->first()->maximum ?? 1000000;
+
 		while (true) {
 			$facilities = Facility::where('synched', 0)->limit(30)->get();
 			if($facilities->isEmpty()) break;
 
-			$response = $client->request('post', 'synch/facilities', [
+			$response = $client->request('post', 'facility', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'facilities' => $facilities->toJson(),
@@ -1253,26 +1401,32 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
+			$update_data = ['synched' => 1,];
+
 			foreach ($body->facilities as $key => $value) {
-				$update_data = ['id' => $value->id, 'synched' => 1,];
-				Facility::where('id', $value->original_id)->update($update_data);
-				if($value->id != $value->original_id){
-					self::change_facility_id(Batch::class, $value->original_id, $value->id);
-					self::change_facility_id(Viralbatch::class, $value->original_id, $value->id);
-					self::change_facility_id(Patient::class, $value->original_id, $value->id);
-					self::change_facility_id(Viralpatient::class, $value->original_id, $value->id);
+				Facility::where('id', $value->old_facility_id)->update($update_data);
+				
+				if($value->new_facility_id != $value->old_facility_id){
+
+					$f = new FacilityChange;
+					$f->old_facility_id = $value->old_facility_id;
+					$f->new_facility_id = $value->new_facility_id;
+					$f->temp_facility_id = $max_temp++;
+					$f->save();
+
+					\App\Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
 				}
 			}
 		}
-	}
 
-	public static function change_facility_id($class_name, $old_id, $new_id)
-	{
-		$models = $class_name::where('facility_id', $old_id)->get();
-		foreach ($models as $m) {
-			$m->facility_id = $new_id;
-			$m->pre_update();
+		$changes = FacilityChange::where(['implemented' => 0])->get();
+
+		foreach ($changes as $f) {
+			\App\Common::change_facility_id($f->temp_facility_id, $value->new_facility_id, true);
+			$f->implemented = 1;
+			$f->save();
 		}
 	}
+
 
 }

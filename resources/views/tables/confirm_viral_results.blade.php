@@ -165,7 +165,7 @@
                                             <select class="dilutionfactor {{ $class }} dilution-{{ $sample->dilutionfactor }}" name="dilutionfactors[]">
                                                 @foreach($dilutions as $dilution)
                                                     <option value="{{$dilution->dilutionfactor }}"
-                                                        @if($sample->dilutionfactor == $dilution->dilutionfactor    )
+                                                        @if($sample->dilutionfactor == $dilution->dilutionfactor)
                                                             selected="selected"
                                                         @endif
                                                         > {{ $dilution->dilutiontype }} </option>

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Kits extends Model
+class Kits extends BaseModel
 {
-    //
+	//
 }
