@@ -64,7 +64,7 @@
                 </li> -->
                 <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
                 <hr />
-                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3, 5]))
                     <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
