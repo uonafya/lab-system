@@ -117,7 +117,7 @@ class ViralsampleController extends Controller
             }
             unset($new_sample->batch->creator); 
 
-            $b = Viralbatch::whereDate('created_at', $new_sample->batch->created_at)
+            $b = Viralbatch::where('created_at', $new_sample->batch->created_at)
                 ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
                 ->first();
 
