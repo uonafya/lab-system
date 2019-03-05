@@ -19,7 +19,7 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
+    public function index($state=0, $machine_type=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         // $state = session()->pull('worksheet_state', null); 
         $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
@@ -28,6 +28,9 @@ class WorksheetController extends Controller
         })
         ->when($state, function ($query) use ($state){
             return $query->where('status_id', $state);
+        })
+        ->when($machine_type, function ($query) use ($machine_type){
+            return $query->where('machine_type', $machine_type);
         })
         ->when($date_start, function($query) use ($date_start, $date_end){
             if($date_end)
@@ -88,7 +91,8 @@ class WorksheetController extends Controller
             ->orderBy('machine_type', 'asc')
             ->get();
         $data['worksheets'] = $worksheets;
-        $data['myurl'] = url('worksheet/index/' . $state . '/');
+        $data['myurl'] = url("worksheet/index/{$state}/{$machine_type}/");
+        $data['myurl2'] = url("worksheet/index/{$state}/");
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
     }
@@ -197,7 +201,7 @@ class WorksheetController extends Controller
     public function find(Worksheet $worksheet)
     {
         session(['toast_message' => 'Found 1 worksheet.']);
-        return $this->index(0, null, null, $worksheet->id);
+        return $this->index(0, 0, null, null, $worksheet->id);
     }
 
     /**
