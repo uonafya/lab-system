@@ -573,13 +573,13 @@ class BatchController extends Controller
                 }
             }
             Refresh::refresh_cache();
-            $this->generate_sampleManifest($request);
+            $this->generate_sampleManifest($request, $facility_user);
             return back();
         }else 
             return view('forms.sample_manifest_form')->with('pageTitle', 'Generate Sample Manifest');
     }
 
-    protected function generate_sampleManifest($request) {
+    protected function generate_sampleManifest($request, $facility_user) {
         $dateString = 'for date(s)';
         if ($request->input('from') == $request->input('to'))
             $dateString .= date('Y-m-d', strtotime($request->input('from')));
@@ -591,7 +591,7 @@ class BatchController extends Controller
                         ->leftJoin('facilitys', 'facilitys.id', '=', 'samples_view.facility_id')
                         ->leftJoin('pcrtype', 'pcrtype.id', '=', 'samples_view.pcrtype')
                         ->leftJoin('users as rec', 'rec.id', '=', "samples_view.received_by")
-                        ->where('samples_view.facility_id', '=', $request->input('facility_id'))
+                        ->whereRaw("(`samples_view`.`facility_id` = $request->input('facility_id') or `samples_view`.`user_id` = $facility_user->id )")
                         ->where('samples_view.site_entry', '=', 1)
                         ->when(true, function($query) use ($request) {
                             if ($request->input('from') == $request->input('to'))

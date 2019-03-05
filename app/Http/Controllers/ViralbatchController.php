@@ -666,13 +666,13 @@ class ViralbatchController extends Controller
                 
             }
             Refresh::refresh_cache();
-            $this->generate_sampleManifest($request);
+            $this->generate_sampleManifest($request, $facility_user);
             return back();
         }else 
             return view('forms.sample_manifest_form')->with('pageTitle', 'Generate Sample Manifest');
     }
 
-    protected function generate_sampleManifest($request) {
+    protected function generate_sampleManifest($request, $facility_user) {
         $dateString = 'for date(s)';
         if ($request->input('from') == $request->input('to'))
             $dateString .= date('Y-m-d', strtotime($request->input('from')));
@@ -684,7 +684,7 @@ class ViralbatchController extends Controller
                         ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
                         ->leftJoin('users as rec', 'rec.id', '=', "viralsamples_view.received_by")
-                        ->where('viralsamples_view.facility_id', '=', $request->input('facility_id'))
+                        ->whereRaw("(`viralsamples_view`.`facility_id` = $request->input('facility_id') or `viralsamples_view`.`user_id` = $facility_user->id )")
                         ->where('viralsamples_view.site_entry', '=', 1)
                         ->when(true, function($query) use ($request) {
                             if ($request->input('from') == $request->input('to'))
