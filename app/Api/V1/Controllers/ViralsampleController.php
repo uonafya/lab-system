@@ -119,12 +119,14 @@ class ViralsampleController extends Controller
 
             $b = Viralbatch::whereDate('created_at', date('Y-m-d'))
                 ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
-                ->get();
+                ->first();
 
             if($b){
                 $s = $b->sample->count();
-                if($s > 9) $b->full_batch();
-                $b = new Viralbatch;
+                if($s > 9){
+                    $b->full_batch();
+                    $b = new Viralbatch;
+                }                
             }
             else{
                 $b = new Viralbatch;
