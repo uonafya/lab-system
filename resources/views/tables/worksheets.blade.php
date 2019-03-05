@@ -33,8 +33,8 @@
     <div class="row">
         <div class="col-md-12">
             Click To View: 
-            <a href="{{ $myurl2 . 1 }}" title="Taqman Worksheets"> Taqman Worksheets </a> |
-            <a href="{{ $myurl2 . 2 }}" title="Abbott Worksheets"> Abbott Worksheets </a>
+            <a href="{{ $myurl2 . '/1' }}" title="Taqman Worksheets"> Taqman Worksheets </a> |
+            <a href="{{ $myurl2 . '/2' }}" title="Abbott Worksheets"> Abbott Worksheets </a>
         </div>        
     </div>
 
