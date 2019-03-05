@@ -243,7 +243,7 @@ class Synch
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
-				'http_errors' => false,
+				// 'http_errors' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -257,7 +257,7 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			// dd($body);
+			dd($body);
 
 			if($response->getStatusCode() > 399)
 			{
