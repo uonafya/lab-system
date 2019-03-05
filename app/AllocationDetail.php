@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Allocation extends BaseModel
+class AllocationDetail extends BaseModel
 {
     /**
      * The attributes that should be guarded from mass assignment.
@@ -13,11 +13,7 @@ class Allocation extends BaseModel
      */
     protected $guarded = [];
 
-    public function machine(){
-        return $this->belongsTo('App\Machine');
-    }
-
-    public function details() {
-    	return $this->hasMany('App\AllocationDetail');
+    public function kit(){
+    	return $this->belongsTo('App\Kits');
     }
 }

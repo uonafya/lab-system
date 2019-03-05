@@ -38,7 +38,8 @@ class KitsSeeder extends Seeder
      */
     public function run()
     {
-    	$roche = [1,3];
+		$roche = [1,3];
+		// dd($this->taqmanKits);
     	foreach ($roche as $key => $rocheMachine) {
     		foreach ($this->taqmanKits as $key => $kit) {
     			$kit = (object) $kit;

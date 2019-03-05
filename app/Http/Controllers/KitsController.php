@@ -9,7 +9,60 @@ use App\Allocation;
 use App\AllocationDetail;
 
 class KitsController extends Controller
-{
+{    
+	/**
+     * The test types available.
+     *
+     * @var array
+     */
+	public $testtypes = NULL;
+
+	/**
+     * The months for allocations.
+     *
+     * @var array
+     */
+	public $allocation_months = NULL;
+
+    /**
+     * The last month of consumption.
+     *
+     * @var array
+     */
+    public $last_month = NULL;
+
+
+	/**
+     * The years for allocations.
+     *
+     * @var array
+     */
+	public $allocation_years = NULL;
+
+    /**
+     * The last year of consumption.
+     *
+     * @var array
+     */
+    public $last_year = NULL;
+
+	/**
+     * The years for allocations.
+     *
+     * @var array
+     */
+	public $years = NULL;
+
+	public function __construct() {
+		$this->testtypes = ['EID' => 1, 'VL' => 2];
+		$this->years = [date('Y'), date('Y')-1];
+        $this->last_month = date('m')-1;
+        $this->last_year = date('Y');
+        if (date('m') == 1) {
+            $this->last_year -= 1;
+            $this->last_month = 12;
+        }
+    }
     
     public function kits(Request $request)
     {
@@ -83,27 +136,59 @@ class KitsController extends Controller
 						COUNT(IF(approve=1, 1, NULL)) AS `approved`,
 						COUNT(IF(approve=2, 1, NULL)) AS `rejected`";
         $data = [
-        				'allocations' => Allocation::selectRaw($allocationSQL)->groupBy(['year','month', 'testtype'])->orderBy('year', 'desc')->orderBy('month', 'desc')->get(),
-        				'badge' => function($value, $type) {
-        					$badge = "success";
-        					if ($type == 1) {// Pending approval
-        						if ($value > 0)
-        							$badge = "warning";
-        					} else if ($type == 2) { //Approved
-        						if ($value == 0)
-        							$badge = "warning";
-        					} else if ($type == 3) { // Rejected
-        						if ($value > 0)
-        							$badge = "danger";
-        					}
-        					return $badge;
-        				}
-        			];
+                'allocations' => Allocation::selectRaw($allocationSQL)->groupBy(['year','month', 'testtype'])->orderBy('year', 'desc')->orderBy('month', 'desc')->get(),
+                'badge' => function($value, $type) {
+                    $badge = "success";
+                    if ($type == 1) {// Pending approval
+                        if ($value > 0)
+                            $badge = "warning";
+                    } else if ($type == 2) { //Approved
+                        if ($value == 0)
+                            $badge = "warning";
+                    } else if ($type == 3) { // Rejected
+                        if ($value > 0)
+                            $badge = "danger";
+                    }
+                    return $badge;
+                }
+            ];
+            // dd($data);
         // dd($data->badge{(1,1)});
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 
-    public function allocation(Allocation $allocation) {
-
+    public function allocation($testtype = 1, $year, $month, $approval = null) {
+        if (!($testtype == 1 || $testtype == 2)) abort(404);
+        $allocations = Allocation::where('testtype', '=', $testtype)->where(['year' => $year, 'month' => $month])
+                                    ->when($approval, function($query) use ($approval) {
+                                        return $query->where('approve', '=', 2);
+                                    })->get();
+        $data = (object)[
+            'allocations' => $allocations,
+            'year' => $year, 
+            'last_year' => $this->last_year,
+            'last_month' => $this->last_month,
+            'month' => $month,
+            'testtype' => ($testtype == 1) ? 'EID' : 'VL',
+            'approval' => $approval,
+        ];
+        return view('reports.kitreports-allocations-details', compact('data'))->with('pageTitle', $data->testtype . ' Kits Allocations');
     }
+
+    public function editallocation(Request $request, Allocation $allocation) {
+        $details = $allocation->details;
+        foreach ($details as $key => $detail) {
+            $detail->allocated = $request->input($detail->id);
+            $detail->pre_update();
+        }
+        $allocation->allocationcomments = $request->input('allocationcomments');
+        $allocation->approve = 0;
+        $allocation->submissions = $allocation->submissions + 1;
+        $allocation->pre_update();
+        session(['toast_message' => 'Allocation(s) edited successfully.']);
+        \App\Synch::synch_allocations_updates();
+        return back();
+    }
+
+    // public function 
 }
