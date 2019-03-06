@@ -1544,4 +1544,19 @@ class Random
 		");
 	}
 
+	public static function eid_worksheets()
+	{
+		$rows = \App\SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine, result, count(*) as tests ")
+			->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+			->join('machines', 'machines.id', '=', 'worksheets.machine_type')
+			->where('site_entry', '!=', 2)
+			->whereYear('daterun', 2018)
+			->groupBy('year', 'month', 'machine', 'result')
+			->orderBy('year', 'month', 'machine', 'result')
+			->get();
+
+		dd($rows);
+
+	}
+
 }
