@@ -1561,9 +1561,8 @@ class Random
 		$rows = [];
 
 		for ($i=1; $i < 13; $i++) { 
-			$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
-
 			foreach ($machines as $mkey => $mvalue) {
+				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
 				$row['Machine'] = $mvalue;
 				$total = 0;
 
@@ -1571,9 +1570,10 @@ class Random
 					$row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
 					$total += $row[$rvalue];
 				}
+				
 				$row['Total'] = $total;
+				$rows[] = $row;
 			}
-			$rows[] = $row;
 		}
 
 		dd($rows);
