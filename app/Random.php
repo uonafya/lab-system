@@ -1525,4 +1525,38 @@ class Random
         \App\Common::save_tat5('vl');
 	}
 
+	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {
+		if ($plartform == 1) {
+			$consumption = Taqmanprocurement::class;
+			$kits = (object)self::$taqmanKits;
+		} else if ($plartform == 2) {
+			$consumption = Abbotprocurement::class;
+			$kits = (object)self::$abbottKits;
+		}
+		$consumptions = $consumption::find($id);
+		if ((int)$ending > 0) 
+			self::adjust_procurement_numbers($consumptions, $ending, $kits, 'ending');
+		if ((int)$wasted > 0)
+			self::adjust_procurement_numbers($consumptions, $wasted, $kits, 'wasted');
+		if ((int)$issued > 0) 
+			self::adjust_procurement_numbers($consumptions, $issued, $kits, 'issued');
+		if ((int)$request > 0)
+			self::adjust_procurement_numbers($consumptions, $request, $kits, 'request');
+		if ((int)$pos > 0)
+			self::adjust_procurement_numbers($consumptions, $pos, $kits, 'pos');
+		// dd($consumptions);
+		$consumptions->pre_update();
+	}
+
+	protected static function adjust_procurement_numbers(&$model, $qualquantity, $kits, $type) {
+		$qualkitvalue = 0;
+		foreach($kits as $kit) {
+			$kit = (object)$kit;
+			$column = $type.$kit->alias;
+			if ($kit->alias == 'qualkit')
+				$qualkitvalue = $qualquantity;
+			$model->$column = $qualkitvalue * $kit->factor;
+		}
+	}
+
 }
