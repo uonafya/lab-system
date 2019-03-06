@@ -133,8 +133,7 @@ class ViralsampleController extends Controller
             }
 
             $batch_details = get_object_vars($new_sample->batch);
-            unset($batch_details['id']);
-            
+            unset($batch_details['id']);            
             $b->fill($batch_details);
             $b->user_id = $user_id;
             $b->lab_id = env('APP_LAB');
@@ -147,7 +146,6 @@ class ViralsampleController extends Controller
 
             $patient_details = get_object_vars($new_sample->patient);
             unset($patient_details['id']);
-
             $p->fill($patient_details);
             $p->save();
             unset($new_sample->patient);
