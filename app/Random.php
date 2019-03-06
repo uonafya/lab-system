@@ -1573,6 +1573,7 @@ class Random
 				}
 				$row['Total'] = $total;
 			}
+			$rows[] = $row;
 		}
 
 		dd($rows);
