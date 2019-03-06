@@ -1585,7 +1585,7 @@ class Random
 			$consumption = Abbotprocurement::class;
 			$kits = (object)self::$abbottKits;
 		}
-		$consumptions = $consumption::find($id);
+		$consumptions = $consumption::findOrFail($id);
 		if ((int)$ending > 0) 
 			self::adjust_procurement_numbers($consumptions, $ending, $kits, 'ending');
 		if ((int)$wasted > 0)
@@ -1596,8 +1596,8 @@ class Random
 			self::adjust_procurement_numbers($consumptions, $request, $kits, 'request');
 		if ((int)$pos > 0)
 			self::adjust_procurement_numbers($consumptions, $pos, $kits, 'pos');
-		// dd($consumptions);
-		$consumptions->pre_update();
+		if($consumptions->isDirty());
+			$consumptions->pre_update();
 	}
 
 	protected static function adjust_procurement_numbers(&$model, $qualquantity, $kits, $type) {
