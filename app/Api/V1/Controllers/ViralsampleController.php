@@ -107,7 +107,7 @@ class ViralsampleController extends Controller
             $existing = ViralsampleView::sample($new_sample->batch->facility_id, $new_sample->patient->patient, $new_sample->datecollected)->first();
             if($existing){
                 $ok[] = $new_sample->id;
-                continue;
+                break;
             }
 
             $user = $new_sample->batch->creator ?? null;
@@ -126,34 +126,34 @@ class ViralsampleController extends Controller
                 if($s > 9){
                     $b->full_batch();
                     $b = new Viralbatch;
-                }                
+                }            
             }
             else{
                 $b = new Viralbatch;
             }
-            
-            $b->fill(get_object_vars($new_sample->batch));
-            // $b->facility_id = $new_sample->batch->facility_id;
+
+            $batch_details = get_object_vars($new_sample->batch);
+            unset($batch_details['id']);            
+            $b->fill($batch_details);
             $b->user_id = $user_id;
-            unset($b->id);
+            $b->lab_id = env('APP_LAB');
             $b->save();
+            $batch_id = $b->id;
             unset($new_sample->batch);
 
-            $new_patient = false;
             $p = Viralpatient::existing($new_sample->patient->facility_id, $new_sample->patient->patient)->first();
-            if(!$p){
-                $p = new Viralpatient;
-                $new_patient = true;
-            }
+            if(!$p) $p = new Viralpatient;
 
-            $p->fill(get_object_vars($new_sample->patient));
-            if($new_patient) unset($p->id);
+            $patient_details = get_object_vars($new_sample->patient);
+            unset($patient_details['id']);
+            $p->fill($patient_details);
             $p->save();
             unset($new_sample->patient);
 
             $s = new Viralsample;
             $s->fill(get_object_vars($new_sample));
-            $s->batch_id = $b->id;
+            // $s->batch_id = $b->id;
+            $s->batch_id = $batch_id;
             $s->patient_id = $p->id;
             unset($s->id);
             $s->save();

@@ -388,6 +388,10 @@ class WorksheetController extends Controller
      */
     public function save_results(Request $request, Worksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet already has results."]);
+            return back();   
+        }
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 

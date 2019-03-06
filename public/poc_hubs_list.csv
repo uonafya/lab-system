@@ -1,0 +1,85 @@
+#,County,Site,code,platform
+1,Turkana,Lodwar County Referral Hosital ,15049,Alere q
+2,Homabay,Kandiege Sub County Hospital,13653,Alere q
+3,Homabay,Marindi Sub County Hospital,13777,Alere q
+4,Homabay,Homabay County Referral Hospital,13608,Alere q  & Gene Xpert
+5,Homabay,Rachuonyo Sub County Hospital,14022,Alere q
+6,Homabay,Nyandiwa Health Center,13920,Alere q
+7,Nyamira,Nyamira Conty Referral Hospital,13912,Alere q
+8,Vihiga,Emuhaya Sub County Hospital,15876,Alere q
+9,Bungoma,Kimilili Sub County Hospital,15950,Alere q
+10,Kakamega ,Lumakanda Sub County Hospital,15969,Alere q
+11,Homabay,Mbita Sub District Hospital,13798,Gene Xpert
+12,Siaya,Rwambwa Health Center,14063,Alere q
+13,Homabay,Suba Sub County Hospital,14130,Alere q
+14,Migori,Uriri Health Center,14161,Alere q
+15,Migori,Macalder Sub County Hospital,13745,Alere q
+16,Homabay,Nyagoro Health Center,13875,Alere q
+17,Kakamega ,Matungu Sub County Hospital,16037,Alere q
+18,Kakamega ,Butere Sub County Hospital,15836,Alere q
+19,Turkana,Kakuma Mission Hospital,14655,Alere q
+20,Siaya,Yala Sub County Hospital,14175,Gene Xpert
+21,Bungoma,Webuye Sub County Hospital,16161,Alere q
+22,Busia,Port Victoria Su County Hospital,16091,Alere q
+23,Kisii,Keumbu Sub County Hospital,13680,Alere q
+24,Kisii,Gucha Sub County Hospital,13594,Alere q
+25,Homabay,Kendu Sub County Hospital,13668,Alere q
+26,Migori,Karungu Sub County Hospital,13656,Alere q
+27,Busia,Khunyangu Sub County Hospital,15939,Alere q
+28,Homabay,Kabondo Sub County Hospital,13638,Alere q
+29,Kisii,Kisii Hspital,13703,Alere q
+30,Vihiga,Hamisi Sub County Hospital,15894,Alere q
+31,Kakamega ,Malava Sub County Hospital,15996,Alere q
+32,Busia,Teso North Su County Hospital,16150,Alere q
+33,Migori,Isibania Sub County Hospital,13625,Alere q
+34,Siaya,Ukwala Health Center,14156,Alere q
+35,Turkana,Katilu Sub County Hospital,14818,Alere q
+36,Migori,Awendo Sub County Hospital,13492,Alere q
+37,Homabay,Rangwe Sub County Hospital,14036,Alere q
+38,Nyamira,Masaba Sub County Hospital,13678,Alere q
+39,Busia,Sio Port Sub County Hospital,16128,Alere q
+40,Migori,Rongo Sub County Hospital,14058,Alere q
+41,Kisumu ,Jaramogi Oginga Odinga Teaching and Referral ,13939,Alere q
+42,West Pokot,Kapenguria County Referral Hospital,14701,Alere q
+43,meru,Meru Teaching Refferal Hospital,12516,Gene Xpert
+44,wajir,Wajir County Referral Hospital,13452,Gene Xpert
+45,meru,Nyambene District Hospital,12684,Gene Xpert
+46,kwale,Kwale District Hospital,11507,Gene Xpert
+47,kwale,Msambweni District Hospital,11655,Gene Xpert
+48,kwale,Kinango Hospital,11480,Gene Xpert
+49,kilifi,Kilifi District Hospital,11474,Gene Xpert
+50,kilifi,Malindi District Hospital,11555,Gene Xpert
+51,kilifi,Mariakani District Hospital,11566,Gene Xpert
+52,isiolo,Isiolo District Hospital,12094,Gene Xpert
+53,isiolo,Garbatulla District Hospital,12029,Gene Xpert
+54,garissa,Garissa Provincial General Hospital (PGH),13346,Gene Xpert
+55,lamu,Lamu District Hospital,11512,Gene Xpert
+56,taitaveta,Taveta District Hospital,11840,Gene Xpert
+57,taitaveta,Moi Voi District Hospital,11641,Gene Xpert
+58,tanariver,Hola District Hospital,11411,Gene Xpert
+59,Homa Bay,Got Kojowi Health Centre,13589,Gene Xpert
+60,Homa Bay,Ndhiwa Sub-District Hospital,13841,Gene Xpert
+61,Homa Bay,Pala Health Centre,14011,Gene Xpert
+62,Homa Bay,Magina Health Centre,13751,Gene Xpert
+63,Homa Bay,Malela Dispensary,13761,Gene Xpert
+64,Homa Bay,Kachuth Dispensary,18876,Gene Xpert
+65,Homa Bay,Kadhola Dispensary,16769,Gene Xpert
+66,Homa Bay,Kiasa Dispensary,13686,Gene Xpert
+67,Homa Bay,Kobodo Dispensary,20241,Gene Xpert
+68,Homa Bay,Kome Dispensary,20347,Gene Xpert
+69,Homa Bay,Kwamo Dispensary,13728,Gene Xpert
+70,Homa Bay,Lambwe Forest Dispensary,13732,Gene Xpert
+71,Homa Bay,Lwanda Awiti Dispensary,16770,Gene Xpert
+72,Homa Bay,Lwanda Kodita Dispensary,20285,Gene Xpert
+73,Homa Bay,Ndisi Health Centre,16771,Gene Xpert
+74,Homa Bay,Nguku Dispensary,13855,Gene Xpert
+75,Homa Bay,Ober Kabuoch Dispensary,13952,Gene Xpert
+76,Homa Bay,Okok Dispensary,16259,Gene Xpert
+77,Homa Bay,Ombo Kachieng-Ndhiwa Dispensary,13979,Gene Xpert
+78,Homa Bay,Oridi Dispensary,16767,Gene Xpert
+79,Homa Bay,Osani Community Disp,17266,Gene Xpert
+80,Homa Bay,Otange Disp,18877,Gene Xpert
+81,Homa Bay,Ponge Dispensary (Homa Bay),14015,Gene Xpert
+82,Homa Bay,Roadblock Clinic,14056,Gene Xpert
+83,Homa Bay,Unga Dispensary,20242,Gene Xpert
+84,Homa Bay,Maram Dispensary,16258,Gene Xpert
