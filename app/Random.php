@@ -1607,7 +1607,15 @@ class Random
 			$column = $type.$kit->alias;
 			if ($kit->alias == 'qualkit')
 				$qualkitvalue = $qualquantity;
-			$model->$column = $qualkitvalue * $kit->factor;
+
+			$factor = $kit->factor;
+			$classname = get_class($model);
+			if ($classname == "App\Abbotprocurement"){
+				$factor = $kit->factor->EID;
+				if ($model->testtype == 2)
+					$factor = $kit->factor->VL;
+			}
+			$model->$column = $qualkitvalue * $factor;
 		}
 	}
 
