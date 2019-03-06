@@ -1550,7 +1550,7 @@ class Random
 			->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
 			->where('site_entry', '!=', 2)
 			->whereYear('daterun', 2018)
-			->where(['lab_id' => env('APP_LAB')])
+			->where(['samples_view.lab_id' => env('APP_LAB')])
 			->groupBy('year', 'month', 'machine_type', 'result')
 			->orderBy('year', 'month', 'machine_type', 'result')
 			->get();
