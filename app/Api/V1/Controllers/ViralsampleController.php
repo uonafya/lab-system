@@ -107,6 +107,7 @@ class ViralsampleController extends Controller
             $existing = ViralsampleView::sample($new_sample->batch->facility_id, $new_sample->patient->patient, $new_sample->datecollected)->first();
             if($existing){
                 $ok[] = $new_sample->id;
+                break;
                 continue;
             }
 
@@ -121,21 +122,20 @@ class ViralsampleController extends Controller
                 ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
                 ->first();
 
-            if($b){
-                $s = $b->sample->count();
-                if($s > 9){
-                    $b->full_batch();
-                    $b = new Viralbatch;
-                }                
-            }
-            else{
-                $b = new Viralbatch;
-            }
+            // if($b){
+            //     $s = $b->sample->count();
+            //     if($s > 9){
+            //         $b->full_batch();
+            //         $b = new Viralbatch;
+            //     }                
+            // }
+            // else{
+            //     $b = new Viralbatch;
+            // }
 
-            // if(!$b) $b = new Viralbatch;
+            if(!$b) $b = new Viralbatch;
             
             $b->fill(get_object_vars($new_sample->batch));
-            // $b->facility_id = $new_sample->batch->facility_id;
             $b->user_id = $user_id;
             $b->lab_id = env('APP_LAB');
             unset($b->id);
