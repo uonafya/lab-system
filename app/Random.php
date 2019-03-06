@@ -1611,9 +1611,10 @@ class Random
 			$factor = $kit->factor;
 			$classname = get_class($model);
 			if ($classname == "App\Abbotprocurement"){
-				$factor = $kit->factor->EID;
 				if ($model->testtype == 2)
 					$factor = $kit->factor->VL;
+				else
+					$factor = $kit->factor->EID;
 			}
 			$model->$column = $qualkitvalue * $factor;
 		}
