@@ -310,9 +310,17 @@ Artisan::command('edarp:approvesamples', function(){
 //     $this->info($str);
 // })->describe('Checking for Chege');
 
+// Quick fixes
 // Quick fix for deliveries
 Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
     $str = \App\Random::adjust_deliveries($platform, $id, $quantity, $damaged);
     $this->info($str);
 })->describe('Adjust deliveries');
 // Quick fix for deliveries
+// Quick fix for consumptions
+Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued} {request} {pos}', function($platform, $id, $ending, $wasted, $issued, $request, $pos) {
+    $str = \App\Random::adjust_procurement($platform, $id, $ending, $wasted, $issued, $request, $pos);
+    $this->info($str);
+})->describe('Adjust Consumptions');
+// Quick fix for consumptions
+//Quick fixes
