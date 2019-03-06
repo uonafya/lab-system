@@ -64,6 +64,13 @@
                         <li class="">
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
+                    @elseif(session('testingSystem') == 'DR')
+                        <li class="">
+                            <a href="{{ url('dr_sample/index/10') }}">Dispatched Samples</a>
+                        </li>                
+                        <li class="">
+                            <a href="{{ url('dr_sample/report') }}">Report</a>
+                        </li>    
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                             @if (Auth::user()->user_type_id == 5)
@@ -134,7 +141,7 @@
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
                                     <li class="">
-                                        <a href="#">Kits</a>
+                                        <a href="{{ url('reports/kits') }}">Kits</a>
                                     </li>
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
@@ -165,7 +172,7 @@
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
                         <i class="pe-7s-home" style="font-size: 25px;"></i>
-                            <span class="label label-danger"> </span>
+                            <span class="label label-danger"></span>
                         </a>
                     </li>
                     <li class="">
@@ -184,6 +191,9 @@
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
+                    <li class="">
+                        <a href="{{ url('dr_sample/index/10') }}">Dispatched Samples</a>
+                    </li>                
                     <li class="">
                         <a href="{{ url('dr_sample/report') }}">Report</a>
                     </li>                

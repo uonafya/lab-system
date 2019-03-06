@@ -652,6 +652,30 @@ class Common
 	    }
     }
 
+    public static function old_batches_dispatch()
+    {
+        ini_set("memory_limit", "-1");
+        $classes = \App\Synch::$synch_arrays;
+
+        foreach ($classes as $c) {
+
+	        $batch_class = $c['batch_class'];
+	        $misc_class = $c['misc_class'];
+
+	        $batches = $batch_class::where('batch_complete', 2)->get();
+	        $batch_ids = $batches->pluck(['id'])->toArray();
+	        $date_tested = $misc_class::get_maxdatetested($batch_ids, false);
+
+	        foreach ($batches as $batch) {
+	        	$dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
+	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +3days'));
+	        	$batch->batch_complete = 1;
+	        	$batch->sent_email = 1;
+	        	$batch->save();
+	        }
+	    }
+    }
+
     public static function correct_facility($mfl)
     {
         ini_set("memory_limit", "-1");
@@ -773,5 +797,309 @@ class Common
         } catch (Exception $e) {
         	
         }
+    }
+
+    public static function transferconsumptions() {
+    	$kits = \App\Kits::get();
+    	$kitArray = [];
+    	// Getting first the abbott consumptions
+    	$abbottconsumptions = \App\Abbotprocurement::get();
+    	foreach ($abbottconsumptions as $key => $consumption) {
+    		foreach ($kits as $key => $kit) {
+	    		if ($kit->machine_id == 2) {
+	    			$ending = 'ending'.$kit->alias;
+		    		$wasted = 'wasted'.$kit->alias;
+		    		$issued = 'issued'.$kit->alias;
+		    		$request = 'request'.$kit->alias;
+		    		$pos = 'pos'.$kit->alias;
+		    		$kitArray[] = [
+		    			'month' => $consumption->month,
+		    			'year' => $consumption->year,
+						'testtype' => $consumption->testtype,
+						'kit_id' => $kit->id,
+						'ending' => $consumption->$ending,
+						'wasted' => $consumption->$wasted,
+						'issued' => $consumption->$issued,
+						'pos' => $consumption->$pos,
+						'request' => $consumption->$request,
+						'datesubmitted' => $consumption->datesubmitted,
+						'submittedby' => $consumption->submittedby,
+						'lab_id' => $consumption->lab_id,
+						'comments' => $consumption->comments,
+						'issuedcomments' => $consumption->issuedcomments,
+						'approve' => $consumption->approve,
+						'disapprovereason' => $consumption->disapprovereason,
+						'synched' => $consumption->synched,
+						'datesynched' => $consumption->datesynched,
+						'deleted_at' => $consumption->deleted_at,
+						'created_at' => $consumption->created_at,
+						'updated_at' => $consumption->updated_at,
+		    		];
+	    		}
+	    	}
+		}
+
+		// Finally getting the Roche consumptions
+		$months = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$years = \App\Taqmanprocurement::selectRaw("max(year) as maximum, min(year) minimum")->first();
+		for ($i=$years->minimum; $i <=$years->maximum ; $i++) {
+			foreach ($months as $key => $month) {
+				$consumptions = \App\Taqmanprocurement::where('year', '=', $i)->where('month', '=', $month)->get();
+				$vlsamples = \App\Viralsample::selectRaw("count(if(viralworksheets.machine_type = 1, 1, null)) as `taqman`, count(if(viralworksheets.machine_type = 3, 1, null)) as `C8800`")
+							->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+							->whereIn('machine_type', [1,3])
+							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
+				$eidsamples = \App\Sample::selectRaw("count(if(worksheets.machine_type = 1, 1, null)) as `taqman`, count(if(worksheets.machine_type = 3, 1, null)) as `C8800`")
+							->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+							->whereIn('machine_type', [1,3])
+							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
+				foreach ($consumptions as $key => $consumption) {
+					if ($consumption->testtype == 1)
+		    			$model = $eidsamples;
+		    		else if ($consumption->testtype == 2)
+		    			$model = $eidsamples;
+		    		if ($model->taqman == 0 && $model->C8800 == 0) {
+
+		    		} else {
+		    			$total = $model->taqman + $model->C8800;
+		    			$taqmanratio = ($model->taqman / $total);
+		    			$C8800ratio = ($model->C8800 / $total);
+		    			if ($model->taqman > 0) {
+		    				foreach ($kits as $key => $kit) {
+								if ($kit->machine_id == 1) {
+									$ending = 'ending'.$kit->alias;
+						    		$wasted = 'wasted'.$kit->alias;
+						    		$issued = 'issued'.$kit->alias;
+						    		$request = 'request'.$kit->alias;
+						    		$pos = 'pos'.$kit->alias;
+
+						    		$kitArray[] = [
+						    			'month' => $consumption->month,
+						    			'year' => $consumption->year,
+										'testtype' => $consumption->testtype,
+										'kit_id' => $kit->id,
+										'ending' => ($consumption->$ending * $taqmanratio),
+										'wasted' => ($consumption->$wasted * $taqmanratio),
+										'issued' => ($consumption->$issued * $taqmanratio),
+										'pos' => ($consumption->$pos * $taqmanratio),
+										'request' => ($consumption->$request * $taqmanratio),
+										'datesubmitted' => $consumption->datesubmitted,
+										'submittedby' => $consumption->submittedby,
+										'lab_id' => $consumption->lab_id,
+										'comments' => $consumption->comments,
+										'issuedcomments' => $consumption->issuedcomments,
+										'approve' => $consumption->approve,
+										'disapprovereason' => $consumption->disapprovereason,
+										'synched' => $consumption->synched,
+										'datesynched' => $consumption->datesynched,
+										'deleted_at' => $consumption->deleted_at,
+										'created_at' => $consumption->created_at,
+										'updated_at' => $consumption->updated_at,
+						    		];
+								}
+							}
+		    			} else if ($model->C8800 > 0) {
+		    				foreach ($kits as $key => $kit) {
+								if ($kit->machine_id == 3) {
+									$ending = 'ending'.$kit->alias;
+						    		$wasted = 'wasted'.$kit->alias;
+						    		$issued = 'issued'.$kit->alias;
+						    		$request = 'request'.$kit->alias;
+						    		$pos = 'pos'.$kit->alias;
+
+						    		$kitArray[] = [
+						    			'month' => $consumption->month,
+						    			'year' => $consumption->year,
+										'testtype' => $consumption->testtype,
+										'kit_id' => $kit->id,
+										'ending' => ($consumption->$ending * $C8800ratio),
+										'wasted' => ($consumption->$wasted * $C8800ratio),
+										'issued' => ($consumption->$issued * $C8800ratio),
+										'pos' => ($consumption->$pos * $C8800ratio),
+										'request' => ($consumption->$request * $C8800ratio),
+										'datesubmitted' => $consumption->datesubmitted,
+										'submittedby' => $consumption->submittedby,
+										'lab_id' => $consumption->lab_id,
+										'comments' => $consumption->comments,
+										'issuedcomments' => $consumption->issuedcomments,
+										'approve' => $consumption->approve,
+										'disapprovereason' => $consumption->disapprovereason,
+										'synched' => $consumption->synched,
+										'datesynched' => $consumption->datesynched,
+										'deleted_at' => $consumption->deleted_at,
+										'created_at' => $consumption->created_at,
+										'updated_at' => $consumption->updated_at,
+						    		];
+								}
+							}
+		    			}		    				
+		    		}
+				}
+			}
+		}
+		foreach ($kitArray as $key => $consumption) {
+			\App\Consumption::create($consumption);
+		}
+    }
+
+    public static function transferdeliveries() {
+    	$kits = \App\Kits::get();
+    	$kitArray = [];
+    	// Getting first the abbott deliveries
+    	$abbottdeliveries = Abbotdeliveries::get();
+    	foreach ($abbottdeliveries as $key => $delivery) {
+    		foreach ($kits as $key => $kit) {
+	    		if ($kit->machine_id == 2) {
+	    			$lotno = $kit->alias.'lotno';
+    				$expiry = $kit->alias.'expiry';
+	    			$received = $kit->alias.'received';
+		    		$damaged = $kit->alias.'damaged';
+		    		$kitArray[] = [
+		    			'quarter' => $delivery->quarter,
+		    			'year' => $delivery->year,
+						'testtype' => $delivery->testtype,
+						'kit_id' => $kit->id,
+						'source' => $delivery->source,
+						'labfrom' => $delivery->labfrom,
+						'lotno' => $delivery->$lotno ?? NULL,
+						'expiry' => $delivery->$expiry ?? NULL,
+						'received' => $delivery->$received,
+						'damaged' => $delivery->$damaged,
+						'datereceived' => $delivery->datereceived,
+						'receivedby' => $delivery->receivedby,
+						'lab_id' => $delivery->lab_id,
+						'enteredby' => $delivery->enteredby,
+						'dateentered' => $delivery->dateentered,
+						'synched' => $delivery->synched,
+						'datesynched' => $delivery->datesynched,
+						'deleted_at' => $delivery->deleted_at,
+						'created_at' => $delivery->created_at,
+						'updated_at' => $delivery->updated_at,
+		    		];
+	    		}
+	    	}
+		}
+
+		// Finally getting the Roche deliveries
+		$quarters = [1=>'(1,2,3)', 2=>'(4,5,6)', 3=>'(7,8,9)', 4=>'(10,11,12)'];
+		$years = \App\Taqmandeliveries::selectRaw("max(year) as maximum, min(year) minimum")->first();
+		for ($i=$years->minimum; $i <=$years->maximum ; $i++) {
+			foreach ($quarters as $key => $quarter) {
+				$deliveries = \App\Taqmandeliveries::where('year', '=', $i)->where('quarter', '=', $key)->get();
+				$vlsamples = \App\Viralsample::selectRaw("count(if(viralworksheets.machine_type = 1, 1, null)) as `taqman`, count(if(viralworksheets.machine_type = 3, 1, null)) as `C8800`")
+							->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+							->whereIn('machine_type', [1,3])
+							->whereYear('datetested', $i)->whereRaw("month(datetested) in $quarter")->first();
+				$eidsamples = \App\Sample::selectRaw("count(if(worksheets.machine_type = 1, 1, null)) as `taqman`, count(if(worksheets.machine_type = 3, 1, null)) as `C8800`")
+							->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+							->whereIn('machine_type', [1,3])
+							->whereYear('datetested', $i)->whereRaw("month(datetested) in $quarter")->first();
+				
+				foreach ($deliveries as $key => $delivery) {
+					if ($delivery->testtype == 1)
+		    			$model = $eidsamples;
+		    		else if ($delivery->testtype == 2)
+		    			$model = $eidsamples;
+
+		    		if ($model->taqman == 0 && $model->C8800 == 0) {
+		    			foreach ($kits as $key => $kit) {
+							if ($kit->machine_id == 1) {
+				    			$received = $kit->alias.'received';
+					    		$damaged = $kit->alias.'damaged';
+					    		$kitArray[] = [
+					    			'quarter' => $delivery->quarter,
+					    			'year' => $delivery->year,
+									'testtype' => $delivery->testtype,
+									'kit_id' => $kit->id,
+									'source' => $delivery->source,
+									'labfrom' => $delivery->labfrom,
+									'lotno' => $delivery->lotno ?? NULL,
+									'expiry' => $delivery->expiry ?? NULL,
+									'received' => ($delivery->$received / 2),
+									'damaged' => ($delivery->$damaged / 2),
+									'datereceived' => $delivery->datereceived,
+									'receivedby' => $delivery->receivedby,
+									'lab_id' => $delivery->lab_id,
+									'enteredby' => $delivery->enteredby,
+									'dateentered' => $delivery->dateentered,
+									'synched' => $delivery->synched,
+									'datesynched' => $delivery->datesynched,
+									'deleted_at' => $delivery->deleted_at,
+									'created_at' => $delivery->created_at,
+									'updated_at' => $delivery->updated_at,
+					    		];
+							}
+						}
+		    		} else {
+			    		$total = $model->taqman + $model->C8800;
+		    			$taqmanratio = ($model->taqman / $total);
+		    			$C8800ratio = ($model->C8800 / $total);
+		    			if ($model->taqman > 0) {
+		    				foreach ($kits as $key => $kit) {
+								if ($kit->machine_id == 1) {
+					    			$received = $kit->alias.'received';
+						    		$damaged = $kit->alias.'damaged';
+						    		$kitArray[] = [
+						    			'quarter' => $delivery->quarter,
+						    			'year' => $delivery->year,
+										'testtype' => $delivery->testtype,
+										'kit_id' => $kit->id,
+										'source' => $delivery->source,
+										'labfrom' => $delivery->labfrom,
+										'lotno' => $delivery->lotno ?? NULL,
+										'expiry' => $delivery->expiry ?? NULL,
+										'received' => $delivery->$received * $taqmanratio,
+										'damaged' => $delivery->$damaged * $taqmanratio,
+										'datereceived' => $delivery->datereceived,
+										'receivedby' => $delivery->receivedby,
+										'lab_id' => $delivery->lab_id,
+										'enteredby' => $delivery->enteredby,
+										'dateentered' => $delivery->dateentered,
+										'synched' => $delivery->synched,
+										'datesynched' => $delivery->datesynched,
+										'deleted_at' => $delivery->deleted_at,
+										'created_at' => $delivery->created_at,
+										'updated_at' => $delivery->updated_at,
+						    		];
+								}
+							}
+		    			} else if ($model->C8800 > 0) {
+		    				foreach ($kits as $key => $kit) {
+								if ($kit->machine_id == 3) {
+									$received = $kit->alias.'received';
+						    		$damaged = $kit->alias.'damaged';
+						    		$kitArray[] = [
+						    			'quarter' => $delivery->quarter,
+						    			'year' => $delivery->year,
+										'testtype' => $delivery->testtype,
+										'kit_id' => $kit->id,
+										'source' => $delivery->source,
+										'labfrom' => $delivery->labfrom,
+										'lotno' => $delivery->lotno ?? NULL,
+										'expiry' => $delivery->expiry ?? NULL,
+										'received' => $delivery->$received * $taqmanratio,
+										'damaged' => $delivery->$damaged * $taqmanratio,
+										'datereceived' => $delivery->datereceived,
+										'receivedby' => $delivery->receivedby,
+										'lab_id' => $delivery->lab_id,
+										'enteredby' => $delivery->enteredby,
+										'dateentered' => $delivery->dateentered,
+										'synched' => $delivery->synched,
+										'datesynched' => $delivery->datesynched,
+										'deleted_at' => $delivery->deleted_at,
+										'created_at' => $delivery->created_at,
+										'updated_at' => $delivery->updated_at,
+						    		];
+								}
+							}
+		    			}		    				
+		    		}
+				}
+			}
+		}
+		
+		foreach ($kitArray as $key => $delivery) {
+			\App\Deliveries::insert($delivery);
+		}
     }
 }
