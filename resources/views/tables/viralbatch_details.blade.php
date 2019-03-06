@@ -22,7 +22,9 @@
                             <p><strong>Batch:</strong> {{ $batch->id  ?? '' }}</p>
                         </div>
                         <div class="col-md-8">
-                            <p><strong>Facility:</strong> {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }}</p>
+                            @if($batch->view_facility)
+                                <p><strong>Facility:</strong> {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }}</p>
+                            @endif
                         </div>
                         
                         <div class="col-md-4">
