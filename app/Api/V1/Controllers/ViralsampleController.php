@@ -108,7 +108,6 @@ class ViralsampleController extends Controller
             if($existing){
                 $ok[] = $new_sample->id;
                 break;
-                continue;
             }
 
             $user = $new_sample->batch->creator ?? null;
@@ -122,36 +121,34 @@ class ViralsampleController extends Controller
                 ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
                 ->first();
 
-            // if($b){
-            //     $s = $b->sample->count();
-            //     if($s > 9){
-            //         $b->full_batch();
-            //         $b = new Viralbatch;
-            //     }                
-            // }
-            // else{
-            //     $b = new Viralbatch;
-            // }
+            if($b){
+                $s = $b->sample->count();
+                if($s > 9){
+                    $b->full_batch();
+                    $b = new Viralbatch;
+                }            
+            }
+            else{
+                $b = new Viralbatch;
+            }
 
-            if(!$b) $b = new Viralbatch;
+            $batch_details = get_object_vars($new_sample->batch);
+            unset($batch_details['id']);
             
-            $b->fill(get_object_vars($new_sample->batch));
+            $b->fill($batch_details);
             $b->user_id = $user_id;
             $b->lab_id = env('APP_LAB');
-            unset($b->id);
             $b->save();
             $batch_id = $b->id;
             unset($new_sample->batch);
 
-            $new_patient = false;
             $p = Viralpatient::existing($new_sample->patient->facility_id, $new_sample->patient->patient)->first();
-            if(!$p){
-                $p = new Viralpatient;
-                $new_patient = true;
-            }
+            if(!$p) $p = new Viralpatient;
 
-            $p->fill(get_object_vars($new_sample->patient));
-            if($new_patient) unset($p->id);
+            $patient_details = get_object_vars($new_sample->patient);
+            unset($patient_details['id']);
+
+            $p->fill($patient_details);
             $p->save();
             unset($new_sample->patient);
 
