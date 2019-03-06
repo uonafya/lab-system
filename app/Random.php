@@ -1523,6 +1523,60 @@ class Random
         \App\Common::save_tat5('vl');
 	}
 
+	public static function facility_tables()
+	{
+		DB::statement("
+			CREATE TABLE IF NOT EXISTS `facility_changes` (
+			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  `old_facility_id` int(10) unsigned NOT NULL,
+			  `new_facility_id` int(10) unsigned NOT NULL,
+			  `temp_facility_id` int(10) unsigned NOT NULL,
+			  `implemented` tinyint unsigned NOT NULL DEFAULT 0,
+			  `created_at` timestamp NULL DEFAULT NULL,
+			  `updated_at` timestamp NULL DEFAULT NULL,
+			  PRIMARY KEY (`id`),
+			  KEY `old_facility_id` (`old_facility_id`),
+			  KEY `new_facility_id` (`new_facility_id`),
+			  KEY `temp_facility_id` (`temp_facility_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+		");
+	}
+
+	public static function eid_worksheets()
+	{
+		$data = \App\SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
+			->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+			->where('site_entry', '!=', 2)
+			->whereYear('daterun', 2018)
+			->where(['samples_view.lab_id' => env('APP_LAB')])
+			->groupBy('year', 'month', 'machine_type', 'result')
+			->orderBy('year', 'month', 'machine_type', 'result')
+			->get();
+
+		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 5 => 'Collect New Sample'];
+		$machines = [1 => 'Roche', 2 => 'Abbott'];
+
+		$rows = [];
+
+		for ($i=1; $i < 13; $i++) { 
+			foreach ($machines as $mkey => $mvalue) {
+				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+				$row['Machine'] = $mvalue;
+				$total = 0;
+
+				foreach ($results as $rkey => $rvalue) {
+					$row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+					$total += $row[$rvalue];
+				}
+				
+				$row['Total'] = $total;
+				$rows[] = $row;
+			}
+		}
+
+		dd($rows);
+	}
+
 	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {
 		if ($plartform == 1) {
 			$consumption = Taqmanprocurement::class;

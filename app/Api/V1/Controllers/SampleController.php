@@ -117,14 +117,16 @@ class SampleController extends Controller
             }
             unset($new_sample->batch->creator);  
 
-            $b = Batch::whereDate('created_at', date('Y-m-d'))
+            $b = Batch::where('created_at', $new_sample->batch->created_at)
                 ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
-                ->get();
+                ->first();
 
             if($b){
                 $s = $b->sample->count();
-                if($s > 9) $b->full_batch();
-                $b = new Batch;
+                if($s > 9){
+                    $b->full_batch();
+                    $b = new Batch;
+                }
             }
             else{
                 $b = new Batch;
@@ -134,6 +136,7 @@ class SampleController extends Controller
             $b->fill(get_object_vars($new_sample->batch));
             $b->user_id = $user_id;
             unset($b->id);
+            $b->lab_id = env('APP_LAB');
             $b->pre_update();
             unset($new_sample->batch);
 
