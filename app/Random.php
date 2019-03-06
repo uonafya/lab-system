@@ -1546,17 +1546,36 @@ class Random
 
 	public static function eid_worksheets()
 	{
-		$rows = \App\SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine, result, count(*) as tests ")
+		$data = \App\SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
 			->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
-			->join('machines', 'machines.id', '=', 'worksheets.machine_type')
 			->where('site_entry', '!=', 2)
 			->whereYear('daterun', 2018)
-			->groupBy('year', 'month', 'machine', 'result')
-			->orderBy('year', 'month', 'machine', 'result')
+			->where(['lab_id' => env('APP_LAB')])
+			->groupBy('year', 'month', 'machine_type', 'result')
+			->orderBy('year', 'month', 'machine_type', 'result')
 			->get();
 
-		dd($rows);
+		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 5 => 'Collect New Sample'];
+		$machines = [1 => 'Roche', 2 => 'Abbott'];
 
+		$rows = [];
+
+		for ($i=1; $i < 13; $i++) { 
+			$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+
+			foreach ($machines as $mkey => $mvalue) {
+				$row['Machine'] = $mvalue;
+				$total = 0;
+
+				foreach ($results as $rkey => $rvalue) {
+					$row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+					$total += $row[$rvalue];
+				}
+				$row['Total'] = $total;
+			}
+		}
+
+		dd($rows);
 	}
 
 }
