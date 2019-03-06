@@ -1405,7 +1405,7 @@ class Synch
 
 			foreach ($body->facilities as $key => $value) {
 				Facility::where('id', $value->old_facility_id)->update($update_data);
-				
+
 				if($value->new_facility_id != $value->old_facility_id){
 
 					$f = new FacilityChange;
@@ -1422,7 +1422,7 @@ class Synch
 		$changes = FacilityChange::where(['implemented' => 0])->get();
 
 		foreach ($changes as $f) {
-			\App\Common::change_facility_id($f->temp_facility_id, $value->new_facility_id, true);
+			\App\Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
 			$f->implemented = 1;
 			$f->save();
 		}
