@@ -1525,4 +1525,23 @@ class Random
         \App\Common::save_tat5('vl');
 	}
 
+	public static function facility_tables()
+	{
+		DB::statement("
+			CREATE TABLE IF NOT EXISTS `facility_changes` (
+			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  `old_facility_id` int(10) unsigned NOT NULL,
+			  `new_facility_id` int(10) unsigned NOT NULL,
+			  `temp_facility_id` int(10) unsigned NOT NULL,
+			  `implemented` tinyint unsigned NOT NULL DEFAULT 0,
+			  `created_at` timestamp NULL DEFAULT NULL,
+			  `updated_at` timestamp NULL DEFAULT NULL,
+			  PRIMARY KEY (`id`),
+			  KEY `old_facility_id` (`old_facility_id`),
+			  KEY `new_facility_id` (`new_facility_id`),
+			  KEY `temp_facility_id` (`temp_facility_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+		");
+	}
+
 }
