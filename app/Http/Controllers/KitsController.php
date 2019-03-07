@@ -136,7 +136,9 @@ class KitsController extends Controller
                         COUNT(IF(approve=1, 1, NULL)) AS `approved`,
                         COUNT(IF(approve=2, 1, NULL)) AS `rejected`";
         $data = [
-            'allocations' => Allocation::selectRaw($allocationSQL)->groupBy(['year','month','testtype'])->orderBy('year','desc')->orderBy('month','desc')->get(),
+            'allocations' => AllocationDetail::selectRaw($allocationSQL)->groupBy(['year','month','testtype'])
+                                ->orderBy('year','desc')->orderBy('month','desc')
+                                ->join('allocations', 'allocations.id', '=', 'allocation_details.allocation_id')->get(),
             'badge' => function($value, $type) {
                 $badge = "success";
                 if ($type == 1) {// Pending approval

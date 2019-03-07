@@ -128,6 +128,14 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Consumables Allocation Comments</label>
+                            <div class="col-md-8">
+                                <textarea name="consumablecomments" class="form-control"></textarea>
+                            </div>                            
+                        </div>
+                    </div>
                 {{-- Consumables form --}}
                 <center>
                     <button type="submit" name="kits-form" class="btn btn-primary btn-lg" value="true" style="margin-top: 2em;margin-bottom: 2em; width: 200px; height: 30px;">Allocate</button>

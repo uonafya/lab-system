@@ -28,6 +28,8 @@
                         EID
                     @elseif($allocation->testtype == 2)
                         VL
+                    @else 
+                        CONSUMABLES
                     @endif
                     </td>
                     <td><center><span class="label label-{{ $data['badge']($allocation->pending, 1) }}">{{ $allocation->pending }}</span></center></td>

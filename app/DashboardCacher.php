@@ -381,7 +381,7 @@ class DashboardCacher
     }
 
     public static function rejectedAllocations() {
-        return Allocation::where('approve', '=', 2)->count();
+        return AllocationDetail::where('approve', '=', 2)->count();
     }
 
     public static function cacher()

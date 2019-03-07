@@ -13,7 +13,4 @@ class AllocationDetail extends BaseModel
      */
     protected $guarded = [];
 
-    public function kit(){
-    	return $this->belongsTo('App\Kits');
-    }
 }
