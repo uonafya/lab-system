@@ -131,29 +131,6 @@ class KitsController extends Controller
                 return back();
             }
         }
-        $allocationSQL = "`year`, `month`, `testtype`,
-						COUNT(IF(approve=0, 1, NULL)) AS `pending`,
-						COUNT(IF(approve=1, 1, NULL)) AS `approved`,
-						COUNT(IF(approve=2, 1, NULL)) AS `rejected`";
-        $data = [
-                'allocations' => Allocation::selectRaw($allocationSQL)->groupBy(['year','month', 'testtype'])->orderBy('year', 'desc')->orderBy('month', 'desc')->get(),
-                'badge' => function($value, $type) {
-                    $badge = "success";
-                    if ($type == 1) {// Pending approval
-                        if ($value > 0)
-                            $badge = "warning";
-                    } else if ($type == 2) { //Approved
-                        if ($value == 0)
-                            $badge = "warning";
-                    } else if ($type == 3) { // Rejected
-                        if ($value > 0)
-                            $badge = "danger";
-                    }
-                    return $badge;
-                }
-            ];
-            // dd($data);
-        // dd($data->badge{(1,1)});
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 

@@ -18,9 +18,6 @@
     } else {
         $eidtestingSys = 'checked';
     }
-    foreach($data['allocations'] as $allocation) {
-        $rejected += $allocation->rejected;
-    }
 @endphp
 <div class="content">
     <div class="row">
@@ -29,7 +26,6 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#kits-deliveries"><strong>A.) KITS DELIVERIES (RECEIVED KITS ) REPORT</strong></a></li>
                     <li class=""><a data-toggle="tab" href="#kits-consumption"><strong>B.) SUBMITTED MONTHLY KITS CONSUMPTION REPORTS</strong></a></li>
-                    <li class=""><a data-toggle="tab" href="#kits-allocation"><strong>C.) KITS ALLOCATIONS <span class="label label-{{ $data['badge']($rejected,3) }}">{{ $rejected }}</span> </strong></a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="kits-deliveries" class="tab-pane active">
@@ -37,9 +33,6 @@
                     </div>
                     <div id="kits-consumption" class="tab-pane">
                         @include('reports.kitsreport-consumption')
-                    </div>
-                    <div id="kits-allocation" class="tab-pane">
-                        @include('reports.kitsreport-allocation')
                     </div>
                 </div>
             </div>

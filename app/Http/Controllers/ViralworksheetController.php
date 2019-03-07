@@ -21,7 +21,7 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
+    public function index($state=0, $machine_type=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
             ->leftJoin('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
@@ -38,6 +38,9 @@ class ViralworksheetController extends Controller
                     )");
                 }
                 return $query->where('status_id', $state);                
+            })
+            ->when($machine_type, function ($query) use ($machine_type){
+                return $query->where('machine_type', $machine_type);
             })
             ->when($date_start, function($query) use ($date_start, $date_end){
                 if($date_end)
@@ -70,7 +73,8 @@ class ViralworksheetController extends Controller
             ->orderBy('machine_type', 'asc')
             ->get();
         $data['worksheets'] = $worksheets;
-        $data['myurl'] = url('viralworksheet/index/' . $state . '/');
+        $data['myurl'] = url("viralworksheet/index/{$state}/{$machine_type}/");
+        $data['myurl2'] = url("viralworksheet/index/{$state}/");
         return view('tables.viralworksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
@@ -182,7 +186,7 @@ class ViralworksheetController extends Controller
     public function find(Viralworksheet $worksheet)
     {
         session(['toast_message' => 'Found 1 worksheet.']);
-        return $this->index(0, null, null, $worksheet->id);
+        return $this->index(0, 0, null, null, $worksheet->id);
     }
 
     /**
@@ -373,6 +377,10 @@ class ViralworksheetController extends Controller
      */
     public function save_results(Request $request, Viralworksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet already has results."]);
+            return back();   
+        }
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/vl');
@@ -676,7 +684,7 @@ class ViralworksheetController extends Controller
         $approver = auth()->user()->id;
 
         $batch = array();
-
+        // dd($samples);
         foreach ($samples as $key => $value) {
 
             if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2){
