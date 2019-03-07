@@ -536,7 +536,7 @@ class MiscViral extends Common
     public function set_rcat()
     {
         while(true){
-            $samples = Viralsample::where(['synched' => 1, 'rcategory' => 0, 'receivedstatus' => 1])->whereNotNull('datetested')->limit(1000)->get();
+            $samples = Viralsample::where(['synched' => 1, 'rcategory' => 0])->whereNotNull('datetested')->limit(1000)->get();
             if($samples->isEmpty()) break;
 
             foreach ($samples as $key => $sample) {
