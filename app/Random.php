@@ -1555,7 +1555,7 @@ class Random
 			->orderBy('year', 'month', 'machine_type', 'result')
 			->get();
 
-		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 5 => 'Collect New Sample'];
+		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
 		$machines = [1 => 'Roche', 2 => 'Abbott'];
 
 		$rows = [];
