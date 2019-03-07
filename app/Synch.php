@@ -641,7 +641,7 @@ class Synch
 		echo "==> Completed deliveries synch\n";
 	}
 
-	public static function labactivity($type)
+	public static function labactivity($type, $lab_id=null)
 	{
 		if(!$lab_id) $lab_id = env('APP_LAB', null);
 		
