@@ -122,7 +122,7 @@
                             <tr>
                                 <td>{{ $consumable->name ?? '' }}</td>
                                 <td></td>
-                                <td><input class="form-control input-edit" type="number" min="0" name="consumable[{{ $consumable->id }}]" value="0" required></td>
+                                <td><input class="form-control input-edit" type="number" min="0" name="consumable-{{ $consumable->id }}" value="0" required></td>
                             </tr>
                         @endforeach
                         </tbody>

@@ -408,8 +408,9 @@ class TaskController extends Controller
     }
 
     protected function saveAllocation($request) {
-        dd($request->all());
         $form = $request->except(['_token', 'kits-form']);
+        $consumable = $this->getConumableAllocationData($form);
+        dd($consumable);
         $allocation_data = $this->getAllocationData($form);
         foreach ($allocation_data as $allocationkey => $allocation) {
             $allocations_details_data = array_pull($allocation, 'allocationDetails');
@@ -464,6 +465,20 @@ class TaskController extends Controller
             }
         }
         return $allocation_details_array;
+    }
+
+    // Format the consumable allocation data to fit laravel way to insert
+    protected function getConumableAllocationData($form_data) {
+        $consumables = GeneralConsumables::get();
+        $consumables_array = [];
+        foreach($consumables as $key => $consumable) {
+            $column = 'consumable-'.$consumable->id;
+            $consumables_array[] = [
+                'consumable_id' => $consumable->id,
+                'quantity' => $form_data[$column]
+            ];
+        }
+        return $consumables_array;
     }
 
     public function performancelog(Request $request)
