@@ -652,6 +652,12 @@ class BatchController extends Controller
 
     public function site_entry_approval_group_save(Request $request, Batch $batch)
     {
+        if(env('APP_LAB') != 8){
+            $request->validate([
+                'datereceived' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+            ]);
+        }
+
         $sample_ids = $request->input('samples');
         $rejectedreason_array = $request->input('rejectedreason');
         $spots_array = $request->input('spots');
