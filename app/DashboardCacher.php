@@ -82,6 +82,8 @@ class DashboardCacher
             return 'success';
         };
 
+        $data['rejectedAllocations'] = Cache::get('rejectedAllocations');
+
         if (session('testingSystem') == 'Viralload') {            
         	return array_merge($data, [
         		'pendingSamples' => Cache::get('vl_pendingSamples'),
@@ -378,6 +380,10 @@ class DashboardCacher
                     ->first()->tobereceived;
     }
 
+    public static function rejectedAllocations() {
+        return Allocation::where('approve', '=', 2)->count();
+    }
+
     public static function cacher()
     {
     	if(Cache::has('vl_pendingSamples')) return true;
@@ -417,6 +423,7 @@ class DashboardCacher
             $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
         }
         
+        $rejectedAllocations = self::rejectedAllocations();
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
         Cache::put('vl_batchesForApproval', $batchesForApproval, $minutes);
@@ -450,7 +457,7 @@ class DashboardCacher
             Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
         }
         // Neutral Cache
-        
+        Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
     }
 
     public static function clear_cache()
