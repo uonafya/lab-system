@@ -39,7 +39,7 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
-                                        <td>  {!! $sample->batch->hyper_link ?? $sample->batch_id !!} </td>
+                                        <td>  {!! $sample->batch->hyper_link ?? $sample->get_link('batch_id') !!} </td>
                                         <td>
                                             @foreach($received_statuses as $received_status)
                                                 @if($sample->receivedstatus == $received_status->id)
