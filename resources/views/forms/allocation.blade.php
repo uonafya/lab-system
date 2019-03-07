@@ -28,6 +28,7 @@
                     $year = date('Y');
                 @endphp
                 {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                {{-- Kits form --}}
                 @foreach($data->machines as $machine)
                     @foreach($data->testtypes as $testtypeKey => $testtype)
                     <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
@@ -86,7 +87,7 @@
                                         <td></td>
                                         <td></td>
                                     @endforelse
-                                    <td><input class="form-control input-edit" type="text" name="allocate-{{ $testtype }}-{{ $kit->id }}" id="{{ $testtype }}-{{ $kit->id }}" required></td>
+                                    <td><input class="form-control input-edit" type="number" step="any" min="0" name="allocate-{{ $testtype }}-{{ $kit->id }}" id="{{ $testtype }}-{{ $kit->id }}" required></td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -102,6 +103,32 @@
                     </div>
                     @endforeach
                 @endforeach
+                {{-- Kits form --}}
+                {{-- Consumables form --}}
+                <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                    <div class="alert alert-warning">
+                        <center>Consumable Allocation (This is for all the equipments)</center>
+                    </div>
+                    <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
+                        <thead>               
+                            <tr>
+                                <th>Name of Consumable</th>
+                                <th>Last Month Allocation</th>
+                                <th>Quantity Allocated by Lab</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($data->generalconsumables as $consumable)
+                            <tr>
+                                <td>{{ $consumable->name ?? '' }}</td>
+                                <td></td>
+                                <td><input class="form-control input-edit" type="number" min="0" name="consumable[{{ $consumable->id }}]" value="0" required></td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                {{-- Consumables form --}}
                 <center>
                     <button type="submit" name="kits-form" class="btn btn-primary btn-lg" value="true" style="margin-top: 2em;margin-bottom: 2em; width: 200px; height: 30px;">Allocate</button>
                 </center>

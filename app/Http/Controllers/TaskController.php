@@ -18,6 +18,7 @@ use App\Consumption;
 use App\Machine;
 use App\Allocation;
 use App\AllocationDetail;
+use App\GeneralConsumables;
 
 use DB;
 
@@ -375,29 +376,30 @@ class TaskController extends Controller
     public function allocation(Request $request) {
         if ($request->method() == "GET") {
             $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->count();
-            if ($currentMonthAllocation > 0){
+            if ($currentMonthAllocation > 0){ // Ensure that allocation is not repeated if entered
                 session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
                 return back();
-            } else {
+            } else { // Ensure that that allocation once rejected is not done
                 $tasks = (object) $this->pendingTasks();
                 if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
                     session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
                     return back();
                 }
             }
-            
+            // If no allocation is not done and not declined, show the form to select the machines for allocations
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
-            
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
-            if ($request->has(['machine-form'])){
+            if ($request->has(['machine-form'])){ // This is to fill the allocation form for the previously slected machines
                 $machines = Machine::whereIn('id',$request->input('machine'))->get();
+                $generalconsumables = GeneralConsumables::get();
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
+                $data['generalconsumables'] = $generalconsumables;
                 $data = (object) $data;
                 
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
-            } else {
+            } else { // Save the allocations from the previous if section
                 $saveAllocation = $this->saveAllocation($request);
                 \App\Synch::synch_allocations();
                 return redirect()->route('pending');
@@ -406,6 +408,7 @@ class TaskController extends Controller
     }
 
     protected function saveAllocation($request) {
+        dd($request->all());
         $form = $request->except(['_token', 'kits-form']);
         $allocation_data = $this->getAllocationData($form);
         foreach ($allocation_data as $allocationkey => $allocation) {
@@ -421,6 +424,7 @@ class TaskController extends Controller
         return $allocation;
     }
 
+    // Format the Allocation data to fit laravel way to insert
     protected function getAllocationData($form_data) {
         $allocation_data = [];
         foreach ($form_data as $key => $datum) {
@@ -444,7 +448,7 @@ class TaskController extends Controller
         }
         return $allocation_data;
     }
-
+    // Format the Allocation Details data to fit laravel way to insert
     protected function getAllocationDetailsData($machine, $testtype, $form_data) {
         $kits = Kits::where('machine_id', '=', $machine)->get();
         $allocation_details_array = [];
