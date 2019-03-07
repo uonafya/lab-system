@@ -16,7 +16,7 @@ class NewTaqmanDeliveries extends Migration
     public function up()
     {
         Schema::table('taqmandeliveries', function (Blueprint $table) {
-            $table->softDeletes()->after('datesynched');
+            // $table->softDeletes()->after('datesynched');
         });
         // Schema::create('taqmandeliveries', function (Blueprint $table) {
         //     $table->increments('id');

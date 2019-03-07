@@ -16,7 +16,7 @@ class NewAbbottProcurements extends Migration
     public function up()
     {
         Schema::table('abbotprocurements', function (Blueprint $table) {
-            $table->softDeletes()->after('datesynched');
+            // $table->softDeletes()->after('datesynched');
         });
         // Schema::create('abbotprocurements', function (Blueprint $table) {
         //     $table->increments('id');
