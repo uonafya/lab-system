@@ -541,7 +541,7 @@ class MiscViral extends Common
 
             foreach ($samples as $key => $sample) {
                 $sample->age_category = $this->set_age_cat($sample->age); 
-                $sample->fill($this->set_rcategory($this->result, $this->repeatt));
+                $sample->fill($this->set_rcategory($sample->result, $sample->repeatt));
                 $sample->pre_update();
             }
         }
