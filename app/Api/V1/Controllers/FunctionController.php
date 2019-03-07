@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Api\V1\Controllers\BaseController;
+use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\BlankRequest;
 use DB;
@@ -14,7 +14,7 @@ use App\ViralsampleView;
 use App\Cd4SampleView;
 use App\CragSampleView;
 
-class FunctionController extends BaseController
+class FunctionController extends Controller
 {
     /**
      * Create a new AuthController instance.
@@ -33,7 +33,7 @@ class FunctionController extends BaseController
 
     }
 
-    public function myfunction(BlankRequest $request)
+    public function api(BlankRequest $request)
     {     
         $test = $request->input('test');
         $start_date = $request->input('start_date');
@@ -69,8 +69,6 @@ class FunctionController extends BaseController
             $facilities = str_replace(' ', '', $facilities);
             $facilities = explode(',', $facilities);
         }
-
-        if($test == 3 && env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not provide CD4.");
  
         $result = $class::when($facilities, function($query) use($facilities){
                 return $query->whereIn('facilitycode', $facilities);
