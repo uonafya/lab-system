@@ -513,6 +513,7 @@ class MiscViral extends Common
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
         if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
+        if(str_contains($str, ['collect', 'invalid', 'failed'])) return ['rcategory' => 5 ];
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
@@ -530,6 +531,20 @@ class MiscViral extends Common
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
         return [];
+    }
+
+    public function set_rcat()
+    {
+        while(true){
+            $samples = Viralsample::where(['synched' => 1, 'rcategory' => 0, 'receivedstatus' => 1])->whereNotNull('datetested')->limit(500)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $sample) {
+                $sample->age_category = $this->set_age_cat($sample->age); 
+                $sample->fill($this->set_rcategory($this->result, $this->repeatt));
+                $sample->pre_update();
+            }
+        }
     }
 
     public static function generate_dr_list()
