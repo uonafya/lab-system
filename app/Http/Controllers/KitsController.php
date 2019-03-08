@@ -7,6 +7,7 @@ use App\Abbotdeliveries;
 use App\Taqmandeliveries;
 use App\Allocation;
 use App\AllocationDetail;
+use App\AllocationDetailsBreakdown;
 
 class KitsController extends Controller
 {    
@@ -172,29 +173,32 @@ class KitsController extends Controller
                                     });
         $data = (object)[
             'allocations' => $allocation_details,
-            // 'year' => $year, 
             'last_year' => $this->last_year,
             'last_month' => $this->last_month,
-            // 'month' => $month,
             'testtype' => $type,
             'approval' => $approval,
         ];
         return view('reports.kitreports-allocations-details', compact('data'))->with('pageTitle', $data->testtype . ' Kits Allocations');
     }
 
-    public function editallocation(Request $request, Allocation $allocation) {
-        $details = $allocation->details;
-        foreach ($details as $key => $detail) {
-            $detail->allocated = $request->input($detail->id);
-            $detail->pre_update();
+    public function editallocation(Request $request, $allocation_details) {
+        $allocation_details = AllocationDetail::findOrFail($allocation_details);
+        $data = $request->except(['_method', '_token', 'allocationcomments', 'allocation-form']);
+        foreach($data as $key => $breakdown) {
+            $breakdown_data = AllocationDetailsBreakDown::find($key);
+            $breakdown_data->allocated = $breakdown;
+            $breakdown_data->pre_update();
         }
-        $allocation->allocationcomments = $request->input('allocationcomments');
-        $allocation->approve = 0;
-        $allocation->submissions = $allocation->submissions + 1;
-        $allocation->pre_update();
+        $allocation_details->approve = 0;
+        $allocation_details->allocationcomments = $request->input('allocationcomments');
+        $allocation_details->submissions = $allocation_details->submissions + 1;
+        $allocation_details->pre_update();
+        $allocation = $allocation_details->allocation;
+        $allocation->synched = 2;
+        $allocation->save();
         session(['toast_message' => 'Allocation(s) edited successfully.']);
         \App\Synch::synch_allocations_updates();
-        return back();
+        return redirect('reports/kits');
     }
 
     // public function 

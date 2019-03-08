@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AllocationDetailsBreakdown extends Model
+class AllocationDetailsBreakdown extends BaseModel
 {
     /**
      * The attributes that should be guarded from mass assignment.
