@@ -251,7 +251,7 @@ class MiscViral extends Common
             return self::exponential_result($result);
         }
 
-        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error']) || strlen($error) > 10)
+        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error', 'invalid']) || strlen($error) > 10)
         {
             $res= "Failed";
             $interpretation = $error ?? $result;       
@@ -438,6 +438,28 @@ class MiscViral extends Common
         return $samples;
     }
 
+    public static function get_maxdateapproved($batch_id=NULL, $complete=true)
+    {
+        $samples = Viralsample::selectRaw("max(dateapproved) as mydate, batch_id")
+            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->when($batch_id, function($query) use ($batch_id){
+                if (is_array($batch_id)) {
+                    return $query->whereIn('batch_id', $batch_id);
+                }
+                else{
+                    return $query->where('batch_id', $batch_id);
+                }
+            })
+            ->when($complete, function($query){
+                return $query->where('batch_complete', 2);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('batch_id')
+            ->get();
+
+        return $samples;
+    }
+
     public static function delete_empty_batches()
     {
         $batches = \App\Viralbatch::selectRaw("viralbatches.id, count(viralsamples.id) as mycount")
@@ -491,6 +513,7 @@ class MiscViral extends Common
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
         if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
+        if(str_contains($str, ['collect', 'invalid', 'failed'])) return ['rcategory' => 5 ];
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
@@ -508,6 +531,21 @@ class MiscViral extends Common
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
         return [];
+    }
+
+    public function set_rcat()
+    {
+        while(true){
+            $samples = Viralsample::where(['synched' => 1, 'rcategory' => 0])->whereNotNull('datetested')->limit(1000)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $sample) {
+                $sample->age_category = $this->set_age_cat($sample->age); 
+                $sample->fill($this->set_rcategory($sample->result, $sample->repeatt));
+                $sample->pre_update();
+            }
+            break;
+        }
     }
 
     public static function generate_dr_list()

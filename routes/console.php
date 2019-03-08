@@ -200,7 +200,25 @@ Artisan::command('synch:deletes', function(){
     $this->info($str);
 })->describe('Synch deletes to the national database.');
 
+Artisan::command('synch:allocations', function(){
+    $str = \App\Synch::synch_allocations();
+    $this->info($str);
+})->describe('Synch allocations from lab to national database');
 
+Artisan::command('synch:allocationsupdates', function(){
+    $str = \App\Synch::synch_allocations_updates();
+    $this->insteadOf($str);
+})->describe('Synch Allocation updates');
+
+Artisan::command('synch:consumptions', function(){
+    $str = \App\Synch::synch_consumptions();
+    $this->info($str);
+})->describe('Synch consumptions from lab to national databases');
+
+Artisan::command('synch:deliveries', function(){
+    $str = \App\Synch::synch_deliveries();
+    $this->info($str);
+})->describe('Synch deliveries from lab to national database');
 
 
 
@@ -305,14 +323,32 @@ Artisan::command('edarp:approvesamples', function(){
     $this->info($str);
 })->describe('Send email of the EDARP samples that need approval');
 
+Artisan::command('transfer:consumptions', function(){
+    $str = \App\Common::transferconsumptions();
+    $this->info($str);
+})->describe('Migrate from the old procurements tables');
+
+Artisan::command('transfer:deliveries', function(){
+    $str = \App\Common::transferdeliveries();
+    $this->info($str);
+})->describe('Migrate from the old procurements tables');
+
 // Artisan::command('verify:list', function(){
 //     $str = \App\Misc::check_patients_list();
 //     $this->info($str);
 // })->describe('Checking for Chege');
 
+// Quick fixes
 // Quick fix for deliveries
 Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
     $str = \App\Random::adjust_deliveries($platform, $id, $quantity, $damaged);
     $this->info($str);
 })->describe('Adjust deliveries');
 // Quick fix for deliveries
+// Quick fix for consumptions
+Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued} {request} {pos}', function($platform, $id, $ending, $wasted, $issued, $request, $pos) {
+    $str = \App\Random::adjust_procurement($platform, $id, $ending, $wasted, $issued, $request, $pos);
+    $this->info($str);
+})->describe('Adjust Consumptions');
+// Quick fix for consumptions
+//Quick fixes
