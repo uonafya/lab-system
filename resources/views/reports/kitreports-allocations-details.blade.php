@@ -41,7 +41,7 @@
                         else if ($allocation->approve == 2) $badge = 'danger';
                     @endphp
                     <div class="alert alert-{{ $badge }}">
-                        <center>Allocation for {{ $allocation->machine->machine}}, {{ $globaltesttype }}</center>
+                        <center>Allocation for {{ $allocation->machine->machine ?? ''}} @if ($allocation->machine) , @endif {{ $globaltesttype }}</center>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover">
@@ -55,7 +55,7 @@
                                     <th>Quantity Allocated by Lab</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                        {{--     <tbody>
                             @php
                                 $tests = $allocation->machine->testsforLast3Months()->$globaltesttype;
                                 $qualamc = 0;
@@ -101,7 +101,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                            @endforeach
+                            @endforeach --}}
                             </tbody>
                         </table>
                     </div>

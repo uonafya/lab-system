@@ -402,7 +402,7 @@ class TaskController extends Controller
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else { // Save the allocations from the previous if section
                 $saveAllocation = $this->saveAllocation($request);
-                // \App\Synch::synch_allocations();
+                \App\Synch::synch_allocations();
                 return redirect()->route('pending');
             }
         }

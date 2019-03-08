@@ -18,30 +18,29 @@
             <tbody> 
             @foreach($data['allocations'] as $key => $allocation)
                 <tr>
+                    @php
+                        $type = 'consumables';
+                        if ($allocation->testtype == 1)
+                            $type = 'EID';
+                        else if ($allocation->testtype == 2)
+                            $type = 'VL';
+                    @endphp
                     <td> {{ $key + 1 }} </td>
                     <td> 
                         {{ date("F", mktime(null, null, null, $allocation->month)) }}, 
                         {{ $allocation->year }}
                     </td>
-                    <td>
-                    @if($allocation->testtype == 1)
-                        EID
-                    @elseif($allocation->testtype == 2)
-                        VL
-                    @else 
-                        CONSUMABLES
-                    @endif
-                    </td>
+                    <td>{{ strtoupper($type) }}</td>
                     <td><center><span class="label label-{{ $data['badge']($allocation->pending, 1) }}">{{ $allocation->pending }}</span></center></td>
                     <td><center><span class="label label-{{ $data['badge']($allocation->approved, 2) }}">{{ $allocation->approved }}</span></center></td>
                     <td><center><span class="label label-{{ $data['badge']($allocation->rejected, 3) }}">{{ $allocation->rejected }}</span></center></td>
                     <td>
-                        <a href="{{ url('report/allocation/'.$allocation->testtype.'/'.$allocation->year.'/'.$allocation->month) }}" class="btn btn-default">
+                        <a href="{{ url('report/allocation/'.$allocation->id.'/'.$type) }}" class="btn btn-default">
                             View
                         </a>
                         @if($allocation->rejected > 0)
                          | 
-                        <a href="{{ url('report/allocation/'.$allocation->testtype.'/'.$allocation->year.'/'.$allocation->month.'/1') }}" class="btn btn-warning">
+                        <a href="{{ url('report/allocation/'.$allocation->id.'/'.$type.'/1') }}" class="btn btn-warning">
                             Update Rejected
                         </a>
                         @endif

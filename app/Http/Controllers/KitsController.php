@@ -131,13 +131,13 @@ class KitsController extends Controller
                 return back();
             }
         }
-        $allocationSQL = "`year`, `month`, `testtype`,
+        $allocationSQL = "`allocations`.`id`, `year`, `month`, `testtype`,
                         COUNT(IF(approve=0, 1, NULL)) AS `pending`,
                         COUNT(IF(approve=1, 1, NULL)) AS `approved`,
                         COUNT(IF(approve=2, 1, NULL)) AS `rejected`";
         $data = [
-            'allocations' => AllocationDetail::selectRaw($allocationSQL)->groupBy(['year','month','testtype'])
-                                ->orderBy('year','desc')->orderBy('month','desc')
+            'allocations' => AllocationDetail::selectRaw($allocationSQL)->groupBy(['year','month','testtype','id'])
+                                ->orderBy('id','desc')->orderBy('year','desc')->orderBy('month','desc')
                                 ->join('allocations', 'allocations.id', '=', 'allocation_details.allocation_id')->get(),
             'badge' => function($value, $type) {
                 $badge = "success";
@@ -157,19 +157,26 @@ class KitsController extends Controller
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 
-    public function allocation($testtype = 1, $year, $month, $approval = null) {
-        if (!($testtype == 1 || $testtype == 2)) abort(404);
-        $allocations = Allocation::where('testtype', '=', $testtype)->where(['year' => $year, 'month' => $month])
-                                    ->when($approval, function($query) use ($approval) {
-                                        return $query->where('approve', '=', 2);
-                                    })->get();
+    public function allocation(Allocation $allocation, $type, $approval = null) {
+        $type = strtoupper($type);
+        if (!($type == 'EID' || $type == 'VL' || $type == 'CONSUMABLES')) abort(404);
+        $allocation_details = $allocation->details->when($type, function($details) use ($type){
+                                        if ($type == 'EID')
+                                            return $details->where('testtype', 1);
+                                        if ($type == 'VL')
+                                            return $details->where('testtype', 2);
+                                        if ($type == 'CONSUMABLES')
+                                                return $details->where('testtype', NULL);
+                                    })->when($approval, function($details) use ($approval) {
+                                        return $details->where('approve', 2);
+                                    });
         $data = (object)[
-            'allocations' => $allocations,
-            'year' => $year, 
-            'last_year' => $this->last_year,
-            'last_month' => $this->last_month,
-            'month' => $month,
-            'testtype' => ($testtype == 1) ? 'EID' : 'VL',
+            'allocations' => $allocation_details,
+            // 'year' => $year, 
+            // 'last_year' => $this->last_year,
+            // 'last_month' => $this->last_month,
+            // 'month' => $month,
+            'testtype' => $type,
             'approval' => $approval,
         ];
         return view('reports.kitreports-allocations-details', compact('data'))->with('pageTitle', $data->testtype . ' Kits Allocations');

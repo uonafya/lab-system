@@ -472,8 +472,9 @@ class HomeController extends Controller
 
     public function test()
     {
-        // dd(Synch::synch_eid_patients());
-        // echo Synch::synch_eid_patients();
+        // \App\Synch::synch_allocations();
+        // // dd(Synch::synch_eid_patients());
+        // // echo Synch::synch_eid_patients();
         echo Synch::synch_eid_batches();
     }
 

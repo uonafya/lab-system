@@ -13,4 +13,7 @@ class AllocationDetail extends BaseModel
      */
     protected $guarded = [];
 
+    public function breakdowns() {
+        return $this->hasMany('App\AllocationDetailsBreakdown');
+    }
 }
