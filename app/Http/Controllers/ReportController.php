@@ -169,6 +169,8 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString, $request);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             if ($request->input('types') == 'manifest'){
                 $batches = $data->unique('batch_id')->pluck('batch_id');
                 if ($request->input('testtype') == 'EID')
