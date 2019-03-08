@@ -147,6 +147,8 @@ class ReportController extends Controller
     }// This is in the working tree
 
     protected function generate_samples_manifest($request, $data, $dateString) {
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
         $export['samples'] = $data;
         $export['testtype'] = $request->input('testtype');
         $export['lab'] = Lab::find(env('APP_LAB'));
