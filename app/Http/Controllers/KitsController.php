@@ -173,8 +173,8 @@ class KitsController extends Controller
         $data = (object)[
             'allocations' => $allocation_details,
             // 'year' => $year, 
-            // 'last_year' => $this->last_year,
-            // 'last_month' => $this->last_month,
+            'last_year' => $this->last_year,
+            'last_month' => $this->last_month,
             // 'month' => $month,
             'testtype' => $type,
             'approval' => $approval,

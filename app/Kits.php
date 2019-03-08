@@ -34,4 +34,9 @@ class Kits extends BaseModel
     public function lastMonth(){
     	return $this->consumption->where('year', '=', $this->previousYear)->where('month', '=', $this->previousMonth);
     }
+   
+    public function commodities()
+    {
+        return $this->morphMany('App\AllocationDetailsBreakdown', 'breakdown');
+    }
 }

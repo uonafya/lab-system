@@ -16,4 +16,8 @@ class AllocationDetail extends BaseModel
     public function breakdowns() {
         return $this->hasMany('App\AllocationDetailsBreakdown');
     }
+
+    public function machine(){
+        return $this->belongsTo('App\Machine');
+    }
 }
