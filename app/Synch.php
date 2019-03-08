@@ -138,7 +138,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'auth/login', [
-            // 'http_errors' => false,
+            'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -152,7 +152,7 @@ class Synch
 		$body = json_decode($response->getBody());
 		Cache::store('file')->put('api_token', $body->token, 60);
 
-		dd($body);
+		// dd($body);
 	}
 
 	public static function get_token()
@@ -270,8 +270,6 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
-
-			dd($body);
 
 			if($response->getStatusCode() > 399)
 			{
