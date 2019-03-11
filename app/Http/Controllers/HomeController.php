@@ -301,8 +301,8 @@ class HomeController extends Controller
 
         foreach ($periods as $periodkey => $periodvalue) {
             $testingSystem = 'eid';
-            else if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
-            // else if (session('testingSystem') == 'DR') $testingSystem = 'dr';
+            if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
+            // if (session('testingSystem') == 'DR') $testingSystem = 'dr';
             Cache::put($testingSystem.$periodvalue."entered", self::__getEnteredSamples($periodvalue), $minutes);
             Cache::put($testingSystem.$periodvalue."received", self::__getReceivedSamples($periodvalue), $minutes);
             Cache::put($testingSystem.$periodvalue."tested", self::__getTestedSamples($periodvalue), $minutes);
