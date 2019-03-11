@@ -160,10 +160,9 @@ class MiscDr extends Common
 			$worksheet->status_id = 5;
 			$worksheet->save();
 
-			dd($body->data->attributes->samples);
-
 			foreach ($body->data->attributes->samples as $key => $value) {
-				$sample = DrSample::find($value->sample_name);
+				$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
+				$sample = DrSample::find($sample_id);
 				$sample->exatype_id = $value->id;
 				$sample->save();
 			}
