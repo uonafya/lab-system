@@ -139,7 +139,7 @@ class Controller extends BaseController
 
         if ($abbottoday > 0 || $taqmantoday > 0)
             $today = true;
-
+        // dd($submittedstatus);
         return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker, 'filledtoday' => $today];
     }
 

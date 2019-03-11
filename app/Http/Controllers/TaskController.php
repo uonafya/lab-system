@@ -376,7 +376,7 @@ class TaskController extends Controller
 
     public function allocation(Request $request) {
         if ($request->method() == "GET") {
-            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->count();
+            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->where('lab_id', '=', env('APP_LAB'))->count();
             if ($currentMonthAllocation > 0){ // Ensure that allocation is not repeated if entered
                 session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
                 return back();
