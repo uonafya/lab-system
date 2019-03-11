@@ -15,6 +15,10 @@ use App\User;
 use App\Worksheet;
 use App\Viralworksheet;
 
+use App\DrSample;
+use App\DrSampleView;
+use App\DrWorksheet;
+
 class HomeController extends Controller
 {
     /**
@@ -319,7 +323,7 @@ class HomeController extends Controller
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
             })->get()->first()->total;
-        } else {
+        } else if (session('testingSystem') == 'EID'){
             return SampleView::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
             ->where('site_entry', '<>', 2)

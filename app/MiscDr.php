@@ -619,27 +619,27 @@ class MiscDr extends Common
     	$u = \App\User::where('user_type_id', 0)->first();
     	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => $u->id, 'date_gel_documentation' => date('Y-m-d')]);
 
-    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
+    	$w = \App\DrWorksheet::create(['lab_id' => env('APP_LAB'), 'extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
 
     	DB::table('dr_samples')->insert([
-    		['id' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 3, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 4, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 5, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 7, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 9, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 3, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 4, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 5, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 7, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 9, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
     	]);
 
     	DB::table('dr_samples')->insert([
-    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
-    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
+    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')],
     	]);
 	}
 
