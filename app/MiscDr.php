@@ -141,7 +141,7 @@ class MiscDr extends Common
 		// die();
 
 		$response = $client->request('POST', 'sanger/plate', [
-            'http_errors' => false,
+            // 'http_errors' => false,
             // 'debug' => true,
 			'headers' => [
 				// 'Accept' => 'application/json',
