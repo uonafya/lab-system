@@ -322,6 +322,18 @@ class DrWorksheetController extends Controller
         return redirect('dr_worksheet');
     }
 
+    public function create_plate(DrWorksheet $worksheet)
+    {
+        \App\MiscDr::create_plate($worksheet);
+        return back();
+    }
+
+    public function get_plate_result(DrWorksheet $worksheet)
+    {
+        \App\MiscDr::get_plate_result($worksheet);
+        return back();
+    }
+
 
 
     
