@@ -22,7 +22,8 @@
    <div class="content">
         <div>
 
-        @if($upload_errors)
+        @if(isset($upload_errors) && is_array($upload_errors))
+            The following errors 
             @foreach($upload_errors as $error)
                 {{ $error }} <br />
             @endforeach
