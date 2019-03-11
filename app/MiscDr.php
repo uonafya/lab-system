@@ -141,7 +141,7 @@ class MiscDr extends Common
 		// die();
 
 		$response = $client->request('POST', 'sanger/plate', [
-            // 'http_errors' => false,
+            'http_errors' => false,
             // 'debug' => true,
 			'headers' => [
 				// 'Accept' => 'application/json',
@@ -170,7 +170,7 @@ class MiscDr extends Common
 
 		echo "\n The status code is " . $response->getStatusCode() . "\n";
 
-		dd($body);
+		// dd($body);
 	}
 
 
