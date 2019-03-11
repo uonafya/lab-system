@@ -122,7 +122,7 @@ class MiscDr extends Common
 		$errors = $files['errors'];
 
 		if($errors){
-			session(['toast_error' => 1, 'toast_message' => 'The upload has errors.'])
+			session(['toast_error' => 1, 'toast_message' => 'The upload has errors.']);
 			return $errors;
 		}
 
