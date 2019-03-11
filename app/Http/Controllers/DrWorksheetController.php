@@ -178,6 +178,14 @@ class DrWorksheetController extends Controller
         if($zip->open($file) === TRUE){
             $zip->extractTo($path);
             $zip->close();
+
+            $data = MiscDr::get_worksheet_files($worksheet);
+
+            if($data['errors']){
+                session(['upload_errors' => $data['errors'], 'toast_error' => 1, 'toast_message' => 'The upload has errors.']);
+                return back();
+            }
+
             $worksheet->save();
 
             DrSample::where(['worksheet_id' => $worksheet->id])->update(['datetested' => $worksheet->daterun]);
@@ -229,6 +237,8 @@ class DrWorksheetController extends Controller
 
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         MiscDr::delete_folder($path);
+        $worksheet->status_id = 1;
+        $worksheet->save();
         session(['toast_message' => 'The worksheet upload has been reversed.']);
         return redirect('dr_worksheet/upload/' . $worksheet->id);
     }

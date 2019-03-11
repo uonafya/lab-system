@@ -122,6 +122,7 @@ class MiscDr extends Common
 		$errors = $files['errors'];
 
 		if($errors){
+			session(['toast_error' => 1, 'toast_message' => 'The upload has errors.'])
 			return $errors;
 		}
 
@@ -609,6 +610,35 @@ class MiscDr extends Common
     		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    	]);
+	}
+
+	public static function seed_nhrl()
+	{		
+    	$u = \App\User::where('user_type_id', 0)->first();
+    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => $u->id, 'date_gel_documentation' => date('Y-m-d')]);
+
+    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
+
+    	DrSample::create('dr_samples')->insert([
+    		['id' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 3, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 4, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 5, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 7, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 9, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    	]);
+
+    	DrSample::create([
+    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
+    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 	}
 
