@@ -106,8 +106,8 @@ class HomeController extends Controller
     public function getHomeGraph($period = 'day')
     {
         $testingSystem = 'eid';
-        if (session('testingSystem') == 'Viralload') 
-            $testingSystem = 'vl';
+        if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
+        if (session('testingSystem') == 'DR') $testingSystem = 'dr';
         $chart = [];
         $count = 0;
         $period = strtolower(trim($period));
