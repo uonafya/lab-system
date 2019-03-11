@@ -591,12 +591,12 @@ class MiscDr extends Common
 
     	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
 
-    	DrSample::create([
+    	DB::table('dr_samples')->insert([
     		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 
-    	DrSample::create([
+    	DB::table('dr_samples')->insert([
     		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
@@ -620,7 +620,7 @@ class MiscDr extends Common
 
     	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
 
-    	DrSample::create([
+    	DB::table('dr_samples')->insert([
     		['id' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 3, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
@@ -636,7 +636,7 @@ class MiscDr extends Common
     		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
 
-    	DrSample::create([
+    	DB::table('dr_samples')->insert([
     		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id],
     	]);
