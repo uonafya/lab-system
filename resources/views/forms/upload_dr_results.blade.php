@@ -23,7 +23,7 @@
         <div>
 
         @if(isset($upload_errors) && is_array($upload_errors))
-            The following errors 
+            The following errors <br />
             @foreach($upload_errors as $error)
                 {{ $error }} <br />
             @endforeach

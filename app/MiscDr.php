@@ -218,7 +218,7 @@ class MiscDr extends Common
 					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
 				else{
-					$errors[] = "Sample {$sample->id} Primer {$primer} could not be found.";
+					$errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
 				}
 			}
 			if(!$abs) continue;
