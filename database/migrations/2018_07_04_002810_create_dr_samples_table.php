@@ -23,7 +23,7 @@ class CreateDrSamplesTable extends Migration
             // 1 is negative control
             // 2 is positive control
             $table->tinyInteger('control')->unsigned()->nullable()->default(0);
-            $table->integer('exatype_id')->unsigned()->index()->nullable()->default(0);
+            $table->bigInteger('exatype_id')->unsigned()->index()->nullable()->default(0);
 
             $table->tinyInteger('prev_prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();

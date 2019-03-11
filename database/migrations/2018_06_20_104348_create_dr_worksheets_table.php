@@ -19,7 +19,7 @@ class CreateDrWorksheetsTable extends Migration
 
             // This is the exatype id
             $table->integer('plate_id')->unsigned()->nullable()->index();
-            $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
+            $table->bigInteger('extraction_worksheet_id')->nullable()->unsigned()->index();
 
             // 1 is in process
             // 2 is tested, results uploaded
