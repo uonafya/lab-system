@@ -170,7 +170,7 @@ class MiscDr extends Common
 
 		echo "\n The status code is " . $response->getStatusCode() . "\n";
 
-		// dd($body);
+		dd($body);
 	}
 
 
