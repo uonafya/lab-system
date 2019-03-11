@@ -159,7 +159,9 @@ class DrWorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', 1)->get();
-        return view('forms.upload_dr_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'dr'])->with('pageTitle', 'Worksheet Upload');        
+        $data = ['worksheet' => $worksheet, 'users' => $users, 'type' => 'dr'];
+        if(session('toast_error')) $data['upload_errors'] = session('upload_errors');
+        return view('forms.upload_dr_results', $data)->with('pageTitle', 'Worksheet Upload');        
     }
 
     public function save_results(Request $request, DrWorksheet $worksheet)
