@@ -383,7 +383,7 @@ class MiscDr extends Common
 				}
 
 				if($s->calls){
-					$sample->has_calls = true;
+					// $sample->has_calls = true;
 
 					foreach ($s->calls as $call) {
 						// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
@@ -409,6 +409,8 @@ class MiscDr extends Common
 							// 'major_mutations' => self::escape_null($call->major_mutations),
 						]);
 
+						if($c->mutations_array) $sample->has_mutations = true;
+
 						foreach ($call->drugs as $drug) {
 							$d = DrCallDrug::firstOrCreate([
 								'call_id' => $c->id,
@@ -421,7 +423,7 @@ class MiscDr extends Common
 				}
 
 				if($s->genotype){
-					$sample->has_genotypes = true;
+					// $sample->has_genotypes = true;
 
 					foreach ($s->genotype as $genotype) {
 						$g = DrGenotype::firstOrCreate([

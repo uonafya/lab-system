@@ -360,7 +360,7 @@ class ViralworksheetController extends Controller
     public function upload(Viralworksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::whereIn('user_type_id', [1, 4])->get();
+        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Worksheet Upload');
     }
 
