@@ -320,28 +320,26 @@ class HomeController extends Controller
     static function __getEnteredSamples($period = 'day') 
     {
         $param = self::starting_day($period);
+        if($period == 'day') $param = date('Y-m-d', strtotime('-1day'));
         if (session('testingSystem') == 'Viralload') {
             return ViralsampleView::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
             ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('created_at', '>', $param);
-                return $query->where('created_at', $param);
+                return $query->where('created_at', '>', $param);
             })->first()->total;
         } else if (session('testingSystem') == 'EID'){
             return SampleView::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
             ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('created_at', '>', $param);
-                return $query->where('created_at', $param);
+                return $query->where('created_at', '>', $param);
             })->first()->total;
         } else if (session('testingSystem') == 'DR'){
             return DrSample::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('created_at', '>', $param);
-                return $query->where('created_at', $param);
+                return $query->where('created_at', '>', $param);
             })->first()->total;
         }
     }
