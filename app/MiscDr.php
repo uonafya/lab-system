@@ -337,125 +337,126 @@ class MiscDr extends Common
 
 				$sample = DrSample::where(['exatype_id' => $value->attributes->id])->first();
 
-				if($sample){
+				if(!$sample) continue;
+				if(in_array($sample->status_id, [1, 2, 3])) continue;
 
-					// echo " {$sample->id} ";
+				// echo " {$sample->id} ";
 
-					// if($worksheet->exatype_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
+				// if($worksheet->exatype_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
 
-					$s = $value->attributes;
-					$sample->status_id = self::get_sample_status($s->status_id);	
+				$s = $value->attributes;
+				$sample->status_id = self::get_sample_status($s->status_id);	
 
-					if($sample->status_id == 3)	$sample->qc_pass = 0;			
+				if($sample->status_id == 3)	$sample->qc_pass = 0;			
 
-					if($s->sample_qc_pass){
-						$sample->qc_pass = $s->sample_qc_pass;
+				if($s->sample_qc_pass){
+					$sample->qc_pass = $s->sample_qc_pass;
 
-						$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass;
-						$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass;
-						$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass;
-					}
-
-					if($s->sample_qc_distance){
-						$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id;
-						$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id;
-						$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference;
-						$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name;
-						$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name;
-						$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name;
-					}
-
-					if($s->errors){
-						$sample->has_errors = true;
-
-						foreach ($s->errors as $error) {
-							self::create_warning(2, $sample, $error);
-						}
-					}
-
-					if($s->warnings){
-						$sample->has_warnings = true;
-
-						foreach ($s->warnings as $error) {
-							self::create_warning(2, $sample, $error);
-						}
-					}
-
-					if($s->calls){
-						$sample->has_calls = true;
-
-						foreach ($s->calls as $call) {
-							// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
-							// if(!$c) $c = new DrCall;
-
-							// $c->fill([
-							// 	'sample_id' => $sample->id,
-							// 	'drug_class' => $call->drug_class,
-							// 	'other_mutations' => $call->other_mutations,
-							// 	'major_mutations' => $call->major_mutations,
-							// ]);
-
-							// $c->save();
-
-							// dd($call);
-
-							$c = DrCall::firstOrCreate([
-								'sample_id' => $sample->id,
-								'drug_class' => $call->drug_class,
-								'drug_class_id' => self::get_drug_class($call->drug_class),
-								'mutations' => self::escape_null($call->mutations),
-								// 'other_mutations' => self::escape_null($call->other_mutations),
-								// 'major_mutations' => self::escape_null($call->major_mutations),
-							]);
-
-							foreach ($call->drugs as $drug) {
-								$d = DrCallDrug::firstOrCreate([
-									'call_id' => $c->id,
-									'short_name' => $drug->short_name,
-									'short_name_id' => self::get_short_name_id($drug->short_name),
-									'call' => $drug->call,
-								]);
-							}
-						}
-					}
-
-					if($s->genotype){
-						$sample->has_genotypes = true;
-
-						foreach ($s->genotype as $genotype) {
-							$g = DrGenotype::firstOrCreate([
-								'sample_id' => $sample->id,
-								'locus' => $genotype->locus,
-							]);
-
-							foreach ($genotype->residues as $residue) {
-								$r = DrResidue::firstOrCreate([
-									'genotype_id' => $g->id,
-									'residue' => $residue->residues[0] ?? null,
-									'position' => $residue->position,
-								]);
-							}
-						}
-					}
-
-					if($s->pending_action == "PendChromatogramManualIntervention"){
-						$sample->pending_manual_intervention = true;
-					}
-
-					if(!$s->pending_action && $sample->pending_manual_intervention){
-						$sample->pending_manual_intervention = false;
-						$sample->had_manual_intervention = true;
-					}				
-
-					$sample->assembled_sequence = $s->assembled_sequence ?? '';
-					$sample->chromatogram_url = $s->chromatogram_url ?? '';
-					$sample->exatype_version = $s->exatype_version ?? '';
-					$sample->algorithm = $s->algorithm ?? '';
-					// $sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
-					$sample->save();
-
-					// echo " {$sample->id} ";
+					$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass;
+					$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass;
+					$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass;
 				}
+
+				if($s->sample_qc_distance){
+					$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id;
+					$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id;
+					$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference;
+					$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name;
+					$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name;
+					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name;
+				}
+
+				if($s->errors){
+					$sample->has_errors = true;
+
+					foreach ($s->errors as $error) {
+						self::create_warning(2, $sample, $error);
+					}
+				}
+
+				if($s->warnings){
+					$sample->has_warnings = true;
+
+					foreach ($s->warnings as $error) {
+						self::create_warning(2, $sample, $error);
+					}
+				}
+
+				if($s->calls){
+					$sample->has_calls = true;
+
+					foreach ($s->calls as $call) {
+						// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
+						// if(!$c) $c = new DrCall;
+
+						// $c->fill([
+						// 	'sample_id' => $sample->id,
+						// 	'drug_class' => $call->drug_class,
+						// 	'other_mutations' => $call->other_mutations,
+						// 	'major_mutations' => $call->major_mutations,
+						// ]);
+
+						// $c->save();
+
+						// dd($call);
+
+						$c = DrCall::firstOrCreate([
+							'sample_id' => $sample->id,
+							'drug_class' => $call->drug_class,
+							'drug_class_id' => self::get_drug_class($call->drug_class),
+							'mutations' => self::escape_null($call->mutations),
+							// 'other_mutations' => self::escape_null($call->other_mutations),
+							// 'major_mutations' => self::escape_null($call->major_mutations),
+						]);
+
+						foreach ($call->drugs as $drug) {
+							$d = DrCallDrug::firstOrCreate([
+								'call_id' => $c->id,
+								'short_name' => $drug->short_name,
+								'short_name_id' => self::get_short_name_id($drug->short_name),
+								'call' => $drug->call,
+							]);
+						}
+					}
+				}
+
+				if($s->genotype){
+					$sample->has_genotypes = true;
+
+					foreach ($s->genotype as $genotype) {
+						$g = DrGenotype::firstOrCreate([
+							'sample_id' => $sample->id,
+							'locus' => $genotype->locus,
+						]);
+
+						foreach ($genotype->residues as $residue) {
+							$r = DrResidue::firstOrCreate([
+								'genotype_id' => $g->id,
+								'residue' => $residue->residues[0] ?? null,
+								'position' => $residue->position,
+							]);
+						}
+					}
+				}
+
+				if($s->pending_action == "PendChromatogramManualIntervention"){
+					$sample->pending_manual_intervention = true;
+				}
+
+				if(!$s->pending_action && $sample->pending_manual_intervention){
+					$sample->pending_manual_intervention = false;
+					$sample->had_manual_intervention = true;
+				}				
+
+				$sample->assembled_sequence = $s->assembled_sequence ?? '';
+				$sample->chromatogram_url = $s->chromatogram_url ?? '';
+				$sample->exatype_version = $s->exatype_version ?? '';
+				$sample->algorithm = $s->algorithm ?? '';
+				// $sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
+				$sample->save();
+
+				// echo " {$sample->id} ";
+			
 			}
 		}
 
@@ -472,10 +473,18 @@ class MiscDr extends Common
 		return DB::table('dr_sample_statuses')->where(['other_id' => $id])->first()->id;
 	}
 
-	public static function get_sample_warning($id)
+	public static function get_sample_warning($error_name)
 	{
-		// if(!DB::table('dr_warning_codes')->where(['name' => $id])->first()) dd($id);
-		return DB::table('dr_warning_codes')->where(['name' => $id])->first()->id ?? 0;
+		// if(!DB::table('dr_warning_codes')->where(['name' => $error_name])->first()) dd($id);
+		$warning_id = DB::table('dr_warning_codes')->where(['name' => $error_name])->first()->id ?? 0;
+		if(!$warning_id){
+			$error = 1;
+			if(starts_with($error_name, 'Wrn')) $error = 0;
+			DB::table('dr_warning_codes')->insert(['name' => $error_name, 'error' => $error]);
+			return self::get_sample_warning($error_name);
+		}else{
+			return $warning_id;
+		}
 	}
 
 	public static function get_drug_class($id)
@@ -597,21 +606,11 @@ class MiscDr extends Common
     		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
     	]);
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 99, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 2009695759, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 2012693909, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 2012693911, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 2012693943, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 3005052934, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 3005052959, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    	]);
+    	$samples = [6, 10, 14, 17, 20, 22, 99, 2009695759, 2012693909, 2012693911, 2012693943, 3005052934, 3005052959, ];
+
+    	foreach ($samples as $key => $sample) {
+    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
+    	}
 	}
 
 	public static function seed_nhrl()
@@ -621,21 +620,11 @@ class MiscDr extends Common
 
     	$w = \App\DrWorksheet::create(['lab_id' => env('APP_LAB'), 'extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 3, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 4, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 5, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 6, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 7, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 9, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 10, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 14, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 17, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 20, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 22, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    	]);
+    	$samples = [1, 2, 3, 4, 5, 6, 7, 9, 10, 14, 17, 20, 22, ];
+
+    	foreach ($samples as $key => $sample) {
+    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
+    	}
 
     	DB::table('dr_samples')->insert([
     		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
