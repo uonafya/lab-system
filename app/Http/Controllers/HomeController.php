@@ -293,11 +293,16 @@ class HomeController extends Controller
         if (session('testingSystem') == 'Viralload') {
             if(Cache::has('vldayentered'))
                 return true;
-        } else {
+        } else if (session('testingSystem') == 'EID') {
             if(Cache::has('eiddayentered'))
                 return true;
+        } else if (session('testingSystem') == 'DR') {
+            if(Cache::has('drdayentered'))
+                return true;
+        } else{
+            return true;
         }
-        $minutes = 1;
+        $minutes = 5;
 
         foreach ($periods as $periodkey => $periodvalue) {
             $testingSystem = 'eid';
