@@ -254,6 +254,9 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('approve/{worksheet}', 'DrWorksheetController@approve_results')->name('approve_results');
 			Route::put('approve/{worksheet}', 'DrWorksheetController@approve')->name('approve');
+			
+			Route::get('create_plate/{worksheet}', 'DrWorksheetController@create_plate')->name('create_plate');
+			Route::get('get_plate_result/{worksheet}', 'DrWorksheetController@get_plate_result')->name('get_plate_result');
 
 			Route::get('print/{worksheet}', 'DrWorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'DrWorksheetController@cancel')->name('cancel');

@@ -15,6 +15,10 @@ use App\User;
 use App\Worksheet;
 use App\Viralworksheet;
 
+use App\DrSample;
+use App\DrSampleView;
+use App\DrWorksheet;
+
 class HomeController extends Controller
 {
     /**
@@ -102,8 +106,8 @@ class HomeController extends Controller
     public function getHomeGraph($period = 'day')
     {
         $testingSystem = 'eid';
-        if (session('testingSystem') == 'Viralload') 
-            $testingSystem = 'vl';
+        if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
+        if (session('testingSystem') == 'DR') $testingSystem = 'dr';
         $chart = [];
         $count = 0;
         $period = strtolower(trim($period));
@@ -289,16 +293,21 @@ class HomeController extends Controller
         if (session('testingSystem') == 'Viralload') {
             if(Cache::has('vldayentered'))
                 return true;
-        } else {
+        } else if (session('testingSystem') == 'EID') {
             if(Cache::has('eiddayentered'))
                 return true;
+        } else if (session('testingSystem') == 'DR') {
+            if(Cache::has('drdayentered'))
+                return true;
+        } else{
+            return true;
         }
-        $minutes = 1;
+        $minutes = 5;
 
         foreach ($periods as $periodkey => $periodvalue) {
             $testingSystem = 'eid';
-            if (session('testingSystem') == 'Viralload') 
-                $testingSystem = 'vl';
+            if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
+            if (session('testingSystem') == 'DR') $testingSystem = 'dr';
             Cache::put($testingSystem.$periodvalue."entered", self::__getEnteredSamples($periodvalue), $minutes);
             Cache::put($testingSystem.$periodvalue."received", self::__getReceivedSamples($periodvalue), $minutes);
             Cache::put($testingSystem.$periodvalue."tested", self::__getTestedSamples($periodvalue), $minutes);
@@ -318,15 +327,22 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
-            })->get()->first()->total;
-        } else {
+            })->first()->total;
+        } else if (session('testingSystem') == 'EID'){
             return SampleView::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
             ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('created_at', '>', $param);
                 return $query->where('created_at', $param);
-            })->get()->first()->total;
+            })->first()->total;
+        } else if (session('testingSystem') == 'DR'){
+            return DrSample::selectRaw("count(id) as total")
+            ->where('lab_id', '=', env('APP_LAB'))
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->where('created_at', '>', $param);
+                return $query->where('created_at', $param);
+            })->first()->total;
         }
     }
 
@@ -342,8 +358,8 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
                 return $query->where('datereceived', $param);
-            })->get()->first()->total;
-        } else {
+            })->first()->total;
+        } else if (session('testingSystem') == 'EID') {
             return SampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
             ->where('lab_id', '=', env('APP_LAB'))
@@ -352,7 +368,14 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->whereDate('datereceived', '>', $param);
                 return $query->whereDate('datereceived', $param);
-            })->get()->first()->total;
+            })->first()->total;
+        } else if (session('testingSystem') == 'DR') {
+            return DrSample::selectRaw("count(id) as total")
+            ->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->first()->total;
         }
     }
 
@@ -367,14 +390,21 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
                 return $query->where('datereceived', $param);
-            })->get()->first()->total;
-        } else {
+            })->first()->total;
+        } else if (session('testingSystem') == 'EID') {
             return SampleView::selectRaw("count(id) as total")
             ->where('receivedstatus', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
                 return $query->where('datereceived', $param);
-            })->get()->first()->total;
+            })->first()->total;
+        } else if (session('testingSystem') == 'DR') {
+            return DrSample::selectRaw("count(id) as total")
+            ->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'receivedstatus' => 2])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
+                return $query->whereDate('datereceived', $param);
+            })->first()->total;
         }
     }
 
@@ -388,15 +418,22 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datetested', '>', $param);
                 return $query->where('datetested', $param);
-            })->get()->first()->total;
-        } else {
+            })->first()->total;
+        } else if (session('testingSystem') == 'EID') {
             return SampleView::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
             ->where('site_entry', '<>', 2)
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datetested', '>', $param);
                 return $query->where('datetested', $param);
-            })->get()->first()->total;
+            })->first()->total;
+        } else if (session('testingSystem') == 'DR') {
+            return DrSample::selectRaw("count(id) as total")
+            ->where(['lab_id' => env('APP_LAB')])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datetested', '>', $param);
+                return $query->whereDate('datetested', $param);
+            })->first()->total;
         }
     }
 
@@ -412,8 +449,8 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datedispatched', '>', $param);
                 return $query->where('datedispatched', $param);
-            })->get()->first()->total;
-        } else {
+            })->first()->total;
+        } else if (session('testingSystem') == 'EID') {
             return SampleView::selectRaw("count(id) as total")
             ->where('repeatt', 0)
             ->where('lab_id', '=', env('APP_LAB'))
@@ -421,7 +458,14 @@ class HomeController extends Controller
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datedispatched', '>', $param);
                 return $query->where('datedispatched', $param);
-            })->get()->first()->total;
+            })->first()->total;
+        } else if (session('testingSystem') == 'DR') {
+            return DrSample::selectRaw("count(id) as total")
+            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0,])
+            ->when(true, function($query) use ($period, $param){
+                if($period != 'day') return $query->whereDate('datedispatched', '>', $param);
+                return $query->whereDate('datedispatched', $param);
+            })->first()->total;
         }
     }
 
