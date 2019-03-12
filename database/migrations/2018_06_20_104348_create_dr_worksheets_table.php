@@ -18,7 +18,7 @@ class CreateDrWorksheetsTable extends Migration
             $table->tinyInteger('lab_id')->unsigned();
 
             // This is the exatype id
-            $table->integer('plate_id')->unsigned()->nullable()->index();
+            $table->bigInteger('plate_id')->unsigned()->nullable()->index();
             $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
 
             // 1 is in process
