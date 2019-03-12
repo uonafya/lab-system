@@ -17,12 +17,13 @@ class CreateDrSamplesTable extends Migration
             $table->increments('id');
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('facility_id')->unsigned()->index();
+            $table->tinyInteger('lab_id')->unsigned()->index();
 
             // 0 is for normal sample
             // 1 is negative control
             // 2 is positive control
             $table->tinyInteger('control')->unsigned()->nullable()->default(0);
-            $table->integer('exatype_id')->unsigned()->index()->nullable()->default(0);
+            $table->bigInteger('exatype_id')->unsigned()->index()->nullable();
 
             $table->tinyInteger('prev_prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();

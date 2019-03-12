@@ -341,6 +341,7 @@ class Common
 	{
 		$batch_model = self::get_batch_class($type);
         $min_time = date('Y-m-d', strtotime("-14 days"));
+        if(env('APP_LAB') == 3) $min_time = date('Y-m-d', strtotime("-28 days"));
 
 		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0, 'lab_id' => env('APP_LAB')])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
 
@@ -664,11 +665,11 @@ class Common
 
 	        $batches = $batch_class::where('batch_complete', 2)->get();
 	        $batch_ids = $batches->pluck(['id'])->toArray();
-	        $date_tested = $misc_class::get_maxdatetested($batch_ids, false);
+	        $date_tested = $misc_class::get_maxdateapproved($batch_ids, false);
 
 	        foreach ($batches as $batch) {
 	        	$dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
-	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +3days'));
+	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +1days'));
 	        	$batch->batch_complete = 1;
 	        	$batch->sent_email = 1;
 	        	$batch->save();

@@ -1022,6 +1022,19 @@ class SampleController extends Controller
         return $samples;
     }
 
+    public function similar(Request $request)
+    {
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+        $sex = $request->input('sex');
+
+        $samples = SampleView::where('created_at', '>', date('Y-m-d', strtotime('-2months')))
+            ->where(['repeatt' => 0, 'facility_id' => $facility_id, 'sex' => $sex, ])
+            ->limit(10);
+
+        return $samples;
+    }
+
 
 
     private function clear_session(){

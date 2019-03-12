@@ -19,6 +19,23 @@
                 </div>
                 <div class="panel-body">
 
+                @if ($errors->any())
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="alert alert-danger">
+                                <center>
+                                    The following errors were encountered: <br />
+                                    @foreach ($errors->all() as $error)
+                                        {{ $error }} <br />
+                                    @endforeach
+                                </center>
+                            </div>
+                        </div>                
+                    </div>
+
+                    <br />
+                @endif
+
 
                     {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put', 'id' => 'approve_batch_form', 'class'=>'form-horizontal', ]) }}
 

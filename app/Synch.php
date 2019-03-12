@@ -151,6 +151,8 @@ class Synch
 		if($status_code > 399) die();
 		$body = json_decode($response->getBody());
 		Cache::store('file')->put('api_token', $body->token, 60);
+
+		// dd($body);
 	}
 
 	public static function get_token()
@@ -268,8 +270,6 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
-
-			dd($body);
 
 			if($response->getStatusCode() > 399)
 			{
@@ -641,7 +641,7 @@ class Synch
 		echo "==> Completed deliveries synch\n";
 	}
 
-	public static function labactivity($type)
+	public static function labactivity($type, $lab_id=null)
 	{
 		if(!$lab_id) $lab_id = env('APP_LAB', null);
 		

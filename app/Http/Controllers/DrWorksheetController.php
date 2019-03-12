@@ -159,7 +159,9 @@ class DrWorksheetController extends Controller
     {
         $worksheet->load(['creator']);
         $users = User::where('user_type_id', 1)->get();
-        return view('forms.upload_dr_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'dr'])->with('pageTitle', 'Worksheet Upload');        
+        $data = ['worksheet' => $worksheet, 'users' => $users, 'type' => 'dr'];
+        if(session('toast_error')) $data['upload_errors'] = session('upload_errors');
+        return view('forms.upload_dr_results', $data)->with('pageTitle', 'Worksheet Upload');        
     }
 
     public function save_results(Request $request, DrWorksheet $worksheet)
@@ -178,6 +180,14 @@ class DrWorksheetController extends Controller
         if($zip->open($file) === TRUE){
             $zip->extractTo($path);
             $zip->close();
+
+            $data = MiscDr::get_worksheet_files($worksheet);
+
+            if($data['errors']){
+                session(['upload_errors' => $data['errors'], 'toast_error' => 1, 'toast_message' => 'The upload has errors.']);
+                return back();
+            }
+
             $worksheet->save();
 
             DrSample::where(['worksheet_id' => $worksheet->id])->update(['datetested' => $worksheet->daterun]);
@@ -229,6 +239,8 @@ class DrWorksheetController extends Controller
 
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         MiscDr::delete_folder($path);
+        $worksheet->status_id = 1;
+        $worksheet->save();
         session(['toast_message' => 'The worksheet upload has been reversed.']);
         return redirect('dr_worksheet/upload/' . $worksheet->id);
     }
@@ -308,6 +320,20 @@ class DrWorksheetController extends Controller
 
         session(['toast_message' => 'The selected samples have been approved.']);
         return redirect('dr_worksheet');
+    }
+
+    public function create_plate(DrWorksheet $worksheet)
+    {
+        \App\MiscDr::create_plate($worksheet);
+        // session(['toast_message' => 'The samples have been uploaded to exatype and will be ready later.']);
+        return back();
+    }
+
+    public function get_plate_result(DrWorksheet $worksheet)
+    {
+        \App\MiscDr::get_plate_result($worksheet);
+        // session(['toast_message' => 'The results have been retrieved.']);
+        return back();
     }
 
 

@@ -1553,7 +1553,7 @@ class Random
 			->orderBy('year', 'month', 'machine_type', 'result')
 			->get();
 
-		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 5 => 'Collect New Sample'];
+		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
 		$machines = [1 => 'Roche', 2 => 'Abbott'];
 
 		$rows = [];
@@ -1568,13 +1568,68 @@ class Random
 					$row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
 					$total += $row[$rvalue];
 				}
-				
+
 				$row['Total'] = $total;
 				$rows[] = $row;
 			}
 		}
 
-		dd($rows);
+		$file = 'eid_worksheets_data';
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		// Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+	}
+
+	public static function vl_worksheets()
+	{
+		$data = \App\ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
+			->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+			->where('site_entry', '!=', 2)
+			->whereYear('daterun', 2018)
+			->where(['viralsamples_view.lab_id' => env('APP_LAB')])
+			->groupBy('year', 'month', 'machine_type', 'rcategory')
+			->orderBy('year', 'month', 'machine_type', 'rcategory')
+			->get();
+
+		$results = [1 => 'LDL', 2 => '<= 1000', 3 => '> 1000 & <= 5000', 4 => '> 5000', 5 => 'Collect New Sample'];
+		$machines = [1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
+
+		$rows = [];
+
+		for ($i=1; $i < 13; $i++) { 
+			foreach ($machines as $mkey => $mvalue) {
+				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+				$row['Machine'] = $mvalue;
+				$total = 0;
+
+				foreach ($results as $rkey => $rvalue) {
+					$row[$rvalue] = $data->where('rcategory', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+					$total += $row[$rvalue];
+				}
+
+				$row['Total'] = $total;
+				$rows[] = $row;
+			}
+		}
+
+		$file = 'vl_worksheets_data';
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		// Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
 	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {

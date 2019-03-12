@@ -472,7 +472,7 @@ class ViralbatchController extends Controller
     {
         $batches = Viralbatch::select('viralbatches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
+            ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('viralbatches.id', $batch_list);
             })
@@ -750,6 +750,12 @@ class ViralbatchController extends Controller
 
     public function site_entry_approval_group_save(Request $request, Viralbatch $batch)
     {
+        if(env('APP_LAB') != 8){
+            $request->validate([
+                'datereceived' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
+            ]);
+        }
+        
         $sample_ids = $request->input('samples');
         $rejectedreason_array = $request->input('rejectedreason');
         $submit_type = $request->input('submit_type');
