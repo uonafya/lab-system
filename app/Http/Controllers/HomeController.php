@@ -364,15 +364,15 @@ class HomeController extends Controller
             ->where('site_entry', '<>', 2)
             ->whereIn('receivedstatus', [1, 3])
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
-                return $query->whereDate('datereceived', $param);
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
             })->first()->total;
         } else if (session('testingSystem') == 'DR') {
             return DrSample::selectRaw("count(id) as total")
             ->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
-                return $query->whereDate('datereceived', $param);
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
             })->first()->total;
         }
     }
@@ -400,8 +400,8 @@ class HomeController extends Controller
             return DrSample::selectRaw("count(id) as total")
             ->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'receivedstatus' => 2])
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datereceived', '>', $param);
-                return $query->whereDate('datereceived', $param);
+                if($period != 'day') return $query->where('datereceived', '>', $param);
+                return $query->where('datereceived', $param);
             })->first()->total;
         }
     }
@@ -429,8 +429,8 @@ class HomeController extends Controller
             return DrSample::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB')])
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datetested', '>', $param);
-                return $query->whereDate('datetested', $param);
+                if($period != 'day') return $query->where('datetested', '>', $param);
+                return $query->where('datetested', $param);
             })->first()->total;
         }
     }
@@ -461,8 +461,8 @@ class HomeController extends Controller
             return DrSample::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0,])
             ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->whereDate('datedispatched', '>', $param);
-                return $query->whereDate('datedispatched', $param);
+                if($period != 'day') return $query->where('datedispatched', '>', $param);
+                return $query->where('datedispatched', $param);
             })->first()->total;
         }
     }
