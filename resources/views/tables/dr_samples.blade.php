@@ -207,8 +207,7 @@
                                     <th>Sequencing Worksheet</th>
                                     <th>Has Errors</th>
                                     <th>Has Warnings</th>
-                                    <th>Has Drug Data</th>
-                                    <th>Has Genotypes</th>
+                                    <th>Has Mutations</th>
                                     <th>Tasks</th>
                                 </tr>
                             </thead>
@@ -226,8 +225,7 @@
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_boolean_format('has_errors') }} </td>
                                         <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_calls') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
+                                        <td> {{ $sample->my_boolean_format('has_mutations') }} </td>
                                         <td>
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
