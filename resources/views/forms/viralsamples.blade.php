@@ -753,9 +753,9 @@
 
             @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($sample))
                 $("#samples_form input,select").change(function(){
-                    var frm = $('#samples_form');
-                    var data = JSON.stringify(frm.serializeObject());
-                    console.log(data);
+                    // var frm = $('#samples_form');
+                    // var data = JSON.stringify(frm.serializeObject());
+                    // console.log(data);
                 });  
             @endif
 
