@@ -33,7 +33,7 @@
                 o[this.name] = elemValue || '';
             }
             if(o[this.name] == '') o[this.name] = null;
-            if(this.name == '_token') o['test'] = true;
+            if(this.name == '_token') o[this.name ] = 'true';
         });
         return o;
     }
