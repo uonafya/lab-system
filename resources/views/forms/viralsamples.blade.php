@@ -750,12 +750,15 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            @if(env('APP_LAB') == 3)
-                // $("#samples_form ").change(function(){
 
-                // });  
-
+            @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($sample))
+                $("#samples_form input,select").change(function(){
+                    var frm = $('#samples_form');
+                    var data = JSON.stringify(frm.serializeObject());
+                    console.log(data);
+                });  
             @endif
+
 
             $("#rejection").hide();
 
@@ -837,6 +840,62 @@
         });
 
         function check_new_patient(patient, facility_id){
+            $.ajax({
+               type: "POST",
+               data: {
+                _token : "{{ csrf_token() }}",
+                patient : patient,
+                facility_id : facility_id
+               },
+               url: "{{ url('/viralsample/new_patient') }}",
+
+               success: function(data){
+
+                    console.log(data);
+
+                    $("#new_patient").val(data[0]);
+
+                    if(data[0] == 0){
+                        localStorage.setItem("new_patient", 0);
+                        var patient = data[1];
+                        var prev = data[2];
+
+                        console.log(patient.dob);
+
+                        $("#dob").val(patient.dob);
+                        $("#initiation_date").val(patient.initiation_date);
+                        // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
+
+                        $("#sex").val(patient.sex).change();
+
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'patient_id',
+                            value: patient.id,
+                            id: 'hidden_patient',
+                            class: 'patient_details'
+                        }).appendTo("#samples_form");
+
+                        if(data[3] != 0)
+                        {
+                            set_message(data[3]);
+                        }
+
+                        // $(".lockable").attr("disabled", "disabled");
+                    }
+                    else{
+                        localStorage.setItem("new_patient", 1);
+                        // $(".lockable").removeAttr("disabled");
+                        // $(".lockable").val('').change();
+
+                        $('.patient_details').remove();
+                    }
+
+                }
+            });
+        }
+
+        function check_similar_samples(json_data){
             $.ajax({
                type: "POST",
                data: {
