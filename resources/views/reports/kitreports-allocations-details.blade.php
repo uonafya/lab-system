@@ -103,7 +103,7 @@
                                     @endif
                                     <td>
                                         @if ($allocation->approve == 2)
-                                        <input class="form-control input-edit" type="text" name="{{ $detail->id }}" id="{{ $detail->id }}" value="{{ $detail->allocated }}" />
+                                    <input class="form-control input-edit" type="text" name="{{ $detail->id }}" id="{{ $allocation->id }}-{{ $detail->breakdown->alias ?? $detail->breakdown->consumption }}" value="{{ $detail->allocated }}" />
                                         @else
                                             {{ $detail->allocated }}
                                         @endif
@@ -152,7 +152,37 @@
     @endcomponent
     <script type="text/javascript">
         $(document).ready(function(){
-            
+            @if($globaltesttype != 'CONSUMABLES')
+                @foreach ($data->allocations as $allocation)
+                    @if($allocation->approve == 2)
+                        @foreach($allocation->breakdowns as $detail)
+                            @if($detail->breakdown->alias == 'qualkit')
+                                $("#{{ $allocation->id }}-{{ $detail->breakdown->alias }}").change(function(){
+                                    qualkitval = $(this).val();
+                                    computevalues("{{ $allocation->id }}", qualkitval);
+                                });
+                            @endif
+                        @endforeach
+                    @endif
+                @endforeach
+            @endif
         });
+        
+        function computevalues(allocation, qualkitvalue) {
+            @foreach ($data->allocations as $allocation)
+                if("{{ $allocation->id }}" == allocation) {
+                    @foreach($allocation->breakdowns as $detail)
+                        @if($detail->breakdown->alias != 'qualkit')
+                            @php
+                                $factor = json_decode($detail->breakdown->factor);
+                                if(isset($factor->$globaltesttype))
+                                    $factor = $factor->$globaltesttype;
+                            @endphp
+                            $("#" + allocation + "-{{ $detail->breakdown->alias }}").val(qualkitvalue * {{ $factor }});
+                        @endif
+                    @endforeach
+                }
+            @endforeach
+        }
     </script>
 @endsection

@@ -171,6 +171,7 @@ class KitsController extends Controller
                                     })->when($approval, function($details) use ($approval) {
                                         return $details->where('approve', 2);
                                     });
+        
         $data = (object)[
             'allocations' => $allocation_details,
             'last_year' => $this->last_year,
