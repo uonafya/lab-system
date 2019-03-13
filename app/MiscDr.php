@@ -303,6 +303,8 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
+		dd($body);
+
 		if($response->getStatusCode() == 200)
 		{
 			$w = $body->data->attributes;
