@@ -38,6 +38,10 @@
         @endif
 
         <div class="row">
+            <div id="similar_samples"></div>
+        </div>
+
+        <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body">
@@ -750,6 +754,16 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+
+            @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($viralsample))
+                $("#samples_form input,select").change(function(){
+                    var frm = $('#samples_form');
+                    var data = frm.serializeObject();
+                    check_similar_samples(data);
+                });  
+            @endif
+
+
             $("#rejection").hide();
 
             @if(isset($viralsample))                
@@ -881,6 +895,18 @@
                         $('.patient_details').remove();
                     }
 
+                }
+            });
+        }
+
+        function check_similar_samples(json_data){
+            json_data['_token'] = "{{ csrf_token() }}";
+            $.ajax({
+               type: "POST",
+               data: json_data,
+               url: "{{ url('/viralsample/similar') }}",
+               success: function(data){
+                    $("#similar_samples").html(data);
                 }
             });
         }

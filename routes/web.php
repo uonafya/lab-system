@@ -254,6 +254,9 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('approve/{worksheet}', 'DrWorksheetController@approve_results')->name('approve_results');
 			Route::put('approve/{worksheet}', 'DrWorksheetController@approve')->name('approve');
+			
+			Route::get('create_plate/{worksheet}', 'DrWorksheetController@create_plate')->name('create_plate');
+			Route::get('get_plate_result/{worksheet}', 'DrWorksheetController@get_plate_result')->name('get_plate_result');
 
 			Route::get('print/{worksheet}', 'DrWorksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'DrWorksheetController@cancel')->name('cancel');
@@ -344,6 +347,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('sample')->name('sample.')->group(function () {
 		Route::post('new_patient', 'SampleController@new_patient');
+		Route::post('similar', 'SampleController@similar');
 		Route::get('release/{sample}', 'SampleController@release_redraw');
 		Route::get('print/{sample}', 'SampleController@individual');
 		
@@ -399,6 +403,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('sms/{sample}', 'ViralsampleController@send_sms');
 
 		Route::post('new_patient', 'ViralsampleController@new_patient');
+		Route::post('similar', 'ViralsampleController@similar');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
 
