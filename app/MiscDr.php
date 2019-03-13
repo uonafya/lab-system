@@ -311,7 +311,8 @@ class MiscDr extends Common
 			$worksheet->exatype_status_id = self::get_worksheet_status($w->status);
 			$worksheet->plate_controls_pass = $w->plate_controls_pass;
 			$worksheet->qc_run = $w->plate_qc_run;
-			$worksheet->qc_pass = $w->plate_qc;
+			$worksheet->qc_pass = $w->plate_qc->pass ?? 0;
+			$worksheet->qc_distance_pass = $w->plate_qc->distance_pass ?? 0;
 
 			if($worksheet->exatype_status_id == 4) return null;
 
