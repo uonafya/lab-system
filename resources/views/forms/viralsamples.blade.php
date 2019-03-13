@@ -907,6 +907,7 @@
                url: "{{ url('/viralsample/similar') }}",
                success: function(data){
                     $("#similar_samples").html(data);
+                    // console.log(data);
                 }
             });
         }

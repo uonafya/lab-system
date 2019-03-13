@@ -1106,7 +1106,9 @@ class ViralsampleController extends Controller
             ->when($datecollected, function($query) use ($datecollected){
                 return $query->whereBetween($datecollected, [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
             })
-            ->limit(10);
+            ->limit(10)
+            ->get();
+
 
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
