@@ -451,6 +451,7 @@ class Synch
 						$my->save_tat($sampleview_class, $sample_class, $batch->id);
 					}
 				}
+				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
@@ -464,6 +465,7 @@ class Synch
 				]);
 
 				$body = json_decode($response->getBody());
+				// dd($body);
 				$original_column = 'original_id';
 				if ($type == 'allocations')
 					$original_column = 'original_allocation_id';
