@@ -4,6 +4,7 @@ namespace App\Api\V1\Controllers;
 
 use App\Allocation;
 use App\AllocationDetail;
+use App\AllocationDetailsBreakdown;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
 
@@ -54,30 +55,60 @@ class AllocationController extends Controller
      * @param  \App\Allocation  $allocation
      * @return \Illuminate\Http\Response
      */
-    public function update(ApiRequest $request, $id)
+    public function update(ApiRequest $request)
     {
-        // return response()->json([
-        //     'message' => 'The update was successful.',
-        //     'status_code' => 200,
-        // ], 200);
-    	$allocation = Allocation::findOrFail($id);
         $fields = json_decode($request->input('allocation'));
-
+        $allocation_details = $fields->details;
+        $allocation = Allocation::findOrFail($fields->original_allocation_id);
         $allocation->national_id = $fields->id;
-        $unset_array = ['id', 'original_allocation_id', 'created_at', 'updated_at'];
+        $unset_array = ['id', 'original_allocation_id', 'created_at', 'updated_at', 'details'];
         foreach ($unset_array as $value) {
             unset($fields->$value);
         }
-
         $allocation->fill(get_object_vars($fields));
         $allocation->synched = 1;
         $allocation->datesynched = date('Y-m-d');
         $allocation->save();
+        $allocation_details = $this->updateAllocationDetails($allocation_details);
 
         return response()->json([
                 'message' => 'The update was successful.',
                 'status_code' => 200,
             ], 200);
+    }
+
+    protected function updateAllocationDetails($allocation_details) {
+        foreach($allocation_details as $details) {
+            $allocation_details_breakdown = $details->breakdowns;
+            $new_alloc_details = AllocationDetail::findOrFail($details->original_allocation_detail_id);
+            $new_alloc_details->national_id = $details->id;
+            $unset_array = ['id', 'original_allocation_detail_id', 'allocation_id', 'created_at', 'updated_at', 'breakdowns'];
+            foreach ($unset_array as $value) {
+                unset($details->$value);
+            }
+            $new_alloc_details->fill(get_object_vars($details));
+            $new_alloc_details->synched = 1;
+            $new_alloc_details->datesynched = date('Y-m-d');
+            $new_alloc_details->save();
+            $allocation_detail_breakdown = $this->updateAllocationDetailBreakdown($allocation_details_breakdown);
+        }
+        return $new_alloc_details;
+    }
+
+    protected function updateAllocationDetailBreakdown($breakdowns) {
+        foreach ($breakdowns as $breakdown) {
+            $allocation_detail_breakdown = AllocationDetailsBreakdown::findOrFail($breakdown->original_allocation_details_breakdown_id);
+            $allocation_detail_breakdown->national_id = $breakdown->id;
+            $unset_array = ['id', 'original_allocation_details_breakdown_id', 'allocation_detail_id', 'created_at', 'updated_at'];
+            foreach ($unset_array as $value) {
+                unset($breakdown->$value);
+            }            
+            $allocation_detail_breakdown->fill(get_object_vars($breakdown));
+            $allocation_detail_breakdown->synched = 1;
+            $allocation_detail_breakdown->datesynched = date('Y-m-d');
+            $allocation_detail_breakdown->save();
+        }
+        return $allocation_detail_breakdown;
     }
 
     /**
