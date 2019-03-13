@@ -555,7 +555,7 @@ class Synch
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
 				break;
-			dd($allocations);
+			
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
@@ -569,7 +569,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			dd($body);
+			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
 				Allocation::where('id', $value->original_allocation_id)->update($update_data);
