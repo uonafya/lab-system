@@ -877,7 +877,7 @@
 
 
         });
-        
+
 $.fn.serializeObject = function() {
     var o = {};
     //var a = this.serializeArray();
@@ -905,6 +905,7 @@ $.fn.serializeObject = function() {
         else {
             o[this.name] = elemValue || '';
         }
+        if(o[this.name] == '') o[this.name] = null;
     });
     return o;
 }
