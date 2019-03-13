@@ -802,6 +802,14 @@
         $(document).ready(function(){
             $("#rejection").hide();
 
+            @if(env('APP_LAB') == 8 && !isset($sample))
+                $("#samples_form input,select").change(function(){
+                    var frm = $('#samples_form');
+                    var data = JSON.stringify(frm.serializeObject());
+                    console.log(data);
+                });  
+            @endif
+
             @if(isset($sample))                
                 @if($sample->receivedstatus == 2)
                     $("#rejection").show();
