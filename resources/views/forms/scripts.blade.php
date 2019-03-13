@@ -16,7 +16,7 @@
                     if ($chb.prop('checked')) return;
                 }
             }
-            if (this.name === null || this.name === undefined || this.name === '')
+            if (this.name === null || this.name === undefined || this.name === '' || this.name === '_token' || | this.name === '_method')
                 return;
             var elemValue = null;
             if ($(this).is('select'))

@@ -903,7 +903,7 @@
                 patient : patient,
                 facility_id : facility_id
                },
-               url: "{{ url('/viralsample/new_patient') }}",
+               url: "{{ url('/viralsample/similar') }}",
 
                success: function(data){
 
