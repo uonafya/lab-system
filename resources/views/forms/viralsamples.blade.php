@@ -750,6 +750,13 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+            @if(env('APP_LAB') == 3)
+                // $("#samples_form ").change(function(){
+
+                // });  
+
+            @endif
+
             $("#rejection").hide();
 
             @if(isset($viralsample))                
