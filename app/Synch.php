@@ -555,7 +555,7 @@ class Synch
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
 				break;
-			
+			dd($allocations);
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
