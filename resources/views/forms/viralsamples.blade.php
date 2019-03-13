@@ -38,6 +38,10 @@
         @endif
 
         <div class="row">
+            <div id="similar_samples"></div>
+        </div>
+
+        <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body">
@@ -751,11 +755,11 @@
         $(document).ready(function(){
 
 
-            @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($sample))
+            @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($viralsample))
                 $("#samples_form input,select").change(function(){
-                    // var frm = $('#samples_form');
-                    // var data = JSON.stringify(frm.serializeObject());
-                    // console.log(data);
+                    var frm = $('#samples_form');
+                    var data = frm.serializeObject();
+                    check_similar_samples(data);
                 });  
             @endif
 
@@ -896,57 +900,13 @@
         }
 
         function check_similar_samples(json_data){
+            json_data['_token'] = "{{ csrf_token() }}";
             $.ajax({
                type: "POST",
-               data: {
-                _token : "{{ csrf_token() }}",
-                patient : patient,
-                facility_id : facility_id
-               },
+               data: json_data,
                url: "{{ url('/viralsample/similar') }}",
-
                success: function(data){
-
-                    console.log(data);
-
-                    $("#new_patient").val(data[0]);
-
-                    if(data[0] == 0){
-                        localStorage.setItem("new_patient", 0);
-                        var patient = data[1];
-                        var prev = data[2];
-
-                        console.log(patient.dob);
-
-                        $("#dob").val(patient.dob);
-                        $("#initiation_date").val(patient.initiation_date);
-                        // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
-
-                        $("#sex").val(patient.sex).change();
-
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'patient_id',
-                            value: patient.id,
-                            id: 'hidden_patient',
-                            class: 'patient_details'
-                        }).appendTo("#samples_form");
-
-                        if(data[3] != 0)
-                        {
-                            set_message(data[3]);
-                        }
-
-                        // $(".lockable").attr("disabled", "disabled");
-                    }
-                    else{
-                        localStorage.setItem("new_patient", 1);
-                        // $(".lockable").removeAttr("disabled");
-                        // $(".lockable").val('').change();
-
-                        $('.patient_details').remove();
-                    }
-
+                    $("#similar_samples").html(data);
                 }
             });
         }

@@ -33,8 +33,6 @@
                 o[this.name] = elemValue || '';
             }
             if(o[this.name] == '') o[this.name] = null;
-            if(this.name == '_token') o[this.name] = 'true';
-            if(this.name == '_token') console.log('Found');
         });
         return o;
     }
