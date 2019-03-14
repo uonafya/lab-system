@@ -107,7 +107,7 @@ class ViralsampleController extends Controller
             $existing = ViralsampleView::sample($new_sample->batch->facility_id, $new_sample->patient->patient, $new_sample->datecollected)->first();
             if($existing){
                 $ok[] = $new_sample->id;
-                break;
+                continue;
             }
 
             $user = $new_sample->batch->creator ?? null;

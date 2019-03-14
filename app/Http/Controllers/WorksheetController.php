@@ -372,7 +372,7 @@ class WorksheetController extends Controller
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::whereIn('user_type_id', [1, 4])->get();
+        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
