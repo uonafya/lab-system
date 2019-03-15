@@ -34,6 +34,7 @@ Route::get('labtrackertest', 'RandomController@testlabtracker');
 // });
 
 Route::get('/config', 'RandomController@config');
+Route::get('/download_notice', 'RandomController@download_notice');
 
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
