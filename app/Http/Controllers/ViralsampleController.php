@@ -1087,6 +1087,46 @@ class ViralsampleController extends Controller
         return $samples;
     }
 
+    public function similar(Request $request)
+    {
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+        if(!$facility_id || !$patient) return '';
+        $datecollected = $request->input('datecollected');
+
+        $samples = ViralsampleView::where('created_at', '>', date('Y-m-d', strtotime('-1months')))
+            ->where(['repeatt' => 0, 'site_entry' => 1, 'facility_id' => $facility_id, ])
+            ->when($request->input('sex'), $this->query_callback($request, 'sex'))
+            ->when($request->input('prophylaxis'), $this->query_callback($request, 'prophylaxis'))
+            ->when($request->input('justification'), $this->query_callback($request, 'justification'))
+            ->when($patient, function($query) use ($patient){
+                $patient_string = substr($patient, 0, 5);
+                return $query->whereRaw("(patient like '{$patient_string}%' ) ");
+            })
+            ->when($datecollected, function($query) use ($datecollected){
+                return $query->whereBetween($datecollected, [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
+            })
+            ->limit(10)
+            ->get();
+
+
+        $data = Lookup::get_viral_lookups();
+        $data['samples'] = $samples;
+
+        return view('tables.similar_viralsamples', $data);
+    }
+
+
+
+    public function query_callback($request, $attribute)
+    {
+        $val = $request->input($attribute);
+
+        return function($query) use($val){
+            return $query->where($attribute, $val);
+        };
+    }
+
 
     private function clear_session(){
         session()->forget('viral_batch');

@@ -802,6 +802,15 @@
         $(document).ready(function(){
             $("#rejection").hide();
 
+            @if(env('APP_LAB') == 8 && auth()->user()->is_lab_user() && !isset($sample))
+                $("#samples_form input,select").change(function(){
+                    var frm = $('#samples_form');
+                    // var data = JSON.stringify(frm.serializeObject());
+                    var data = frm.serializeObject();
+                    console.log(data);
+                });  
+            @endif
+
             @if(isset($sample))                
                 @if($sample->receivedstatus == 2)
                     $("#rejection").show();
@@ -869,6 +878,7 @@
 
 
         });
+
 
         function check_new_patient(patient, facility_id){
             $.ajax({

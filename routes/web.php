@@ -34,6 +34,7 @@ Route::get('labtrackertest', 'RandomController@testlabtracker');
 // });
 
 Route::get('/config', 'RandomController@config');
+Route::get('/download_notice', 'RandomController@download_notice');
 
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
@@ -347,6 +348,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('sample')->name('sample.')->group(function () {
 		Route::post('new_patient', 'SampleController@new_patient');
+		Route::post('similar', 'SampleController@similar');
 		Route::get('release/{sample}', 'SampleController@release_redraw');
 		Route::get('print/{sample}', 'SampleController@individual');
 		
@@ -402,6 +404,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('sms/{sample}', 'ViralsampleController@send_sms');
 
 		Route::post('new_patient', 'ViralsampleController@new_patient');
+		Route::post('similar', 'ViralsampleController@similar');
 		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
 
