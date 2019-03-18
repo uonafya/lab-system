@@ -474,6 +474,14 @@ class Common
 	}
 
 
+	public static function worksheet_date($date_tested, $created_at, $default=null)
+	{
+		if(!$default) $default = date('Y-m-d');
+
+		if(strtotime($date_tested) > strtotime($created_at) && strtotime($date_tested) < strtotime('now')) return $date_tested;
+		return $default;
+	}
+
 
 
 

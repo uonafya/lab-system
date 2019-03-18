@@ -403,7 +403,7 @@ class WorksheetController extends Controller
         if($worksheet->machine_type == 2)
         {
             $date_tested = $request->input('daterun');
-            if(strtotime($date_tested) > strtotime($worksheet->created_at)) $datetested = $date_tested;
+            $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -458,7 +458,9 @@ class WorksheetController extends Controller
 
                 $error = $data[10];
 
-                $datetested=date("Y-m-d", strtotime($data[3]));
+                $date_tested=date("Y-m-d", strtotime($data[3]));
+
+                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
 
                 $data_array = Misc::sample_result($interpretation, $error);
 
