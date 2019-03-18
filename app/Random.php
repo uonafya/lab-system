@@ -1674,7 +1674,7 @@ class Random
 	}
 
 
-	public static function create_attachents_table()
+	public static function create_attachments_table()
 	{
 		DB::statement("
 			CREATE TABLE `attachments` (
