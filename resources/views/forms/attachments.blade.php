@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @component('/forms/css')
-        <link href="{{ asset('css/plugins/jasny/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('css/jasny/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css">
 @endcomponent
 
 @section('content')
@@ -112,7 +112,7 @@
 
     @component('/forms/scripts')
         @slot('js_scripts')
-            <script src="{{ asset('js/plugins/jasny/jasny-bootstrap.min.js') }}"></script>
+            <script src="{{ asset('js/jasny/jasny-bootstrap.min.js') }}"></script>
         @endslot
 
     @endcomponent
