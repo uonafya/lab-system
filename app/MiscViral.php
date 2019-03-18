@@ -723,7 +723,7 @@ class MiscViral extends Common
         }
     }
 
-    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null)
+    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null, $entered_by=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -781,6 +781,11 @@ class MiscViral extends Common
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                 if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
             })
+            ->when($entered_by, function($query) use ($entered_by){
+                // return $query->where('received_by', $user->id)->where('parentid', 0);
+                return $query->where('parentid', 0)
+                    ->whereRaw("((received_by={$entered_by} && sample_received_by IS NULL) OR  sample_received_by={$entered_by})");
+            })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -808,7 +813,7 @@ class MiscViral extends Common
         if(in_array(env('APP_LAB'), [8])) $create = true;
 
         return [
-            'count' => $count, 'limit' => $temp_limit,
+            'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];

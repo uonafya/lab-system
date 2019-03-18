@@ -34,6 +34,7 @@ Route::get('labtrackertest', 'RandomController@testlabtracker');
 // });
 
 Route::get('/config', 'RandomController@config');
+Route::get('/download_notice', 'RandomController@download_notice');
 
 Route::get('login/facility', 'Auth\\LoginController@fac_login')->name('login.facility');
 Route::post('login/facility', 'Auth\\LoginController@facility_login');
@@ -272,6 +273,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('email')->name('email.')->group(function () {
 			Route::get('preview/{email}', 'EmailController@demo')->name('demo');
 			Route::post('preview/{email}', 'EmailController@demo_email')->name('demo_email');
+
+			Route::get('download_attachment/{email}', 'EmailController@download_attachment');
+			Route::get('attachment/{email}', 'EmailController@add_attachment');
+			Route::post('attachment/{email}', 'EmailController@save_attachment');
+			Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
 		});
 		Route::resource('email', 'EmailController');
 	});
@@ -471,7 +477,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('set_sampletype/{machine_type}/{calibration?}/{limit?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
 			Route::post('set_sampletype', 'ViralworksheetController@set_sampletype')->name('set_sampletype');
 
-			Route::get('create/{sampletype}/{machine_type?}/{calibration?}/{limit?}', 'ViralworksheetController@create')->name('create_any');		
+			Route::get('create/{sampletype}/{machine_type?}/{calibration?}/{limit?}/{entered_by?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
