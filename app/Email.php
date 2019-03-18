@@ -23,6 +23,11 @@ class Email extends BaseModel
         return $this->belongsTo('App\User');
     }
 
+    public function attachment()
+    {
+        return $this->hasMany('App\Attachment');
+    }
+
     /**
      * Get the user's full name
      *
@@ -65,6 +70,8 @@ class Email extends BaseModel
         
         $this->sent = true;
         $this->save();
+
+        $this->load(['attachment']);
 
         $cc_array = $this->comma_array($this->cc_list);
         $bcc_array = $this->comma_array($this->bcc_list);

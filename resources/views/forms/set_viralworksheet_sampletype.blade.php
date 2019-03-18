@@ -64,19 +64,23 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Samples Entered By/Received By</label>
-                            <div class="col-sm-8"><select class="form-control" name="entered_by" id="entered_by">
-                                
-                                <option value=""> Select One </option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">
-                                     {{ $user->full_name }}
-                                    </option>
-                                @endforeach
+                        @if(env('APP_LAB') == 1)
 
-                            </select></div>
-                        </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Samples Entered By/Received By</label>
+                                <div class="col-sm-8"><select class="form-control" name="entered_by" id="entered_by">
+                                    
+                                    <option value=""> Select One </option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">
+                                         {{ $user->full_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select></div>
+                            </div>
+
+                        @endif
 
                         <div class="hr-line-dashed"></div>
 

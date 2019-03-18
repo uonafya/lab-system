@@ -273,6 +273,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('email')->name('email.')->group(function () {
 			Route::get('preview/{email}', 'EmailController@demo')->name('demo');
 			Route::post('preview/{email}', 'EmailController@demo_email')->name('demo_email');
+
+			Route::get('download_attachment/{email}', 'EmailController@download_attachment');
+			Route::get('attachment/{email}', 'EmailController@add_attachment');
+			Route::post('attachment/{email}', 'EmailController@save_attachment');
+			Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
 		});
 		Route::resource('email', 'EmailController');
 	});

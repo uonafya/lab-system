@@ -36,6 +36,10 @@ class CustomMail extends Mailable
      */
     public function build()
     {
+        foreach ($this->email->attachment as $key => $attachment) {
+            $this->attach($attachment->path, ['as' => $attachment->download_name]);            
+        }
+        
         $view_name = 'emails.' . $this->email->id;
         $from = env('MAIL_FROM_NAME');
         if($this->email->from_name != '') $from = $this->email->from_name;
