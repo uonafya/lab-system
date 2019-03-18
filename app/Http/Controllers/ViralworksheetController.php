@@ -129,7 +129,7 @@ class ViralworksheetController extends Controller
         $worksheet->save();
         $sampletype = $worksheet->sampletype;
 
-        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'));
+        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'), $request->input('entered_by'));
 
         if(!$data || (!$data['create'])){
             dd($data);
