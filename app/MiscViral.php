@@ -746,7 +746,7 @@ class MiscViral extends Common
         if(date('m') < 7) $year --;
         $date_str = $year . '-12-31';
 
-        if($test){
+        if($test || $entered_by){
             $repeats = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
                 ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -804,7 +804,7 @@ class MiscViral extends Common
             ->limit($limit)
             ->get();
 
-        if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
+        if(($test || $entered_by) && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
         $create = false; 
