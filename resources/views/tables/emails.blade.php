@@ -47,7 +47,7 @@
                                             <td>False</td>
                                         @endif
                                         <td>
-                                            <a href="{{ url('/email/attachement/' . $email->id ) }} " target='_blank'>Attachments</a>
+                                            <a href="{{ url('/email/attachment/' . $email->id ) }} " target='_blank'>Attachments</a>
                                         </td>
                                         <td>
                                             <a href="{{ url('/email/preview/' . $email->id ) }} " target='_blank'>Preview</a>
