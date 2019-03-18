@@ -84,6 +84,7 @@ class ViralworksheetController extends Controller
         $data['machine_type'] = $machine_type;
         $data['calibration'] = $calibration;
         $data['limit'] = $limit;
+        $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
 
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
     }
@@ -93,8 +94,9 @@ class ViralworksheetController extends Controller
         $sampletype = $request->input('sampletype');
         $machine_type = $request->input('machine_type');
         $calibration = $request->input('calibration', 0);
-        $limit = $request->input('limit');
-        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}");
+        $limit = $request->input('limit', 0);
+        $entered_by = $request->input('entered_by');
+        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
     }
 
     /**
@@ -102,9 +104,9 @@ class ViralworksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($sampletype, $machine_type=2, $calibration=false, $limit=false)
+    public function create($sampletype, $machine_type=2, $calibration=false, $limit=false, $entered_by=null)
     {
-        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype, $limit);
+        $data = MiscViral::get_worksheet_samples($machine_type, $calibration, $sampletype, $limit, $entered_by);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
@@ -121,7 +123,7 @@ class ViralworksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Viralworksheet;
-        $worksheet->fill($request->except('_token', 'limit'));
+        $worksheet->fill($request->except('_token', 'limit', 'entered_by'));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();

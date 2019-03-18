@@ -51,7 +51,9 @@
                         @endif
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Worksheet Sample Type</label>
+                            <label class="col-sm-4 control-label">Worksheet Sample Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                           </label>
                             <div class="col-sm-8">
                                 <select class="form-control lockable" required name="sampletype" id="sampletype">
                                     <option></option>
@@ -60,6 +62,20 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Samples Entered By/Received By</label>
+                            <div class="col-sm-8"><select class="form-control" name="entered_by" id="entered_by">
+                                
+                                <option value=""> Select One </option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">
+                                     {{ $user->full_name }}
+                                    </option>
+                                @endforeach
+
+                            </select></div>
                         </div>
 
                         <div class="hr-line-dashed"></div>
