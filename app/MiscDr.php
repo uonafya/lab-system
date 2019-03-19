@@ -303,13 +303,16 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
+		// dd($body);
+
 		if($response->getStatusCode() == 200)
 		{
 			$w = $body->data->attributes;
 			$worksheet->exatype_status_id = self::get_worksheet_status($w->status);
 			$worksheet->plate_controls_pass = $w->plate_controls_pass;
 			$worksheet->qc_run = $w->plate_qc_run;
-			$worksheet->qc_pass = $w->plate_qc;
+			$worksheet->qc_pass = $w->plate_qc->pass ?? 0;
+			$worksheet->qc_distance_pass = $w->plate_qc->distance_pass ?? 0;
 
 			if($worksheet->exatype_status_id == 4) return null;
 
@@ -383,7 +386,7 @@ class MiscDr extends Common
 				}
 
 				if($s->calls){
-					$sample->has_calls = true;
+					// $sample->has_calls = true;
 
 					foreach ($s->calls as $call) {
 						// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
@@ -409,6 +412,8 @@ class MiscDr extends Common
 							// 'major_mutations' => self::escape_null($call->major_mutations),
 						]);
 
+						if($c->mutations_array) $sample->has_mutations = true;
+
 						foreach ($call->drugs as $drug) {
 							$d = DrCallDrug::firstOrCreate([
 								'call_id' => $c->id,
@@ -421,7 +426,7 @@ class MiscDr extends Common
 				}
 
 				if($s->genotype){
-					$sample->has_genotypes = true;
+					// $sample->has_genotypes = true;
 
 					foreach ($s->genotype as $genotype) {
 						$g = DrGenotype::firstOrCreate([
@@ -631,61 +636,5 @@ class MiscDr extends Common
     		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
     	]);
 	}
-
-	public static function download_pdf()
-	{
-		$client = new Client();
-		// $url = "https://hyrax-development-sanger-sample.s3-eu-west-1.amazonaws.com/1550136209464705939/4569f586f6df15baf4cb92d8a94279bc?response-content-disposition=attachment%3B%20filename%3D22.pdf&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIARH5SJVFVYGFOJCHP%2F20190214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20190214T105733Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEJP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDIN78kttnR2IssO03SK3A1z0d2oC2zkwdgFx2rG5tluWSX6gOUawwS79leG0dgkxAuoZi3Du52z%2FgLTgeb0QIAilCWCGujyUXSeDojB%2FFeDyq7Tj%2FvfyvxQscXn%2BF%2FcD9Ts%2BRBWdlvbbpGh8%2Bo21%2B8JHkvDM4G4InWMi3RMtIvST%2BKhMJkUSZxkRgrCb2c%2BzX45sWuXhbkZngr7KEPDwCVABAWKgcKmKhauLlUXIl67D8Jg9QGKKYA2I%2B4yayCdF17NyWS3lysYciNvxIYXVBAWIF6UVLrk1X6rotjehkUYqysoq%2FuTAe99xR6TpT2eDX8EZR7KkbMbOib%2BYcSjfX1ybjabkB1u8YsDYyg7k6OOiTdA%2FerC4hi8xGcEJNrK1yhjpJlwX3UYr2kIj9UmzPRf6NQO0dkVkmjzRvKHGziYeynqgAhKlMdpAo8Zr6W5wOclULMUJpQ2BcYxKvk0G2SoV0Hn4sgOeVEy4sP81B9UjhK4q8RXyxqTbfJ%2FYlMUuJCjA2AGR6kmWY%2Bc1v2OTy9wi3FEwkTTjvNVKAY5t8rMPb6JNvxl3ftqta%2FPYvb3gs5PzWXvQ1m%2FrH0XTSD5ZyZbZLFu%2FWo0oueSU4wU%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=23421a4f7244956b86bcbbcf6b7d5a56163c1481be84a0a6e10c225d6c6efcf7";
-
-		$url = "https://hyrax-development-sanger-sample.s3-eu-west-1.amazonaws.com/1550136214181171526/d33cce822e88cb26f34a8ff0f7641af4?response-content-disposition=attachment%3B%20filename%3D2009695759.pdf&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIARH5SJVFVYGFOJCHP%2F20190214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20190214T105733Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEJP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDIN78kttnR2IssO03SK3A1z0d2oC2zkwdgFx2rG5tluWSX6gOUawwS79leG0dgkxAuoZi3Du52z%2FgLTgeb0QIAilCWCGujyUXSeDojB%2FFeDyq7Tj%2FvfyvxQscXn%2BF%2FcD9Ts%2BRBWdlvbbpGh8%2Bo21%2B8JHkvDM4G4InWMi3RMtIvST%2BKhMJkUSZxkRgrCb2c%2BzX45sWuXhbkZngr7KEPDwCVABAWKgcKmKhauLlUXIl67D8Jg9QGKKYA2I%2B4yayCdF17NyWS3lysYciNvxIYXVBAWIF6UVLrk1X6rotjehkUYqysoq%2FuTAe99xR6TpT2eDX8EZR7KkbMbOib%2BYcSjfX1ybjabkB1u8YsDYyg7k6OOiTdA%2FerC4hi8xGcEJNrK1yhjpJlwX3UYr2kIj9UmzPRf6NQO0dkVkmjzRvKHGziYeynqgAhKlMdpAo8Zr6W5wOclULMUJpQ2BcYxKvk0G2SoV0Hn4sgOeVEy4sP81B9UjhK4q8RXyxqTbfJ%2FYlMUuJCjA2AGR6kmWY%2Bc1v2OTy9wi3FEwkTTjvNVKAY5t8rMPb6JNvxl3ftqta%2FPYvb3gs5PzWXvQ1m%2FrH0XTSD5ZyZbZLFu%2FWo0oueSU4wU%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=52fac846320d254fe5094518e226701ba2c1a044da9247cdb8a24059251d3dee";
-
-
-		$response = $client->request('GET', $url, [
-			// 'headers' => [
-				// 'Accept' => 'application/json',
-				// 'X-Hyrax-Apikey' => self::get_hyrax_key(),
-			// ],
-		]);
-
-		$body = $response->getBody();
-		$headers = $response->getHeaders();
-
-		// dd($body);
-		dd($headers);
-	}
-
-	public static function columns()
-	{
-		DB::statement("ALTER TABLE `dr_samples`
-			ADD `age` tinyint unsigned NULL AFTER `sampletype`,
-
-			ADD `approvedby` int unsigned NULL AFTER `datedispatched`,
-			ADD `approvedby2` int unsigned NULL AFTER `approvedby`,
-			ADD `dateapproved` date NULL AFTER `approvedby2`,
-			ADD `dateapproved2` date NULL AFTER `dateapproved`,
-
-			ADD `repeatt` tinyint unsigned NOT NULL DEFAULT 0 AFTER `other_medications`,
-			ADD `run` tinyint unsigned NOT NULL DEFAULT 1 AFTER `repeatt`,
-			ADD `parentid` int unsigned NOT NULL DEFAULT 0 AFTER `run`,
-			ADD `collect_new_sample` tinyint unsigned NOT NULL DEFAULT 0 AFTER `parentid`,
-
-			CHANGE `sanger_id` `exatype_id` int(10) unsigned NULL DEFAULT '0' AFTER `control`
-		;");
-
-
-	}
-
-	public static function w_columns()
-	{
-		DB::statement("ALTER TABLE `dr_worksheets`
-			CHANGE `sanger_status_id` `exatype_status_id` int(10) unsigned NULL DEFAULT '0' AFTER `status_id`,
-			ADD `daterun` DATE NULL AFTER `exatype_status_id`
-		;");
-
-
-	}
-
-	
-
 
 }

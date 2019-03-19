@@ -209,7 +209,7 @@
                                         </td>
 
                                         <td>
-                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->run < 2 && $sample->receivedstatus != 2)
+                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->worksheet_id == null && $sample->run < 2 && $sample->receivedstatus != 2)
                                             
                                                 {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                     <button type="submit" class="btn btn-xs btn-primary">Delete</button>

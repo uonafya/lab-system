@@ -110,8 +110,10 @@ class CreateDrSamplesTable extends Migration
 
             $table->boolean('has_errors')->default(0);
             $table->boolean('has_warnings')->default(0);
-            $table->boolean('has_calls')->default(0);
-            $table->boolean('has_genotypes')->default(0);
+            $table->boolean('has_mutations')->default(0);
+
+            // $table->boolean('has_calls')->default(0);
+            // $table->boolean('has_genotypes')->default(0);
 
             // PendChromatogramManualIntervention
             $table->boolean('pending_manual_intervention')->default(0);

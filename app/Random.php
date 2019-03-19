@@ -1673,4 +1673,22 @@ class Random
 		}
 	}
 
+
+	public static function create_attachments_table()
+	{
+		DB::statement("
+			CREATE TABLE `attachments` (
+		  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+		  `email_id` int(10) unsigned NOT NULL ,
+		  `attachment_path` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+		  `download_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+		  `created_at` timestamp NULL DEFAULT NULL,
+		  `updated_at` timestamp NULL DEFAULT NULL,
+		  `deleted_at` timestamp NULL DEFAULT NULL,
+		  PRIMARY KEY (`id`),
+		  KEY `attachments_email_id_index` (`email_id`)
+		) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+		");
+	}
+
 }
