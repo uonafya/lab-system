@@ -470,6 +470,7 @@ class ViralbatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
+        ini_set('memory_limit', "-1");
         $batches = Viralbatch::select('viralbatches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
