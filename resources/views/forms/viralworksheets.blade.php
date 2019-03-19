@@ -53,6 +53,10 @@
                 @if($limit)
                     <input type="hidden" value="{{ $limit }}" name="limit" >
                 @endif
+
+                @if($entered_by)
+                    <input type="hidden" value="{{ $entered_by }}" name="entered_by" >
+                @endif
             @endif
 
             <div class="row">

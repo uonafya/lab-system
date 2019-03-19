@@ -21,17 +21,18 @@ CREATE TABLE  `dr_sample_statuses` (
   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `other_id` INT unsigned NOT NULL,
   `name` varchar(100) DEFAULT NULL,
+  `output` varchar(70) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`) VALUES
-	(1, 1100, 'completed'),
-	(2, 1101, 'error'),
-	(3, 1102, 'failed'),
-	(4, 1110, 'pending'),
-	(5, 1111, 'processing'),
-	(6, 1120, 'action_required');
+INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`, `output`) VALUES
+	(1, 1100, 'completed','<strong><div style=\'color: #339900;\'>Completed</div></strong>'),
+	(2, 1101, 'error','<strong><div style=\'color: #FF0000;\'>Error</div></strong>'),
+	(3, 1102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
+	(4, 1110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
+	(5, 1111, 'processing','<strong><div style=\'color: #0000FF;\'>Processing</div></strong>'),
+	(6, 1120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>');
 
 -- DROP TABLE IF EXISTS `calls`;
 -- CREATE TABLE  `calls` (

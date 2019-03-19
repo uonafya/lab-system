@@ -491,6 +491,7 @@ class MiscViral extends Common
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
         if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
+        if(str_contains($str, ['collect', 'invalid', 'failed'])) return ['rcategory' => 5 ];
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
@@ -508,6 +509,21 @@ class MiscViral extends Common
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
         return [];
+    }
+
+    public function set_rcat()
+    {
+        while(true){
+            $samples = Viralsample::where(['synched' => 1, 'rcategory' => 0])->whereNotNull('datetested')->limit(1000)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $sample) {
+                $sample->age_category = $this->set_age_cat($sample->age); 
+                $sample->fill($this->set_rcategory($sample->result, $sample->repeatt));
+                $sample->pre_update();
+            }
+            break;
+        }
     }
 
     public static function generate_dr_list()
@@ -685,7 +701,7 @@ class MiscViral extends Common
         }
     }
 
-    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null)
+    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null, $entered_by=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -708,7 +724,7 @@ class MiscViral extends Common
         if(date('m') < 7) $year --;
         $date_str = $year . '-12-31';
 
-        if($test){
+        if($test || $entered_by){
             $repeats = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
                 ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -743,6 +759,11 @@ class MiscViral extends Common
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                 if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
             })
+            ->when($entered_by, function($query) use ($entered_by){
+                // return $query->where('received_by', $user->id)->where('parentid', 0);
+                return $query->where('parentid', 0)
+                    ->whereRaw("((received_by={$entered_by} && sample_received_by IS NULL) OR  sample_received_by={$entered_by})");
+            })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -761,7 +782,7 @@ class MiscViral extends Common
             ->limit($limit)
             ->get();
 
-        if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
+        if(($test || $entered_by) && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
         $create = false; 
@@ -770,7 +791,7 @@ class MiscViral extends Common
         if(in_array(env('APP_LAB'), [8])) $create = true;
 
         return [
-            'count' => $count, 'limit' => $temp_limit,
+            'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];

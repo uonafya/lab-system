@@ -341,6 +341,7 @@ class Common
 	{
 		$batch_model = self::get_batch_class($type);
         $min_time = date('Y-m-d', strtotime("-14 days"));
+        if(env('APP_LAB') == 3) $min_time = date('Y-m-d', strtotime("-28 days"));
 
 		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0, 'lab_id' => env('APP_LAB')])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
 
@@ -472,6 +473,14 @@ class Common
 		}
 	}
 
+
+	public static function worksheet_date($date_tested, $created_at, $default=null)
+	{
+		if(!$default) $default = date('Y-m-d');
+
+		if(strtotime($date_tested) > strtotime($created_at) && strtotime($date_tested) < strtotime('now')) return $date_tested;
+		return $default;
+	}
 
 
 
