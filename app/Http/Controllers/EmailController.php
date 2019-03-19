@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Email;
+use App\Attachment;
 use App\County;
 use Illuminate\Http\Request;
 
@@ -114,6 +115,41 @@ class EmailController extends Controller
         $email->demo_email($request->input('recepient'));
         session(['toast_message' => 'The email was successful']);
         return back();
+    }
+
+
+
+    public function add_attachment(Email $email)
+    {
+        $email->load('attachment');   
+        return view('forms.attachments', ['email' => $email]);
+    }
+
+    public function save_attachment(Request $request, Email $email)
+    {
+        $att = new Attachment;
+        // dd($request->all());
+        $att->download_name = $request->file('upload')->getClientOriginalName();
+        $att->attachment_path = $request->upload->store('attachments'); 
+        $att->email_id = $email->id;
+        $att->save();
+
+        session(['toast_message' => 'The attachment has been created.']);
+        return back();
+    }
+
+    public function download_attachment($attachment_id)
+    {
+        $attachment = Attachment::findOrFail($attachment_id);
+        return response()->download($attachment->path, $attachment->download_name);
+    }
+
+    public function delete_attachment($attachment_id)
+    {
+        $attachment = Attachment::findOrFail($attachment_id);
+        $attachment->pre_delete();
+        session(['toast_message' => 'The attachment has been deleted.']);
+        return back();        
     }
 
 }

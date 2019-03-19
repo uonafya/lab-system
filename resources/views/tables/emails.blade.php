@@ -23,6 +23,7 @@
                                     <th>Lab Signature</th>
                                     <th>Time To Be Sent</th>
                                     <th>Sent</th>
+                                    <th>Attachments</th>
                                     <th>Test Email</th>
                                     <th>Edit Email</th>
                                     <th>Delete Email</th>
@@ -45,6 +46,9 @@
                                         @else
                                             <td>False</td>
                                         @endif
+                                        <td>
+                                            <a href="{{ url('/email/attachment/' . $email->id ) }} " target='_blank'>Attachments</a>
+                                        </td>
                                         <td>
                                             <a href="{{ url('/email/preview/' . $email->id ) }} " target='_blank'>Preview</a>
                                         </td>

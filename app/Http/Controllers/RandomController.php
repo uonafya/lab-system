@@ -33,6 +33,23 @@ class RandomController extends Controller
     	return response()->download($path);
 	}
 
+	public function download_notice()
+	{		
+		if(env('APP_LAB') == 1){
+			$path = $path = public_path('kemri_nairobi.pdf');
+			$name = 'KEMRI LMB LAB TEMPORARY SERVICE INTERRUPTION INTERNAL MEMO.pdf';
+		}	
+		else if(env('APP_LAB') == 3){
+			$path = $path = public_path('kemri_alupe.pdf');
+			$name = 'KEMRI ALUPE LAB TEMPORARY SERVICE INTERRUPTION INTERNAL MEMO.pdf';
+		}
+		else{
+			return redirect('/batch');
+		}
+		session(['downloaded_notice' => true]);
+    	return response()->download($path, $name);
+	}
+
 	public function send_to_login($param = null)
 	{
 		return redirect('/login');

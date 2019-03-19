@@ -630,7 +630,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->result == NULL && $sample->run < 2){
+        if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL){
             $batch = $sample->batch;
             $sample->delete();
             $samples = $batch->sample;
@@ -1019,6 +1019,19 @@ class SampleController extends Controller
             ->paginate(10);
 
         $samples->setPath(url()->current());
+        return $samples;
+    }
+
+    public function similar(Request $request)
+    {
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+        $sex = $request->input('sex');
+
+        $samples = SampleView::where('created_at', '>', date('Y-m-d', strtotime('-2months')))
+            ->where(['repeatt' => 0, 'facility_id' => $facility_id, 'sex' => $sex, ])
+            ->limit(10);
+
         return $samples;
     }
 
