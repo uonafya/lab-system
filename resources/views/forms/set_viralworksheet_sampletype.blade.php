@@ -64,7 +64,7 @@
                             </div>
                         </div>
 
-                        @if(env('APP_LAB') == 1)
+                        @if(env('APP_LAB') != 1)
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Samples Entered By/Received By</label>
