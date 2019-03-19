@@ -32,7 +32,8 @@ INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`, `output`) VALUES
 	(3, 1102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
 	(4, 1110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
 	(5, 1111, 'processing','<strong><div style=\'color: #0000FF;\'>Processing</div></strong>'),
-	(6, 1120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>');
+	(6, 1120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>'),
+	(7, 1112, 'qc_pending','<strong><div style=\'color: #FFD324;\'>Quality Control Pending</div></strong>');
 
 -- DROP TABLE IF EXISTS `calls`;
 -- CREATE TABLE  `calls` (
