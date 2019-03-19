@@ -598,7 +598,7 @@ class BatchController extends Controller
                                 return $query->whereRaw("date(`samples_view`.`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))) . "'");
                             else
                                 return $query->whereRaw("date(`samples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
-                        })->get();
+                        })->orderBy('facility','desc')->orderBy('batch_id','asc')->orderBy('created_at', 'asc')->get();
         $export['samples'] = $data;
         $export['testtype'] = 'EID';
         $export['lab'] = \App\Lab::find(env('APP_LAB'));
