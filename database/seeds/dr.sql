@@ -20,8 +20,8 @@ DROP TABLE IF EXISTS `dr_sample_statuses`;
 CREATE TABLE  `dr_sample_statuses` (
   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `other_id` INT unsigned NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `output` varchar(70) DEFAULT NULL,
+  `name` varchar(70) DEFAULT NULL,
+  `output` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
