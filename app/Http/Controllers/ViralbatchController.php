@@ -470,6 +470,7 @@ class ViralbatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
+        ini_set('memory_limit', "-1");
         $batches = Viralbatch::select('viralbatches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
@@ -480,15 +481,15 @@ class ViralbatchController extends Controller
             ->where('lab_id', env('APP_LAB'))
             ->get();
 
-        $noresult_a = MiscViral::get_totals(0);
-        $redraw_a = MiscViral::get_totals(5);
-        $failed_a = MiscViral::get_totals(3);
-        $detected_a = MiscViral::get_totals(2);
-        $undetected_a = MiscViral::get_totals(1);
+        $noresult_a = MiscViral::get_totals(0, null, true);
+        $redraw_a = MiscViral::get_totals(5, null, true);
+        $failed_a = MiscViral::get_totals(3, null, true);
+        $detected_a = MiscViral::get_totals(2, null, true);
+        $undetected_a = MiscViral::get_totals(1, null, true);
 
-        $rejected = MiscViral::get_rejected();
-        $date_modified = MiscViral::get_maxdatemodified();
-        $date_tested = MiscViral::get_maxdatetested();
+        $rejected = MiscViral::get_rejected(null, true);
+        $date_modified = MiscViral::get_maxdatemodified(null, true);
+        $date_tested = MiscViral::get_maxdatetested(null, true);
         $currentdate=date('d-m-Y');
 
         $batches->transform(function($batch, $key) use ($noresult_a, $redraw_a, $failed_a, $detected_a, $undetected_a, $rejected, $date_modified, $date_tested){
