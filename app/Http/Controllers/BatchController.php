@@ -780,7 +780,6 @@ class BatchController extends Controller
         $data = Lookup::get_lookups();
         $data['batches'] = $batches;
         $mpdf = new Mpdf(['format' => 'A4-L']);
-        $mpdf->setFooter('{PAGENO}');
         $view_data = view('exports.mpdf_samples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);

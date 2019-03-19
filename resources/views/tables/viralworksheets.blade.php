@@ -37,18 +37,6 @@
     <br />
 
     <div class="row">
-        <div class="col-md-12">
-            Click To View: 
-            <a href="{{ $myurl2 . '/1'  }}" title="Taqman Worksheets"> Taqman Worksheets </a> |
-            <a href="{{ $myurl2 . '/2' }}" title="Abbott Worksheets"> Abbott Worksheets </a> |
-            <a href="{{ $myurl2 . '/3' }}" title="C8800 Worksheets"> C8800 Worksheets </a> |
-            <a href="{{ $myurl2 . '/4' }}" title="Pantha Worksheets"> Pantha Worksheets </a> |
-        </div>        
-    </div>
-    
-    <br />
-
-    <div class="row">
         <div class="col-md-4"> 
             <div class="form-group">
                 <label class="col-sm-2 control-label">Select Date</label>

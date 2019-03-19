@@ -332,8 +332,8 @@ class TaskController extends Controller
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0) {
-            // return redirect()->route('allocation');
-            return redirect()->route('pending');
+            return redirect()->route('allocation');
+            // return redirect()->route('pending');
         }
         
         $data['taqmanKits'] = $this->taqmanKits;

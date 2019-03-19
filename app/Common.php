@@ -652,30 +652,6 @@ class Common
 	    }
     }
 
-    public static function old_batches_dispatch()
-    {
-        ini_set("memory_limit", "-1");
-        $classes = \App\Synch::$synch_arrays;
-
-        foreach ($classes as $c) {
-
-	        $batch_class = $c['batch_class'];
-	        $misc_class = $c['misc_class'];
-
-	        $batches = $batch_class::where('batch_complete', 2)->get();
-	        $batch_ids = $batches->pluck(['id'])->toArray();
-	        $date_tested = $misc_class::get_maxdatetested($batch_ids, false);
-
-	        foreach ($batches as $batch) {
-	        	$dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
-	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +3days'));
-	        	$batch->batch_complete = 1;
-	        	$batch->sent_email = 1;
-	        	$batch->save();
-	        }
-	    }
-    }
-
     public static function correct_facility($mfl)
     {
         ini_set("memory_limit", "-1");
@@ -755,28 +731,25 @@ class Common
         dd($conflict);
     }
 
-    public static function change_facility_id($old_id, $new_id, $also_facility=false)
+    public static function change_facility_id($old_id, $new_id)
     {
         $classes = [
         	\App\Mother::class,
         	\App\Batch::class,
         	\App\Patient::class,
 
+
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
-
-        	\App\User::class,
-        	\App\FacilityContact::class,
         ];
 
 
-		foreach ($classes as $key => $class) {
-			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
+		foreach ($classes as $class) {
+			$class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
 			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
-		if($also_facility) \App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
     }
 
     public static function send_lab_tracker($year, $previousMonth) {
