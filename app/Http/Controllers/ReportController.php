@@ -311,7 +311,7 @@ class ReportController extends Controller
                                 if ($request->input('fromDate') == $request->input('toDate'))
                                     return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
                                 else
-                                    return $query->whereRaw("$table.$column > '".$request->input('fromDate')."'");
+                                    return $query->whereRaw("$table.$column BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
                             });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
@@ -563,7 +563,7 @@ class ReportController extends Controller
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
-                $model = $model->where('site_entry', '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->whereNull('received_by')->orderBy('facility','desc')->orderBy('batch_id','asc')->orderBy('created_at', 'asc');
+                $model = $model->where('site_entry', '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->whereNull('received_by')->orderBy('created_at', 'asc');
             else
                 $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
