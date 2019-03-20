@@ -19,9 +19,9 @@
 		Cancel Upload
 	</a> | 
 
-	<a href="{{ url('dr_worksheet/create_plate/' . $worksheet->id) }}" title="Click to Send Worksheet to Exatype">		
-		Send to Exatype
-	</a> | 
+	{{-- <a href="{{ url('dr_worksheet/create_plate/' . $worksheet->id) }}" title="Click to Send Worksheet to Exatype">		
+		 		Send to Exatype
+		 	</a> | --}} 
 
 	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
@@ -45,9 +45,9 @@
 
 @elseif($worksheet->status_id == 5)
 
-	<a href="{{ url('dr_worksheet/get_plate_result/' . $worksheet->id) }}" title="Click to Get Worksheet From Exatype">		
-		Retrieve Results
-	</a> | 
+	{{-- <a href="{{ url('dr_worksheet/get_plate_result/' . $worksheet->id) }}" title="Click to Get Worksheet From Exatype">		
+		 		Retrieve Results
+		 	</a> | --}} 
 
 	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
