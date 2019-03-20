@@ -642,8 +642,8 @@ class Synch
 
 	public static function labactivity($type)
 	{
-		$lab_id = NULL;
-		if(!isset($lab_id)) 
+		// $lab_id = NULL;
+		// if(!isset($lab_id)) 
 			$lab_id = env('APP_LAB', null);
 		
 		$classes = self::$synch_arrays[$type];
