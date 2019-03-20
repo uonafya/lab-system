@@ -272,26 +272,6 @@ class Misc extends Common
         return $samples;
     }
 
-    public static function get_maxdateapproved($batch_id=NULL, $complete=true)
-    {
-        $samples = Sample::selectRaw("max(dateapproved) as mydate, batch_id")
-            ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                return $query->where('batch_id', $batch_id);
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
     public static function clean_dob()
     {
     	$samples = Sample::where('age', '>', 36)->with(['patient'])->get();

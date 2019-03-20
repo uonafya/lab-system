@@ -251,7 +251,7 @@ class MiscViral extends Common
             return self::exponential_result($result);
         }
 
-        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error', 'invalid']) || strlen($error) > 10)
+        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
             $interpretation = $error ?? $result;       
@@ -419,28 +419,6 @@ class MiscViral extends Common
     public static function get_maxdatetested($batch_id=NULL, $complete=true)
     {
         $samples = Viralsample::selectRaw("max(datetested) as mydate, batch_id")
-            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                else{
-                    return $query->where('batch_id', $batch_id);
-                }
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
-    public static function get_maxdateapproved($batch_id=NULL, $complete=true)
-    {
-        $samples = Viralsample::selectRaw("max(dateapproved) as mydate, batch_id")
             ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
             ->when($batch_id, function($query) use ($batch_id){
                 if (is_array($batch_id)) {

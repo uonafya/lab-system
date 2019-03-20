@@ -22,10 +22,7 @@ class DrWorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        $worksheets = DrWorksheet::with(['creator', 'reviewer', 'sample'])->withCount(['sample'])
-            ->when($worksheet_id, function ($query) use ($worksheet_id){
-                return $query->where('dr_worksheets.id', $worksheet_id);
-            })
+        $worksheets = DrWorksheet::with(['creator', 'reviewer'])->withCount(['sample'])
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
@@ -38,14 +35,12 @@ class DrWorksheetController extends Controller
                 return $query->whereDate('dr_worksheets.created_at', $date_start);
             })
             ->orderBy('dr_worksheets.created_at', 'desc')
-            ->paginate();
-
-        $worksheets->setPath(url()->current());
+            ->get();
 
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
-        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Sequencing Worksheets');
+        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets');
     }
 
     /**
@@ -104,7 +99,7 @@ class DrWorksheetController extends Controller
     {
         $data = Lookup::get_dr();
         // $data['samples'] = $drWorksheet->sample;
-        $data['samples'] = DrSample::where(['worksheet_id' => $drWorksheet->id])->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
+        $data['samples'] = DrSample::where(['worksheet_id' => $drWorksheet->id])->orderBy('id', 'asc')->get();
         $data['date_created'] = $drWorksheet->my_date_format('created_at', "Y-m-d");
         if($print) $data['print'] = true;
         return view('worksheets.dr_worksheet', $data);
@@ -189,9 +184,6 @@ class DrWorksheetController extends Controller
             }
 
             $worksheet->save();
-
-            DrSample::where(['worksheet_id' => $worksheet->id])->update(['datetested' => $worksheet->daterun]);
-
             session(['toast_message' => 'The worksheet results has been uploaded.']);
         }
         else{
@@ -296,30 +288,25 @@ class DrWorksheetController extends Controller
 
         $cns_data = array_merge($data, ['collect_new_sample' => 1]);
 
-        if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet->id])->update($data);
-        if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet->id])->update($cns_data);
+        if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
+        if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
 
-        if($rerun && is_array($rerun)) {
-            $samples = DrSample::whereIn('id', $rerun)->get();
-            unset($data['datedispatched']);
+        $samples = DrSample::whereIn('id', $rerun)->get();
+        unset($data['datedispatched']);
 
-            foreach ($samples as $key => $sample){
-                $sample->create_rerun($data);
-            }
+        foreach ($samples as $key => $sample){
+            $sample->create_rerun($data);
         }
 
-        $total = DrSample::where(['worksheet_id' => $worksheet->id, 'parentid' => 0])->count();
-        $dispatched = DrSample::whereNotNull('datedispatched')->where(['worksheet_id' => $worksheet->id])->count();
-        $reruns = DrSample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->count();
+        $total = DrSample::where(['worksheet_id' => $worksheet_id, 'parentid' => 0])->count();
+        $dispatched = DrSample::whereNotNull('datedispatched')->where(['worksheet_id' => $worksheet_id])->count();
+        $reruns = DrSample::where(['worksheet_id' => $worksheet_id, 'repeatt' => 1])->count();
 
         if($total == ($dispatched + $reruns)){
             $worksheet->fill($w_data);
             $worksheet->status_id = 3;
             $worksheet->save();
         }
-
-        session(['toast_message' => 'The selected samples have been approved.']);
-        return redirect('dr_worksheet');
     }
 
     public function create_plate(DrWorksheet $worksheet)

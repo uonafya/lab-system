@@ -64,13 +64,6 @@
                         <li class="">
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
-                    @elseif(session('testingSystem') == 'DR')
-                        <li class="">
-                            <a href="{{ url('dr_sample/index/10') }}">Dispatched Samples</a>
-                        </li>                
-                        <li class="">
-                            <a href="{{ url('dr_sample/report') }}">Report</a>
-                        </li>    
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                             @if (Auth::user()->user_type_id == 5)
@@ -147,7 +140,10 @@
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
                                     <li class="">
-                                        <a href="{{ url('reports/kits') }}">Kits</a>
+                                        <a href="{{ url('reports/kits') }}">Kits
+                                            <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                               {{ $widgets['rejectedAllocations'] }}
+                                            </span></a>
                                     </li>
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
@@ -197,9 +193,6 @@
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
-                    <li class="">
-                        <a href="{{ url('dr_sample/index/10') }}">Dispatched Samples</a>
-                    </li>                
                     <li class="">
                         <a href="{{ url('dr_sample/report') }}">Report</a>
                     </li>                
@@ -307,7 +300,10 @@
                                     @endif">Nascop Dashboard</a>
                             </li>
                             <li class="">
-                                <a href="{{ url('reports/kits') }}">Kits</a>
+                                <a href="{{ url('reports/kits') }}">Kits
+                                    <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                       {{ $widgets['rejectedAllocations'] }}
+                                    </span></a>
                             </li>
                             @if(Auth::user()->user_type_id == 0)
                                 <li>
