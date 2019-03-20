@@ -644,7 +644,7 @@ class Synch
 	{
 		// $lab_id = NULL;
 		// if(!isset($lab_id)) 
-			$lab_id = env('APP_LAB', null);
+		$lab_id = env('APP_LAB', null);
 		
 		$classes = self::$synch_arrays[$type];
 		$sample_class = $classes['sample_class'];
