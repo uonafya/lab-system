@@ -82,7 +82,7 @@ class DashboardCacher
             return 'success';
         };
 
-        $data['rejectedAllocations'] = Cache::get('rejectedAllocations');
+        // $data['rejectedAllocations'] = Cache::get('rejectedAllocations');
 
         if (session('testingSystem') == 'Viralload') {            
         	return array_merge($data, [
@@ -423,7 +423,7 @@ class DashboardCacher
             $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
         }
 
-        $rejectedAllocations = self::rejectedAllocations();
+        // $rejectedAllocations = self::rejectedAllocations();
         
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
@@ -458,7 +458,7 @@ class DashboardCacher
             Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
         }
         // Neutral Cache
-        Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
+        // Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
         
     }
 
