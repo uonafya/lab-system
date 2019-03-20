@@ -135,9 +135,10 @@
                                     </li>
                                     <li class="">
                                         <a href="{{ url('reports/kits') }}">Kits
-                                            <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                            {{-- <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
                                                {{ $widgets['rejectedAllocations'] }}
-                                            </span></a>
+                                            </span> --}}
+                                        </a>
                                     </li>
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
@@ -289,9 +290,10 @@
                             </li>
                             <li class="">
                                 <a href="{{ url('reports/kits') }}">Kits
-                                    <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                    {{-- <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
                                        {{ $widgets['rejectedAllocations'] }}
-                                    </span></a>
+                                    </span> --}}
+                                </a>
                             </li>
                             @if(Auth::user()->user_type_id == 0)
                                 <li>
