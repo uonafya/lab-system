@@ -67,46 +67,40 @@
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                             @if (Auth::user()->user_type_id == 5)
-                                @if(in_array(env('APP_LAB'), [1, 3]) && !session('downloaded_notice'))
-                                    <li class="">
-                                        <a href="{{ url('download_notice') }}">Download Lab Notice (VERY IMPORTANT)</a>
-                                    </li>
-                                @else
-                                    <li class="">
-                                        <a href="{{ url('batch') }}">EID Samples</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('batch/index/1') }}">EID Results</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('viralbatch') }}">VL Samples</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                                    </li>
+                                <li class="">
+                                    <a href="{{ url('batch') }}">EID Samples</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('batch/index/1') }}">EID Results</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('viralbatch') }}">VL Samples</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
+                                </li>
 
-                                    <li class="">
-                                        <a href="{{ url('worklist') }}">POC Worklists</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
-                                    </li>
-                                    <!-- <li class="">
-                                        <a href="#">EID Reports</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="#">VL Reports</a>
-                                    </li> -->
-                                @endif
+                                <li class="">
+                                    <a href="{{ url('worklist') }}">POC Worklists</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
+                                </li>
+                                <!-- <li class="">
+                                    <a href="#">EID Reports</a>
+                                </li>
+                                <li class="">
+                                    <a href="#">VL Reports</a>
+                                </li> -->
                             @elseif(Auth::user()->user_type_id == 2)
                                 <li>
                                     <a href="{{ url('home') }}">Home</a>
@@ -199,45 +193,39 @@
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
-                            @if(in_array(env('APP_LAB'), [1, 3]) && !session('downloaded_notice'))
-                                <li class="">
-                                    <a href="{{ url('download_notice') }}">Download Lab Notice (VERY IMPORTANT)</a>
-                                </li>
-                            @else
-                                <li class="">
-                                    <a href="{{ url('batch') }}">EID Samples</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('batch/index/1') }}">EID Results</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('viralbatch') }}">VL Samples</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('worklist') }}">POC Worklists</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
-                                </li>
-                                <!-- <li class="">
-                                    <a href="#">EID Reports</a>
-                                </li>
-                                <li class="">
-                                    <a href="#">VL Reports</a>
-                                </li> -->
-                            @endif
+                            <li class="">
+                                <a href="{{ url('batch') }}">EID Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('batch/index/1') }}">EID Results</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralbatch') }}">VL Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('worklist') }}">POC Worklists</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
+                            </li>
+                            <!-- <li class="">
+                                <a href="#">EID Reports</a>
+                            </li>
+                            <li class="">
+                                <a href="#">VL Reports</a>
+                            </li> -->
                         @elseif(Auth::user()->user_type_id == 2)
                                 <li>
                                     <a href="{{ url('home') }}">Home</a>
