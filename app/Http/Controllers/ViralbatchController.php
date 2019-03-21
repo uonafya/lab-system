@@ -996,7 +996,7 @@ class ViralbatchController extends Controller
         foreach ($samples as $key => $sample) {
             $data[$key]['#'] = $key+1;
             $data[$key]['Batch #'] = $sample->batch_id;
-            $data[$key]['Facility'] = $sample->facility;
+            $data[$key]['Facility'] = $sample->facilityname;
             $data[$key]['Sub County'] = $sample->subcounty;
             $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
             $data[$key]['Gender'] = $sample->gender;
