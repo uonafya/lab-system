@@ -37,22 +37,31 @@
     @switch(env('APP_LAB'))
         @case(1)
             <img src="{{ asset('img/kemri_nascoplogo.png') }}">
+            @break
         @case(2)
             <img src="{{ asset('img/kisumunascoplogo.png') }}">
+            @break
         @case(3)
             <img src="{{ asset('img/alupenascoplogo.png') }}">
+            @break
         @case(4)
             <img src="{{ asset('img/wrplogo.png') }}">
+            @break
         @case(5)
             <img src="{{ asset('img/ampathnascoplogo.png') }}">
+            @break
         @case(6)
             <img src="{{ asset('img/cpghlogo.png') }}">
+            @break
         @case(7)
             <img src="{{ asset('img/nhrllogo.png') }}">
+            @break
         @case(8)
             <img src="{{ asset('img/knhnascoplogo.png') }}">
+            @break
         @case(9)
             <img src="{{ asset('img/nyumbaninascoplogo.png') }}">
+            @break
         @default
             <img src="{{ asset('img/kemri_nascoplogo.png') }}">
     @endswitch
