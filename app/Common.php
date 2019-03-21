@@ -469,8 +469,8 @@ class Common
 
 
         $batches = $batch_model::selectRaw("{$batch_table}.*, COUNT({$sample_table}.id) AS `samples_count`")
-            ->join('{$sample_table}', '{$batch_table}.id', '=', '{$sample_table}.batch_id')
-            ->where(['batch_complete' => 0, '{$batch_table}.lab_id' => env('APP_LAB')])
+            ->join("{$sample_table}", "{$batch_table}.id", '=', "{$sample_table}.batch_id")
+            ->where(['batch_complete' => 0, "{$batch_table}.lab_id" => env('APP_LAB')])
             ->when(true, function($query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
                     return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
