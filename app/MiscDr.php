@@ -166,9 +166,15 @@ class MiscDr extends Common
 				$sample->exatype_id = $value->id;
 				$sample->save();
 			}
+			session(['toast_message' => 'The worksheet has been successfully created at Exatype.']);
+			return true;
+		}
+		else{
+			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
+			return false;
 		}
 
-		echo "\n The status code is " . $response->getStatusCode() . "\n";
+		// echo "\n The status code is " . $response->getStatusCode() . "\n";
 
 		// dd($body);
 	}
@@ -303,13 +309,16 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
+		// dd($body);
+
 		if($response->getStatusCode() == 200)
 		{
 			$w = $body->data->attributes;
 			$worksheet->exatype_status_id = self::get_worksheet_status($w->status);
 			$worksheet->plate_controls_pass = $w->plate_controls_pass;
 			$worksheet->qc_run = $w->plate_qc_run;
-			$worksheet->qc_pass = $w->plate_qc;
+			$worksheet->qc_pass = $w->plate_qc->pass ?? 0;
+			$worksheet->qc_distance_pass = $w->plate_qc->distance_pass ?? 0;
 
 			if($worksheet->exatype_status_id == 4) return null;
 
@@ -460,6 +469,12 @@ class MiscDr extends Common
 				// echo " {$sample->id} ";
 			
 			}
+			session(['toast_message' => 'The worksheet results have been successfully retrieved from Exatype.']);
+			return true;
+		}
+		else{
+			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
+			return false;			
 		}
 
 		// dd($body);
@@ -632,6 +647,35 @@ class MiscDr extends Common
     		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
     		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
     	]);
+	}
+
+
+	/*
+		Start of Console Commands
+	*/
+
+	public static function send_to_exatype()
+	{
+		$worksheets = DrWorksheet::where(['status_id' => 2])->get();
+		foreach ($worksheets as $key => $worksheet) {
+			self::create_plate($worksheet);
+		}
+	}
+
+	public static function fetch_results()
+	{
+		$max_time = date('Y-m-d H:i:s', strtotime('-30 minutes'));
+		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		foreach ($worksheets as $key => $worksheet) {
+			self::get_plate_result($worksheet);
+		}
+
+		$max_time = date('Y-m-d H:i:s', strtotime('-1 hour'));
+		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		foreach ($worksheets as $key => $worksheet) {
+			self::get_plate_result($worksheet);
+		}
+
 	}
 
 }

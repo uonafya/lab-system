@@ -283,6 +283,7 @@ CREATE TABLE IF NOT EXISTS `dr_worksheets` (
   `time_sent_to_sanger` datetime DEFAULT NULL,
   `qc_pass` tinyint(1) NOT NULL DEFAULT '0',
   `qc_run` tinyint(1) NOT NULL DEFAULT '0',
+  `qc_distance_pass` int(10) unsigned NOT NULL DEFAULT '0',
   `plate_controls_pass` tinyint(1) NOT NULL DEFAULT '0',
   `has_errors` tinyint(1) NOT NULL DEFAULT '0',
   `has_warnings` tinyint(1) NOT NULL DEFAULT '0',
