@@ -230,6 +230,11 @@ Artisan::command('synch:deliveries', function(){
     $this->info($str);
 })->describe('Synch deliveries from lab to national database');
 
+Artisan::command('synch:facilities', function(){
+    $str = \App\Synch::synch_facilities();
+    $this->info($str);
+})->describe('Synch facilities from lab to national database');
+
 
 
 Artisan::command('copy:eid', function(){
