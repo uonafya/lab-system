@@ -176,21 +176,21 @@ class Batch extends BaseModel
         }
 
         $new_batch = new \App\Batch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent'])->toArray());
+        $new_batch->fill($this->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent'])->toArray());
         if($submit_type != "new_facility"){
-            $new_batch->id = (int) $batch->id + 0.5;
-            $new_id = $batch->id + 0.5;
+            $new_batch->id = (int) $this->id + 0.5;
+            $new_id = $this->id + 0.5;
             $existing_batch = \App\Batch::find($new_id);
             if($existing_batch){
                 session(['toast_message' => "Batch {$new_id} already exists.", 'toast_error' => 1]);
                 return 'back';         
             }
             if($new_batch->id == floor($new_batch->id)){
-                session(['toast_message' => "The batch {$batch->id} cannot have its samples transferred.", 'toast_error' => 1]);
+                session(['toast_message' => "The batch {$this->id} cannot have its samples transferred.", 'toast_error' => 1]);
                 return 'back';         
             }    
         }
-        $new_batch->created_at = $batch->created_at;
+        $new_batch->created_at = $this->created_at;
         $new_batch->save();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
@@ -232,12 +232,12 @@ class Batch extends BaseModel
             \App\Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
         }
 
-        Misc::check_batch($batch->id);
+        Misc::check_batch($this->id);
         Misc::check_batch($new_id);
 
-        session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}."]);
         if($submit_type == "new_facility"){
-            session(['toast_message' => "The batch {$batch->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
+            session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
             // return redirect('sample/' . $s->id . '/edit');
             return 'sample/' . $s->id . '/edit';
         }
