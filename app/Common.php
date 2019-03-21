@@ -477,9 +477,9 @@ class Common
                 }
                 return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
             })
-            ->groupBy('{$batch_table}.id')
+            ->groupBy("{$batch_table}.id")
             // ->having('samples_count', '>', 0)
-            ->havingRaw('COUNT({$sample_table}.id) > 0')
+            ->havingRaw("COUNT({$sample_table}.id) > 0")
             ->get();
 
     	foreach ($batches as $batch) {
