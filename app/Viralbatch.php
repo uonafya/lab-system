@@ -206,7 +206,7 @@ class Viralbatch extends BaseModel
         $has_received_status = false;
 
         foreach ($sample_ids as $key => $id) {
-            $sample = \App\Sample::find($id);
+            $sample = \App\Viralsample::find($id);
             if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result ))){
                 continue;
             }else{

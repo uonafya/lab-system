@@ -487,8 +487,8 @@ class Common
     		if($samples->count() > 0){
 		        unset($batch->samples_count);
     			$sample_ids = $samples->pluck('id')->toArray();
-    			$batch->transfer_samples($sample_ids, 'new_facility');
     			echo "{$type} batch {$batch->id} \n ";
+    			$batch->transfer_samples($sample_ids, 'new_facility');
     		}
     	}
     }
