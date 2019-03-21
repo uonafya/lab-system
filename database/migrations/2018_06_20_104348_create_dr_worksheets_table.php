@@ -50,7 +50,7 @@ class CreateDrWorksheetsTable extends Migration
 
             $table->boolean('qc_run')->default(0);
             $table->boolean('qc_pass')->default(0);
-            $table->boolean('qc_distance_pass')->default(0);
+            $table->integer('qc_distance_pass')->nullable();
             $table->boolean('plate_controls_pass')->default(0);
 
 

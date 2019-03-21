@@ -166,9 +166,15 @@ class MiscDr extends Common
 				$sample->exatype_id = $value->id;
 				$sample->save();
 			}
+			session(['toast_message' => 'The worksheet has been successfully created at Exatype.']);
+			return true;
+		}
+		else{
+			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
+			return false;
 		}
 
-		echo "\n The status code is " . $response->getStatusCode() . "\n";
+		// echo "\n The status code is " . $response->getStatusCode() . "\n";
 
 		// dd($body);
 	}
@@ -463,6 +469,12 @@ class MiscDr extends Common
 				// echo " {$sample->id} ";
 			
 			}
+			session(['toast_message' => 'The worksheet results have been successfully retrieved from Exatype.']);
+			return true;
+		}
+		else{
+			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
+			return false;			
 		}
 
 		// dd($body);
