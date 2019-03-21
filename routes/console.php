@@ -111,6 +111,13 @@ Artisan::command('transfer:missing-samples', function(){
 })->describe('Transfer samples delaying batches to new batches.');
 
 
+Artisan::command('reject:missing-samples', function(){
+    $str = \App\Common::reject_delayed_samples('eid');
+    $str .= \App\Common::reject_delayed_samples('vl');
+    $this->info($str);
+})->describe('Reject samples that have not been received despite a long duration.');
+
+
 Artisan::command('delete:empty-batches', function(){
     \App\Misc::delete_empty_batches();
     \App\MiscViral::delete_empty_batches();
