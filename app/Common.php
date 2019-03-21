@@ -29,8 +29,12 @@ class Common
 			'batch_class' => \App\Batch::class,
 			'worksheet_class' => \App\Worksheet::class,
 			'patient_class' => \App\Patient::class,
+
+
 			'view_table' => 'samples_view',
 			'worksheets_table' => 'worksheets',
+			'batch_table' => 'batches',
+			'sample_table' => 'samples',
 		],
 
 		'vl' => [
@@ -40,8 +44,12 @@ class Common
 			'batch_class' => \App\Viralbatch::class,
 			'worksheet_class' => \App\Viralworksheet::class,
 			'patient_class' => \App\Viralpatient::class,
+
+
 			'view_table' => 'viralsamples_view',
 			'worksheets_table' => 'viralworksheets',
+			'batch_table' => 'viralbatches',
+			'sample_table' => 'viralsamples',
 		],
 	];
 
@@ -431,20 +439,56 @@ class Common
         }
     }
 
-    public static function nhrl($type, $lab=null)
+    public static function nhrl($type)
     {
     	ini_set('memory_limit', "-1");
-    	if(!$lab) $lab=7;
 
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['lab_id' => $lab, 'synched' => 5])->get();
+    	$batches = $batch_model::where(['lab_id' => $lab, 'synched' => 5])->whereIn('lab_id', [7, 10])->get();
 
     	foreach ($batches as $batch) {
-    		$sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
-    		$batch->synched=0;
-    		$batch->save();
+    		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->first();
+    		if(!$sample){
+	    		$batch->synched=0;
+	    		$batch->save();    			
+    		}
+    	}
+    }
+
+    public static function transfer_delayed_samples($type)
+    {
+    	ini_set('memory_limit', "-1");
+
+    	$batch_model = self::$my_classes[$type]['batch_class'];
+    	$batch_table = self::$my_classes[$type]['batch_table'];
+
+    	$sample_class = self::$my_classes[$type]['sample_class'];
+    	$sample_table = self::$my_classes[$type]['sample_table'];
+
+
+        $batches = $batch_model::selectRaw("{$batch_table}.*, COUNT({$sample_table}.id) AS `samples_count`")
+            ->join('{$sample_table}', '{$batch_table}.id', '=', '{$sample_table}.batch_id')
+            ->where(['batch_complete' => 0, '{$batch_table}.lab_id' => env('APP_LAB')])
+            ->when(true, function($query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
+                }
+                return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
+            })
+            ->groupBy('{$batch_table}.id')
+            // ->having('samples_count', '>', 0)
+            ->havingRaw('COUNT({$sample_table}.id) > 0')
+            ->get();
+
+    	foreach ($batches as $batch) {
+    		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
+    		if($samples->count() > 0){
+    			$sample_ids = $samples->pluck('id')->toArray();
+    			// $batch->transfer_samples($sample_ids, 'new_facility');
+    			echo "{$type} batch {$batch->id} \n ";
+    		}
     	}
     }
 
