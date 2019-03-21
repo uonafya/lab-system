@@ -104,6 +104,13 @@ Artisan::command('delete:delayed-batches', function(){
 })->describe('Delete batches that have not been received after 2 weeks.');
 
 
+Artisan::command('transfer:missing-samples', function(){
+    $str = \App\Common::transfer_delayed_samples('eid');
+    $str .= \App\Common::transfer_delayed_samples('vl');
+    $this->info($str);
+})->describe('Transfer samples delaying batches to new batches.');
+
+
 Artisan::command('delete:empty-batches', function(){
     \App\Misc::delete_empty_batches();
     \App\MiscViral::delete_empty_batches();

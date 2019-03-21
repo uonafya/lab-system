@@ -457,7 +457,7 @@ class Common
     	}
     }
 
-    public static function transfer_delayed_batches($type)
+    public static function transfer_delayed_samples($type)
     {
     	ini_set('memory_limit', "-1");
 
@@ -482,12 +482,12 @@ class Common
             ->havingRaw('COUNT({$sample_table}.id) > 0')
             ->get();
 
-
     	foreach ($batches as $batch) {
     		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
     		if($samples->count() > 0){
     			$sample_ids = $samples->pluck('id')->toArray();
-    			
+    			// $batch->transfer_samples($sample_ids, 'new_facility');
+    			echo "{$type} batch {$batch->id} \n ";
     		}
     	}
     }
