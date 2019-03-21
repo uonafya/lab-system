@@ -940,14 +940,11 @@ class ViralbatchController extends Controller
 
     public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
-        $date_column = "viralbatches.datereceived";
-        if(in_array($batch_complete, [1, 6])) $date_column = "viralbatches.datedispatched";
+        $date_column = "datereceived";
+        if(in_array($batch_complete, [1, 6])) $date_column = "datedispatched";
 
-        $samples = Viralsample::select(['viralsamples.batch_id', 'facilitys.name as facility', 'districts.name as subcounty', 'viralpatients.patient', 'viralsamples.result', 'viralsamples.receivedstatus', 'viralsamples.datecollected', 'viralbatches.datereceived', 'viralsamples.datetested', 'viralbatches.datedispatched', 'viralbatches.tat5'])
-            ->leftJoin('viralpatients', 'viralpatients.id', '=', 'viralsamples.patient_id')
-            ->leftJoin('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->leftJoin('districts', 'districts.id', '=', 'facilitys.district')
+        $samples = ViralsampleView::select(['viralsamples_view.*', 'view_facilitys.subcounty',])
+            ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
             // ->leftJoin('users', 'users.id', '=', 'batches.user_id')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
@@ -958,13 +955,13 @@ class ViralbatchController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when($facility_id, function($query) use ($facility_id){
-                return $query->where('viralbatches.facility_id', $facility_id);
+                return $query->where('facility_id', $facility_id);
             })
             ->when($subcounty_id, function($query) use ($subcounty_id){
-                return $query->where('facilitys.district', $subcounty_id);
+                return $query->where('subcounty_id', $subcounty_id);
             })
             ->when($partner_id, function($query) use ($partner_id){
-                return $query->where('facilitys.partner', $partner_id);
+                return $query->where('partner_id', $partner_id);
             })
             ->when(true, function($query) use ($batch_complete){
                 if($batch_complete < 4) return $query->where('batch_complete', $batch_complete);
@@ -972,7 +969,7 @@ class ViralbatchController extends Controller
                 else if($batch_complete == 5){
                     return $query->whereNull('datereceived')
                         ->where(['site_entry' => 1, 'batch_complete' => 0])
-                        ->where('viralbatches.created_at', '<', date('Y-m-d', strtotime('-10 days')));
+                        ->where('created_at', '<', date('Y-m-d', strtotime('-10 days')));
                 }
 
                 else if($batch_complete == 6){
@@ -980,10 +977,10 @@ class ViralbatchController extends Controller
                 }
             })
             ->when(true, function($query) use ($batch_complete){
-                if(in_array($batch_complete, [1, 6])) return $query->orderBy('viralbatches.datedispatched', 'desc');
-                return $query->orderBy('viralbatches.created_at', 'desc');
+                if(in_array($batch_complete, [1, 6])) return $query->orderBy('datedispatched', 'desc');
+                return $query->orderBy('created_at', 'desc');
             })
-            ->where('viralbatches.lab_id', env('APP_LAB'))
+            ->where('viralsamples_view.lab_id', env('APP_LAB'))
             // ->where('batch_complete', 1)
             // ->orderBy($date_column, 'desc')
             // ->orderBy('batch_id', 'desc')
@@ -994,9 +991,11 @@ class ViralbatchController extends Controller
         foreach ($samples as $key => $sample) {
             $data[$key]['#'] = $key+1;
             $data[$key]['Batch #'] = $sample->batch_id;
-            $data[$key]['Facility'] = $sample->facility;
+            $data[$key]['Facility'] = $sample->facilityname;
             $data[$key]['Sub County'] = $sample->subcounty;
             $data[$key]['Sample/Patient ID'] = $sample->{'patient'};
+            $data[$key]['Gender'] = $sample->gender;
+            $data[$key]['Date of Birth'] = $sample->my_date_format('dob');
             $data[$key]['Test Outcome'] = $sample->result;
             $data[$key]['Date Collected'] = $sample->my_date_format('datecollected');
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
