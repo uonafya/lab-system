@@ -517,8 +517,7 @@ class Common
             ->get();
 
         $sample_ids = $samples->pluck(['id'])->toArray();
-        print_r($sample_ids);
-        // $sample_class::whereIn('id', $sample_ids)->update(['receivedstatus' => 2, 'rejectedreason' => $rej, 'updated_at' => date('Y-m-d H:i:s')]);
+        $sample_class::whereIn('id', $sample_ids)->update(['receivedstatus' => 2, 'rejectedreason' => $rej, 'updated_at' => date('Y-m-d H:i:s')]);
     }
 
 	public static function fix_no_age($type)
