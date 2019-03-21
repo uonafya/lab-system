@@ -486,10 +486,38 @@ class Common
     		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
     		if($samples->count() > 0){
     			$sample_ids = $samples->pluck('id')->toArray();
-    			// $batch->transfer_samples($sample_ids, 'new_facility');
+    			$batch->transfer_samples($sample_ids, 'new_facility');
     			echo "{$type} batch {$batch->id} \n ";
     		}
     	}
+    }
+
+    public static function reject_delayed_samples($type)
+    {
+    	ini_set('memory_limit', "-1");
+
+    	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
+    	$sample_class = self::$my_classes[$type]['sample_class'];
+
+    	if($type == 'eid'){
+    		$days = 14;
+    		$rej = 18;
+    	}
+    	else{
+    		$days = 28;
+    		$rej = 17;
+    	}
+
+    	$sample_class = self::$my_classes[$type]['sample_class'];
+    	$sample_table = self::$my_classes[$type]['sample_table'];
+
+        $samples = $sampleview_class::whereNull('receivedstatus')
+        	->where(['batch_complete' => 0, 'lab_id' => env('APP_LAB')])
+        	->where('created_at', '<', date('Y-m-d H:i:s', strtotime("-{$days} days")))
+            ->get();
+
+        $sample_ids = $samples->pluck(['id'])->toArray();
+        $sample_class::whereIn('id', $sample_ids)->update(['receivedstatus' => 2, 'rejectedreason' => $rej, 'updated_at' => date('Y-m-d H:i:s')]);
     }
 
 	public static function fix_no_age($type)
