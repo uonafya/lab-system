@@ -17,10 +17,20 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
-Artisan::command('generate:dr-list', function(){
+Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
     $this->info($str);
 })->describe('Generate a list of potential dr patients.');
+
+Artisan::command('dr:create-plates', function(){
+    $str = \App\MiscDr::send_to_exatype();
+    $this->info($str);
+})->describe('Create plates on exatype system.');
+
+Artisan::command('dr:fetch-results', function(){
+    $str = \App\MiscDr::fetch_results();
+    $this->info($str);
+})->describe('Fetch results from exatype system.');
 
 Artisan::command('compute:tat5', function(){
     \App\Common::save_tat5('eid');
@@ -64,7 +74,7 @@ Artisan::command('dispatch:mlab', function(){
 Artisan::command('dispatch:nhrl', function(){
     \App\Common::nhrl('eid');
     \App\Common::nhrl('vl');
-})->describe('Set NHRL samples to be dispatched.');
+})->describe('Set NHRL & Edarp samples to be dispatched.');
 
 
 Artisan::command('input-complete', function(){
@@ -113,13 +123,13 @@ Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');
 	$str = \App\Synch::labactivity('vl');
 
-    if(env('APP_LAB') == 2){
+    /*if(env('APP_LAB') == 2){
         $str = \App\Synch::labactivity('eid', 7);
         $str = \App\Synch::labactivity('vl', 7);
 
         $str = \App\Synch::labactivity('eid', 10);
         $str = \App\Synch::labactivity('vl', 10);
-    }
+    }*/
     $this->info($str);
 })->describe('Send lablog data to national.');
 
