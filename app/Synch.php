@@ -1373,8 +1373,7 @@ class Synch
 	}
 
 
-	// No longer necessary
-	// Facilities will be created nationally then synched to all labs
+
 	public static function synch_facilities()
 	{
 		ini_set('memory_limit', '-1');

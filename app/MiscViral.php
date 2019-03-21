@@ -506,7 +506,8 @@ class MiscViral extends Common
         $numeric_result = preg_replace('/[^0-9]/', '', $result);
         if(is_numeric($numeric_result)){
             $result = (int) $numeric_result;
-            if($result > 0 && $result < 1001) return ['rcategory' => 2];
+            if($result < 401) return ['rcategory' => 1];
+            else if($result > 400 && $result < 1001) return ['rcategory' => 2];
             else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
             else if($result > 5000) return ['rcategory' => 4];
         }
