@@ -57,10 +57,10 @@
             <img src="{{ asset('img/nhrllogo.png') }}">
             @break
         @case(8)
-            <img src="{{ asset('img/knhnascoplogo.png') }}">
+            <img src="{{ asset('img/nyumbaninascoplogo.png') }}">
             @break
         @case(9)
-            <img src="{{ asset('img/nyumbaninascoplogo.png') }}">
+            <img src="{{ asset('img/knhnascoplogo.png') }}">
             @break
         @default
             <img src="{{ asset('img/kemri_nascoplogo.png') }}">
