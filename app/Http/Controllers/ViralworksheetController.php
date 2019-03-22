@@ -690,6 +690,11 @@ class ViralworksheetController extends Controller
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
 
+        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
+            session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
+            return redirect('/viralworksheet');            
+        }
+
         $batch = array();
         // dd($samples);
         foreach ($samples as $key => $value) {

@@ -649,4 +649,33 @@ class MiscDr extends Common
     	]);
 	}
 
+
+	/*
+		Start of Console Commands
+	*/
+
+	public static function send_to_exatype()
+	{
+		$worksheets = DrWorksheet::where(['status_id' => 2])->get();
+		foreach ($worksheets as $key => $worksheet) {
+			self::create_plate($worksheet);
+		}
+	}
+
+	public static function fetch_results()
+	{
+		$max_time = date('Y-m-d H:i:s', strtotime('-30 minutes'));
+		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		foreach ($worksheets as $key => $worksheet) {
+			self::get_plate_result($worksheet);
+		}
+
+		$max_time = date('Y-m-d H:i:s', strtotime('-1 hour'));
+		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		foreach ($worksheets as $key => $worksheet) {
+			self::get_plate_result($worksheet);
+		}
+
+	}
+
 }

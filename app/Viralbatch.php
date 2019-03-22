@@ -4,6 +4,7 @@ namespace App;
 
 use Exception;
 use App\BaseModel;
+use App\MiscViral;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BatchDeletedNotification;
 
@@ -37,7 +38,7 @@ class Viralbatch extends BaseModel
 
         $max = date('Y-m-d');
         if($this->batch_complete == 1) $max = $this->datedispatched;
-        return \App\Misc::get_days($this->datereceived, $max, false);
+        return MiscViral::get_days($this->datereceived, $max, false);
     }
 
     public function full_batch()
@@ -169,5 +170,83 @@ class Viralbatch extends BaseModel
         $this->delete();
         session(['toast_message' => "Batch {$this->id} has been deleted."]);
         return true;
+    }
+
+
+    public function transfer_samples($sample_ids, $submit_type)
+    {     
+        if(!$sample_ids){
+            session(['toast_error' => 1, 'toast_message' => "No samples have been selected."]);
+            return 'back';         
+        }
+
+        $new_batch = new \App\Viralbatch;
+        $new_batch->fill($this->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent'])->toArray());
+        if($submit_type != "new_facility"){
+            $new_batch->id = (int) $this->id + 0.5;
+            $new_id = $this->id + 0.5;
+            $existing_batch = \App\Viralbatch::find($new_id);
+            if($existing_batch){
+                session(['toast_message' => "Batch {$new_id} already exists.", 'toast_error' => 1]);
+                return 'back';         
+            }
+            if($new_batch->id == floor($new_batch->id)){
+                session(['toast_message' => "The batch {$this->id} cannot have its samples transferred.", 'toast_error' => 1]);
+                return 'back';         
+            }    
+        }
+        $new_batch->created_at = $this->created_at;
+        $new_batch->save();
+
+        if($submit_type == "new_facility") $new_id = $new_batch->id;
+
+        $count = 0;
+        $s;
+
+        $has_received_status = false;
+
+        foreach ($sample_ids as $key => $id) {
+            $sample = \App\Viralsample::find($id);
+            if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result ))){
+                continue;
+            }else{
+                $parent = $sample->parent;
+                if($parent){
+                    $parent->batch_id = $new_id;
+                    $parent->pre_update();
+
+                    $children = $parent->children;
+                    if($children){
+                        foreach ($children as $child) {
+                            $child->batch_id = $new_id;
+                            $child->pre_update();
+                        }                        
+                    }
+                }
+            }
+            if($sample->result && $submit_type == "new_batch") continue;
+            if($sample->receivedstatus) $has_received_status = true;
+            $sample->batch_id = $new_id;
+            $sample->pre_update();
+            $s = $sample;
+            $count++;
+        }
+        // $s = $new_batch->sample->first();
+
+        if(!$has_received_status){
+            \App\Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
+        }
+
+        MiscViral::check_batch($this->id);
+        MiscViral::check_batch($new_id);
+
+        session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        if($submit_type == "new_facility"){
+            session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
+            // return redirect('sample/' . $s->id . '/edit');
+            return 'sample/' . $s->id . '/edit';
+        }
+        // return redirect('batch/' . $new_id);
+        return 'batch/' . $new_id;
     }
 }
