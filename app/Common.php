@@ -446,7 +446,7 @@ class Common
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['lab_id' => $lab, 'synched' => 5])->whereIn('lab_id', [7, 10])->get();
+    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [10])->get();
 
     	foreach ($batches as $batch) {
     		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->first();
@@ -455,7 +455,14 @@ class Common
 	    		$batch->save();    			
     		}
     	}
-    }
+
+    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7])->get();
+
+    	foreach ($batches as $batch) {
+    		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
+    		$batch->synched=0;
+    		$batch->save();   
+    	}
 
     public static function transfer_delayed_samples($type)
     {
