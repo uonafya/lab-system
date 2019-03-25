@@ -868,6 +868,7 @@
 
                         $("#dob").val(patient.dob);
                         $("#initiation_date").val(patient.initiation_date);
+                        $("#patient_phone_no").val(patient.patient_phone_no);
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
                         $("#sex").val(patient.sex).change();

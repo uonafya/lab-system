@@ -762,6 +762,15 @@ class MiscViral extends Common
             })
             ->when($entered_by, function($query) use ($entered_by){
                 // return $query->where('received_by', $user->id)->where('parentid', 0);
+                if(is_array($entered_by)){
+                    $str = '(';
+                    foreach ($entered_by as $key => $value) {
+                        $str .= $value . ', ';
+                    }
+                    $str = substr($str, 0, -2) . ')';
+                    return $query->where('parentid', 0)
+                    ->whereRaw("((received_by IN {$str} && sample_received_by IS NULL) OR  sample_received_by IN {$str})");
+                }
                 return $query->where('parentid', 0)
                     ->whereRaw("((received_by={$entered_by} && sample_received_by IS NULL) OR  sample_received_by={$entered_by})");
             })
@@ -789,7 +798,7 @@ class MiscViral extends Common
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
-        if(in_array(env('APP_LAB'), [8])) $create = true;
+        if(in_array(env('APP_LAB'), [8, 5])) $create = true;
 
         return [
             'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,
