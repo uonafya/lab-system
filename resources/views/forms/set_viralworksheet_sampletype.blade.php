@@ -79,10 +79,12 @@
                                     </select>--}}
 
                                     @foreach ($users as $user)
-                                        <label> 
-                                            <input name="entered_by[]" type="checkbox" class="i-checks" value="{{ $user->id }}" />
-                                            {{ $user->full_name }}
-                                        </label>
+                                        <div>
+                                            <label> 
+                                                <input name="entered_by[]" type="checkbox" class="i-checks" value="{{ $user->id }}" />
+                                                {{ $user->full_name }}
+                                            </label>
+                                        </div>
                                     @endforeach
 
                                 </div>
