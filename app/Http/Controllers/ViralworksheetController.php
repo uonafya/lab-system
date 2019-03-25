@@ -99,7 +99,7 @@ class ViralworksheetController extends Controller
         $calibration = $request->input('calibration', 0);
         $limit = $request->input('limit', 0);
         $entered_by = $request->input('entered_by');
-        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
+        // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
 
         return $this->create($sampletype, $machine_type, $calibration, $limit, $entered_by);
     }
