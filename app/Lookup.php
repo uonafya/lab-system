@@ -143,8 +143,11 @@ class Lookup
         self::cacher();
 
         if($test == 1) $reasons = Cache::get('rejected_reasons');
-        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
-        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+        else if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        else if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+        else {
+            return '';
+        }
 
         return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
     }
