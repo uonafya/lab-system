@@ -173,6 +173,7 @@ class ReportController extends Controller
             ini_set("max_execution_time", "3000");
             if ($request->input('types') == 'manifest'){
                 $batches = $data->unique('batch_id')->pluck('batch_id');
+                dd($batches);
                 if ($request->input('testtype') == 'EID')
                     $model = Batch::class;
                 else
