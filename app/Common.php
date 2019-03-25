@@ -463,6 +463,7 @@ class Common
     		$batch->synched=0;
     		$batch->save();   
     	}
+    }
 
     public static function transfer_delayed_samples($type)
     {
