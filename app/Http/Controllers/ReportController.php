@@ -556,6 +556,14 @@ class ReportController extends Controller
         } else {
             $report .= 'samples log ';    
         }
+        if ($request->input('types') == 'failed'){
+            $model = $model->when($testtype, function($query) use ($testtype){
+                                if ($testtype == 'EID')
+                                    return $query->whereIn('result', [3,5])->where('repeatt', '=', 0);
+                                if ($testtype == 'VL')
+                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed', 'Collect New Sample']);
+                            });
+        }
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
