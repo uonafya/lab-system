@@ -68,16 +68,26 @@
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Samples Entered By/Received By</label>
-                                <div class="col-sm-8"><select class="form-control" name="entered_by" id="entered_by">
-                                    
-                                    <option value=""> Select One </option>
+                                <div class="col-sm-8">
+                                    {{--<select class="form-control" name="entered_by" id="entered_by">                                    
+                                        <option value=""> Select One </option>
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}">
+                                             {{ $user->full_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>--}}
+
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">
-                                         {{ $user->full_name }}
-                                        </option>
+                                        <div>
+                                            <label> 
+                                                <input name="entered_by[]" type="checkbox" class="i-checks" value="{{ $user->id }}" />
+                                                {{ $user->full_name }}
+                                            </label>
+                                        </div>
                                     @endforeach
 
-                                </select></div>
+                                </div>
                             </div>
 
                         @endif
