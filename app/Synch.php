@@ -421,7 +421,7 @@ class Synch
 				$update_child_class = $value['child_class'];
 			$column = self::$column_array[$key];
 
-			$sheet = $sample = $eid_patient = false;
+			$sheet = $sample = $eid_patient = $allocate = false;
 			if($key == 'worksheets') $sheet = true;
 			if($key == 'samples') $sample = true;
 			if($key == 'patients' && $type == 'eid') $eid_patient = true;
