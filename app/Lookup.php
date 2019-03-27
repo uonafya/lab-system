@@ -158,7 +158,7 @@ class Lookup
         // $fac = Cache::get('facilities');       
         // return $fac->where('facilitycode', $mfl)->first()->id;
 
-        return \App\Facility::locate($mfl)->get()->first()->id ?? null;
+        return \App\Facility::locate($mfl)->first()->id ?? null;
     }
 
     public static function get_partners()
