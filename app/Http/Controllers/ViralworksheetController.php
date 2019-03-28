@@ -84,7 +84,6 @@ class ViralworksheetController extends Controller
             ->whereRaw(" id IN (SELECT DISTINCT received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 ) ")
             ->get();
 
-
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
     }
 
@@ -95,7 +94,9 @@ class ViralworksheetController extends Controller
         $calibration = $request->input('calibration', 0);
         $limit = $request->input('limit', 0);
         $entered_by = $request->input('entered_by');
-        return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
+        // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
+
+        return $this->create($sampletype, $machine_type, $calibration, $limit, $entered_by);
     }
 
     /**
@@ -681,6 +682,11 @@ class ViralworksheetController extends Controller
 
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
+
+        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
+            session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
+            return redirect('/viralworksheet');            
+        }
 
         $batch = array();
 

@@ -908,6 +908,7 @@
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
                         $("#patient_name").val(patient.patient_name);
+                        $("#patient_phone_no").val(patient.patient_phone_no);
                         $("#sex").val(patient.sex).change();
                         $("#entry_point").val(patient.entry_point).change();
                         $("#mother_age").val(mother.age);
