@@ -35,13 +35,13 @@
                                     ?>
 
                                     <tr>
-                                        @if($code->error)
+                                        @if($code && $code->error)
                                             <td> Error </td>
                                         @else
                                             <td> Warning </td>
                                         @endif
-                                        <td> {{ $code->name }} </td>
-                                        <td> {{ $code->description }} </td>
+                                        <td> {{ $code->name ?? '' }} </td>
+                                        <td> {{ $code->description ?? '' }} </td>
                                         <td> {{ $warning->system }} </td>
                                         <td> {{ $warning->detail }} </td>
                                     </tr>

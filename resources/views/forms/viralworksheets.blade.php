@@ -53,6 +53,16 @@
                 @if($limit)
                     <input type="hidden" value="{{ $limit }}" name="limit" >
                 @endif
+
+                @if($entered_by)
+                    @if(is_array($entered_by))
+                        @foreach($entered_by as $value)
+                            <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                        @endforeach
+                    @else
+                        <input type="hidden" value="{{ $entered_by }}" name="entered_by" >
+                    @endif
+                @endif
             @endif
 
             <div class="row">

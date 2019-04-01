@@ -150,6 +150,8 @@ class Synch
 		if($status_code > 399) die();
 		$body = json_decode($response->getBody());
 		Cache::store('file')->put('api_token', $body->token, 60);
+
+		// dd($body);
 	}
 
 	public static function get_token()
@@ -418,7 +420,7 @@ class Synch
 				$update_child_class = $value['child_class'];
 			$column = self::$column_array[$key];
 
-			$sheet = $sample = $eid_patient = false;
+			$sheet = $sample = $eid_patient = $allocate = false;
 			if($key == 'worksheets') $sheet = true;
 			if($key == 'samples') $sample = true;
 			if($key == 'patients' && $type == 'eid') $eid_patient = true;
@@ -640,7 +642,9 @@ class Synch
 
 	public static function labactivity($type)
 	{
-		if(!$lab_id) $lab_id = env('APP_LAB', null);
+		// $lab_id = NULL;
+		// if(!isset($lab_id)) 
+		$lab_id = env('APP_LAB', null);
 		
 		$classes = self::$synch_arrays[$type];
 		$sample_class = $classes['sample_class'];
@@ -1364,8 +1368,7 @@ class Synch
 	}
 
 
-	// No longer necessary
-	// Facilities will be created nationally then synched to all labs
+
 	public static function synch_facilities()
 	{
 		ini_set('memory_limit', '-1');

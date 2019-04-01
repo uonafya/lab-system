@@ -37,7 +37,6 @@
                                         <th>Has Errors</th>
                                         <th>Has Warnings</th>
                                         <th>Has Mutations</th>
-                                        <th>Has Genotypes</th>
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
                                         <th>Task</th>                
@@ -96,13 +95,12 @@
                                                 @endif
                                             </td>
                                             <td> {{ $sample->patient }} </td>
-                                            <td> {{ $dr_sample_statuses->where('id', $sample->status_id)->first()->name ?? '' }} </td>
+                                            <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
                                             <td> {{ $sample->facilityname }} </td>
                                             <td> {{ $sample->control_type }} </td>
                                             <td> {{ $sample->my_boolean_format('has_errors') }} </td>
                                             <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
-                                            <td> {{ $sample->my_boolean_format('has_calls') }} </td>
-                                            <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
+                                            <td> {{ $sample->my_boolean_format('has_mutations') }} </td>
                                             @if($sample->pending_manual_intervention && !$sample->had_manual_intervention)
                                                 <td> Yes </td>
                                             @else

@@ -368,7 +368,7 @@ class WorksheetController extends Controller
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::whereIn('user_type_id', [1, 4])->get();
+        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -395,7 +395,7 @@ class WorksheetController extends Controller
         if($worksheet->machine_type == 2)
         {
             $date_tested = $request->input('daterun');
-            if(strtotime($date_tested) > strtotime($worksheet->created_at)) $datetested = $date_tested;
+            $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -450,7 +450,9 @@ class WorksheetController extends Controller
 
                 $error = $data[10];
 
-                $datetested=date("Y-m-d", strtotime($data[3]));
+                $date_tested=date("Y-m-d", strtotime($data[3]));
+
+                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
 
                 $data_array = Misc::sample_result($interpretation, $error);
 
@@ -552,6 +554,11 @@ class WorksheetController extends Controller
 
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
+
+        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
+            session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
+            return redirect('/worksheet');            
+        }
 
         $batch = array();
 

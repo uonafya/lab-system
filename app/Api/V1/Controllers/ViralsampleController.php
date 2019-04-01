@@ -116,8 +116,25 @@ class ViralsampleController extends Controller
             }
             unset($new_sample->batch->user); 
 
-            $b = new Viralbatch;
-            $b->fill(get_object_vars($new_sample->batch));
+            $b = Viralbatch::where('created_at', $new_sample->batch->created_at)
+                // ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0])
+                ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_complete' => 0])
+                ->first();
+
+            if($b){
+                $s = $b->sample->count();
+                if($s > 9){
+                    $b->full_batch();
+                    $b = new Viralbatch;
+                }            
+            }
+            else{
+                $b = new Viralbatch;
+            }
+
+            $batch_details = get_object_vars($new_sample->batch);
+            unset($batch_details['id']);            
+            $b->fill($batch_details);
             $b->user_id = $user_id;
             unset($b->id);
             $b->pre_update();

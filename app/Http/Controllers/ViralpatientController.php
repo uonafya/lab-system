@@ -177,6 +177,8 @@ class ViralpatientController extends Controller
         $string = "(facility_id='{$user->facility_id}')";
 
         $search = $request->input('search');
+        $search = addslashes($search);
+        
         $patients = Viralpatient::select('viralpatients.id', 'viralpatients.patient', 'facilitys.name', 'facilitys.facilitycode')
             ->join('facilitys', 'facilitys.id', '=', 'viralpatients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")

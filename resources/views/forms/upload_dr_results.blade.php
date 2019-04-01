@@ -21,6 +21,13 @@
    <div class="content">
         <div>
 
+        @if(isset($upload_errors) && is_array($upload_errors))
+            The following errors <br />
+            @foreach($upload_errors as $error)
+                {{ $error }} <br />
+            @endforeach
+        @endif
+
         {{ Form::open(['url'=>'/dr_worksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
 
         <input type="hidden" value="{{ auth()->user()->id }}" name="uploadedby">

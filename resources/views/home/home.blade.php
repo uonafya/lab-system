@@ -387,7 +387,7 @@
 		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
 						@endif
-						{{-- @if(Session('testingSystem') != 'CD4')
+						@if(!in_array(Session('testingSystem'), ['CD4', 'DR']))
 							@if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
 								<li class="list-group-item alert alert-danger" style="background-color: #d9534f">
 									<span class="badge badge-{{ $widgets['get_badge']($widgets['sample_manifest']) }}">
@@ -396,7 +396,7 @@
 									<a href="{{ url($widgets['prefix'] . 'batch/sample_manifest') }}" style="color:honeydew;">Print Sample Manifest </a>
 								</li>
 							@endif
-						@endif --}}
+						@endif
 		            	</ul>
 		            </div>
 		        </div>

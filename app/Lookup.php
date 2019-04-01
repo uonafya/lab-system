@@ -143,8 +143,11 @@ class Lookup
         self::cacher();
 
         if($test == 1) $reasons = Cache::get('rejected_reasons');
-        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
-        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+        else if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        else if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+        else {
+            return '';
+        }
 
         return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
     }
@@ -155,7 +158,7 @@ class Lookup
         // $fac = Cache::get('facilities');       
         // return $fac->where('facilitycode', $mfl)->first()->id;
 
-        return \App\Facility::locate($mfl)->get()->first()->id ?? null;
+        return \App\Facility::locate($mfl)->first()->id ?? null;
     }
 
     public static function get_partners()
