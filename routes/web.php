@@ -280,6 +280,8 @@ Route::middleware(['auth'])->group(function(){
 			Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
 		});
 		Route::resource('email', 'EmailController');
+
+		Route::resource('muser', 'MuserController');
 	});
 
 	Route::group(['middleware' => ['only_utype:1']], function() {
