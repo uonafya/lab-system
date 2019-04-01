@@ -459,7 +459,7 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('lab_id', env('APP_LAB'))
-            ->paginate();
+            ->get();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
 
