@@ -459,12 +459,14 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('lab_id', env('APP_LAB'))
-            ->get();
+            ->paginate();
 
-        $subtotals = Misc::get_subtotals(null, true);
-        $rejected = Misc::get_rejected(null, true);
-        $date_modified = Misc::get_maxdatemodified(null, true);
-        $date_tested = Misc::get_maxdatetested(null, true);
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        $subtotals = Misc::get_subtotals($batch_ids);
+        $rejected = Misc::get_rejected($batch_ids);
+        $date_modified = Misc::get_maxdatemodified($batch_ids);
+        $date_tested = Misc::get_maxdatetested($batch_ids);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
             $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
