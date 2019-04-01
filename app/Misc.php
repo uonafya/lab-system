@@ -491,7 +491,7 @@ class Misc extends Common
         if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
 
-        $create = true;
+        $create = false;
         if($count == $machine->eid_limit) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
         if(in_array(env('APP_LAB'), [9, 5])) $create = true;
