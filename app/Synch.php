@@ -1381,7 +1381,10 @@ class Synch
 
 			$response = $client->request('post', 'facility', [
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b4c026934f127fd309b7842f2c6412b8a637d169
 				'headers' => [
 					'Accept' => 'application/json',
 				],
