@@ -440,26 +440,11 @@ class BatchController extends Controller
 
         foreach ($batches as $key => $value) {
             $batch = Batch::find($value);
-            $facility = Facility::find($batch->facility_id);
-
-            // if(!$batch->sent_email){ 
-            //     $batch->sent_email = true;
-            //     $batch->dateemailsent = date('Y-m-d');
-            // }
             $batch->datedispatched = date('Y-m-d');
             $batch->batch_complete = 1;
             $batch->pre_update();
-
-
-            // if($facility->email != null || $facility->email != '')
-            // {
-            //     $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
-            //     if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
-            //     Mail::to($mail_array)->cc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send(new EidDispatch($batch));
-            // }         
         }
         Refresh::refresh_cache();
-        // Batch::whereIn('id', $batches)->update(['datedispatched' => date('Y-m-d'), 'batch_complete' => 1]);
 
         return redirect('/batch/index/1');
     }
@@ -476,10 +461,12 @@ class BatchController extends Controller
             ->where('lab_id', env('APP_LAB'))
             ->get();
 
-        $subtotals = Misc::get_subtotals();
-        $rejected = Misc::get_rejected();
-        $date_modified = Misc::get_maxdatemodified();
-        $date_tested = Misc::get_maxdatetested();
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        $subtotals = Misc::get_subtotals($batch_ids);
+        $rejected = Misc::get_rejected($batch_ids);
+        $date_modified = Misc::get_maxdatemodified($batch_ids);
+        $date_tested = Misc::get_maxdatetested($batch_ids);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
             $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
