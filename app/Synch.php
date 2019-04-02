@@ -1380,7 +1380,6 @@ class Synch
 			if($facilities->isEmpty()) break;
 
 			$response = $client->request('post', 'facility', [
-
 				'headers' => [
 					'Accept' => 'application/json',
 				],
