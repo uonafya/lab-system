@@ -1379,7 +1379,9 @@ class Synch
 			$facilities = Facility::where('synched', 0)->limit(30)->get();
 			if($facilities->isEmpty()) break;
 
-			$response = $client->request('post', 'synch/facilities', [
+			$response = $client->request('post', 'facility', [
+
+
 				'headers' => [
 					'Accept' => 'application/json',
 				],
