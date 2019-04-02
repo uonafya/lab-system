@@ -1382,6 +1382,7 @@ class Synch
 			$response = $client->request('post', 'facility', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'facilities' => $facilities->toJson(),
