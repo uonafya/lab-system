@@ -412,14 +412,14 @@ class SampleController extends Controller
 
         $patient = $sample->patient;
 
-        if($patient->patient != $request->input('patient')){
+        /*if($patient->patient != $request->input('patient')){
             $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
 
             if(!$patient){
                 $patient = new Patient;
                 $created_patient = true;
             }
-        }
+        }*/
 
 
 
@@ -561,7 +561,7 @@ class SampleController extends Controller
 
         if($sample->receivedstatus == 1 && $user->is_lab_user()){            
             $work_samples = Misc::get_worksheet_samples(2);
-            if($work_samples['count'] > 21) session(['toast_message' => 'The sample have been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+            if($work_samples['count'] > 21) session(['toast_message' => 'The sample has been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
         }
 
         /*if($new_batch){
