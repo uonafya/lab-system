@@ -147,7 +147,14 @@ class Random
 		$data = Excel::load($path, function($reader){})->get();
 
 		foreach ($data as $row) {
-			dd($row);
+			$s = \App\Viralsample::find($row->labid);
+			$p = $s->patient;
+			if($p->patient != $row->patientid) continue;
+			$p->sex = 1;
+			$p->pre_update();
+
+			$s->pmtct = 3;
+			$s->pre_update();
 		}
 	}
 
