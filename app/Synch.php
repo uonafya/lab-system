@@ -1393,6 +1393,8 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
+			dd($body);
+
 			foreach ($body->facilities as $key => $value) {
 				$update_data = ['id' => $value->id, 'synched' => 1,];
 				Facility::where('id', $value->original_id)->update($update_data);
