@@ -138,6 +138,19 @@ class Random
 		Facility::where('id', '>', 0)->update(['smsprinter' => 0]);
 	}
 
+	public static function correct_faces_data()
+	{
+		ini_set("memory_limit", "-1");
+        config(['excel.import.heading' => true]);
+		$path = public_path('vl_records.csv');
+
+		$data = Excel::load($path, function($reader){})->get();
+
+		foreach ($data as $row) {
+			dd($row);
+		}
+	}
+
 	public static function poc_sites()
 	{
 		ini_set("memory_limit", "-1");
