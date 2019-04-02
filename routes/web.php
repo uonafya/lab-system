@@ -449,7 +449,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::prefix('worksheet')->name('worksheet.')->group(function () {
 
-			Route::get('index/{state?}/{machine_type?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
 			Route::get('create/{machine_type}/{limit?}', 'WorksheetController@create')->name('create_any');
 			Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
@@ -474,7 +474,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::prefix('viralworksheet')->name('viralworksheet.')->group(function () {
 
-			Route::get('index/{state?}/{machine_type?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'ViralworksheetController@index')->name('list');
 
 			Route::get('set_sampletype/{machine_type}/{calibration?}/{limit?}', 'ViralworksheetController@set_sampletype_form')->name('set_sampletype_form');
 			Route::post('set_sampletype', 'ViralworksheetController@set_sampletype')->name('set_sampletype');
