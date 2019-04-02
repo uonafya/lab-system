@@ -492,28 +492,28 @@ class ViralsampleController extends Controller
 
         $data = $request->only($viralsamples_arrays['patient']);
 
-        $new_patient = $request->input('new_patient');
+        /*$new_patient = $request->input('new_patient');
 
-        // if($new_patient == 0){            
-        //     $viralpatient = Viralpatient::find($viralsample->patient_id);
-        // }
-        // else{
-        //     $viralpatient = new Viralpatient;
-        // }
+        if($new_patient == 0){            
+            $viralpatient = Viralpatient::find($viralsample->patient_id);
+        }
+        else{
+            $viralpatient = new Viralpatient;
+        }*/
 
         $viralpatient = $viralsample->patient;
 
-        if($viralpatient->patient != $request->input('patient')){
+        /*if($viralpatient->patient != $request->input('patient')){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
 
             if(!$viralpatient){
                 $viralpatient = new Viralpatient;
                 $created_patient = true;
             }
-        }
+        }*/
         
 
-        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        if(!$data['dob'] || $data['dob'] == '') $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->pre_update();
 
