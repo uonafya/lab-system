@@ -426,7 +426,7 @@
             </li>
             <hr />
         @endif
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && Auth::user()->user_type_id == 0)
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 1]))
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <hr />
         @endif
