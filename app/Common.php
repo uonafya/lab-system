@@ -832,6 +832,9 @@ class Common
 
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
+
+        	\App\User::class,
+        	\App\FacilityContact::class,
         ];
 
 		foreach ($classes as $key => $class) {
@@ -845,6 +848,7 @@ class Common
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		if($also_facility) \App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
     }
 
 
@@ -858,6 +862,9 @@ class Common
 
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
+
+        	\App\User::class,
+        	\App\FacilityContact::class,
         ];
 
 		foreach ($classes as $key => $class) {
