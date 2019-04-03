@@ -18,6 +18,7 @@ use App\Viralpatient;
 use App\Viralworksheet;
 
 use App\Facility;
+use App\FacilityChange;
 
 class Synch
 {
@@ -1368,49 +1369,44 @@ class Synch
 	}
 
 
-
 	public static function synch_facilities()
 	{
 		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
-
+		$max_temp = FacilityChange::selectRaw("max(temp_facility_id) as maximum ")->first()->maximum ?? 1000000;
 		while (true) {
 			$facilities = Facility::where('synched', 0)->limit(30)->get();
 			if($facilities->isEmpty()) break;
-
-			$response = $client->request('post', 'synch/facilities', [
+			$response = $client->request('post', 'facility', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
 					'facilities' => $facilities->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
-
 			]);
-
 			$body = json_decode($response->getBody());
-
+			$update_data = ['synched' => 1,];
 			foreach ($body->facilities as $key => $value) {
-				$update_data = ['id' => $value->id, 'synched' => 1,];
-				Facility::where('id', $value->original_id)->update($update_data);
-				if($value->id != $value->original_id){
-					self::change_facility_id(Batch::class, $value->original_id, $value->id);
-					self::change_facility_id(Viralbatch::class, $value->original_id, $value->id);
-					self::change_facility_id(Patient::class, $value->original_id, $value->id);
-					self::change_facility_id(Viralpatient::class, $value->original_id, $value->id);
+				Facility::where('id', $value->old_facility_id)->update($update_data);
+				if($value->new_facility_id != $value->old_facility_id){
+					$f = new FacilityChange;
+					$f->old_facility_id = $value->old_facility_id;
+					$f->new_facility_id = $value->new_facility_id;
+					$f->temp_facility_id = $max_temp++;
+					$f->save();
+					\App\Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
 				}
 			}
 		}
-	}
-
-	public static function change_facility_id($class_name, $old_id, $new_id)
-	{
-		$models = $class_name::where('facility_id', $old_id)->get();
-		foreach ($models as $m) {
-			$m->facility_id = $new_id;
-			$m->pre_update();
+		$changes = FacilityChange::where(['implemented' => 0])->get();
+		foreach ($changes as $f) {
+			\App\Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
+			$f->implemented = 1;
+			$f->save();
 		}
 	}
 
