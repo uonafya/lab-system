@@ -845,7 +845,7 @@ class Common
         dd($conflict);
     }
 
-    public static function change_facility_id($old_id, $new_id, $also_facility=false)
+    public static function change_facility_id($old_id, $new_id, $also_facility=false, $created_at=false)
     {
         $classes = [
         	\App\Mother::class,
@@ -859,9 +859,12 @@ class Common
         	\App\FacilityContact::class,
         ];
 
-
 		foreach ($classes as $key => $class) {
-			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
+			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
+				->when($created_at, function($query) use ($created_at){
+					return $query->where('created_at', '>', $created_at);
+				})
+				->update(['facility_id' => $new_id, 'synched' => 2]);
 			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
 		}
 
