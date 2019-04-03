@@ -50,7 +50,7 @@ $api->version('v1', function (Router $api) {
         // $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
 
 
-            $api->post('eid', 'EidController@eid');        
+            $api->post('eid', 'EidController@eid');    
             $api->post('eid_complete', 'EidController@complete_result');  
 
             $api->post('vl', 'VlController@vl');        
