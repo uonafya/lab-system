@@ -821,6 +821,7 @@ class Common
         dd($conflict);
     }
 
+
     public static function change_facility_id($old_id, $new_id, $also_facility=false, $created_at=false)
     {
         $classes = [
@@ -839,6 +840,7 @@ class Common
 					return $query->where('created_at', '>', $created_at);
 				})
 				->update(['facility_id' => $new_id, 'synched' => 2]);
+
 			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
 		}
 
