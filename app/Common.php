@@ -834,7 +834,6 @@ class Common
         	\App\Viralpatient::class,
         ];
 
-
 		foreach ($classes as $key => $class) {
 			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
 				->when($created_at, function($query) use ($created_at){
