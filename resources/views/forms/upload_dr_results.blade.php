@@ -1,8 +1,7 @@
 @extends('layouts.master')
 
 @component('/forms/css')
-    <link href="{{ asset('css/jasny/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ asset('css/jasny/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css">
 @endcomponent
 
 @section('content')
@@ -35,8 +34,6 @@
         <input type="hidden" value="{{ date('Y-m-d') }}" name="dateuploaded">
         <input type="hidden" value="2" name="status_id">
 
-        <input type="hidden" value="{{ $worksheet->my_date_format('created_at', 'Y-m-d') }}" id="datecreated">
-
 
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
@@ -65,18 +62,6 @@
                             <div class="col-sm-8">
                                 <input class="form-control" required type="text" value="{{ $worksheet->creator->full_name ?? '' }}" disabled>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Testing
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="daterun" class="form-control" name="daterun">
-                                </div>
-                            </div>                            
                         </div>
 
                         <div class="hr-line-dashed"></div>
@@ -124,28 +109,7 @@
     @component('/forms/scripts')
         @slot('js_scripts')
             <script src="{{ asset('js/jasny/jasny-bootstrap.min.js') }}"></script>
-            <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
         @endslot
-
-        @slot('val_rules')
-           ,
-            rules: {
-                daterun: {
-                    greaterThan: ["#datecreated", "Date of Testing", "Date Created"]
-                }                               
-            }
-        @endslot
-
-        $(".date").datepicker({
-            startView: 0,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            startDate: '-5d',
-            endDate: new Date(),
-            format: "yyyy-mm-dd"
-        });
     @endcomponent
 
 

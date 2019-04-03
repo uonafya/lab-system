@@ -460,7 +460,7 @@ class ViralbatchController extends Controller
         ini_set('memory_limit', "-1");
         $batches = Viralbatch::select('viralbatches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
+            ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('viralbatches.id', $batch_list);
             })
@@ -632,6 +632,8 @@ class ViralbatchController extends Controller
 
     public function sample_manifest(Request $request) {
         if ($request->method() == 'POST') {
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             $facility_user = \App\User::where('facility_id', '=', $request->input('facility_id'))->first();
             $batches = Viralbatch::whereRaw("(facility_id = $facility_user->facility_id or user_id = $facility_user->id)")
                             ->where('site_entry', '=', 1)
@@ -668,6 +670,8 @@ class ViralbatchController extends Controller
             $dateString .= date('Y-m-d', strtotime($request->input('from'))) . ' to ' . date('Y-m-d', strtotime($request->input('to')));
             
         $column = "viralsamples_view.patient, viralsamples_view.batch_id, facilitys.name as facility, facilitys.facilitycode, viralsampletype.name as sampletype, viralsamples_view.datecollected, viralsamples_view.created_at, viralsamples_view.entered_by, viralsamples_view.datedispatchedfromfacility, viralsamples_view.datereceived, rec.surname as receiver";
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
         $data = ViralsampleView::selectRaw($column)
                         ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
@@ -679,7 +683,7 @@ class ViralbatchController extends Controller
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))). "'");
                             else
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
-                        })->get();
+                        })->orderBy('created_at', 'asc')->get();
         // dd($data);
         $export['samples'] = $data;
         $export['testtype'] = 'VL';
@@ -871,7 +875,6 @@ class ViralbatchController extends Controller
         $data = Lookup::get_viral_lookups();
         $data['batches'] = $batches;
         $mpdf = new Mpdf(['format' => 'A4-L']);
-        $mpdf->setFooter('{PAGENO}');
         $view_data = view('exports.mpdf_viralsamples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);

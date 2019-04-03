@@ -28,8 +28,8 @@
                                     <tr>
                                         <th>Lab ID</th>
                                         <th>Approve</th>
-                                        <th>Collect New Sample</th>
                                         <th>Rerun</th>
+                                        <th>Collect New Sample</th>
                                         <th>Sample ID</th>
                                         <th>Exatype Status</th>
                                         <th>Facility</th>
@@ -79,7 +79,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun && !$sample->dateapproved && !$sample->control )                                                
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
                                                     <div align='center'>
                                                         <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
                                                     </div>
@@ -88,7 +88,7 @@
                                             <td>
                                                 @if($sample->has_rerun)
                                                     Has Rerun
-                                                @elseif(in_array($sample->status_id, [2, 3]) && !$sample->dateapproved && !$sample->control )                                                
+                                                @elseif(in_array($sample->status_id, [2, 3]))                                                
                                                     <div align='center'>
                                                         <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
                                                     </div>
@@ -109,10 +109,9 @@
                                             <td> {!! $sample->view_chromatogram !!} </td>
                                             <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
                                             <td> 
+                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> |
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank">View Results</a> |
-                                                @if($sample->dateapproved && $sample->repeatt == 0)
-                                                    <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
-                                                @endif
+                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
                                             </td>
                                         </tr>
 
