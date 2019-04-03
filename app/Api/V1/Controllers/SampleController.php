@@ -110,12 +110,12 @@ class SampleController extends Controller
                 continue;
             }
 
-            $user = $new_sample->batch->creator ?? null;
+            $user = $new_sample->batch->user ?? null;
             $user_id = 20000;
             if($new_sample->batch->site_entry && $user){
                 $user_id = \App\User::where('facility_id', $user->facility_id)->first()->id ?? 20000;
             }
-            unset($new_sample->batch->creator);  
+            unset($new_sample->batch->user); 
 
             $b = Batch::where('created_at', $new_sample->batch->created_at)
                 ->where(['facility_id' => $new_sample->batch->facility_id, 'user_id' => $user_id, 'batch_complete' => 0])
@@ -136,7 +136,6 @@ class SampleController extends Controller
             $b->fill(get_object_vars($new_sample->batch));
             $b->user_id = $user_id;
             unset($b->id);
-            $b->lab_id = env('APP_LAB');
             $b->pre_update();
             unset($new_sample->batch);
 

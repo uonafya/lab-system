@@ -55,8 +55,7 @@ class VlDispatch extends Mailable
         $data = Lookup::get_viral_lookups();
         $samples->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
-        $view_data = view('exports.mpdf_viralsamples', $data)->render();        
-        $mpdf->setFooter('{PAGENO}');
+        $view_data = view('exports.mpdf_viralsamples', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
 

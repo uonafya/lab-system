@@ -313,7 +313,7 @@ class ReportController extends Controller
                                 if ($request->input('fromDate') == $request->input('toDate'))
                                     return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
                                 else
-                                    return $query->whereRaw("date($table.$column) BETWEEN '".$request->input('fromDate')."' AND '".$request->input('toDate')."'");
+                                    return $query->whereBetween("$table.$column", [$request->input('fromDate'), $request->input('toDate')]);
                             });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
@@ -561,6 +561,14 @@ class ReportController extends Controller
             $report .= 'sample manifest ';
         } else {
             $report .= 'samples log ';    
+        }
+        if ($request->input('types') == 'failed'){
+            $model = $model->when($testtype, function($query) use ($testtype){
+                                if ($testtype == 'EID')
+                                    return $query->whereIn('result', [3,5])->where('repeatt', '=', 0);
+                                if ($testtype == 'VL')
+                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed', 'Collect New Sample']);
+                            });
         }
 
         if(auth()->user()->user_type_id == 5) {
