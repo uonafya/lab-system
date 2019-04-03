@@ -632,6 +632,8 @@ class ViralbatchController extends Controller
 
     public function sample_manifest(Request $request) {
         if ($request->method() == 'POST') {
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             $facility_user = \App\User::where('facility_id', '=', $request->input('facility_id'))->first();
             $batches = Viralbatch::whereRaw("(facility_id = $facility_user->facility_id or user_id = $facility_user->id)")
                             ->where('site_entry', '=', 1)
@@ -668,6 +670,8 @@ class ViralbatchController extends Controller
             $dateString .= date('Y-m-d', strtotime($request->input('from'))) . ' to ' . date('Y-m-d', strtotime($request->input('to')));
             
         $column = "viralsamples_view.patient, viralsamples_view.batch_id, facilitys.name as facility, facilitys.facilitycode, viralsampletype.name as sampletype, viralsamples_view.datecollected, viralsamples_view.created_at, viralsamples_view.entered_by, viralsamples_view.datedispatchedfromfacility, viralsamples_view.datereceived, rec.surname as receiver";
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
         $data = ViralsampleView::selectRaw($column)
                         ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
                         ->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
@@ -679,7 +683,7 @@ class ViralbatchController extends Controller
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))). "'");
                             else
                                 return $query->whereRaw("date(`viralsamples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
-                        })->get();
+                        })->orderBy('created_at', 'asc')->get();
         // dd($data);
         $export['samples'] = $data;
         $export['testtype'] = 'VL';

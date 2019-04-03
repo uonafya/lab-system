@@ -147,6 +147,8 @@ class ReportController extends Controller
     }// This is in the working tree
 
     protected function generate_samples_manifest($request, $data, $dateString) {
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
         $export['samples'] = $data;
         $export['testtype'] = $request->input('testtype');
         $export['lab'] = Lab::find(env('APP_LAB'));
@@ -167,8 +169,12 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString, $request);
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
+            // dd($data);
+            ini_set("memory_limit", "-1");
+            ini_set("max_execution_time", "3000");
             if ($request->input('types') == 'manifest'){
                 $batches = $data->unique('batch_id')->pluck('batch_id');
+                // dd($batches);
                 if ($request->input('testtype') == 'EID')
                     $model = Batch::class;
                 else
@@ -556,10 +562,18 @@ class ReportController extends Controller
         } else {
             $report .= 'samples log ';    
         }
+        if ($request->input('types') == 'failed'){
+            $model = $model->when($testtype, function($query) use ($testtype){
+                                if ($testtype == 'EID')
+                                    return $query->whereIn('result', [3,5])->where('repeatt', '=', 0);
+                                if ($testtype == 'VL')
+                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed', 'Collect New Sample']);
+                            });
+        }
 
         if(auth()->user()->user_type_id == 5) {
             if ($request->input('types') == 'manifest')
-                $model = $model->where('site_entry', '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->whereNull('received_by')->orderBy('created_at', 'asc');
+                $model = $model->where('site_entry', '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->orderBy('created_at', 'asc');
             else
                 $model = $model->where("$table.facility_id", '=', auth()->user()->facility_id);
         }
