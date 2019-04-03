@@ -837,6 +837,8 @@ class Common
         	\App\FacilityContact::class,
         ];
 
+		if($also_facility) \App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+		
 		foreach ($classes as $key => $class) {
 			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
 				->when($created_at, function($query) use ($created_at){
@@ -848,7 +850,6 @@ class Common
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
-		if($also_facility) \App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
     }
 
 
