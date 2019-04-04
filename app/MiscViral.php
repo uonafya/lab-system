@@ -785,10 +785,10 @@ class MiscViral extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('batch_id', 'asc')
             ->when((env('APP_LAB') == 2), function($query){
                 return $query->orderBy('facilitys.id', 'asc');
-            })            
+            })  
+            ->orderBy('batch_id', 'asc')          
             ->limit($limit)
             ->get();
 
