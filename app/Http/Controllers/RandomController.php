@@ -11,6 +11,7 @@ use App\Viralsample;
 use App\ViralsampleView;
 use App\Random;
 use Mpdf\Mpdf;
+use DB;
 
 class RandomController extends Controller
 {
@@ -112,6 +113,41 @@ class RandomController extends Controller
 		$data = Random::__getLablogsData($year, $month);
 				
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
+	}
+
+	public function equipmentbreakdown(Request $request) {
+		if($request->method() == 'GET') {
+			$data = DB::table('lab_equipment_mapping')->where('lab', '=', auth()->user()->lab_id)->get();
+			$now = true;
+			$data = (object)$data;
+			return view('tasks.equipmentlog', compact('data', 'now'))->with('pageTitle', 'Equipment Breakdown');
+		} else {
+			$tracker = [];
+            foreach ($request->equipmentid as $key => $value) {
+                $tracker[] = [
+                        'month' => date('m'),
+                        'year' => date('Y'),
+                        'lab_id' => auth()->user()->lab_id,
+                        'equipment_id' => $value,
+                        'datesubmitted' => date('Y-m-d'),
+                        'submittedBy' => auth()->user()->id,
+                        'datebrokendown' => ($request->datebrokendown[$key] == "") ? null : $request->datebrokendown[$key],
+                        'datereported' => ($request->datereported[$key] == "") ? null : $request->datereported[$key],
+                        'datefixed' => ($request->datefixed[$key] == "") ? null : $request->datefixed[$key],
+                        'downtime' => ($request->downtime[$key] == "") ? null : $request->downtime[$key],
+                        'samplesnorun' => ($request->samplesnorun[$key] == "") ? null : $request->samplesnorun[$key],
+                        'failedruns' => ($request->failedruns[$key] == "") ? null : $request->failedruns[$key],
+                        'reagentswasted' => ($request->reagentswasted[$key] == "") ? null : $request->reagentswasted[$key],
+                        'breakdownreason' => ($request->breakdownreason[$key] == "") ? null : $request->breakdownreason[$key],
+                        'othercomments' => ($request->otherreasons == "") ? null : $request->otherreasons
+                    ];
+            }
+            
+            foreach ($tracker as $key => $value) {
+                $save = LabEquipmentTracker::create($value);
+            }
+            return redirect('lablogs');
+		}
 	}
 
 	public function config()

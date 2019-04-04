@@ -286,6 +286,8 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::group(['middleware' => ['only_utype:1']], function() {
 		Route::get('lablogs/{year?}/{month?}', 'RandomController@lablogs')->name('lablogs');
+		Route::get('equipmentbreakdown', 'RandomController@equipmentbreakdown')->name('equipmentbreakdown');
+		Route::post('equipmentbreakdown', 'RandomController@equipmentbreakdown');
 	});
 	
 	Route::group(['middleware' => ['utype:4']], function () {

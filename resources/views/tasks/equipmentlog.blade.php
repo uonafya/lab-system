@@ -26,7 +26,11 @@
 <div class="row">
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 4%;">
+        @if(isset($now))
+        {{ Form::open(['url' => '/equipmentbreakdown', 'method' => 'post', 'class'=>'form-horizontal']) }}
+        @else
         {{ Form::open(['url' => '/equipmentlog', 'method' => 'post', 'class'=>'form-horizontal']) }}
+        @endif
            <div class="alert alert-warning">
                     <center>
                         <font color="#4183D7">
