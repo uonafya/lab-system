@@ -1397,7 +1397,6 @@ class Synch
 
             foreach ($body->facilities as $key => $value) {
                 Facility::where('id', $value->old_facility_id)->update($update_data);
-
                 if($value->new_facility_id != $value->old_facility_id){
 
                     $f = new FacilityChange;

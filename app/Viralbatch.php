@@ -127,7 +127,8 @@ class Viralbatch extends BaseModel
 
     public function scopeEditing($query)
     {
-        return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0]);
+        $today = date('Y-m-d');
+        return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0, 'batch_complete' => 0])->whereDate('created_at', $today);
     }
 
     /**
