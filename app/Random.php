@@ -99,13 +99,13 @@ class Random
     	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users)")->get();
     	foreach ($facilities as $facility) {
     		$u = \App\User::create([
-    			'user_type_id' => 5,
-		        'surname' => '',
-		        'oname' => '',
-		        'facility_id' => $facility->id,
-		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		        'username' => 'facility' . $facility->id . '@nascop-lab.com',
-		        'password' => encrypt($facility->name),
+                'user_type_id' => 5,
+                'surname' => '',
+                'oname' => '',
+                'lab_id' => env('APP_LAB'),
+                'facility_id' => $facility->id,
+                'email' => 'facility' . $facility->id . '@nascop-lab.com',
+                'password' => encrypt($facility->name)
     		]);
     	}
 
