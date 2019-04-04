@@ -96,7 +96,7 @@ class Random
 
     public static function create_facility_users()
     {
-    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users)")->get();
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users where user_type_id = 5)")->get();
     	foreach ($facilities as $facility) {
     		$u = \App\User::create([
                 'user_type_id' => 5,
