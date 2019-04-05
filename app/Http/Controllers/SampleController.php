@@ -771,6 +771,34 @@ class SampleController extends Controller
         return back();
     }
 
+    public function return_for_testing(Sample $sample)
+    {
+        if($sample->result != 5 || $sample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
+            return back();
+        }
+
+        $sample->repeatt = 1;
+        $sample->save();
+        
+        Misc::save_repeat($sample->id);
+
+        $batch = $sample->batch;
+
+        if($batch->batch_complete == 0){
+            session(['toast_message' => 'The sample has been returned for testing.']);
+            return back();
+        }
+        else{
+            $batch->transfer_samples([$sample->id], 'new_facility');
+            $sample->refresh();
+            $batch = $sample->batch;
+            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->save();
+            return redirect('batch/' . $batch->id);
+        }
+    }
+
     public function release_redraw(Sample $sample)
     {
         $batch = $sample->batch;

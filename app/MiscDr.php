@@ -25,7 +25,7 @@ class MiscDr extends Common
 	// public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
 	// public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
-	public static $hyrax_url = 'http://sanger.api.exatype.com';
+	public static $hyrax_url = 'https://sanger.api.exatype.com'; 
 	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
     public static $call_array = [
@@ -78,8 +78,9 @@ class MiscDr extends Common
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('POST', 'sanger/authorisations', [
-            'debug' => true,
+            // 'debug' => true,
             'http_errors' => false,
+            'connect_timeout' => 3.14,
 			'headers' => [
 				// 'Accept' => 'application/json',
 			],
@@ -94,11 +95,13 @@ class MiscDr extends Common
 			],
 		]);
 
-		dd($response->getBody());		
+		// dd($response->getBody());		
 
 		if($response->getStatusCode() < 400)
 		{
 			$body = json_decode($response->getBody());
+
+			dd($body);
 
 			$key = $body->data->attributes->api_key ?? null;
 
@@ -110,6 +113,7 @@ class MiscDr extends Common
 			return;
 		}
 		else{
+			dd($response->getStatusCode());
 			$body = json_decode($response->getBody());
 			dd($body);
 		}
