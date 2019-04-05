@@ -78,6 +78,8 @@
                             @endforelse
                             </tbody>
                         </table>
+
+                        {{ $samples->links() }}
                     </div>
                 </div>
             </div>
