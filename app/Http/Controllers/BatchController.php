@@ -468,8 +468,6 @@ class BatchController extends Controller
         $date_modified = Misc::get_maxdatemodified($batch_ids);
         $date_tested = Misc::get_maxdatetested($batch_ids);
 
-        dd($batches);
-
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
             $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
             $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
@@ -494,6 +492,8 @@ class BatchController extends Controller
             $batch->date_tested = $dt;
             return $batch;
         });
+
+        dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
