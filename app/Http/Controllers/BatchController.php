@@ -493,7 +493,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        // dd($batches);
+        dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
