@@ -459,6 +459,9 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('lab_id', env('APP_LAB'))
+            ->when((env('APP_LAB') == 9), function($query){
+                return $query->limit(10);
+            })            
             ->get();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -493,7 +496,7 @@ class BatchController extends Controller
             return $batch;
         });
 
-        dd($batches);
+        // dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
