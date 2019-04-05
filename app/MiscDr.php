@@ -24,8 +24,8 @@ class MiscDr extends Common
 
 	// public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
 	// public static $ui_url = 'http://sangelamerkel.exatype.co.za';
-	
-	public static $hyrax_url = 'http://sanger.api.exatype.com/sanger';
+
+	public static $hyrax_url = 'http://sanger.api.exatype.com';
 	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
     public static $call_array = [
