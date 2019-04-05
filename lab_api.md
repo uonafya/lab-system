@@ -37,6 +37,11 @@ For the last 4 links, the following fields are common to all
 > - lab (This is the lab tested in.) *If the lab is not filled it will be set to the lab where the sample is being sent. It is however mandatory for complete requests.*
 
 ---
+For the last 4 links, the following fields are common to all requests where you want the patient to receive sms notfications
+> - patient_phone_no  *(format 2547???????)*
+> - preferred_language *(1 for English, 2 for Kiswahili)*
+
+---
 The following fields are common to complete requests 
 >- receivedstatus **required**
 >- datereceived **required**  *(greater than or equal to **datecollected**)*
