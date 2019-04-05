@@ -461,6 +461,8 @@ class BatchController extends Controller
             ->where('lab_id', env('APP_LAB'))
             ->get();
 
+        dd($batches);
+
         $batch_ids = $batches->pluck(['id'])->toArray();
 
         $subtotals = Misc::get_subtotals($batch_ids);
