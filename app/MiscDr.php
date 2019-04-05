@@ -93,7 +93,7 @@ class MiscDr extends Common
 			],
 		]);
 
-		
+		dd($response->getBody());		
 
 		if($response->getStatusCode() < 400)
 		{
