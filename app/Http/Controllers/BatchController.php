@@ -461,14 +461,14 @@ class BatchController extends Controller
             ->where('lab_id', env('APP_LAB'))
             ->get();
 
-        dd($batches);
-
         $batch_ids = $batches->pluck(['id'])->toArray();
 
         $subtotals = Misc::get_subtotals($batch_ids);
         $rejected = Misc::get_rejected($batch_ids);
         $date_modified = Misc::get_maxdatemodified($batch_ids);
         $date_tested = Misc::get_maxdatetested($batch_ids);
+
+        dd($batches);
 
         $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
             $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
