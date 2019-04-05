@@ -78,6 +78,7 @@ class MiscDr extends Common
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('POST', 'sanger/authorisations', [
+            'debug' => true,
             'http_errors' => false,
 			'headers' => [
 				// 'Accept' => 'application/json',
