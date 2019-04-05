@@ -451,6 +451,8 @@ class BatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
+        ini_set('memory_limit', '-1');
+        
         $batches = Batch::select('batches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
