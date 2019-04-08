@@ -764,7 +764,7 @@ class ViralsampleController extends Controller
 
     public function return_for_testing(Viralsample $sample)
     {
-        if($sample->result != 'Collect New Sample' || $sample->repeatt == 1){
+        if($sample->result != 'Collect New Sample' || $sample->repeatt == 1 || $sample->age_in_months > 3){
             session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
             return back();
         }
