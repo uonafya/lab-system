@@ -57,7 +57,8 @@ class SampleController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->orderBy('id', 'desc')->paginate(50);
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
