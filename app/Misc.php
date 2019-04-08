@@ -328,11 +328,11 @@ class Misc extends Common
                 $message = $sample->patient_name . "  Jambo, baby's results are ready. Remember to keep your appointment date! Thank you";
             }
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
+				$message = $sample->patient_name . " Jambo, please come to the clinic with baby as soon as you can! Thank you";
 			}
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
+					$message = $sample->patient_name . " Jambo, please come to the clinic with baby as soon as you can! Thank you";
 				}
 				// else{
 				// 	$message = $sample->patient_name . " Jambo, baby's results are ready. Remember to keep your appointment date! Thank you"; 	
@@ -345,14 +345,14 @@ class Misc extends Common
 				$message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
 			}
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
+				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza. Asante";
 			}
             if($sample->result == 1){
-                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki, Asante";
+                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki. Asante";
             }
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
+					$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza. Asante";
 				}
 				// else{
 				// 	$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";

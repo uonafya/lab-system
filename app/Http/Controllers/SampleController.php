@@ -57,7 +57,8 @@ class SampleController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->orderBy('id', 'desc')->paginate(50);
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
@@ -769,6 +770,34 @@ class SampleController extends Controller
         Misc::send_sms($sample);
         session(['toast_message' => 'The sms has been sent.']);
         return back();
+    }
+
+    public function return_for_testing(Sample $sample)
+    {
+        if($sample->result != 5 || $sample->repeatt == 1 || $sample->age_in_months > 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
+            return back();
+        }
+
+        $sample->repeatt = 1;
+        $sample->save();
+        
+        Misc::save_repeat($sample->id);
+
+        $batch = $sample->batch;
+
+        if($batch->batch_complete == 0){
+            session(['toast_message' => 'The sample has been returned for testing.']);
+            return back();
+        }
+        else{
+            $batch->transfer_samples([$sample->id], 'new_facility');
+            $sample->refresh();
+            $batch = $sample->batch;
+            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->save();
+            return redirect('batch/' . $batch->id);
+        }
     }
 
     public function release_redraw(Sample $sample)
