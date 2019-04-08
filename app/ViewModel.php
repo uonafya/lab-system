@@ -70,6 +70,28 @@ class ViewModel extends Model
         return $query->where(['facility_id' => $facility, 'patient' => $patient]);
     }
 
+
+
+    public function getAgeInDaysAttribute()
+    {
+        $now = \Carbon\Carbon::now();
+        return $now->diffInDays($this->created_at);
+    }
+
+    public function getAgeInWeeksAttribute()
+    {
+        $now = \Carbon\Carbon::now();
+        return $now->diffInWeeks($this->created_at);
+    }
+
+    public function getAgeInMonthsAttribute()
+    {
+        $now = \Carbon\Carbon::now();
+        return $now->diffInMonths($this->created_at);
+    }
+
+    
+
     public function getIsReadyAttribute()
     {
         if($this->repeatt == 0){
