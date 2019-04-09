@@ -50,6 +50,7 @@
 
 		<br />
 
+        @if(!$download)
 		@forelse($data->performance as $performance)
             <table style="width: 100%;">
                 <tbody>
@@ -130,6 +131,7 @@
         	<tr><td colspan="7"><center>No Data Available</center></td></tr>
         @endforelse
 		<br />
+        @endif
 		<table style="width: 100%;">
             <tbody>
             	<tr>
