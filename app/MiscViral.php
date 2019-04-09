@@ -619,8 +619,8 @@ class MiscViral extends Common
         $samples = ViralsampleView::whereNotNull('patient_phone_no')
                     ->where('patient_phone_no', '!=', '')
                     ->whereNull('time_result_sms_sent')
-                    ->where('batch_complete', 1)
-                    ->where('datereceived', '>', '2018-05-01')
+                    ->where(['batch_complete' => 1, 'repeatt' => 0])
+                    ->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
                     ->get();
 
         foreach ($samples as $key => $sample) {
@@ -785,10 +785,10 @@ class MiscViral extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('batch_id', 'asc')
             ->when((env('APP_LAB') == 2), function($query){
                 return $query->orderBy('facilitys.id', 'asc');
-            })            
+            })  
+            ->orderBy('batch_id', 'asc')          
             ->limit($limit)
             ->get();
 
