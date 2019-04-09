@@ -10,7 +10,7 @@
             <div class="hpanel">
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover data-table" >
+                        <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -30,7 +30,7 @@
                                 @foreach($samples as $key => $sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $sample->facility->name }} </td>
+                                        <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->patient }} </td>
                                         <td> {{ $sample->full_name }} </td>
                                         <td> {{ $sample->age }} </td>
@@ -51,10 +51,10 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
-
                             </tbody>
                         </table>
+
+                    {{ $samples->links() }}
                     </div>
                 </div>
             </div>
