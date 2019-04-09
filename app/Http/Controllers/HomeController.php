@@ -193,7 +193,7 @@ class HomeController extends Controller
                     ->where('site_entry', '<>', 2)
                     ->where('viralsamples_view.flag', '1')
                     ->orderBy('parentid', 'desc')
-                    ->orderBy('waitingtime', 'desc')->get();
+                    ->orderBy('waitingtime', 'desc')->paginate(30);
         } else {
             $samples = SampleView::selectRaw('samples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -208,10 +208,13 @@ class HomeController extends Controller
                     ->where('site_entry', '<>', 2)
                     ->where('flag', '1')
                     ->orderBy('parentid', 'desc')
-                    ->orderBy('waitingtime', 'desc')->get();
+                    ->orderBy('waitingtime', 'desc')->paginate(30);
         }
-        $noSamples = $samples->count();
-        $pageTitle = "Samples awaiting testing [$noSamples]";
+        // $noSamples = $samples->count();
+        // $pageTitle = "Samples awaiting testing [$noSamples]";
+
+        $samples->setPath(url()->current());
+        $pageTitle = "Samples awaiting testing";
         // dd($samples);
         return view('tables.pending', compact('samples'))->with('pageTitle', $pageTitle);
     }

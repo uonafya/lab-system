@@ -369,6 +369,7 @@ Artisan::command('transfer:deliveries', function(){
 
 // Quick fixes
 // Quick fix for deliveries
+// Quick fix for deliveries
 Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
     $str = \App\Random::adjust_deliveries($platform, $id, $quantity, $damaged);
     $this->info($str);

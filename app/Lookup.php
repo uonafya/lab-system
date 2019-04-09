@@ -461,7 +461,6 @@ class Lookup
 
             'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
             'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-            'resistance_colours' => \App\MiscDr::$call_array,
             'double_approval' => self::$double_approval,
 
             'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),

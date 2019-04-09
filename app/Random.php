@@ -94,6 +94,32 @@ class Random
         }
     }
 
+    public static function create_facility_users()
+    {
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users where user_type_id = 5)")->get();
+    	foreach ($facilities as $facility) {
+    		$u = \App\User::create([
+                'user_type_id' => 5,
+                'surname' => '',
+                'oname' => '',
+                'lab_id' => env('APP_LAB'),
+                'facility_id' => $facility->id,
+                'email' => 'facility' . $facility->id . '@nascop-lab.com',
+                'password' => encrypt($facility->name)
+    		]);
+    	}
+
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from facility_contacts)")->get();
+    	foreach ($facilities as $facility) {
+	        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
+
+	        $contact = new FacilityContact();
+	        $contact->fill($facility->only($contact_array));
+	        $contact->facility_id = $facility->id;
+	        $contact->save();
+    	}
+    }
+
     public static function oldest($type)
     {
 		$sampleview_class = \App\Synch::$synch_arrays[$type]['sampleview_class'];
@@ -136,6 +162,26 @@ class Random
 	{
 		DB::statement('ALTER TABLE facilitys ADD COLUMN `poc` TINYINT UNSIGNED DEFAULT 0 after latitude;');
 		Facility::where('id', '>', 0)->update(['smsprinter' => 0]);
+	}
+
+	public static function correct_faces_data()
+	{
+		ini_set("memory_limit", "-1");
+        config(['excel.import.heading' => true]);
+		$path = public_path('vl_records.csv');
+
+		$data = Excel::load($path, function($reader){})->get();
+
+		foreach ($data as $row) {
+			$s = \App\Viralsample::find($row->labid);
+			$p = $s->patient;
+			if($p->patient != $row->patientid) continue;
+			$p->sex = 1;
+			$p->pre_update();
+
+			$s->pmtct = 3;
+			$s->pre_update();
+		}
 	}
 
 	public static function poc_sites()

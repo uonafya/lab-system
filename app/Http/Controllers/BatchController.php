@@ -451,14 +451,19 @@ class BatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
+        ini_set('memory_limit', '-1');
+        
         $batches = Batch::select('batches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-            ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
+            ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('batches.id', $batch_list);
             })
             ->where('batch_complete', 2)
             ->where('lab_id', env('APP_LAB'))
+            ->when((env('APP_LAB') == 9), function($query){
+                return $query->limit(10);
+            })            
             ->get();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -492,6 +497,8 @@ class BatchController extends Controller
             $batch->date_tested = $dt;
             return $batch;
         });
+
+        // dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
@@ -582,10 +589,10 @@ class BatchController extends Controller
                         ->where('samples_view.site_entry', '=', 1)
                         ->when(true, function($query) use ($request) {
                             if ($request->input('from') == $request->input('to'))
-                                return $query->whereRaw("date(`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))) . "'");
+                                return $query->whereRaw("date(`samples_view`.`created_at`) = '" . date('Y-m-d', strtotime($request->input('from'))) . "'");
                             else
-                                return $query->whereRaw("date(`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
-                        })->get();
+                                return $query->whereRaw("date(`samples_view`.`created_at`) BETWEEN '" . date('Y-m-d', strtotime($request->input('from'))) . "' AND '" . date('Y-m-d', strtotime($request->input('to'))) . "'");
+                        })->orderBy('created_at', 'asc')->get();
         $export['samples'] = $data;
         $export['testtype'] = 'EID';
         $export['lab'] = \App\Lab::find(env('APP_LAB'));
@@ -779,7 +786,6 @@ class BatchController extends Controller
         $data = Lookup::get_lookups();
         $data['batches'] = $batches;
         $mpdf = new Mpdf(['format' => 'A4-L']);
-        $mpdf->setFooter('{PAGENO}');
         $view_data = view('exports.mpdf_samples_summary', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('summary.pdf', \Mpdf\Output\Destination::DOWNLOAD);

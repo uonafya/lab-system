@@ -85,14 +85,13 @@
                     Worksheets
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover" >
+                    <table class="table table-striped table-bordered table-hover data-table" >
                         <thead>
                             <tr>
                                     <th> W No </th>
                                     <th> Date Created </th>
                                     <th> Created By </th>
                                     <th> # Samples </th>
-                                    <th> # Samples Not In Sequencing Worksheet </th>
                                     <!-- <th> Date Run </th> -->
                                     <th> Date of Gel Documentation </th>
                                     <th> Task </th>                 
@@ -107,16 +106,13 @@
                                     <td> {{ $worksheet->creator->full_name ?? '' }} </td>
 
                                     <td> {{ $worksheet->sample_count }} </td>
-                                    <td> {{ $worksheet->sample->where('worksheet_id', null)->count() }} </td>
 
                                     <td> {{ $worksheet->my_date_format('date_gel_documentation') }} </td>
                                     <td> 
                                         @if($worksheet->date_gel_documentation)
-                                            @if($worksheet->can_create_sequencing)
-                                                <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
-                                                    Create Sequencing Worksheet
-                                                </a> | 
-                                            @endif
+                                            <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
+                                                Create Sequencing Worksheet
+                                            </a> | 
                                         @else
 
                                             <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet->id) }}" title="Click to Submit the Gel Documentation">
@@ -136,7 +132,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $worksheets->links() }}
                 </div>
             </div>
         </div>

@@ -272,26 +272,6 @@ class Misc extends Common
         return $samples;
     }
 
-    public static function get_maxdateapproved($batch_id=NULL, $complete=true)
-    {
-        $samples = Sample::selectRaw("max(dateapproved) as mydate, batch_id")
-            ->join('batches', 'batches.id', '=', 'samples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                return $query->where('batch_id', $batch_id);
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
     public static function clean_dob()
     {
     	$samples = Sample::where('age', '>', 36)->with(['patient'])->get();
@@ -327,8 +307,8 @@ class Misc extends Common
     	$samples = SampleView::whereNotNull('patient_phone_no')
     				->where('patient_phone_no', '!=', '')
     				->whereNull('time_result_sms_sent')
-    				->where('batch_complete', 1)
-    				->where('datereceived', '>', '2018-05-01')
+    				->where(['batch_complete' => 1, 'repeatt' => 0])
+    				->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
     				->get();
 
     	foreach ($samples as $key => $sample) {
@@ -348,11 +328,11 @@ class Misc extends Common
                 $message = $sample->patient_name . "  Jambo, baby's results are ready. Remember to keep your appointment date! Thank you";
             }
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
+				$message = $sample->patient_name . " Jambo, please come to the clinic with baby as soon as you can! Thank you";
 			}
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo,  please come to the clinic with baby as soon as you can! Thank you ";
+					$message = $sample->patient_name . " Jambo, please come to the clinic with baby as soon as you can! Thank you";
 				}
 				// else{
 				// 	$message = $sample->patient_name . " Jambo, baby's results are ready. Remember to keep your appointment date! Thank you"; 	
@@ -365,14 +345,14 @@ class Misc extends Common
 				$message = $sample->patient_name . " Jambo, matokeo ya mtoto yako tayari. Tafadhali kuja kliniki utakapoweza. Asante.";
 			}
 			else if($sample->result == 3 || $sample->result == 5){
-				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
+				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza. Asante";
 			}
             if($sample->result == 1){
-                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki, Asante";
+                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki. Asante";
             }
 			else{
 				if($sample->receivedstatus == 2){
-					$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza, asante";
+					$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza. Asante";
 				}
 				// else{
 				// 	$message = $sample->patient_name . " Jambo, kuja kliniki utakapoweza. Asante.";
@@ -501,8 +481,10 @@ class Misc extends Common
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->orderBy('site_entry', 'asc')
-            ->orderBy('batch_id', 'asc')
-            // ->orderBy('facilitys.id', 'asc')
+            ->when((env('APP_LAB') == 2), function($query){
+                return $query->orderBy('facilitys.id', 'asc');
+            })  
+            ->orderBy('batch_id', 'asc')     
             ->limit($limit)
             ->get();
 

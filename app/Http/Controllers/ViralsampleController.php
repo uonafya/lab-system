@@ -65,7 +65,8 @@ class ViralsampleController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         
         $data = Lookup::get_viral_lookups();
-        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
+        $samples = ViralsampleView::whereRaw($string)->whereNotNull('time_result_sms_sent')->orderBy('datedispatched', 'desc')->paginate(50);
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
@@ -492,28 +493,28 @@ class ViralsampleController extends Controller
 
         $data = $request->only($viralsamples_arrays['patient']);
 
-        $new_patient = $request->input('new_patient');
+        /*$new_patient = $request->input('new_patient');
 
-        // if($new_patient == 0){            
-        //     $viralpatient = Viralpatient::find($viralsample->patient_id);
-        // }
-        // else{
-        //     $viralpatient = new Viralpatient;
-        // }
+        if($new_patient == 0){            
+            $viralpatient = Viralpatient::find($viralsample->patient_id);
+        }
+        else{
+            $viralpatient = new Viralpatient;
+        }*/
 
         $viralpatient = $viralsample->patient;
 
-        if($viralpatient->patient != $request->input('patient')){
+        /*if($viralpatient->patient != $request->input('patient')){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
 
             if(!$viralpatient){
                 $viralpatient = new Viralpatient;
                 $created_patient = true;
             }
-        }
+        }*/
         
 
-        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        if(!$data['dob'] || $data['dob'] == '') $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->pre_update();
 
@@ -759,6 +760,34 @@ class ViralsampleController extends Controller
         MiscViral::send_sms($sample);
         session(['toast_message' => 'The sms has been sent.']);
         return back();
+    }
+
+    public function return_for_testing(Viralsample $sample)
+    {
+        if($sample->result != 'Collect New Sample' || $sample->repeatt == 1 || $sample->age_in_months > 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
+            return back();
+        }
+
+        $sample->repeatt = 1;
+        $sample->save();
+
+        MiscViral::save_repeat($sample->id);
+
+        $batch = $sample->batch;
+
+        if($batch->batch_complete == 0){
+            session(['toast_message' => 'The sample has been returned for testing.']);
+            return back();
+        }
+        else{
+            $batch->transfer_samples([$sample->id], 'new_facility');
+            $sample->refresh();
+            $batch = $sample->batch;
+            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->save();
+            return redirect('viralbatch/' . $batch->id);
+        }
     }
 
     public function release_redraw(Viralsample $sample)
