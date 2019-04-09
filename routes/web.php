@@ -359,12 +359,13 @@ Route::middleware(['auth'])->group(function(){
 	Route::prefix('sample')->name('sample.')->group(function () {
 		Route::post('new_patient', 'SampleController@new_patient');
 		Route::post('similar', 'SampleController@similar');
-		Route::get('release/{sample}', 'SampleController@release_redraw');
 		Route::get('print/{sample}', 'SampleController@individual');
 		
 		Route::group(['middleware' => ['utype:4']], function () {
 			Route::get('runs/{sample}', 'SampleController@runs');	
-			Route::get('transfer/{sample}', 'SampleController@transfer');	
+			Route::get('transfer/{sample}', 'SampleController@transfer');
+			Route::get('release/{sample}', 'SampleController@release_redraw');	
+			Route::get('return_for_testing/{sample}', 'SampleController@return_for_testing');	
 		});
 
 		Route::group(['middleware' => ['only_utype:2']], function () {	
@@ -415,12 +416,13 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::post('new_patient', 'ViralsampleController@new_patient');
 		Route::post('similar', 'ViralsampleController@similar');
-		Route::get('release/{sample}', 'ViralsampleController@release_redraw');
 		Route::get('print/{sample}', 'ViralsampleController@individual');
 
 		Route::group(['middleware' => ['utype:4']], function () {
 			Route::get('runs/{sample}', 'ViralsampleController@runs');		
-			Route::get('transfer/{sample}', 'ViralsampleController@transfer');		
+			Route::get('transfer/{sample}', 'ViralsampleController@transfer');	
+			Route::get('release/{sample}', 'ViralsampleController@release_redraw');	
+			Route::get('return_for_testing/{sample}', 'ViralsampleController@return_for_testing');	
 		});
 
 		Route::group(['middleware' => ['only_utype:2']], function () {	

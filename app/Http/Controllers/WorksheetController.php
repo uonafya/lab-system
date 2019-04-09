@@ -176,6 +176,7 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                         if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                         if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })

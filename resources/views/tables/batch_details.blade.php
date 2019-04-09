@@ -200,8 +200,13 @@
                                             <a href="{{ url('/sample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
 
-                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
-                                                | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @if(auth()->user()->is_lab_user())
+                                                @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
+                                                    | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                                @endif
+                                                @if($sample->result == 5 && $sample->age_in_months < 4)
+                                                    | <a href="{{ url('/sample/return_for_testing/' . $sample->id ) }}">Return for Testing</a> 
+                                                @endif
                                             @endif
                                         </td>
 

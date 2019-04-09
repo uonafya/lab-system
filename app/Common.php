@@ -832,12 +832,13 @@ class Common
 
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
-
-        	\App\User::class,
-        	\App\FacilityContact::class,
         ];
 
-		if($also_facility) \App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+		if($also_facility){
+			\App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+			\App\User::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+			\App\FacilityContact::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
 		
 		foreach ($classes as $key => $class) {
 			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
@@ -863,19 +864,25 @@ class Common
 
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
-
-        	\App\User::class,
-        	\App\FacilityContact::class,
         ];
+
+		if($also_facility){
+			\App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+			\App\User::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+			\App\FacilityContact::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
 
 		foreach ($classes as $key => $class) {
 			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
 				->when($created_at, function($query) use ($created_at){
-					return $query->whereDate('created_at', '<', $created_at);
+					return $query->whereBetween('created_at', $created_at);
 				})
 				->update(['facility_id' => $new_id, 'synched' => 2]);
 
-			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+			$class::where(['facility_id' => $old_id])
+				->when($created_at, function($query) use ($created_at){
+					return $query->whereBetween('created_at', $created_at);
+				})->update(['facility_id' => $new_id]);
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
