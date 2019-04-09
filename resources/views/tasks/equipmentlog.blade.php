@@ -22,17 +22,25 @@
         $prevmonth = 12;
         $prevyear -= 1;
     }
+    $month = $prevmonth;
+    if(isset($now)){
+        $month = $currentmonth;
+    }
 @endphp
 <div class="row">
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 4%;">
+        @if(isset($now))
+        {{ Form::open(['url' => '/equipmentbreakdown', 'method' => 'post', 'class'=>'form-horizontal']) }}
+        @else
         {{ Form::open(['url' => '/equipmentlog', 'method' => 'post', 'class'=>'form-horizontal']) }}
-           <div class="alert alert-warning">
-                    <center>
-                        <font color="#4183D7">
-                        Please Fill Out any Equipment Breakdown Details below. If none brokedown , Go to Comments and Write that then Click Submit
-                        </font>
-                    </center>
+        @endif
+            <div class="alert alert-warning">
+                <center>
+                    <font color="#4183D7">
+                    Please Fill Out any Equipment Breakdown Details below for <strong>({{ date("F", mktime(null, null, null, $month)) }}, @if(isset($now)) {{ date('Y') }} @else {{ $prevyear }} @endif )</strong>. @if(!isset($now)) If none brokedown , Go to Comments and Write that then Click Submit. @endif
+                    </font>
+                </center>
             </div>
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
