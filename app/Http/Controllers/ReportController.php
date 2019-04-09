@@ -341,7 +341,7 @@ class ReportController extends Controller
             $dateString .= $request->input('year');
             $model = $model->whereRaw("YEAR($table.$column) = '".$request->input('year')."'");
         }
-        dd($model->toSql());
+        // dd($model->toSql());
         return $model;
     }
 
