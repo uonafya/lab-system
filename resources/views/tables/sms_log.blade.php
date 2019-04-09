@@ -30,7 +30,7 @@
                                 @foreach($samples as $key => $sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $sample->facility->name }} </td>
+                                        <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->patient }} </td>
                                         <td> {{ $sample->full_name }} </td>
                                         <td> {{ $sample->age }} </td>
