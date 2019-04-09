@@ -11,6 +11,7 @@ use App\Viralsample;
 use App\ViralsampleView;
 use App\Random;
 use Mpdf\Mpdf;
+use DB;
 
 class RandomController extends Controller
 {
@@ -79,7 +80,12 @@ class RandomController extends Controller
 
 	
 
-	public function lablogs($year = null, $month = null){
+	public function lablogs(Request $request, $year = null, $month = null){
+		if ($request->method() == 'POST') {
+			$year = $request->input('year');
+			$month = $request->input('month');
+		}
+
 		if ($month == null || $month=='null') {
 			if (null !== session('lablogmonth')) {
 				$month = session('lablogmonth');
@@ -110,8 +116,57 @@ class RandomController extends Controller
 		$year = session('lablogyear');
 		$month = session('lablogmonth');
 		$data = Random::__getLablogsData($year, $month);
-				
+
+		if ($request->method() == 'POST') {
+			$lab = \App\Lab::find(env('APP_LAB'));
+	    	$download = true;
+	    	$mpdf = new Mpdf();
+	        $this->lab = \App\Lab::find(env('APP_LAB'));
+	        $lab = $this->lab;
+	        $pageData = ['data' => $data, 'lab' => $lab, 'download' => true];
+	        $view_data = view('exports.mpdf_labtracker', $pageData)->render();
+	        $mpdf->WriteHTML($view_data);
+	        $mpdf->Output('monthlabtracker ' . $data->year .  $data->month .'.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+
+			return view('exports.mpdf_labtracker', compact('data', 'lab', 'download'));
+		}
+		
 		return view('reports.labtrackers', compact('data'))->with('pageTitle', 'Lab Equipment Log/Tracker');
+	}
+
+	public function equipmentbreakdown(Request $request) {
+		if($request->method() == 'GET') {
+			$data = DB::table('lab_equipment_mapping')->where('lab', '=', auth()->user()->lab_id)->get();
+			$now = true;
+			$data = (object)$data;
+			return view('tasks.equipmentlog', compact('data', 'now'))->with('pageTitle', 'Equipment Breakdown');
+		} else {
+			$tracker = [];
+            foreach ($request->equipmentid as $key => $value) {
+                $tracker[] = [
+                        'month' => date('m'),
+                        'year' => date('Y'),
+                        'lab_id' => auth()->user()->lab_id,
+                        'equipment_id' => $value,
+                        'datesubmitted' => date('Y-m-d'),
+                        'submittedBy' => auth()->user()->id,
+                        'datebrokendown' => ($request->datebrokendown[$key] == "") ? null : $request->datebrokendown[$key],
+                        'datereported' => ($request->datereported[$key] == "") ? null : $request->datereported[$key],
+                        'datefixed' => ($request->datefixed[$key] == "") ? null : $request->datefixed[$key],
+                        'downtime' => ($request->downtime[$key] == "") ? null : $request->downtime[$key],
+                        'samplesnorun' => ($request->samplesnorun[$key] == "") ? null : $request->samplesnorun[$key],
+                        'failedruns' => ($request->failedruns[$key] == "") ? null : $request->failedruns[$key],
+                        'reagentswasted' => ($request->reagentswasted[$key] == "") ? null : $request->reagentswasted[$key],
+                        'breakdownreason' => ($request->breakdownreason[$key] == "") ? null : $request->breakdownreason[$key],
+                        'othercomments' => ($request->otherreasons == "") ? null : $request->otherreasons
+                    ];
+            }
+            
+            foreach ($tracker as $key => $value) {
+                $save = LabEquipmentTracker::create($value);
+            }
+            return redirect('lablogs');
+		}
 	}
 
 	public function config()
@@ -130,9 +185,9 @@ class RandomController extends Controller
         	abort(401);
 	}
 
-	public function testlabtracker() {
-		$year = date('Y');
-    	$month = date('m');
+	public function testlabtracker($year = 2019, $month = 4) {
+		// $year = date('Y');
+  //   	$month = date('m');
     	$previousMonth =  $month - 1;
     	if ($month == 1) {
     		$previousMonth = 12;
@@ -140,7 +195,8 @@ class RandomController extends Controller
     	}
     	$data = Random::__getLablogsData($year, $month);
     	$lab = \App\Lab::find(env('APP_LAB'));
-    	// dd($lab);
+    	$download = true;
+    	// // dd($lab);
     	// $path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
 
      //    if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
@@ -149,11 +205,11 @@ class RandomController extends Controller
     	// $mpdf = new Mpdf();
      //    $this->lab = \App\Lab::find(env('APP_LAB'));
      //    $lab = $this->lab;
-     //    $pageData = ['data' => $data, 'lab' => $lab];
+     //    $pageData = ['data' => $data, 'lab' => $lab, 'download' => true];
      //    $view_data = view('exports.mpdf_labtracker', $pageData)->render();
      //    $mpdf->WriteHTML($view_data);
      //    $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
 
-		return view('exports.mpdf_labtracker', compact('data', 'lab'));
+		return view('exports.mpdf_labtracker', compact('data', 'lab', 'download'));
 	}
 }

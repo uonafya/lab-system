@@ -170,6 +170,12 @@
 			                    @endforelse
 			                    </tbody>
 			                </table>
+			            <form class="form-horizontal" id="submit" method="post" action="{{ url('lablogs') }}">
+			            	@csrf()
+			            	<input type="hidden" name="month" value="{{ $data->month }}" />
+			            	<input type="hidden" name="year" value="{{ $data->year }}" />
+			            	<button type="submit" class="btn btn-info">Generate Report</button>
+			            </form>
                         </div>
                     </div>
                 </div>
@@ -189,6 +195,10 @@
         @slot('val_rules')
            
         @endslot
-
     @endcomponent
+   	<script type="text/javascript">
+   		$().ready(function(){
+   			
+   		});
+   	</script>
 @endsection
