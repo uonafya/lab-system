@@ -163,7 +163,7 @@ class ViralworksheetController extends Controller
                     ->whereIn('viralsamples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
-                        // if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                         if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                         if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })
@@ -670,7 +670,7 @@ class ViralworksheetController extends Controller
     public function approve(Request $request, Viralworksheet $worksheet)
     {
         $double_approval = Lookup::$double_approval;
-        $samples = $request->input('samples');
+        $samples = $request->input('samples', []);
         $batches = $request->input('batches');
         $redraws = $request->input('redraws');
         $results = $request->input('results');
@@ -740,18 +740,23 @@ class ViralworksheetController extends Controller
             if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
         }
 
+        if($batches){
+            $batch = collect($batches);
+            $b = $batch->unique();
+            $unique = $b->values()->all();
+
+            foreach ($unique as $value) {
+                MiscViral::check_batch($value);
+            }
+        }
+
+        $checked_batches = true;
+
         // if(env('APP_LAB') == 9) MiscViral::dump_worksheet($worksheet->id);
         // $random_var = true;
 
         if(in_array(env('APP_LAB'), $double_approval)){
             if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
-                $batch = collect($batches);
-                $b = $batch->unique();
-                $unique = $b->values()->all();
-
-                foreach ($unique as $value) {
-                    MiscViral::check_batch($value);
-                }
 
                 $worksheet->status_id = 3;
                 $worksheet->datereviewed2 = $today;
@@ -769,15 +774,7 @@ class ViralworksheetController extends Controller
                 return redirect('/viralworksheet');
             }
         }
-
         else{
-            $batch = collect($batches);
-            $b = $batch->unique();
-            $unique = $b->values()->all();
-
-            foreach ($unique as $value) {
-                MiscViral::check_batch($value);
-            }
 
             $worksheet->status_id = 3;
             $worksheet->datereviewed = $today;

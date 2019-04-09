@@ -176,6 +176,7 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                         if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                         if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })
@@ -547,7 +548,7 @@ class WorksheetController extends Controller
     public function approve(Request $request, Worksheet $worksheet)
     {
         $double_approval = Lookup::$double_approval;
-        $samples = $request->input('samples');
+        $samples = $request->input('samples', []);
         $batches = $request->input('batches');
         $results = $request->input('results');
         $actions = $request->input('actions');
@@ -597,16 +598,20 @@ class WorksheetController extends Controller
             }
         }
 
+        if($batches){
+            $batch = collect($batches);
+            $b = $batch->unique();
+            $unique = $b->values()->all();
+
+            foreach ($unique as $value) {
+                Misc::check_batch($value);
+            }
+        }
+
+        $checked_batches = true;
+
         if(in_array(env('APP_LAB'), $double_approval)){
             if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
-                $batch = collect($batches);
-                $b = $batch->unique();
-                $unique = $b->values()->all();
-
-                foreach ($unique as $value) {
-                    Misc::check_batch($value);
-                }
-
                 $worksheet->status_id = 3;
                 $worksheet->datereviewed2 = $today;
                 $worksheet->reviewedby2 = $approver;
@@ -624,16 +629,7 @@ class WorksheetController extends Controller
                 return redirect('/worksheet');
             }
         }
-
         else{
-            $batch = collect($batches);
-            $b = $batch->unique();
-            $unique = $b->values()->all();
-
-            foreach ($unique as $value) {
-                Misc::check_batch($value);
-            }
-
             $worksheet->status_id = 3;
             $worksheet->datereviewed = $today;
             $worksheet->reviewedby = $approver;

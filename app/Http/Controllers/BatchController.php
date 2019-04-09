@@ -451,6 +451,8 @@ class BatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
+        ini_set('memory_limit', '-1');
+        
         $batches = Batch::select('batches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
@@ -459,6 +461,9 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('lab_id', env('APP_LAB'))
+            ->when((env('APP_LAB') == 9), function($query){
+                return $query->limit(10);
+            })            
             ->get();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -492,6 +497,8 @@ class BatchController extends Controller
             $batch->date_tested = $dt;
             return $batch;
         });
+
+        // dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
