@@ -755,7 +755,7 @@
         $(document).ready(function(){
 
 
-            @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($viralsample))
+            @if(in_array(env('APP_LAB'), [3, 1]) && auth()->user()->is_lab_user() && !isset($viralsample))
                 $("#samples_form input,select").change(function(){
                     var frm = $('#samples_form');
                     var data = frm.serializeObject();
