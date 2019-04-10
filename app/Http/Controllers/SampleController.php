@@ -413,14 +413,14 @@ class SampleController extends Controller
 
         $patient = $sample->patient;
 
-        /*if($patient->patient != $request->input('patient')){
+        if($patient->patient != $request->input('patient')){
             $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
 
             if(!$patient){
                 $patient = new Patient;
                 $created_patient = true;
             }
-        }*/
+        }
 
 
 
