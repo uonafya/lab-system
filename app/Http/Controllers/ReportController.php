@@ -313,7 +313,7 @@ class ReportController extends Controller
                                 if ($request->input('fromDate') == $request->input('toDate'))
                                     return $query->whereRaw("date($table.$column) = '" . $request->input('fromDate') . "'");
                                 else
-                                    return $query->whereRaw("date($table.$column) between " . $request->input('fromDate') . " and " . $request->input('toDate'));
+                                    return $query->whereRaw("date($table.$column) between '" . $request->input('fromDate') . "' and '" . $request->input('toDate') . "'");
                             });
         } else if ($request->input('period') == 'monthly') {
             $dateString .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
