@@ -246,7 +246,11 @@
                             <div class="col-sm-8">
                                 <div class="input-group date date-dob">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                    <input type="text" id="dob" class="form-control lockable"
+                                    @if(auth()->user()->user_type_id == 5)
+                                        required
+                                    @endif
+                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
                                 </div>
                             </div>                            
                         </div>
@@ -694,9 +698,11 @@
                 datedispatched: {
                     lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
                 },
-                age: {
-                    required: '#dob:blank'
-                }
+                @if(auth()->user()->user_type_id != 5)
+                    age: {
+                        required: '#dob:blank'
+                    }
+                @endif
             }
         @endslot
 
