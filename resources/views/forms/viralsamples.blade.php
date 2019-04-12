@@ -246,18 +246,23 @@
                             <div class="col-sm-8">
                                 <div class="input-group date date-dob">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                    <input type="text" id="dob" class="form-control lockable"
+                                    @if(auth()->user()->user_type_id == 5)
+                                        required
+                                    @endif
+                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
                                 </div>
                             </div>                            
                         </div>
 
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Age (In Years)</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                        @if(auth()->user()->user_type_id != 5)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Age (In Years)</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
 
 
@@ -592,7 +597,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by" id="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
@@ -688,14 +693,18 @@
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
-                    lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @if(auth()->user()->user_type_id != 5)
+                        lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @endif
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
                 },
-                age: {
-                    required: '#dob:blank'
-                }
+                @if(auth()->user()->user_type_id != 5)
+                    age: {
+                        required: '#dob:blank'
+                    }
+                @endif
             }
         @endslot
 
