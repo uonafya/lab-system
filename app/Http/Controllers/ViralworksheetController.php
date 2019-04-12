@@ -645,9 +645,12 @@ class ViralworksheetController extends Controller
                     ->select('viralsamples.*', 'viralbatches.facility_id')
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
-                    // ->orderBy('facility_id')
-                    ->orderBy('batch_id', 'asc')
-                    ->orderBy('viralsamples.id', 'asc')                    
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    })
+                    ->orderBy('viralsamples.id', 'asc')              
                     ->get();
 
         $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));

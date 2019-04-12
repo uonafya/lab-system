@@ -251,13 +251,14 @@
                             </div>                            
                         </div>
 
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Age (In Years)</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                        @if(auth()->user()->user_type_id != 5)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Age (In Years)</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
 
 
@@ -592,7 +593,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by" id="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
