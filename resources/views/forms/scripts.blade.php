@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 
-    /*$.fn.serializeObject = function() {
+    $.fn.serializeObject = function() {
         var o = {};
         //var a = this.serializeArray();
         $(this).find('input[type="hidden"], input[type="text"], input[type="password"], input[type="checkbox"]:checked, input[type="radio"]:checked, select').each(function() {
@@ -35,7 +35,7 @@
             if(o[this.name] == '') o[this.name] = null;
         });
         return o;
-    }*/
+    }
 
     $(document).ready(function(){
     	$(".form-control").attr('autocomplete', 'off');
@@ -172,7 +172,7 @@
     });
 
 
-/*$.fn.serializeObject = function() {
+$.fn.serializeObject = function() {
     var o = {};
     //var a = this.serializeArray();
     $(this).find('input[type="hidden"], input[type="text"], input[type="password"], input[type="checkbox"]:checked, input[type="radio"]:checked, select').each(function() {
@@ -202,6 +202,6 @@
         if(o[this.name] == '') o[this.name] = null;
     });
     return o;
-}*/
+}
 
 </script>

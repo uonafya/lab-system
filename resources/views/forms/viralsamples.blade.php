@@ -593,7 +593,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by" id="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
