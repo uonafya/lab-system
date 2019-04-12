@@ -693,7 +693,9 @@
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
-                    lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @if(auth()->user()->user_type_id != 5)
+                        lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @endif
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
