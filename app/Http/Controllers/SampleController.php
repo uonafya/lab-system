@@ -151,6 +151,7 @@ class SampleController extends Controller
             if($user->is_lab_user()){
                 $batch->received_by = $user->id;
                 $batch->site_entry = 0;
+                $batch->time_received = date('Y-m-d H:i:s');
             }
             else{
                 $batch->site_entry = 1;
@@ -408,7 +409,10 @@ class SampleController extends Controller
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()){
+            $batch->received_by = $user->id;
+            $batch->time_received = date('Y-m-d H:i:s');
+        }
         $batch->pre_update();
 
         $patient = $sample->patient;
@@ -915,6 +919,7 @@ class SampleController extends Controller
                 $batch->user_id = $facility->facility_user->id;
                 $batch->facility_id = $facility->id;
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->lab_id = auth()->user()->lab_id;
                 $batch->datereceived = $datereceived;
                 $batch->site_entry = $site_entry;

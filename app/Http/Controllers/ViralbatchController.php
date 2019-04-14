@@ -361,7 +361,7 @@ class ViralbatchController extends Controller
         }
 
         if(!$has_received_status){
-            Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
+            Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null, 'time_received' => null]);
         }
 
         MiscViral::check_batch($batch->id);
@@ -645,6 +645,7 @@ class ViralbatchController extends Controller
                             })->get();
             foreach ($batches as $batch) {
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->datereceived = date('Y-m-d');
                 $batch->pre_update();
                 if(!empty($batch->samples)){
@@ -710,6 +711,7 @@ class ViralbatchController extends Controller
         }
         else{
             $batch->received_by = auth()->user()->id;
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->save();
             Refresh::refresh_cache();
             session(['toast_message' => "All the samples in the batch have been received."]);
@@ -769,6 +771,7 @@ class ViralbatchController extends Controller
         // // $batch->received_by = auth()->user()->id;
         if ($batch->received_by == NULL) {
             $batch->received_by = auth()->user()->id ?? $request->input('received_by');
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->datereceived = $request->input('datereceived');
         }
         
