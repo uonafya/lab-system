@@ -35,6 +35,7 @@ class CreateViralbatchesTable extends Migration
             $table->integer('facility_id')->unsigned()->nullable()->index();
 
             $table->date('datedispatchedfromfacility')->nullable();
+            $table->dateTime('time_received')->nullable();
             $table->date('datereceived')->nullable()->index();
             $table->date('datedispatched')->nullable()->index();
 
