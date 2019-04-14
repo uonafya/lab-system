@@ -480,6 +480,9 @@ class Misc extends Common
             // ->orderBy('isnull', 'asc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
+            ->when(($test && !in_array(env('APP_LAB'), [2, 8])), function($query){
+                return $query->orderBy('time_received', 'asc');
+            })
             ->orderBy('site_entry', 'asc')
             ->when((env('APP_LAB') == 2), function($query){
                 return $query->orderBy('facilitys.id', 'asc');
