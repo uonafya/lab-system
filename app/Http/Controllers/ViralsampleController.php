@@ -280,6 +280,7 @@ class ViralsampleController extends Controller
 
             if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->site_entry = 0;
             }
 
@@ -307,6 +308,7 @@ class ViralsampleController extends Controller
 
             if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->site_entry = 0;
             }
 
@@ -488,7 +490,10 @@ class ViralsampleController extends Controller
 
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()){
+            $batch->received_by = $user->id;
+            $batch->time_received = date('Y-m-d H:i:s');
+        }
         $batch->pre_update();
 
         $data = $request->only($viralsamples_arrays['patient']);
@@ -986,6 +991,7 @@ class ViralsampleController extends Controller
                     $batch->user_id = $facility->facility_user->id;
                     $batch->facility_id = $facility->id;
                     $batch->received_by = auth()->user()->id;
+                    $batch->time_received = date('Y-m-d H:i:s');
                     $batch->lab_id = auth()->user()->lab_id;
                     $batch->datereceived = $datereceived;
                     $batch->site_entry = $site_entry;

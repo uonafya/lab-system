@@ -356,7 +356,7 @@ class BatchController extends Controller
         // $s = $new_batch->sample->first();
 
         if(!$has_received_status){
-            Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
+            Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null, 'time_received' => null]);
         }
 
         Misc::check_batch($batch->id);
@@ -557,6 +557,7 @@ class BatchController extends Controller
                             })->get();
             foreach ($batches as $batch) {
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->datereceived = date('Y-m-d');
                 $batch->pre_update();
                 if(!empty($batch->samples)){
@@ -618,6 +619,7 @@ class BatchController extends Controller
         }
         else{
             $batch->received_by = auth()->user()->id;
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->save();
             session(['toast_message' => "All the samples in the batch have been received."]);
             Refresh::refresh_cache();
@@ -679,6 +681,7 @@ class BatchController extends Controller
         // $batch->received_by = auth()->user()->id;
         if ($batch->received_by == NULL) {
             $batch->received_by = $request->input('received_by');
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->datereceived = $request->input('datereceived');
         }
         $batch->save();
