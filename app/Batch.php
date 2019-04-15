@@ -247,7 +247,7 @@ class Batch extends BaseModel
     }
 
     public function hasAttribute($attr) {
-            return array_key_exists($attr, $this->attributes);
+        return array_key_exists($attr, $this->attributes);
     }
     
 }
