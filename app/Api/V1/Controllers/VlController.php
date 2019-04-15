@@ -139,9 +139,9 @@ class VlController extends BaseController
             return $this->response->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
-        if($lab == 7 && strtotime($datetested) < strtotime("2019-02-01") ){
-            return $this->response->errorBadRequest("This sample is unacceptable.");            
-        } 
+        // if($lab == 7 && strtotime($datetested) < strtotime("2019-02-01") ){
+        //     return $this->response->errorBadRequest("This sample is unacceptable.");            
+        // } 
 
         if(!$editted){
             $batch = Viralbatch::existing($facility, $datereceived, $lab)->where(['synched' => 5])->withCount(['sample'])->first();
