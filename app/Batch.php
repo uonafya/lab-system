@@ -245,5 +245,9 @@ class Batch extends BaseModel
         // return redirect('batch/' . $new_id);
         return 'batch/' . $new_id;
     }
+
+    public function hasAttribute($attr) {
+            return array_key_exists($attr, $this->attributes);
+    }
     
 }
