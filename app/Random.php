@@ -1602,6 +1602,21 @@ class Random
         ");
 	}
 
+	public static function clean_batches()
+	{
+		$batches = DB::select("select b.id, b.created_at, count(s.id) as s_count from viralbatches b left join viralsamples s on b.id=s.batch_id where s.repeatt=1 and b.id IN (select b.id from viralbatches b left join viralsamples s on b.id=s.batch_id group by b.id having count(s.id)=1 ) and date(b.created_at) > '2019-04-01' group by b.id having s_count=1;");
+
+		foreach ($batches as $key => $batch) {
+			$b = \App\Viralbatch::find($batch->id);
+			$s = $b->sample->first();
+			$c = $s->child->first();
+			$c->batch_id = $b->id;
+			$c->save();
+
+			echo "Cleaned batch {$b->id} \n";
+		}
+	}
+
 
 	public static function facility_tables()
 	{
