@@ -48,10 +48,15 @@ class FunctionController extends Controller
         $dispatched = $request->input('dispatched');   
         $ids = $request->input('ids');   
 
+
+
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
-        else if($test == 3) $class = Cd4SampleView::class;
-        else if($test == 4) $class = CragSampleView::class;
+        else if($test == 3){
+            $class = Cd4SampleView::class;
+            if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not do CD4 tests.");
+        }
+        // else if($test == 4) $class = CragSampleView::class;
 
         if($patients){
             $patients = str_replace(' ', '', $patients);
