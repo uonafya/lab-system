@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\BlankRequest;
 use DB;
@@ -14,7 +14,7 @@ use App\ViralsampleView;
 use App\Cd4SampleView;
 use App\CragSampleView;
 
-class FunctionController extends Controller
+class FunctionController extends BaseController
 {
     /**
      * Create a new AuthController instance.
