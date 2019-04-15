@@ -33,7 +33,7 @@ class FunctionController extends BaseController
 
     }
 
-    public function api(BlankRequest $request)
+    public function data_functions(BlankRequest $request)
     {     
         $test = $request->input('test');
         $start_date = $request->input('start_date');

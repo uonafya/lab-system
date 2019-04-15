@@ -62,7 +62,7 @@ $api->version('v1', function (Router $api) {
             $api->post('crag', 'CragController@partial');
             // $api->post('crag_complete', 'CragController@complete_result');
 
-            $api->post('function', 'FunctionController@api');
+            $api->post('function', 'FunctionController@data_functions');
 
         // });
     });
