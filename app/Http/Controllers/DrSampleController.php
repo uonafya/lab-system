@@ -253,6 +253,10 @@ class DrSampleController extends Controller
         $other_medications = $request->input('other_medications');
         $others = explode(',', $others);
         $drSample->other_medications = array_merge($other_medications, $others);
+        if(is_array($others) && is_array($other_medications)) $drSample->other_medications = array_merge($other_medications, $others);
+        else{
+            $drSample->other_medications = $others;
+        }
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
