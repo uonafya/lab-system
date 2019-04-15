@@ -1157,7 +1157,7 @@ class ViralsampleController extends Controller
     {
         $val = $request->input($attribute);
 
-        return function($query) use($val){
+        return function($query) use($attribute, $val){
             return $query->where($attribute, $val);
         };
     }
