@@ -786,7 +786,7 @@ class SampleController extends Controller
         $sample->repeatt = 1;
         $sample->save();
         
-        Misc::save_repeat($sample->id);
+        $rerun = Misc::save_repeat($sample->id);
 
         $batch = $sample->batch;
 
@@ -795,9 +795,9 @@ class SampleController extends Controller
             return back();
         }
         else{
-            $batch->transfer_samples([$sample->id], 'new_facility');
-            $sample->refresh();
-            $batch = $sample->batch;
+            $batch->transfer_samples([$rerun->id], 'new_facility');
+            $rerun->refresh();
+            $batch = $rerun->batch;
             $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
             $batch->save();
             return redirect('batch/' . $batch->id);
