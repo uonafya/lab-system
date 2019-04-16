@@ -184,7 +184,8 @@ class ReportController extends Controller
                     $datedispatched = date('Y-m-d');
                     if (null !== $batch->datereceived && $batch->datereceived < $datedispatched)
                         $datedispatched = $batch->created_at;
-                    $batch->datedispatchedfromfacility = $datedispatched;
+                    if ($batch->hasAttribute('datedispatchedfromfacility'))
+                        $batch->datedispatchedfromfacility = $datedispatched;
                     $batch->pre_update();
                 }
                 $this->generate_samples_manifest($request, $data, $dateString);

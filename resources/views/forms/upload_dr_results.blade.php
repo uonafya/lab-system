@@ -30,6 +30,7 @@
 
         {{ Form::open(['url'=>'/dr_worksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
 
+        <input type="hidden" value="{{ auth()->user()->id }}" name="runby">
         <input type="hidden" value="{{ auth()->user()->id }}" name="uploadedby">
         <input type="hidden" value="{{ date('Y-m-d') }}" name="dateuploaded">
         <input type="hidden" value="2" name="status_id">
