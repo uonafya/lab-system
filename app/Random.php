@@ -1801,7 +1801,7 @@ class Random
 						// ['patient' => '15833/2018/0027', 'batch_id' => 32673],
 						// ['patient' => '15823-2019-0013', 'batch_id' => 33933],
 						// ['patient' => '15795/2018/0057', 'batch_id' => 33054],
-						['patient' => '14512-2019-0003', 'batch_id' => 30774]
+						['patient' => '14512-2019-0003', 'batch_id' => 30774] //Belongs to AMPATH
 						// ['patient' => '1793120180031', 'batch_id' => 33064],
 						// ['patient' => '1585020180006', 'batch_id' => 33961],
 						// ['patient' => '1582620180006', 'batch_id' => 32064],
