@@ -38,11 +38,11 @@ class CreateDrWorksheetsTable extends Migration
             $table->date('datereviewed2')->nullable();
 
             $table->integer('createdby')->unsigned()->nullable();
+            $table->integer('runby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();
             $table->integer('cancelledby')->unsigned()->nullable();
             $table->integer('reviewedby')->unsigned()->nullable();
             $table->integer('reviewedby2')->unsigned()->nullable();
-
 
             $table->dateTime('time_sent_to_sanger')->nullable();
 
