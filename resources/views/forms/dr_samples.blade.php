@@ -148,6 +148,15 @@
 
                         <div class="hr-line-dashed"></div>
 
+                        <!-- Clinician -->                        
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Clinician Name</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" name="clinician_name" type="text" value="{{ $sample->clinician_name ?? '' }}" id="clinician_name">
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Reason for DR test
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -248,6 +257,27 @@
                                         @endif
 
                                         > {{ $sample_type->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Specimen Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control requirable" required name="sampletype" id="sampletype">
+                                    <option value=""> Select One </option>
+                                    @foreach ($sampletypes as $sampletype)
+                                        <option value="{{ $sample_type->id }}"
+
+                                        @if (isset($sample) && $sample->sampletype == $sampletype->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $sampletype->name }}
                                         </option>
                                     @endforeach
                                 </select>
