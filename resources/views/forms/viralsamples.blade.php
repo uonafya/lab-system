@@ -126,24 +126,26 @@
                             </div>
                         @endif
 
-                      <div class="form-group ampath-div">
-                          <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
-                          <div class="col-sm-8"><select class="form-control ampath-only" name="amrs_location">
+                        <div class="form-group ampath-div">
+                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
+                            <div class="col-sm-8">
+                                <select class="form-control ampath-only" name="amrs_location">
 
-                              <option></option>
-                              @foreach ($amrs_locations as $amrs_location)
-                                  <option value="{{ $amrs_location->id }}"
+                                    <option></option>
+                                    @foreach ($amrs_locations as $amrs_location)
+                                        <option value="{{ $amrs_location->id }}"
 
-                                  @if (isset($viralsample) && $viralsample->amrs_location == $amrs_location->id)
-                                      selected
-                                  @endif
+                                        @if (isset($viralsample) && $viralsample->amrs_location == $amrs_location->id)
+                                          selected
+                                        @endif
 
-                                  > {{ $amrs_location->name }}
-                                  </option>
-                              @endforeach
+                                        > {{ $amrs_location->name }}
+                                        </option>
+                                    @endforeach
 
-                          </select></div>
-                      </div>
+                              </select>
+                            </div>
+                        </div>
 
                       @if(env('APP_LAB') == 8)
 
@@ -214,7 +216,7 @@
                             </div>
                         </div>
 
-                        @if(!isset($viralsample))
+                        @if(!isset($viralsample) && auth()->user()->user_type_id != 5)
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
