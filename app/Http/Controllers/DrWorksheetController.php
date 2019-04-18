@@ -79,6 +79,12 @@ class DrWorksheetController extends Controller
         $dr_worksheet->save();
 
         $data = MiscDr::get_worksheet_samples($dr_worksheet->extraction_worksheet_id);
+
+        if(!$data['create']){
+            session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
+            return back();
+        }
+
         $samples = $data['samples'];
 
         foreach ($samples as $s) {
