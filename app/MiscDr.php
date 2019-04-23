@@ -101,7 +101,7 @@ class MiscDr extends Common
 		{
 			$body = json_decode($response->getBody());
 
-			dd($body);
+			// dd($body);
 
 			$key = $body->data->attributes->api_key ?? null;
 
