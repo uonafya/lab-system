@@ -20,7 +20,10 @@ class DrExtractionWorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        $worksheets = DrExtractionWorksheet::with(['creator'])->withCount(['sample'])
+        $worksheets = DrExtractionWorksheet::selectRaw("dr_extraction_worksheets.*, COUNT(dr_samples.id) AS my_sample_count ")
+            ->with(['creator'])->withCount(['sample'])
+            ->leftJoin('dr_samples', 'dr_samples.extraction_worksheet_id', '=', 'dr_extraction_worksheets.id')
+            ->where(['passed_gel_documentation' => true])
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
