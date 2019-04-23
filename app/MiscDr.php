@@ -164,7 +164,7 @@ class MiscDr extends Common
 		if($response->getStatusCode() < 400)
 		{
 			$worksheet->plate_id = $body->data->id;
-			$worksheet->time_sent_to_sanger = date('Y-m-d H:i:s');
+			$worksheet->time_sent_to_exatype = date('Y-m-d H:i:s');
 			$worksheet->status_id = 5;
 			$worksheet->save();
 
@@ -673,14 +673,14 @@ class MiscDr extends Common
 	public static function fetch_results()
 	{
 		$max_time = date('Y-m-d H:i:s', strtotime('-10 minutes'));
-		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			echo "Getting results for {$worksheet->id} \n";
 			self::get_plate_result($worksheet);
 		}
 
 		$max_time = date('Y-m-d H:i:s', strtotime('-1 hour'));
-		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			self::get_plate_result($worksheet);
 		}

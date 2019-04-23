@@ -44,7 +44,7 @@ class CreateDrWorksheetsTable extends Migration
             $table->integer('reviewedby')->unsigned()->nullable();
             $table->integer('reviewedby2')->unsigned()->nullable();
 
-            $table->dateTime('time_sent_to_sanger')->nullable();
+            $table->dateTime('time_sent_to_exatype')->nullable();
 
             $table->boolean('qc_run')->default(0);
             $table->boolean('qc_pass')->default(0);
