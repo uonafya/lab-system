@@ -672,7 +672,7 @@ class MiscDr extends Common
 
 	public static function fetch_results()
 	{
-		$max_time = date('Y-m-d H:i:s', strtotime('-15 minutes'));
+		$max_time = date('Y-m-d H:i:s', strtotime('-10 minutes'));
 		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			echo "Getting results for {$worksheet->id} \n";
