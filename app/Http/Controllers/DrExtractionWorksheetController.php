@@ -69,6 +69,11 @@ class DrExtractionWorksheetController extends Controller
         $negative_control = DrSample::create(['extraction_worksheet_id' => $worksheet->id, 'patient_id' => 0, 'control' => 1]);
 
         $data = MiscDr::get_extraction_worksheet_samples($request->input('limit'));
+
+        if(!$data['create']){
+            session(['toast_error' => 1, 'toast_message' => 'The extraction woksheet could not be created.']);
+            return back();
+        }
         $samples = $data['samples'];
 
         foreach ($samples as $s) {

@@ -560,7 +560,7 @@ class MiscDr extends Common
 		->limit($limit)
 		->get();
 
-		if($samples->count() == $limit){
+		if($samples->count() == $limit || in_array(env('APP_LAB'), [7]) ){
 			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 		}
 		return ['samples' => $samples, 'create' => false];
