@@ -304,6 +304,8 @@ class DrWorksheetController extends Controller
             $sample->create_rerun($data);
         }
 
+        session(['toast_message' => 'The worksheet has been approved.']);
+
         $total = DrSample::where(['worksheet_id' => $worksheet_id, 'parentid' => 0])->count();
         $dispatched = DrSample::whereNotNull('datedispatched')->where(['worksheet_id' => $worksheet_id])->count();
         $reruns = DrSample::where(['worksheet_id' => $worksheet_id, 'repeatt' => 1])->count();
@@ -312,7 +314,15 @@ class DrWorksheetController extends Controller
             $worksheet->fill($w_data);
             $worksheet->status_id = 3;
             $worksheet->save();
+
+            $w = $worksheet->extraction_worksheet;
+            if(!$w->sequencing && !$w->pending_worksheet){
+                $w->status_id = 3;
+                $w->save();
+            }
+            session(['toast_message' => 'The worksheet has been approved fully.']);
         }
+        return redirect('dr_worksheet');
     }
 
     public function create_plate(DrWorksheet $worksheet)

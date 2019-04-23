@@ -110,7 +110,7 @@
                                     <td> {{ $worksheet->my_date_format('date_gel_documentation') }} </td>
                                     <td> 
                                         @if($worksheet->date_gel_documentation)
-                                            @if($worksheet->my_sample_count > 0)
+                                            @if($worksheet->status_id != 3 && $worksheet->sequencing)
                                                 <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
                                                     Create Sequencing Worksheet
                                                 </a> | 

@@ -20,11 +20,7 @@ class DrExtractionWorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        $worksheets = DrExtractionWorksheet::selectRaw("dr_extraction_worksheets.*, COUNT(dr_samples.id) AS my_sample_count ")
-            ->with(['creator'])->withCount(['sample'])
-            ->leftJoin('dr_samples', 'dr_samples.extraction_worksheet_id', '=', 'dr_extraction_worksheets.id')
-            // ->where(['passed_gel_documentation' => true])
-            ->whereNull('worksheet_id')
+        $worksheets = DrExtractionWorksheet::with(['creator'])->withCount(['sample'])
             ->when($state, function ($query) use ($state){
                 return $query->where('status_id', $state);
             })
@@ -37,7 +33,6 @@ class DrExtractionWorksheetController extends Controller
                 return $query->whereDate('dr_extraction_worksheets.created_at', $date_start);
             })
             ->orderBy('dr_extraction_worksheets.created_at', 'desc')
-            ->groupBy('dr_extraction_worksheets.id')
             ->get();
 
         $data = Lookup::get_dr();
