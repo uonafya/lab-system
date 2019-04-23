@@ -110,9 +110,11 @@
                                     <td> {{ $worksheet->my_date_format('date_gel_documentation') }} </td>
                                     <td> 
                                         @if($worksheet->date_gel_documentation)
-                                            <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
-                                                Create Sequencing Worksheet
-                                            </a> | 
+                                            @if($worksheet->my_sample_count > 0)
+                                                <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
+                                                    Create Sequencing Worksheet
+                                                </a> | 
+                                            @endif
                                         @else
 
                                             <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet->id) }}" title="Click to Submit the Gel Documentation">
@@ -124,9 +126,6 @@
                                             </a>
                                         @endif
 
-                                        @if($worksheet->status_id == 1)
-
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
