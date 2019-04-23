@@ -322,15 +322,15 @@ class MiscDr extends Common
 		if($response->getStatusCode() == 200)
 		{
 			$w = $body->data->attributes;
-			$worksheet->sanger_status_id = self::get_worksheet_status($w->status);
+			$worksheet->exatype_status_id = self::get_worksheet_status($w->status);
 			$worksheet->plate_controls_pass = $w->plate_controls_pass;
 			$worksheet->qc_run = $w->plate_qc_run;
 			$worksheet->qc_pass = $w->plate_qc->pass ?? 0;
 			$worksheet->qc_distance_pass = $w->plate_qc->distance_pass ?? 0;
 
-			if($worksheet->sanger_status_id == 4) return null;
+			if($worksheet->exatype_status_id == 4) return null;
 
-			if($worksheet->sanger_status_id != 5){
+			if($worksheet->exatype_status_id != 5){
 
 				if($w->errors){
 					foreach ($w->errors as $error) {
