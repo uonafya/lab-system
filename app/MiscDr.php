@@ -26,7 +26,7 @@ class MiscDr extends Common
 	// public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
 	public static $hyrax_url = 'https://sanger.api.exatype.com'; 
-	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
+	public static $ui_url = 'https://sanger.exatype.com';
 
     public static $call_array = [
         'LC' => [
@@ -101,7 +101,7 @@ class MiscDr extends Common
 		{
 			$body = json_decode($response->getBody());
 
-			dd($body);
+			// dd($body);
 
 			$key = $body->data->attributes->api_key ?? null;
 
@@ -164,7 +164,7 @@ class MiscDr extends Common
 		if($response->getStatusCode() < 400)
 		{
 			$worksheet->plate_id = $body->data->id;
-			$worksheet->time_sent_to_sanger = date('Y-m-d H:i:s');
+			$worksheet->time_sent_to_exatype = date('Y-m-d H:i:s');
 			$worksheet->status_id = 5;
 			$worksheet->save();
 
@@ -322,15 +322,15 @@ class MiscDr extends Common
 		if($response->getStatusCode() == 200)
 		{
 			$w = $body->data->attributes;
-			$worksheet->sanger_status_id = self::get_worksheet_status($w->status);
+			$worksheet->exatype_status_id = self::get_worksheet_status($w->status);
 			$worksheet->plate_controls_pass = $w->plate_controls_pass;
 			$worksheet->qc_run = $w->plate_qc_run;
 			$worksheet->qc_pass = $w->plate_qc->pass ?? 0;
 			$worksheet->qc_distance_pass = $w->plate_qc->distance_pass ?? 0;
 
-			if($worksheet->sanger_status_id == 4) return null;
+			if($worksheet->exatype_status_id == 4) return null;
 
-			if($worksheet->sanger_status_id != 5){
+			if($worksheet->exatype_status_id != 5){
 
 				if($w->errors){
 					foreach ($w->errors as $error) {
@@ -672,14 +672,15 @@ class MiscDr extends Common
 
 	public static function fetch_results()
 	{
-		$max_time = date('Y-m-d H:i:s', strtotime('-30 minutes'));
-		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		$max_time = date('Y-m-d H:i:s', strtotime('-10 minutes'));
+		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
+			echo "Getting results for {$worksheet->id} \n";
 			self::get_plate_result($worksheet);
 		}
 
 		$max_time = date('Y-m-d H:i:s', strtotime('-1 hour'));
-		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_sanger', '<', $max_time)->get();
+		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			self::get_plate_result($worksheet);
 		}
