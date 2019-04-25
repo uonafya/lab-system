@@ -166,7 +166,12 @@ class HomeController extends Controller
         dd($samples);
     }
 
-    public function pending($type = 'samples', $sampletypes = null) {
+    public function pending($type = 'samples', $sampletypes = null) 
+    {
+        $paginate = 30;
+        if(env('APP_LAB') == 2) $paginate = 100;
+        $pageTitle = "Samples awaiting testing";
+
         if (session('testingSystem') == 'Viralload') {
             $samples = ViralsampleView::selectRaw('viralsamples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, viralsampletype.name as sampletype, datediff(curdate(), datereceived) as waitingtime')
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -193,7 +198,7 @@ class HomeController extends Controller
                     ->where('site_entry', '<>', 2)
                     ->where('viralsamples_view.flag', '1')
                     ->orderBy('parentid', 'desc')
-                    ->orderBy('waitingtime', 'desc')->paginate(30);
+                    ->orderBy('waitingtime', 'desc')->paginate($paginate);
         } else {
             $samples = SampleView::selectRaw('samples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
                     ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -208,13 +213,12 @@ class HomeController extends Controller
                     ->where('site_entry', '<>', 2)
                     ->where('flag', '1')
                     ->orderBy('parentid', 'desc')
-                    ->orderBy('waitingtime', 'desc')->paginate(30);
+                    ->orderBy('waitingtime', 'desc')->paginate($paginate);
         }
         // $noSamples = $samples->count();
         // $pageTitle = "Samples awaiting testing [$noSamples]";
 
         $samples->setPath(url()->current());
-        $pageTitle = "Samples awaiting testing";
         // dd($samples);
         return view('tables.pending', compact('samples'))->with('pageTitle', $pageTitle);
     }

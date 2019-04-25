@@ -28,6 +28,11 @@ class DrWorksheet extends BaseModel
     	return $this->belongsTo('App\User', 'createdby');
     }
 
+    public function runner()
+    {
+        return $this->belongsTo('App\User', 'runby');
+    }
+
     public function uploader()
     {
         return $this->belongsTo('App\User', 'uploadedby');
