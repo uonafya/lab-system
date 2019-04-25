@@ -30,7 +30,7 @@ class CreateDrWorksheetsTable extends Migration
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
 
             // Exatype status
-            $table->tinyInteger('sanger_status_id')->unsigned()->default(4)->index();
+            $table->tinyInteger('exatype_status_id')->unsigned()->default(4)->index();
 
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
@@ -38,13 +38,13 @@ class CreateDrWorksheetsTable extends Migration
             $table->date('datereviewed2')->nullable();
 
             $table->integer('createdby')->unsigned()->nullable();
+            $table->integer('runby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();
             $table->integer('cancelledby')->unsigned()->nullable();
             $table->integer('reviewedby')->unsigned()->nullable();
             $table->integer('reviewedby2')->unsigned()->nullable();
 
-
-            $table->dateTime('time_sent_to_sanger')->nullable();
+            $table->dateTime('time_sent_to_exatype')->nullable();
 
             $table->boolean('qc_run')->default(0);
             $table->boolean('qc_pass')->default(0);

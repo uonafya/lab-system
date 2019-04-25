@@ -89,7 +89,7 @@ class BatchController extends Controller
                 return $query->orderBy('batches.created_at', 'desc');
             })
             ->where('batches.lab_id', env('APP_LAB'))
-            ->paginate();
+            ->simplePaginate();
 
         $this->batches_transformer($batches);
 
