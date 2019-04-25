@@ -1572,8 +1572,11 @@ class Random
 
 	public static function time_received()
 	{
-		DB::statement("ALTER TABLE `batches` ADD `time_received` tinyint unsigned NULL AFTER `datedispatchedfromfacility`");
-		DB::statement("ALTER TABLE `viralbatches` ADD `time_received` tinyint unsigned NULL AFTER `datedispatchedfromfacility`");
+		\App\Batch::where('id', '>', 1000)->update(['time_received' => null]);
+		\App\Viralbatch::where('id', '>', 10000)->update(['time_received' => null]);
+
+		DB::statement("ALTER TABLE `batches` MODIFY COLUMN `time_received` datetime NULL");
+		DB::statement("ALTER TABLE `viralbatches` MODIFY COLUMN `time_received` datetime NULL");
 
         DB::statement("
         CREATE OR REPLACE VIEW samples_view AS
