@@ -148,6 +148,15 @@
 
                         <div class="hr-line-dashed"></div>
 
+                        <!-- Clinician -->                        
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Clinician Name</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" name="clinician_name" type="text" value="{{ $sample->clinician_name ?? '' }}" id="clinician_name">
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Reason for DR test
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -226,7 +235,7 @@
                             <div class="col-sm-9">
                                 <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="date_current_regimen" class="form-control" value="{{ $sample->date_current_regimen ?? '' }}" name="date_current_regimen">
+                                    <input type="text" id="date_current_regimen" class="form-control requirable" value="{{ $sample->date_current_regimen ?? '' }}" name="date_current_regimen">
                                 </div>
                             </div>                            
                         </div> 
@@ -255,6 +264,27 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-sm-3 control-label">Specimen Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control requirable" required name="sampletype" id="sampletype">
+                                    <option value=""> Select One </option>
+                                    @foreach ($sampletypes as $sampletype)
+                                        <option value="{{ $sample_type->id }}"
+
+                                        @if (isset($sample) && $sample->sampletype == $sampletype->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $sampletype->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-3 control-label">Clinical Indication
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -262,7 +292,7 @@
                                 @foreach ($clinical_indications as $clinical_indication)
                                     <div>
                                         <label> 
-                                            <input name="clinical_indications[]" type="checkbox" class="i-checks" required
+                                            <input name="clinical_indications[]" type="checkbox" class="i-checks requirable" required
                                                 value="{{ $clinical_indication->id }}" 
 
                                                 @if(isset($sample) && is_array($sample->clinical_indications_array) &&
@@ -287,8 +317,7 @@
                             <div class="col-sm-9">
                                 @component('shared/boolean_dropdown', ['obj' => $sample ?? null, 'field' => 'has_opportunistic_infections'])
 
-                                @endcomponent                             
-
+                                @endcomponent 
                             </div>
                         </div>
 
@@ -314,8 +343,7 @@
                             <div class="col-sm-9">
                                 @component('shared/boolean_dropdown', ['obj' => $sample ?? null, 'field' => 'has_tb'])
 
-                                @endcomponent                           
-
+                                @endcomponent
                             </div>
                         </div>
 
@@ -706,6 +734,8 @@
                     var facility = $("#facility_id").val();
                     check_new_patient(patient, facility);
                 });
+            @else
+                $('.requirable').removeAttr("required");
             @endif
 
             $("#facility_id").change(function(){
@@ -724,10 +754,14 @@
                 if(val == 2){
                     $("#rejection").show();
                     $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
                 }
                 else{
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
+                    @if(env('APP_LAB') != 7)
+                        $('.requirable').attr("required", "required");
+                    @endif
                 }
             });   
 

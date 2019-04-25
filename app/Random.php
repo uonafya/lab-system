@@ -1572,8 +1572,11 @@ class Random
 
 	public static function time_received()
 	{
-		DB::statement("ALTER TABLE `batches` ADD `time_received` tinyint unsigned NULL AFTER `datedispatchedfromfacility`");
-		DB::statement("ALTER TABLE `viralbatches` ADD `time_received` tinyint unsigned NULL AFTER `datedispatchedfromfacility`");
+		\App\Batch::where('id', '>', 1000)->update(['time_received' => null]);
+		\App\Viralbatch::where('id', '>', 10000)->update(['time_received' => null]);
+
+		DB::statement("ALTER TABLE `batches` MODIFY COLUMN `time_received` datetime NULL");
+		DB::statement("ALTER TABLE `viralbatches` MODIFY COLUMN `time_received` datetime NULL");
 
         DB::statement("
         CREATE OR REPLACE VIEW samples_view AS
@@ -1600,6 +1603,21 @@ class Random
             LEFT JOIN facilitys f ON f.id=b.facility_id
         );
         ");
+	}
+
+	public static function clean_batches()
+	{
+		$batches = DB::select("select b.id, b.created_at, count(s.id) as s_count from viralbatches b left join viralsamples s on b.id=s.batch_id where s.repeatt=1 and b.id IN (select b.id from viralbatches b left join viralsamples s on b.id=s.batch_id group by b.id having count(s.id)=1 ) and date(b.created_at) > '2019-02-01' group by b.id having s_count=1;");
+
+		foreach ($batches as $key => $batch) {
+			$b = \App\Viralbatch::find($batch->id);
+			$s = $b->sample->first();
+			$c = $s->child->first();
+			$c->batch_id = $b->id;
+			$c->save();
+
+			echo "Cleaned batch {$b->id} \n";
+		}
 	}
 
 

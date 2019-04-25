@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\BlankRequest;
 use DB;
@@ -14,7 +14,7 @@ use App\ViralsampleView;
 use App\Cd4SampleView;
 use App\CragSampleView;
 
-class FunctionController extends Controller
+class FunctionController extends BaseController
 {
     /**
      * Create a new AuthController instance.
@@ -33,7 +33,7 @@ class FunctionController extends Controller
 
     }
 
-    public function api(BlankRequest $request)
+    public function data_functions(BlankRequest $request)
     {     
         $test = $request->input('test');
         $start_date = $request->input('start_date');
@@ -48,10 +48,15 @@ class FunctionController extends Controller
         $dispatched = $request->input('dispatched');   
         $ids = $request->input('ids');   
 
+
+
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
-        else if($test == 3) $class = Cd4SampleView::class;
-        else if($test == 4) $class = CragSampleView::class;
+        else if($test == 3){
+            $class = Cd4SampleView::class;
+            if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not do CD4 tests.");
+        }
+        // else if($test == 4) $class = CragSampleView::class;
 
         if($patients){
             $patients = str_replace(' ', '', $patients);
