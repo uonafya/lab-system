@@ -111,7 +111,7 @@
                                     <td> {{ $worksheet->reviewer->full_name ?? '' }} </td>
 
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
-                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->sanger_status_id)->first()->output ?? '' !!} </td>
+                                    <td> {!! $dr_plate_statuses->where('id', $worksheet->exatype_status_id)->first()->output ?? $worksheet->exatype_status_id !!} </td>
 
                                     <td> {{ $worksheet->sample_count }} </td>
 
