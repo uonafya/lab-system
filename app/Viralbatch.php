@@ -250,4 +250,19 @@ class Viralbatch extends BaseModel
         // return redirect('batch/' . $new_id);
         return 'batch/' . $new_id;
     }
+
+    public function return_for_testing()
+    {
+        $this->fill([
+            'tat5' => null,
+            'datedispatched' => null,
+            'dateindividualresultprinted' => null,
+            'datebatchprinted' => null,
+            'dateemailsent' => null,
+            'sent_email' => 0,
+            'batch_complete' => 0,
+            'synched' => 0,
+        ]);
+        $this->save();
+    }
 }
