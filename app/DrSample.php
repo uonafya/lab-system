@@ -171,7 +171,7 @@ class DrSample extends BaseModel
 
     public function setArvToxicitiesAttribute($value)
     {
-        if($value){
+        if($value && is_array($value)){
             $val = '[';
             foreach ($value as $v) {
                 $val .= "'" . $v . "',";
@@ -190,7 +190,7 @@ class DrSample extends BaseModel
 
     public function setClinicalIndicationsAttribute($value)
     {
-        if($value){
+        if($value && is_array($value)){
             $val = '[';
             foreach ($value as $v) {
                 $val .= "'" . $v . "',";
@@ -209,7 +209,7 @@ class DrSample extends BaseModel
 
     public function setOtherMedicationsAttribute($value)
     {
-        if($value){
+        if($value && is_array($value)){
             $val = '[';
             foreach ($value as $v) {
                 $val .= "'" . $v . "',";

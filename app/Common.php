@@ -196,7 +196,7 @@ class Common
 	{
         ini_set("memory_limit", "-1");
 		$samples = $view_model::where(['batch_complete' => 1])
-		->whereRaw("(synched = 0 or synched = 2)")
+		->whereRaw("(synched = 0 or synched = 2 or (synched=1 and tat4=0))")
 		->when($batch_id, function($query) use ($batch_id){
 			return $query->where(['batch_id' => $batch_id]);
 		})
