@@ -13,9 +13,9 @@ class AlterConsumptionsAddNationalId extends Migration
      */
     public function up()
     {
-        Schema::table('consumptions', function(Blueprint $table){
-            $table->bigInteger('national_id')->nullable()->after('id');
-        });
+        // Schema::table('consumptions', function(Blueprint $table){
+        //     $table->bigInteger('national_id')->nullable()->after('id');
+        // });
     }
 
     /**

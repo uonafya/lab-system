@@ -260,5 +260,9 @@ class Batch extends BaseModel
         ]);
         $this->save();
     }
+
+    public function hasAttribute($attr) {
+        return array_key_exists($attr, $this->attributes);
+    }
     
 }

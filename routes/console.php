@@ -368,6 +368,10 @@ Artisan::command('transfer:deliveries', function(){
 // })->describe('Checking for Chege');
 
 // Quick fixes
+Artisan::command('correct:repeats', function(){
+    $str = \App\Random::temp_correct_repeats();
+    $this->info($str);
+})->describe('Adjust repeats');
 // Quick fix for deliveries
 // Quick fix for deliveries
 Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', function($platform, $id, $quantity, $damaged){
