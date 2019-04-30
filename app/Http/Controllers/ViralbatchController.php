@@ -47,10 +47,9 @@ class ViralbatchController extends Controller
 
         $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
 
-        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
+        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->leftJoin('users u', 'u.id', '=', 'viralbatches.user_id')
-            ->leftJoin('users r', 'r.id', '=', 'viralbatches.received_by')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
