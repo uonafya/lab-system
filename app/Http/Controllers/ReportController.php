@@ -53,7 +53,7 @@ class ReportController extends Controller
     public static function __getCD4Data($request, &$title){
         $tbl = "cd4_samples_view";
         $columns = "$tbl.serial_no, view_facilitys.name as facilty, amrslocations.name as amrs, view_facilitys.county, view_facilitys.subcounty, $tbl.medicalrecordno, $tbl.patient_name, $tbl.provider_identifier, gender.gender_description, $tbl.dob, $tbl.datecollected, receivedstatus.name as receivedstatus, cd4rejectedreasons.name as rejectedreason, $tbl.datereceived, date($tbl.created_at) as datecreated, users.surname, $tbl.datetested, $tbl.dateresultprinted, $tbl.AVGCD3percentLymph, $tbl.AVGCD3AbsCnt, $tbl.AVGCD3CD4percentLymph, $tbl.AVGCD3CD4AbsCnt, $tbl.CD45AbsCnt";
-        $model = Cd4SampleView::selectRaw($columns)->where('repeatt', '=', 0)->where('parentid', '=', 0)
+        $model = Cd4SampleView::selectRaw($columns)->where('repeatt', '=', 0)
                     ->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$tbl.facility_id")
                     ->leftJoin('amrslocations', 'amrslocations.id', '=', "$tbl.amrs_location")
                     ->leftJoin('gender', 'gender.id', '=', "$tbl.sex")
@@ -218,7 +218,7 @@ class ReportController extends Controller
         } else if (session('testingSystem') == 'CD4') {
             return back();
         }
-        $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")->where('repeatt', '=', 0)->where('parentid', '=', 0)
+        $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")->where('repeatt', '=', 0)
                     ->where("$table.lab_id", '=', env('APP_LAB'))->whereNotNull('tat1')->whereNotNull('tat2')
                     ->whereNotNull('tat3')->whereNotNull('tat4')->orderBy('tat2', 'asc')
                     ->orderBy('tat1', 'asc')->orderBy('tat3', 'asc')->orderBy('tat4', 'asc');
@@ -268,7 +268,7 @@ class ReportController extends Controller
                     })->when(true, function($query) use ($request, $table){
                         if($request->input('types') == 'remoteentry')
                             return $query->where("$table.site_entry", "=", 1);
-                    })->where('repeatt', '=', 0)->where('parentid', '=', 0);
+                    })->where('repeatt', '=', 0);
         
         $model = self::__getBelongingTo($request, $model, $dateString);
         $model = self::__getDateRequested($request, $model, $table, $dateString);
