@@ -307,7 +307,7 @@
                                             @else
                                                 <td> {{ $batch->creator }} </td>
                                             @endif
-                                            <td> {{ $batch->receiver }} </td>
+                                            <td> {{ $batch->receptor }} </td>
                                             <td> {{ $batch->total }} </td>
                                             <td> {{ $batch->rejected }} </td>
                                             <td> {{ $batch->result }} </td>
