@@ -47,9 +47,10 @@ class ViralbatchController extends Controller
 
         $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
 
-        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
+        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+            ->leftJoin('users as u', 'u.id', '=', 'viralbatches.user_id')
+            ->leftJoin('users as r', 'r.id', '=', 'viralbatches.received_by')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
@@ -1112,6 +1113,7 @@ class ViralbatchController extends Controller
 
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->receiver = $batch->rsurname . ' ' . $batch->roname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->datedispatched = $batch->my_date_format('datedispatched');
