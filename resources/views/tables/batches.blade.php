@@ -238,6 +238,7 @@
                                         <th rowspan="2">Facility</th>
                                         <th colspan="2">Date</th>
                                         <th rowspan="2">Entered By</th>
+                                        <th rowspan="2">Received By</th>
                                         <th colspan="4"># of samples</th>
 
                                         @if(isset($batch_complete) && $batch_complete == 1)
@@ -306,6 +307,7 @@
                                             @else
                                                 <td> {{ $batch->creator }} </td>
                                             @endif
+                                            <td> {{ $batch->receiver }} </td>
                                             <td> {{ $batch->total }} </td>
                                             <td> {{ $batch->rejected }} </td>
                                             <td> {{ $batch->result }} </td>
