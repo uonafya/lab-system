@@ -122,6 +122,7 @@
                                     <th> Created By </th>
                                     <th> Type </th>
                                     <th> Status </th>
+                                    <th> Sample Type </th>
                                     <th> # Detected </th>
                                     <th> # Undetected </th>
                                     <th> # Failed </th>
@@ -145,9 +146,8 @@
                                     <td> {!! $statuses->where('status', $worksheet->status_id)->first()['string'] !!} </td>--}}
 
                                     <td> {!! $machines->where('id', $worksheet->machine_type)->first()->output !!} </td>
-
-
                                     <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
+                                    <td>{{ $worksheet->sample_type_name }} </td>
 
                                     <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
                                     <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
