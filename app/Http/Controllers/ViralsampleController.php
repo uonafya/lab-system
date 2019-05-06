@@ -65,7 +65,8 @@ class ViralsampleController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         
         $data = Lookup::get_viral_lookups();
-        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
+        $samples = ViralsampleView::whereRaw($string)->whereNotNull('time_result_sms_sent')->orderBy('datedispatched', 'desc')->paginate(50);
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
@@ -279,6 +280,7 @@ class ViralsampleController extends Controller
 
             if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->site_entry = 0;
             }
 
@@ -306,6 +308,7 @@ class ViralsampleController extends Controller
 
             if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->site_entry = 0;
             }
 
@@ -487,7 +490,10 @@ class ViralsampleController extends Controller
 
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()){
+            $batch->received_by = $user->id;
+            $batch->time_received = date('Y-m-d H:i:s');
+        }
         $batch->pre_update();
 
         $data = $request->only($viralsamples_arrays['patient']);
@@ -503,14 +509,14 @@ class ViralsampleController extends Controller
 
         $viralpatient = $viralsample->patient;
 
-        /*if($viralpatient->patient != $request->input('patient')){
+        if($viralpatient->patient != $request->input('patient')){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
 
             if(!$viralpatient){
                 $viralpatient = new Viralpatient;
                 $created_patient = true;
             }
-        }*/
+        }
         
 
         if(!$data['dob'] || $data['dob'] == '') $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
@@ -761,6 +767,34 @@ class ViralsampleController extends Controller
         return back();
     }
 
+    public function return_for_testing(Viralsample $sample)
+    {
+        if($sample->result != 'Collect New Sample' || $sample->repeatt == 1 || $sample->age_in_months > 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
+            return back();
+        }
+
+        $sample->repeatt = 1;
+        $sample->save();
+
+        $rerun = MiscViral::save_repeat($sample->id);
+
+        $batch = $sample->batch;
+
+        if($batch->batch_complete == 0){
+            session(['toast_message' => 'The sample has been returned for testing.']);
+            return back();
+        }
+        else{
+            $batch->transfer_samples([$rerun->id], 'new_facility');
+            $rerun->refresh();
+            $batch = $rerun->batch;
+            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->save();
+            return redirect('viralbatch/' . $batch->id);
+        }
+    }
+
     public function release_redraw(Viralsample $sample)
     {
         $batch = $sample->batch;
@@ -957,6 +991,7 @@ class ViralsampleController extends Controller
                     $batch->user_id = $facility->facility_user->id;
                     $batch->facility_id = $facility->id;
                     $batch->received_by = auth()->user()->id;
+                    $batch->time_received = date('Y-m-d H:i:s');
                     $batch->lab_id = auth()->user()->lab_id;
                     $batch->datereceived = $datereceived;
                     $batch->site_entry = $site_entry;
@@ -1122,7 +1157,7 @@ class ViralsampleController extends Controller
     {
         $val = $request->input($attribute);
 
-        return function($query) use($val){
+        return function($query) use($attribute, $val){
             return $query->where($attribute, $val);
         };
     }

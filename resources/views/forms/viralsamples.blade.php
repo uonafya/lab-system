@@ -112,7 +112,7 @@
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
                         
-                        @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                        @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4]))
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">High Priority</label>
                                 <div class="col-sm-8">
@@ -126,24 +126,26 @@
                             </div>
                         @endif
 
-                      <div class="form-group ampath-div">
-                          <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
-                          <div class="col-sm-8"><select class="form-control ampath-only" name="amrs_location">
+                        <div class="form-group ampath-div">
+                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
+                            <div class="col-sm-8">
+                                <select class="form-control ampath-only" name="amrs_location">
 
-                              <option></option>
-                              @foreach ($amrs_locations as $amrs_location)
-                                  <option value="{{ $amrs_location->id }}"
+                                    <option></option>
+                                    @foreach ($amrs_locations as $amrs_location)
+                                        <option value="{{ $amrs_location->id }}"
 
-                                  @if (isset($viralsample) && $viralsample->amrs_location == $amrs_location->id)
-                                      selected
-                                  @endif
+                                        @if (isset($viralsample) && $viralsample->amrs_location == $amrs_location->id)
+                                          selected
+                                        @endif
 
-                                  > {{ $amrs_location->name }}
-                                  </option>
-                              @endforeach
+                                        > {{ $amrs_location->name }}
+                                        </option>
+                                    @endforeach
 
-                          </select></div>
-                      </div>
+                              </select>
+                            </div>
+                        </div>
 
                       @if(env('APP_LAB') == 8)
 
@@ -214,7 +216,7 @@
                             </div>
                         </div>
 
-                        @if(!isset($viralsample))
+                        @if(!isset($viralsample) && auth()->user()->user_type_id != 5)
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
@@ -246,18 +248,23 @@
                             <div class="col-sm-8">
                                 <div class="input-group date date-dob">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" class="form-control lockable" value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                    <input type="text" id="dob" class="form-control lockable"
+                                    @if(auth()->user()->user_type_id == 5)
+                                        required
+                                    @endif
+                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
                                 </div>
                             </div>                            
                         </div>
 
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Age (In Years)</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                        @if(auth()->user()->user_type_id != 5)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Age (In Years)</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
 
 
@@ -592,7 +599,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
+                                    <input class="form-control requirable" required name="entered_by" id="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
                                 </div>
                             </div>
                         @endif
@@ -688,14 +695,18 @@
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
-                    lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @if(auth()->user()->user_type_id != 5)
+                        lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @endif
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
                 },
-                age: {
-                    required: '#dob:blank'
-                }
+                @if(auth()->user()->user_type_id != 5)
+                    age: {
+                        required: '#dob:blank'
+                    }
+                @endif
             }
         @endslot
 
@@ -755,7 +766,7 @@
         $(document).ready(function(){
 
 
-            @if(env('APP_LAB') == 3 && auth()->user()->is_lab_user() && !isset($viralsample))
+            @if(in_array(env('APP_LAB'), [3, 1]) && auth()->user()->is_lab_user() && !isset($viralsample))
                 $("#samples_form input,select").change(function(){
                     var frm = $('#samples_form');
                     var data = frm.serializeObject();

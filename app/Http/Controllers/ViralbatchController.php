@@ -47,9 +47,10 @@ class ViralbatchController extends Controller
 
         $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
 
-        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'users.surname', 'users.oname'])
+        $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
-            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+            ->leftJoin('users as u', 'u.id', '=', 'viralbatches.user_id')
+            ->leftJoin('users as r', 'r.id', '=', 'viralbatches.received_by')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
@@ -88,7 +89,7 @@ class ViralbatchController extends Controller
                 if(in_array($batch_complete, [1, 6])) return $query->orderBy('viralbatches.datedispatched', 'desc');
                 return $query->orderBy('viralbatches.created_at', 'desc');
             })
-            ->paginate();
+            ->simplePaginate();
 
         $this->batches_transformer($batches, $batch_complete);
 
@@ -361,7 +362,7 @@ class ViralbatchController extends Controller
         }
 
         if(!$has_received_status){
-            Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
+            Viralbatch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null, 'time_received' => null]);
         }
 
         MiscViral::check_batch($batch->id);
@@ -645,6 +646,7 @@ class ViralbatchController extends Controller
                             })->get();
             foreach ($batches as $batch) {
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->datereceived = date('Y-m-d');
                 $batch->pre_update();
                 if(!empty($batch->samples)){
@@ -710,6 +712,7 @@ class ViralbatchController extends Controller
         }
         else{
             $batch->received_by = auth()->user()->id;
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->save();
             Refresh::refresh_cache();
             session(['toast_message' => "All the samples in the batch have been received."]);
@@ -769,6 +772,7 @@ class ViralbatchController extends Controller
         // // $batch->received_by = auth()->user()->id;
         if ($batch->received_by == NULL) {
             $batch->received_by = auth()->user()->id ?? $request->input('received_by');
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->datereceived = $request->input('datereceived');
         }
         
@@ -1109,6 +1113,7 @@ class ViralbatchController extends Controller
 
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->receptor = $batch->rsurname . ' ' . $batch->roname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->datedispatched = $batch->my_date_format('datedispatched');

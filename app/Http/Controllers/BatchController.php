@@ -47,9 +47,10 @@ class BatchController extends Controller
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
 
-        $batches = Batch::select(['batches.*', 'facilitys.name', 'users.surname', 'users.oname'])
+        $batches = Batch::select(['batches.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->leftJoin('users as u', 'u.id', '=', 'batches.user_id')
+            ->leftJoin('users as r', 'r.id', '=', 'batches.received_by')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
@@ -89,7 +90,7 @@ class BatchController extends Controller
                 return $query->orderBy('batches.created_at', 'desc');
             })
             ->where('batches.lab_id', env('APP_LAB'))
-            ->paginate();
+            ->simplePaginate();
 
         $this->batches_transformer($batches);
 
@@ -356,7 +357,7 @@ class BatchController extends Controller
         // $s = $new_batch->sample->first();
 
         if(!$has_received_status){
-            Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
+            Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null, 'time_received' => null]);
         }
 
         Misc::check_batch($batch->id);
@@ -451,6 +452,8 @@ class BatchController extends Controller
 
     public function get_rows($batch_list=NULL)
     {
+        ini_set('memory_limit', '-1');
+        
         $batches = Batch::select('batches.*', 'facility_contacts.email', 'facilitys.name')
             ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
@@ -459,6 +462,9 @@ class BatchController extends Controller
             })
             ->where('batch_complete', 2)
             ->where('lab_id', env('APP_LAB'))
+            ->when((env('APP_LAB') == 9), function($query){
+                return $query->limit(10);
+            })            
             ->get();
 
         $batch_ids = $batches->pluck(['id'])->toArray();
@@ -492,6 +498,8 @@ class BatchController extends Controller
             $batch->date_tested = $dt;
             return $batch;
         });
+
+        // dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
@@ -550,6 +558,7 @@ class BatchController extends Controller
                             })->get();
             foreach ($batches as $batch) {
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->datereceived = date('Y-m-d');
                 $batch->pre_update();
                 if(!empty($batch->samples)){
@@ -611,6 +620,7 @@ class BatchController extends Controller
         }
         else{
             $batch->received_by = auth()->user()->id;
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->save();
             session(['toast_message' => "All the samples in the batch have been received."]);
             Refresh::refresh_cache();
@@ -672,6 +682,7 @@ class BatchController extends Controller
         // $batch->received_by = auth()->user()->id;
         if ($batch->received_by == NULL) {
             $batch->received_by = $request->input('received_by');
+            $batch->time_received = date('Y-m-d H:i:s');
             $batch->datereceived = $request->input('datereceived');
         }
         $batch->save();
@@ -995,6 +1006,7 @@ class BatchController extends Controller
             $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
+            $batch->receptor = $batch->rsurname . ' ' . $batch->roname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->datedispatched = $batch->my_date_format('datedispatched');

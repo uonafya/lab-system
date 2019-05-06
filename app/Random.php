@@ -1569,6 +1569,58 @@ class Random
         \App\Common::save_tat5('vl');
 	}
 
+
+	public static function time_received()
+	{
+		\App\Batch::where('id', '>', 1000)->update(['time_received' => null]);
+		\App\Viralbatch::where('id', '>', 10000)->update(['time_received' => null]);
+
+		DB::statement("ALTER TABLE `batches` MODIFY COLUMN `time_received` datetime NULL");
+		DB::statement("ALTER TABLE `viralbatches` MODIFY COLUMN `time_received` datetime NULL");
+
+        DB::statement("
+        CREATE OR REPLACE VIEW samples_view AS
+        (
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.time_received, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete,  p.national_patient_id, p.patient, p.sex, p.dob, p.mother_id, p.entry_point, p.patient_name, p.patient_phone_no, p.preferred_language, p.dateinitiatedontreatment,
+          p.hei_validation, p.enrollment_ccc_no, p.enrollment_status, p.referredfromsite, p.otherreason
+
+          FROM samples s
+            JOIN batches b ON b.id=s.batch_id
+            JOIN patients p ON p.id=s.patient_id
+            LEFT JOIN facilitys f ON f.id=b.facility_id
+        );
+        ");
+
+        DB::statement("
+        CREATE OR REPLACE VIEW viralsamples_view AS
+        (
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.time_received, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete,
+          p.national_patient_id, p.patient, p.initiation_date, p.sex, p.dob, p.patient_name, p.patient_phone_no, p.preferred_language
+
+          FROM viralsamples s
+            JOIN viralbatches b ON b.id=s.batch_id
+            JOIN viralpatients p ON p.id=s.patient_id
+            LEFT JOIN facilitys f ON f.id=b.facility_id
+        );
+        ");
+	}
+
+	public static function clean_batches()
+	{
+		$batches = DB::select("select b.id, b.created_at, count(s.id) as s_count from viralbatches b left join viralsamples s on b.id=s.batch_id where s.repeatt=1 and b.id IN (select b.id from viralbatches b left join viralsamples s on b.id=s.batch_id group by b.id having count(s.id)=1 ) and date(b.created_at) > '2019-02-01' group by b.id having s_count=1;");
+
+		foreach ($batches as $key => $batch) {
+			$b = \App\Viralbatch::find($batch->id);
+			$s = $b->sample->first();
+			$c = $s->child->first();
+			$c->batch_id = $b->id;
+			$c->save();
+
+			echo "Cleaned batch {$b->id} \n";
+		}
+	}
+
+
 	public static function facility_tables()
 	{
 		DB::statement("
@@ -1735,6 +1787,41 @@ class Random
 		  KEY `attachments_email_id_index` (`email_id`)
 		) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
+	}
+
+	public static function temp_correct_repeats() {
+		$new_array = [];
+		$samples_id = [
+						// ['patient' => '17190-2019-0001', 'batch_id' => 33516],
+						// ['patient' => '16152-2018-025', 'batch_id' => 33903],
+						// ['patient' => '16066/2019/0008', 'batch_id' => 33702],
+						// ['patient' => '16061-2019-0002', 'batch_id' => 33823],
+						// ['patient' => '16027-2019-0003', 'batch_id' => 32807],
+						// ['patient' => '15969-2019-0012', 'batch_id' => 33577],
+						// ['patient' => '15969-2019-0008', 'batch_id' => 33413],
+						// ['patient' => '15940-2019-0006', 'batch_id' => 33976],
+						// ['patient' => '15874/2019/007', 'batch_id' => 33804],
+						// ['patient' => '15833/2018/0027', 'batch_id' => 32673],
+						// ['patient' => '15823-2019-0013', 'batch_id' => 33933],
+						// ['patient' => '15795/2018/0057', 'batch_id' => 33054],
+						['patient' => '14512-2019-0003', 'batch_id' => 30774] //Belongs to AMPATH
+						// ['patient' => '1793120180031', 'batch_id' => 33064],
+						// ['patient' => '1585020180006', 'batch_id' => 33961],
+						// ['patient' => '1582620180006', 'batch_id' => 32064],
+						// ['patient' => '158712018015', 'batch_id' => 33411]
+					];
+
+		foreach ($samples_id as $key => $sample) {
+			$db_sample = SampleView::where($sample)->get();
+			if(!$db_sample->isEmpty()){
+				$update_sample = Sample::find($db_sample->first()->id);
+				$update_sample->pcrtype = 2;
+				$update_sample->pre_update();
+			} else {
+				$new_array[] = $sample;
+			}
+		}
+		echo "<pre>";print_r($new_array);
 	}
 
 }

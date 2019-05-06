@@ -619,8 +619,8 @@ class MiscViral extends Common
         $samples = ViralsampleView::whereNotNull('patient_phone_no')
                     ->where('patient_phone_no', '!=', '')
                     ->whereNull('time_result_sms_sent')
-                    ->where('batch_complete', 1)
-                    ->where('datereceived', '>', '2018-05-01')
+                    ->where(['batch_complete' => 1, 'repeatt' => 0])
+                    ->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
                     ->get();
 
         foreach ($samples as $key => $sample) {
@@ -784,11 +784,14 @@ class MiscViral extends Common
             ->orderBy('run', 'desc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
+            ->when((($test || $entered_by) && !in_array(env('APP_LAB'), [2, 8])), function($query){
+                return $query->orderBy('time_received', 'asc');
+            })
             ->orderBy('site_entry', 'asc')
-            ->orderBy('batch_id', 'asc')
             ->when((env('APP_LAB') == 2), function($query){
                 return $query->orderBy('facilitys.id', 'asc');
-            })            
+            })  
+            ->orderBy('batch_id', 'asc')          
             ->limit($limit)
             ->get();
 
@@ -798,7 +801,7 @@ class MiscViral extends Common
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
-        if(in_array(env('APP_LAB'), [8])) $create = true;
+        if(in_array(env('APP_LAB'), [5, 8])) $create = true;
 
         return [
             'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,
