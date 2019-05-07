@@ -1824,4 +1824,133 @@ class Random
 		echo "<pre>";print_r($new_array);
 	}
 
+	public static function import_edarp_samples_excel($received_by) {
+        echo "==>Upload Begin\n";
+		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
+        $batch = null;
+        $lookups = Lookup::get_viral_lookups();
+        // dd($lookups);
+        $excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+        $excelsheetvalue = collect($excelData->values()->all());
+        $dataArray = [];
+        $dataArray = ['Viral Batches'];
+        $countItem = $excelsheetvalue->count();
+        $counter = 0;
+        if (!$excelsheetvalue->isEmpty()){
+            foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+            	$counter++;
+                $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
+                if (!isset($facility)){
+                    $nofacility[] = $samplevalue;
+                    continue;
+                }
+                $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
+                
+                if ($existing)
+                    $patient = $existing;
+                else {
+                    $patient = new Viralpatient();
+                    $patient->patient = $samplevalue[3];
+                    $patient->facility_id = $facility->id;
+                    $patient->sex = $lookups['genders']->where('gender', $samplevalue[6])->first()->id;
+                    $patient->dob = $samplevalue[9];
+                    // $patient->initiation_date = $samplevalue[14];
+                    $patient->save();
+                }
+                
+                if ($counter == 1) {
+                    $batch = new Viralbatch();
+                    $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+                    
+                    if ($existingSample)
+                        continue;
+                    $batch->user_id = $received_by;
+                    $batch->lab_id = env('APP_LAB');
+                    $batch->received_by = $received_by;
+                    $batch->site_entry = 0;
+                    $batch->entered_by = $received_by;
+                    $batch->datereceived = $samplevalue[16];
+                    $batch->facility_id = $facility->id;
+                    $batch->save();
+                }
+
+                $sample = new Viralsample();
+                $sample->batch_id = $batch->id;
+                $sample->receivedstatus = $samplevalue[18];
+                $sample->age = $samplevalue[8];
+                $sample->patient_id = $patient->id;
+                $sample->pmtct = $samplevalue[7];
+                $sample->dateinitiatedonregimen = $samplevalue[14];
+                $sample->datecollected = $samplevalue[11];
+                $sample->regimenline = $samplevalue[13];
+                $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
+                $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
+                $sample->sampletype = $samplevalue[10];
+                $sample->save();
+
+                $sample_count = $batch->sample->count();
+
+                $countItem -= 1;
+                if($counter == 10) {
+                    $dataArray[] = $batch->id;
+                    $batch->full_batch();
+                    $batch = null;
+                    $counter = 0;
+                } 
+
+                if ($countItem == 1) {
+                    $sample_count = $batch->sample->count();
+                    if ($sample_count != 10) {
+                        $batch->premature();
+                        $dataArray[] = $batch->id;
+                    }
+                }
+                // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
+            }
+
+            $file = 'EDARP Samples uploaded to KEMRI'.date('Y_m_d H_i_s');
+
+            Excel::create($file, function($excel) use($dataArray, $file){
+                $excel->setTitle($file);
+                $excel->setCreator('Joshua Bakasa')->setCompany($file);
+                $excel->setDescription($file);
+
+                $excel->sheet('Sheetname', function($sheet) use($dataArray) {
+                    $sheet->fromArray($dataArray);
+                });
+            })->store('csv');
+
+            $file2 = 'EDARP Samples uploaded to KEMRI without facilitycode'.date('Y_m_d H_i_s');
+
+            Excel::create($file2, function($excel) use($nofacility, $file2){
+                $excel->setTitle($file2);
+                $excel->setCreator('Joshua Bakasa')->setCompany($file2);
+                $excel->setDescription($file2);
+
+                $excel->sheet('Sheetname', function($sheet) use($nofacility) {
+                    $sheet->fromArray($nofacility);
+                });
+            })->store('csv');
+
+            $data = [storage_path("exports/" . $file . ".csv"), storage_path("exports/" . $file2 . ".csv")];
+
+            // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+
+            // $title = "EDARP Samples uploaded to KEMRI";
+            // Excel::create($title, function($excel) use ($dataArray, $title) {
+            //     $excel->setTitle($title);
+            //     $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+            //     $excel->setDescription($title);
+
+            //     $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+            //         $sheet->fromArray($dataArray, null, 'A1', false, false);
+            //     });
+
+            // })->download('csv');
+            echo "==>Upload Complete";
+        }
+	}
+
 }
