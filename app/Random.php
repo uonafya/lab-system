@@ -1936,7 +1936,7 @@ class Random
 
             $data = [storage_path("exports/" . $file . ".csv"), storage_path("exports/" . $file2 . ".csv")];
 
-            // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+            Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
             // $title = "EDARP Samples uploaded to KEMRI";
             // Excel::create($title, function($excel) use ($dataArray, $title) {
