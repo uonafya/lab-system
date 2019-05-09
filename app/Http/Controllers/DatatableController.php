@@ -52,6 +52,13 @@ class DatatableController extends Controller
         	'vl' => 'viralsample',
         ];
 
+        $results = [
+        	'1' => 'Negative',
+        	'2' => 'Positive',
+        	'3' => 'Failed',
+        	'5' => 'Collect New Sample',
+        ];
+
         foreach ($rows as $row) {
         	$d = [];
         	foreach ($row->toArray() as $key => $value) {
@@ -63,8 +70,11 @@ class DatatableController extends Controller
         		}
         	}
         	$d['action'] = "<a href='" . url($links[$param] . "/sms/{$row->id}") . "'> Resend SMS </a> ";
+        	if($param == 'eid') $d['result'] = $result[$row->result];
         	$data[] = $d;
         }
+
+        return $request->all();
 
     	/*$data->transform(function ($sample, $key) use ($param, $links){
     		if($param == 'eid') $sample->result = $sample->result_name;
