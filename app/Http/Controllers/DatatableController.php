@@ -62,7 +62,7 @@ class DatatableController extends Controller
         			$d[$key] = $value;
         		}
         	}
-        	$d['action'] = "<a href='" . url($links[$param] . "/sms/{$row->id}") . "'>  </a> ";
+        	$d['action'] = "<a href='" . url($links[$param] . "/sms/{$row->id}") . "'> Resend SMS </a> ";
         	$data[] = $d;
         }
 
