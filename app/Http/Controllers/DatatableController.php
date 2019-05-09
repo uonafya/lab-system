@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use DB;
 
 use App\Datatable;
 
@@ -44,8 +45,11 @@ class DatatableController extends Controller
         Datatable::order($request, $query, $this->patient_sms_columns);
         Datatable::filter($request, $query, $this->patient_sms_columns);
 
+        DB::enableQueryLog();
         $rows = $query->get();
         $data = [];
+
+        return DB::getQueryLog();
 
         $links = [
         	'eid' => 'sample',
