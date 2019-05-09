@@ -45,11 +45,11 @@ class DatatableController extends Controller
         Datatable::order($request, $query, $this->patient_sms_columns);
         Datatable::filter($request, $query, $this->patient_sms_columns);
 
-        DB::enableQueryLog();
+        // DB::enableQueryLog();
         $rows = $query->get();
         $data = [];
 
-        return DB::getQueryLog();
+        // return DB::getQueryLog();
 
         $links = [
         	'eid' => 'sample',
