@@ -48,9 +48,15 @@ class Datatable
 		$dtColumns = array_column( $db_columns, 'db' );
 
 		$str = '';
+		$date = false;
 		$or_query = [];
 
-		if($search && $search['value'] != '') $str = "'%" . $search['value'] . "%'";
+		if($search && $search['value'] != ''){ 
+			$str = $search['value'];
+			if(preg_match("/[0-9]{4}[-][0-9]{2}[-][0-9]{2}/", $str)){
+				$date = true;
+			}
+		}
 
 		foreach ($columns as $key => $requestColumn) {
 			$columnIdx = array_search( $requestColumn['data'], $dtColumns );
@@ -61,7 +67,12 @@ class Datatable
 			$column_name .= $column_array['db'];
 
 			if ( $search && $search['value'] != '' && $requestColumn['searchable'] && $requestColumn['searchable'] == 'true' ){
-				$or_query[] = $column_name . " LIKE {$str}";
+				if(!$date) $or_query[] = $column_name . " LIKE '%{$str}%' ";
+				else{
+					if(str_contains($column_name, ['date', 'time'])){
+						$or_query[] = $column_name . " = '{$str}' ";
+					}
+				}
 			}
 
 			// Individual column filtering
