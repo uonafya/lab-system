@@ -77,7 +77,7 @@ class DatatableController extends Controller
         		}
         	}
         	$d['action'] = "<a href='" . url($links[$param] . "/sms/{$row->id}") . "'> Resend SMS </a> ";
-        	if($param == 'eid') $d['result'] = $results[$row->result];
+        	if($param == 'eid') $d['result'] = $results[$row->result] ?? '';
         	$data[] = $d;
         }
 
