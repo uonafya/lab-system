@@ -54,9 +54,9 @@ class DatatableController extends Controller
 
         foreach ($rows as $row) {
         	$d = [];
-        	foreach ($row as $key => $value) {
+        	foreach ($row->toArray() as $key => $value) {
         		if($key == 'id'){
-        			$d['DT_RowId'] = 'row_' . $row->id; 
+        			$d['DT_RowId'] = 'row_' . $value; 
         		}
         		else{
         			$d[$key] = $value;
@@ -65,6 +65,7 @@ class DatatableController extends Controller
         	$d['action_link'] = "<a href='" . url($links[$param] . "/sms/{$row->id}") . "'>  </a> ";
         	$data[] = $d;
         }
+        dd($data);
 
     	/*$data->transform(function ($sample, $key) use ($param, $links){
     		if($param == 'eid') $sample->result = $sample->result_name;
