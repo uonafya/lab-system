@@ -38,8 +38,16 @@ class DatatableController extends Controller
 
     public function sms_log(Request $request, $param)
     {
+    	$draw = $request->input('draw');
     	$search = $request->input('search');
-    	if($search && $search['value'] != '' && strlen($search['value']) < 4) return [];
+    	if($search && $search['value'] != '' && strlen($search['value']) < 4){
+	        return [
+	        	'draw' => $draw ? intval($draw) : 0,
+	        	'recordsTotal' => $recordsTotal ?? 0,
+	        	'recordsFiltered' => $recordsFiltered ?? 0,
+	        	'data' => [],
+	        ];
+    	}
 
         $user = auth()->user();
         $string = "1";
@@ -93,7 +101,6 @@ class DatatableController extends Controller
     		return $sample;
 		});*/
 
-    	$draw = $request->input('draw');
 
         // Records total
         $recordsTotal = $class::selectRaw('COUNT(id) as my_count')->whereRaw($string)->whereNotNull('time_result_sms_sent')->first()->my_count;
