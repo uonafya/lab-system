@@ -61,7 +61,7 @@
                 { 'data' : 'time_result_sms_sent' },
                 { 'data' : 'action',  'orderable' : false, 'searchable' : false},
             ],
-            'order' : [['datedispatched', 'desc']]
+            'order' : [['8', 'desc']]
 
         } );
 
