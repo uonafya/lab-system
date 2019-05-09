@@ -22,8 +22,10 @@ class Datatable
 
 		if($order && count($order)){
 			foreach ($order as $key => $value) {
+				// Column from the request
 				$requestColumn = $columns[$value['column']];
 
+				// Column from the db_columns array
 				$columnIdx = array_search( $value['column'], $dtColumns );
 				$column_array = $db_columns[ $columnIdx ];
 
