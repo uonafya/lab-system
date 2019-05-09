@@ -39,7 +39,7 @@ class DatatableController extends Controller
     public function sms_log(Request $request, $param)
     {
     	$search = $request->input('search');
-    	if($search && $search['value'] != '' strlen($search['value']) < 4) return [];
+    	if($search && $search['value'] != '' && strlen($search['value']) < 4) return [];
 
         $user = auth()->user();
         $string = "1";
