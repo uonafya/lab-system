@@ -38,6 +38,9 @@ class DatatableController extends Controller
 
     public function sms_log(Request $request, $param)
     {
+    	$search = $request->input('search');
+    	if($search && $search['value'] != '' strlen($search['value']) < 4) return [];
+
         $user = auth()->user();
         $string = "1";
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
@@ -48,11 +51,11 @@ class DatatableController extends Controller
         Datatable::order($request, $query, $this->patient_sms_columns);
         Datatable::filter($request, $query, $this->patient_sms_columns);
 
-        DB::enableQueryLog();
+        // DB::enableQueryLog();
         $rows = $query->get();
         $data = [];
 
-        return DB::getQueryLog();
+        // return DB::getQueryLog();
 
         $links = [
         	'eid' => 'sample',
@@ -90,7 +93,6 @@ class DatatableController extends Controller
     		return $sample;
 		});*/
 
-        $draw = $request->input('draw');
 
         // Records total
         $recordsTotal = $class::selectRaw('COUNT(id) as my_count')->whereRaw($string)->whereNotNull('time_result_sms_sent')->first()->my_count;
