@@ -11,17 +11,20 @@ class DatatableController extends Controller
 {
 	public $patient_sms_columns = [
 		['db' => 'id', 'dt' => 'DT_RowId' ],
-		['db' => 'facilityname', 'dt' => 1 ],
-		['db' => 'patient', 'dt' => 2 ],
-		['db' => 'patient_name', 'dt' => 3 ],
-		['db' => 'age', 'dt' => 4 ],
-		['db' => 'patient_phone_no', 'dt' => 5 ],
-		['db' => 'datecollected', 'dt' => 6, ],
-		['db' => 'datetested', 'dt' => 7, ],
-		['db' => 'result', 'dt' => 8, ],
-		['db' => 'datedispatched', 'dt' => 9, ],
-		['db' => 'time_result_sms_sent', 'dt' => 10, ],
+		['db' => 'facilityname', 'dt' => 0 ],
+		['db' => 'patient', 'dt' => 1 ],
+		['db' => 'patient_name', 'dt' => 2 ],
+		['db' => 'age', 'dt' => 3 ],
+		['db' => 'patient_phone_no', 'dt' => 4 ],
+		['db' => 'datecollected', 'dt' => 5, ],
+		['db' => 'datetested', 'dt' => 6, ],
+		['db' => 'result', 'dt' => 7, ],
+		['db' => 'datedispatched', 'dt' => 8, ],
+		['db' => 'time_result_sms_sent', 'dt' => 9, ],
 	];
+
+	// $db_columns = [ ['db' => 'id', 'dt' => 'DT_RowId' ], ['db' => 'facilityname', 'dt' => 1 ], ['db' => 'patient', 'dt' => 2 ], ['db' => 'patient_name', 'dt' => 3 ], ['db' => 'age', 'dt' => 4 ], ['db' => 'patient_phone_no', 'dt' => 5 ], ['db' => 'datecollected', 'dt' => 6, ], ['db' => 'datetested', 'dt' => 7, ], ['db' => 'result', 'dt' => 8, ], ['db' => 'datedispatched', 'dt' => 9, ], ['db' => 'time_result_sms_sent', 'dt' => 10, ], ];
+
 
 	public function sms_view($param='eid')
 	{
