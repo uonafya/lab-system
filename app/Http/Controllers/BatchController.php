@@ -1006,7 +1006,7 @@ class BatchController extends Controller
             $batch->date_tested = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
 
             $batch->creator = $batch->surname . ' ' . $batch->oname;
-            $batch->receiver = $batch->rsurname . ' ' . $batch->roname;
+            $batch->receptor = $batch->rsurname . ' ' . $batch->roname;
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->datedispatched = $batch->my_date_format('datedispatched');
