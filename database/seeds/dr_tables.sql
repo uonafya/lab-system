@@ -276,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `dr_worksheets` (
   `datereviewed` date DEFAULT NULL,
   `datereviewed2` date DEFAULT NULL,
   `createdby` int(10) unsigned DEFAULT NULL,
+  `runby` int(10) unsigned DEFAULT NULL,
   `uploadedby` int(10) unsigned DEFAULT NULL,
   `cancelledby` int(10) unsigned DEFAULT NULL,
   `reviewedby` int(10) unsigned DEFAULT NULL,
