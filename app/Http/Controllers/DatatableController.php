@@ -81,7 +81,7 @@ class DatatableController extends Controller
         	$data[] = $d;
         }
 
-        return $request->all();
+        // return $request->all();
 
     	/*$data->transform(function ($sample, $key) use ($param, $links){
     		if($param == 'eid') $sample->result = $sample->result_name;
