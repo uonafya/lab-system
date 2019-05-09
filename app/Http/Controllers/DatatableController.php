@@ -93,6 +93,7 @@ class DatatableController extends Controller
     		return $sample;
 		});*/
 
+    	$draw = $request->input('draw');
 
         // Records total
         $recordsTotal = $class::selectRaw('COUNT(id) as my_count')->whereRaw($string)->whereNotNull('time_result_sms_sent')->first()->my_count;
