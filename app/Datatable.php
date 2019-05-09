@@ -18,7 +18,7 @@ class Datatable
 	{
 		$order = $request->input('order');
 		$columns = $request->input('columns');
-		$dtColumns = array_column( $db_columns, 'db' );
+		$dtColumns = array_column( $db_columns, 'dt' );
 
 		if($order && count($order)){
 			foreach ($order as $key => $value) {
