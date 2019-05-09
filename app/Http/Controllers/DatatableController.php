@@ -76,9 +76,10 @@ class DatatableController extends Controller
         $draw = $request->input('draw');
 
         // Records total
-        $recordsTotal = $class::select('COUNT(id) as my_count')->whereRaw($string)->whereNotNull('time_result_sms_sent')->first()->my_count;
+        $recordsTotal = $class::selectRaw('COUNT(id) as my_count')->whereRaw($string)->whereNotNull('time_result_sms_sent')->first()->my_count;
 
-        $query = $class::whereRaw($string)->whereNotNull('time_result_sms_sent');
+        // Records filtered
+        $query = $class::selectRaw('COUNT(id) as my_count')->whereRaw($string)->whereNotNull('time_result_sms_sent');
         Datatable::filter($request, $query, $this->patient_sms_columns);
         $recordsFiltered = $query->first()->my_count;
 
