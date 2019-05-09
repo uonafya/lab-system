@@ -65,8 +65,6 @@ class DatatableController extends Controller
         	$d['action_link'] = "<a href='" . url($links[$param] . "/sms/{$row->id}") . "'>  </a> ";
         	$data[] = $d;
         }
-        return $request->all();
-        return $data;
 
     	/*$data->transform(function ($sample, $key) use ($param, $links){
     		if($param == 'eid') $sample->result = $sample->result_name;

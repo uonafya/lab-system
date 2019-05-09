@@ -10,7 +10,8 @@ class Datatable
 	{
 		$start = $request->input('start');
 		$length = $request->input('length');
-		if($start && $length != -1) $model->limit($length)->offset($start);
+		if($length && $length != -1) $model->limit($length);
+		if($start) $model->offset($start);
 	}
 
 	public static function order($request, &$model, $db_columns, $table_name=null)
