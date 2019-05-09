@@ -13,7 +13,7 @@ class Datatable
 		if($start && $length != -1) $model->limit($length)->offset($start);
 	}
 
-	public static function order($request, &$model, $db_columns)
+	public static function order($request, &$model, $db_columns, $table_name=null)
 	{
 		$order = $request->input('order');
 		$columns = $request->input('columns');
@@ -26,6 +26,10 @@ class Datatable
 
 				$columnIdx = array_search( $requestColumn['data'], $dtColumns );
 				$column_array = $db_columns[ $columnIdx ];
+
+				$column_name = '';
+				if($table_name) $column_name = $table_name . '.';
+				$column_name .= $column_array['db'];
 
 				if ( $requestColumn['orderable'] && $requestColumn['orderable'] == 'true' ) {
 					$dir = $value['dir'] === 'asc' ? 'ASC' : 'DESC';
@@ -52,7 +56,7 @@ class Datatable
 
 			$column_name = '';
 			if($table_name) $column_name = $table_name . '.';
-			$column_name .= '.' . $column_array['db'];
+			$column_name .= $column_array['db'];
 
 			if ( $search && $search['value'] != '' && $requestColumn['searchable'] && $requestColumn['searchable'] == 'true' ){
 				$or_query[] = $column_name . " LIKE {$str}";

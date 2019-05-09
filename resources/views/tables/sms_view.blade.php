@@ -47,7 +47,21 @@
             'ajax' : {
                 'url' : "{{ url('datatable/sms_log/' . $type) }}",
                 'type' : 'POST'
-            }
+            },
+            'columns' : [
+                { 'data' : 'facilityname' },
+                { 'data' : 'patient' },
+                { 'data' : 'patient_name' },
+                { 'data' : 'age' },
+                { 'data' : 'patient_phone_no' },
+                { 'data' : 'datecollected' },
+                { 'data' : 'datetested' },
+                { 'data' : 'result' },
+                { 'data' : 'datedispatched' },
+                { 'data' : 'time_result_sms_sent' },
+                { 'data' : 'action',  'orderable' : false, 'searchable' : false},
+            ],
+            'order' : [[8, 'desc']]
 
         } );
 
