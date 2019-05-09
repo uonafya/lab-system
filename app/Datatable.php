@@ -10,7 +10,8 @@ class Datatable
 	{
 		$start = $request->input('start');
 		$length = $request->input('length');
-		if($start && $length != -1) $model->limit($length)->offset($start);
+		if($length && $length != -1) $model->limit($length);
+		if($start) $model->offset($start);
 	}
 
 	public static function order($request, &$model, $db_columns, $table_name=null)
@@ -21,10 +22,11 @@ class Datatable
 
 		if($order && count($order)){
 			foreach ($order as $key => $value) {
-				$columnIdx = intval($value['column']);
-				$requestColumn = $columns[$columnIdx];
+				// Column from the request
+				$requestColumn = $columns[$value['column']];
 
-				$columnIdx = array_search( $requestColumn['data'], $dtColumns );
+				// Column from the db_columns array
+				$columnIdx = array_search( $value['column'], $dtColumns );
 				$column_array = $db_columns[ $columnIdx ];
 
 				$column_name = '';
@@ -43,12 +45,18 @@ class Datatable
 	{
 		$search = $request->input('search');
 		$columns = $request->input('columns');
-		$dtColumns = array_column( $db_columns, 'dt' );
+		$dtColumns = array_column( $db_columns, 'db' );
 
 		$str = '';
+		$date = false;
 		$or_query = [];
 
-		if($search && $search['value'] != '') $str = "'%" . $search['value'] . "%'";
+		if($search && $search['value'] != ''){ 
+			$str = $search['value'];
+			if(preg_match("/[0-9]{4}[-][0-9]{2}[-][0-9]{2}/", $str)){
+				$date = true;
+			}
+		}
 
 		foreach ($columns as $key => $requestColumn) {
 			$columnIdx = array_search( $requestColumn['data'], $dtColumns );
@@ -59,7 +67,14 @@ class Datatable
 			$column_name .= $column_array['db'];
 
 			if ( $search && $search['value'] != '' && $requestColumn['searchable'] && $requestColumn['searchable'] == 'true' ){
-				$or_query[] = $column_name . " LIKE {$str}";
+				if(!$date) {
+					$or_query[] = $column_name . " LIKE '%{$str}%' ";
+				}
+				else{
+					if(str_contains($column_name, ['date', 'time'])){
+						$or_query[] = $column_name . " = '{$str}' ";
+					}
+				}
 			}
 
 			// Individual column filtering
