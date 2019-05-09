@@ -270,7 +270,7 @@ INSERT INTO `dr_rejected_reasons` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `tb_treatment_phases`;
 CREATE TABLE `tb_treatment_phases` (
-  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

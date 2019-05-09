@@ -315,6 +315,7 @@ class Lookup
         // $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
         $dob = Carbon::parse( $dob );
         $dc = Carbon::parse( $date_collected );
+        if($dob->greaterThan($dc)) return 0;
         $months = $dc->diffInMonths($dob);
         $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
         $total = $months + ($weeks / 4);

@@ -13,9 +13,9 @@ class NewLabEquipmentTrackers extends Migration
      */
     public function up()
     {
-        Schema::table('lab_equipment_trackers', function (Blueprint $table) {
-            $table->softDeletes()->after('datesynched');
-        });
+        // Schema::table('lab_equipment_trackers', function (Blueprint $table) {
+        //     $table->softDeletes()->after('datesynched');
+        // });
         // Schema::create('lab_equipment_trackers', function (Blueprint $table) {
         //     $table->increments('id');
         //     $table->tinyInteger('month')->unsigned();

@@ -22,11 +22,11 @@ use App\DrResidue;
 class MiscDr extends Common
 {
 
-	// public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
-	// public static $ui_url = 'http://sangelamerkel.exatype.co.za';
+	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
+	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
-	public static $hyrax_url = 'https://sanger.api.exatype.com'; 
-	public static $ui_url = 'https://sanger.exatype.com';
+	// public static $hyrax_url = 'https://sanger.api.exatype.com'; 
+	// public static $ui_url = 'https://sanger.exatype.com';
 
     public static $call_array = [
         'LC' => [

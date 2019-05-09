@@ -376,6 +376,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('upload', 'SampleController@site_sample_page');
 		Route::post('upload', 'SampleController@upload_site_samples');
 
+		Route::get('sms_view', 'DatatableController@sms_view');
 		Route::get('sms_log', 'SampleController@list_sms');
 		Route::get('sms/{sample}', 'SampleController@send_sms');
 
@@ -411,6 +412,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('upload', 'ViralsampleController@site_sample_page');
 		Route::post('upload', 'ViralsampleController@upload_site_samples');
 
+		Route::get('sms_view', 'DatatableController@sms_view');
 		Route::get('sms_log', 'ViralsampleController@list_sms');
 		Route::get('sms/{sample}', 'ViralsampleController@send_sms');
 
@@ -448,6 +450,10 @@ Route::middleware(['auth'])->group(function(){
 		});
 	});
 	Route::resource('viralsample', 'ViralsampleController');
+
+	Route::prefix('datatable')->name('datatable.')->group(function () {	
+		Route::post('sms_log/{param}', 'DatatableController@sms_log');
+	});
 
 
 	Route::group(['middleware' => ['utype:4']], function () {
