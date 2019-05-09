@@ -67,7 +67,9 @@ class Datatable
 			$column_name .= $column_array['db'];
 
 			if ( $search && $search['value'] != '' && $requestColumn['searchable'] && $requestColumn['searchable'] == 'true' ){
-				if(!$date) $or_query[] = $column_name . " LIKE '%{$str}%' ";
+				if(!$date) {
+					$or_query[] = $column_name . " LIKE '%{$str}%' ";
+				}
 				else{
 					if(str_contains($column_name, ['date', 'time'])){
 						$or_query[] = $column_name . " = '{$str}' ";
