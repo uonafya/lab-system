@@ -452,7 +452,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('viralsample', 'ViralsampleController');
 
 	Route::prefix('datatable')->name('datatable.')->group(function () {	
-		Route::post('sms_log', 'DatatableController@sms_log');
+		Route::post('sms_log/{param}', 'DatatableController@sms_log');
 	});
 
 
