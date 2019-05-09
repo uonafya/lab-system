@@ -186,8 +186,7 @@
                                         <th rowspan="1">TAT</th>
                                         <th rowspan="2">Email</th>
                                         <th rowspan="2">Individual Printed</th>
-                                        <th rowspan="2">Summary Printed</th>
-                                        <th rowspan="2">Email</th>                                        
+                                        <th rowspan="2">Summary Printed</th>                            
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
