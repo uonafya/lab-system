@@ -45,7 +45,7 @@
             'processing' : true,
             'serverSide' : true,
             'ajax' : {
-                'url' : "{{ url('datatable/sms_log') }}",
+                'url' : "{{ url('datatable/sms_log/' . $type) }}",
                 'type' : 'POST'
             }
 
