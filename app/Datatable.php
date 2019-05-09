@@ -18,11 +18,11 @@ class Datatable
 	{
 		$order = $request->input('order');
 		$columns = $request->input('columns');
-		$dtColumns = array_column( $db_columns, 'dt' );
+		$dtColumns = array_column( $db_columns, 'db' );
 
 		if($order && count($order)){
 			foreach ($order as $key => $value) {
-				$columnIdx = intval($value['column']);
+				$columnIdx = $value['column'];
 				$requestColumn = $columns[$columnIdx];
 
 				$columnIdx = array_search( $requestColumn['data'], $dtColumns );
@@ -44,7 +44,7 @@ class Datatable
 	{
 		$search = $request->input('search');
 		$columns = $request->input('columns');
-		$dtColumns = array_column( $db_columns, 'dt' );
+		$dtColumns = array_column( $db_columns, 'db' );
 
 		$str = '';
 		$or_query = [];
