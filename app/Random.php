@@ -1825,6 +1825,8 @@ class Random
 	}
 
 	public static function import_edarp_samples_excel($received_by) {
+		$nofacility = [];
+		$dataArray = [];
         echo "==>Upload Begin\n";
 		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
         $batch = null;
