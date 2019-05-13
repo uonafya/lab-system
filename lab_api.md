@@ -18,7 +18,7 @@ All links are **POST** requests. All post requests are validated using a header 
 > - location *AMRS location*
 > - dispatched *Boolean* When true, only samples that have been dispatched will be returned.
 
-> This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
+> This link is paginated i.e. only 50 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
 
 These are the fields that you should expect back:
 - **id** - This is the system id of the sample.
