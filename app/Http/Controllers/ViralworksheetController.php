@@ -81,7 +81,8 @@ class ViralworksheetController extends Controller
         $data['calibration'] = $calibration;
         $data['limit'] = $limit;
         $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
-            ->whereRaw(" (id IN 
+            ->whereRaw(" (
+                id IN 
                 (SELECT DISTINCT received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 ) 
                 OR id IN
                 (SELECT DISTINCT sample_received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 AND sample_received_by IS NOT NULL) 
