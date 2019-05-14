@@ -126,7 +126,7 @@ class Random
             $site_entry = Lookup::get_site_entry($row[14]);
 
             $batch = \App\Viralbatch::withCount(['sample'])
-                                    ->where('received_by', auth()->user()->id)
+                                    ->where('received_by', 7939)
                                     ->where('datereceived', $datereceived)
                                     ->where('input_complete', 0)
                                     ->where('site_entry', $site_entry)
@@ -147,7 +147,7 @@ class Random
                 $batch->facility_id = $facility->id;
                 $batch->received_by = 7939;
                 $batch->time_received = date('Y-m-d H:i:s');
-                $batch->lab_id = auth()->user()->lab_id;
+                $batch->lab_id = env('APP_LAB');
                 $batch->datereceived = $datereceived;
                 $batch->site_entry = $site_entry;
                 $batch->save();
