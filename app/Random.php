@@ -155,7 +155,7 @@ class Random
 
             $patient = \App\Viralpatient::existing($facility->id, $row[1])->get()->first();
             if(!$patient){
-                $patient = new Viralpatient;
+                $patient = new \App\Viralpatient;
             }
             $dob = Lookup::other_date($row[5]);
             if (!$dob) {
