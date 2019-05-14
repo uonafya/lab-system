@@ -965,7 +965,7 @@ class ViralsampleController extends Controller
 
                 if($existing){
                     $sampletype = (int) $row[7];
-                    if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2]){
+                    if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2])){
                         $s = Viralsample::find($existing->id);
                         $s->delete();
                     }
