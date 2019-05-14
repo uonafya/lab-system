@@ -94,6 +94,100 @@ class Random
         }
     }
 
+    public static function enter_samples()
+    {
+    	$file = public_path('machakos.csv');
+    	$handle = fopen($file, "r");
+    	while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+
+            $facility = Facility::locate($row[3])->get()->first();
+            if(!$facility) continue;
+            $datecollected = Lookup::other_date($row[8]);
+            $datereceived = Lookup::other_date($row[15]);
+            if(!$datereceived) $datereceived = date('Y-m-d');
+            $existing = \App\ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->first();
+
+            if($existing){
+                $sampletype = (int) $row[7];
+                if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2,5])){
+                    $s = \App\Viralsample::find($existing->id);
+                    $s->delete();
+                }
+                else{
+                	if($existing->received_by != 7939){
+	                    $b = \App\Viralbatch::find($existing->batch_id);
+	                    $b->received_by = 7939;
+	                    $b->save();
+                	}
+                    continue;                        
+                }
+            }
+
+            $site_entry = Lookup::get_site_entry($row[14]);
+
+            $batch = \App\Viralbatch::withCount(['sample'])
+                                    ->where('received_by', auth()->user()->id)
+                                    ->where('datereceived', $datereceived)
+                                    ->where('input_complete', 0)
+                                    ->where('site_entry', $site_entry)
+                                    ->where('facility_id', $facility->id)
+                                    ->get()->first();
+
+            if($batch){
+                if($batch->sample_count > 9){
+                    unset($batch->sample_count);
+                    $batch->full_batch();
+                    $batch = null;
+                }
+            }
+
+            if(!$batch){
+                $batch = new \App\Viralbatch;
+                $batch->user_id = $facility->facility_user->id;
+                $batch->facility_id = $facility->id;
+                $batch->received_by = 7939;
+                $batch->time_received = date('Y-m-d H:i:s');
+                $batch->lab_id = auth()->user()->lab_id;
+                $batch->datereceived = $datereceived;
+                $batch->site_entry = $site_entry;
+                $batch->save();
+            }
+
+            $patient = \App\Viralpatient::existing($facility->id, $row[1])->get()->first();
+            if(!$patient){
+                $patient = new Viralpatient;
+            }
+            $dob = Lookup::other_date($row[5]);
+            if (!$dob) {
+                if(strlen($row[5]) == 4) $dob = $row[5] . '-01-01';
+            }
+            if($dob) $patient->dob = $dob;            
+            $patient->facility_id = $facility->id;
+            $patient->patient = $row[1];
+            $patient->sex = Lookup::get_gender($row[4]);
+            $patient->initiation_date = Lookup::other_date($row[9]);
+            if(!$patient->dob && $row[6]) $patient->dob = Lookup::calculate_dob($datecollected, $row[6]); 
+            $patient->pre_update();
+
+            $sample = new \App\Viralsample;
+            $sample->batch_id = $batch->id;
+            $sample->patient_id = $patient->id;
+            $sample->datecollected = $datecollected;
+            $sample->age = $row[6];
+            if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
+            $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+            $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
+            $sample->justification = Lookup::justification($row[12]);
+            $sample->sampletype = (int) $row[7];
+            if($sample->sampletype == 5) $sample->sampletype = 1;
+            $sample->pmtct = $row[13];
+            $sample->receivedstatus = $row[16];
+            if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
+            $sample->save();
+
+    	}
+    }
+
     public static function create_facility_users()
     {
     	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users where user_type_id = 5)")->get();
