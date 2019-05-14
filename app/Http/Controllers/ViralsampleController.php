@@ -979,11 +979,18 @@ class ViralsampleController extends Controller
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
-                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->first();
 
                 if($existing){
-                    $existing_rows[] = $existing->toArray();
-                    continue;
+                    $sampletype = (int) $row[7];
+                    if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2]){
+                        $s = Viralsample::find($existing->id);
+                        $s->delete();
+                    }
+                    else{
+                        $existing_rows[] = $existing->toArray();
+                        continue;                        
+                    }
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);

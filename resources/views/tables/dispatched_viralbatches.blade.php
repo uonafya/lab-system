@@ -230,20 +230,20 @@
                                             <td> {{ $batch->tat() }} </td>
 
                                             @if($batch->sent_email)
-                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                                <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('dateemailsent') }}</strong> </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif  
 
                                             @if($batch->dateindividualresultprinted)
-                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> {{ $batch->my_date_format('dateindividualresultprinted') }} </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 
 
 
                                             @if($batch->datebatchprinted)
-                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                                <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('datebatchprinted') }}</strong> </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 
