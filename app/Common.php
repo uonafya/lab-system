@@ -516,6 +516,8 @@ class Common
             ->havingRaw("COUNT({$sample_table}.id) > 0")
             ->get();
 
+        return $batches;
+
     	foreach ($batches as $batch) {
     		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
     		if($samples->count() > 0){
