@@ -2050,16 +2050,16 @@ class Random
             	$count++;
             else 
             	$availablecount++;
-            $sample[19] = $dbsample->rejectedreason ?? null;
-            $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? null;
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : null;
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : null;
-            // $sample[22] = $dbsample->datetested;
-            // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? null;
+            // $sample[19] = $dbsample->rejectedreason ?? null;
+            // $sample[20] = $dbsample->reason_for_repeat ?? null;
+            // $sample[21] = $dbsample->labcomment ?? null;
+            // $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : null;
+            // $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : null;
+            // // $sample[22] = $dbsample->datetested;
+            // // $sample[23] = $dbsample->datedispatched;
+            // $sample[24] = $dbsample->result ?? null;
 
-            $newData[] = $sample->toArray();
+            // $newData[] = $sample->toArray();
         }
         dd('Available - ' . $availablecount . ' Unavailable - ' . $count);
         echo "==> Building excel results \n";
