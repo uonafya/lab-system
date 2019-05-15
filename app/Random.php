@@ -2045,7 +2045,7 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->whereNot('result', 'Failed')->get()->last();
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->where('result', '<>', 'Failed')->get()->last();
             if ($dbsample)
             	$availablecount++;
             else
