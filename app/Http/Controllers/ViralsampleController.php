@@ -577,6 +577,15 @@ class ViralsampleController extends Controller
             $viralsample->result = null;
             $viralsample->interpretation = null;
         }
+
+        if($viralsample->receivedstatus == 1 && $viralsample->getOriginal('receivedstatus') == 2){
+            if($batch->batch_complete == 1) $transfer = true;
+            else if($batch->batch_complete == 2){
+                $batch->batch_complete = 0;
+                $batch->pre_update();
+            }            
+        }
+
         if(env('APP_LAB') == 8){
             $viralsample->areaname = $request->input('areaname');
             $viralsample->label_id = $request->input('label_id');
@@ -585,6 +594,13 @@ class ViralsampleController extends Controller
         if($viralpatient->sex == 1) $viralsample->pmtct = 3;
 
         $viralsample->pre_update();
+
+        if(isset($transfer)){
+            $url = $batch->transfer_samples([$viralsample->id], 'new_facility', true);
+            $viralsample->refresh();
+            $batch = $viralsample->batch;
+            session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
+        }
 
         if(isset($created_patient)){
             if($viralsample->run == 1 && $viralsample->has_rerun){
@@ -979,11 +995,18 @@ class ViralsampleController extends Controller
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
-                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->first();
 
                 if($existing){
-                    $existing_rows[] = $existing->toArray();
-                    continue;
+                    $sampletype = (int) $row[7];
+                    if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2,5])){
+                        $s = Viralsample::find($existing->id);
+                        $s->delete();
+                    }
+                    else{
+                        $existing_rows[] = $existing->toArray();
+                        continue;                        
+                    }
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
@@ -1042,6 +1065,7 @@ class ViralsampleController extends Controller
                 $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->sampletype = (int) $row[7];
+                if($sample->sampletype == 5) $sample->sampletype = 1;
                 $sample->pmtct = $row[13];
                 $sample->receivedstatus = $row[16];
                 if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
@@ -1147,7 +1171,9 @@ class ViralsampleController extends Controller
         if(!$facility_id || !$patient) return '';
         $datecollected = $request->input('datecollected');
 
-        $samples = ViralsampleView::where('created_at', '>', date('Y-m-d', strtotime('-1months')))
+        $dt = date('Y-m-d', strtotime('-1months'));
+
+        $samples = ViralsampleView::where('created_at', '>', "{$dt}")
             ->where(['repeatt' => 0, 'site_entry' => 1, 'facility_id' => $facility_id, ])
             ->when($request->input('sex'), $this->query_callback($request, 'sex'))
             ->when($request->input('prophylaxis'), $this->query_callback($request, 'prophylaxis'))
