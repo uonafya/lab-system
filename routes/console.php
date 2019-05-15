@@ -391,5 +391,10 @@ Artisan::command('edarp:kemri {received_by}', function($received_by) {
     $str = \App\Random::import_edarp_samples_excel($received_by);
     $this->info($str);
 })->describe('Move EDARP samples to KEMRI');
+
+Artisan::command('edarp:kemri', function(){
+    $str = \App\Random::export_edarp_results();
+    $this->info($str);
+})->describe('Extract Moved samples');
 //Quick fix add EDARP samples to KEMRI
 //Quick fixes

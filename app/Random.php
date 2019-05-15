@@ -1955,4 +1955,54 @@ class Random
         }
 	}
 
+	public static function export_edarp_results() {
+        echo "==>Retrival Begin \n";
+		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
+        $batch = null;
+        $lookups = Lookup::get_viral_lookups();
+        // dd($lookups);
+        $excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+        $data = $excelData;
+        $newData = [];
+        $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
+        // dd($data);
+        foreach ($data as $key => $sample) {
+            // dd($sample);
+            // $sample = collect($sample)->flatten(1)->toArray();
+            // dd($sample[3]);
+            // $sample = (array)$sample;
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->where('repeatt', '<>', 1)->get()->last();
+            $sample[19] = $dbsample->rejectedreason ?? null;
+            $sample[20] = $dbsample->reason_for_repeat ?? null;
+            $sample[21] = $dbsample->labcomment ?? null;
+            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : null;
+            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : null;
+            // $sample[22] = $dbsample->datetested;
+            // $sample[23] = $dbsample->datedispatched;
+            $sample[24] = $dbsample->result ?? null;
+
+            $newData[] = $sample->toArray();
+        }
+
+        $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
+
+        Excel::create($file, function($excel) use($dataArray, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
+
+            $excel->sheet('Sheetname', function($sheet) use($dataArray) {
+                $sheet->fromArray($dataArray);
+            });
+        })->store('csv');
+
+        $data = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+
+        echo "==>Retrival Complete";
+	}
+
 }
