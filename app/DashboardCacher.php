@@ -214,7 +214,7 @@ class DashboardCacher
         } else {
             $model = Batch::class;
         }
-        return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('batch_complete', '=', '2')->get()->first()->total;
+        return $model::selectRaw('COUNT(*) as total')->where(['lab_id', => env('APP_LAB'), 'batch_complete' => 2])->first()->total;
 	}
 
     public static function cd4samplesAwaitingDispatch(){
