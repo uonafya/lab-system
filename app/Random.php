@@ -1956,11 +1956,12 @@ class Random
 	}
 
 	public static function export_edarp_results() {
-        echo "==>Retrival Begin \n";
+        echo "==> Retrival Begin \n";
 		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
-        $batch = null;
-        $lookups = Lookup::get_viral_lookups();
+        // $batch = null;
+        // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
+        echo "==> Fetching Excel Data \n";
         $excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
@@ -1968,6 +1969,7 @@ class Random
         $newData = [];
         $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
         // dd($data);
+        echo "==> Getting Results \n";
         foreach ($data as $key => $sample) {
             // dd($sample);
             // $sample = collect($sample)->flatten(1)->toArray();
@@ -1985,6 +1987,7 @@ class Random
 
             $newData[] = $sample->toArray();
         }
+        echo "==> Building excel results \n";
 
         $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
 
