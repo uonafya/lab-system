@@ -2045,7 +2045,11 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->get()->last();
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->whereNot('result', 'Failed')->get()->last();
+            if ($dbsample)
+            	$availablecount++;
+            else
+            	$count++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
             $sample[21] = $dbsample->labcomment ?? null;
@@ -2054,10 +2058,9 @@ class Random
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
             $sample[24] = $dbsample->result ?? null;
-            dd($sample);
             // $newData[] = $sample->toArray();
         }
-        dd('Available - ' . $availablecount . ' Unavailable - ' . $count);
+        echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
         echo "==> Building excel results \n";
 
         $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
