@@ -537,8 +537,22 @@ class SampleController extends Controller
             $sample->interpretation = null;
         }
 
+        if($sample->receivedstatus == 1 && $sample->getOriginal('receivedstatus') == 2){
+            if($batch->batch_complete == 1) $transfer = true;
+            else if($batch->batch_complete == 2){
+                $batch->batch_complete = 0;
+                $batch->pre_update();
+            }            
+        }
 
         $sample->pre_update(); 
+
+        if(isset($transfer)){
+            $url = $batch->transfer_samples([$sample->id], 'new_facility', true);
+            $sample->refresh();
+            $batch = $sample->batch;
+            session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
+        }
 
         if(isset($created_patient)){
             if($sample->run == 1 && $sample->has_rerun){
