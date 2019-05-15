@@ -2045,7 +2045,7 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->whereNot('result', 'Failed')->get()->last();
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->where('result', '<>', 'Failed')->get()->last();
             if ($dbsample)
             	$availablecount++;
             else
@@ -2065,19 +2065,19 @@ class Random
 
         $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
 
-        Excel::create($file, function($excel) use($newData, $file){
-            $excel->setTitle($file);
-            $excel->setCreator('Joshua Bakasa')->setCompany($file);
-            $excel->setDescription($file);
+        // Excel::create($file, function($excel) use($newData, $file){
+        //     $excel->setTitle($file);
+        //     $excel->setCreator('Joshua Bakasa')->setCompany($file);
+        //     $excel->setDescription($file);
 
-            $excel->sheet('Sheetname', function($sheet) use($newData) {
-                $sheet->fromArray($newData);
-            });
-        })->store('csv');
+        //     $excel->sheet('Sheetname', function($sheet) use($newData) {
+        //         $sheet->fromArray($newData);
+        //     });
+        // })->store('csv');
 
-        $data = [storage_path("exports/" . $file . ".csv")];
+        // $data = [storage_path("exports/" . $file . ".csv")];
 
-        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+        // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
         echo "==>Retrival Complete";
 	}
