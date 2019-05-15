@@ -501,22 +501,34 @@ class Common
     	$sample_class = self::$my_classes[$type]['sample_class'];
     	$sample_table = self::$my_classes[$type]['sample_table'];
 
+    	$where_raw = '';
+
+    	if($type == 'eid'){
+    		if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+    			$where_raw = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+    		}
+    		else{
+    			$where_raw = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
+    		}
+    	}
+    	else{
+    		if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+    			$where_raw = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
+    		}
+    		else{
+    			$where_raw = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+    		}
+    	}
+
 
         $batches = $batch_model::selectRaw("{$batch_table}.*, COUNT({$sample_table}.id) AS `samples_count`")
             ->join("{$sample_table}", "{$batch_table}.id", '=', "{$sample_table}.batch_id")
             ->where(['batch_complete' => 0, "{$batch_table}.lab_id" => env('APP_LAB')])
-            ->when(true, function($query){
-                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
-                    return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
-                }
-                return $query->whereRaw("( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )");
-            })
+            ->whereRaw($where_raw)
             ->groupBy("{$batch_table}.id")
             // ->having('samples_count', '>', 0)
             ->havingRaw("COUNT({$sample_table}.id) > 0")
             ->get();
-
-        return $batches;
 
     	foreach ($batches as $batch) {
     		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
