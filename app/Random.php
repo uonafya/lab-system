@@ -2059,13 +2059,13 @@ class Random
 
         $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
 
-        Excel::create($file, function($excel) use($dataArray, $file){
+        Excel::create($file, function($excel) use($newData, $file){
             $excel->setTitle($file);
             $excel->setCreator('Joshua Bakasa')->setCompany($file);
             $excel->setDescription($file);
 
-            $excel->sheet('Sheetname', function($sheet) use($dataArray) {
-                $sheet->fromArray($dataArray);
+            $excel->sheet('Sheetname', function($sheet) use($newData) {
+                $sheet->fromArray($newData);
             });
         })->store('csv');
 
