@@ -2065,19 +2065,19 @@ class Random
 
         $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
 
-        // Excel::create($file, function($excel) use($newData, $file){
-        //     $excel->setTitle($file);
-        //     $excel->setCreator('Joshua Bakasa')->setCompany($file);
-        //     $excel->setDescription($file);
+        Excel::create($file, function($excel) use($newData, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
 
-        //     $excel->sheet('Sheetname', function($sheet) use($newData) {
-        //         $sheet->fromArray($newData);
-        //     });
-        // })->store('csv');
+            $excel->sheet('Sheetname', function($sheet) use($newData) {
+                $sheet->fromArray($newData);
+            });
+        })->store('csv');
 
-        // $data = [storage_path("exports/" . $file . ".csv")];
+        $data = [storage_path("exports/" . $file . ".csv")];
 
-        // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
         echo "==>Retrival Complete";
 	}
