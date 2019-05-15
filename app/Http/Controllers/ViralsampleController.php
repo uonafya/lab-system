@@ -577,6 +577,15 @@ class ViralsampleController extends Controller
             $viralsample->result = null;
             $viralsample->interpretation = null;
         }
+
+        if($viralsample->receivedstatus == 1 && $viralsample->getOriginal('receivedstatus') == 2){
+            if($batch->batch_complete == 1) $transfer = true;
+            else if($batch->batch_complete == 2){
+                $batch->batch_complete = 0;
+                $batch->pre_update();
+            }            
+        }
+
         if(env('APP_LAB') == 8){
             $viralsample->areaname = $request->input('areaname');
             $viralsample->label_id = $request->input('label_id');
@@ -585,6 +594,13 @@ class ViralsampleController extends Controller
         if($viralpatient->sex == 1) $viralsample->pmtct = 3;
 
         $viralsample->pre_update();
+
+        if(isset($transfer)){
+            $url = $batch->transfer_samples([$viralsample->id], 'new_facility', true);
+            $viralsample->refresh();
+            $batch = $viralsample->batch;
+            session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
+        }
 
         if(isset($created_patient)){
             if($viralsample->run == 1 && $viralsample->has_rerun){

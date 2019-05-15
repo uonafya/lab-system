@@ -439,6 +439,32 @@ class Common
         }
     }
 
+    public static function create_facility_users()
+    {
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users where user_type_id = 5)")->get();
+    	foreach ($facilities as $facility) {
+    		$u = \App\User::create([
+                'user_type_id' => 5,
+                'surname' => '',
+                'oname' => '',
+                'lab_id' => env('APP_LAB'),
+                'facility_id' => $facility->id,
+                'email' => 'facility' . $facility->id . '@nascop-lab.com',
+                'password' => encrypt($facility->name)
+    		]);
+    	}
+
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from facility_contacts)")->get();
+    	foreach ($facilities as $facility) {
+	        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
+
+	        $contact = new FacilityContact();
+	        $contact->fill($facility->only($contact_array));
+	        $contact->facility_id = $facility->id;
+	        $contact->save();
+    	}
+    }
+
     public static function nhrl($type)
     {
     	ini_set('memory_limit', "-1");
@@ -489,6 +515,8 @@ class Common
             // ->having('samples_count', '>', 0)
             ->havingRaw("COUNT({$sample_table}.id) > 0")
             ->get();
+
+        return $batches;
 
     	foreach ($batches as $batch) {
     		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
