@@ -119,18 +119,15 @@ class MiscViral extends Common
             ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
+            $where_query = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+            $where_query = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
         }
 
 
 		$total = Viralsample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
-		$tests = Viralsample::where('batch_id', $batch_id)
-		->whereRaw($where_query)
-		->get()
-		->count();
+		$tests = Viralsample::where('batch_id', $batch_id)->whereRaw($where_query)->get()->count();
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
