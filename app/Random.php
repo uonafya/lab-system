@@ -2038,13 +2038,18 @@ class Random
         $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
         // dd($data);
         echo "==> Getting Results \n";
+        $count = 0;
+        $availablecount = 0;
         foreach ($data as $key => $sample) {
             // dd($sample);
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->where('repeatt', '<>', 1)->get()->last();
-            dd($dbsample);
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->get();
+            if (!$dbsample->isEmpty())
+            	$count++;
+            else 
+            	$availablecount++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
             $sample[21] = $dbsample->labcomment ?? null;
@@ -2056,6 +2061,7 @@ class Random
 
             $newData[] = $sample->toArray();
         }
+        dd('Available - ' . $availablecount . ' Unavailable - ' . $count);
         echo "==> Building excel results \n";
 
         $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
