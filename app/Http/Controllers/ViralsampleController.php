@@ -961,11 +961,18 @@ class ViralsampleController extends Controller
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
-                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->first();
 
                 if($existing){
-                    $existing_rows[] = $existing->toArray();
-                    continue;
+                    $sampletype = (int) $row[7];
+                    if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2,5])){
+                        $s = Viralsample::find($existing->id);
+                        $s->delete();
+                    }
+                    else{
+                        $existing_rows[] = $existing->toArray();
+                        continue;                        
+                    }
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
@@ -1024,6 +1031,7 @@ class ViralsampleController extends Controller
                 $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->sampletype = (int) $row[7];
+                if($sample->sampletype == 5) $sample->sampletype = 1;
                 $sample->pmtct = $row[13];
                 $sample->receivedstatus = $row[16];
                 if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
@@ -1129,7 +1137,9 @@ class ViralsampleController extends Controller
         if(!$facility_id || !$patient) return '';
         $datecollected = $request->input('datecollected');
 
-        $samples = ViralsampleView::where('created_at', '>', date('Y-m-d', strtotime('-1months')))
+        $dt = date('Y-m-d', strtotime('-1months'));
+
+        $samples = ViralsampleView::where('created_at', '>', "{$dt}")
             ->where(['repeatt' => 0, 'site_entry' => 1, 'facility_id' => $facility_id, ])
             ->when($request->input('sex'), $this->query_callback($request, 'sex'))
             ->when($request->input('prophylaxis'), $this->query_callback($request, 'prophylaxis'))
