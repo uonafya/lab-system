@@ -2201,6 +2201,7 @@ class Random
         echo "\t Checking duplicates Count\n";
         if (!$excelsheetvalue->isEmpty()){
             foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+            	$facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
             	$patient = Viralpatient::existing($facility->id, $samplevalue[3])->first();
             	$samples = $patient->sample;
             	if ($samples->count() > 1) {
