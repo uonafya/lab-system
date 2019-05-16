@@ -1910,9 +1910,12 @@ class Random
         $dataArray = ['Viral Batches'];
         $countItem = $excelsheetvalue->count();
         $counter = 0;
+        $loop = 1;
         if (!$excelsheetvalue->isEmpty()){
             foreach ($excelsheetvalue as $samplekey => $samplevalue) {
             	$counter++;
+            	echo $loop . "   ";
+            	$loop++;
                 $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
                 if (!isset($facility)){
                     $nofacility[] = $samplevalue;
