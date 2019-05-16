@@ -1935,12 +1935,17 @@ class Random
                     $patient->save();
                 }
                 
-                if ($counter == 1) {
+
+                $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+                
+                if ($existingSample) {
+                	$batch = Viralbatch::find($existingSample->batch_id);
+                	if ($batch->count() == 10)
+                		$counter = 0;
+                    continue;
+                }
+                if ($counter == 1) {                    
                     $batch = new Viralbatch();
-                    $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
-                    
-                    if ($existingSample)
-                        continue;
                     $batch->user_id = $received_by;
                     $batch->lab_id = env('APP_LAB');
                     $batch->received_by = $received_by;
