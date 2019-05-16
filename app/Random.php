@@ -2190,5 +2190,34 @@ class Random
         echo "\t Count complete data\n";
         echo "==> Check complete with available " . $addedcount . " and missing " . $missingcount;
 	}
+	public function delete_duplicates () {
+		echo "==>Check Begin\n";
+		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
+        echo "\t Fetching excel data\n";
+        $excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+        $excelsheetvalue = collect($excelData->values()->all());
+        echo "\t Checking duplicates Count\n";
+        if (!$excelsheetvalue->isEmpty()){
+            foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+            	$patient = Viralpatient::existing($facility->id, $samplevalue[3])->first();
+            	$samples = $patient->sample;
+            	if ($samples->count() > 1) {
+            		$firstSample = $samples->first();
+            		foreach ($samples as $key => $sample) {
+            			if (($firstSample->id != $sample->id) && ($sample->facility_id == $firstSample->facility_id && $sample->datecollected == $firstSample->datecollected)) {
+            				if ($sample->batch->count() == 0)
+            					$sample->batch->delete();
+            				$sample->delete();
+            			}
+            		}
+            	}
+            }
+        }
+        echo "==> Complete";
+	}
+
+
 
 }
