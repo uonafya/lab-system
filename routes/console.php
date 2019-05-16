@@ -387,7 +387,7 @@ Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued}
 // Quick fix for consumptions
 
 //Quick fix add EDARP samples to KEMRI
-Artisan::command('edarp:lab {received_by}', function($received_by) {
+Artisan::command('edarp:upload {received_by}', function($received_by) {
     $str = \App\Random::import_edarp_samples_excel($received_by);
     $this->info($str);
 })->describe('Move EDARP samples to KEMRI');
