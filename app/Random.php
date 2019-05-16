@@ -2121,6 +2121,8 @@ class Random
         echo "\t Beginning Count\n";
         if (!$excelsheetvalue->isEmpty()){
             foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+            	$facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
+				$patient = Viralpatient::existing($facility->id, $samplevalue[3])->first();
             	$existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
                 if ($existingSampleCheck) 
                 	$addedcount++;
