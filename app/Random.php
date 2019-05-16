@@ -2105,7 +2105,7 @@ class Random
         echo "==> Deletion Complete\n";
 	}
 
-	public static function confirm_edarp_upload() {
+	public static function confirm_edarp_upload($received_by) {
 		echo "==>Check Begin\n";
 		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
         // $batch = null;
@@ -2118,16 +2118,67 @@ class Random
             $reader->toArray();
         })->get();
         $excelsheetvalue = collect($excelData->values()->all());
+        $countItem = $excelsheetvalue->count();
         echo "\t Beginning Count\n";
         if (!$excelsheetvalue->isEmpty()){
             foreach ($excelsheetvalue as $samplekey => $samplevalue) {
             	$facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
 				$patient = Viralpatient::existing($facility->id, $samplevalue[3])->first();
             	$existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
-                if ($existingSampleCheck) 
+                if ($existingSampleCheck) {
                 	$addedcount++;
-                else
+                	$countItem -= 1;
+                } else {
+                	$counter++;
+                	if ($counter == 1) {                    
+	                    $batch = new Viralbatch();
+	                    $batch->user_id = $received_by;
+	                    $batch->lab_id = env('APP_LAB');
+	                    $batch->received_by = $received_by;
+	                    $batch->site_entry = 0;
+	                    $batch->entered_by = $received_by;
+	                    $batch->datereceived = $samplevalue[16];
+	                    $batch->facility_id = $facility->id;
+	                    $batch->save();
+	                }
+	                $existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+	                if ($existingSampleCheck) {
+	                	$dataArray[] = $existingSampleCheck->batch_id;
+	                	continue;
+	                }
+	                $sample = new Viralsample();
+	                $sample->batch_id = $batch->id;
+	                $sample->receivedstatus = $samplevalue[18];
+	                $sample->age = $samplevalue[8];
+	                $sample->patient_id = $patient->id;
+	                $sample->pmtct = $samplevalue[7];
+	                $sample->dateinitiatedonregimen = $samplevalue[14];
+	                $sample->datecollected = $samplevalue[11];
+	                $sample->regimenline = $samplevalue[13];
+	                $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
+	                $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
+	                $sample->sampletype = $samplevalue[10];
+	                $sample->save();
+
+	                $sample_count = $batch->sample->count();
+	                echo ".";
+	                $countItem -= 1;
+	                if($counter == 10) {
+	                    $dataArray[] = $batch->id;
+	                    $batch->full_batch();
+	                    $batch = null;
+	                    $counter = 0;
+	                } 
+
+	                if ($countItem == 1) {
+	                    $sample_count = $batch->sample->count();
+	                    if ($sample_count != 10) {
+	                        $batch->premature();
+	                        $dataArray[] = $batch->id;
+	                    }
+	                }
                 	$missingcount++;
+                }
             }
         }
         echo "\t Count complete data\n";

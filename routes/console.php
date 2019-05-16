@@ -402,8 +402,8 @@ Artisan::command('edarp:labdelete', function(){
     $this->info($str);
 })->describe('Delete Moved samples');
 
-Artisan::command('edarp:confirm', function(){
-    $str = \App\Random::confirm_edarp_upload();
+Artisan::command('edarp:confirm  {received_by}', function($received_by){
+    $str = \App\Random::confirm_edarp_upload($received_by);
     $this->info($str);
 })->describe('Check EDARP request');
 //Quick fix add EDARP samples to KEMRI
