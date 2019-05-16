@@ -2190,7 +2190,7 @@ class Random
         echo "\t Count complete data\n";
         echo "==> Check complete with available " . $addedcount . " and missing " . $missingcount;
 	}
-	public function delete_duplicates () {
+	public static function delete_duplicates () {
 		echo "==>Check Begin\n";
 		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
         echo "\t Fetching excel data\n";
