@@ -1896,7 +1896,7 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
+		$file = 'public/docs/EDARP_samples_being_referred_to_KNH_CCC_laboratory.xlsx';
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
