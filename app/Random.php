@@ -1896,7 +1896,7 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/EDARP_samples_being_referred_to_KNH_CCC_laboratory.xlsx';
+		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2080,6 +2080,15 @@ class Random
         Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
         echo "==>Retrival Complete";
+	}
+
+	public static function delete_edarp_imported_batches() {
+		echo "==> Deleting Samples\n";
+		$batches = [87694,87695,87696,87697,87698,87699,87700,87701,87702,87703,87704,87705,87706,87707,87708,87709,87710,87711,87712,87713,87714,87715,87716,87717,87718,87719,87720,87721,87722,87723,87723];
+		// $batches = collect($excelData->toArray())->first();
+        Viralsample::whereIn('batch_id', $batches)->delete();
+        Viralbatch::whereIn('id', $batches)->delete();
+        echo "==> Deletion Complete\n";
 	}
 
 }
