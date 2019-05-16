@@ -1900,10 +1900,12 @@ class Random
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
+        echo "\t Fetching excel data\n";
         $excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
         $excelsheetvalue = collect($excelData->values()->all());
+        echo "\t Inserting sample data\n";
         $dataArray = [];
         $dataArray = ['Viral Batches'];
         $countItem = $excelsheetvalue->count();
@@ -1961,7 +1963,7 @@ class Random
                 $sample->save();
 
                 $sample_count = $batch->sample->count();
-
+                echo ".";
                 $countItem -= 1;
                 if($counter == 10) {
                     $dataArray[] = $batch->id;
@@ -1979,7 +1981,7 @@ class Random
                 }
                 // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
             }
-
+            echo "\t Creating uploaded batches and missing facilities excel\n";
             $file = 'EDARP Samples uploaded to ' . Lab::find(env('APP_LAB'))->labdesc . date('Y_m_d H_i_s');
 
             Excel::create($file, function($excel) use($dataArray, $file){
@@ -2003,7 +2005,7 @@ class Random
                     $sheet->fromArray($nofacility);
                 });
             })->store('csv');
-
+            echo "\t Emailing uploaded batches and missing facilities excel\n";
             $data = [storage_path("exports/" . $file . ".csv"), storage_path("exports/" . $file2 . ".csv")];
 
             Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
