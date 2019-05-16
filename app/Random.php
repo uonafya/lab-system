@@ -2130,58 +2130,58 @@ class Random
                 	$addedcount++;
                 	$countItem -= 1;
                 } else {
-                	$counter++;
-					$nofacility = [];
-					$dataArray = [];
+     //            	$counter++;
+					// $nofacility = [];
+					// $dataArray = [];
 
-			        $lookups = Lookup::get_viral_lookups();
-                	if ($counter == 1) {                    
-	                    $batch = new Viralbatch();
-	                    $batch->user_id = $received_by;
-	                    $batch->lab_id = env('APP_LAB');
-	                    $batch->received_by = $received_by;
-	                    $batch->site_entry = 0;
-	                    $batch->entered_by = $received_by;
-	                    $batch->datereceived = $samplevalue[16];
-	                    $batch->facility_id = $facility->id;
-	                    $batch->save();
-	                }
-	                $existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
-	                if ($existingSampleCheck) {
-	                	$dataArray[] = $existingSampleCheck->batch_id;
-	                	continue;
-	                }
-	                $sample = new Viralsample();
-	                $sample->batch_id = $batch->id;
-	                $sample->receivedstatus = $samplevalue[18];
-	                $sample->age = $samplevalue[8];
-	                $sample->patient_id = $patient->id;
-	                $sample->pmtct = $samplevalue[7];
-	                $sample->dateinitiatedonregimen = $samplevalue[14];
-	                $sample->datecollected = $samplevalue[11];
-	                $sample->regimenline = $samplevalue[13];
-	                $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
-	                $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
-	                $sample->sampletype = $samplevalue[10];
-	                $sample->save();
+			  //       $lookups = Lookup::get_viral_lookups();
+     //            	if ($counter == 1) {                    
+	    //                 $batch = new Viralbatch();
+	    //                 $batch->user_id = $received_by;
+	    //                 $batch->lab_id = env('APP_LAB');
+	    //                 $batch->received_by = $received_by;
+	    //                 $batch->site_entry = 0;
+	    //                 $batch->entered_by = $received_by;
+	    //                 $batch->datereceived = $samplevalue[16];
+	    //                 $batch->facility_id = $facility->id;
+	    //                 $batch->save();
+	    //             }
+	    //             $existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+	    //             if ($existingSampleCheck) {
+	    //             	$dataArray[] = $existingSampleCheck->batch_id;
+	    //             	continue;
+	    //             }
+	    //             $sample = new Viralsample();
+	    //             $sample->batch_id = $batch->id;
+	    //             $sample->receivedstatus = $samplevalue[18];
+	    //             $sample->age = $samplevalue[8];
+	    //             $sample->patient_id = $patient->id;
+	    //             $sample->pmtct = $samplevalue[7];
+	    //             $sample->dateinitiatedonregimen = $samplevalue[14];
+	    //             $sample->datecollected = $samplevalue[11];
+	    //             $sample->regimenline = $samplevalue[13];
+	    //             $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
+	    //             $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
+	    //             $sample->sampletype = $samplevalue[10];
+	    //             $sample->save();
 
-	                $sample_count = $batch->sample->count();
-	                echo ".";
-	                $countItem -= 1;
-	                if($counter == 10) {
-	                    $dataArray[] = $batch->id;
-	                    $batch->full_batch();
-	                    $batch = null;
-	                    $counter = 0;
-	                } 
+	    //             $sample_count = $batch->sample->count();
+	    //             echo ".";
+	    //             $countItem -= 1;
+	    //             if($counter == 10) {
+	    //                 $dataArray[] = $batch->id;
+	    //                 $batch->full_batch();
+	    //                 $batch = null;
+	    //                 $counter = 0;
+	    //             } 
 
-	                if ($countItem == 1) {
-	                    $sample_count = $batch->sample->count();
-	                    if ($sample_count != 10) {
-	                        $batch->premature();
-	                        $dataArray[] = $batch->id;
-	                    }
-	                }
+	    //             if ($countItem == 1) {
+	    //                 $sample_count = $batch->sample->count();
+	    //                 if ($sample_count != 10) {
+	    //                     $batch->premature();
+	    //                     $dataArray[] = $batch->id;
+	    //                 }
+	    //             }
                 	$missingcount++;
                 }
             }
