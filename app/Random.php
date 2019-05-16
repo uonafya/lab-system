@@ -2105,4 +2105,31 @@ class Random
         echo "==> Deletion Complete\n";
 	}
 
+	public static function confirm_edarp_upload() {
+		echo "==>Check Begin\n";
+		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
+        // $batch = null;
+        // $lookups = Lookup::get_viral_lookups();
+        // // dd($lookups);
+        $addedcount = 0;
+        $missingcount = 0;
+        echo "\t Fetching excel data\n";
+        $excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+        $excelsheetvalue = collect($excelData->values()->all());
+        echo "\t Beginning Count\n";
+        if (!$excelsheetvalue->isEmpty()){
+            foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+            	$existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+                if ($existingSampleCheck) 
+                	$addedcount++;
+                else
+                	$missingcount++;
+            }
+        }
+        echo "\t Count complete data\n";
+        echo "==> Check complete with available " . $addedcount . " and missing " . $missingcount;
+	}
+
 }

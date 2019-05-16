@@ -401,5 +401,10 @@ Artisan::command('edarp:labdelete', function(){
     $str = \App\Random::delete_edarp_imported_batches();
     $this->info($str);
 })->describe('Delete Moved samples');
+
+Artisan::command('edarp:confirm', function(){
+    $str = \App\Random::confirm_edarp_upload();
+    $this->info($str);
+})->describe('Check EDARP request');
 //Quick fix add EDARP samples to KEMRI
 //Quick fixes
