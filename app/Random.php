@@ -2130,6 +2130,7 @@ class Random
                 	$addedcount++;
                 	$countItem -= 1;
                 } else {
+                	print_r($samplevalue);
      //            	$counter++;
 					// $nofacility = [];
 					// $dataArray = [];
