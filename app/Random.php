@@ -2119,6 +2119,7 @@ class Random
         })->get();
         $excelsheetvalue = collect($excelData->values()->all());
         $countItem = $excelsheetvalue->count();
+        $counter = 0;
         echo "\t Beginning Count\n";
         if (!$excelsheetvalue->isEmpty()){
             foreach ($excelsheetvalue as $samplekey => $samplevalue) {
