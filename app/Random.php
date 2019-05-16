@@ -1980,7 +1980,7 @@ class Random
                 // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
             }
 
-            $file = 'EDARP Samples uploaded to KEMRI'.date('Y_m_d H_i_s');
+            $file = 'EDARP Samples uploaded to ' . Lab::find(env('APP_LAB'))->labdesc . date('Y_m_d H_i_s');
 
             Excel::create($file, function($excel) use($dataArray, $file){
                 $excel->setTitle($file);
@@ -1992,7 +1992,7 @@ class Random
                 });
             })->store('csv');
 
-            $file2 = 'EDARP Samples uploaded to KEMRI without facilitycode'.date('Y_m_d H_i_s');
+            $file2 = 'EDARP Samples uploaded to ' . Lab::find(env('APP_LAB'))->labdesc . ' without facilitycode'.date('Y_m_d H_i_s');
 
             Excel::create($file2, function($excel) use($nofacility, $file2){
                 $excel->setTitle($file2);
