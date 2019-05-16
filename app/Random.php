@@ -1947,7 +1947,11 @@ class Random
                     $batch->facility_id = $facility->id;
                     $batch->save();
                 }
-
+                $existingSampleCheck = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+                if ($existingSampleCheck) {
+                	$dataArray[] = $existingSampleCheck->batch_id;
+                	continue;
+                }
                 $sample = new Viralsample();
                 $sample->batch_id = $batch->id;
                 $sample->receivedstatus = $samplevalue[18];
