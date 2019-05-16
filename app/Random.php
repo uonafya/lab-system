@@ -2131,6 +2131,10 @@ class Random
                 	$countItem -= 1;
                 } else {
                 	$counter++;
+					$nofacility = [];
+					$dataArray = [];
+
+			        $lookups = Lookup::get_viral_lookups();
                 	if ($counter == 1) {                    
 	                    $batch = new Viralbatch();
 	                    $batch->user_id = $received_by;
