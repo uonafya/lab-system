@@ -267,7 +267,7 @@ class MiscViral extends Common
         }
         else if(str_contains($result, ['>']))
         {
-            $res= "> 1,000,000,000 copies/ml";
+            $res= "> 1,000,000,000 cp/ml";
             $interpretation= $result;       
         }
         else if(str_contains($str, ['not detected']))
