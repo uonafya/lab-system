@@ -166,7 +166,7 @@ class Viralsample extends BaseModel
         else if($this->result == "< LDL copies/ml" || $this->result == "Target Not Detected"){
             return "<strong><div style='color: #00ff00;'>&lt; LDL copies/ml</div></strong>";
         }
-        else if($this->result == "> 1,000,000,000 copies/ml"){
+        else if($this->result == "> 10,000,000 cp/ml"){
             return "<strong><div style='color: #ff0000;'>{$this->result} </div></strong>";
         }
         else{
