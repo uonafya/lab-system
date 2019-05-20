@@ -174,7 +174,7 @@ class Viralbatch extends BaseModel
     }
 
 
-    public function transfer_samples($sample_ids, $submit_type)
+    public function transfer_samples($sample_ids, $submit_type, $return_for_testing=false)
     {     
         if(!$sample_ids){
             session(['toast_error' => 1, 'toast_message' => "No samples have been selected."]);
@@ -198,6 +198,7 @@ class Viralbatch extends BaseModel
         }
         $new_batch->created_at = $this->created_at;
         $new_batch->save();
+        if($return_for_testing) $new_batch->return_for_testing();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 
@@ -245,10 +246,10 @@ class Viralbatch extends BaseModel
         if($submit_type == "new_facility"){
             session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
             // return redirect('sample/' . $s->id . '/edit');
-            return 'sample/' . $s->id . '/edit';
+            return 'viralsample/' . $s->id . '/edit';
         }
         // return redirect('batch/' . $new_id);
-        return 'batch/' . $new_id;
+        return 'viralbatch/' . $new_id;
     }
 
     public function return_for_testing()

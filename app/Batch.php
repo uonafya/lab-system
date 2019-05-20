@@ -169,7 +169,7 @@ class Batch extends BaseModel
         return true;
     }
 
-    public function transfer_samples($sample_ids, $submit_type)
+    public function transfer_samples($sample_ids, $submit_type, $return_for_testing=false)
     {     
         if(!$sample_ids){
             session(['toast_error' => 1, 'toast_message' => "No samples have been selected."]);
@@ -193,6 +193,7 @@ class Batch extends BaseModel
         }
         $new_batch->created_at = $this->created_at;
         $new_batch->save();
+        if($return_for_testing) $new_batch->return_for_testing();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 
