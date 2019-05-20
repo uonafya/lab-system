@@ -366,6 +366,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('transfer/{sample}', 'SampleController@transfer');
 			Route::get('release/{sample}', 'SampleController@release_redraw');	
 			Route::get('return_for_testing/{sample}', 'SampleController@return_for_testing');	
+			Route::get('unreceive/{sample}', 'SampleController@unreceive');	
 		});
 
 		Route::group(['middleware' => ['only_utype:2']], function () {	
@@ -425,6 +426,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('transfer/{sample}', 'ViralsampleController@transfer');	
 			Route::get('release/{sample}', 'ViralsampleController@release_redraw');	
 			Route::get('return_for_testing/{sample}', 'ViralsampleController@return_for_testing');	
+			Route::get('unreceive/{sample}', 'ViralsampleController@unreceive');	
 		});
 
 		Route::group(['middleware' => ['only_utype:2']], function () {	
