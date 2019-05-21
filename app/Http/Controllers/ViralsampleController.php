@@ -875,6 +875,19 @@ class ViralsampleController extends Controller
         return back();
     }
 
+    public function unreceive(Viralsample $sample)
+    {
+        if($sample->worksheet_id || $sample->run > 1 || $sample->synched){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be set to unreceived']);
+        }
+        else{
+            $sample->fill(['sample_received_by' => null, 'receivedstatus' => null, 'rejectedreason' => null]);
+            $sample->save();
+            session(['toast_message' => 'The sample has been unreceived.']);
+        }
+        return back();
+    }
+
     public function approve_nhrl(Request $request)
     {
         $viralsamples = $request->input('samples');
