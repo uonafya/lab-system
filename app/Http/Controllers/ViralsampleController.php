@@ -1196,7 +1196,7 @@ class ViralsampleController extends Controller
                 return $query->whereRaw("(patient like '{$patient_string}%' ) ");
             })
             ->when($datecollected, function($query) use ($datecollected){
-                return $query->whereBetween($datecollected, [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
+                return $query->whereBetween('datecollected', [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
             })
             ->limit(10)
             ->get();
