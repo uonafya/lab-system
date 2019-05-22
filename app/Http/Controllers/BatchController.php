@@ -455,8 +455,8 @@ class BatchController extends Controller
         ini_set('memory_limit', '-1');
         
         $batches = Batch::select('batches.*', 'facility_contacts.email', 'facilitys.name')
-            ->join('facilitys', 'facilitys.id', '=', 'batches.facility_id')
-            ->join('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
             ->when($batch_list, function($query) use ($batch_list){
                 return $query->whereIn('batches.id', $batch_list);
             })

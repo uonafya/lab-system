@@ -458,7 +458,7 @@ class ViralworksheetController extends Controller
                 if(!isset($value[1])) break;
                 $sample_id = $value[1];
                 $interpretation = $value[6];
-                $result_array = MiscViral::exponential_result($interpretation);
+                $result_array = MiscViral::sample_result($interpretation);
 
                 MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
