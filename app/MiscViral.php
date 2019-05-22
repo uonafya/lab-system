@@ -27,7 +27,7 @@ class MiscViral extends Common
         '1' => [],
         '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
-        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
+        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000', "> 10,000,000 cp/ml"],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
     ];
 
@@ -265,7 +265,11 @@ class MiscViral extends Common
             $res= "< LDL copies/ml";
             $interpretation= $result;       
         }
-
+        else if(str_contains($result, ['>']))
+        {
+            $res= "> 10,000,000 cp/ml";
+            $interpretation= $result;       
+        }
         else if(str_contains($str, ['not detected']))
         {
             // $res="Target Not Detected";
