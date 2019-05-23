@@ -33,10 +33,9 @@ class RandomController extends BaseController
         try {
             \App\Synch::test_nascop();
         } catch (Exception $e) {
-            // return $this->response->errorBadRequest("NASCOP cannot be reached.");
             return response()->json([
                     'message' => 'NASCOP cannot be reached.'
-                ], 500);
+                ], 400);
         }
         return response()->json([
                 'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
