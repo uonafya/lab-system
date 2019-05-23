@@ -2,10 +2,10 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use Exception;
 
-class RandomController extends Controller
+class RandomController extends BaseController
 {
     public function protected_route()
     {
@@ -33,10 +33,10 @@ class RandomController extends Controller
         try {
             \App\Synch::test_nascop();
         } catch (Exception $e) {
-            // return $this->response->errorBadRequest("NASCOP cannot be reached.");
-            return response()->json([
-                    'message' => 'NASCOP cannot be reached.'
-                ], 500);
+            return $this->response->errorBadRequest("NASCOP cannot be reached.");
+            // return response()->json([
+            //         'message' => 'NASCOP cannot be reached.'
+            //     ], 500);
         }
         return response()->json([
                 'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
