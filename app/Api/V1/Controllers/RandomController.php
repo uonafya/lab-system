@@ -31,7 +31,7 @@ class RandomController extends Controller
     public function hello_nascop()
     {
         try {
-            \App\Synch::test_connection();
+            \App\Synch::test_nascop();
         } catch (Exception $e) {
             return $this->response->errorBadRequest("NASCOP cannot be reached.");
         }
