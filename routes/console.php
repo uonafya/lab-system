@@ -249,6 +249,12 @@ Artisan::command('synch:facilities', function(){
     $this->info($str);
 })->describe('Synch facilities from lab to national database');
 
+Artisan::command('synch:facilities-updates', function(){
+    $str = \App\Synch::synch_updates_facilities();
+    $this->info($str);
+})->describe('Synch updates for facilities from national database to lab');
+
+
 
 
 Artisan::command('copy:eid', function(){
