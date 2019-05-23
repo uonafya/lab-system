@@ -132,6 +132,15 @@ class Synch
 		return $body->message;
 	}
 
+	public static function test_nascop()
+	{
+		$base = 'https://api.nascop.org/eid';
+		$client = new Client(['base_uri' => $base]);
+		$response = $client->request('get', '', ['timeout' => 1]);
+		$body = json_decode($response->getBody());
+		return $body->message;
+	}
+
 	public static function login()
 	{
 		Cache::store('file')->forget('api_token');
