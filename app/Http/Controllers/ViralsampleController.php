@@ -45,7 +45,7 @@ class ViralsampleController extends Controller
 
         $samples = ViralsampleView::with(['facility'])
             ->when($param, function($query){
-                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+                return $query->whereRaw("((result IS NULL ) OR (result ='0' ))")->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
