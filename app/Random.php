@@ -1896,7 +1896,8 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
+		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx'; // KEMRI
+		// $file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx'; //KNH
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2038,12 +2039,12 @@ class Random
 	}
 
 	public static function export_edarp_results() {
-        echo "==> Retrival Begin \n";
+        // echo "==> Retrival Begin \n";
 		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
-        echo "==> Fetching Excel Data \n";
+        // echo "==> Fetching Excel Data \n";
         $excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
@@ -2051,7 +2052,7 @@ class Random
         $newData = [];
         $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
         // dd($data);
-        echo "==> Getting Results \n";
+        // echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
         foreach ($data as $key => $sample) {
@@ -2060,10 +2061,10 @@ class Random
             // dd($sample[3]);
             // $sample = (array)$sample;
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->get()->last();
-            if ($dbsample)
-            	$availablecount++;
-            else
-            	$count++;
+            // if ($dbsample)
+            // 	$availablecount++;
+            // else
+            // 	$count++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
             $sample[21] = $dbsample->labcomment ?? null;
@@ -2072,10 +2073,10 @@ class Random
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
             $sample[24] = $dbsample->result ?? null;
-            // $newData[] = $sample->toArray();
+            $newData[] = $sample->toArray();
         }
-        echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
-        echo "==> Building excel results \n";
+        // echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
+        // echo "==> Building excel results \n";
 
         $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
 
