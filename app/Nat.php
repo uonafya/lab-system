@@ -13,11 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomMailOld;
 use App\Mail\TestMail;
 
-class Nat extends Model
+class Nat
 {
-
-
-
 	public static function get_current_gender_query($facility_id, $date_params=null)
 	{
     	$sql = 'SELECT sex, rcategory, count(*) as totals ';
