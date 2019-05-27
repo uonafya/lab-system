@@ -2072,7 +2072,7 @@ class Random
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
             $sample[24] = $dbsample->result ?? null;
-            // $newData[] = $sample->toArray();
+            $newData[] = $sample->toArray();
         }
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
         echo "==> Building excel results \n";
