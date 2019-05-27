@@ -24,7 +24,7 @@ class DrSampleView extends ViewModel
 
     public function getChromatogramLinkAttribute()
     {
-        $ui_url = 'http://sangelamerkel.exatype.co.za';
+        $ui_url = \App\MiscDr::$ui_url;
         return $ui_url . $this->chromatogram_url;
     }
 

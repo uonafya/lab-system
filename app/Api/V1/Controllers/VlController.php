@@ -7,6 +7,7 @@ use App\Api\V1\Requests\VlRequest;
 use App\Api\V1\Requests\VlCompleteRequest;
 
 use App\Lookup;
+use App\MiscViral;
 use App\ViralsampleView;
 use App\Viralbatch;
 use App\Viralpatient;
@@ -139,9 +140,9 @@ class VlController extends BaseController
             return $this->response->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
         }
 
-        if($lab == 7 && strtotime($datetested) < strtotime("2019-02-01") ){
-            return $this->response->errorBadRequest("This sample is unacceptable.");            
-        } 
+        // if($lab == 7 && strtotime($datetested) < strtotime("2019-02-01") ){
+        //     return $this->response->errorBadRequest("This sample is unacceptable.");            
+        // } 
 
         if(!$editted){
             $batch = Viralbatch::existing($facility, $datereceived, $lab)->where(['synched' => 5])->withCount(['sample'])->first();
@@ -196,6 +197,7 @@ class VlController extends BaseController
         }
 
         $sample->fill($request->only($fields['sample_api']));
+        $sample->fill(MiscViral::sample_result($sample->result));
         $sample->justification = Lookup::justification($sample->justification);
         $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
         $sample->age = $age;

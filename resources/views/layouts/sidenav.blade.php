@@ -91,7 +91,7 @@
                     </a>
                 </li>
                 <hr />
-                @if(env('APP_LAB') == 4)
+                @if(in_array(env('APP_LAB'), [2, 4]))
                     <li><a href=" {{ url('batch/to_print') }}">Batches Due For Printing</span>
                         </a>
                     </li>
@@ -181,7 +181,7 @@
                     <a href=" {{ url('viralbatch/dispatch') }}">Dispatch Results<span class="label label-warning pull-right">{{ $widgets['batchesForDispatch'] ?? 0 }}</span></a>
                 </li>
                 <hr />
-                @if(env('APP_LAB') == 4)
+                @if(in_array(env('APP_LAB'), [2, 4]))
                     <li><a href=" {{ url('viralbatch/to_print') }}">Batches Due For Printing</span>
                         </a>
                     </li>
@@ -426,8 +426,9 @@
             </li>
             <hr />
         @endif
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && Auth::user()->user_type_id == 0)
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 1]))
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
+            <li><a href="{{ url('equipmentbreakdown') }}">Report Equipment Breakdown</a></li>
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)

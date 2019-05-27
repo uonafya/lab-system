@@ -65,7 +65,8 @@ class ViralsampleController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
         
         $data = Lookup::get_viral_lookups();
-        $samples = ViralsampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
+        $samples = ViralsampleView::whereRaw($string)->whereNotNull('time_result_sms_sent')->orderBy('datedispatched', 'desc')->paginate(50);
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
@@ -120,106 +121,124 @@ class ViralsampleController extends Controller
             $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
             return view('forms.viralsamplesexcel', $data)->with('pageTitle', 'Add Sample');
         } else {
-            $file = $request->excelupload->path();
-            $path = $request->excelupload->store('public/samples/otherlab');
-            $batch = null;
-            $lookups = Lookup::get_viral_lookups();
-            // dd($lookups);
-            $excelData = Excel::load($file, function($reader){
-                $reader->toArray();
-            })->get();
-            $excelsheetvalue = collect($excelData->flatten(1)->values()->all());
-            $dataArray = [];
-            $dataArray = ['Viral Batches'];
-            $countItem = $excelsheetvalue->count();
-            $counter = 0;
-            if (!$excelsheetvalue->isEmpty()){
-                foreach ($excelsheetvalue as $samplekey => $samplevalue) {
-                    $counter++;
-                    $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
-                    // if (!isset($facility)){
-                    //     $nofacility[] = $samplevalue;
-                    //     continue;
-                    // }
-                    $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
+            // $file = $request->excelupload->path();
+            // $path = $request->excelupload->store('public/samples/otherlab');
+            // $batch = null;
+            // $lookups = Lookup::get_viral_lookups();
+            // // dd($lookups);
+            // $excelData = Excel::load($file, function($reader){
+            //     $reader->toArray();
+            // })->get();
+            // $excelsheetvalue = collect($excelData->flatten(1)->values()->all());
+            // $dataArray = [];
+            // $dataArray = ['Viral Batches'];
+            // $countItem = $excelsheetvalue->count();
+            // $counter = 0;
+            // if (!$excelsheetvalue->isEmpty()){
+            //     foreach ($excelsheetvalue as $samplekey => $samplevalue) {
+            //         $counter++;
+            //         $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
+            //         // if (!isset($facility)){
+            //         //     $nofacility[] = $samplevalue;
+            //         //     continue;
+            //         // }
+            //         $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
                     
-                    if ($existing)
-                        $patient = $existing;
-                    else {
-                        $patient = new Viralpatient();
-                        $patient->patient = $samplevalue[3];
-                        $patient->facility_id = $facility->id;
-                        $patient->sex = $lookups['genders']->where('gender', $samplevalue[6])->first()->id;
-                        $patient->dob = $samplevalue[9];
-                        // $patient->initiation_date = $samplevalue[14];
-                        $patient->save();
-                    }
+            //         if ($existing)
+            //             $patient = $existing;
+            //         else {
+            //             $patient = new Viralpatient();
+            //             $patient->patient = $samplevalue[3];
+            //             $patient->facility_id = $facility->id;
+            //             $patient->sex = $lookups['genders']->where('gender', $samplevalue[6])->first()->id;
+            //             $patient->dob = $samplevalue[9];
+            //             // $patient->initiation_date = $samplevalue[14];
+            //             $patient->save();
+            //         }
                     
-                    if ($counter == 1) {
-                        $batch = new Viralbatch();
-                        $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
+            //         if ($counter == 1) {
+            //             $batch = new Viralbatch();
+            //             $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $samplevalue[11]])->first();
                         
-                        if ($existingSample)
-                            continue;
-                        $batch->user_id = $request->input('receivedby');
-                        $batch->lab_id = env('APP_LAB');
-                        $batch->received_by = $request->input('receivedby');
-                        $batch->site_entry = 0;
-                        $batch->entered_by = $request->input('receivedby');
-                        $batch->datereceived = $samplevalue[16];
-                        $batch->facility_id = $facility->id;
-                        $batch->save();
-                    }
+            //             if ($existingSample)
+            //                 continue;
+            //             $batch->user_id = $request->input('receivedby');
+            //             $batch->lab_id = env('APP_LAB');
+            //             $batch->received_by = $request->input('receivedby');
+            //             $batch->site_entry = 0;
+            //             $batch->entered_by = $request->input('receivedby');
+            //             $batch->datereceived = $samplevalue[16];
+            //             $batch->facility_id = $facility->id;
+            //             $batch->save();
+            //         }
 
-                    $sample = new Viralsample();
-                    $sample->batch_id = $batch->id;
-                    $sample->receivedstatus = $samplevalue[18];
-                    $sample->age = $samplevalue[8];
-                    $sample->patient_id = $patient->id;
-                    $sample->pmtct = $samplevalue[7];
-                    $sample->dateinitiatedonregimen = $samplevalue[14];
-                    $sample->datecollected = $samplevalue[11];
-                    $sample->regimenline = $samplevalue[13];
-                    $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
-                    $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
-                    $sample->sampletype = $samplevalue[10];
-                    $sample->save();
+            //         $sample = new Viralsample();
+            //         $sample->batch_id = $batch->id;
+            //         $sample->receivedstatus = $samplevalue[18];
+            //         $sample->age = $samplevalue[8];
+            //         $sample->patient_id = $patient->id;
+            //         $sample->pmtct = $samplevalue[7];
+            //         $sample->dateinitiatedonregimen = $samplevalue[14];
+            //         $sample->datecollected = $samplevalue[11];
+            //         $sample->regimenline = $samplevalue[13];
+            //         $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
+            //         $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
+            //         $sample->sampletype = $samplevalue[10];
+            //         $sample->save();
 
-                    $sample_count = $batch->sample->count();
+            //         $sample_count = $batch->sample->count();
 
-                    $countItem -= 1;
-                    if($counter == 10) {
-                        $dataArray[] = $batch->id;
-                        $batch->full_batch();
-                        $batch = null;
-                        $counter = 0;
-                    } 
+            //         $countItem -= 1;
+            //         if($counter == 10) {
+            //             $dataArray[] = $batch->id;
+            //             $batch->full_batch();
+            //             $batch = null;
+            //             $counter = 0;
+            //         } 
 
-                    if ($countItem == 1) {
-                        $sample_count = $batch->sample->count();
-                        if ($sample_count != 10) {
-                            $batch->premature();
-                            $dataArray[] = $batch->id;
-                        }
-                    }
-                    // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
-                }
-                $title = "EDARP Samples uploaded to KEMRI";
-                Excel::create($title, function($excel) use ($dataArray, $title) {
-                    $excel->setTitle($title);
-                    $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-                    $excel->setDescription($title);
+            //         if ($countItem == 1) {
+            //             $sample_count = $batch->sample->count();
+            //             if ($sample_count != 10) {
+            //                 $batch->premature();
+            //                 $dataArray[] = $batch->id;
+            //             }
+            //         }
+            //         // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
+            //     }
 
-                    $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
-                        $sheet->fromArray($dataArray, null, 'A1', false, false);
-                    });
+            //     $file = 'EDARP Samples uploaded to KEMRI';
 
-                })->download('csv');
-            }
-            return back();
+            //     Excel::create($file, function($excel) use($rows, $file){
+            //         $excel->setTitle($file);
+            //         $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            //         $excel->setDescription($file);
+
+            //         $excel->sheet('Sheetname', function($sheet) use($rows) {
+            //             $sheet->fromArray($rows);
+            //         });
+            //     })->store('csv');
+
+            //     $data = [storage_path("exports/" . $file . ".csv")];
+
+            //     Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+
+            //     // $title = "EDARP Samples uploaded to KEMRI";
+            //     // Excel::create($title, function($excel) use ($dataArray, $title) {
+            //     //     $excel->setTitle($title);
+            //     //     $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+            //     //     $excel->setDescription($title);
+
+            //     //     $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+            //     //         $sheet->fromArray($dataArray, null, 'A1', false, false);
+            //     //     });
+
+            //     // })->download('csv');
+            // }
+            // return back();
         }
         
     }
+
     public function store(ViralsampleRequest $request)
     {
         $viralsamples_arrays = Lookup::viralsamples_arrays();
@@ -279,6 +298,7 @@ class ViralsampleController extends Controller
 
             if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->site_entry = 0;
             }
 
@@ -306,6 +326,7 @@ class ViralsampleController extends Controller
 
             if($user->is_lab_user()){
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->site_entry = 0;
             }
 
@@ -487,19 +508,22 @@ class ViralsampleController extends Controller
 
         $data = $request->only($viralsamples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()){
+            $batch->received_by = $user->id;
+            $batch->time_received = date('Y-m-d H:i:s');
+        }
         $batch->pre_update();
 
         $data = $request->only($viralsamples_arrays['patient']);
 
-        $new_patient = $request->input('new_patient');
+        /*$new_patient = $request->input('new_patient');
 
-        // if($new_patient == 0){            
-        //     $viralpatient = Viralpatient::find($viralsample->patient_id);
-        // }
-        // else{
-        //     $viralpatient = new Viralpatient;
-        // }
+        if($new_patient == 0){            
+            $viralpatient = Viralpatient::find($viralsample->patient_id);
+        }
+        else{
+            $viralpatient = new Viralpatient;
+        }*/
 
         $viralpatient = $viralsample->patient;
 
@@ -513,7 +537,7 @@ class ViralsampleController extends Controller
         }
         
 
-        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        if(!$data['dob'] || $data['dob'] == '') $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->pre_update();
 
@@ -553,6 +577,15 @@ class ViralsampleController extends Controller
             $viralsample->result = null;
             $viralsample->interpretation = null;
         }
+
+        if($viralsample->receivedstatus == 1 && $viralsample->getOriginal('receivedstatus') == 2){
+            if($batch->batch_complete == 1) $transfer = true;
+            else if($batch->batch_complete == 2){
+                $batch->batch_complete = 0;
+                $batch->pre_update();
+            }            
+        }
+
         if(env('APP_LAB') == 8){
             $viralsample->areaname = $request->input('areaname');
             $viralsample->label_id = $request->input('label_id');
@@ -561,6 +594,13 @@ class ViralsampleController extends Controller
         if($viralpatient->sex == 1) $viralsample->pmtct = 3;
 
         $viralsample->pre_update();
+
+        if(isset($transfer)){
+            $url = $batch->transfer_samples([$viralsample->id], 'new_facility', true);
+            $viralsample->refresh();
+            $batch = $viralsample->batch;
+            session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
+        }
 
         if(isset($created_patient)){
             if($viralsample->run == 1 && $viralsample->has_rerun){
@@ -667,7 +707,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->result == NULL && $viralsample->run < 2){
+        if($viralsample->result == NULL && $viralsample->run < 2 && $viralsample->worksheet_id == NULL){
             $batch = $viralsample->batch;
             $viralsample->delete();
             $samples = $batch->sample;
@@ -761,6 +801,34 @@ class ViralsampleController extends Controller
         return back();
     }
 
+    public function return_for_testing(Viralsample $sample)
+    {
+        if($sample->result != 'Collect New Sample' || $sample->repeatt == 1 || $sample->age_in_months > 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
+            return back();
+        }
+
+        $sample->repeatt = 1;
+        $sample->save();
+
+        $rerun = MiscViral::save_repeat($sample->id);
+
+        $batch = $sample->batch;
+
+        if($batch->batch_complete == 0){
+            session(['toast_message' => 'The sample has been returned for testing.']);
+            return back();
+        }
+        else{
+            $batch->transfer_samples([$rerun->id], 'new_facility');
+            $rerun->refresh();
+            $batch = $rerun->batch;
+            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->save();
+            return redirect('viralbatch/' . $batch->id);
+        }
+    }
+
     public function release_redraw(Viralsample $sample)
     {
         $batch = $sample->batch;
@@ -804,6 +872,19 @@ class ViralsampleController extends Controller
             $this->release_redraw($viralsample);
         }
 
+        return back();
+    }
+
+    public function unreceive(Viralsample $sample)
+    {
+        if($sample->worksheet_id || $sample->run > 1 || $sample->synched){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be set to unreceived']);
+        }
+        else{
+            $sample->fill(['sample_received_by' => null, 'receivedstatus' => null, 'rejectedreason' => null]);
+            $sample->save();
+            session(['toast_message' => 'The sample has been unreceived.']);
+        }
         return back();
     }
 
@@ -927,11 +1008,18 @@ class ViralsampleController extends Controller
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
-                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->first();
 
                 if($existing){
-                    $existing_rows[] = $existing->toArray();
-                    continue;
+                    $sampletype = (int) $row[7];
+                    if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2,5])){
+                        $s = Viralsample::find($existing->id);
+                        $s->delete();
+                    }
+                    else{
+                        $existing_rows[] = $existing->toArray();
+                        continue;                        
+                    }
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
@@ -957,6 +1045,7 @@ class ViralsampleController extends Controller
                     $batch->user_id = $facility->facility_user->id;
                     $batch->facility_id = $facility->id;
                     $batch->received_by = auth()->user()->id;
+                    $batch->time_received = date('Y-m-d H:i:s');
                     $batch->lab_id = auth()->user()->lab_id;
                     $batch->datereceived = $datereceived;
                     $batch->site_entry = $site_entry;
@@ -989,6 +1078,7 @@ class ViralsampleController extends Controller
                 $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->sampletype = (int) $row[7];
+                if($sample->sampletype == 5) $sample->sampletype = 1;
                 $sample->pmtct = $row[13];
                 $sample->receivedstatus = $row[16];
                 if(is_numeric($row[17])) $sample->rejectedreason = $row[17];
@@ -1087,6 +1177,48 @@ class ViralsampleController extends Controller
         return $samples;
     }
 
+    public function similar(Request $request)
+    {
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+        if(!$facility_id || !$patient) return '';
+        $datecollected = $request->input('datecollected');
+
+        $dt = date('Y-m-d', strtotime('-1months'));
+
+        $samples = ViralsampleView::where('created_at', '>', "{$dt}")
+            ->where(['repeatt' => 0, 'site_entry' => 1, 'facility_id' => $facility_id, ])
+            ->when($request->input('sex'), $this->query_callback($request, 'sex'))
+            ->when($request->input('prophylaxis'), $this->query_callback($request, 'prophylaxis'))
+            ->when($request->input('justification'), $this->query_callback($request, 'justification'))
+            ->when($patient, function($query) use ($patient){
+                $patient_string = substr($patient, 0, 5);
+                return $query->whereRaw("(patient like '{$patient_string}%' ) ");
+            })
+            ->when($datecollected, function($query) use ($datecollected){
+                return $query->whereBetween('datecollected', [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
+            })
+            ->limit(10)
+            ->get();
+
+
+        $data = Lookup::get_viral_lookups();
+        $data['samples'] = $samples;
+
+        return view('tables.similar_viralsamples', $data);
+    }
+
+
+
+    public function query_callback($request, $attribute)
+    {
+        $val = $request->input($attribute);
+
+        return function($query) use($attribute, $val){
+            return $query->where($attribute, $val);
+        };
+    }
+
 
     private function clear_session(){
         session()->forget('viral_batch');
@@ -1117,7 +1249,7 @@ class ViralsampleController extends Controller
                 // $sample = collect($sample)->flatten(1)->toArray();
                 // dd($sample[3]);
                 // $sample = (array)$sample;
-                $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
+                $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->where('repeatt', '<>', 1)->get()->last();
                 $sample[19] = $dbsample->rejectedreason ?? null;
                 $sample[20] = $dbsample->reason_for_repeat ?? null;
                 $sample[21] = $dbsample->labcomment ?? null;

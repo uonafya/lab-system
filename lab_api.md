@@ -1,6 +1,6 @@
 ## LAB API
 
-[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**.
+[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**. If you do not have **POSTMAN** installed, you can download it by [clicking here.](https://www.getpostman.com/downloads/)
 
 
 All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.
@@ -18,7 +18,24 @@ All links are **POST** requests. All post requests are validated using a header 
 > - location *AMRS location*
 > - dispatched *Boolean* When true, only samples that have been dispatched will be returned.
 
-> This link is paginated i.e. only 20 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
+> This link is paginated i.e. only 50 results at a time will be returned. The return data has a field called next_page_url and other links to help you get all the results. There is also other useful data such as the total results found.
+
+These are the fields that you should expect back:
+- **id** - This is the system id of the sample.
+- **order_number** - This is the order number.
+- **provider_identifier** - AMPATH sites only.
+- **AMRs_location** - AMPATH sites only.
+- **facility_code** - The facility MFL Code.
+- **patient** - The patient's CCC/HEI number.
+- **full_names** - The patient's name.
+- **date_collected** - The date the sample was collected.
+- **date_received** - The date the sample was received.
+- **date_tested** - The date the sample was tested.
+- **date_dispatched** - The date the sample was dispatched.
+- **interpretation** - The raw result from the machine.
+- **result** - The result of the test. 
+- **sample_status** - The status of the sample. It can either be Complete, Incomplete or Rejected.
+- **rejected_reason** - If the sample is rejected, this attribute will be present and will contain the reason why the sample was rejected.
 
 
 For the links below, if the order number exists, it will not save it again.
@@ -35,6 +52,11 @@ For the last 4 links, the following fields are common to all
 > - mflCode  **required**
 > - sex  **required** (1 for male, 2 for female, 3 for unknown)
 > - lab (This is the lab tested in.) *If the lab is not filled it will be set to the lab where the sample is being sent. It is however mandatory for complete requests.*
+
+---
+For the last 4 links, the following fields are common to all requests where you want the patient to receive sms notfications
+> - patient_phone_no  *(format 2547???????)*
+> - preferred_language *(1 for English, 2 for Kiswahili)*
 
 ---
 The following fields are common to complete requests 

@@ -28,11 +28,27 @@ class DrExtractionWorksheet extends BaseModel
     }
 
 
-    public function getCanCreateSequencingAttribute()
+    /**
+     * Get if worksheet has samples that can enter a sequencing worksheet
+     *
+     * @return string
+     */
+    public function getSequencingAttribute()
     {
-        $sample = \App\DrSample::where('extraction_worksheet_id', $this->id)->whereNull('worksheet_id')->first();
+        $sample = \App\DrSample::whereNull('worksheet_id')->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $this->id])->first();
         if($sample) return true;
         return false;
     }
 
+    /**
+     * Get if worksheet has samples that can enter a sequencing worksheet
+     *
+     * @return string
+     */
+    public function getPendingWorksheetAttribute()
+    {
+        $work = \App\DrWorksheet::whereNotIn('status_id', [3, 4])->first();
+        if($work) return true;
+        return false;
+    }
 }

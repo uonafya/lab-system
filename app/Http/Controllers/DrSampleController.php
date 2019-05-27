@@ -43,17 +43,13 @@ class DrSampleController extends Controller
                 return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
-                if($sample_status > 9){
-                    $query->whereNotNull('dateapproved');
-                    $sample_status -= 10;
-                    if(!$sample_status) return $query;
-                }
                 return $query->where('status_id', $sample_status);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
-                    return $query->whereBetween($date_column, [$date_start, $date_end]);
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
                 }
                 return $query->whereDate($date_column, $date_start);
             })
@@ -184,7 +180,11 @@ class DrSampleController extends Controller
         $others = $request->input('other_medications_text');
         $other_medications = $request->input('other_medications');
         $others = explode(',', $others);
-        $drSample->other_medications = array_merge($other_medications, $others);
+        if(is_array($others) && is_array($other_medications)) $drSample->other_medications = array_merge($other_medications, $others);
+        else{
+            $drSample->other_medications = $others;
+        }
+        
         $drSample->save();
 
         session(['toast_message' => 'The sample has been created.']);
@@ -253,6 +253,10 @@ class DrSampleController extends Controller
         $other_medications = $request->input('other_medications');
         $others = explode(',', $others);
         $drSample->other_medications = array_merge($other_medications, $others);
+        if(is_array($others) && is_array($other_medications)) $drSample->other_medications = array_merge($other_medications, $others);
+        else{
+            $drSample->other_medications = $others;
+        }
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);

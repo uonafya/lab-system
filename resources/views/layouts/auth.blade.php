@@ -34,7 +34,38 @@
 <body class="light-skin blank">
 
 <div class="back-link">
-    <img src="{{ asset(env('LOGO', 'img/nascoplogo.png') ) }}">
+    @switch(env('APP_LAB'))
+        @case(1)
+            <img src="{{ asset('img/kemri_nascoplogo.png') }}">
+            @break
+        @case(2)
+            <img src="{{ asset('img/kisumunascoplogo.png') }}">
+            @break
+        @case(3)
+            <img src="{{ asset('img/alupenascoplogo.png') }}">
+            @break
+        @case(4)
+            <img src="{{ asset('img/wrplogo.png') }}">
+            @break
+        @case(5)
+            <img src="{{ asset('img/ampathnascoplogo.png') }}">
+            @break
+        @case(6)
+            <img src="{{ asset('img/cpghlogo.png') }}">
+            @break
+        @case(7)
+            <img src="{{ asset('img/nhrllogo.png') }}">
+            @break
+        @case(8)
+            <img src="{{ asset('img/nyumbaninascoplogo.png') }}">
+            @break
+        @case(9)
+            <img src="{{ asset('img/knhnascoplogo.png') }}">
+            @break
+        @default
+            <img src="{{ asset('img/kemri_nascoplogo.png') }}">
+    @endswitch
+    {{-- <img src="{{ asset(env('LOGO', 'img/nascoplogo.png') ) }}"> --}}
 </div>
 <div class="pull-right" style="margin: 1.5em;">
     <a href="#" class="btn btn-primary" style="background-color: rgba(0, 0, 0, 0); color: black; border: none;"><strong class="font-extra-bold font-uppercase">{{ @Date("l, d F Y") }}</strong></a>

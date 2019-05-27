@@ -91,6 +91,11 @@ p.breakhere {page-break-before: always}
 			$labtelno="0722207868 Ext. Lab";
 		}
 
+		if(in_array($labss, [1, 3])) $envelope_logo = 'img/envelope_logos/kemri_nairobi_and_busia.jpg';
+		else if(in_array($labss, [5, 6, 9])) $envelope_logo = 'img/envelope_logos/ampath_cpgh_knh.jpg';
+		else if(in_array($labss, [2])) $envelope_logo = 'img/envelope_logos/cdc_kisumu.jpg';
+		else if(in_array($labss, [5])) $envelope_logo = 'img/envelope_logos/walter_reed.jpg';
+
 	?>
 
 @foreach($batches as $batch)
@@ -106,7 +111,8 @@ p.breakhere {page-break-before: always}
 
 				<tr>
 					<td class="style4 style1 comment" ><strong>{{ $batch->lab->name }} </strong></td>
-					<td rowspan="4" ><img src="{{ asset(env('ENVELOPE_LOGO') ) }} " alt="" width="60" height="60" /></td>
+					{{-- <td rowspan="4" ><img src="{{ asset(env('ENVELOPE_LOGO') ) }} " alt="" width="60" height="60" /></td> --}}
+					<td rowspan="4" ><img src="{{ asset($envelope_logo) }} " alt="" width="60" height="60" /></td>
 				</tr>
 
 				<tr></tr>

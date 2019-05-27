@@ -23,6 +23,11 @@ class Email extends BaseModel
         return $this->belongsTo('App\User');
     }
 
+    public function attachment()
+    {
+        return $this->hasMany('App\Attachment');
+    }
+
     /**
      * Get the user's full name
      *
@@ -57,14 +62,21 @@ class Email extends BaseModel
     {
         $this->save_blade();
         ini_set("memory_limit", "-1");
-        $facilities = \App\Facility::where('flag', 1)->get();
+        $min_date = date('Y-m-d', strtotime('-2years'));
+        $supported_query = "(id IN (select distinct facility_id from viralbatches where site_entry != 2 and datereceived > '{$min_date}') OR id IN (select distinct facility_id from batches where site_entry != 2 and datereceived > '{$min_date}'))"; 
+        $county_id = $this->county_id;
 
-        if($this->county_id){
-            $facilities = \App\Facility::where('flag', 1)->whereRaw("id IN (select id from view_facilitys where county_id = {$this->county_id})")->get();
-        }
-        
+        $facilities = \App\Facility::where('flag', 1)
+            ->whereRaw($supported_query)
+            ->when($this->county_id, function($query) use ($county_id){
+                return $query->whereRaw("id IN (select id from view_facilitys where county_id = {$county_id})");
+            })
+            ->get();
+            
         $this->sent = true;
         $this->save();
+
+        $this->load(['attachment']);
 
         $cc_array = $this->comma_array($this->cc_list);
         $bcc_array = $this->comma_array($this->bcc_list);

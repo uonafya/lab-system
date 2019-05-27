@@ -19,7 +19,7 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $machine_type=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
         // $state = session()->pull('worksheet_state', null); 
         $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
@@ -28,9 +28,6 @@ class WorksheetController extends Controller
         })
         ->when($state, function ($query) use ($state){
             return $query->where('status_id', $state);
-        })
-        ->when($machine_type, function ($query) use ($machine_type){
-            return $query->where('machine_type', $machine_type);
         })
         ->when($date_start, function($query) use ($date_start, $date_end){
             if($date_end)
@@ -91,8 +88,7 @@ class WorksheetController extends Controller
             ->orderBy('machine_type', 'asc')
             ->get();
         $data['worksheets'] = $worksheets;
-        $data['myurl'] = url("worksheet/index/{$state}/{$machine_type}/");
-        $data['myurl2'] = url("worksheet/index/{$state}/");
+        $data['myurl'] = url('worksheet/index/' . $state . '/');
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
     }
@@ -180,6 +176,7 @@ class WorksheetController extends Controller
                     ->whereIn('samples.id', $sample_array)
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                         if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                         if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })
@@ -201,7 +198,7 @@ class WorksheetController extends Controller
     public function find(Worksheet $worksheet)
     {
         session(['toast_message' => 'Found 1 worksheet.']);
-        return $this->index(0, 0, null, null, $worksheet->id);
+        return $this->index(0, null, null, $worksheet->id);
     }
 
     /**
@@ -372,7 +369,7 @@ class WorksheetController extends Controller
     public function upload(Worksheet $worksheet)
     {
         $worksheet->load(['creator']);
-        $users = User::whereIn('user_type_id', [1, 4])->get();
+        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -388,10 +385,6 @@ class WorksheetController extends Controller
      */
     public function save_results(Request $request, Worksheet $worksheet)
     {
-        if($worksheet->status_id != 1){
-            session(['toast_error' => 1, 'toast_message' => "The worksheet already has results."]);
-            return back();   
-        }
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
@@ -403,7 +396,7 @@ class WorksheetController extends Controller
         if($worksheet->machine_type == 2)
         {
             $date_tested = $request->input('daterun');
-            if(strtotime($date_tested) > strtotime($worksheet->created_at)) $datetested = $date_tested;
+            $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -458,7 +451,9 @@ class WorksheetController extends Controller
 
                 $error = $data[10];
 
-                $datetested=date("Y-m-d", strtotime($data[3]));
+                $date_tested=date("Y-m-d", strtotime($data[3]));
+
+                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
 
                 $data_array = Misc::sample_result($interpretation, $error);
 
@@ -525,9 +520,12 @@ class WorksheetController extends Controller
                     ->select('samples.*', 'batches.facility_id')
                     ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
-                    // ->orderBy('facility_id')
-                    ->orderBy('batch_id', 'asc')
-                    ->orderBy('samples.id', 'asc')  
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    })
+                    ->orderBy('samples.id', 'asc')
                     ->get();
 
         $s = $this->get_worksheets($worksheet->id);
@@ -553,13 +551,18 @@ class WorksheetController extends Controller
     public function approve(Request $request, Worksheet $worksheet)
     {
         $double_approval = Lookup::$double_approval;
-        $samples = $request->input('samples');
+        $samples = $request->input('samples', []);
         $batches = $request->input('batches');
         $results = $request->input('results');
         $actions = $request->input('actions');
 
         $today = date('Y-m-d');
         $approver = auth()->user()->id;
+
+        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
+            session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
+            return redirect('/worksheet');            
+        }
 
         $batch = array();
 
@@ -598,16 +601,20 @@ class WorksheetController extends Controller
             }
         }
 
+        if($batches){
+            $batch = collect($batches);
+            $b = $batch->unique();
+            $unique = $b->values()->all();
+
+            foreach ($unique as $value) {
+                Misc::check_batch($value);
+            }
+        }
+
+        $checked_batches = true;
+
         if(in_array(env('APP_LAB'), $double_approval)){
             if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
-                $batch = collect($batches);
-                $b = $batch->unique();
-                $unique = $b->values()->all();
-
-                foreach ($unique as $value) {
-                    Misc::check_batch($value);
-                }
-
                 $worksheet->status_id = 3;
                 $worksheet->datereviewed2 = $today;
                 $worksheet->reviewedby2 = $approver;
@@ -625,16 +632,7 @@ class WorksheetController extends Controller
                 return redirect('/worksheet');
             }
         }
-
         else{
-            $batch = collect($batches);
-            $b = $batch->unique();
-            $unique = $b->values()->all();
-
-            foreach ($unique as $value) {
-                Misc::check_batch($value);
-            }
-
             $worksheet->status_id = 3;
             $worksheet->datereviewed = $today;
             $worksheet->reviewedby = $approver;

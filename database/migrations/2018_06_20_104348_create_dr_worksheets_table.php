@@ -18,7 +18,7 @@ class CreateDrWorksheetsTable extends Migration
             $table->tinyInteger('lab_id')->unsigned();
 
             // This is the exatype id
-            $table->integer('plate_id')->unsigned()->nullable()->index();
+            $table->bigInteger('plate_id')->unsigned()->nullable()->index();
             $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
 
             // 1 is in process
@@ -32,24 +32,23 @@ class CreateDrWorksheetsTable extends Migration
             // Exatype status
             $table->tinyInteger('exatype_status_id')->unsigned()->default(4)->index();
 
-
-            $table->date('daterun')->nullable();
             $table->date('dateuploaded')->nullable();
             $table->date('datecancelled')->nullable();
             $table->date('datereviewed')->nullable();
             $table->date('datereviewed2')->nullable();
 
             $table->integer('createdby')->unsigned()->nullable();
+            $table->integer('runby')->unsigned()->nullable();
             $table->integer('uploadedby')->unsigned()->nullable();
             $table->integer('cancelledby')->unsigned()->nullable();
             $table->integer('reviewedby')->unsigned()->nullable();
             $table->integer('reviewedby2')->unsigned()->nullable();
 
+            $table->dateTime('time_sent_to_exatype')->nullable();
 
-            $table->dateTime('time_sent_to_sanger')->nullable();
-
-            $table->boolean('qc_pass')->default(0);
             $table->boolean('qc_run')->default(0);
+            $table->boolean('qc_pass')->default(0);
+            $table->integer('qc_distance_pass')->nullable();
             $table->boolean('plate_controls_pass')->default(0);
 
 

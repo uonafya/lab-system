@@ -200,13 +200,21 @@
                                             <a href="{{ url('/sample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
 
-                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
-                                                | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @if(auth()->user()->is_lab_user())
+                                                @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result && $sample->run > 1)
+                                                    | <a href="{{ url('/sample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                                @endif
+                                                @if($sample->result == 5 && $sample->age_in_months < 4)
+                                                    | <a href="{{ url('/sample/return_for_testing/' . $sample->id ) }}">Return for Testing</a> 
+                                                @endif
+                                                @if($batch->batch_complete == 0 && $sample->receivedstatus)
+                                                    | <a href="{{ url('/sample/unreceive/' . $sample->id ) }}">Unreceive Sample</a> 
+                                                @endif
                                             @endif
                                         </td>
 
                                         <td>
-                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->run < 2 && $sample->receivedstatus != 2)
+                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->worksheet_id == null && $sample->run < 2 && $sample->receivedstatus != 2)
 
                                             
                                                 {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}

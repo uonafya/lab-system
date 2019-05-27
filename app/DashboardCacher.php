@@ -214,7 +214,7 @@ class DashboardCacher
         } else {
             $model = Batch::class;
         }
-        return $model::selectRaw('COUNT(*) as total')->where('lab_id', '=', env('APP_LAB'))->where('batch_complete', '=', '2')->get()->first()->total;
+        return $model::selectRaw('COUNT(*) as total')->where(['lab_id' => env('APP_LAB'), 'batch_complete' => 2])->first()->total;
 	}
 
     public static function cd4samplesAwaitingDispatch(){
@@ -355,7 +355,7 @@ class DashboardCacher
 
         $delayed = $batch_class::selectRaw("{$pre}batches.*, COUNT({$pre}samples.id) AS `samples_count`")
             ->join("{$pre}samples", "{$pre}batches.id", '=', "{$pre}samples.batch_id")
-            ->where('batch_complete', 0)
+            ->where(['batch_complete' => 0, 'lab_id' => env('APP_LAB')])
             ->when(true, function($query) use ($res_query){
                 if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
                     return $query->whereRaw("( receivedstatus=2 OR  ({$res_query} AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )");
@@ -422,6 +422,8 @@ class DashboardCacher
             $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
             $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
         }
+
+        // $rejectedAllocations = self::rejectedAllocations();
         
         $rejectedAllocations = self::rejectedAllocations();
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);

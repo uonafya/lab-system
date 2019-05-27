@@ -20,18 +20,20 @@ DROP TABLE IF EXISTS `dr_sample_statuses`;
 CREATE TABLE  `dr_sample_statuses` (
   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `other_id` INT unsigned NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
+  `name` varchar(70) DEFAULT NULL,
+  `output` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`) VALUES
-	(1, 1100, 'completed'),
-	(2, 1101, 'error'),
-	(3, 1102, 'failed'),
-	(4, 1110, 'pending'),
-	(5, 1111, 'processing'),
-	(6, 1120, 'action_required');
+INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`, `output`) VALUES
+	(1, 1100, 'completed','<strong><div style=\'color: #339900;\'>Completed</div></strong>'),
+	(2, 1101, 'error','<strong><div style=\'color: #FF0000;\'>Error</div></strong>'),
+	(3, 1102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
+	(4, 1110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
+	(5, 1111, 'processing','<strong><div style=\'color: #0000FF;\'>Processing</div></strong>'),
+	(6, 1120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>'),
+	(7, 1112, 'qc_pending','<strong><div style=\'color: #FFD324;\'>Quality Control Pending</div></strong>');
 
 -- DROP TABLE IF EXISTS `calls`;
 -- CREATE TABLE  `calls` (
@@ -195,7 +197,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `drug_resistance_reasons`;
 
 CREATE TABLE `drug_resistance_reasons` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `rank` TINYINT UNSIGNED NOT NULL,
@@ -210,7 +212,7 @@ INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`, `rank`) VALU
 DROP TABLE IF EXISTS `dr_primers`;
 
 CREATE TABLE `dr_primers` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `full_name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -227,7 +229,7 @@ INSERT INTO `dr_primers` (`id`, `name`, `full_name`) VALUES
 
 DROP TABLE IF EXISTS `dr_patient_statuses`;
 CREATE TABLE `dr_patient_statuses` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -242,7 +244,7 @@ INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `dr_sample_types`;
 CREATE TABLE `dr_sample_types` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -255,7 +257,7 @@ INSERT INTO `dr_sample_types` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `dr_rejected_reasons`;
 CREATE TABLE `dr_rejected_reasons` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -268,7 +270,7 @@ INSERT INTO `dr_rejected_reasons` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `tb_treatment_phases`;
 CREATE TABLE `tb_treatment_phases` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -281,7 +283,7 @@ INSERT INTO `tb_treatment_phases` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `clinical_indications`;
 CREATE TABLE `clinical_indications` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -297,7 +299,7 @@ INSERT INTO `clinical_indications` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `arv_toxicities`;
 CREATE TABLE `arv_toxicities` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -311,7 +313,7 @@ INSERT INTO `arv_toxicities` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `other_medications`;
 CREATE TABLE `other_medications` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

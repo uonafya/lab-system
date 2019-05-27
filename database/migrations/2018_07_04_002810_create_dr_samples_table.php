@@ -17,20 +17,26 @@ class CreateDrSamplesTable extends Migration
             $table->increments('id');
             $table->integer('patient_id')->unsigned()->index();
             $table->integer('facility_id')->unsigned()->index();
+            $table->tinyInteger('lab_id')->unsigned()->index();
+
+            $table->string('clinician_name', 50)->nullable();
 
             // 0 is for normal sample
             // 1 is negative control
             // 2 is positive control
             $table->tinyInteger('control')->unsigned()->nullable()->default(0);
-            $table->integer('exatype_id')->unsigned()->index()->nullable()->default(0);
+            $table->bigInteger('exatype_id')->unsigned()->index()->nullable();
 
             $table->tinyInteger('prev_prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('receivedstatus')->unsigned()->nullable(); 
             $table->tinyInteger('rejectedreason')->unsigned()->nullable();
 
-
+            // Public,Survelliance etc
             $table->tinyInteger('sample_type')->unsigned()->nullable();
+
+            // Specimen Type
+            $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->tinyInteger('age')->unsigned()->nullable();
             // Multiple
             $table->string('clinical_indications', 50)->nullable(); 
@@ -46,7 +52,7 @@ class CreateDrSamplesTable extends Migration
             // Multiple
             $table->string('arv_toxicities', 50)->nullable();
 
-            $table->string('cd4_result', 50)->nullable();
+            $table->string('cd4_result', 30)->nullable();
 
             // Adherence
             $table->boolean('has_missed_pills')->default(0);
@@ -109,8 +115,10 @@ class CreateDrSamplesTable extends Migration
 
             $table->boolean('has_errors')->default(0);
             $table->boolean('has_warnings')->default(0);
-            $table->boolean('has_calls')->default(0);
-            $table->boolean('has_genotypes')->default(0);
+            $table->boolean('has_mutations')->default(0);
+
+            // $table->boolean('has_calls')->default(0);
+            // $table->boolean('has_genotypes')->default(0);
 
             // PendChromatogramManualIntervention
             $table->boolean('pending_manual_intervention')->default(0);
@@ -120,7 +128,7 @@ class CreateDrSamplesTable extends Migration
             $table->text('assembled_sequence')->nullable(); 
             $table->string('chromatogram_url', 50)->nullable(); 
             // $table->string('pdf_download_link')->nullable(); 
-            $table->string('exatype_version', 50)->nullable(); 
+            $table->string('exatype_version', 30)->nullable(); 
             $table->string('algorithm', 20)->nullable(); 
             
 

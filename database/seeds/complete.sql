@@ -79,7 +79,7 @@ INSERT INTO `facilitytype` (`id`, `name`) VALUES
 DROP TABLE IF EXISTS `countys`;
 -- Dumping structure for table apidb.countys
 CREATE TABLE IF NOT EXISTS `countys` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `CountyDHISCode` varchar(50) DEFAULT NULL,
   `CountyMFLCode` varchar(10) DEFAULT NULL,
@@ -2505,7 +2505,7 @@ DROP TABLE IF EXISTS `actions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `actions` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `name_colour` varchar(100) DEFAULT NULL,
   `active` TINYINT UNSIGNED DEFAULT '1',
@@ -2729,7 +2729,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `synch_levels`;
 
 CREATE TABLE `synch_levels` (
-  `id` TINYINT UNSIGNED NOT NULL,
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `synch_level` varchar(50) NOT NULL,
   `synch_description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)

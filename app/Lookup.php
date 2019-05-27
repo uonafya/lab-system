@@ -143,8 +143,11 @@ class Lookup
         self::cacher();
 
         if($test == 1) $reasons = Cache::get('rejected_reasons');
-        if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
-        if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+        else if($test == 2) $reasons = Cache::get('viral_rejected_reasons');
+        else if($test == 3) $reasons = Cache::get('cd4_rejected_reasons');
+        else {
+            return '';
+        }
 
         return $reasons->where('id', $rejectedreason)->first()->name ?? 'Unknown';
     }
@@ -155,7 +158,7 @@ class Lookup
         // $fac = Cache::get('facilities');       
         // return $fac->where('facilitycode', $mfl)->first()->id;
 
-        return \App\Facility::locate($mfl)->get()->first()->id ?? null;
+        return \App\Facility::locate($mfl)->first()->id ?? null;
     }
 
     public static function get_partners()
@@ -312,6 +315,7 @@ class Lookup
         // $dc = Carbon::createFromFormat('Y-m-d', $request->input('datecollected'));
         $dob = Carbon::parse( $dob );
         $dc = Carbon::parse( $date_collected );
+        if($dob->greaterThan($dc)) return 0;
         $months = $dc->diffInMonths($dob);
         $weeks = $dc->diffInWeeks($dob->copy()->addMonths($months));
         $total = $months + ($weeks / 4);
@@ -446,6 +450,7 @@ class Lookup
             'dr_primers' => Cache::get('dr_primers'),
             'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
             'dr_sample_types' => Cache::get('dr_sample_types'),
+            'sampletypes' => Cache::get('sample_types'),
             'tb_treatment_phases' => Cache::get('tb_treatment_phases'),
             'clinical_indications' => Cache::get('clinical_indications'),
             'arv_toxicities' => Cache::get('arv_toxicities'),
@@ -491,9 +496,9 @@ class Lookup
 
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
-            'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications'],
+            'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name'],
 
-            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'run', 'parentid', 'age'],
+            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
         ];
     }
 

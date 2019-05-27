@@ -22,9 +22,7 @@
                             <p><strong>Batch:</strong> {{ $batch->id  ?? '' }}</p>
                         </div>
                         <div class="col-md-8">
-                            @if($batch->view_facility)
-                                <p><strong>Facility:</strong> {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }}</p>
-                            @endif
+                            <p><strong>Facility:</strong> {{ ($batch->view_facility->facilitycode . ' - ' . $batch->view_facility->name . ' (' . $batch->view_facility->county . ')') ?? '' }}</p>
                         </div>
                         
                         <div class="col-md-4">
@@ -203,13 +201,21 @@
                                             <a href="{{ url('/viralsample/' . $sample->id ) }} ">View</a> |
                                             <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
-                                            @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result)
-                                                | <a href="{{ url('/viralsample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                            @if(auth()->user()->is_lab_user())
+                                                @if($batch->batch_complete == 0 && $sample->receivedstatus == 1 && !$sample->worksheet_id && !$sample->result && $sample->run > 1)
+                                                    | <a href="{{ url('/viralsample/release/' . $sample->id ) }} ">Release As Redraw</a> 
+                                                @endif
+                                                @if($sample->result == 'Collect New Sample' && $sample->age_in_months < 4)
+                                                    | <a href="{{ url('/viralsample/return_for_testing/' . $sample->id ) }}">Return for Testing</a> 
+                                                @endif
+                                                @if($batch->batch_complete == 0 && $sample->receivedstatus)
+                                                    | <a href="{{ url('/viralsample/unreceive/' . $sample->id ) }}">Unreceive Sample</a> 
+                                                @endif
                                             @endif
                                         </td>
 
                                         <td>
-                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->run < 2 && $sample->receivedstatus != 2)
+                                            @if($batch->batch_complete == 0 && $sample->result == null && $sample->worksheet_id == null && $sample->run < 2 && $sample->receivedstatus != 2)
                                             
                                                 {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                     <button type="submit" class="btn btn-xs btn-primary">Delete</button>

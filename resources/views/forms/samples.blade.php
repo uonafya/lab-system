@@ -749,7 +749,9 @@
                 },
                 datecollected: {
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
-                    lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @if(auth()->user()->user_type_id != 5)
+                        lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @endif
                 },
                 datedispatched: {
                     lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
@@ -801,6 +803,15 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#rejection").hide();
+
+            @if(env('APP_LAB') == 8 && auth()->user()->is_lab_user() && !isset($sample))
+                $("#samples_form input,select").change(function(){
+                    var frm = $('#samples_form');
+                    // var data = JSON.stringify(frm.serializeObject());
+                    var data = frm.serializeObject();
+                    console.log(data);
+                });  
+            @endif
 
             @if(isset($sample))                
                 @if($sample->receivedstatus == 2)
@@ -870,6 +881,7 @@
 
         });
 
+
         function check_new_patient(patient, facility_id){
             $.ajax({
                type: "POST",
@@ -898,6 +910,7 @@
                         // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
                         $("#patient_name").val(patient.patient_name);
+                        $("#patient_phone_no").val(patient.patient_phone_no);
                         $("#sex").val(patient.sex).change();
                         $("#entry_point").val(patient.entry_point).change();
                         $("#mother_age").val(mother.age);

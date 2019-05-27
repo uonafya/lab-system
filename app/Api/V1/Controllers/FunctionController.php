@@ -33,7 +33,7 @@ class FunctionController extends BaseController
 
     }
 
-    public function myfunction(BlankRequest $request)
+    public function data_functions(BlankRequest $request)
     {     
         $test = $request->input('test');
         $start_date = $request->input('start_date');
@@ -48,10 +48,15 @@ class FunctionController extends BaseController
         $dispatched = $request->input('dispatched');   
         $ids = $request->input('ids');   
 
+
+
         if($test == 1) $class = SampleView::class;
         else if($test == 2) $class = ViralsampleView::class;
-        else if($test == 3) $class = Cd4SampleView::class;
-        else if($test == 4) $class = CragSampleView::class;
+        else if($test == 3){
+            $class = Cd4SampleView::class;
+            if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not do CD4 tests.");
+        }
+        // else if($test == 4) $class = CragSampleView::class;
 
         if($patients){
             $patients = str_replace(' ', '', $patients);
@@ -69,8 +74,6 @@ class FunctionController extends BaseController
             $facilities = str_replace(' ', '', $facilities);
             $facilities = explode(',', $facilities);
         }
-
-        if($test == 3 && env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not provide CD4.");
  
         $result = $class::when($facilities, function($query) use($facilities){
                 return $query->whereIn('facilitycode', $facilities);
@@ -143,15 +146,11 @@ class FunctionController extends BaseController
                 'facility_code' => $sample->facilitycode,
                 'AMRs_location' => Lookup::get_mrslocation($sample->amrs_location),
                 'full_names' => $sample->patient_name,
-                // 'date_collected' => Lookup::my_date_format($sample->datecollected),
-                // 'date_received' => Lookup::my_date_format($sample->datereceived),
-                // 'date_tested' => Lookup::my_date_format($sample->datetested),
                 'date_collected' => $sample->datecollected,
                 'date_received' => $sample->datereceived,
                 'date_tested' => $sample->datetested,
                 'interpretation' => $sample->interpretation,
                 'result' => $sample->result,
-                // 'date_dispatched' => Lookup::my_date_format($sample->datedispatched),
                 'date_dispatched' => $sample->datedispatched,
                 'sample_status' => $sample->sample_status,
             ];

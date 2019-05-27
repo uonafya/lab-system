@@ -29,8 +29,12 @@ class Common
 			'batch_class' => \App\Batch::class,
 			'worksheet_class' => \App\Worksheet::class,
 			'patient_class' => \App\Patient::class,
+
+
 			'view_table' => 'samples_view',
 			'worksheets_table' => 'worksheets',
+			'batch_table' => 'batches',
+			'sample_table' => 'samples',
 		],
 
 		'vl' => [
@@ -40,8 +44,12 @@ class Common
 			'batch_class' => \App\Viralbatch::class,
 			'worksheet_class' => \App\Viralworksheet::class,
 			'patient_class' => \App\Viralpatient::class,
+
+
 			'view_table' => 'viralsamples_view',
 			'worksheets_table' => 'viralworksheets',
+			'batch_table' => 'viralbatches',
+			'sample_table' => 'viralsamples',
 		],
 	];
 
@@ -188,7 +196,7 @@ class Common
 	{
         ini_set("memory_limit", "-1");
 		$samples = $view_model::where(['batch_complete' => 1])
-		->whereRaw("(synched = 0 or synched = 2)")
+		->whereRaw("(synched = 0 or synched = 2 or (synched=1 and tat4=0))")
 		->when($batch_id, function($query) use ($batch_id){
 			return $query->where(['batch_id' => $batch_id]);
 		})
@@ -341,6 +349,7 @@ class Common
 	{
 		$batch_model = self::get_batch_class($type);
         $min_time = date('Y-m-d', strtotime("-14 days"));
+        if(env('APP_LAB') == 3) $min_time = date('Y-m-d', strtotime("-28 days"));
 
 		$batches = $batch_model::where(['site_entry' => 1, 'batch_complete' => 0, 'lab_id' => env('APP_LAB')])->where('created_at', '<', $min_time)->whereNull('datereceived')->whereNull('datedispatched')->get();
 
@@ -430,21 +439,134 @@ class Common
         }
     }
 
-    public static function nhrl($type, $lab=null)
+    public static function create_facility_users()
+    {
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from users where user_type_id = 5)")->get();
+    	foreach ($facilities as $facility) {
+    		$u = \App\User::create([
+                'user_type_id' => 5,
+                'surname' => '',
+                'oname' => '',
+                'lab_id' => env('APP_LAB'),
+                'facility_id' => $facility->id,
+                'email' => 'facility' . $facility->id . '@nascop-lab.com',
+                'password' => encrypt($facility->name)
+    		]);
+    	}
+
+    	$facilities = \App\Facility::whereRaw("id not in (select facility_id from facility_contacts)")->get();
+    	foreach ($facilities as $facility) {
+	        $contact_array = ['telephone', 'telephone2', 'fax', 'email', 'PostalAddress', 'contactperson', 'contacttelephone', 'contacttelephone2', 'physicaladdress', 'G4Sbranchname', 'G4Slocation', 'G4Sphone1', 'G4Sphone2', 'G4Sphone3', 'G4Sfax', 'ContactEmail'];
+
+	        $contact = new FacilityContact();
+	        $contact->fill($facility->only($contact_array));
+	        $contact->facility_id = $facility->id;
+	        $contact->save();
+    	}
+    }
+
+    public static function nhrl($type)
     {
     	ini_set('memory_limit', "-1");
-    	if(!$lab) $lab=7;
 
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['lab_id' => $lab, 'synched' => 5])->get();
+    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [10])->get();
 
     	foreach ($batches as $batch) {
-    		$sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
-    		$batch->synched=0;
-    		$batch->save();
+    		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->first();
+    		if(!$sample){
+	    		$batch->synched=0;
+	    		$batch->save();    			
+    		}
     	}
+
+    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7])->get();
+
+    	foreach ($batches as $batch) {
+    		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
+    		$batch->synched=0;
+    		$batch->save();   
+    	}
+    }
+
+    public static function transfer_delayed_samples($type)
+    {
+    	ini_set('memory_limit', "-1");
+
+    	$batch_model = self::$my_classes[$type]['batch_class'];
+    	$batch_table = self::$my_classes[$type]['batch_table'];
+
+    	$sample_class = self::$my_classes[$type]['sample_class'];
+    	$sample_table = self::$my_classes[$type]['sample_table'];
+
+    	$where_raw = '';
+
+    	if($type == 'eid'){
+    		if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+    			$where_raw = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL AND approvedby2 IS NOT NULL) )";
+    		}
+    		else{
+    			$where_raw = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND approvedby IS NOT NULL) )";
+    		}
+    	}
+    	else{
+    		if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+    			$where_raw = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
+    		}
+    		else{
+    			$where_raw = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+    		}
+    	}
+
+
+        $batches = $batch_model::selectRaw("{$batch_table}.*, COUNT({$sample_table}.id) AS `samples_count`")
+            ->join("{$sample_table}", "{$batch_table}.id", '=', "{$sample_table}.batch_id")
+            ->where(['batch_complete' => 0, "{$batch_table}.lab_id" => env('APP_LAB')])
+            ->whereRaw($where_raw)
+            ->groupBy("{$batch_table}.id")
+            // ->having('samples_count', '>', 0)
+            ->havingRaw("COUNT({$sample_table}.id) > 0")
+            ->get();
+
+    	foreach ($batches as $batch) {
+    		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
+    		if($samples->count() > 0){
+		        unset($batch->samples_count);
+    			$sample_ids = $samples->pluck('id')->toArray();
+    			echo "{$type} batch {$batch->id} \n ";
+    			$batch->transfer_samples($sample_ids, 'new_facility');
+    		}
+    	}
+    }
+
+    public static function reject_delayed_samples($type)
+    {
+    	ini_set('memory_limit', "-1");
+
+    	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
+    	$sample_class = self::$my_classes[$type]['sample_class'];
+
+    	if($type == 'eid'){
+    		$days = 14;
+    		$rej = 18;
+    	}
+    	else{
+    		$days = 28;
+    		$rej = 17;
+    	}
+
+    	$sample_class = self::$my_classes[$type]['sample_class'];
+    	$sample_table = self::$my_classes[$type]['sample_table'];
+
+        $samples = $sampleview_class::whereNull('receivedstatus')
+        	->where(['batch_complete' => 0, 'lab_id' => env('APP_LAB')])
+        	->where('created_at', '<', date('Y-m-d H:i:s', strtotime("-{$days} days")))
+            ->get();
+
+        $sample_ids = $samples->pluck(['id'])->toArray();
+        $sample_class::whereIn('id', $sample_ids)->update(['receivedstatus' => 2, 'rejectedreason' => $rej, 'updated_at' => date('Y-m-d H:i:s')]);
     }
 
 	public static function fix_no_age($type)
@@ -472,6 +594,14 @@ class Common
 		}
 	}
 
+
+	public static function worksheet_date($date_tested, $created_at, $default=null)
+	{
+		if(!$default) $default = date('Y-m-d');
+
+		if(strtotime($date_tested) > strtotime($created_at) && strtotime($date_tested) < strtotime('now')) return $date_tested;
+		return $default;
+	}
 
 
 
@@ -652,30 +782,6 @@ class Common
 	    }
     }
 
-    public static function old_batches_dispatch()
-    {
-        ini_set("memory_limit", "-1");
-        $classes = \App\Synch::$synch_arrays;
-
-        foreach ($classes as $c) {
-
-	        $batch_class = $c['batch_class'];
-	        $misc_class = $c['misc_class'];
-
-	        $batches = $batch_class::where('batch_complete', 2)->get();
-	        $batch_ids = $batches->pluck(['id'])->toArray();
-	        $date_tested = $misc_class::get_maxdateapproved($batch_ids, false);
-
-	        foreach ($batches as $batch) {
-	        	$dt = $date_tested->where('batch_id', $batch->id)->first()->mydate;
-	        	$batch->datedispatched = $batch->datebatchprinted = $batch->dateindividualresultprinted = date('Y-m-d', strtotime($dt . ' +1days'));
-	        	$batch->batch_complete = 1;
-	        	$batch->sent_email = 1;
-	        	$batch->save();
-	        }
-	    }
-    }
-
     public static function correct_facility($mfl)
     {
         ini_set("memory_limit", "-1");
@@ -755,28 +861,71 @@ class Common
         dd($conflict);
     }
 
-    public static function change_facility_id($old_id, $new_id, $also_facility=false)
+
+    public static function change_facility_id($old_id, $new_id, $also_facility=false, $created_at=false)
     {
         $classes = [
         	\App\Mother::class,
         	\App\Batch::class,
         	\App\Patient::class,
 
+
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
-
-        	\App\User::class,
-        	\App\FacilityContact::class,
         ];
 
-
+		if($also_facility){
+			\App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+			\App\User::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+			\App\FacilityContact::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
+		
 		foreach ($classes as $key => $class) {
-			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])->update(['facility_id' => $new_id, 'synched' => 2]);
+			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
+				->when($created_at, function($query) use ($created_at){
+					return $query->whereDate('created_at', '>', $created_at);
+				})
+				->update(['facility_id' => $new_id, 'synched' => 2]);
+
 			$class::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
 		}
 
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
-		if($also_facility) \App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+    }
+
+
+    public static function change_facility_id_two($old_id, $new_id, $also_facility=false, $created_at=false)
+    {
+        $classes = [
+        	\App\Mother::class,
+        	\App\Batch::class,
+        	\App\Patient::class,
+
+
+        	\App\Viralbatch::class,
+        	\App\Viralpatient::class,
+        ];
+
+		if($also_facility){
+			\App\Facility::where(['id' => $old_id])->update(['id' => $new_id]);
+			\App\User::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+			\App\FacilityContact::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
+		}
+
+		foreach ($classes as $key => $class) {
+			if($key < 5) $class::where(['facility_id' => $old_id, 'synched' => 1])
+				->when($created_at, function($query) use ($created_at){
+					return $query->whereBetween('created_at', $created_at);
+				})
+				->update(['facility_id' => $new_id, 'synched' => 2]);
+
+			$class::where(['facility_id' => $old_id])
+				->when($created_at, function($query) use ($created_at){
+					return $query->whereBetween('created_at', $created_at);
+				})->update(['facility_id' => $new_id]);
+		}
+
+		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
     public static function send_lab_tracker($year, $previousMonth) {

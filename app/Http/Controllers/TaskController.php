@@ -371,6 +371,7 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
+        // dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 

@@ -125,7 +125,7 @@ class FacilityController extends Controller
                             ->where('facilitys.lab', '=', Auth()->user()->lab_id)
                             ->get();*/
 
-        $facilities = ViewFacility::whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")->get();
+        $facilities = ViewFacility::whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry != 2 AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")->get();
         $count = 0;
         $table = '';
         foreach ($facilities as $key => $value) {
@@ -287,11 +287,6 @@ class FacilityController extends Controller
         $this->auth_user([2]);
         $facility = new Facility();
         $facility->fill($request->except(['_token', 'submit_type']));
-        $fac = Facility::where(['facilitycode' => $facility->facilitycode])->first();
-        if($fac){
-            session(['toast_error' => 1, 'toast_message'=>"Facility MFL Code {$fac->facilitycode} already exists."]);
-            return back();
-        }
         $facility->save();
 
         session(['toast_message'=>'Facility Created Successfully']);

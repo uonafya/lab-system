@@ -16,8 +16,6 @@
             @foreach($dr_sample_statuses as $dr_sample_status)
                 <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
             @endforeach
-                <a href="{{ $myurl2 . '/10' }}"> approved samples</a> |
-                <a href="{{ $myurl2 . '/11' }}"> approved completed samples</a> |
         </div>
     </div>
 
@@ -200,6 +198,7 @@
                                     <th>Sample Code / Patient ID</th>
                                     <th>Facility</th>
                                     <th>Lab ID</th>
+                                    <th>Exatype Status</th>
                                     <th>Date Collected</th>
                                     <th>Date Received</th>
                                     <th>Reason</th>
@@ -207,8 +206,7 @@
                                     <th>Sequencing Worksheet</th>
                                     <th>Has Errors</th>
                                     <th>Has Warnings</th>
-                                    <th>Has Drug Data</th>
-                                    <th>Has Genotypes</th>
+                                    <th>Has Mutations</th>
                                     <th>Tasks</th>
                                 </tr>
                             </thead>
@@ -219,6 +217,7 @@
                                         <td> {!! $sample->patient->hyper_link ?? '' !!} </td>
                                         <td> {{ $sample->patient->facility->name ?? '' }} </td>
                                         <td> {{ $sample->id }} </td>
+                                        <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
@@ -226,17 +225,14 @@
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_boolean_format('has_errors') }} </td>
                                         <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_calls') }} </td>
-                                        <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
+                                        <td> {{ $sample->my_boolean_format('has_mutations') }} </td>
                                         <td>
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
 
-                                            @if(in_array($sample->status_id, [1, 2, 3]) || $sample->receivedstatus == 2)
-                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> |
-                                                @if($sample->dateapproved || $sample->receivedstatus == 2) 
-                                                    <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
-                                                @endif
+                                            @if(in_array($sample->status_id, [1, 2, 3]))
+                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
+                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
                                             @endif
                                         </td>
                                     </tr>

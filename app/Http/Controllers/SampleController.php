@@ -57,7 +57,8 @@ class SampleController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
         $data = Lookup::get_lookups();
-        $samples = SampleView::with(['facility'])->whereRaw($string)->whereNotNull('time_result_sms_sent')->get();
+        $samples = SampleView::whereRaw($string)->whereNotNull('time_result_sms_sent')->orderBy('datedispatched', 'desc')->paginate(50);
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.sms_log', $data)->with('pageTitle', 'Eid Patient SMS Log');
@@ -150,6 +151,7 @@ class SampleController extends Controller
             if($user->is_lab_user()){
                 $batch->received_by = $user->id;
                 $batch->site_entry = 0;
+                $batch->time_received = date('Y-m-d H:i:s');
             }
             else{
                 $batch->site_entry = 1;
@@ -407,7 +409,10 @@ class SampleController extends Controller
 
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
-        if(!$batch->received_by && $user->is_lab_user()) $batch->received_by = $user->id;
+        if(!$batch->received_by && $user->is_lab_user()){
+            $batch->received_by = $user->id;
+            $batch->time_received = date('Y-m-d H:i:s');
+        }
         $batch->pre_update();
 
         $patient = $sample->patient;
@@ -532,8 +537,22 @@ class SampleController extends Controller
             $sample->interpretation = null;
         }
 
+        if($sample->receivedstatus == 1 && $sample->getOriginal('receivedstatus') == 2){
+            if($batch->batch_complete == 1) $transfer = true;
+            else if($batch->batch_complete == 2){
+                $batch->batch_complete = 0;
+                $batch->pre_update();
+            }            
+        }
 
         $sample->pre_update(); 
+
+        if(isset($transfer)){
+            $url = $batch->transfer_samples([$sample->id], 'new_facility', true);
+            $sample->refresh();
+            $batch = $sample->batch;
+            session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
+        }
 
         if(isset($created_patient)){
             if($sample->run == 1 && $sample->has_rerun){
@@ -561,7 +580,7 @@ class SampleController extends Controller
 
         if($sample->receivedstatus == 1 && $user->is_lab_user()){            
             $work_samples = Misc::get_worksheet_samples(2);
-            if($work_samples['count'] > 21) session(['toast_message' => 'The sample have been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
+            if($work_samples['count'] > 21) session(['toast_message' => 'The sample has been accepted.<br />You now have ' . $work_samples['count'] . ' samples that are eligible for testing.']);
         }
 
         /*if($new_batch){
@@ -630,7 +649,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->result == NULL && $sample->run < 2){
+        if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL){
             $batch = $sample->batch;
             $sample->delete();
             $samples = $batch->sample;
@@ -771,6 +790,34 @@ class SampleController extends Controller
         return back();
     }
 
+    public function return_for_testing(Sample $sample)
+    {
+        if($sample->result != 5 || $sample->repeatt == 1 || $sample->age_in_months > 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be returned for testing.']);
+            return back();
+        }
+
+        $sample->repeatt = 1;
+        $sample->save();
+        
+        $rerun = Misc::save_repeat($sample->id);
+
+        $batch = $sample->batch;
+
+        if($batch->batch_complete == 0){
+            session(['toast_message' => 'The sample has been returned for testing.']);
+            return back();
+        }
+        else{
+            $batch->transfer_samples([$rerun->id], 'new_facility');
+            $rerun->refresh();
+            $batch = $rerun->batch;
+            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->save();
+            return redirect('batch/' . $batch->id);
+        }
+    }
+
     public function release_redraw(Sample $sample)
     {
         $batch = $sample->batch;
@@ -813,6 +860,19 @@ class SampleController extends Controller
 
         foreach ($samples as $key => $sample) {
             $this->release_redraw($sample);
+        }
+        return back();
+    }
+
+    public function unreceive(Sample $sample)
+    {
+        if($sample->worksheet_id || $sample->run > 1 || $sample->synched){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be set to unreceived']);
+        }
+        else{
+            $sample->fill(['sample_received_by' => null, 'receivedstatus' => null, 'rejectedreason' => null]);
+            $sample->save();
+            session(['toast_message' => 'The sample has been unreceived.']);
         }
         return back();
     }
@@ -886,6 +946,7 @@ class SampleController extends Controller
                 $batch->user_id = $facility->facility_user->id;
                 $batch->facility_id = $facility->id;
                 $batch->received_by = auth()->user()->id;
+                $batch->time_received = date('Y-m-d H:i:s');
                 $batch->lab_id = auth()->user()->lab_id;
                 $batch->datereceived = $datereceived;
                 $batch->site_entry = $site_entry;
@@ -1019,6 +1080,19 @@ class SampleController extends Controller
             ->paginate(10);
 
         $samples->setPath(url()->current());
+        return $samples;
+    }
+
+    public function similar(Request $request)
+    {
+        $facility_id = $request->input('facility_id');
+        $patient = $request->input('patient');
+        $sex = $request->input('sex');
+
+        $samples = SampleView::where('created_at', '>', date('Y-m-d', strtotime('-2months')))
+            ->where(['repeatt' => 0, 'facility_id' => $facility_id, 'sex' => $sex, ])
+            ->limit(10);
+
         return $samples;
     }
 

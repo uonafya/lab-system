@@ -62,6 +62,10 @@ return [
         'sex' => ['required', 'integer', 'max:3'], 
         'lab' => 'integer',
         'amrs_location' => 'integer',
+
+        'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
+        'preferred_language' => ['integer', 'between:1,2'],
+
     ],
 
     'complete_result' => [
@@ -117,6 +121,9 @@ return [
         'datedispatchedfromfacility' => ['after_or_equal:-6month', 'before_or_equal:+7days', 'date_format:Y-m-d'],
         'sex' => ['required', 'integer', 'between:1,2'], 
         'amrs_location' => 'integer',
+
+        'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
+        'preferred_language' => ['integer', 'between:1,2'],
 
     ],
 

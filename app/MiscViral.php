@@ -27,7 +27,7 @@ class MiscViral extends Common
         '1' => [],
         '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
-        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
+        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000', "> 10,000,000 cp/ml"],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
     ];
 
@@ -119,18 +119,15 @@ class MiscViral extends Common
             ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
+            $where_query = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+            $where_query = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
         }
 
 
 		$total = Viralsample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
-		$tests = Viralsample::where('batch_id', $batch_id)
-		->whereRaw($where_query)
-		->get()
-		->count();
+		$tests = Viralsample::where('batch_id', $batch_id)->whereRaw($where_query)->get()->count();
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
@@ -251,7 +248,7 @@ class MiscViral extends Common
             return self::exponential_result($result);
         }
 
-        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error', 'invalid']) || strlen($error) > 10)
+        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
             $interpretation = $error ?? $result;       
@@ -268,7 +265,11 @@ class MiscViral extends Common
             $res= "< LDL copies/ml";
             $interpretation= $result;       
         }
-
+        else if(str_contains($result, ['>']))
+        {
+            $res= "> 10,000,000 cp/ml";
+            $interpretation= $result;       
+        }
         else if(str_contains($str, ['not detected']))
         {
             // $res="Target Not Detected";
@@ -438,28 +439,6 @@ class MiscViral extends Common
         return $samples;
     }
 
-    public static function get_maxdateapproved($batch_id=NULL, $complete=true)
-    {
-        $samples = Viralsample::selectRaw("max(dateapproved) as mydate, batch_id")
-            ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
-            ->when($batch_id, function($query) use ($batch_id){
-                if (is_array($batch_id)) {
-                    return $query->whereIn('batch_id', $batch_id);
-                }
-                else{
-                    return $query->where('batch_id', $batch_id);
-                }
-            })
-            ->when($complete, function($query){
-                return $query->where('batch_complete', 2);
-            })
-            ->where('receivedstatus', '!=', 2)
-            ->groupBy('batch_id')
-            ->get();
-
-        return $samples;
-    }
-
     public static function delete_empty_batches()
     {
         $batches = \App\Viralbatch::selectRaw("viralbatches.id, count(viralsamples.id) as mycount")
@@ -506,13 +485,15 @@ class MiscViral extends Common
         $numeric_result = preg_replace('/[^0-9]/', '', $result);
         if(is_numeric($numeric_result)){
             $result = (int) $numeric_result;
-            if($result > 0 && $result < 1001) return ['rcategory' => 2];
+            if($result < 401) return ['rcategory' => 1];
+            else if($result > 400 && $result < 1001) return ['rcategory' => 2];
             else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
             else if($result > 5000) return ['rcategory' => 4];
         }
         $str = strtolower($result);
         if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
         if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
+        if(str_contains($str, ['collect', 'invalid', 'failed'])) return ['rcategory' => 5 ];
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
@@ -530,6 +511,21 @@ class MiscViral extends Common
             if(in_array($result, $value)) return ['rcategory' => $key];
         }
         return [];
+    }
+
+    public function set_rcat()
+    {
+        while(true){
+            $samples = Viralsample::where(['synched' => 1, 'rcategory' => 0])->whereNotNull('datetested')->limit(1000)->get();
+            if($samples->isEmpty()) break;
+
+            foreach ($samples as $key => $sample) {
+                $sample->age_category = $this->set_age_cat($sample->age); 
+                $sample->fill($this->set_rcategory($sample->result, $sample->repeatt));
+                $sample->pre_update();
+            }
+            break;
+        }
     }
 
     public static function generate_dr_list()
@@ -624,8 +620,8 @@ class MiscViral extends Common
         $samples = ViralsampleView::whereNotNull('patient_phone_no')
                     ->where('patient_phone_no', '!=', '')
                     ->whereNull('time_result_sms_sent')
-                    ->where('batch_complete', 1)
-                    ->where('datereceived', '>', '2018-05-01')
+                    ->where(['batch_complete' => 1, 'repeatt' => 0])
+                    ->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
                     ->get();
 
         foreach ($samples as $key => $sample) {
@@ -707,7 +703,7 @@ class MiscViral extends Common
         }
     }
 
-    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null)
+    public static function get_worksheet_samples($machine_type, $calibration, $sampletype, $temp_limit=null, $entered_by=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -730,7 +726,7 @@ class MiscViral extends Common
         if(date('m') < 7) $year --;
         $date_str = $year . '-12-31';
 
-        if($test){
+        if($test || $entered_by){
             $repeats = ViralsampleView::selectRaw("viralsamples_view.*, facilitys.name, users.surname, users.oname, IF(parentid > 0 OR parentid=0, 0, 1) AS isnull")
                 ->leftJoin('users', 'users.id', '=', 'viralsamples_view.user_id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -765,6 +761,20 @@ class MiscViral extends Common
                 if($sampletype == 1) return $query->whereIn('sampletype', [3, 4]);
                 if($sampletype == 2) return $query->whereIn('sampletype', [1, 2, 5]);                    
             })
+            ->when($entered_by, function($query) use ($entered_by){
+                // return $query->where('received_by', $user->id)->where('parentid', 0);
+                if(is_array($entered_by)){
+                    $str = '(';
+                    foreach ($entered_by as $key => $value) {
+                        $str .= $value . ', ';
+                    }
+                    $str = substr($str, 0, -2) . ')';
+                    return $query->where('parentid', 0)
+                    ->whereRaw("((received_by IN {$str} && sample_received_by IS NULL) OR  sample_received_by IN {$str})");
+                }
+                return $query->where('parentid', 0)
+                    ->whereRaw("((received_by={$entered_by} && sample_received_by IS NULL) OR  sample_received_by={$entered_by})");
+            })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
             ->whereRaw("(worksheet_id is null or worksheet_id=0)")
@@ -775,24 +785,27 @@ class MiscViral extends Common
             ->orderBy('run', 'desc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
+            ->when((($test || $entered_by) && !in_array(env('APP_LAB'), [2, 8])), function($query){
+                return $query->orderBy('time_received', 'asc');
+            })
             ->orderBy('site_entry', 'asc')
-            ->orderBy('batch_id', 'asc')
             ->when((env('APP_LAB') == 2), function($query){
                 return $query->orderBy('facilitys.id', 'asc');
-            })            
+            })  
+            ->orderBy('batch_id', 'asc')          
             ->limit($limit)
             ->get();
 
-        if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
+        if(($test || $entered_by) && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();
 
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
-        if(in_array(env('APP_LAB'), [8])) $create = true;
+        if(in_array(env('APP_LAB'), [5, 8])) $create = true;
 
         return [
-            'count' => $count, 'limit' => $temp_limit,
+            'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,
             'create' => $create, 'machine_type' => $machine_type, 'calibration' => $calibration, 
             'sampletype' => $sampletype, 'machine' => $machine, 'samples' => $samples
         ];

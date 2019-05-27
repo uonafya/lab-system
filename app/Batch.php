@@ -4,6 +4,7 @@ namespace App;
 
 use Exception;
 use App\BaseModel;
+use App\Misc;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BatchDeletedNotification;
@@ -33,7 +34,7 @@ class Batch extends BaseModel
 
         $max = date('Y-m-d');
         if($this->batch_complete == 1) $max = $this->datedispatched;
-        return \App\Misc::get_days($this->datereceived, $max, false);
+        return Misc::get_days($this->datereceived, $max, false);
     }
 
     public function full_batch()
@@ -122,7 +123,8 @@ class Batch extends BaseModel
 
     public function scopeEditing($query)
     {
-        return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0]);
+        $today = date('Y-m-d');
+        return $query->where(['user_id' => auth()->user()->id, 'input_complete' => 0, 'batch_complete' => 0])->whereDate('created_at', $today);
     }
 
     /**
@@ -148,6 +150,11 @@ class Batch extends BaseModel
         }
     }
 
+    public function getSampleNoAttribute()
+    {
+        return \App\Sample::selectRaw('count(id) AS my_count')->where(['batch_id' => $this->id, 'repeatt' => 0])->first()->my_count;
+    }
+
     public function batch_delete()
     {
         if(!$this->delete_button) abort(409, "Batch number {$this->id} is not eligible for deletion.");
@@ -165,6 +172,114 @@ class Batch extends BaseModel
         $this->delete();
         session(['toast_message' => "Batch {$this->id} has been deleted."]);
         return true;
+    }
+
+    public function transfer_samples($sample_ids, $submit_type, $return_for_testing=false)
+    {     
+        if(!$sample_ids){
+            session(['toast_error' => 1, 'toast_message' => "No samples have been selected."]);
+            return 'back';         
+        }
+
+        if(count($sample_ids) == $this->SampleNo){
+            if($return_for_testing){
+                $this->return_for_testing();
+                session(['toast_message' => "The batch has been returned for testing."]);
+            }
+            else{
+                session(['toast_error' => 1, 'toast_message' => "Too many samples have been selected."]);
+            }
+            return;
+        }
+
+        $new_batch = new \App\Batch;
+        $new_batch->fill($this->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent'])->toArray());
+        if($submit_type != "new_facility"){
+            $new_batch->id = (int) $this->id + 0.5;
+            $new_id = $this->id + 0.5;
+            $existing_batch = \App\Batch::find($new_id);
+            if($existing_batch){
+                session(['toast_message' => "Batch {$new_id} already exists.", 'toast_error' => 1]);
+                return 'back';         
+            }
+            if($new_batch->id == floor($new_batch->id)){
+                session(['toast_message' => "The batch {$this->id} cannot have its samples transferred.", 'toast_error' => 1]);
+                return 'back';         
+            }    
+        }
+        $new_batch->created_at = $this->created_at;
+        $new_batch->save();
+        if($return_for_testing) $new_batch->return_for_testing();
+
+        if($submit_type == "new_facility") $new_id = $new_batch->id;
+
+        $count = 0;
+        $s;
+
+        $has_received_status = false;
+
+        foreach ($sample_ids as $key => $id) {
+            $sample = \App\Sample::find($id);
+            if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result ))){
+                continue;
+            }else{
+                $parent = $sample->parent;
+                if($parent){
+                    $parent->batch_id = $new_id;
+                    $parent->pre_update();
+
+                    $children = $parent->children;
+                    if($children){
+                        foreach ($children as $child) {
+                            $child->batch_id = $new_id;
+                            $child->pre_update();
+                        }                        
+                    }
+                }
+            }
+            if($sample->result && $submit_type == "new_batch") continue;
+            if($sample->receivedstatus) $has_received_status = true;
+            $sample->batch_id = $new_id;
+            $sample->pre_update();
+            $s = $sample;
+            $count++;
+        }
+        // $s = $new_batch->sample->first();
+
+        if(!$has_received_status){
+            \App\Batch::where(['id' => $new_id])->update(['datereceived' => null, 'received_by' => null]);
+        }
+
+        Misc::check_batch($this->id);
+        Misc::check_batch($new_id);
+
+        session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}."]);
+        if($submit_type == "new_facility"){
+            session(['toast_message' => "The batch {$this->id} has had {$count} samples transferred to  batch {$new_id}. Update the facility on this form to complete the process."]);
+            // return redirect('sample/' . $s->id . '/edit');
+            return 'sample/' . $s->id . '/edit';
+        }
+        // return redirect('batch/' . $new_id);
+        return 'batch/' . $new_id;
+    }
+
+    public function return_for_testing()
+    {
+        $this->fill([
+            'tat5' => null,
+            'datedispatched' => null,
+            'dateindividualresultprinted' => null,
+            'datebatchprinted' => null,
+            'dateemailsent' => null,
+            'sent_email' => 0,
+            'batch_complete' => 0,
+            'synched' => 0,
+        ]);
+        $this->save();
+    }
+
+    public function hasAttribute($attr) {
+        return array_key_exists($attr, $this->attributes);
     }
     
 }

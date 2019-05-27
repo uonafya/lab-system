@@ -28,16 +28,15 @@
                                     <tr>
                                         <th>Lab ID</th>
                                         <th>Approve</th>
-                                        <th>Collect New Sample</th>
                                         <th>Rerun</th>
+                                        <th>Collect New Sample</th>
                                         <th>Sample ID</th>
                                         <th>Exatype Status</th>
                                         <th>Facility</th>
                                         <th>Control</th>
                                         <th>Has Errors</th>
                                         <th>Has Warnings</th>
-                                        <th>Has Drug Data</th>
-                                        <th>Has Genotypes</th>
+                                        <th>Has Mutations</th>
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
                                         <th>Task</th>                
@@ -80,7 +79,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun && !$sample->dateapproved && !$sample->control )                                                
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
                                                     <div align='center'>
                                                         <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
                                                     </div>
@@ -89,20 +88,19 @@
                                             <td>
                                                 @if($sample->has_rerun)
                                                     Has Rerun
-                                                @elseif(in_array($sample->status_id, [2, 3]) && !$sample->dateapproved && !$sample->control )                                                
+                                                @elseif(in_array($sample->status_id, [2, 3]))                                                
                                                     <div align='center'>
                                                         <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
                                                     </div>
                                                 @endif
                                             </td>
                                             <td> {{ $sample->patient }} </td>
-                                            <td> {{ $dr_sample_statuses->where('id', $sample->status_id)->first()->name ?? '' }} </td>
+                                            <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
                                             <td> {{ $sample->facilityname }} </td>
                                             <td> {{ $sample->control_type }} </td>
                                             <td> {{ $sample->my_boolean_format('has_errors') }} </td>
                                             <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
-                                            <td> {{ $sample->my_boolean_format('has_calls') }} </td>
-                                            <td> {{ $sample->my_boolean_format('has_genotypes') }} </td>
+                                            <td> {{ $sample->my_boolean_format('has_mutations') }} </td>
                                             @if($sample->pending_manual_intervention && !$sample->had_manual_intervention)
                                                 <td> Yes </td>
                                             @else
@@ -111,10 +109,9 @@
                                             <td> {!! $sample->view_chromatogram !!} </td>
                                             <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
                                             <td> 
+                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> |
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank">View Results</a> |
-                                                @if($sample->dateapproved && $sample->repeatt == 0)
-                                                    <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
-                                                @endif
+                                                <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
                                             </td>
                                         </tr>
 

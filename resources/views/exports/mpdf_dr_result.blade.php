@@ -2,14 +2,6 @@
 
 <head>
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
-
-	<style type="text/css">
-		table, th, td {
-			padding: 6px;
-			font-size: 10px;
-		}
-
-	</style>
 </head>
 
 
@@ -29,9 +21,11 @@
 			@endif
 
 			<h2>HIV-1 Drug Resistance Genotype Report</h2>
+			<br />
+			<br />
 		</div>
 
-		<div class="row">
+		{{--<div class="row">
 			<table class="table">
 				<tr>			
 					<td><b>Specimen ID:</b> {{ $sample->patient->patient ?? '' }} </td>
@@ -49,7 +43,43 @@
 					<td><b>Report ID:</b> </td>					
 				</tr>
 			</table>			
+		</div>--}}
+
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<td> Patient Details </td>
+						<td> Test Details </td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td> Name: {{ $sample->patient->patient_name ?? '' }} </td>
+						<td> Date of Collection: {{ $sample->my_date_format('datecollected') }} </td>
+					</tr>
+					<tr>
+						<td> Patient CCC: {{ $sample->patient->patient ?? '' }} </td>
+						<td>  </td>
+					</tr>
+					<tr>
+						<td> NASCOP No. NAT </td>
+						<td> Requesting Clinician: {{ $sample->clinician_name }} </td>
+					</tr>
+					<tr>
+						<td> Date of Birth: {{ $sample->patient->my_date_format('dob') }} </td>
+						<td>  </td>
+					</tr>
+					<tr>
+						<td> Gender: {{ $sample->patient->gender ?? '' }} </td>
+						<td> Report Date: {{ $sample->my_date_format('created_at') }} </td>
+					</tr>
+				</tbody>
+			</table>			
 		</div>
+
+		<br />
+		<br />
 
 		<div class="row">
 			@if($sample->receivedstatus == 2)
@@ -132,10 +162,21 @@
 			
 		</div>	
 
+
+
 		<div class="row">
-			<b>Approved By: </b> {{ $sample->approver->full_name ?? '' }}
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<b>Date Approved: </b> {{ $sample->my_date_format('dateapproved') }}
+			<table class="table">
+				<tr>
+					<td> <b>Tested By:</b> {{ $sample->worksheet->runner->full_name ?? '' }} </td>
+					<td> <b>Sign:</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+					<td> <b>Date:</b> {{ $sample->my_date_format('datetested') }} </td>
+				</tr>
+				<tr>
+					<td> <b>Verified By:</b> {{ $sample->approver->full_name ?? '' }} </td>
+					<td> <b>Sign:</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+					<td> <b>Date:</b> {{ $sample->my_date_format('dateapproved') }} </td>
+				</tr>							
+			</table>
 		</div>	
 	</div>
 
