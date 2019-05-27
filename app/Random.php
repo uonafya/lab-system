@@ -2059,7 +2059,7 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->where('result', '<>', 'Failed')->get()->last();
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->whereNotNull('result')->get()->last();
             if ($dbsample)
             	$availablecount++;
             else
@@ -2077,7 +2077,7 @@ class Random
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
         echo "==> Building excel results \n";
 
-        $file = 'EDARP Reffered Samples to KEMRI'.date('Y_m_d H_i_s');
+        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
 
         Excel::create($file, function($excel) use($newData, $file){
             $excel->setTitle($file);
@@ -2098,7 +2098,7 @@ class Random
 
 	public static function delete_edarp_imported_batches() {
 		echo "==> Deleting Samples\n";
-		$batches = [87694,87695,87696,87697,87698,87699,87700,87701,87702,87703,87704,87705,87706,87707,87708,87709,87710,87711,87712,87713,87714,87715,87716,87717,87718,87719,87720,87721,87722,87723,87723];
+		$batches = [];
 		// $batches = collect($excelData->toArray())->first();
         Viralsample::whereIn('batch_id', $batches)->delete();
         Viralbatch::whereIn('id', $batches)->delete();
