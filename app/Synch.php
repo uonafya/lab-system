@@ -132,6 +132,15 @@ class Synch
 		return $body->message;
 	}
 
+	public static function test_nascop()
+	{
+		$base = 'https://api.nascop.org/eid';
+		$client = new Client(['base_uri' => $base]);
+		$response = $client->request('get', '', ['timeout' => 1]);
+		$body = json_decode($response->getBody());
+		return $body->message;
+	}
+
 	public static function login()
 	{
 		Cache::store('file')->forget('api_token');
@@ -1418,6 +1427,33 @@ class Synch
             $f->save();
         }
     }
+
+    public static function synch_updates_facilities()
+    {
+        ini_set('memory_limit', '-1');
+        $client = new Client(['base_uri' => self::$base]);
+        $today = date('Y-m-d');
+
+        $facilities = Facility::where(['synched' => 1])->get();
+
+        foreach ($facilities as $facility) {
+
+            $response = $client->request('get', "facility/{$facility->id}", [
+                'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . self::get_token(),
+                ],
+            ]);
+            
+            $body = json_decode($response->getBody());
+
+            $facility->district = $body->facility->district;
+            $facility->partner = $body->facility->partner;
+            $facility->save();
+        }
+    }
+
+
 
 
 }
