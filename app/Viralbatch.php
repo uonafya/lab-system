@@ -154,6 +154,11 @@ class Viralbatch extends BaseModel
         }
     }
 
+    public function getSampleNoAttribute()
+    {
+        return \App\Viralsample::selectRaw('count(id) AS my_count')->where(['batch_id' => $this->id, 'repeatt' => 0])->first()->my_count;
+    }
+
 
     public function batch_delete()
     {
@@ -179,6 +184,16 @@ class Viralbatch extends BaseModel
         if(!$sample_ids){
             session(['toast_error' => 1, 'toast_message' => "No samples have been selected."]);
             return 'back';         
+        }
+        if(count($sample_ids) == $this->SampleNo){
+            if($return_for_testing){
+                $this->return_for_testing();
+                session(['toast_message' => "The batch has been returned for testing."]);
+            }
+            else{
+                session(['toast_error' => 1, 'toast_message' => "Too many samples have been selected."]);
+            }
+            return;
         }
 
         $new_batch = new \App\Viralbatch;
