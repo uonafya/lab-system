@@ -2039,7 +2039,8 @@ class Random
 
 	public static function export_edarp_results() {
         echo "==> Retrival Begin \n";
-		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
+		// $file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
+		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
