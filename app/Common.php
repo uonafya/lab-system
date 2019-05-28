@@ -547,12 +547,12 @@ class Common
 						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' =>0])
 						->get();
 
-			try {				
+			// try {				
 				$comm = new CriticalResults($facility, $type, $samples, $dt);
 				Mail::to($mail_array)->send($comm);
-			} catch (Exception $e) {
+			// } catch (Exception $e) {
 				
-			}
+			// }
 			break;
 		}
 	}
