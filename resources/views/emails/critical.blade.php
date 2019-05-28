@@ -5,7 +5,7 @@
 	<br />
 	<br />
 
-	Please find attached {{ strtoupper($type) }} Critical Results that were dispatched on {{ $datedispatched }}. 
+	Please find attached {{ $type }} Critical Results that were dispatched on {{ $datedispatched }}. 
 	
 	<br />
 	<br />
