@@ -37,7 +37,7 @@ class CriticalResults extends Mailable
 
         if(!is_dir(storage_path("app/critical/"))) mkdir(storage_path("app/critical/"), 0777, true);
 
-        $mpdf = new Mpdf();
+        $mpdf = new Mpdf(['format' => 'A4-L']);
         $view_data = view('exports.mpdf_critical', ['samples' => $samples, 'facility' => $facility, 'type' => $type])->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->file_path, \Mpdf\Output\Destination::FILE);
