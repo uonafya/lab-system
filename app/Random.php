@@ -1896,7 +1896,7 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
+		$file = 'public/docs/knh-28-2-2019.xlsx';
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2042,35 +2042,33 @@ class Random
 		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
 
 		/***  KEMRI Results File ***/
-		$rfile1 = 'public/docs/Edarp1.xlsx';
-		$rfile2 = 'public/docs/Edarp2.xlsx';
-		$rfile3 = 'public/docs/Edarp3.xlsx';
-		$rdata = [];
-		$rexcelData = Excel::load($rfile1, function($reader){
-			$reader->toArray();
-		})->get();
-		$rexcelData2 = Excel::load($rfile2, function($reader){
-			$reader->toArray();
-		})->get();
-		$rexcelData3 = Excel::load($rfile3, function($reader){
-			$reader->toArray();
-		})->get();
-		foreach ($rexcelData as $key => $value) {
-			$rdata[] = $value;
-		}
-		foreach ($rexcelData2 as $key => $value) {
-			$rdata[] = $value;
-		}
-		foreach ($rexcelData3 as $key => $value) {
-			$rdata[] = $value;
-		}
-		$rdata = collect($rdata);
+		// $rfile1 = 'public/docs/Edarp1.xlsx';
+		// $rfile2 = 'public/docs/Edarp2.xlsx';
+		// $rfile3 = 'public/docs/Edarp3.xlsx';
+		// $rdata = [];
+		// $rexcelData = Excel::load($rfile1, function($reader){
+		// 	$reader->toArray();
+		// })->get();
+		// $rexcelData2 = Excel::load($rfile2, function($reader){
+		// 	$reader->toArray();
+		// })->get();
+		// $rexcelData3 = Excel::load($rfile3, function($reader){
+		// 	$reader->toArray();
+		// })->get();
+		// foreach ($rexcelData as $key => $value) {
+		// 	$rdata[] = $value;
+		// }
+		// foreach ($rexcelData2 as $key => $value) {
+		// 	$rdata[] = $value;
+		// }
+		// foreach ($rexcelData3 as $key => $value) {
+		// 	$rdata[] = $value;
+		// }
+		// $rdata = collect($rdata);
 		/***  KEMRI Results File ***/
 
 		// $file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
-        // $batch = null;
-        // $lookups = Lookup::get_viral_lookups();
-        // dd($lookups);
+
         echo "==> Fetching Excel Data \n";
         $excelData = Excel::load($file, function($reader){
             $reader->toArray();
@@ -2084,10 +2082,10 @@ class Random
         $availablecount = 0;
         foreach ($data as $key => $sample) {
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
-            $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
-            if (!$excelResult)
-            	continue;
-            $excelResult = $excelResult->toArray();
+            // $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
+            // if (!$excelResult)
+            // 	continue;
+            // $excelResult = $excelResult->toArray();
             if ($dbsample)
             	$availablecount++;
             else
