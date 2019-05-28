@@ -206,16 +206,13 @@ class Random
     }
 
 
-	public static function add_amrs()
+	public static function switch_amrs()
 	{
 		ini_set("memory_limit", "-1");
-        config(['excel.import.heading' => true]);
-		$path = public_path('obs2.csv');
-		$data = Excel::load($path, function($reader){})->get();
-
-		foreach ($data as $row) {
-			$amrs_location = Lookup::get_mrslocation($row->location_id);
-			\App\Viralsample::where(['order_no' => $row->order_number])->update(['amrs_location' => $amrs_location]);
+		$samples = \App\Viralsample::whereBetween('datereceived', ['2018-09-01', '2018-10-24'])->whereRaw("(amrs_location is not null and amrs_location != 0)")->get();
+		foreach ($samples as $s) {
+			$s->amrs_location = Lookup::get_mrslocation($s->location_id);
+			$s->pre_update();
 		}
 	}
 

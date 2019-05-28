@@ -132,6 +132,15 @@ class Synch
 		return $body->message;
 	}
 
+	public static function test_nascop()
+	{
+		$base = 'https://api.nascop.org/eid';
+		$client = new Client(['base_uri' => $base]);
+		$response = $client->request('get', '', ['timeout' => 1]);
+		$body = json_decode($response->getBody());
+		return $body->message;
+	}
+
 	public static function login()
 	{
 		Cache::store('file')->forget('api_token');
@@ -1036,28 +1045,32 @@ class Synch
 
 	public static function get_backlogs(){    	
     	/**** Total samples run ****/
-    	$totaleidsamplesrun = Sample::selectRaw("count(*) as samples_run")
-    								->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-    								->where('repeatt', '=', 0)
+    	$totaleidsamplesrun = SampleView::selectRaw("count(*) as samples_run")
+    								->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+    								->where('site_entry', '!=', 2)
+    								->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('worksheets.status_id', '<', 3)->first()->samples_run;
-    	$totalvlsamplesrun = Viralsample::selectRaw("count(*) as samples_run")
-    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-    								->where('repeatt', '=', 0)
+    	$totalvlsamplesrun = ViralsampleView::selectRaw("count(*) as samples_run")
+    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+    								->where('site_entry', '!=', 2)
+    								->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
 
     	/**** Samples pending results ****/
-    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")
+							    	->whereNull('worksheet_id')
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result = 0 ))")->where('input_complete', '=', 1)
+    								->whereRaw("((result IS NULL ) OR (result = 0 ))")
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
+    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1, 'input_complete' => 1])
     								->where('flag', '=', 1)->first()->pending_samples;
-    	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")
+							    	->whereNull('worksheet_id')
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result =0 ) OR (result !='Collect New Sample') )")
-    								->where('input_complete', '=', 1)->where('sampletype', '>', 0)
+    								->whereRaw("((result IS NULL ) OR (result ='0' ) OR (result !='Collect New Sample') )")
+    								->where('sampletype', '>', 0)
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
+    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1, 'input_complete' => 1])
     								->where('flag', '=', 1)->first()->pending_samples;
 
     	return (object)[
@@ -1418,6 +1431,33 @@ class Synch
             $f->save();
         }
     }
+
+    public static function synch_updates_facilities()
+    {
+        ini_set('memory_limit', '-1');
+        $client = new Client(['base_uri' => self::$base]);
+        $today = date('Y-m-d');
+
+        $facilities = Facility::where(['synched' => 1])->get();
+
+        foreach ($facilities as $facility) {
+
+            $response = $client->request('get', "facility/{$facility->id}", [
+                'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . self::get_token(),
+                ],
+            ]);
+            
+            $body = json_decode($response->getBody());
+
+            $facility->district = $body->facility->district;
+            $facility->partner = $body->facility->partner;
+            $facility->save();
+        }
+    }
+
+
 
 
 }

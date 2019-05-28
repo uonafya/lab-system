@@ -45,7 +45,7 @@ class ViralsampleController extends Controller
 
         $samples = ViralsampleView::with(['facility'])
             ->when($param, function($query){
-                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+                return $query->whereRaw("((result IS NULL ) OR (result ='0' ))")->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
@@ -1178,7 +1178,7 @@ class ViralsampleController extends Controller
                 return $query->whereRaw("(patient like '{$patient_string}%' ) ");
             })
             ->when($datecollected, function($query) use ($datecollected){
-                return $query->whereBetween($datecollected, [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
+                return $query->whereBetween('datecollected', [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
             })
             ->limit(10)
             ->get();
