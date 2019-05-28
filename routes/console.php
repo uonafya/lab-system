@@ -159,6 +159,12 @@ Artisan::command('send:nodata', function(){
     $this->info($str);
 })->describe('Send no data report.');
 
+
+Artisan::command('send:gender', function(){
+    $str = \App\Nat::save_gender_results();
+    $this->info($str);
+})->describe('Send gender suppression data.');
+
 Artisan::command('send:communication', function(){
     $str = \App\Common::send_communication();
     $this->info($str);
