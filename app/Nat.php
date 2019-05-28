@@ -13,11 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomMailOld;
 use App\Mail\TestMail;
 
-class Nat extends Model
+class Nat
 {
-
-
-
 	public static function get_current_gender_query($facility_id, $date_params=null)
 	{
     	$sql = 'SELECT sex, rcategory, count(*) as totals ';
@@ -88,7 +85,7 @@ class Nat extends Model
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org'])->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data));
 	}
 
 	/*
