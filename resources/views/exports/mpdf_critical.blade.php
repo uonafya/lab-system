@@ -16,9 +16,13 @@
     <!--<link rel="shortcut icon" type="image/ico" href="favicon.ico" />-->
 
     <!-- Vendor styles -->
-    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
+    {{--<link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/animate.css/animate.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" /> --}}
+
+    <link rel="stylesheet" href="http://lab.test.nascop.org/vendor/fontawesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="http://lab.test.nascop.org/vendor/animate.css/animate.css" />
+    <link rel="stylesheet" href="http://lab.test.nascop.org/vendor/bootstrap/dist/css/bootstrap.css'" />
 
     <style type="text/css">
         body.light-skin #menu {
@@ -104,10 +108,16 @@
 
 <!-- </div> -->
 
-<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
+{{--<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/jquery-ui/jquery-ui.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('vendor/iCheck/icheck.min.js') }}"></script>
+<script src="{{ asset('vendor/iCheck/icheck.min.js') }}"></script>--}}
+
+<script src="http://lab.test.nascop.org/vendor/jquery/dist/jquery.min.js"></script>
+<script src="http://lab.test.nascop.org/vendor/jquery-ui/jquery-ui.min.js"></script>
+<script src="http://lab.test.nascop.org/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="http://lab.test.nascop.org/vendor/iCheck/icheck.min.js"></script>
+
 
 </body>
 </html>
