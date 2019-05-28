@@ -2085,19 +2085,19 @@ class Random
         foreach ($data as $key => $sample) {
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
             $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first()->toArray();
-            dd($excelResult);
+            // dd($excelResult);
             if ($dbsample)
             	$availablecount++;
             else
             	$count++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? null;
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : null;
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : null;
+            $sample[21] = $dbsample->labcomment ?? $excelResult[6];
+            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[9];
+            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[7];
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? null;
+            $sample[24] = $dbsample->result ?? $excelResult[5];
             $newData[] = $sample->toArray();
         }
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
