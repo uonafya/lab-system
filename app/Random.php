@@ -1993,7 +1993,7 @@ class Random
                 }
                 // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
             }
-            echo "\t Creating uploaded batches and missing facilities excel\n";
+            echo "\n\t Creating uploaded batches and missing facilities excel\n";
             $file = 'EDARP Samples uploaded to ' . Lab::find(env('APP_LAB'))->labdesc . date('Y_m_d H_i_s');
 
             Excel::create($file, function($excel) use($dataArray, $file){
