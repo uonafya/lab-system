@@ -209,8 +209,9 @@ class Random
 	public static function switch_amrs()
 	{
 		ini_set("memory_limit", "-1");
-		$samples = \App\Viralsample::whereBetween('datereceived', ['2018-09-01', '2018-10-24'])->whereRaw("(amrs_location is not null and amrs_location != 0)")->get();
-		foreach ($samples as $s) {
+		$samples = \App\ViralsampleView::whereBetween('datereceived', ['2018-09-01', '2018-10-24'])->whereRaw("(amrs_location is not null and amrs_location != 0)")->get();
+		foreach ($samples as $sample) {
+			$s = \App\Viralsample::find($sample->id);
 			$s->amrs_location = Lookup::get_mrslocation($s->location_id);
 			$s->pre_update();
 		}
