@@ -544,7 +544,7 @@ class Common
 	        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
 			$samples = $sampleview_class::whereRaw($q)
-						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' =>0])
+						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' => 0])
 						->get();
 
 			// try {				
