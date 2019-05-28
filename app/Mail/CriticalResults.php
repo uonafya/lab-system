@@ -17,6 +17,7 @@ class CriticalResults extends Mailable
     public $type;
     public $samples;
     public $file_path;
+    public $datedispatched;
     public $lab;
 
 
