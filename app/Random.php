@@ -2085,7 +2085,7 @@ class Random
         foreach ($data as $key => $sample) {
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
             $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id);
-            dd($excelResult);
+            dd($excelResult->first());
             if ($dbsample)
             	$availablecount++;
             else
