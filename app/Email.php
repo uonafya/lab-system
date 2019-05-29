@@ -102,7 +102,7 @@ class Email extends BaseModel
     public function send_files()
     {
         $comm = new CustomEmailFiles($this);
-        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        $mail_array = array('joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com');
         Mail::to($mail_array)->send($comm);
     }
 

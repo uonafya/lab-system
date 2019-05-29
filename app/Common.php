@@ -305,7 +305,7 @@ class Common
     {
     	$facility = $batch->facility; 
     	
-        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+        $mail_array = array('joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
         if(!$mail_array) return null;
 
@@ -540,7 +540,7 @@ class Common
 
 		foreach ($facilities as $key => $facility) {
 
-	        $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
+	        $mail_array = ['joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com'];
 	        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
 			$samples = $sampleview_class::whereRaw($q)
