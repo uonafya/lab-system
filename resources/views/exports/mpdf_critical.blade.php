@@ -71,6 +71,7 @@
                         @else
                             <th> CCC Number </th>
                         @endif
+                        <th> Batch </th>
                         <th> Date Collected </th>
                         <th> Date Received </th>
                         <th> Date Tested </th>
@@ -83,6 +84,7 @@
                         <tr>
                             <td> {{ $key+1 }} </td>
                             <td> {{ $sample->patient }} </td>
+                            <td> {{ $sample->batch_id }} </td>
                             <td> {{ $sample->my_date_format('datecollected') }} </td>
                             <td> {{ $sample->my_date_format('datereceived') }} </td>
                             <td> {{ $sample->my_date_format('datetested') }} </td>
