@@ -45,7 +45,7 @@ class Nat
 	}
 
 
-	public static function save_gender_results($ordering=false)
+	public static function save_gender_results()
 	{
 		ini_set("memory_limit", "-1");
 
@@ -90,7 +90,7 @@ class Nat
 	}
 
 
-	public static function save_gender_ordering_results($ordering=false)
+	public static function save_gender_ordering_results()
 	{
 		ini_set("memory_limit", "-1");
 
