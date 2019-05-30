@@ -86,7 +86,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals All Facilities')->send(new TestMail($data));
 	}
 
 
@@ -138,7 +138,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
 	}
 
 	/*
