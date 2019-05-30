@@ -45,7 +45,7 @@ class ViralsampleController extends Controller
 
         $samples = ViralsampleView::with(['facility'])
             ->when($param, function($query){
-                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+                return $query->whereRaw("((result IS NULL ) OR (result ='0' ))")->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
@@ -857,6 +857,19 @@ class ViralsampleController extends Controller
         return back();
     }
 
+    public function unreceive(Viralsample $sample)
+    {
+        if($sample->worksheet_id || $sample->run > 1 || $sample->synched){
+            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be set to unreceived']);
+        }
+        else{
+            $sample->fill(['sample_received_by' => null, 'receivedstatus' => null, 'rejectedreason' => null]);
+            $sample->save();
+            session(['toast_message' => 'The sample has been unreceived.']);
+        }
+        return back();
+    }
+
     public function approve_nhrl(Request $request)
     {
         $viralsamples = $request->input('samples');
@@ -1165,7 +1178,7 @@ class ViralsampleController extends Controller
                 return $query->whereRaw("(patient like '{$patient_string}%' ) ");
             })
             ->when($datecollected, function($query) use ($datecollected){
-                return $query->whereBetween($datecollected, [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
+                return $query->whereBetween('datecollected', [date('Y-m-d', strtotime("{$datecollected} -1week")), date('Y-m-d', strtotime("{$datecollected} +1week"))]);
             })
             ->limit(10)
             ->get();

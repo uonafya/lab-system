@@ -20,6 +20,7 @@ $api->version('v1', function (Router $api) {
         });
 
         $api->get('hello', 'RandomController@hello');
+        $api->get('hello_nascop', 'RandomController@hello_nascop');
 
 
         $api->group(['middleware' => 'jwt.auth'], function(Router $api) {

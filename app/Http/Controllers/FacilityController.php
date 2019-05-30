@@ -125,7 +125,7 @@ class FacilityController extends Controller
                             ->where('facilitys.lab', '=', Auth()->user()->lab_id)
                             ->get();*/
 
-        $facilities = ViewFacility::whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry in (1, 2) AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")->get();
+        $facilities = ViewFacility::whereRaw("id in (SELECT DISTINCT facility_id FROM viralbatches WHERE site_entry != 2 AND year(datereceived) > {$min_year} AND lab_id = {$lab_id})")->get();
         $count = 0;
         $table = '';
         foreach ($facilities as $key => $value) {

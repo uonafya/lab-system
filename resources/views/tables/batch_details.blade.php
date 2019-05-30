@@ -207,6 +207,9 @@
                                                 @if($sample->result == 5 && $sample->age_in_months < 4)
                                                     | <a href="{{ url('/sample/return_for_testing/' . $sample->id ) }}">Return for Testing</a> 
                                                 @endif
+                                                @if($batch->batch_complete == 0 && $sample->receivedstatus)
+                                                    | <a href="{{ url('/sample/unreceive/' . $sample->id ) }}">Unreceive Sample</a> 
+                                                @endif
                                             @endif
                                         </td>
 

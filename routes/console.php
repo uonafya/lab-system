@@ -65,6 +65,12 @@ Artisan::command('dispatch:results', function(){
     $this->info($str);
 })->describe('Send emails for dispatched batches.');
 
+Artisan::command('dispatch:critical', function(){
+    $str = \App\Common::critical_results('eid');
+    $str = \App\Common::critical_results('vl');
+    $this->info($str);
+})->describe('Send emails for critical results.');
+
 Artisan::command('dispatch:mlab', function(){
     $str = \App\Misc::send_to_mlab();
     $str .= \App\MiscViral::send_to_mlab();
@@ -159,6 +165,12 @@ Artisan::command('send:nodata', function(){
     $this->info($str);
 })->describe('Send no data report.');
 
+
+Artisan::command('send:gender', function(){
+    $str = \App\Nat::save_gender_results();
+    $this->info($str);
+})->describe('Send gender suppression data.');
+
 Artisan::command('send:communication', function(){
     $str = \App\Common::send_communication();
     $this->info($str);
@@ -248,6 +260,12 @@ Artisan::command('synch:facilities', function(){
     $str = \App\Synch::synch_facilities();
     $this->info($str);
 })->describe('Synch facilities from lab to national database');
+
+Artisan::command('synch:facilities-updates', function(){
+    $str = \App\Synch::synch_updates_facilities();
+    $this->info($str);
+})->describe('Synch updates for facilities from national database to lab');
+
 
 
 

@@ -248,8 +248,7 @@ class ViralworksheetController extends Controller
     public function convert_worksheet(Viralworksheet $worksheet, $machine_type)
     {
         if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;
@@ -458,7 +457,7 @@ class ViralworksheetController extends Controller
                 if(!isset($value[1])) break;
                 $sample_id = $value[1];
                 $interpretation = $value[6];
-                $result_array = MiscViral::exponential_result($interpretation);
+                $result_array = MiscViral::sample_result($interpretation);
 
                 MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
