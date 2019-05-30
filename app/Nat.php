@@ -45,7 +45,7 @@ class Nat
 	}
 
 
-	public static function save_gender_results()
+	public static function save_gender_results($ordering=false)
 	{
 		ini_set("memory_limit", "-1");
 
@@ -64,6 +64,59 @@ class Nat
 			$data = collect(DB::select($sql));
 
 			$rows[] = [
+				'No' => ($key+1),
+				'MFL Code' => $facility->facilitycode,
+				'Facility' => $facility->name,
+				'Male 400 and less' => $data->where('sex', 1)->where('rcategory', 1)->first()->totals ?? null,
+				'Female 400 and less' => $data->where('sex', 2)->where('rcategory', 1)->first()->totals ?? null,
+				'Male Above 400 Less 1000' => $data->where('sex', 1)->where('rcategory', 2)->first()->totals ?? null,
+				'Female Above 400 Less 1000' => $data->where('sex', 2)->where('rcategory', 2)->first()->totals ?? null,
+				'Male Above 1000' => ($data->where('sex', 1)->where('rcategory', 3)->first()->totals ?? null) + ($data->where('sex', 1)->where('rcategory', 4)->first()->totals ?? null),
+				'Female Above 1000' => ($data->where('sex', 2)->where('rcategory', 3)->first()->totals ?? null) + ($data->where('sex', 2)->where('rcategory', 4)->first()->totals ?? null),
+			];
+
+		}
+		$file = "gender_totals_all_sites_between_{$start_date}_and_{$end_date}_by_most_recent_test";
+		
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data));
+	}
+
+
+	public static function save_gender_ordering_results($ordering=false)
+	{
+		ini_set("memory_limit", "-1");
+
+		$start_date = Carbon::now()->subYear();
+		$days = $start_date->day;
+
+		$start_date = $start_date->subDays($days-1)->toDateString();
+		$end_date = Carbon::now()->subDays($days)->toDateString();
+		$date_params = [$start_date, $end_date];
+
+        config(['excel.import.heading' => true]);
+		$path = public_path('art_ordering.csv');
+
+		$facilities = Excel::load($path, function($reader){})->get();
+
+		// $facilities = \App\Facility::whereRaw("id IN (SELECT DISTINCT facility_id FROM viralsamples_view where datetested between '{$start_date}' AND '{$end_date}' )")->get();
+
+		foreach ($facilities as $key => $fac) {
+			$facility = \App\Facility::where(['facilitycode' => $fac->mfl_code])->first();
+			if(!$facility) continue;
+
+			$sql = self::get_current_gender_query($facility->id, $date_params);
+			$data = collect(DB::select($sql));
+
+			$rows[] = [
+				'No' => ($key+1),
 				'MFL Code' => $facility->facilitycode,
 				'Facility' => $facility->name,
 				'Male 400 and less' => $data->where('sex', 1)->where('rcategory', 1)->first()->totals ?? null,
