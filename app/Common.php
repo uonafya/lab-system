@@ -541,19 +541,18 @@ class Common
 		foreach ($facilities as $key => $facility) {
 
 	        $mail_array = ['joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com'];
-	        // if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+	        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
 			$samples = $sampleview_class::whereRaw($q)
 						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' => 0])
 						->get();
 
-			// try {				
+			try {				
 				$comm = new CriticalResults($facility, $type, $samples, $dt);
-				Mail::to($mail_array)->send($comm);
-			// } catch (Exception $e) {
+				Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+			} catch (Exception $e) {
 				
-			// }
-			break;
+			}
 		}
 	}
 
