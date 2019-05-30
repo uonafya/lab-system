@@ -65,6 +65,12 @@ Artisan::command('dispatch:results', function(){
     $this->info($str);
 })->describe('Send emails for dispatched batches.');
 
+Artisan::command('dispatch:critical', function(){
+    $str = \App\Common::critical_results('eid');
+    $str = \App\Common::critical_results('vl');
+    $this->info($str);
+})->describe('Send emails for critical results.');
+
 Artisan::command('dispatch:mlab', function(){
     $str = \App\Misc::send_to_mlab();
     $str .= \App\MiscViral::send_to_mlab();
