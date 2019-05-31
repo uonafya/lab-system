@@ -168,6 +168,7 @@ Artisan::command('send:nodata', function(){
 
 Artisan::command('send:gender', function(){
     $str = \App\Nat::save_gender_results();
+    $str = \App\Nat::save_gender_ordering_results();
     $this->info($str);
 })->describe('Send gender suppression data.');
 
