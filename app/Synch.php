@@ -562,7 +562,7 @@ class Synch
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
-		dd(self::login());
+
 		while (true) {
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
@@ -581,7 +581,6 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			dd($body);
 			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
