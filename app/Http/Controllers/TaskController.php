@@ -402,7 +402,6 @@ class TaskController extends Controller
                 
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else { // Save the allocations from the previous if section
-                dd($request->all());
                 $saveAllocation = $this->saveAllocation($request);
                 \App\Synch::synch_allocations();
                 return redirect()->route('pending');
@@ -413,7 +412,10 @@ class TaskController extends Controller
     protected function saveAllocation($request) {
         $orderNumber = date('Y') . "-" . substr(date('F', mktime(0, 0, 0, date('m'), 10)), 0, 3);
         $form = $request->except(['_token', 'kits-form']);
-        $allocation = Allocation::create([
+        $allocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->get();
+        dd($allocation);
+        if (!$allocation->isEmpty()){
+            $allocation = Allocation::create([
                         'year' => $this->year,
                         'month' => $this->month,
                         'order_num' => $orderNumber,
@@ -421,8 +423,8 @@ class TaskController extends Controller
                         'submittedby' => auth()->user()->full_name,
                         'lab_id' => env('APP_LAB'),
                     ]);
-        $allocation_details = $this->saveAllocationDetails($allocation, $form);
-        
+            $allocation_details = $this->saveAllocationDetails($allocation, $form);
+        }
         return $allocation;
     }
 
