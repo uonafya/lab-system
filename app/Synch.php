@@ -24,8 +24,8 @@ class Synch
 {
 	// public static $base = 'http://127.0.0.1:9000/api/';
 	// public static $base = 'http://eid-dash.nascop.org/api/';
-	// public static $base = 'http://lab-2.test.nascop.org/api/';
-	public static $base = 'http://lab-nat.test/api/';
+	public static $base = 'http://lab-2.test.nascop.org/api/';
+	// public static $base = 'http://lab-nat.test/api/';
 
 	public static $synch_arrays = [
 		'eid' => [
