@@ -567,7 +567,6 @@ class Synch
 			if($allocations->isEmpty())
 				break;
 			
-			dd($client);
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
@@ -581,6 +580,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
+			dd($body);
 			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
