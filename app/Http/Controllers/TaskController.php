@@ -413,7 +413,7 @@ class TaskController extends Controller
         $orderNumber = date('Y') . "-" . substr(date('F', mktime(0, 0, 0, date('m'), 10)), 0, 3);
         $form = $request->except(['_token', 'kits-form']);
         $allocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->first();
-        if (!$allocation->isEmpty()){
+        if (!$allocation){
             $allocation = Allocation::create([
                         'year' => $this->year,
                         'month' => $this->month,
