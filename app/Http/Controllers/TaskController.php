@@ -410,10 +410,12 @@ class TaskController extends Controller
     }
 
     protected function saveAllocation($request) {
+        $orderNumber = date('Y') . "-" . substr(date('F', mktime(0, 0, 0, date('m'), 10)), 0, 3);
         $form = $request->except(['_token', 'kits-form']);
         $allocation = Allocation::create([
                         'year' => $this->year,
                         'month' => $this->month,
+                        'order_num' => $orderNumber,
                         'datesubmitted' => date('Y-m-d'),
                         'submittedby' => auth()->user()->full_name,
                         'lab_id' => env('APP_LAB'),
