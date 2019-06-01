@@ -395,6 +395,7 @@ class TaskController extends Controller
             if ($request->has(['machine-form'])){ // This is to fill the allocation form for the previously slected machines
                 $machines = Machine::whereIn('id',$request->input('machine'))->get();
                 $generalconsumables = GeneralConsumables::get();
+                dd($generalconsumables);
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
                 $data['generalconsumables'] = $generalconsumables;
