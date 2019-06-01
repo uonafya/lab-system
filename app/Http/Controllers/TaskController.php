@@ -376,7 +376,6 @@ class TaskController extends Controller
     }
 
     public function allocation(Request $request) {
-        dd($request->all());
         if ($request->method() == "GET") {
             $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->where('lab_id', '=', env('APP_LAB'))->count();
             if ($currentMonthAllocation > 0){ // Ensure that allocation is not repeated if entered
@@ -396,7 +395,6 @@ class TaskController extends Controller
             if ($request->has(['machine-form'])){ // This is to fill the allocation form for the previously slected machines
                 $machines = Machine::whereIn('id',$request->input('machine'))->get();
                 $generalconsumables = GeneralConsumables::get();
-                dd($generalconsumables);
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
                 $data['generalconsumables'] = $generalconsumables;
@@ -404,6 +402,7 @@ class TaskController extends Controller
                 
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else { // Save the allocations from the previous if section
+                dd($request->all());
                 $saveAllocation = $this->saveAllocation($request);
                 \App\Synch::synch_allocations();
                 return redirect()->route('pending');
