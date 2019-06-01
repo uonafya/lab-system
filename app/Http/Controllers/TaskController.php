@@ -412,8 +412,7 @@ class TaskController extends Controller
     protected function saveAllocation($request) {
         $orderNumber = date('Y') . "-" . substr(date('F', mktime(0, 0, 0, date('m'), 10)), 0, 3);
         $form = $request->except(['_token', 'kits-form']);
-        $allocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->get();
-        dd($allocation);
+        $allocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->first();
         if (!$allocation->isEmpty()){
             $allocation = Allocation::create([
                         'year' => $this->year,
@@ -425,6 +424,7 @@ class TaskController extends Controller
                     ]);
             $allocation_details = $this->saveAllocationDetails($allocation, $form);
         }
+        dd($allocation);
         return $allocation;
     }
 
