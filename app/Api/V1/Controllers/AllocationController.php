@@ -61,7 +61,7 @@ class AllocationController extends Controller
         $allocation_details = $fields->details;
         $allocation = Allocation::findOrFail($fields->original_allocation_id);
         $allocation->national_id = $fields->id;
-        $unset_array = ['id', 'original_allocation_id', 'created_at', 'updated_at', 'details'];
+        $unset_array = ['id', 'original_allocation_id', 'created_at', 'updated_at', 'details', 'orderdate'];
         foreach ($unset_array as $value) {
             unset($fields->$value);
         }
