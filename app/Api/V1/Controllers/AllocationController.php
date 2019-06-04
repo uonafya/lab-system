@@ -56,6 +56,7 @@ class AllocationController extends Controller
      */
     public function update(ApiRequest $request, $id)
     {
+        return response()->json($request->all());
     	$allocation = Allocation::findOrFail($id);
         $fields = json_decode($request->input('allocation'));
 
