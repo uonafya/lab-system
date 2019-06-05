@@ -27,6 +27,7 @@ class WorksheetController extends Controller
             return $query->where('worksheets.id', $worksheet_id);
         })
         ->when($state, function ($query) use ($state){
+            if($state == 1) $query->orderBy('worksheets.id', 'asc');
             return $query->where('status_id', $state);
         })
         ->when($date_start, function($query) use ($date_start, $date_end){

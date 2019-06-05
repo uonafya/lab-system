@@ -2,9 +2,10 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\BaseController;
+use Exception;
 
-class RandomController extends Controller
+class RandomController extends BaseController
 {
     public function protected_route()
     {
@@ -25,5 +26,19 @@ class RandomController extends Controller
         return response()->json([
                 'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
             ]);
+    } 
+
+    public function hello_nascop()
+    {
+        try {
+            \App\Synch::test_nascop();
+        } catch (Exception $e) {
+            return response()->json([
+                    'message' => 'NASCOP cannot be reached.'
+                ], 400);
+        }
+        return response()->json([
+                'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
+            ], 200);
     }
 }

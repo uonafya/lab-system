@@ -30,6 +30,7 @@ class ViralworksheetController extends Controller
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
+                if($state == 1) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
                         SELECT DISTINCT worksheet_id
@@ -248,8 +249,7 @@ class ViralworksheetController extends Controller
     public function convert_worksheet(Viralworksheet $worksheet, $machine_type)
     {
         if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;
