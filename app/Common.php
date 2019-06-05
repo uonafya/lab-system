@@ -458,7 +458,7 @@ class Common
     	foreach ($batches as $batch) {
     		if($not_received) $samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
     		else{
-    			$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
+    			$samples = $sample_class::where(['batch_id' => $batch->id, 'repeatt' => 0])->whereNull('result')->get();
     		}
     		if($samples->count() > 0){
 		        unset($batch->samples_count);

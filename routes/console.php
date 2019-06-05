@@ -116,6 +116,12 @@ Artisan::command('transfer:missing-samples', function(){
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
+Artisan::command('transfer:delayed-samples', function(){
+    $str = \App\Common::transfer_delayed_samples('eid', false);
+    $str .= \App\Common::transfer_delayed_samples('vl', false);
+    $this->info($str);
+})->describe('Transfer samples delaying batches to new batches.');
+
 
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');
