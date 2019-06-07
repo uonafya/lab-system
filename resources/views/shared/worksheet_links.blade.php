@@ -6,6 +6,19 @@
 	<a href="{{ url('worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
 	</a> | 
+	
+	@if($worksheet->machine_type == 2)
+		@if($worksheet->samples_no < 23)
+			<a href="{{ url('worksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
+				Convert to Roche
+			</a> |
+		@endif
+	@else
+		<a href="{{ url('worksheet/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" target='_blank'>
+			Convert to Abbott
+		</a> |
+	@endif
+
 	<a href="{{ url('worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet->id}}?');">		
 		Cancel
 	</a> | 

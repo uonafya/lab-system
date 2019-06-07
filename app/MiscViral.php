@@ -634,7 +634,7 @@ class MiscViral extends Common
     {
         // English
         if($sample->preferred_language == 1){
-            if($sample->rcategory == 1 || $sample->rcategory == 2){
+            if($sample->rcategory == 1){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
                 }
@@ -642,7 +642,7 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
                 }
             }
-            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+            else if(in_array($sample->rcategory, [2, 3, 4])){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
                 }
@@ -656,7 +656,7 @@ class MiscViral extends Common
         }
         // Kiswahili
         else{
-            if($sample->rcategory == 1 || $sample->rcategory == 2){
+            if($sample->rcategory == 1){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
                 }
@@ -664,12 +664,12 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
                 }
             }
-            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+            else if(in_array($sample->rcategory, [2, 3, 4])){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
                 }
                 else{
-                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";
                 }
             }
             else if($sample->rcategory == 5 || $sample->receivedstatus == 2){

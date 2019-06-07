@@ -65,6 +65,12 @@ Artisan::command('dispatch:results', function(){
     $this->info($str);
 })->describe('Send emails for dispatched batches.');
 
+Artisan::command('dispatch:critical', function(){
+    $str = \App\Common::critical_results('eid');
+    $str = \App\Common::critical_results('vl');
+    $this->info($str);
+})->describe('Send emails for critical results.');
+
 Artisan::command('dispatch:mlab', function(){
     $str = \App\Misc::send_to_mlab();
     $str .= \App\MiscViral::send_to_mlab();
@@ -107,6 +113,12 @@ Artisan::command('delete:delayed-batches', function(){
 Artisan::command('transfer:missing-samples', function(){
     $str = \App\Common::transfer_delayed_samples('eid');
     $str .= \App\Common::transfer_delayed_samples('vl');
+    $this->info($str);
+})->describe('Transfer samples delaying batches to new batches.');
+
+Artisan::command('transfer:delayed-samples', function(){
+    $str = \App\Common::transfer_delayed_samples('eid', false);
+    $str .= \App\Common::transfer_delayed_samples('vl', false);
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
@@ -158,6 +170,13 @@ Artisan::command('send:nodata', function(){
     $str = \App\Common::no_data_report('vl');
     $this->info($str);
 })->describe('Send no data report.');
+
+
+Artisan::command('send:gender', function(){
+    $str = \App\Nat::save_gender_results();
+    $str = \App\Nat::save_gender_ordering_results();
+    $this->info($str);
+})->describe('Send gender suppression data.');
 
 Artisan::command('send:communication', function(){
     $str = \App\Common::send_communication();
