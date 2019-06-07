@@ -2054,13 +2054,17 @@ class Random
         echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
+        $worksheet = null;
         foreach ($data as $key => $sample) {
             // dd($sample);
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
-            dd($dbsample);
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->last();
+            if(!$worksheet || $worksheet != $dbsample->worksheet_id){
+            	$worksheet = $dbsample->worksheet_id;
+            	echo "\t" . $worksheet . "\n";
+            }
             if ($dbsample)
             	$availablecount++;
             else
