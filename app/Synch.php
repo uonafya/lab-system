@@ -138,7 +138,8 @@ class Synch
 		$client = new Client(['base_uri' => $base]);
 		$response = $client->request('get', '', ['timeout' => 1]);
 		$body = json_decode($response->getBody());
-		return $body->message;
+		if($response->getStatusCode() < 399) return true;
+		return false;
 	}
 
 	public static function login()
