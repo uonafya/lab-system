@@ -38,6 +38,7 @@ class ReportController extends Controller
 
     public function dateselect(Request $request)
     {
+        ini_set("memory_limit", "-1");
         $dateString = '';
         if (session('testingSystem') == 'CD4') {
             $data = self::__getCD4Data($request, $dateString)->get();
@@ -163,6 +164,8 @@ class ReportController extends Controller
 
     public function generate(Request $request)
     {
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
         $dateString = '';
         if (session('testingSystem') == 'CD4') {
             $data = self::__getCD4Data($request, $dateString)->get();
@@ -170,8 +173,6 @@ class ReportController extends Controller
         } else if (auth()->user()->user_type_id == 5) {
             $data = self::__getDateData($request,$dateString)->get();
             // dd($data);
-            ini_set("memory_limit", "-1");
-            ini_set("max_execution_time", "3000");
             if ($request->input('types') == 'manifest'){
                 $batches = $data->unique('batch_id')->pluck('batch_id');
                 // dd($batches);
