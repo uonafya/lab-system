@@ -30,6 +30,7 @@ class ViralworksheetController extends Controller
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
+                if($state == 1) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
                         SELECT DISTINCT worksheet_id

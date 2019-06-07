@@ -2037,6 +2037,10 @@ class Random
 
 	public static function export_edarp_results() {
         echo "==> Retrival Begin \n";
+		$file = 'public/docs/MISSING RESULTS.xlsx';
+        // $batch = null;
+        // $lookups = Lookup::get_viral_lookups();
+        // dd($lookups);
 		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
 
 		/***  KEMRI Results File ***/
@@ -2078,7 +2082,17 @@ class Random
         echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
+        $worksheet = null;
         foreach ($data as $key => $sample) {
+            // dd($sample);
+            // $sample = collect($sample)->flatten(1)->toArray();
+            // dd($sample[3]);
+            // $sample = (array)$sample;
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->last();
+            if(!$worksheet || $worksheet != $dbsample->worksheet_id){
+            	$worksheet = $dbsample->worksheet_id;
+            	echo "\t" . $worksheet . "\n";
+            }
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
             // $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
             // if (!$excelResult)

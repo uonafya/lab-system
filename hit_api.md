@@ -1,5 +1,6 @@
 ## HIT API
 
+
 All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.
 *Open the link in **POSTMAN** and then set the request to **POST** *
 - Get data by request type
