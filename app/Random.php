@@ -2088,12 +2088,11 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->last();
+            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
             if(!$worksheet || $worksheet != $dbsample->worksheet_id){
             	$worksheet = $dbsample->worksheet_id;
             	echo "\t" . $worksheet . "\n";
             }
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
             // $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
             // if (!$excelResult)
             // 	continue;
