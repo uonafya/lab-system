@@ -2041,7 +2041,7 @@ class Random
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
-		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
+		// $file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
 
 		/***  KEMRI Results File ***/
 		// $rfile1 = 'public/docs/Edarp1.xlsx';
@@ -2103,12 +2103,12 @@ class Random
             	$count++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? $excelResult[6];
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[9];
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[7];
+            $sample[21] = $dbsample->labcomment ?? $excelResult[6] ?? null;
+            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[9] ?? null;
+            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[7] ?? null;
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? $excelResult[5];
+            $sample[24] = $dbsample->result ?? $excelResult[5] ?? null;
             $newData[] = $sample->toArray();
         }
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
