@@ -1,6 +1,6 @@
 ## LAB API
 
-[Click here](http://lab.test.nascop.org/download_api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**. If you do not have **POSTMAN** installed, you can download it by [clicking here.](https://www.getpostman.com/downloads/)
+[Click here](http://lab-2.test.nascop.org/download/api) to get the below post routes as a **POSTMAN** collection complete with all the fields you need. Open this file using **POSTMAN**. If you do not have **POSTMAN** installed, you can download it by [clicking here.](https://www.getpostman.com/downloads/)
 
 
 All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.

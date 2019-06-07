@@ -116,6 +116,12 @@ Artisan::command('transfer:missing-samples', function(){
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
+Artisan::command('transfer:delayed-samples', function(){
+    $str = \App\Common::transfer_delayed_samples('eid', false);
+    $str .= \App\Common::transfer_delayed_samples('vl', false);
+    $this->info($str);
+})->describe('Transfer samples delaying batches to new batches.');
+
 
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');
@@ -168,6 +174,7 @@ Artisan::command('send:nodata', function(){
 
 Artisan::command('send:gender', function(){
     $str = \App\Nat::save_gender_results();
+    $str = \App\Nat::save_gender_ordering_results();
     $this->info($str);
 })->describe('Send gender suppression data.');
 
