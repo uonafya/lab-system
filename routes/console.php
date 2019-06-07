@@ -410,4 +410,31 @@ Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued}
     $this->info($str);
 })->describe('Adjust Consumptions');
 // Quick fix for consumptions
+
+//Quick fix add EDARP samples to KEMRI
+Artisan::command('edarp:upload {received_by}', function($received_by) {
+    $str = \App\Random::import_edarp_samples_excel($received_by);
+    $this->info($str);
+})->describe('Move EDARP samples to Lab');
+
+Artisan::command('edarp:lab', function(){
+    $str = \App\Random::export_edarp_results();
+    $this->info($str);
+})->describe('Extract Moved samples');
+
+Artisan::command('edarp:labdelete', function(){
+    $str = \App\Random::delete_edarp_imported_batches();
+    $this->info($str);
+})->describe('Delete Moved samples');
+
+Artisan::command('edarp:labdeleteduplicates', function(){
+    $str = \App\Random::delete_duplicates();
+    $this->info($str);
+})->describe('Delete duplicated Moved samples');
+
+Artisan::command('edarp:confirm  {received_by}', function($received_by){
+    $str = \App\Random::confirm_edarp_upload($received_by);
+    $this->info($str);
+})->describe('Check EDARP request');
+//Quick fix add EDARP samples to KEMRI
 //Quick fixes
