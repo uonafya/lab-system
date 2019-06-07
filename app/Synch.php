@@ -134,7 +134,7 @@ class Synch
 
 	public static function test_nascop()
 	{
-		$base = 'https://api.nascop.org/eid';
+		$base = 'https://api.nascop.org/eid/ver2.0';
 		$client = new Client(['base_uri' => $base]);
 		$response = $client->request('get', '', ['timeout' => 1]);
 		$body = json_decode($response->getBody());
