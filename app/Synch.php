@@ -956,7 +956,7 @@ class Synch
 
 		$data['c8800_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('machine_type', 2)
+						->where('machine_type', 3)
 						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
