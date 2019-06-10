@@ -1057,12 +1057,12 @@ class Synch
     	$totaleidsamplesrun = SampleView::selectRaw("count(*) as samples_run")
     								->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+    								->where(['samples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('worksheets.status_id', '<', 3)->first()->samples_run;
     	$totalvlsamplesrun = ViralsampleView::selectRaw("count(*) as samples_run")
     								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+    								->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
 
     	/**** Samples pending results ****/
