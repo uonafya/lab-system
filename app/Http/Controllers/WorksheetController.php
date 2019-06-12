@@ -311,6 +311,10 @@ class WorksheetController extends Controller
 
     public function reverse_upload(Worksheet $worksheet)
     {
+        if($worksheet->status_id != 3){
+            session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            return back();
+        }
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -369,6 +373,10 @@ class WorksheetController extends Controller
 
     public function upload(Worksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
         $worksheet->load(['creator']);
         $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
@@ -386,6 +394,10 @@ class WorksheetController extends Controller
      */
     public function save_results(Request $request, Worksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
