@@ -367,6 +367,11 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
+Artisan::command('set:time', function(){
+    $str = \App\Synch::synch_time();
+    $this->info($str);
+})->describe('Check time at lab-2.test.nascop.org and set the time to that.');
+
 Artisan::command('send:labtracker {year} {month}', function($year, $month){
     $str = \App\Common::send_lab_tracker($year, $month);
     $this->info($str);
