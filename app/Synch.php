@@ -133,10 +133,14 @@ class Synch
 	public static function synch_time()
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		$response = $client->request('get', 'time');
-		$body = json_decode($response->getBody());
-		exec("date +%Y%m%d -s '" . $body->date . "'");
-		exec("date +%T -s '" . $body->time . "'");
+		try {
+			$response = $client->request('get', 'time', ['timeout' => 1]);
+			$body = json_decode($response->getBody());
+			exec("date +%Y%m%d -s '" . $body->date . "'");
+			exec("date +%T -s '" . $body->time . "'");			
+		} catch (Exception $e) {
+			
+		}
 	}
 
 	public static function test_nascop()
