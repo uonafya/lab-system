@@ -2255,4 +2255,34 @@ class Random
         }
         echo "==> Complete";
 	}
+
+    public static function checkMbNo(){
+    	$files = [['file' =>'public/docs/eid data Exsting.xlsx', 'name' => 'eid data Exsting First'],
+    			['file' =>'public/docs/eidDataSecond.xlsx', 'name' => 'eid data Exsting Second'],
+    			['file' =>'public/docs/eidDataThird.xlsx', 'name' => 'eid data Exsting Third'],
+    			['file' =>'public/docs/eidDataFourth.xlsx', 'name' => 'eid data Exsting Fourth'],
+    			['file' =>'public/docs/eidDataFifth.xlsx', 'name' => 'eid data Exsting Fifth'],
+    			['file' =>'public/docs/eidDataSixth.xlsx', 'name' => 'eid data Exsting Sixth'],
+    			['file' =>'public/docs/eidDataSeventh.xlsx', 'name' => 'eid data Exsting Seventh'],
+    			['file' =>'public/docs/eidDataEighth.xlsx', 'name' => 'eid data Exsting Eighth']];
+    	
+    	echo "==> Fetching Excel Data \n";
+    	ini_set("memory_limit", "-1");
+    	foreach ($files as $key => $file) {
+    		$excelData = Excel::load($file['file'], function($reader){
+	            $reader->toArray();
+	        })->get();
+    		dd($excelData);
+    	}
+    	echo "==> All Files completed";
+        // $excelData = Excel::import($file, function($reader){
+        //     $reader->toArray();
+        // })->get();
+        // $data = $excelData;
+        // echo "==> Getting MB No \n";
+        // dd($data);
+        // foreach ($data as $key => $sample) {
+        // 	$dbsample = Sample::where('comment', '=', $sample[3])->get()->last();
+        // }
+    }
 }
