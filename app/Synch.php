@@ -22,10 +22,8 @@ use App\FacilityChange;
 
 class Synch
 {
-	// public static $base = 'http://127.0.0.1:9000/api/';
-	// public static $base = 'http://eid-dash.nascop.org/api/';
+	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
-	// public static $base = 'http://lab-nat.test/api/';
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -130,6 +128,15 @@ class Synch
 		$response = $client->request('get', 'hello');
 		$body = json_decode($response->getBody());
 		return $body->message;
+	}
+
+	public static function synch_time()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$response = $client->request('get', 'time');
+		$body = json_decode($response->getBody());
+		exec("date +%Y%m%d -s '" . $body->date . "'");
+		exec("date +%T -s '" . $body->time . "'");
 	}
 
 	public static function test_nascop()
