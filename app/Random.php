@@ -2054,11 +2054,11 @@ class Random
         echo "==> Fetching Excel Data \n";
 		$rdata = [];
 		foreach ($rfiles as $key => $value) {
-			$rexcelData = Excel::load($rfile1, function($reader){
+			$rexcelData = Excel::load($value, function($reader){
 				$reader->toArray();
 			})->get();
-			foreach ($rexcelData as $key => $value) {
-				$rdata[] = $value;
+			foreach ($rexcelData as $datakey => $datavalue) {
+				$rdata[] = $datavalue;
 			}
 		}
 		$rdata = collect($rdata);
