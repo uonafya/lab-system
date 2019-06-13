@@ -1469,6 +1469,8 @@ class Synch
                         'Authorization' => 'Bearer ' . self::get_token(),
                 ],
             ]);
+
+            if($response->getStatusCode() > 399) echo "Facility {$facility->id} not found.\n";
             
             $body = json_decode($response->getBody());
 
