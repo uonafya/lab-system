@@ -2048,8 +2048,8 @@ class Random
 		$rfiles = ['public/docs/15722.CSV',
 					'public/docs/15723.CSV',
 					'public/docs/15724.CSV',
-					'public/docs/15723.CSV',
-					'public/docs/15724.CSV'];
+					'public/docs/15725.CSV',
+					'public/docs/15726.CSV'];
 
         echo "==> Fetching Excel Data \n";
 		$rdata = [];
@@ -2098,12 +2098,12 @@ class Random
             	$count++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? $excelResult[6] ?? null;
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[9] ?? null;
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[7] ?? null;
+            $sample[21] = $dbsample->labcomment ?? $excelResult[12] ?? null;
+            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[11] ?? null;
+            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[11] ?? null;
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? $excelResult[5] ?? null;
+            $sample[24] = $dbsample->result ?? $excelResult[8] ?? null;
             $newData[] = $sample->toArray();
         }
         echo "\t";
