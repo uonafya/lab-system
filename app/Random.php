@@ -2076,7 +2076,7 @@ class Random
         $availablecount = 0;
         $worksheet = [];
         foreach ($data as $key => $sample) {
-            // dd($sample);
+            dd($sample);
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
