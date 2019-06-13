@@ -1463,11 +1463,17 @@ class Synch
         foreach ($facilities as $facility) {
 
             $response = $client->request('get', "facility/{$facility->id}", [
+            	'http_errors' => false,
                 'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . self::get_token(),
                 ],
             ]);
+
+            if($response->getStatusCode() > 399){
+            	echo "Facility {$facility->id} not found.\n";
+            	continue;
+            }
             
             $body = json_decode($response->getBody());
 

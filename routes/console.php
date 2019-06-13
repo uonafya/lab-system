@@ -442,4 +442,9 @@ Artisan::command('edarp:confirm  {received_by}', function($received_by){
     $this->info($str);
 })->describe('Check EDARP request');
 //Quick fix add EDARP samples to KEMRI
+
+Artisan::command('check:mb', function(){
+    $str = \App\Random::checkMbNo();
+    $this->info($str);
+})->describe('Get MB No');
 //Quick fixes
