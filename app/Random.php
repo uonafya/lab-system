@@ -2080,12 +2080,13 @@ class Random
             // dd($sample[3]);
             // $sample = (array)$sample;
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
-            dd($rdata->first());
+            
             if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
             	$worksheet[] = $dbsample->worksheet_id;
 
             /* File worksheet reagion */
-            $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
+            $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
+            dd($excelResult);
             if (!$excelResult)
             	continue;
             $excelResult = $excelResult->toArray();
