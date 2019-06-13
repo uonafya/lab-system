@@ -1470,7 +1470,10 @@ class Synch
                 ],
             ]);
 
-            if($response->getStatusCode() > 399) echo "Facility {$facility->id} not found.\n";
+            if($response->getStatusCode() > 399){
+            	echo "Facility {$facility->id} not found.\n";
+            	continue;
+            }
             
             $body = json_decode($response->getBody());
 
