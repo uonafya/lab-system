@@ -1945,7 +1945,7 @@ class Random
                 if ($counter == 1) {                    
                     $batch = new Viralbatch();
                     $batch->user_id = $received_by;
-                    $batch->lab_id = env('APP_LAB');
+                    $batch->lab_id = $samplevalue[2];
                     $batch->received_by = $received_by;
                     $batch->site_entry = 0;
                     $batch->entered_by = $received_by;
@@ -2037,41 +2037,33 @@ class Random
 
 	public static function export_edarp_results() {
         echo "==> Retrival Begin \n";
-		// $file = 'public/docs/MISSING RESULTS.xlsx';
+		$file = 'public/docs/MISSING RESULTS.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
 		// $file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
+		// $file = 'public/docs/knh-28-2-2019.xlsx';// KNH
 
 		/***  KEMRI Results File ***/
-		// $rfile1 = 'public/docs/Edarp1.xlsx';
-		// $rfile2 = 'public/docs/Edarp2.xlsx';
-		// $rfile3 = 'public/docs/Edarp3.xlsx';
-		// $rdata = [];
-		// $rexcelData = Excel::load($rfile1, function($reader){
-		// 	$reader->toArray();
-		// })->get();
-		// $rexcelData2 = Excel::load($rfile2, function($reader){
-		// 	$reader->toArray();
-		// })->get();
-		// $rexcelData3 = Excel::load($rfile3, function($reader){
-		// 	$reader->toArray();
-		// })->get();
-		// foreach ($rexcelData as $key => $value) {
-		// 	$rdata[] = $value;
-		// }
-		// foreach ($rexcelData2 as $key => $value) {
-		// 	$rdata[] = $value;
-		// }
-		// foreach ($rexcelData3 as $key => $value) {
-		// 	$rdata[] = $value;
-		// }
-		// $rdata = collect($rdata);
-		/***  KEMRI Results File ***/
-
-		$file = 'public/docs/knh-28-2-2019.xlsx';
+		$rfiles = ['public/docs/15722.xlsx',
+					'public/docs/15723.xlsx',
+					'public/docs/15724.xlsx',
+					'public/docs/15723.xlsx',
+					'public/docs/15724.xlsx']
 
         echo "==> Fetching Excel Data \n";
+		$rdata = [];
+		foreach ($rfiles as $key => $value) {
+			$rexcelData = Excel::load($rfile1, function($reader){
+				$reader->toArray();
+			})->get();
+			foreach ($rexcelData as $key => $value) {
+				$rdata[] = $value;
+			}
+		}
+		$rdata = collect($rdata);
+		/***  KEMRI Results File ***/
+
         $excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
@@ -2082,21 +2074,23 @@ class Random
         echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
-        $worksheet = null;
+        $worksheet = [];
         foreach ($data as $key => $sample) {
             // dd($sample);
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
-            if(!$worksheet || $worksheet != $dbsample->worksheet_id){
-            	$worksheet = $dbsample->worksheet_id;
-            	echo "\t" . $worksheet . "\n";
-            }
-            // $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
-            // if (!$excelResult)
-            // 	continue;
-            // $excelResult = $excelResult->toArray();
+            if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
+            	$worksheet[] = $dbsample->worksheet_id;
+
+            /* File worksheet reagion */
+            $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
+            if (!$excelResult)
+            	continue;
+            $excelResult = $excelResult->toArray();
+            /* File worksheet reagion */
+
             if ($dbsample)
             	$availablecount++;
             else
@@ -2111,10 +2105,13 @@ class Random
             $sample[24] = $dbsample->result ?? $excelResult[5] ?? null;
             $newData[] = $sample->toArray();
         }
+        echo "\t";
+        print_r($worksheet);
+        echo "\n";
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
-        echo "==> Building excel results \n";
+        echo "\n==> Building excel results \n";
 
-        $file = 'KNH2EDARP'.date('Y_m_d H_i_s');
+        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
 
         Excel::create($file, function($excel) use($newData, $file){
             $excel->setTitle($file);
