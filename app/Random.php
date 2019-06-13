@@ -2086,7 +2086,7 @@ class Random
 
             /* File worksheet reagion */
             $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
-            dd($excelResult);
+            // dd($excelResult);
             if (!$excelResult)
             	continue;
             $excelResult = $excelResult->toArray();
