@@ -1471,6 +1471,8 @@ class Synch
             
             $body = json_decode($response->getBody());
 
+            dd($body);
+
             $facility->district = $body->facility->district;
             $facility->partner = $body->facility->partner;
             $facility->save();
