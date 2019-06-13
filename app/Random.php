@@ -2045,11 +2045,11 @@ class Random
 		// $file = 'public/docs/knh-28-2-2019.xlsx';// KNH
 
 		/***  KEMRI Results File ***/
-		$rfiles = ['public/docs/15722.xlsx',
-					'public/docs/15723.xlsx',
-					'public/docs/15724.xlsx',
-					'public/docs/15723.xlsx',
-					'public/docs/15724.xlsx'];
+		$rfiles = ['public/docs/15722.CSV',
+					'public/docs/15723.CSV',
+					'public/docs/15724.CSV',
+					'public/docs/15723.CSV',
+					'public/docs/15724.CSV'];
 
         echo "==> Fetching Excel Data \n";
 		$rdata = [];
