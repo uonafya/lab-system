@@ -2080,7 +2080,7 @@ class Random
             // dd($sample[3]);
             // $sample = (array)$sample;
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
-            dd($dbsample);
+            dd($rdata->first());
             if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
             	$worksheet[] = $dbsample->worksheet_id;
 
