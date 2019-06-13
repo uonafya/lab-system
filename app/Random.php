@@ -2049,7 +2049,7 @@ class Random
 					'public/docs/15723.xlsx',
 					'public/docs/15724.xlsx',
 					'public/docs/15723.xlsx',
-					'public/docs/15724.xlsx']
+					'public/docs/15724.xlsx'];
 
         echo "==> Fetching Excel Data \n";
 		$rdata = [];
