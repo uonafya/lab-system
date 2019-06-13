@@ -1463,6 +1463,7 @@ class Synch
         foreach ($facilities as $facility) {
 
             $response = $client->request('get', "facility/{$facility->id}", [
+            	'http_errors' => false,
                 'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . self::get_token(),
