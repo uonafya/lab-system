@@ -2037,7 +2037,7 @@ class Random
 
 	public static function export_edarp_results() {
         echo "==> Retrival Begin \n";
-		$file = 'public/docs/MISSING RESULTS.xlsx';
+		// $file = 'public/docs/MISSING RESULTS.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2069,7 +2069,7 @@ class Random
 		// $rdata = collect($rdata);
 		/***  KEMRI Results File ***/
 
-		// $file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
+		$file = 'public/docs/knh-28-2-2019.xlsx';
 
         echo "==> Fetching Excel Data \n";
         $excelData = Excel::load($file, function($reader){
@@ -2114,7 +2114,7 @@ class Random
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
         echo "==> Building excel results \n";
 
-        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
+        $file = 'KNH2EDARP'.date('Y_m_d H_i_s');
 
         Excel::create($file, function($excel) use($newData, $file){
             $excel->setTitle($file);
