@@ -1945,7 +1945,7 @@ class Random
                 if ($counter == 1) {                    
                     $batch = new Viralbatch();
                     $batch->user_id = $received_by;
-                    $batch->lab_id = env('APP_LAB');
+                    $batch->lab_id = $samplevalue[2];
                     $batch->received_by = $received_by;
                     $batch->site_entry = 0;
                     $batch->entered_by = $received_by;
@@ -2042,36 +2042,28 @@ class Random
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
 		// $file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';// KEMRI
+		// $file = 'public/docs/knh-28-2-2019.xlsx';// KNH
 
 		/***  KEMRI Results File ***/
-		// $rfile1 = 'public/docs/Edarp1.xlsx';
-		// $rfile2 = 'public/docs/Edarp2.xlsx';
-		// $rfile3 = 'public/docs/Edarp3.xlsx';
-		// $rdata = [];
-		// $rexcelData = Excel::load($rfile1, function($reader){
-		// 	$reader->toArray();
-		// })->get();
-		// $rexcelData2 = Excel::load($rfile2, function($reader){
-		// 	$reader->toArray();
-		// })->get();
-		// $rexcelData3 = Excel::load($rfile3, function($reader){
-		// 	$reader->toArray();
-		// })->get();
-		// foreach ($rexcelData as $key => $value) {
-		// 	$rdata[] = $value;
-		// }
-		// foreach ($rexcelData2 as $key => $value) {
-		// 	$rdata[] = $value;
-		// }
-		// foreach ($rexcelData3 as $key => $value) {
-		// 	$rdata[] = $value;
-		// }
-		// $rdata = collect($rdata);
-		/***  KEMRI Results File ***/
-
-		// $file = 'public/docs/EDARP_samples_being_referred_to _KNH_CCC_laboratory.xlsx';
+		$rfiles = ['public/docs/15722.CSV',
+					'public/docs/15723.CSV',
+					'public/docs/15724.CSV',
+					'public/docs/15725.CSV',
+					'public/docs/15726.CSV'];
 
         echo "==> Fetching Excel Data \n";
+		$rdata = [];
+		foreach ($rfiles as $key => $value) {
+			$rexcelData = Excel::load($value, function($reader){
+				$reader->toArray();
+			})->get();
+			foreach ($rexcelData as $datakey => $datavalue) {
+				$rdata[] = $datavalue;
+			}
+		}
+		$rdata = collect($rdata);
+		/***  KEMRI Results File ***/
+
         $excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
@@ -2082,37 +2074,43 @@ class Random
         echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
-        $worksheet = null;
+        $worksheet = [];
         foreach ($data as $key => $sample) {
-            // dd($sample);
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
             $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
-            if(!$worksheet || $worksheet != $dbsample->worksheet_id){
-            	$worksheet = $dbsample->worksheet_id;
-            	echo "\t" . $worksheet . "\n";
-            }
-            // $excelResult = $rdata->where(0, 'S')->where(2, $dbsample->id)->first();
-            // if (!$excelResult)
-            // 	continue;
-            // $excelResult = $excelResult->toArray();
+            
+            if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
+            	$worksheet[] = $dbsample->worksheet_id;
+
+            /* File worksheet reagion */
+            $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
+            // dd($excelResult);
+            if (!$excelResult)
+            	continue;
+            $excelResult = $excelResult->toArray();
+            /* File worksheet reagion */
+
             if ($dbsample)
             	$availablecount++;
             else
             	$count++;
             $sample[19] = $dbsample->rejectedreason ?? null;
             $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? $excelResult[6] ?? null;
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[9] ?? null;
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[7] ?? null;
+            $sample[21] = $dbsample->labcomment ?? $excelResult[12] ?? null;
+            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[11] ?? null;
+            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[11] ?? null;
             // $sample[22] = $dbsample->datetested;
             // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? $excelResult[5] ?? null;
+            $sample[24] = $dbsample->result ?? $excelResult[8] ?? null;
             $newData[] = $sample->toArray();
         }
+        echo "\t";
+        print_r($worksheet);
+        echo "\n";
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
-        echo "==> Building excel results \n";
+        echo "\n==> Building excel results \n";
 
         $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
 
@@ -2255,4 +2253,34 @@ class Random
         }
         echo "==> Complete";
 	}
+
+    public static function checkMbNo(){
+    	$files = [['file' =>'public/docs/eid data Exsting.xlsx', 'name' => 'eid data Exsting First'],
+    			['file' =>'public/docs/eidDataSecond.xlsx', 'name' => 'eid data Exsting Second'],
+    			['file' =>'public/docs/eidDataThird.xlsx', 'name' => 'eid data Exsting Third'],
+    			['file' =>'public/docs/eidDataFourth.xlsx', 'name' => 'eid data Exsting Fourth'],
+    			['file' =>'public/docs/eidDataFifth.xlsx', 'name' => 'eid data Exsting Fifth'],
+    			['file' =>'public/docs/eidDataSixth.xlsx', 'name' => 'eid data Exsting Sixth'],
+    			['file' =>'public/docs/eidDataSeventh.xlsx', 'name' => 'eid data Exsting Seventh'],
+    			['file' =>'public/docs/eidDataEighth.xlsx', 'name' => 'eid data Exsting Eighth']];
+    	
+    	echo "==> Fetching Excel Data \n";
+    	ini_set("memory_limit", "-1");
+    	foreach ($files as $key => $file) {
+    		$excelData = Excel::load($file['file'], function($reader){
+	            $reader->toArray();
+	        })->get();
+    		dd($excelData);
+    	}
+    	echo "==> All Files completed";
+        // $excelData = Excel::import($file, function($reader){
+        //     $reader->toArray();
+        // })->get();
+        // $data = $excelData;
+        // echo "==> Getting MB No \n";
+        // dd($data);
+        // foreach ($data as $key => $sample) {
+        // 	$dbsample = Sample::where('comment', '=', $sample[3])->get()->last();
+        // }
+    }
 }
