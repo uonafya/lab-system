@@ -447,4 +447,10 @@ Artisan::command('check:mb', function(){
     $str = \App\Random::checkMbNo();
     $this->info($str);
 })->describe('Get MB No');
+
+Artisan::command('missing', function(){
+    $str = \App\Random::consolidate();
+    $this->info($str);
+})->describe('merge Missing Kemri Results');
+
 //Quick fixes

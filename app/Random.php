@@ -2283,4 +2283,39 @@ class Random
         // 	$dbsample = Sample::where('comment', '=', $sample[3])->get()->last();
         // }
     }
+
+    public static function consolidate() {
+    	$missing = 'public/docs/MISSING RESULTS.xlsx';
+    	$result = 'public/docs/kemri-28-2-2019.xlsx';
+    	echo "==> Reading Excel files\n";
+    	$missingData = Excel::load($missing, function($reader){
+            $reader->toArray();
+        })->get();
+        $resultData = Excel::load($result, function($reader){
+            $reader->toArray();
+        })->get();
+        $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
+        echo "==> Matching Excel results\n";
+        foreach ($missingData as $key => $missing) {
+        	$result = $resultData->where(2, $missing[2])->first();
+        	$missing[21] = $result[21] ?? null;
+    		$missing[22] = $result[22] ?? null;
+    		$missing[23] = $result[23] ?? null;
+    		$missing[24] = $result[24] ?? null;
+    		$newData[] = $missing->toArray();
+        }
+        echo "==> Writing data to csv\n";
+        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
+        // dd($newData);
+        Excel::create($file, function($excel) use($newData, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
+
+            $excel->sheet('Sheetname', function($sheet) use($newData) {
+                $sheet->fromArray($newData);
+            });
+        })->store('csv');
+        echo "==> Data consolidation complete\n";
+    }
 }
