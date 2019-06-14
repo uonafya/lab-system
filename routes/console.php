@@ -367,6 +367,11 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
+Artisan::command('set:time', function(){
+    $str = \App\Synch::synch_time();
+    $this->info($str);
+})->describe('Check time at lab-2.test.nascop.org and set the time to that.');
+
 Artisan::command('send:labtracker {year} {month}', function($year, $month){
     $str = \App\Common::send_lab_tracker($year, $month);
     $this->info($str);
@@ -437,4 +442,15 @@ Artisan::command('edarp:confirm  {received_by}', function($received_by){
     $this->info($str);
 })->describe('Check EDARP request');
 //Quick fix add EDARP samples to KEMRI
+
+Artisan::command('check:mb', function(){
+    $str = \App\Random::checkMbNo();
+    $this->info($str);
+})->describe('Get MB No');
+
+Artisan::command('missing', function(){
+    $str = \App\Random::consolidate();
+    $this->info($str);
+})->describe('merge Missing Kemri Results');
+
 //Quick fixes

@@ -22,10 +22,8 @@ use App\FacilityChange;
 
 class Synch
 {
-	// public static $base = 'http://127.0.0.1:9000/api/';
-	// public static $base = 'http://eid-dash.nascop.org/api/';
+	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
-	// public static $base = 'http://lab-nat.test/api/';
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -132,13 +130,27 @@ class Synch
 		return $body->message;
 	}
 
+	public static function synch_time()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		try {
+			$response = $client->request('get', 'time', ['timeout' => 1]);
+			$body = json_decode($response->getBody());
+			exec("date +%Y%m%d -s '" . $body->date . "'");
+			exec("date +%T -s '" . $body->time . "'");			
+		} catch (Exception $e) {
+			
+		}
+	}
+
 	public static function test_nascop()
 	{
-		$base = 'https://api.nascop.org/eid';
+		$base = 'https://api.nascop.org/eid/ver2.0';
 		$client = new Client(['base_uri' => $base]);
 		$response = $client->request('get', '', ['timeout' => 1]);
 		$body = json_decode($response->getBody());
-		return $body->message;
+		if($response->getStatusCode() < 399) return true;
+		return false;
 	}
 
 	public static function login()
@@ -955,7 +967,7 @@ class Synch
 
 		$data['c8800_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('machine_type', 2)
+						->where('machine_type', 3)
 						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
@@ -1056,12 +1068,12 @@ class Synch
     	$totaleidsamplesrun = SampleView::selectRaw("count(*) as samples_run")
     								->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+    								->where(['samples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('worksheets.status_id', '<', 3)->first()->samples_run;
     	$totalvlsamplesrun = ViralsampleView::selectRaw("count(*) as samples_run")
     								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+    								->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
 
     	/**** Samples pending results ****/
@@ -1451,11 +1463,17 @@ class Synch
         foreach ($facilities as $facility) {
 
             $response = $client->request('get', "facility/{$facility->id}", [
+            	'http_errors' => false,
                 'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . self::get_token(),
                 ],
             ]);
+
+            if($response->getStatusCode() > 399){
+            	echo "Facility {$facility->id} not found.\n";
+            	continue;
+            }
             
             $body = json_decode($response->getBody());
 
