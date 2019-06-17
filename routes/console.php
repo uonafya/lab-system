@@ -116,6 +116,12 @@ Artisan::command('transfer:missing-samples', function(){
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
+Artisan::command('transfer:delayed-samples', function(){
+    $str = \App\Common::transfer_delayed_samples('eid', false);
+    $str .= \App\Common::transfer_delayed_samples('vl', false);
+    $this->info($str);
+})->describe('Transfer samples delaying batches to new batches.');
+
 
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');
@@ -168,6 +174,7 @@ Artisan::command('send:nodata', function(){
 
 Artisan::command('send:gender', function(){
     $str = \App\Nat::save_gender_results();
+    $str = \App\Nat::save_gender_ordering_results();
     $this->info($str);
 })->describe('Send gender suppression data.');
 
@@ -360,6 +367,11 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
+Artisan::command('set:time', function(){
+    $str = \App\Synch::synch_time();
+    $this->info($str);
+})->describe('Check time at lab-2.test.nascop.org and set the time to that.');
+
 Artisan::command('send:labtracker {year} {month}', function($year, $month){
     $str = \App\Common::send_lab_tracker($year, $month);
     $this->info($str);
@@ -403,4 +415,36 @@ Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued}
     $this->info($str);
 })->describe('Adjust Consumptions');
 // Quick fix for consumptions
+
+//Quick fix add EDARP samples to KEMRI
+Artisan::command('edarp:upload {received_by}', function($received_by) {
+    $str = \App\Random::import_edarp_samples_excel($received_by);
+    $this->info($str);
+})->describe('Move EDARP samples to Lab');
+
+Artisan::command('edarp:lab', function(){
+    $str = \App\Random::export_edarp_results();
+    $this->info($str);
+})->describe('Extract Moved samples');
+
+Artisan::command('edarp:labdelete', function(){
+    $str = \App\Random::delete_edarp_imported_batches();
+    $this->info($str);
+})->describe('Delete Moved samples');
+
+Artisan::command('edarp:labdeleteduplicates', function(){
+    $str = \App\Random::delete_duplicates();
+    $this->info($str);
+})->describe('Delete duplicated Moved samples');
+
+Artisan::command('edarp:confirm  {received_by}', function($received_by){
+    $str = \App\Random::confirm_edarp_upload($received_by);
+    $this->info($str);
+})->describe('Check EDARP request');
+//Quick fix add EDARP samples to KEMRI
+
+Artisan::command('check:mb', function(){
+    $str = \App\Random::checkMbNo();
+    $this->info($str);
+})->describe('Get MB No');
 //Quick fixes

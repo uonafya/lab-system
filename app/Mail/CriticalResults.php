@@ -19,7 +19,7 @@ class CriticalResults extends Mailable
     public $file_path;
     public $datedispatched;
     public $lab;
-
+    public $tests;
 
     /**
      * Create a new message instance.
@@ -34,6 +34,14 @@ class CriticalResults extends Mailable
         $this->datedispatched = $datedispatched;
         $this->file_path = storage_path('app/critical/' . $type . '_' . $facility->id . '.pdf');
         $this->lab = \App\Lab::find(env('APP_LAB'));
+        $this->tests = [
+            'eid' => [
+                'name' => 'EID',
+            ],
+            'vl' => [
+                'name' => 'Viral Load',
+            ],
+        ];
 
         if(!is_dir(storage_path("app/critical/"))) mkdir(storage_path("app/critical/"), 0777, true);
 

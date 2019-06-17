@@ -4,8 +4,8 @@
 
 	<br />
 	<br />
-
-	Please find attached {{ $type }} Critical Results that were dispatched on {{ $datedispatched }}. 
+	
+	We would like to draw your attention to the attached {{ $tests[$type]['name'] }} Critical Results for prompt patient management. Please find attached results dispatched on {{ $datedispatched }}. 
 	
 	<br />
 	<br />
