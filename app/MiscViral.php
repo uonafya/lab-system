@@ -27,7 +27,7 @@ class MiscViral extends Common
         '1' => [],
         '2' => ['<550', '< 550 ', '<150', '<160', '<75', '<274', '<400', ' <400', '< 400', '<188', '<218', '<839', '< 21', '<40', '<20', '>20', '< 20', '22 cp/ml', '<218', '<1000', '< LDL copies/ml', '< LDL copies', 'Target Not Detected', ],
         '3' => ['>1000'],
-        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000'],
+        '4' => ['> 10000000', '>10,000,000', '>10000000', '>10000000', "> 10,000,000 cp/ml"],
         '5' => ['Failed', 'failed', 'Failed PREP_ABORT', 'Failed Test', 'Invalid', 'Collect New Sample', 'Collect New sample']
     ];
 
@@ -119,18 +119,15 @@ class MiscViral extends Common
             ->update(['result' => 'Collect New Sample', 'labcomment' => 'Failed Test']);
 
         if(in_array(env('APP_LAB'), $double_approval)){
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
+            $where_query = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
         }
         else{
-            $where_query = "( receivedstatus=2 OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+            $where_query = "( (receivedstatus=2 and repeatt=0) OR  (result IS NOT NULL AND result != 'Failed' AND result != '' AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
         }
 
 
 		$total = Viralsample::where('batch_id', $batch_id)->where('parentid', 0)->get()->count();
-		$tests = Viralsample::where('batch_id', $batch_id)
-		->whereRaw($where_query)
-		->get()
-		->count();
+		$tests = Viralsample::where('batch_id', $batch_id)->whereRaw($where_query)->get()->count();
 
 		if($total == $tests){ 
             // DB::table('viralbatches')->where('id', $batch_id)->update(['batch_complete' => 2]);
@@ -268,7 +265,11 @@ class MiscViral extends Common
             $res= "< LDL copies/ml";
             $interpretation= $result;       
         }
-
+        else if(str_contains($result, ['>']))
+        {
+            $res= "> 10,000,000 cp/ml";
+            $interpretation= $result;       
+        }
         else if(str_contains($str, ['not detected']))
         {
             // $res="Target Not Detected";
@@ -633,7 +634,7 @@ class MiscViral extends Common
     {
         // English
         if($sample->preferred_language == 1){
-            if($sample->rcategory == 1 || $sample->rcategory == 2){
+            if($sample->rcategory == 1){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
                 }
@@ -641,7 +642,7 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
                 }
             }
-            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+            else if(in_array($sample->rcategory, [2, 3, 4])){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
                 }
@@ -655,7 +656,7 @@ class MiscViral extends Common
         }
         // Kiswahili
         else{
-            if($sample->rcategory == 1 || $sample->rcategory == 2){
+            if($sample->rcategory == 1){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
                 }
@@ -663,12 +664,12 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
                 }
             }
-            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+            else if(in_array($sample->rcategory, [2, 3, 4])){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
                 }
                 else{
-                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";
                 }
             }
             else if($sample->rcategory == 5 || $sample->receivedstatus == 2){

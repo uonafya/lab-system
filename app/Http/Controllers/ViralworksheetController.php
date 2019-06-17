@@ -30,6 +30,7 @@ class ViralworksheetController extends Controller
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
+                if($state == 1) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
                         SELECT DISTINCT worksheet_id
@@ -81,7 +82,13 @@ class ViralworksheetController extends Controller
         $data['calibration'] = $calibration;
         $data['limit'] = $limit;
         $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
-            ->whereRaw(" id IN (SELECT DISTINCT received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 ) ")
+            ->whereRaw(" (
+                id IN 
+                (SELECT DISTINCT received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 ) 
+                OR id IN
+                (SELECT DISTINCT sample_received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 AND sample_received_by IS NOT NULL) 
+                )
+                ")
             ->get();
 
         return view('forms.set_viralworksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
@@ -242,8 +249,7 @@ class ViralworksheetController extends Controller
     public function convert_worksheet(Viralworksheet $worksheet, $machine_type)
     {
         if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet cannot be converted to the requested type.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;
@@ -273,14 +279,12 @@ class ViralworksheetController extends Controller
     public function cancel_upload(Viralworksheet $worksheet)
     {
         if($worksheet->status_id != 2){
-            session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
             return back();
         }
 
         if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
-            session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
             return back();
         }
 
@@ -303,6 +307,10 @@ class ViralworksheetController extends Controller
 
     public function reverse_upload(Viralworksheet $worksheet)
     {
+        if($worksheet->status_id != 3){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -361,6 +369,10 @@ class ViralworksheetController extends Controller
 
     public function upload(Viralworksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
         $worksheet->load(['creator']);
         $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Worksheet Upload');
@@ -379,6 +391,10 @@ class ViralworksheetController extends Controller
      */
     public function save_results(Request $request, Viralworksheet $worksheet)
     {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/vl');
@@ -452,7 +468,7 @@ class ViralworksheetController extends Controller
                 if(!isset($value[1])) break;
                 $sample_id = $value[1];
                 $interpretation = $value[6];
-                $result_array = MiscViral::exponential_result($interpretation);
+                $result_array = MiscViral::sample_result($interpretation);
 
                 MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 

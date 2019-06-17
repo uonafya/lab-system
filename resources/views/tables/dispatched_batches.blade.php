@@ -186,8 +186,7 @@
                                         <th rowspan="1">TAT</th>
                                         <th rowspan="2">Email</th>
                                         <th rowspan="2">Individual Printed</th>
-                                        <th rowspan="2">Summary Printed</th>
-                                        <th rowspan="2">Email</th>                                        
+                                        <th rowspan="2">Summary Printed</th>                            
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
@@ -232,20 +231,20 @@
                                             <td> {{ $batch->tat() }} </td>
 
                                             @if($batch->sent_email)
-                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                                <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('dateemailsent') }} </strong> </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 
 
                                             @if($batch->dateindividualresultprinted)
-                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                                <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('dateindividualresultprinted') }} </strong> </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 
 
 
                                             @if($batch->datebatchprinted)
-                                                <td><strong><div style='color: #00ff00;'>Y</div></strong> </td>
+                                                <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('datebatchprinted') }} </strong> </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
                                             @endif 

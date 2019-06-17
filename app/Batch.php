@@ -150,6 +150,11 @@ class Batch extends BaseModel
         }
     }
 
+    public function getSampleNoAttribute()
+    {
+        return \App\Sample::selectRaw('count(id) AS my_count')->where(['batch_id' => $this->id, 'repeatt' => 0])->first()->my_count;
+    }
+
     public function batch_delete()
     {
         if(!$this->delete_button) abort(409, "Batch number {$this->id} is not eligible for deletion.");
@@ -169,11 +174,22 @@ class Batch extends BaseModel
         return true;
     }
 
-    public function transfer_samples($sample_ids, $submit_type)
+    public function transfer_samples($sample_ids, $submit_type, $return_for_testing=false)
     {     
         if(!$sample_ids){
             session(['toast_error' => 1, 'toast_message' => "No samples have been selected."]);
             return 'back';         
+        }
+
+        if(count($sample_ids) == $this->SampleNo){
+            if($return_for_testing){
+                $this->return_for_testing();
+                session(['toast_message' => "The batch has been returned for testing."]);
+            }
+            else{
+                session(['toast_error' => 1, 'toast_message' => "Too many samples have been selected."]);
+            }
+            return;
         }
 
         $new_batch = new \App\Batch;
@@ -193,6 +209,7 @@ class Batch extends BaseModel
         }
         $new_batch->created_at = $this->created_at;
         $new_batch->save();
+        if($return_for_testing) $new_batch->return_for_testing();
 
         if($submit_type == "new_facility") $new_id = $new_batch->id;
 

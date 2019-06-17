@@ -21,7 +21,9 @@ class CreateSampleCompleteViewsTable extends Migration
           p.hei_validation, p.enrollment_ccc_no, p.enrollment_status, p.referredfromsite, p.otherreason,
 
 
-           p.entry_point, g.gender_description, rs.name as receivedstatus_name, mp.name as mother_prophylaxis_name, ip.name as regimen_name, f.feeding as feeding_name, f.feeding_description
+           p.entry_point, g.gender_description, rs.name as receivedstatus_name, mp.name as mother_prophylaxis_name, ip.name as regimen_name, f.feeding as feeding_name, f.feeding_description,
+
+           pcr.name as pcrtypename, ep.name as entry_point_name, r.name as result_name
 
           FROM samples s 
             JOIN batches b ON b.id=s.batch_id
@@ -32,6 +34,9 @@ class CreateSampleCompleteViewsTable extends Migration
             LEFT JOIN prophylaxis mp on mp.id=s.mother_prophylaxis
             LEFT JOIN prophylaxis ip on ip.id=s.regimen
             LEFT JOIN feedings f on f.id=s.feeding
+            LEFT JOIN pcrtype pcr on pcr.id = s.pcrtype
+            LEFT JOIN entry_points ep on ep.id = p.entry_point
+            LEFT JOIN results r on r.id = s.result
         );
         ");
     }
