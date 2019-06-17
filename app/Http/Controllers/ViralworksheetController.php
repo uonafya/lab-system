@@ -659,14 +659,18 @@ class ViralworksheetController extends Controller
         $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('viralsamples.*', 'viralbatches.facility_id')
-                    ->where('worksheet_id', $worksheet->id)
+                    ->where('worksheet_id', $worksheet->id)          
                     ->orderBy('run', 'desc')
-                    ->when(true, function($query){
-                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
-                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
-                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    ->orderBy('highpriority', 'desc')
+                    ->orderBy('datereceived', 'asc')
+                    ->when((!in_array(env('APP_LAB'), [1, 2, 8])), function($query){
+                        return $query->orderBy('time_received', 'asc');
                     })
-                    ->orderBy('viralsamples.id', 'asc')              
+                    ->orderBy('site_entry', 'asc')
+                    ->when((env('APP_LAB') == 2), function($query){
+                        return $query->orderBy('facilitys.id', 'asc');
+                    })  
+                    ->orderBy('batch_id', 'asc')    
                     ->get();
 
         $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
