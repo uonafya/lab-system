@@ -668,7 +668,7 @@ class ViralworksheetController extends Controller
                     })
                     ->orderBy('site_entry', 'asc')
                     ->when((env('APP_LAB') == 2), function($query){
-                        return $query->orderBy('facilitys.id', 'asc');
+                        return $query->orderBy('facility_id', 'asc');
                     })  
                     ->orderBy('batch_id', 'asc')    
                     ->get();
