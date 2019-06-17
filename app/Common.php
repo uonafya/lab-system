@@ -815,7 +815,8 @@ class Common
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
         } catch (Exception $exception) {
-        	print_r($exception);
+        	Log::error($exception);
+        	// print_r($exception);
         }
     }
 
