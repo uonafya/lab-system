@@ -56,7 +56,7 @@ class Common
 
     public static function test_email()
     {
-        Mail::to(['joelkith@gmail.com'])->send(new TestMail());
+        Mail::to(['joelkith@gmail.com', 'baksajoshua09@gmail.com'])->send(new TestMail());
     }
 
     public static function get_misc_class($type)
@@ -416,7 +416,7 @@ class Common
     	}
     }
 
-    public static function transfer_delayed_samples($type)
+    public static function transfer_delayed_samples($type, $not_received=true)
     {
     	ini_set('memory_limit', "-1");
 
@@ -456,7 +456,10 @@ class Common
             ->get();
 
     	foreach ($batches as $batch) {
-    		$samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
+    		if($not_received) $samples = $sample_class::where(['batch_id' => $batch->id])->whereNull('receivedstatus')->get();
+    		else{
+    			$samples = $sample_class::where(['batch_id' => $batch->id, 'repeatt' => 0])->whereNull('result')->get();
+    		}
     		if($samples->count() > 0){
 		        unset($batch->samples_count);
     			$sample_ids = $samples->pluck('id')->toArray();
@@ -465,6 +468,7 @@ class Common
     		}
     	}
     }
+
 
     public static function reject_delayed_samples($type)
     {
