@@ -230,6 +230,17 @@
                             </div>
                         </div>
 
+                        @if(env('APP_LAB') == 4)
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Automatically Add Facility MFL-Code to CCC Number</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="automatic_mfl" value="1" checked="checked" />
+                                </div>
+                            </div>
+
+                        @endif
+
                         @if(!isset($sample))
                             
                             <div class="form-group">
