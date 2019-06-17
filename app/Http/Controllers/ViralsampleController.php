@@ -262,8 +262,7 @@ class ViralsampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
-        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
-        if(env('APP_LAB') == 4){
+        if(env('APP_LAB') == 4 && $request->input('automatic_mfl')){
             $fac = Facility::find($data_existing['facility_id']);
             // $patient_string = $fac->facilitycode . '/' . $patient_string;
             $str = $fac->facilitycode;
