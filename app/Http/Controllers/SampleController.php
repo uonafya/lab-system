@@ -111,11 +111,10 @@ class SampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
-        if(env('APP_LAB') == 4 && $request->input('automatic_mfl')){
+        if(env('APP_LAB') == 4){
             $fac = Facility::find($data_existing['facility_id']);
             $str = $fac->facilitycode . '/';
-            // if(env('APP_LAB') == 4) $str .= '/';
-            // if(env('APP_LAB') == 2) $str .= '-';
+            if($request->input('automatic_slash')) $str .= '/';
             if(!starts_with($patient_string, $str)){
                 if(starts_with($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
