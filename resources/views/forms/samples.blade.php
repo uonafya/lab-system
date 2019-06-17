@@ -233,7 +233,7 @@
                         @if(env('APP_LAB') == 4)
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Automatically Add Facility MFL-Code to CCC Number</label>
+                                <label class="col-sm-4 control-label">Automatically Add Facility MFL-Code to HEI Number</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="automatic_mfl" value="1" checked="checked" />
                                 </div>
