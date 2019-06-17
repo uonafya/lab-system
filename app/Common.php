@@ -814,8 +814,8 @@ class Common
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
-        } catch (Exception $e) {
-        	
+        } catch (Exception $exception) {
+        	print_r($exception);
         }
     }
 
