@@ -414,6 +414,8 @@ class DashboardController extends Controller
                                 return $query->selectRaw("AVG(tat3) as tatvalues");
                             if($tat == 4)
                                 return $query->selectRaw("AVG(tat4) as tatvalues");
+                            if($tat == 5)
+                                return $query->selectRaw("AVG(tat5) as tatvalues");
                         })->whereYear("datetested", $year)->where('lab_id', env('APP_LAB'))
                         ->when($month, function($query) use ($month, $table){
                             return $query->whereMonth("datetested", $month);
