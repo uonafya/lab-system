@@ -230,12 +230,13 @@ class DashboardController extends Controller
 
     public function lab_tat_statistics($year=null, $month=null)
     {
+        $row = self::__getTAT();
         return [
-            'tat1' => self::__getTAT(1),
-            'tat2' => self::__getTAT(2),
-            'tat3' => self::__getTAT(3),
-            'tat4' => self::__getTAT(4),
-            'tat5' => self::__getTAT(5)
+            'tat1' => round($row->tat1 ?? 0),
+            'tat2' => round($row->tat2 ?? 0),
+            'tat3' => round($row->tat3 ?? 0),
+            'tat4' => round($row->tat4 ?? 0),
+            'tat5' => round($row->tat5 ?? 0),
         ];
     }
 
@@ -392,7 +393,7 @@ class DashboardController extends Controller
         return $model->where('lab_id', env('APP_LAB'));
     }
 
-    public static function __getTAT($tat = null)
+    public static function __getTAT()
     {
         $year = session('dashboardYear');
         $month = session('dashboardMonth');
@@ -405,23 +406,12 @@ class DashboardController extends Controller
             $table = 'samples_view';
         }
 
-        $model = $model->when($tat, function($query) use ($tat) {
-                            if($tat == 1)
-                                return $query->selectRaw("AVG(tat1) as tatvalues");
-                            if($tat == 2)
-                                return $query->selectRaw("AVG(tat2) as tatvalues");
-                            if($tat == 3)
-                                return $query->selectRaw("AVG(tat3) as tatvalues");
-                            if($tat == 4)
-                                return $query->selectRaw("AVG(tat4) as tatvalues");
-                            if($tat == 5)
-                                return $query->selectRaw("AVG(tat5) as tatvalues");
-                        })->whereYear("datetested", $year)->where('lab_id', env('APP_LAB'))
+        $model = $model->selectRaw("AVG(tat1) as tat1,  AVG(tat2) as tat2,  AVG(tat3) as tat3,  AVG(tat4) as tat4,  AVG(tat5) as tat5  ")
+                        ->whereYear("datetested", $year)->where('lab_id', env('APP_LAB'))
                         ->when($month, function($query) use ($month, $table){
                             return $query->whereMonth("datetested", $month);
                         })->whereNotNull('tat1')->whereNotNull('tat2')->whereNotNull('tat3')->whereNotNull('tat4')
-                        ->where('repeatt', '=', 0)->first()->tatvalues ?? 0;
-
-        return round($model);
+                        ->where('repeatt', '=', 0)->first();
+        return $model;
     }
 }
