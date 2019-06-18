@@ -2277,7 +2277,7 @@ class Random
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
-    		\Log::debug($excelData);
+    		\Log::error($excelData);
     	}
     	echo "==> All Files completed";
         // $excelData = Excel::import($file, function($reader){
