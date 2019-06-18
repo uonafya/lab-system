@@ -2277,7 +2277,15 @@ class Random
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
-    		\Log::error($excelData);
+	        foreach ($excelData as $key => $value) {
+	        	$dbData[] = [
+	        		'c_posted' => $value[0],
+	        		'label_id' => $value[1],
+	        		'login_date' => $value[2],
+	        	]
+	        }
+	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] ") \n";
+	        $create = Nhrl::create($dbDatax);
     	}
     	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
         // $excelData = Excel::import($file, function($reader){
