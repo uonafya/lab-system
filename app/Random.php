@@ -2271,7 +2271,7 @@ class Random
     			['file' =>'public/docs/eidDataSeventhPart2.xlsx', 'name' => 'eid data Exsting Seventh Part2'],
     			['file' =>'public/docs/eidDataEighthPart1.xlsx', 'name' => 'eid data Exsting Eighth']];
     	
-    	echo "==> Fetching Excel Data \n";
+    	echo "==> Fetching Excel Data (". date('Y-m-d H:i:s') . ") \n";
     	ini_set("memory_limit", "-1");
     	foreach ($files as $key => $file) {
     		$excelData = Excel::load($file['file'], function($reader){
@@ -2279,7 +2279,7 @@ class Random
 	        })->get();
     		\Log::error($excelData);
     	}
-    	echo "==> All Files completed";
+    	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
         // $excelData = Excel::import($file, function($reader){
         //     $reader->toArray();
         // })->get();
