@@ -73,7 +73,7 @@ class PatientController extends Controller
     {
         $samples = $patient->sample;
         $patient->load(['facility']);
-        $samples->load(['batch']);
+        // $samples->load(['batch']);
         $data = Lookup::get_lookups();
         $data['samples'] = $samples;
         $data['patient'] = $patient;
