@@ -219,7 +219,7 @@ class ReportController extends Controller
         } else if (session('testingSystem') == 'CD4') {
             return back();
         }
-        $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")->where('repeatt', '=', 0)
+        $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4, ROUND(AVG(tat5), 2) as tat5")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")->where('repeatt', '=', 0)
                     ->where("$table.lab_id", '=', env('APP_LAB'))->whereNotNull('tat1')->whereNotNull('tat2')
                     ->whereNotNull('tat3')->whereNotNull('tat4')->orderBy('tat2', 'asc')
                     ->orderBy('tat1', 'asc')->orderBy('tat3', 'asc')->orderBy('tat4', 'asc');
