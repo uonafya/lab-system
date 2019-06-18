@@ -2282,7 +2282,7 @@ class Random
 	        		'c_posted' => $value[0],
 	        		'label_id' => $value[1],
 	        		'login_date' => $value[2],
-	        	]
+	        	];
 	        }
 	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] ") \n";
 	        $create = Nhrl::create($dbDatax);
