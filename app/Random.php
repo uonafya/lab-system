@@ -2272,7 +2272,7 @@ class Random
     			['file' =>'public/docs/eidDataEighthPart1.xlsx', 'name' => 'eid data Exsting Eighth']];
     	
     	echo "==> Fetching Excel Data \n";
-    	ini_set("memory_limit", "-1");
+    	// ini_set("memory_limit", "-1");
     	foreach ($files as $key => $file) {
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
