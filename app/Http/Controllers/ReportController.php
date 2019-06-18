@@ -663,7 +663,7 @@ class ReportController extends Controller
 
     public function __getTATExcel($data, $title) {
         $title = strtoupper($title);
-        $dataArray[] = ['MFL Code', 'Facility Name', 'TAT1', 'TAT2', 'TAT3', 'TAT4'];
+        $dataArray[] = ['MFL Code', 'Facility Name', 'TAT1', 'TAT2', 'TAT3', 'TAT4', 'TAT5 (Lab TAT)'];
         $this->generate_excel($data, $dataArray, $title);
     }
 
