@@ -2285,7 +2285,7 @@ class Random
 	        	];
 	        }
 	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
-	        $create = Nhrl::create($dbDatax);
+	        $create = Nhrl::create($dbData);
     	}
     	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
         // $excelData = Excel::import($file, function($reader){
