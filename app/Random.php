@@ -2284,7 +2284,7 @@ class Random
 	        		'login_date' => $value[2],
 	        	];
 	        }
-	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] ") \n";
+	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
 	        $create = Nhrl::create($dbDatax);
     	}
     	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
