@@ -531,7 +531,7 @@ class WorksheetController extends Controller
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
-                    ->where('worksheet_id', $worksheet->id)
+                    ->where('worksheet_id', $worksheet->id) 
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
