@@ -2284,7 +2284,7 @@ class Random
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
-
+    		dd($excelData->toArray());
 	        foreach ($excelData as $key => $value) {
 	        	$dbData[] = [
 	        		'c_posted' => $value[0],
