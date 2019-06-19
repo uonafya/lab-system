@@ -531,19 +531,14 @@ class WorksheetController extends Controller
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
-                    ->where('worksheet_id', $worksheet->id)           
+                    ->where('worksheet_id', $worksheet->id) 
                     ->orderBy('run', 'desc')
-                    // ->orderBy('isnull', 'asc')
-                    ->orderBy('highpriority', 'desc')
-                    ->orderBy('datereceived', 'asc')
-                    ->when((!in_array(env('APP_LAB'), [1, 2, 8])), function($query){
-                        return $query->orderBy('time_received', 'asc');
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
                     })
-                    ->orderBy('site_entry', 'asc')
-                    ->when((env('APP_LAB') == 2), function($query){
-                        return $query->orderBy('facility_id', 'asc');
-                    })  
-                    ->orderBy('batch_id', 'asc')     
+                    ->orderBy('samples.id', 'asc')
                     ->get();
 
         $s = $this->get_worksheets($worksheet->id);
