@@ -2261,20 +2261,20 @@ class Random
 
     public static function checkMbNo(){
     	$files = [['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting.csv', 'name' => 'eid data Exsting First'],
-    			['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting_part2.csv', 'name' => 'eid data Exsting First Part 2']
-    			// ['file' =>'public/docs/eidDataSecondPart1.xlsx', 'name' => 'eid data Exsting Second Part 1'],
-    			// ['file' =>'public/docs/eidDataSecondPart2.xlsx', 'name' => 'eid data Exsting Second Part 2'],
-    			// ['file' =>'public/docs/eidDataThirdPart1.xlsx', 'name' => 'eid data Exsting Third Part 1'],
-    			// ['file' =>'public/docs/eidDataThirdPart2.xlsx', 'name' => 'eid data Exsting Third Part 2'],
-    			// ['file' =>'public/docs/eidDataFourthPart1.xlsx', 'name' => 'eid data Exsting Fourth Part 1'],
-    			// ['file' =>'public/docs/eidDataFourthPart2.xlsx', 'name' => 'eid data Exsting Fourth Part 2'],
-    			// ['file' =>'public/docs/eidDataFifthPart1.xlsx', 'name' => 'eid data Exsting Fifth Part 1'],
-    			// ['file' =>'public/docs/eidDataFifthPart2.xlsx', 'name' => 'eid data Exsting Fifth Part 2'],
-    			// ['file' =>'public/docs/eidDataSixthPart1.xlsx', 'name' => 'eid data Exsting Sixth Part 1'],
-    			// ['file' =>'public/docs/eidDataSixthPart2.xlsx', 'name' => 'eid data Exsting Sixth Part 2'],
-    			// ['file' =>'public/docs/eidDataSeventhPart1.xlsx', 'name' => 'eid data Exsting Seventh Part1'],
-    			// ['file' =>'public/docs/eidDataSeventhPart2.xlsx', 'name' => 'eid data Exsting Seventh Part2'],
-    			// ['file' =>'public/docs/eidDataEighthPart1.xlsx', 'name' => 'eid data Exsting Eighth']
+    			['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting_part2.csv', 'name' => 'eid data Exsting First Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSecondPart1.csv', 'name' => 'eid data Exsting Second Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSecondPart2.csv', 'name' => 'eid data Exsting Second Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataThirdPart1.csv', 'name' => 'eid data Exsting Third Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataThirdPart2.csv', 'name' => 'eid data Exsting Third Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFourthPart1.csv', 'name' => 'eid data Exsting Fourth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFourthPart2.csv', 'name' => 'eid data Exsting Fourth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFifthPart1.csv', 'name' => 'eid data Exsting Fifth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFifthPart2.csv', 'name' => 'eid data Exsting Fifth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSixthPart1.csv', 'name' => 'eid data Exsting Sixth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSixthPart2.csv', 'name' => 'eid data Exsting Sixth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSeventhPart1.csv', 'name' => 'eid data Exsting Seventh Part1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSeventhPart2.csv', 'name' => 'eid data Exsting Seventh Part2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataEighthPart1.csv', 'name' => 'eid data Exsting Eighth']
     		];
     	// $files = [['file' => 'public/docs/eidTest.xlsx', 'name' => 'EID Test Data']];
     	echo "==> Fetching Excel Data (". date('Y-m-d H:i:s') . ") \n";
@@ -2284,7 +2284,7 @@ class Random
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
-    		dd($excelData->toArray());
+    		// dd($excelData->toArray());
 	        foreach ($excelData as $key => $value) {
 	        	$dbData[] = [
 	        		'c_posted' => $value[0],
