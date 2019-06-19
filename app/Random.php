@@ -1894,7 +1894,8 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/knh-28-2-2019.xlsx';
+        $file = 'public/docs/knh-28-2-2019.xlsx';
+		// $file = 'public/docs/knh-28-2-2019.xlsx';
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2079,7 +2080,11 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
+            $dbsamples = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
+            if ($dbsamples){
+            	dd($dbsamples);
+            }
+            $dbsample = $dbsamples->last();
             
             if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
             	$worksheet[] = $dbsample->worksheet_id;
