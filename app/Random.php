@@ -2270,13 +2270,14 @@ class Random
     			['file' =>'public/docs/eidDataSeventhPart1.xlsx', 'name' => 'eid data Exsting Seventh Part1'],
     			['file' =>'public/docs/eidDataSeventhPart2.xlsx', 'name' => 'eid data Exsting Seventh Part2'],
     			['file' =>'public/docs/eidDataEighthPart1.xlsx', 'name' => 'eid data Exsting Eighth']];
-    	
+    	// $files = [['file' => 'public/docs/eidTest.xlsx', 'name' => 'EID Test Data']];
     	echo "==> Fetching Excel Data (". date('Y-m-d H:i:s') . ") \n";
     	ini_set("memory_limit", "-1");
     	foreach ($files as $key => $file) {
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
+
 	        foreach ($excelData as $key => $value) {
 	        	$dbData[] = [
 	        		'c_posted' => $value[0],
@@ -2285,7 +2286,7 @@ class Random
 	        	];
 	        }
 	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
-	        $create = Nhrl::create($dbData);
+	        $create = Nhrl::insert($dbData);
     	}
     	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
         // $excelData = Excel::import($file, function($reader){
