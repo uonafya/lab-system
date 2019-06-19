@@ -2274,6 +2274,7 @@ class Random
     	echo "==> Fetching Excel Data (". date('Y-m-d H:i:s') . ") \n";
     	ini_set("memory_limit", "-1");
     	foreach ($files as $key => $file) {
+    		echo "====> Getting Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
@@ -2285,7 +2286,7 @@ class Random
 	        		'login_date' => $value[2],
 	        	];
 	        }
-	        echo "==> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
+	        echo "====> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
 	        $create = Nhrl::insert($dbData);
     	}
     	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
