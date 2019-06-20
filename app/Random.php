@@ -2090,21 +2090,79 @@ class Random
             		// Update worksheet data if found
             		if ($excelResult){
             			$wsheet = $samplefound->worksheet;
-            			$wsheet->status_id = 3;
-            			$wsheet->lab_id = 10;
-            			
             			$date_tested=date("Y-m-d", strtotime($excelResult[3]));
 		                $datetested = MiscViral::worksheet_date($date_tested, $wsheet->created_at);
 
 		                $interpretation = $excelResult[8];
 		                $error = $excelResult[10];
-		                
+
 			            MiscViral::dup_worksheet_rows($doubles, $sample_array, $samplefound->id, $interpretation);
 
 			            $result_array = MiscViral::sample_result($interpretation, $error);
 
 		                $sample_type = $excelResult[5];
-		                dd($result_array);
+
+		                $sample_type = $excelResult[5];
+
+		                if($sample_type == "NC"){
+		                    $nc = $result_array['result'];
+		                    $nc_int = $result_array['interpretation']; 
+		                    $nc_units = $result_array['units']; 
+		                }
+		                else if($sample_type == "HPC"){
+		                    $hpc = $result_array['result'];
+		                    $hpc_int = $result_array['interpretation'];
+		                    $hpc_units = $result_array['units'];
+		                }
+		                else if($sample_type == "LPC"){
+		                    $lpc = $result_array['result'];
+		                    $lpc_int = $result_array['interpretation'];
+		                    $lpc_units = $result_array['units'];
+		                }
+
+		                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+
+		                $samplefound->fill($data_array);
+		                if ($samplefound->national_sample_id && $samplefound->synched == 1){
+                			$samplefound->synched = 2;
+                		}
+                		$samplefound->save();
+                		$batch = $samplefound->batch;
+                		if ($batch->national_batch_id && $batch->synched == 1){
+                			$batch->synched = 2;
+                		}
+                		$batch->lab_id = 10;
+                		$batch->datedispatched = date('Y-m-d', strtotime("- 25 days"));
+                		$batch->save
+
+                		Viralsample::where(['worksheet_id' => $wsheet->id])->where('run', 0)->update(['run' => 1]);
+				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
+				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('result')->update(['repeatt' => 1]);
+
+				        if (!in_array($wsheet, $worksheet)){
+				        	$wsheet->status_id = 3;
+	            			$wsheet->lab_id = 10;
+					        $wsheet->neg_units = $nc_units;
+					        $wsheet->neg_control_interpretation = $nc_int;
+					        $wsheet->neg_control_result = $nc;
+
+					        $wsheet->hpc_units = $hpc_units;
+					        $wsheet->highpos_control_interpretation = $hpc_int;
+					        $wsheet->highpos_control_result = $hpc;
+
+					        $wsheet->lpc_units = $lpc_units;
+					        $wsheet->lowpos_control_interpretation = $lpc_int;
+					        $wsheet->lowpos_control_result = $lpc;
+
+					        $wsheet->daterun = $datetested;
+					        $wsheet->uploadedby = auth()->user()->id;
+
+					        $wsheet->save();
+
+					        $worksheet[] = $wsheet->id;
+				        }
+
+					    MiscViral::requeue($wsheet->id);       			
             		}
             		
             	}
