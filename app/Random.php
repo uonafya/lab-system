@@ -2086,6 +2086,7 @@ class Random
             $dbsamples = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
             if ($dbsamples){
             	foreach ($dbsamples as $key => $samplefound) {
+			        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
             		$samplefound = Viralsample::find($samplefound->id);
             		$excelResult = $rdata->where(5, 'S')->where(4, $samplefound->id)->first();
             		// Update worksheet data if found
