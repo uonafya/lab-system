@@ -2087,10 +2087,17 @@ class Random
             		$excelResult = $rdata->where(5, 'S')->where(4, $samplefound->id)->first();
             		// Update worksheet data if found
             		if ($excelResult){
-            			dd($excelResult);
+            			$wsheet = $samplefound->worksheet;
+            			$wsheet->status_id = 3;
+            			$wsheet->lab_id = 10;
+            			
+            			$date_tested=date("Y-m-d", strtotime($value[3]));
+		                $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);
+		                dd($datetested);
+		                $interpretation = $value[8];
+		                $error = $value[10];
             		}
-            		// $wsheet = $samplefound->worksheet;
-            		// dd($wsheet);
+            		
             	}
             }
             // $dbsample = $dbsamples->last();
