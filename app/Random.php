@@ -2355,7 +2355,7 @@ class Random
         	$dbsample = ViralsampleView::where('patient', '=',  $sample[3])->whereNull('result')->get()->last();
         	$sample = Viralsample::find($dbsample->id);
         	$batch = $sample->batch;
-        	dd($batch->fresh('samples'));
+        	dd($batch->fresh('sample'));
         	$sample->delete();
         }
 	}
