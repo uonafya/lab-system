@@ -2157,7 +2157,7 @@ class Random
 					        $wsheet->lowpos_control_result = $lpc;
 
 					        $wsheet->daterun = $datetested;
-					        $wsheet->uploadedby = auth()->user()->id;
+					        $wsheet->uploadedby = 41;
 
 					        $wsheet->save();
 
