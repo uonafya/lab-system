@@ -2063,6 +2063,7 @@ class Random
 			}
 		}
 		$rdata = collect($rdata);
+		dd($rdata->count());
 		/***  KEMRI Results File ***/
 
         $excelData = Excel::load($file, function($reader){
