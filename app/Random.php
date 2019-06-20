@@ -2351,13 +2351,28 @@ class Random
 		$excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
+        $batches = [];
         foreach ($excelData as $key => $sample) {
         	$dbsample = ViralsampleView::where('patient', '=',  $sample[3])->whereNull('result')->get()->last();
         	$sample = Viralsample::find($dbsample->id);
         	$batch = $sample->batch;
-        	dd($batch->fresh('sample'));
         	$sample->delete();
+        	if($batch->fresh('sample')->count() < 1){
+        		$batch->delete();
+        	}
+        	$batches[] = $batch->id;
         }
+        $file = 'KEMRI2EDARPDeletedBatches'.date('Y_m_d H_i_s');
+        
+        Excel::create($file, function($excel) use($batches, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
+
+            $excel->sheet('Sheetname', function($sheet) use($batches) {
+                $sheet->fromArray($batches);
+            });
+        })->store('csv');
 	}
 
     public static function checkMbNo(){
