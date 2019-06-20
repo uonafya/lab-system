@@ -2086,7 +2086,9 @@ class Random
             		$samplefound = Viralsample::find($samplefound->id);
             		$excelResult = $rdata->where(5, 'S')->where(4, $samplefound->id)->first();
             		// Update worksheet data if found
-            		dd($excelResult);
+            		if ($excelResult){
+            			dd($excelResult);
+            		}
             		// $wsheet = $samplefound->worksheet;
             		// dd($wsheet);
             	}
