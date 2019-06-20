@@ -2092,7 +2092,7 @@ class Random
             			$wsheet->lab_id = 10;
             			
             			$date_tested=date("Y-m-d", strtotime($value[3]));
-		                $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);
+		                $datetested = MiscViral::worksheet_date($date_tested, $wsheet->created_at);
 		                dd($datetested);
 		                $interpretation = $value[8];
 		                $error = $value[10];
