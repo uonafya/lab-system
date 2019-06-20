@@ -2347,21 +2347,26 @@ class Random
 	}
 
 	public static function delete_uploads(){
+		echo "==> Reading File\n";
 		$file = 'public/docs/KemriToBeRemoved.csv';
 		$excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
         $batches = [];
+        echo "==> Starting samples delete\n";
         foreach ($excelData as $key => $sample) {
         	$dbsample = ViralsampleView::where('patient', '=',  $sample[3])->whereNull('result')->get()->last();
         	$sample = Viralsample::find($dbsample->id);
         	$batch = $sample->batch;
         	$sample->delete();
+        	echo ".";
         	if($batch->fresh('sample')->count() < 1){
         		$batch->delete();
+        		echo "\n..\n";
         	}
         	$batches[] = $batch->id;
         }
+        echo "\n==> Saving deleted Batches\n";
         $file = 'KEMRI2EDARPDeletedBatches'.date('Y_m_d H_i_s');
         
         Excel::create($file, function($excel) use($batches, $file){
@@ -2373,6 +2378,7 @@ class Random
                 $sheet->fromArray($batches);
             });
         })->store('csv');
+        echo "==> Deletion Complete";
 	}
 
     public static function checkMbNo(){
