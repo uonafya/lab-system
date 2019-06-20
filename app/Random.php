@@ -2133,7 +2133,7 @@ class Random
                 		}
                 		$batch->lab_id = 10;
                 		$batch->datedispatched = date('Y-m-d', strtotime("- 25 days"));
-                		$batch->save
+                		$batch->save();
 
                 		Viralsample::where(['worksheet_id' => $wsheet->id])->where('run', 0)->update(['run' => 1]);
 				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
