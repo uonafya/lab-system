@@ -2082,7 +2082,12 @@ class Random
             // $sample = (array)$sample;
             $dbsamples = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
             if ($dbsamples){
-            	dd($dbsamples);
+            	foreach ($dbsamples as $key => $samplefound) {
+            		$samplefound = Viralsample::find($samplefound->id);
+            		// Update worksheet data
+            		$wsheet = $samplefound->worksheet;
+            		dd($wsheet);
+            	}
             }
             $dbsample = $dbsamples->last();
             
