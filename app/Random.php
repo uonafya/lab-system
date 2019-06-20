@@ -2346,6 +2346,14 @@ class Random
         echo "==> Complete";
 	}
 
+	public static function delete_uploads(){
+		$file = 'public/docs/KemriToBeRemoved.csv';
+		$excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+        dd($excelData);
+	}
+
     public static function checkMbNo(){
     	$files = [['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting.csv', 'name' => 'eid data Exsting First'],
     			['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting_part2.csv', 'name' => 'eid data Exsting First Part 2'],

@@ -441,6 +441,11 @@ Artisan::command('edarp:confirm  {received_by}', function($received_by){
     $str = \App\Random::confirm_edarp_upload($received_by);
     $this->info($str);
 })->describe('Check EDARP request');
+
+Artisan::command('edarp:delete', function(){
+    $str = \App\Random::delete_uploads();
+    $this->info($str);
+})->describe('Delete Transfered');
 //Quick fix add EDARP samples to KEMRI
 
 Artisan::command('check:mb', function(){
