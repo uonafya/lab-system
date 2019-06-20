@@ -2141,7 +2141,7 @@ class Random
 				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
 				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
-				        if (!in_array($wsheet, $worksheet)){
+				        if (!in_array($wsheet->id, $worksheet)){
 				        	$wsheet->status_id = 3;
 	            			$wsheet->lab_id = 10;
 					        $wsheet->neg_units = $nc_units;
