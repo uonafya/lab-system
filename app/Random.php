@@ -2076,6 +2076,7 @@ class Random
         $count = 0;
         $availablecount = 0;
         $worksheet = [];
+        $today = $datetested = date("Y-m-d");
         $my = new MiscViral;
         $sample_array = $doubles = [];
         foreach ($data as $key => $sample) {
