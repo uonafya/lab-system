@@ -2076,6 +2076,8 @@ class Random
         $count = 0;
         $availablecount = 0;
         $worksheet = [];
+        $my = new MiscViral;
+        $sample_array = $doubles = [];
         foreach ($data as $key => $sample) {
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
@@ -2093,9 +2095,16 @@ class Random
             			
             			$date_tested=date("Y-m-d", strtotime($value[3]));
 		                $datetested = MiscViral::worksheet_date($date_tested, $wsheet->created_at);
-		                dd($datetested);
+
 		                $interpretation = $value[8];
 		                $error = $value[10];
+
+			            MiscViral::dup_worksheet_rows($doubles, $sample_array, $samplefound->id, $interpretation);
+
+			            $result_array = MiscViral::sample_result($interpretation, $error);
+
+		                $sample_type = $value[5];
+		                dd($result_array);
             		}
             		
             	}
