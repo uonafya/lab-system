@@ -2084,59 +2084,61 @@ class Random
             if ($dbsamples){
             	foreach ($dbsamples as $key => $samplefound) {
             		$samplefound = Viralsample::find($samplefound->id);
-            		// Update worksheet data
-            		$wsheet = $samplefound->worksheet;
-            		dd($wsheet);
+            		$excelResult = $rdata->where(5, 'S')->where(4, $samplefound->id)->first();
+            		// Update worksheet data if found
+            		dd($excelResult);
+            		// $wsheet = $samplefound->worksheet;
+            		// dd($wsheet);
             	}
             }
-            $dbsample = $dbsamples->last();
+            // $dbsample = $dbsamples->last();
             
-            if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
-            	$worksheet[] = $dbsample->worksheet_id;
+            // if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
+            // 	$worksheet[] = $dbsample->worksheet_id;
 
-            /* File worksheet reagion */
-            $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
-            // dd($excelResult);
-            if (!$excelResult)
-            	continue;
-            $excelResult = $excelResult->toArray();
-            /* File worksheet reagion */
+            // /* File worksheet reagion */
+            // $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
+            // // dd($excelResult);
+            // if (!$excelResult)
+            // 	continue;
+            // $excelResult = $excelResult->toArray();
+            // /* File worksheet reagion */
 
-            if ($dbsample)
-            	$availablecount++;
-            else
-            	$count++;
-            $sample[19] = $dbsample->rejectedreason ?? null;
-            $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? $excelResult[12] ?? null;
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[11] ?? null;
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[11] ?? null;
-            // $sample[22] = $dbsample->datetested;
-            // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? $excelResult[8] ?? null;
-            $newData[] = $sample->toArray();
+            // if ($dbsample)
+            // 	$availablecount++;
+            // else
+            // 	$count++;
+            // $sample[19] = $dbsample->rejectedreason ?? null;
+            // $sample[20] = $dbsample->reason_for_repeat ?? null;
+            // $sample[21] = $dbsample->labcomment ?? $excelResult[12] ?? null;
+            // $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[11] ?? null;
+            // $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[11] ?? null;
+            // // $sample[22] = $dbsample->datetested;
+            // // $sample[23] = $dbsample->datedispatched;
+            // $sample[24] = $dbsample->result ?? $excelResult[8] ?? null;
+            // $newData[] = $sample->toArray();
         }
-        echo "\t";
-        print_r($worksheet);
-        echo "\n";
+        // echo "\t";
+        // print_r($worksheet);
+        // echo "\n";
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
-        echo "\n==> Building excel results \n";
+        // echo "\n==> Building excel results \n";
 
-        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
+        // $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
 
-        Excel::create($file, function($excel) use($newData, $file){
-            $excel->setTitle($file);
-            $excel->setCreator('Joshua Bakasa')->setCompany($file);
-            $excel->setDescription($file);
+        // Excel::create($file, function($excel) use($newData, $file){
+        //     $excel->setTitle($file);
+        //     $excel->setCreator('Joshua Bakasa')->setCompany($file);
+        //     $excel->setDescription($file);
 
-            $excel->sheet('Sheetname', function($sheet) use($newData) {
-                $sheet->fromArray($newData);
-            });
-        })->store('csv');
+        //     $excel->sheet('Sheetname', function($sheet) use($newData) {
+        //         $sheet->fromArray($newData);
+        //     });
+        // })->store('csv');
 
-        $data = [storage_path("exports/" . $file . ".csv")];
+        // $data = [storage_path("exports/" . $file . ".csv")];
 
-        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+        // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
         echo "==>Retrival Complete";
 	}
