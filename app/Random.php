@@ -2352,8 +2352,8 @@ class Random
             $reader->toArray();
         })->get();
         foreach ($excelData as $key => $sample) {
-        	$dbsample = ViralsampleView::where('patient', '=',  $sample[3])->get();
-        	dd($dbsample);
+        	$dbsample = ViralsampleView::where('patient', '=',  $sample[3])->whereNull('result')->get();
+        	dd($dbsample->count());
         }
 	}
 
