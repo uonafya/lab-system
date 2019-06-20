@@ -2093,17 +2093,17 @@ class Random
             			$wsheet->status_id = 3;
             			$wsheet->lab_id = 10;
             			
-            			$date_tested=date("Y-m-d", strtotime($value[3]));
+            			$date_tested=date("Y-m-d", strtotime($excelResult[3]));
 		                $datetested = MiscViral::worksheet_date($date_tested, $wsheet->created_at);
 
-		                $interpretation = $value[8];
-		                $error = $value[10];
+		                $interpretation = $excelResult[8];
+		                $error = $excelResult[10];
 		                dd($interpretation);
 			            MiscViral::dup_worksheet_rows($doubles, $sample_array, $samplefound->id, $interpretation);
 
 			            $result_array = MiscViral::sample_result($interpretation, $error);
 
-		                $sample_type = $value[5];
+		                $sample_type = $excelResult[5];
 		                dd($result_array);
             		}
             		
