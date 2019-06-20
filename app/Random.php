@@ -2038,7 +2038,7 @@ class Random
 
 	public static function export_edarp_results() {
         echo "==> Retrival Begin \n";
-		$file = 'public/docs/MISSING RESULTS.xlsx';
+		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2046,11 +2046,14 @@ class Random
 		// $file = 'public/docs/knh-28-2-2019.xlsx';// KNH
 
 		/***  KEMRI Results File ***/
-		$rfiles = ['public/docs/15722.CSV',
-					'public/docs/15723.CSV',
-					'public/docs/15724.CSV',
-					'public/docs/15725.CSV',
-					'public/docs/15726.CSV'];
+		// $rfiles = ['public/docs/15722.CSV',
+		// 			'public/docs/15723.CSV',
+		// 			'public/docs/15724.CSV',
+		// 			'public/docs/15725.CSV',
+		// 			'public/docs/15726.CSV'];
+		$rfiles = ['public/docs/Edarp1.xlsx',
+					'public/docs/Edarp2.xlsx',
+					'public/docs/Edarp3.xlsx'];
 
         echo "==> Fetching Excel Data \n";
 		$rdata = [];
@@ -2079,32 +2082,31 @@ class Random
         $today = $datetested = date("Y-m-d");
         $my = new MiscViral;
         $sample_array = $doubles = [];
+        // Loop through the worksheet data
+        // foreach ($rdata as $key => $excelworksheet) {
+        // 	# code...
+        // }
         foreach ($data as $key => $sample) {
-            // $sample = collect($sample)->flatten(1)->toArray();
-            // dd($sample[3]);
-            // $sample = (array)$sample;
             $dbsamples = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
             if ($dbsamples){
             	foreach ($dbsamples as $key => $samplefound) {
 			        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
             		$samplefound = Viralsample::find($samplefound->id);
-            		$excelResult = $rdata->where(5, 'S')->where(4, $samplefound->id)->first();
+            		$excelResult = $rdata->where(2, $samplefound->id)->first();
             		// Update worksheet data if found
             		if ($excelResult){
             			$wsheet = $samplefound->worksheet;
-            			$date_tested=date("Y-m-d", strtotime($excelResult[3]));
+            			$date_tested=date("Y-m-d", strtotime($excelResult[9]));
 		                $datetested = MiscViral::worksheet_date($date_tested, $wsheet->created_at);
 
-		                $interpretation = $excelResult[8];
-		                $error = $excelResult[10];
+		                $interpretation = $excelResult[5];
+		                $error = $excelResult[6];
 
 			            MiscViral::dup_worksheet_rows($doubles, $sample_array, $samplefound->id, $interpretation);
 
 			            $result_array = MiscViral::sample_result($interpretation, $error);
 
-		                $sample_type = $excelResult[5];
-
-		                $sample_type = $excelResult[5];
+		                $sample_type = $excelResult[0];
 
 		                if($sample_type == "NC"){
 		                    $nc = $result_array['result'];
