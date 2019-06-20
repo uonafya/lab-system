@@ -2351,7 +2351,10 @@ class Random
 		$excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
-        dd($excelData);
+        foreach ($excelData as $key => $sample) {
+        	$dbsample = Viralsample::where('patient', '=',  $sample[3])->where('datecollected', '=', $sample[11])->get();
+        	dd($dbsample);
+        }
 	}
 
     public static function checkMbNo(){
