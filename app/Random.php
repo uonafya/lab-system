@@ -2098,7 +2098,7 @@ class Random
 
 		                $interpretation = $excelResult[8];
 		                $error = $excelResult[10];
-		                dd($interpretation);
+		                
 			            MiscViral::dup_worksheet_rows($doubles, $sample_array, $samplefound->id, $interpretation);
 
 			            $result_array = MiscViral::sample_result($interpretation, $error);
