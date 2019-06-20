@@ -1894,7 +1894,8 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/knh-28-2-2019.xlsx';
+        $file = 'public/docs/knh-28-2-2019.xlsx';
+		// $file = 'public/docs/knh-28-2-2019.xlsx';
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2062,6 +2063,7 @@ class Random
 			}
 		}
 		$rdata = collect($rdata);
+		dd($rdata->count());
 		/***  KEMRI Results File ***/
 
         $excelData = Excel::load($file, function($reader){
@@ -2079,7 +2081,11 @@ class Random
             // $sample = collect($sample)->flatten(1)->toArray();
             // dd($sample[3]);
             // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
+            $dbsamples = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
+            if ($dbsamples){
+            	dd($dbsamples);
+            }
+            $dbsample = $dbsamples->last();
             
             if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
             	$worksheet[] = $dbsample->worksheet_id;
@@ -2255,24 +2261,43 @@ class Random
 	}
 
     public static function checkMbNo(){
-    	$files = [['file' =>'public/docs/eid data Exsting.xlsx', 'name' => 'eid data Exsting First'],
-    			['file' =>'public/docs/eidDataSecond.xlsx', 'name' => 'eid data Exsting Second'],
-    			['file' =>'public/docs/eidDataThird.xlsx', 'name' => 'eid data Exsting Third'],
-    			['file' =>'public/docs/eidDataFourth.xlsx', 'name' => 'eid data Exsting Fourth'],
-    			['file' =>'public/docs/eidDataFifth.xlsx', 'name' => 'eid data Exsting Fifth'],
-    			['file' =>'public/docs/eidDataSixth.xlsx', 'name' => 'eid data Exsting Sixth'],
-    			['file' =>'public/docs/eidDataSeventh.xlsx', 'name' => 'eid data Exsting Seventh'],
-    			['file' =>'public/docs/eidDataEighth.xlsx', 'name' => 'eid data Exsting Eighth']];
-    	
-    	echo "==> Fetching Excel Data \n";
+    	$files = [['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting.csv', 'name' => 'eid data Exsting First'],
+    			['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting_part2.csv', 'name' => 'eid data Exsting First Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSecondPart1.csv', 'name' => 'eid data Exsting Second Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSecondPart2.csv', 'name' => 'eid data Exsting Second Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataThirdPart1.csv', 'name' => 'eid data Exsting Third Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataThirdPart2.csv', 'name' => 'eid data Exsting Third Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFourthPart1.csv', 'name' => 'eid data Exsting Fourth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFourthPart2.csv', 'name' => 'eid data Exsting Fourth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFifthPart1.csv', 'name' => 'eid data Exsting Fifth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFifthPart2.csv', 'name' => 'eid data Exsting Fifth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSixthPart1.csv', 'name' => 'eid data Exsting Sixth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSixthPart2.csv', 'name' => 'eid data Exsting Sixth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSeventhPart1.csv', 'name' => 'eid data Exsting Seventh Part1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSeventhPart2.csv', 'name' => 'eid data Exsting Seventh Part2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataEighthPart1.csv', 'name' => 'eid data Exsting Eighth']
+    		];
+    	// $files = [['file' => 'public/docs/eidTest.xlsx', 'name' => 'EID Test Data']];
+    	echo "==> Fetching Excel Data (". date('Y-m-d H:i:s') . ") \n";
     	ini_set("memory_limit", "-1");
     	foreach ($files as $key => $file) {
+    		echo "====> Getting Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
-    		dd($excelData);
+    		// dd($excelData->toArray());
+	        foreach ($excelData as $key => $value) {
+	        	$dbData[] = [
+	        		'c_posted' => $value[0],
+	        		'label_id' => $value[1],
+	        		'login_date' => $value[2],
+	        	];
+	        }
+	        echo "====> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
+	        Nhrl::insert($dbData);
+	        echo "====> Saved Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
     	}
-    	echo "==> All Files completed";
+    	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
         // $excelData = Excel::import($file, function($reader){
         //     $reader->toArray();
         // })->get();
