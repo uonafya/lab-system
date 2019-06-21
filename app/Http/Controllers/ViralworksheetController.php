@@ -369,7 +369,7 @@ class ViralworksheetController extends Controller
 
     public function upload(Viralworksheet $worksheet)
     {
-        if($worksheet->status_id != 1){
+        if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
@@ -391,10 +391,14 @@ class ViralworksheetController extends Controller
      */
     public function save_results(Request $request, Viralworksheet $worksheet)
     {
-        if($worksheet->status_id != 1){
+        if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
+
+        $cancelled = false;
+        if($worksheet->status_id == 4) $cancelled =  true;
+
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/vl');
@@ -452,8 +456,11 @@ class ViralworksheetController extends Controller
 
                     $sample = Viralsample::find($sample_id);
                     if(!$sample) continue;
-                    if($sample->worksheet_id != $worksheet->id) continue;
+
                     $sample->fill($data_array);
+                    if($cancelled) $sample->worksheet_id = $worksheet->id;
+                    else if($sample->worksheet_id != $worksheet->id) continue;
+
                     $sample->save();
 
                 }
@@ -507,8 +514,10 @@ class ViralworksheetController extends Controller
                 $sample_id = (int) $sample_id;
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
-                if($sample->worksheet_id != $worksheet->id) continue;
+
                 $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id) continue;
                 $sample->save();
             }
         }
@@ -550,8 +559,11 @@ class ViralworksheetController extends Controller
 
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
-                if($sample->worksheet_id != $worksheet->id) continue;
+
                 $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id) continue;
+
                 $sample->save();
             }
         }
@@ -602,8 +614,11 @@ class ViralworksheetController extends Controller
 
                 $sample = Viralsample::find($sample_id);
                 if(!$sample) continue;
-                if($sample->worksheet_id != $worksheet->id) continue;
+
                 $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id) continue;
+                
                 $sample->save();
 
             }
