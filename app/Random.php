@@ -94,6 +94,49 @@ class Random
         }
     }
 
+    public static function tat_data()
+    {
+    	$months = [3, 4, 5];
+    	$files = [];
+    	$d = [
+    		'eid' => [
+    			'model' => \App\SampleView::class,
+    			'tat' => 3,
+    			'failed_result' => 5,
+    		],
+    		'vl' => [
+    			'model' => \App\ViralsampleView::class,
+    			'tat' => 5,
+    			'failed_result' => 'Collect New Sample',
+    		],
+    	];
+
+    	foreach ($d as $key => $value) {
+    		$m = $value['model'];
+    		$rows = [];
+    		foreach ($months as $month) {
+	    		$row['Year'] = 2019;
+	    		$row['Month'] = date('M', strtotime("2019-{$month}-01"));
+	    		$row['Samples Meeting TAT (' . $value['tat'] . ' days)'] = $m::selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth('datetested', $month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')])->where('tat5', '<', $value['tat'] + 1)->first()->my_count;
+	    		$row['Failed Samples'] = $m::selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth('datedispatched', $month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'result' => $value['failed_result']])->first()->my_count;
+	    		$row['Total Samples Tested'] = $m::selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth('datetested', $month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')])->first()->my_count;
+	    		$rows[] = $row;
+    		}
+
+    		$file = $key . '_data';
+
+			Excel::create($file, function($excel) use($rows){
+				$excel->sheet('Sheetname', function($sheet) use($rows) {
+					$sheet->fromArray($rows);
+				});
+			})->store('csv');
+
+			$files = [storage_path("exports/" . $file . ".csv")];
+    	}		
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function enter_samples()
     {
     	$file = public_path('machakos.csv');

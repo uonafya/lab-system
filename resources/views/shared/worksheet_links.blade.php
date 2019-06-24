@@ -54,6 +54,10 @@
 		View Cancelled  Worksheet Details
 	</a> |
 
+	<a href="{{ url('worksheet/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
+		Update Results (In Case of Accidental Deletion)
+	</a> | 
+
 	{{ Form::open(['url' => 'worksheet/' . $worksheet->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following worksheet?');"]) }}
         <button type="submit" class="btn btn-xs btn-primary">Delete</button>
     {{ Form::close() }} 
