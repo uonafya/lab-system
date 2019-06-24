@@ -459,7 +459,7 @@ class ViralworksheetController extends Controller
 
                     $sample->fill($data_array);
                     if($cancelled) $sample->worksheet_id = $worksheet->id;
-                    else if($sample->worksheet_id != $worksheet->id) continue;
+                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
 
                     $sample->save();
 
@@ -517,7 +517,7 @@ class ViralworksheetController extends Controller
 
                 $sample->fill($data_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id) continue;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
         }
@@ -562,7 +562,7 @@ class ViralworksheetController extends Controller
 
                 $sample->fill($data_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id) continue;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
 
                 $sample->save();
             }
@@ -617,7 +617,7 @@ class ViralworksheetController extends Controller
 
                 $sample->fill($data_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id) continue;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 
                 $sample->save();
 
