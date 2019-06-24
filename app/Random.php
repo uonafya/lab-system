@@ -98,16 +98,30 @@ class Random
     {
     	$months = [3, 4, 5];
     	$files = [];
+    	// $d = [
+    	// 	'eid' => [
+    	// 		'model' => \App\SampleView::class,
+    	// 		'tat' => 3,
+    	// 		'failed_result' => 5,
+    	// 	],
+    	// 	'vl' => [
+    	// 		'model' => \App\ViralsampleView::class,
+    	// 		'tat' => 5,
+    	// 		'failed_result' => 'Collect New Sample',
+    	// 	],
+    	// ];
     	$d = [
-    		'eid' => [
+    		[
     			'model' => \App\SampleView::class,
     			'tat' => 3,
     			'failed_result' => 5,
+    			'type' => 'eid',
     		],
-    		'vl' => [
+    		[
     			'model' => \App\ViralsampleView::class,
     			'tat' => 5,
     			'failed_result' => 'Collect New Sample',
+    			'type' => 'vl',
     		],
     	];
 
