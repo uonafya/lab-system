@@ -112,8 +112,7 @@ class Random
     	];
 
     	foreach ($d as $key => $value) {
-    		dd($value);
-    		$m = $value->model;
+    		$m = $value['model'];
     		$rows = [];
     		foreach ($months as $month) {
 	    		$row['Year'] = 2019;
