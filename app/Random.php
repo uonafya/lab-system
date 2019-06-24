@@ -119,7 +119,7 @@ class Random
 	    		$row['Month'] = date('M', strtotime("2019-{$month}-01"));
 	    		$row['Samples Meeting TAT (' . $value['tat'] . ' days)'] = $m->selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth($month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')])->where('tat5', '<', $value['tat'] + 1)->first()->my_count;
 	    		$row['Failed Samples'] = $m->selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth($month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'result' => $value['failed_result']])->first()->my_count;
-	    		$row['Total Samples Tested'] = $m->selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth($month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')]])->first()->my_count;
+	    		$row['Total Samples Tested'] = $m->selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth($month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')])->first()->my_count;
 	    		$rows[] = $row;
     		}
 
