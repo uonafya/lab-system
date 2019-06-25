@@ -56,7 +56,7 @@ class Common
 
     public static function test_email()
     {
-        Mail::to(['joelkith@gmail.com', 'baksajoshua09@gmail.com'])->send(new TestMail());
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail());
     }
 
     public static function get_misc_class($type)
@@ -528,7 +528,7 @@ class Common
 	{
 		if(!$default) $default = date('Y-m-d');
 
-		if(strtotime($date_tested) > strtotime($created_at) && strtotime($date_tested) < strtotime('now')) return $date_tested;
+		if((strtotime($date_tested) > strtotime($created_at)) && (strtotime($date_tested) < strtotime('now'))) return $date_tested;
 		return $default;
 	}
 
@@ -810,12 +810,12 @@ class Common
         	return null;
 
         try {
-        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke'])
+        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
         } catch (Exception $exception) {
-        	Log::error($exception);
+        	\Log::error($exception);
         	// print_r($exception);
         }
     }

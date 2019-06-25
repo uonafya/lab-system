@@ -766,6 +766,10 @@ class ViralbatchController extends Controller
             }else if($submit_type == "rejected"){
                 $sample->receivedstatus = 2;
                 $sample->rejectedreason = $rejectedreason_array[$key] ?? null;
+                if(!$sample->rejectedreason){
+                    session(['toast_error' => 1, 'toast_message' => 'Please set a rejected reason for all the samples that you wish to reject.']);
+                    return back();
+                }
             }
             $sample->save();
         }
