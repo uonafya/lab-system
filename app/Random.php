@@ -94,6 +94,49 @@ class Random
         }
     }
 
+    public static function tat_data()
+    {
+    	$months = [3, 4, 5];
+    	$files = [];
+    	$d = [
+    		'eid' => [
+    			'model' => \App\SampleView::class,
+    			'tat' => 3,
+    			'failed_result' => 5,
+    		],
+    		'vl' => [
+    			'model' => \App\ViralsampleView::class,
+    			'tat' => 5,
+    			'failed_result' => 'Collect New Sample',
+    		],
+    	];
+
+    	foreach ($d as $key => $value) {
+    		$m = $value['model'];
+    		$rows = [];
+    		foreach ($months as $month) {
+	    		$row['Year'] = 2019;
+	    		$row['Month'] = date('M', strtotime("2019-{$month}-01"));
+	    		$row['Samples Meeting TAT (' . $value['tat'] . ' days)'] = $m::selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth('datetested', $month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')])->where('tat5', '<', $value['tat'] + 1)->first()->my_count;
+	    		$row['Failed Samples'] = $m::selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth('datedispatched', $month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'result' => $value['failed_result']])->first()->my_count;
+	    		$row['Total Samples Tested'] = $m::selectRaw('COUNT(id) AS my_count')->whereYear('datetested', 2019)->whereMonth('datetested', $month)->where(['repeatt' => 0, 'lab_id' => env('APP_LAB')])->first()->my_count;
+	    		$rows[] = $row;
+    		}
+
+    		$file = $key . '_data';
+
+			Excel::create($file, function($excel) use($rows){
+				$excel->sheet('Sheetname', function($sheet) use($rows) {
+					$sheet->fromArray($rows);
+				});
+			})->store('csv');
+
+			$files = [storage_path("exports/" . $file . ".csv")];
+    	}		
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function enter_samples()
     {
     	$file = public_path('machakos.csv');
@@ -1894,7 +1937,8 @@ class Random
 		$nofacility = [];
 		$dataArray = [];
         echo "==>Upload Begin\n";
-		$file = 'public/docs/knh-28-2-2019.xlsx';
+        $file = 'public/docs/knh-28-2-2019.xlsx';
+		// $file = 'public/docs/knh-28-2-2019.xlsx';
         $batch = null;
         $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2037,7 +2081,7 @@ class Random
 
 	public static function export_edarp_results() {
         echo "==> Retrival Begin \n";
-		$file = 'public/docs/MISSING RESULTS.xlsx';
+		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2045,11 +2089,14 @@ class Random
 		// $file = 'public/docs/knh-28-2-2019.xlsx';// KNH
 
 		/***  KEMRI Results File ***/
-		$rfiles = ['public/docs/15722.CSV',
-					'public/docs/15723.CSV',
-					'public/docs/15724.CSV',
-					'public/docs/15725.CSV',
-					'public/docs/15726.CSV'];
+		// $rfiles = ['public/docs/15722.CSV',
+		// 			'public/docs/15723.CSV',
+		// 			'public/docs/15724.CSV',
+		// 			'public/docs/15725.CSV',
+		// 			'public/docs/15726.CSV'];
+		$rfiles = ['public/docs/Edarp1.xlsx',
+					'public/docs/Edarp2.xlsx',
+					'public/docs/Edarp3.xlsx'];
 
         echo "==> Fetching Excel Data \n";
 		$rdata = [];
@@ -2075,58 +2122,146 @@ class Random
         $count = 0;
         $availablecount = 0;
         $worksheet = [];
+        $today = $datetested = date("Y-m-d");
+        $my = new MiscViral;
+        $sample_array = $doubles = [];
+        // Loop through the worksheet data
+        // foreach ($rdata as $key => $excelworksheet) {
+        // 	# code...
+        // }
         foreach ($data as $key => $sample) {
-            // $sample = collect($sample)->flatten(1)->toArray();
-            // dd($sample[3]);
-            // $sample = (array)$sample;
-            $dbsample = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get()->last();
+            $dbsamples = ViralsampleView::where('patient', '=', $sample[3])->where('datecollected', '=', $sample[11])->get();
+            if ($dbsamples){
+            	foreach ($dbsamples as $key => $samplefound) {
+			        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
+            		$samplefound = Viralsample::find($samplefound->id);
+            		$excelResult = $rdata->where(2, $samplefound->id)->first();
+            		// Update worksheet data if found
+            		if ($excelResult){
+            			$wsheet = $samplefound->worksheet;
+            			$date_tested=date("Y-m-d", strtotime($excelResult[9]));
+		                $datetested = MiscViral::worksheet_date($date_tested, $wsheet->created_at);
+
+		                $interpretation = $excelResult[5];
+		                $error = $excelResult[6];
+
+			            MiscViral::dup_worksheet_rows($doubles, $sample_array, $samplefound->id, $interpretation);
+
+			            $result_array = MiscViral::sample_result($interpretation, $error);
+
+		                $sample_type = $excelResult[0];
+
+		                if($sample_type == "NC"){
+		                    $nc = $result_array['result'];
+		                    $nc_int = $result_array['interpretation']; 
+		                    $nc_units = $result_array['units']; 
+		                }
+		                else if($sample_type == "HPC"){
+		                    $hpc = $result_array['result'];
+		                    $hpc_int = $result_array['interpretation'];
+		                    $hpc_units = $result_array['units'];
+		                }
+		                else if($sample_type == "LPC"){
+		                    $lpc = $result_array['result'];
+		                    $lpc_int = $result_array['interpretation'];
+		                    $lpc_units = $result_array['units'];
+		                }
+
+		                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+
+		                $samplefound->fill($data_array);
+		                if ($samplefound->national_sample_id && $samplefound->synched == 1){
+                			$samplefound->synched = 2;
+                		}
+                		$samplefound->save();
+                		$batch = $samplefound->batch;
+                		if ($batch->national_batch_id && $batch->synched == 1){
+                			$batch->synched = 2;
+                		}
+                		$batch->lab_id = 10;
+                		$batch->datedispatched = date('Y-m-d', strtotime("- 25 days"));
+                		$batch->save();
+
+                		Viralsample::where(['worksheet_id' => $wsheet->id])->where('run', 0)->update(['run' => 1]);
+				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
+				        Viralsample::where(['worksheet_id' => $wsheet->id])->whereNull('result')->update(['repeatt' => 1]);
+
+				        if (!in_array($wsheet->id, $worksheet)){
+				        	$wsheet->status_id = 3;
+	            			$wsheet->lab_id = 10;
+					        $wsheet->neg_units = $nc_units;
+					        $wsheet->neg_control_interpretation = $nc_int;
+					        $wsheet->neg_control_result = $nc;
+
+					        $wsheet->hpc_units = $hpc_units;
+					        $wsheet->highpos_control_interpretation = $hpc_int;
+					        $wsheet->highpos_control_result = $hpc;
+
+					        $wsheet->lpc_units = $lpc_units;
+					        $wsheet->lowpos_control_interpretation = $lpc_int;
+					        $wsheet->lowpos_control_result = $lpc;
+
+					        $wsheet->daterun = $datetested;
+					        $wsheet->uploadedby = 41;
+
+					        $wsheet->save();
+
+					        $worksheet[] = $wsheet->id;
+				        }
+
+					    MiscViral::requeue($wsheet->id);       			
+            		}
+            		
+            	}
+            }
+            // $dbsample = $dbsamples->last();
             
-            if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
-            	$worksheet[] = $dbsample->worksheet_id;
+            // if(empty($worksheet) || !in_array($dbsample->worksheet_id, $worksheet) )
+            // 	$worksheet[] = $dbsample->worksheet_id;
 
-            /* File worksheet reagion */
-            $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
-            // dd($excelResult);
-            if (!$excelResult)
-            	continue;
-            $excelResult = $excelResult->toArray();
-            /* File worksheet reagion */
+            // /* File worksheet reagion */
+            // $excelResult = $rdata->where(5, 'S')->where(4, $dbsample->id)->first();
+            // // dd($excelResult);
+            // if (!$excelResult)
+            // 	continue;
+            // $excelResult = $excelResult->toArray();
+            // /* File worksheet reagion */
 
-            if ($dbsample)
-            	$availablecount++;
-            else
-            	$count++;
-            $sample[19] = $dbsample->rejectedreason ?? null;
-            $sample[20] = $dbsample->reason_for_repeat ?? null;
-            $sample[21] = $dbsample->labcomment ?? $excelResult[12] ?? null;
-            $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[11] ?? null;
-            $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[11] ?? null;
-            // $sample[22] = $dbsample->datetested;
-            // $sample[23] = $dbsample->datedispatched;
-            $sample[24] = $dbsample->result ?? $excelResult[8] ?? null;
-            $newData[] = $sample->toArray();
+            // if ($dbsample)
+            // 	$availablecount++;
+            // else
+            // 	$count++;
+            // $sample[19] = $dbsample->rejectedreason ?? null;
+            // $sample[20] = $dbsample->reason_for_repeat ?? null;
+            // $sample[21] = $dbsample->labcomment ?? $excelResult[12] ?? null;
+            // $sample[22] = (isset($dbsample->datetested)) ? date('m/d/Y', strtotime($dbsample->datetested)) : $excelResult[11] ?? null;
+            // $sample[23] = (isset($dbsample->datedispatched)) ? date('m/d/Y', strtotime($dbsample->datedispatched)) : $excelResult[11] ?? null;
+            // // $sample[22] = $dbsample->datetested;
+            // // $sample[23] = $dbsample->datedispatched;
+            // $sample[24] = $dbsample->result ?? $excelResult[8] ?? null;
+            // $newData[] = $sample->toArray();
         }
-        echo "\t";
-        print_r($worksheet);
-        echo "\n";
+        // echo "\t";
+        // print_r($worksheet);
+        // echo "\n";
         echo "==> Available Results - " . $availablecount . "; Unavailable - " . $count;
-        echo "\n==> Building excel results \n";
+        // echo "\n==> Building excel results \n";
 
-        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
+        // $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
 
-        Excel::create($file, function($excel) use($newData, $file){
-            $excel->setTitle($file);
-            $excel->setCreator('Joshua Bakasa')->setCompany($file);
-            $excel->setDescription($file);
+        // Excel::create($file, function($excel) use($newData, $file){
+        //     $excel->setTitle($file);
+        //     $excel->setCreator('Joshua Bakasa')->setCompany($file);
+        //     $excel->setDescription($file);
 
-            $excel->sheet('Sheetname', function($sheet) use($newData) {
-                $sheet->fromArray($newData);
-            });
-        })->store('csv');
+        //     $excel->sheet('Sheetname', function($sheet) use($newData) {
+        //         $sheet->fromArray($newData);
+        //     });
+        // })->store('csv');
 
-        $data = [storage_path("exports/" . $file . ".csv")];
+        // $data = [storage_path("exports/" . $file . ".csv")];
 
-        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+        // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
         echo "==>Retrival Complete";
 	}
@@ -2254,25 +2389,79 @@ class Random
         echo "==> Complete";
 	}
 
+	public static function delete_uploads(){
+		echo "==> Reading File\n";
+		$file = 'public/docs/KemriToBeRemoved.csv';
+		$excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+        $batches = [];
+        echo "==> Starting samples delete\n";
+        foreach ($excelData as $key => $sample) {
+        	$dbsample = ViralsampleView::where('patient', '=',  $sample[3])->whereNull('result')->get()->last();
+        	$sample = Viralsample::find($dbsample->id);
+        	$batch = $sample->batch;
+        	$sample->delete();
+        	echo ".";
+        	if($batch->fresh('sample')->count() < 1){
+        		$batch->delete();
+        		echo "\n..\n";
+        	}
+        	$batches[] = $batch->id;
+        }
+        echo "\n==> Saving deleted Batches\n";
+        $file = 'KEMRI2EDARPDeletedBatches'.date('Y_m_d H_i_s');
+        
+        Excel::create($file, function($excel) use($batches, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
+
+            $excel->sheet('Sheetname', function($sheet) use($batches) {
+                $sheet->fromArray($batches);
+            });
+        })->store('csv');
+        echo "==> Deletion Complete";
+	}
+
     public static function checkMbNo(){
-    	$files = [['file' =>'public/docs/eid data Exsting.xlsx', 'name' => 'eid data Exsting First'],
-    			['file' =>'public/docs/eidDataSecond.xlsx', 'name' => 'eid data Exsting Second'],
-    			['file' =>'public/docs/eidDataThird.xlsx', 'name' => 'eid data Exsting Third'],
-    			['file' =>'public/docs/eidDataFourth.xlsx', 'name' => 'eid data Exsting Fourth'],
-    			['file' =>'public/docs/eidDataFifth.xlsx', 'name' => 'eid data Exsting Fifth'],
-    			['file' =>'public/docs/eidDataSixth.xlsx', 'name' => 'eid data Exsting Sixth'],
-    			['file' =>'public/docs/eidDataSeventh.xlsx', 'name' => 'eid data Exsting Seventh'],
-    			['file' =>'public/docs/eidDataEighth.xlsx', 'name' => 'eid data Exsting Eighth']];
-    	
-    	echo "==> Fetching Excel Data \n";
+    	$files = [['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting.csv', 'name' => 'eid data Exsting First'],
+    			['file' =>'public/docs/NHRL_MBNo/eid_data_Exsting_part2.csv', 'name' => 'eid data Exsting First Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSecondPart1.csv', 'name' => 'eid data Exsting Second Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSecondPart2.csv', 'name' => 'eid data Exsting Second Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataThirdPart1.csv', 'name' => 'eid data Exsting Third Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataThirdPart2.csv', 'name' => 'eid data Exsting Third Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFourthPart1.csv', 'name' => 'eid data Exsting Fourth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFourthPart2.csv', 'name' => 'eid data Exsting Fourth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFifthPart1.csv', 'name' => 'eid data Exsting Fifth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataFifthPart2.csv', 'name' => 'eid data Exsting Fifth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSixthPart1.csv', 'name' => 'eid data Exsting Sixth Part 1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSixthPart2.csv', 'name' => 'eid data Exsting Sixth Part 2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSeventhPart1.csv', 'name' => 'eid data Exsting Seventh Part1'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataSeventhPart2.csv', 'name' => 'eid data Exsting Seventh Part2'],
+    			['file' =>'public/docs/NHRL_MBNo/eidDataEighthPart1.csv', 'name' => 'eid data Exsting Eighth']
+    		];
+    	// $files = [['file' => 'public/docs/eidTest.xlsx', 'name' => 'EID Test Data']];
+    	echo "==> Fetching Excel Data (". date('Y-m-d H:i:s') . ") \n";
     	ini_set("memory_limit", "-1");
     	foreach ($files as $key => $file) {
+    		echo "====> Getting Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
     		$excelData = Excel::load($file['file'], function($reader){
 	            $reader->toArray();
 	        })->get();
-    		dd($excelData);
+    		// dd($excelData->toArray());
+	        foreach ($excelData as $key => $value) {
+	        	$dbData[] = [
+	        		'c_posted' => $value[0],
+	        		'label_id' => $value[1],
+	        		'login_date' => $value[2],
+	        	];
+	        }
+	        echo "====> Saving Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
+	        Nhrl::insert($dbData);
+	        echo "====> Saved Excel Data (". date('Y-m-d H:i:s') . " - " . $file['name'] . ") \n";
     	}
-    	echo "==> All Files completed";
+    	echo "==> All Files completed(". date('Y-m-d H:i:s') . ")";
         // $excelData = Excel::import($file, function($reader){
         //     $reader->toArray();
         // })->get();
