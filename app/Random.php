@@ -1808,7 +1808,7 @@ class Random
 			->orderBy('year', 'month', 'machine_type', 'rcategory')
 			->get();
 
-		$results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 5000', 4 => '> 5000', 5 => 'Collect New Sample'];
+		$results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 4000', 4 => '> 4000', 5 => 'Collect New Sample', 0 => 'Not Yet Dispatched'];
 		$machines = [1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
 
 		$rows = [];
