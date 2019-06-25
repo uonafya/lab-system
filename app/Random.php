@@ -1768,7 +1768,7 @@ class Random
 
 		for ($i=1; $i < 13; $i++) { 
 			foreach ($machines as $mkey => $mvalue) {
-				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+				$row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
 				$row['Machine'] = $mvalue;
 				$total = 0;
 
@@ -1780,6 +1780,7 @@ class Random
 				$row['Total'] = $total;
 				$rows[] = $row;
 			}
+			if($year == date('Y') && $i == date('m')) break;
 		}
 
 		$file = 'eid_worksheets_data';
@@ -1814,7 +1815,7 @@ class Random
 
 		for ($i=1; $i < 13; $i++) { 
 			foreach ($machines as $mkey => $mvalue) {
-				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+				$row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
 				$row['Machine'] = $mvalue;
 				$total = 0;
 
@@ -1826,6 +1827,7 @@ class Random
 				$row['Total'] = $total;
 				$rows[] = $row;
 			}
+			if($year == date('Y') && $i == date('m')) break;
 		}
 
 		$file = 'vl_worksheets_data';
