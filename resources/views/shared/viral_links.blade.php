@@ -16,7 +16,7 @@
 		</a> |
 		@if($worksheet->samples_no < 22)
 			<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
-				Convert to Roche
+				Convert to Roche/Taqman
 			</a> |
 		@endif
 	@elseif($worksheet->machine_type == 3)
