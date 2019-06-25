@@ -1795,7 +1795,7 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
-	public static function vl_worksheets()
+	public static function vl_worksheets($year = null)
 	{
 		if(!$year) $year = date('Y');
 		$data = \App\ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
