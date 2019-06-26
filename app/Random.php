@@ -2279,7 +2279,7 @@ class Random
 					['file' => 'public/docs/15679.xlsx', 'id' => 15679]];
 
         echo "==> Fetching Excel Data \n";
-
+        $newData = [];
 		$excelData = Excel::load($file, function($reader){
             $reader->toArray();
         })->get();
@@ -2385,7 +2385,26 @@ class Random
 
 		    MiscViral::requeue($worksheet->id);
 		}
-		// $rdata = collect($rdata);
+
+		echo "\n==> Building excel results \n";
+
+        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
+
+        Excel::create($file, function($excel) use($newData, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
+
+            $excel->sheet('Sheetname', function($sheet) use($newData) {
+                $sheet->fromArray($newData);
+            });
+        })->store('csv');
+
+        $data = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+
+        echo "==>Retrival Complete";
 	}
 
 	public static function delete_edarp_imported_batches() {
