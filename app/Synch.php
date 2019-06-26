@@ -160,6 +160,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
+            'connect_timeout' => 1.5,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -169,11 +170,11 @@ class Synch
 			],
 		]);
 		$status_code = $response->getStatusCode();
+		$body = json_decode($response->getBody());
 		if($status_code > 399){
-			dd($response->getBody());
+			dd($body);
 			die();
 		}
-		$body = json_decode($response->getBody());
 		Cache::store('file')->put('api_token', $body->token, 60);
 
 		// dd($body);
