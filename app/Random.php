@@ -2266,6 +2266,100 @@ class Random
         echo "==>Retrival Complete";
 	}
 
+	public static function export_edarp_results_worksheet() {
+		echo "==> Retrival Begin\n";
+		$rfiles = [['file' => 'public/docs/15668.xlsx', 'id' => 15668],
+					['file' => 'public/docs/15671.xlsx', 'id' => 15671],
+					['file' => 'public/docs/15675.xlsx', 'id' => 15675],
+					['file' => 'public/docs/15679.xlsx', 'id' => 15679]];
+
+        echo "==> Fetching Excel Data \n";
+		// $rdata = [];
+		foreach ($rfiles as $key => $value) {
+			$rexcelData = Excel::load($value['file'], function($reader){
+				$reader->toArray();
+			})->get();
+			$worksheet = Viralworksheet::find($value['id']);
+	        $today = $datetested = date("Y-m-d");
+	        $my = new MiscViral;
+	        $sample_array = $doubles = [];
+			$nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
+			foreach ($rexcelData as $datakey => $datavalue) {
+				$sample = Viralsample::find($datavalue[2]);
+				$date_tested=date("Y-m-d", strtotime($datavalue[12]));
+		        $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);
+
+		        $interpretation = $datavalue[5];
+                $error = $datavalue[6];
+
+	            MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample->id, $interpretation);
+
+	            $result_array = MiscViral::sample_result($interpretation, $error);
+
+		        $sample_type = $datavalue[0];
+
+                if($sample_type == "NC"){
+                    $nc = $result_array['result'];
+                    $nc_int = $result_array['interpretation']; 
+                    $nc_units = $result_array['units']; 
+                }
+                else if($sample_type == "HPC"){
+                    $hpc = $result_array['result'];
+                    $hpc_int = $result_array['interpretation'];
+                    $hpc_units = $result_array['units'];
+                }
+                else if($sample_type == "LPC"){
+                    $lpc = $result_array['result'];
+                    $lpc_int = $result_array['interpretation'];
+                    $lpc_units = $result_array['units'];
+                }
+
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+				dd($data_array);
+
+                if ($sample) {
+                	$sample->fill($data_array);
+	                if ($sample->national_sample_id && $sample->synched == 1){
+            			$sample->synched = 2;
+            		}
+            		$sample->save();
+            		$batch = $sample->batch;
+            		if ($batch->national_batch_id && $batch->synched == 1){
+            			$batch->synched = 2;
+            		}
+            		$batch->lab_id = 10;
+            		$batch->datedispatched = date('Y-m-d', strtotime("- 25 days"));
+            		$batch->save();
+                }
+			}
+			Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
+	        Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
+	        Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
+
+        	$worksheet->status_id = 3;
+			$worksheet->lab_id = 10;
+	        $worksheet->neg_units = $nc_units;
+	        $worksheet->neg_control_interpretation = $nc_int;
+	        $worksheet->neg_control_result = $nc;
+
+	        $worksheet->hpc_units = $hpc_units;
+	        $worksheet->highpos_control_interpretation = $hpc_int;
+	        $worksheet->highpos_control_result = $hpc;
+
+	        $worksheet->lpc_units = $lpc_units;
+	        $worksheet->lowpos_control_interpretation = $lpc_int;
+	        $worksheet->lowpos_control_result = $lpc;
+
+	        $worksheet->daterun = $datetested;
+	        $worksheet->uploadedby = 41;
+
+	        $worksheet->save();
+
+		    MiscViral::requeue($worksheet->id);
+		}
+		// $rdata = collect($rdata);
+	}
+
 	public static function delete_edarp_imported_batches() {
 		echo "==> Deleting Samples\n";
 		$batches = [];
