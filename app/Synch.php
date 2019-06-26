@@ -171,10 +171,7 @@ class Synch
 		]);
 		$status_code = $response->getStatusCode();
 		$body = json_decode($response->getBody());
-		if($status_code > 399){
-			dd($body);
-			die();
-		}
+		if($status_code > 399) die();
 		Cache::store('file')->put('api_token', $body->token, 60);
 
 		// dd($body);
