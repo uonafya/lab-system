@@ -2272,13 +2272,18 @@ class Random
 
 	public static function export_edarp_results_worksheet() {
 		echo "==> Retrival Begin\n";
+		$file = 'public/docs/Lst28KEMRI.xlsx';
 		$rfiles = [['file' => 'public/docs/15668.xlsx', 'id' => 15668],
 					['file' => 'public/docs/15671.xlsx', 'id' => 15671],
 					['file' => 'public/docs/15675.xlsx', 'id' => 15675],
 					['file' => 'public/docs/15679.xlsx', 'id' => 15679]];
 
         echo "==> Fetching Excel Data \n";
-		// $rdata = [];
+        $newData = [];
+		$excelData = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+
 		foreach ($rfiles as $key => $value) {
 			$rexcelData = Excel::load($value['file'], function($reader){
 				$reader->toArray();
@@ -2334,6 +2339,25 @@ class Random
             		$batch->lab_id = 10;
             		$batch->datedispatched = date('Y-m-d', strtotime("- 25 days"));
             		$batch->save();
+
+            		 /* File worksheet reagion */
+            		$patient = $sample->patient;
+		            $sampleExcel = $excelData->where(3, $patient->patient)->first();
+		            // dd($excelResult);
+		            if (!$excelResult)
+		            	continue;
+		            $sampleExcel = $sampleExcel->toArray();
+		            /* File worksheet reagion */
+
+		            $sampleExcel[19] = $sample->rejectedreason ?? null;
+		            $sampleExcel[20] = $sample->reason_for_repeat ?? null;
+		            $sampleExcel[21] = $sample->labcomment ?? $excelResult[12] ?? null;
+		            $sampleExcel[22] = (isset($sample->datetested)) ? date('m/d/Y', strtotime($sample->datetested)) : null;
+		            $sampleExcel[23] = (isset($sample->datedispatched)) ? date('m/d/Y', strtotime($sample->datedispatched)) : null;
+		            // $sample[22] = $dbsample->datetested;
+		            // $sample[23] = $dbsample->datedispatched;
+		            $sampleExcel[24] = $sample->result ?? null;
+		            $newData[] = $sampleExcel;
                 }
 			}
 			Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
@@ -2361,7 +2385,26 @@ class Random
 
 		    MiscViral::requeue($worksheet->id);
 		}
-		// $rdata = collect($rdata);
+
+		echo "\n==> Building excel results \n";
+
+        $file = 'KEMRI2EDARP'.date('Y_m_d H_i_s');
+
+        Excel::create($file, function($excel) use($newData, $file){
+            $excel->setTitle($file);
+            $excel->setCreator('Joshua Bakasa')->setCompany($file);
+            $excel->setDescription($file);
+
+            $excel->sheet('Sheetname', function($sheet) use($newData) {
+                $sheet->fromArray($newData);
+            });
+        })->store('csv');
+
+        $data = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+
+        echo "==>Retrival Complete";
 	}
 
 	public static function delete_edarp_imported_batches() {
