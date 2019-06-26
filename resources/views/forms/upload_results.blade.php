@@ -35,6 +35,24 @@
             </div>                
         </div>
 
+        @if($worksheet->status_id == 4)
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-body" style="padding-bottom: 6px;">
+                            <div class="alert alert-warning">
+                                <center>
+                                    This is the page for cancelled worksheet <b>{{ $worksheet->id }}.</b> By uploading a worksheet here, all sample ids that appear in the upload will be transferred to this worksheet and the results will be updated. Please be careful when making the upload.  
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
+        @endif
+
         @if(isset($type))
             {{ Form::open(['url'=>'/viralworksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
         @else

@@ -427,6 +427,11 @@ Artisan::command('edarp:lab', function(){
     $this->info($str);
 })->describe('Extract Moved samples');
 
+Artisan::command('edarp:labwks', function(){
+    $str = \App\Random::export_edarp_results_worksheet();
+    $this->info($str);
+})->describe('Extract Moved samples');
+
 Artisan::command('edarp:labdelete', function(){
     $str = \App\Random::delete_edarp_imported_batches();
     $this->info($str);

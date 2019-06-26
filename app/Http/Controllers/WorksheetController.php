@@ -252,13 +252,16 @@ class WorksheetController extends Controller
 
     public function convert_worksheet($machine_type, Worksheet $worksheet)
     {
-        if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        if($worksheet->status_id != 1){
             session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;
         $worksheet->save();
-        return redirect('worksheet/' . $worksheet->id . '/edit');
+        session(['toast_message' => 'The worksheet has been converted.']);
+        return back();
+        // return redirect('worksheet/' . $worksheet->id . '/edit');
     }
 
     public function cancel(Worksheet $worksheet)
@@ -373,7 +376,7 @@ class WorksheetController extends Controller
 
     public function upload(Worksheet $worksheet)
     {
-        if($worksheet->status_id != 1){
+        if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
@@ -394,10 +397,14 @@ class WorksheetController extends Controller
      */
     public function save_results(Request $request, Worksheet $worksheet)
     {
-        if($worksheet->status_id != 1){
+        if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
+
+        $cancelled = false;
+        if($worksheet->status_id == 4) $cancelled =  true;
+
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
@@ -446,8 +453,11 @@ class WorksheetController extends Controller
                     $sample_id = (int) $sample_id;
                     $sample = Sample::find($sample_id);
                     if(!$sample) continue;
-                    if($sample->worksheet_id != $worksheet->id) continue;
+
                     $sample->fill($data_array);
+                    if($cancelled) $sample->worksheet_id = $worksheet->id;
+                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+
                     $sample->save();
                 }
 
@@ -483,8 +493,11 @@ class WorksheetController extends Controller
                 // $sample_id = substr($sample_id, 0, -1);
                 $sample = Sample::find($sample_id);
                 if(!$sample) continue;
-                if($sample->worksheet_id != $worksheet->id) continue;
+
                 $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                    
                 $sample->save();
 
             }
