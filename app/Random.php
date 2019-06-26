@@ -2324,7 +2324,6 @@ class Random
                 }
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
-				dd($data_array);
 
                 if ($sample) {
                 	$sample->fill($data_array);
