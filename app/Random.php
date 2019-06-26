@@ -1749,12 +1749,13 @@ class Random
 		");
 	}
 
-	public static function eid_worksheets()
+	public static function eid_worksheets($year = null)
 	{
+		if(!$year) $year = date('Y');
 		$data = \App\SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
 			->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
 			->where('site_entry', '!=', 2)
-			->whereYear('daterun', 2018)
+			->whereYear('daterun', $year)
 			->where(['samples_view.lab_id' => env('APP_LAB')])
 			->groupBy('year', 'month', 'machine_type', 'result')
 			->orderBy('year', 'month', 'machine_type', 'result')
@@ -1767,7 +1768,7 @@ class Random
 
 		for ($i=1; $i < 13; $i++) { 
 			foreach ($machines as $mkey => $mvalue) {
-				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+				$row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
 				$row['Machine'] = $mvalue;
 				$total = 0;
 
@@ -1779,6 +1780,7 @@ class Random
 				$row['Total'] = $total;
 				$rows[] = $row;
 			}
+			if($year == date('Y') && $i == date('m')) break;
 		}
 
 		$file = 'eid_worksheets_data';
@@ -1791,28 +1793,29 @@ class Random
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		// Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
-	public static function vl_worksheets()
+	public static function vl_worksheets($year = null)
 	{
+		if(!$year) $year = date('Y');
 		$data = \App\ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
 			->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
 			->where('site_entry', '!=', 2)
-			->whereYear('daterun', 2018)
+			->whereYear('daterun', $year)
 			->where(['viralsamples_view.lab_id' => env('APP_LAB')])
 			->groupBy('year', 'month', 'machine_type', 'rcategory')
 			->orderBy('year', 'month', 'machine_type', 'rcategory')
 			->get();
 
-		$results = [1 => 'LDL', 2 => '<= 1000', 3 => '> 1000 & <= 5000', 4 => '> 5000', 5 => 'Collect New Sample'];
+		$results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 4000', 4 => '> 4000', 5 => 'Collect New Sample', 0 => 'Not Yet Dispatched'];
 		$machines = [1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
 
 		$rows = [];
 
 		for ($i=1; $i < 13; $i++) { 
 			foreach ($machines as $mkey => $mvalue) {
-				$row = ['Year of Testing' => 2018, 'Month of Testing' => date('F', strtotime("2018-{$i}-1")), ];
+				$row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
 				$row['Machine'] = $mvalue;
 				$total = 0;
 
@@ -1824,6 +1827,7 @@ class Random
 				$row['Total'] = $total;
 				$rows[] = $row;
 			}
+			if($year == date('Y') && $i == date('m')) break;
 		}
 
 		$file = 'vl_worksheets_data';
@@ -1836,7 +1840,7 @@ class Random
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		// Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
 	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {
