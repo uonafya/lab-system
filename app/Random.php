@@ -2300,8 +2300,8 @@ class Random
 
 		        $interpretation = $datavalue[5];
                 $error = $datavalue[6];
-
-	            MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample->id, $interpretation);
+                if ($sample)
+	            	MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample->id, $interpretation);
 
 	            $result_array = MiscViral::sample_result($interpretation, $error);
 
