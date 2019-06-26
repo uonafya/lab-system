@@ -528,7 +528,7 @@ class Common
 	{
 		if(!$default) $default = date('Y-m-d');
 
-		if(strtotime($date_tested) > strtotime($created_at) && strtotime($date_tested) < strtotime('now')) return $date_tested;
+		if((strtotime($date_tested) > strtotime($created_at)) && (strtotime($date_tested) < strtotime('now'))) return $date_tested;
 		return $default;
 	}
 
