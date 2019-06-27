@@ -281,6 +281,9 @@
             <li>
                 <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
             </li>
+            <li>
+                <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
+            </li>
             <hr />
         @endif
             <!-- <li>

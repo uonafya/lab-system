@@ -10,7 +10,7 @@
 	@if($worksheet->machine_type == 2)
 		@if($worksheet->samples_no < 23)
 			<a href="{{ url('worksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
-				Convert to Roche
+				Convert to Roche/Taqman
 			</a> |
 		@endif
 	@else

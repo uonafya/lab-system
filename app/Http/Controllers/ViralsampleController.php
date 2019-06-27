@@ -397,7 +397,7 @@ class ViralsampleController extends Controller
                 session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             }
             if($batch->site_entry == 2) return back();
-            MiscViral::check_batch($batch->id);
+            // MiscViral::check_batch($batch->id);
 
             if($user->is_lab_user()){           
                 $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);

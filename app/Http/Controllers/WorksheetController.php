@@ -252,13 +252,16 @@ class WorksheetController extends Controller
 
     public function convert_worksheet($machine_type, Worksheet $worksheet)
     {
-        if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        if($worksheet->status_id != 1){
             session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;
         $worksheet->save();
-        return redirect('worksheet/' . $worksheet->id . '/edit');
+        session(['toast_message' => 'The worksheet has been converted.']);
+        return back();
+        // return redirect('worksheet/' . $worksheet->id . '/edit');
     }
 
     public function cancel(Worksheet $worksheet)

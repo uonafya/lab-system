@@ -427,6 +427,11 @@ Artisan::command('edarp:lab', function(){
     $this->info($str);
 })->describe('Extract Moved samples');
 
+Artisan::command('edarp:labwks', function(){
+    $str = \App\Random::export_edarp_results_worksheet();
+    $this->info($str);
+})->describe('Extract Moved samples');
+
 Artisan::command('edarp:labdelete', function(){
     $str = \App\Random::delete_edarp_imported_batches();
     $this->info($str);
@@ -441,6 +446,11 @@ Artisan::command('edarp:confirm  {received_by}', function($received_by){
     $str = \App\Random::confirm_edarp_upload($received_by);
     $this->info($str);
 })->describe('Check EDARP request');
+
+Artisan::command('edarp:delete', function(){
+    $str = \App\Random::delete_uploads();
+    $this->info($str);
+})->describe('Delete Transfered');
 //Quick fix add EDARP samples to KEMRI
 
 Artisan::command('check:mb', function(){
