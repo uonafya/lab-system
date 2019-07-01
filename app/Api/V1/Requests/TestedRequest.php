@@ -4,7 +4,8 @@ namespace App\Api\V1\Requests;
 
 use App\Api\V1\Requests\BaseRequest;
 
-class TestedRequest extends FormRequest
+
+class TestedRequest extends BaseRequest
 {
     public function rules()
     {
