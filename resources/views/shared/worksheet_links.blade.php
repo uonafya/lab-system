@@ -10,7 +10,7 @@
 	@if($worksheet->machine_type == 2)
 		@if($worksheet->samples_no < 23)
 			<a href="{{ url('worksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
-				Convert to Roche
+				Convert to Roche/Taqman
 			</a> |
 		@endif
 	@else
@@ -53,6 +53,10 @@
 	<a href="{{ url('worksheet/' . $worksheet->id) }}" title="Click to View Cancelled Worksheet Details">
 		View Cancelled  Worksheet Details
 	</a> |
+
+	<a href="{{ url('worksheet/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
+		Update Results (In Case of Accidental Deletion)
+	</a> | 
 
 	{{ Form::open(['url' => 'worksheet/' . $worksheet->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following worksheet?');"]) }}
         <button type="submit" class="btn btn-xs btn-primary">Delete</button>

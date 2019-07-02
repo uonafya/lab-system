@@ -275,7 +275,7 @@ class SampleController extends Controller
                 session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             }
             if($batch->site_entry == 2) return back();
-            Misc::check_batch($batch->id); 
+            // Misc::check_batch($batch->id); 
 
             if($user->is_lab_user()){
 
