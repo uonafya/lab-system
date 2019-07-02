@@ -285,7 +285,8 @@ class Random
 			$s = \App\Viralsample::find($row->system_id);
 			if($s->age < 3) continue;
 			$s->justification = 1;
-			$s->pre_update();
+			$s->synched = 2;
+			$s->save();
 		}
 	}
 
