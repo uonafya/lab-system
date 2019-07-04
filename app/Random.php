@@ -273,23 +273,20 @@ class Random
 		Facility::where('id', '>', 0)->update(['smsprinter' => 0]);
 	}
 
-	public static function correct_faces_data()
+	public static function correct_ampath_data()
 	{
 		ini_set("memory_limit", "-1");
         config(['excel.import.heading' => true]);
-		$path = public_path('vl_records.csv');
+		$path = public_path('justification.csv');
 
 		$data = Excel::load($path, function($reader){})->get();
 
 		foreach ($data as $row) {
-			$s = \App\Viralsample::find($row->labid);
-			$p = $s->patient;
-			if($p->patient != $row->patientid) continue;
-			$p->sex = 1;
-			$p->pre_update();
-
-			$s->pmtct = 3;
-			$s->pre_update();
+			$s = \App\Viralsample::find($row->system_id);
+			if($s->age < 3) continue;
+			$s->justification = 1;
+			$s->synched = 2;
+			$s->save();
 		}
 	}
 
