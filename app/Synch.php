@@ -169,10 +169,10 @@ class Synch
 			$emails[] = $value->address;
 		}
 
-		\App\Facility::whereIn('email', $emails)->update(['emails' => null]);
+		\App\Facility::whereIn('email', $emails)->update(['email' => null]);
 		\App\Facility::whereIn('contact_email', $emails)->update(['contact_email' => null]);
 
-		\App\FacilityContact::whereIn('email', $emails)->update(['emails' => null]);
+		\App\FacilityContact::whereIn('email', $emails)->update(['email' => null]);
 		\App\FacilityContact::whereIn('contact_email', $emails)->update(['contact_email' => null]);
 	}
 
