@@ -170,10 +170,10 @@ class Synch
 		}
 
 		\App\Facility::whereIn('email', $emails)->update(['email' => null]);
-		\App\Facility::whereIn('contact_email', $emails)->update(['contact_email' => null]);
+		\App\Facility::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
 
 		\App\FacilityContact::whereIn('email', $emails)->update(['email' => null]);
-		\App\FacilityContact::whereIn('contact_email', $emails)->update(['contact_email' => null]);
+		\App\FacilityContact::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
 	}
 
 	public static function login()
