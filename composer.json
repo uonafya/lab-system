@@ -29,7 +29,8 @@
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~5.7",
         "symfony/css-selector": "3.1.*",
-        "symfony/dom-crawler": "3.1.*"
+        "symfony/dom-crawler": "3.1.*",
+        "beyondcode/laravel-er-diagram-generator": "^1.2"
     },
     "autoload": {
         "classmap": [

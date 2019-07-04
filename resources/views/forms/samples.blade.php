@@ -230,6 +230,17 @@
                             </div>
                         </div>
 
+                        @if(env('APP_LAB') == 4)
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Automatically Add Slash to HEI Number</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="automatic_slash" value="1" checked="checked" />
+                                </div>
+                            </div>
+
+                        @endif
+
                         @if(!isset($sample))
                             
                             <div class="form-group">

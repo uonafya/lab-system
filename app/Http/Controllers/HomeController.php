@@ -225,6 +225,7 @@ class HomeController extends Controller
 
     public function repeat()
     {
+        $paginate = 30;
         if(session('testingSystem') == 'Viralload') {
             $samples = ViralsampleView::selectRaw('viralsamples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -239,7 +240,7 @@ class HomeController extends Controller
                         // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
-                        ->where('flag', '=', '1')->get();
+                        ->where('flag', '=', '1')->paginate($paginate);
         } else {
             $samples = SampleView::selectRaw('samples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -255,7 +256,7 @@ class HomeController extends Controller
                         })
                         // ->where(DB::raw(('samples.result is null or samples.result = 0')))
                         ->where('flag', '=', '1')
-                        ->where('parentid', '>', '0')->get();
+                        ->where('parentid', '>', '0')->paginate($paginate);
         }
         $noSamples = $samples->count();
         $pageTitle = "Samples for Repeat [$noSamples]";
@@ -265,6 +266,7 @@ class HomeController extends Controller
 
     public function rejected()
     {
+        $paginate = 30;
         $year = Date('Y')-3;
         if (session('testingSystem') == 'Viralload') {
             $samples = ViralsampleView::selectRaw('viralsamples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
@@ -276,7 +278,7 @@ class HomeController extends Controller
                         ->where('site_entry', '<>', 2)
                         ->whereYear('datereceived', '>', $year)
                         ->whereNotNull('datereceived')
-                        ->whereNull('datedispatched')->get();
+                        ->whereNull('datedispatched')->paginate($paginate);
         } else {
             $samples = SampleView::selectRaw('samples_view.*, view_facilitys.name as facility, view_facilitys.county, receivedstatus.name as receivedstatus, datediff(curdate(), datereceived) as waitingtime')
                         ->join('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -286,7 +288,7 @@ class HomeController extends Controller
                         ->whereNotNull('datereceived')
                         ->where('site_entry', '<>', 2)
                         ->where('lab_id', '=', env('APP_LAB'))
-                        ->whereNull('datedispatched')->get();
+                        ->whereNull('datedispatched')->paginate($paginate);
         }
         $noSamples = $samples->count();
         $pageTitle = "Rejected Samples for Dispatch [$noSamples]";

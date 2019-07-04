@@ -2520,8 +2520,8 @@ CREATE TABLE `actions` (
 LOCK TABLES `actions` WRITE;
 /*!40000 ALTER TABLE `actions` DISABLE KEYS */;
 INSERT INTO `actions` VALUES 
-(0,'Dispatch', '<strong><div style=\'color: #00ff00;\'>Dispatch</div></strong>', 1),
-(1,'Rerun', '<strong><div style=\'color: #cccc00;\'>Rerun</div></strong>', 1);
+(NULL, 'Dispatch', '<strong><div style=\'color: #00ff00;\'>Dispatch</div></strong>', 1),
+(NULL, 'Rerun', '<strong><div style=\'color: #cccc00;\'>Rerun</div></strong>', 1);
 /*!40000 ALTER TABLE `actions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2787,4 +2787,3 @@ INSERT INTO `lab_equipment_mapping` (`id`, `type`, `name`, `serialno`, `lab`) VA
 (39, 4, 'Pantha Hologic', '2090001855', 5);
 /*!40000 ALTER TABLE `lab_equipment_mapping` ENABLE KEYS */;
 UNLOCK TABLES;
-
