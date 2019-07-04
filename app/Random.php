@@ -2648,12 +2648,11 @@ class Random
     public static function run_ken_request() {
     	$data = [];
     	echo "==> Getting Patients\n";
-    	$patients = Viralpatient::select('id', 'dob')->whereYear('dob', '>', '2009')->get();
+    	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
     	echo "==> Getting Patients Samples\n";
     	$excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
     	ini_set("memory_limit", "-1");
     	foreach ($patients as $key => $patient) {
-    		dd($patient);
     		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
     		if ($samples->count() == 2) {
     			$newsamples = $samples->whereIn('rcategory', [3,4]);
