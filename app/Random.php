@@ -2668,7 +2668,7 @@ class Random
     			}
     		}
     	}
-    	$file = 'Requested Report';
+    	$file = 'Requested Report '.(date('Y-m-d H:i:s'));
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
     	Excel::create($file, function($excel) use($data)  {
 		    $excel->sheet('Sheetname', function($sheet) use($data) {
