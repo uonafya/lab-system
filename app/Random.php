@@ -2663,7 +2663,7 @@ class Random
     					'patient' => $patient->patient,
     					'regimen' => $newsample->prophylaxis_name,
     					'result' => $newsample->result,
-    					'agecategory' => self::getMakeShiftAgeCategory($newsample->age),
+    					'agecategory' => self::getMakeShiftAgeCategory($patient->dob),
     				];
     			}
     		}
@@ -2679,7 +2679,16 @@ class Random
 		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
     }
 
-    private static function getMakeShiftAgeCategory($age) {
+    private static function getMakeShiftAgeCategory($dob) {
+		$date2 = date('Y-m-d');
+
+		$diff = abs(strtotime($date2) - strtotime($dob));
+
+		$years = floor($diff / (365*60*60*24));
+		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+		$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+
+		dd("%d years, %d months, %d days\n", $years, $months, $days);
     	if ($age < 1)
     		return '0-1';
     	if ($age > 0.9999 && $age < 5)
