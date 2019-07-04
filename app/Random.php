@@ -2653,6 +2653,7 @@ class Random
     	$excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
     	ini_set("memory_limit", "-1");
     	foreach ($patients as $key => $patient) {
+    		dd($patient);
     		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
     		if ($samples->count() == 2) {
     			$newsamples = $samples->whereIn('rcategory', [3,4]);
