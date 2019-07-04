@@ -2321,7 +2321,6 @@ class Random
                 }
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
-				dd($data_array);
 
                 if ($sample) {
                 	$sample->fill($data_array);
@@ -2341,14 +2340,14 @@ class Random
             		$patient = $sample->patient;
 		            $sampleExcel = $excelData->where(3, $patient->patient)->first();
 		            // dd($excelResult);
-		            if (!$excelResult)
+		            if (!$sampleExcel)
 		            	continue;
 		            $sampleExcel = $sampleExcel->toArray();
 		            /* File worksheet reagion */
 
 		            $sampleExcel[19] = $sample->rejectedreason ?? null;
 		            $sampleExcel[20] = $sample->reason_for_repeat ?? null;
-		            $sampleExcel[21] = $sample->labcomment ?? $excelResult[12] ?? null;
+		            $sampleExcel[21] = $sample->labcomment ?? null;
 		            $sampleExcel[22] = (isset($sample->datetested)) ? date('m/d/Y', strtotime($sample->datetested)) : null;
 		            $sampleExcel[23] = (isset($sample->datedispatched)) ? date('m/d/Y', strtotime($sample->datedispatched)) : null;
 		            // $sample[22] = $dbsample->datetested;
