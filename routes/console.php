@@ -17,6 +17,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+
+Artisan::command('clean:emails', function(){
+    $str = \App\Synch::clean_emails();
+    $this->info($str);
+})->describe('Clean emails which have an issue.');
+
 Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
     $this->info($str);
