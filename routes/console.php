@@ -17,6 +17,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+
+Artisan::command('clean:emails', function(){
+    $str = \App\Synch::clean_emails();
+    $this->info($str);
+})->describe('Clean emails which have an issue.');
+
 Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
     $this->info($str);
@@ -424,6 +430,11 @@ Artisan::command('edarp:upload {received_by}', function($received_by) {
 
 Artisan::command('edarp:lab', function(){
     $str = \App\Random::export_edarp_results();
+    $this->info($str);
+})->describe('Extract Moved samples');
+
+Artisan::command('edarp:labwks', function(){
+    $str = \App\Random::export_edarp_results_worksheet();
     $this->info($str);
 })->describe('Extract Moved samples');
 

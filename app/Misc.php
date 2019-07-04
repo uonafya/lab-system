@@ -365,6 +365,8 @@ class Misc extends Common
 			return;
 		}
 
+        if(!preg_match('/[2][5][4][7][0-9]{8}/', $sample->patient_phone_no)) return;
+
         $client = new Client(['base_uri' => self::$sms_url]);
 
 		$response = $client->request('post', '', [

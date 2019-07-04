@@ -153,6 +153,29 @@ class Synch
 		return false;
 	}
 
+	public static function clean_emails()
+	{
+		$base = 'https://api.mailgun.net/v3/nascop.or.ke/complaints';
+		$client = new Client(['base_uri' => $base]);
+		$response = $client->request('get', '', [
+			'auth' => ['api', env('MAIL_API_KEY')],
+		]);
+		$body = json_decode($response->getBody());
+		if($response->getStatusCode() > 399) return false;
+
+		$emails = [];
+
+		foreach ($body->items as $key => $value) {
+			$emails[] = $value->address;
+		}
+
+		\App\Facility::whereIn('email', $emails)->update(['email' => null]);
+		\App\Facility::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
+
+		\App\FacilityContact::whereIn('email', $emails)->update(['email' => null]);
+		\App\FacilityContact::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
+	}
+
 	public static function login()
 	{
 		Cache::store('file')->forget('api_token');
@@ -160,6 +183,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
+            'connect_timeout' => 1.5,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -169,8 +193,8 @@ class Synch
 			],
 		]);
 		$status_code = $response->getStatusCode();
-		if($status_code > 399) die();
 		$body = json_decode($response->getBody());
+		if($status_code > 399) die();
 		Cache::store('file')->put('api_token', $body->token, 60);
 
 		// dd($body);

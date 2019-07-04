@@ -8,5 +8,5 @@ class Muser extends Model
 {
 
     protected $guarded = [];
-    protected $timestamps = [];
+    public $timestamps = [];
 }

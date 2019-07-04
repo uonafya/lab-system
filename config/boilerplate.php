@@ -63,7 +63,7 @@ return [
         'lab' => 'integer',
         'amrs_location' => 'integer',
 
-        'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
+        // 'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
         'preferred_language' => ['integer', 'between:1,2'],
 
     ],
@@ -122,7 +122,7 @@ return [
         'sex' => ['required', 'integer', 'between:1,2'], 
         'amrs_location' => 'integer',
 
-        'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
+        // 'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
         'preferred_language' => ['integer', 'between:1,2'],
 
     ],
