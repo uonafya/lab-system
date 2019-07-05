@@ -273,23 +273,20 @@ class Random
 		Facility::where('id', '>', 0)->update(['smsprinter' => 0]);
 	}
 
-	public static function correct_faces_data()
+	public static function correct_ampath_data()
 	{
 		ini_set("memory_limit", "-1");
         config(['excel.import.heading' => true]);
-		$path = public_path('vl_records.csv');
+		$path = public_path('justification.csv');
 
 		$data = Excel::load($path, function($reader){})->get();
 
 		foreach ($data as $row) {
-			$s = \App\Viralsample::find($row->labid);
-			$p = $s->patient;
-			if($p->patient != $row->patientid) continue;
-			$p->sex = 1;
-			$p->pre_update();
-
-			$s->pmtct = 3;
-			$s->pre_update();
+			$s = \App\Viralsample::find($row->system_id);
+			if($s->age < 3) continue;
+			$s->justification = 1;
+			$s->synched = 2;
+			$s->save();
 		}
 	}
 
@@ -2646,5 +2643,56 @@ class Random
             });
         })->store('csv');
         echo "==> Data consolidation complete\n";
+    }
+
+    public static function run_ken_request() {
+    	$data = [];
+    	echo "==> Getting Patients\n";
+    	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
+    	echo "==> Getting Patients Samples\n";
+    	$excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
+    	ini_set("memory_limit", "-1");
+    	foreach ($patients as $key => $patient) {
+    		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
+    		if ($samples->count() == 2) {
+    			$newsamples = $samples->whereIn('rcategory', [3,4]);
+    			if ($newsamples->count() == 2){
+    				echo ".";
+    				$newsample = $newsamples->first();
+    				$data[] = [
+    					'patient' => $patient->patient,
+    					'regimen' => $newsample->prophylaxis_name,
+    					'result' => $newsample->result,
+    					'agecategory' => self::getMakeShiftAgeCategory($patient->dob),
+    				];
+    			}
+    		}
+    	}
+    	$file = 'Requested Report '.(date('Y-m-d H:i:s'));
+    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
+    	Excel::create($file, function($excel) use($data)  {
+		    $excel->sheet('Sheetname', function($sheet) use($data) {
+		        $sheet->fromArray($data);
+		    });
+		})->store('csv');
+		$data = [storage_path("exports/" . $file . ".csv")];
+		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
+    }
+
+    private static function getMakeShiftAgeCategory($dob) {
+		$date2 = date('Y-m-d');
+		$diff = abs(strtotime($date2) - strtotime($dob));
+		$years = floor($diff / (365*60*60*24));
+		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+		$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+		$age = $years + (($months + ($days / 365)) / 12);
+
+		// dd("%d years, %d months, %d days\n", $years, $months, $days);
+    	if ($age < 1)
+    		return '0-1';
+    	if ($age > 0.9999 && $age < 5)
+    		return '1- <5';
+    	if ($age > 5.9999 && $age < 10)
+    		return '5-<10';
     }
 }

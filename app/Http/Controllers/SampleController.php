@@ -810,8 +810,10 @@ class SampleController extends Controller
             $batch->transfer_samples([$rerun->id], 'new_facility');
             $rerun->refresh();
             $batch = $rerun->batch;
-            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            // $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->return_for_testing();
             $batch->save();
+            session(['toast_message' => 'The sample has been returned for testing and tranferred to a new batch.']);
             return redirect('batch/' . $batch->id);
         }
     }
