@@ -674,7 +674,7 @@ class TaskController extends Controller
                 $column = 'created_at';
                 // $model = $model->whereRaw("((parentid=0)||(parentid IS NULL))");
             }
-            $result[$value] = $model->whereRaw("YEAR($column) = $year")->whereRaw("MONTH($column) = $month")->count();
+            $result[$value] = $model->whereRaw("YEAR($column) = $year")->whereRaw("MONTH($column) = $month")->where('lab_id', env('APP_LAB'))->count();
         }
         return $result;
     }
