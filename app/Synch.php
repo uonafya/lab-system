@@ -232,7 +232,7 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
-			dd($body);
+			// dd($body);
 
 			foreach ($body->patients as $key => $value) {
 				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
