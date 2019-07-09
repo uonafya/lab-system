@@ -43,7 +43,7 @@
 		<br /> Label ID - {{ $sample->label_id }}
 	@endif
 
-	@if(in_array(env('APP_LAB') [9, 2]))
+	@if(in_array(env('APP_LAB'), [9, 2]))
 		@if(env('APP_LAB') == 9)
 			@if(get_class($worksheet) == "App\Viralworksheet")
 				- ({{ $i+3 }})
