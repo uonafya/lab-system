@@ -58,12 +58,12 @@ class MiscViral extends Common
         ],
     ];
 
-	public static function requeue($worksheet_id)
+	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
         $samples = Viralsample::whereIn('id', $samples_array)->get();
 
-        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
+        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0, 'datetested' => $daterun]);
 
 		// Default value for repeatt is 0
 

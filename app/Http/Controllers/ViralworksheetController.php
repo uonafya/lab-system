@@ -660,7 +660,7 @@ class ViralworksheetController extends Controller
 
         $worksheet->save();
 
-        MiscViral::requeue($worksheet->id);
+        MiscViral::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
 
         return redirect('viralworksheet/approve/' . $worksheet->id);
