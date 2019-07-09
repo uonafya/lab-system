@@ -139,28 +139,10 @@ width:1180px;
 					@php $count++; @endphp
 
 					@if($count % 7 == 0)
-						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
+						</tr><tr><td colspan=8>&nbsp;</td></tr><tr>
 					@endif
 
 				@endforeach
-
-
-				{{--@foreach($samples->where('parentid', 0) as $sample)
-
-					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
-
-					@php $count++; @endphp
-
-					@if($count % 7 == 0)
-						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
-					@endif
-				@endforeach
-
-				@if($vl) 
-					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
-				@else
-					<td align='center' > PC </td><td  align='center' > NC </td>
-				@endif--}}
 			</tr>
 				
 		</table>
