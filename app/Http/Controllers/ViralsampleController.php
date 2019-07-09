@@ -262,12 +262,11 @@ class ViralsampleController extends Controller
         }
 
         $patient_string = trim($request->input('patient'));
-        // if(env('APP_LAB') == 4 || env('APP_LAB') == 2){
         if(env('APP_LAB') == 4){
             $fac = Facility::find($data_existing['facility_id']);
             // $patient_string = $fac->facilitycode . '/' . $patient_string;
             $str = $fac->facilitycode;
-            if(env('APP_LAB') == 4) $str .= '/';
+            if($request->input('automatic_slash')) $str .= '/';
             if(!starts_with($patient_string, $str)){
                 if(starts_with($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
@@ -398,7 +397,7 @@ class ViralsampleController extends Controller
                 session(['toast_message' => "The batch {$batch->id} is full and no new samples can be added to it."]);
             }
             if($batch->site_entry == 2) return back();
-            MiscViral::check_batch($batch->id);
+            // MiscViral::check_batch($batch->id);
 
             if($user->is_lab_user()){           
                 $work_samples_dbs = MiscViral::get_worksheet_samples(2, false, 1);
@@ -823,8 +822,10 @@ class ViralsampleController extends Controller
             $batch->transfer_samples([$rerun->id], 'new_facility');
             $rerun->refresh();
             $batch = $rerun->batch;
-            $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            // $batch->fill(['batch_complete' => 0, 'datedispatched' => null, 'tat5' => null, 'dateindividualresultprinted' => null, 'datebatchprinted' => null, 'dateemailsent' => null, 'sent_email' => 0]);
+            $batch->return_for_testing();
             $batch->save();
+            session(['toast_message' => 'The sample has been returned for testing and tranferred to a new batch.']);
             return redirect('viralbatch/' . $batch->id);
         }
     }
