@@ -163,7 +163,7 @@ width:1180px;
 					@php $count++; @endphp
 
 					@if($count % 8 == 0)
-						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
+						</tr><tr><td colspan=8>&nbsp;</td></tr><tr>
 					@endif
 
 				@endforeach

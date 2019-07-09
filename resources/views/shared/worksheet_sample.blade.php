@@ -27,6 +27,10 @@
 		@if(env('APP_LAB') != 5) 
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
 		@endif 
+		@if(env('APP_LAB') == 8)
+			<br /> Label ID - {{ $sample->label_id }}
+		@endif
+
 		@if(env('APP_LAB') == 2 && get_class($worksheet) == "App\Worksheet")
 			<br /> Date Received - {{ $sample->batch->my_date_format('datereceived') }} 
 			<br /> Batch Number - {{ $sample->batch_id }} 
@@ -38,10 +42,6 @@
 
 	<br />
 	{{ $sample->id }}
-
-	@if(env('APP_LAB') == 8)
-		<br /> Label ID - {{ $sample->label_id }}
-	@endif
 
 	@if(in_array(env('APP_LAB'), [9, 2]))
 		@if(env('APP_LAB') == 9)
