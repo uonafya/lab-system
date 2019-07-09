@@ -1849,7 +1849,7 @@ class Random
 			$kits = (object)self::$abbottKits;
 		}
 		$consumptions = $consumption::findOrFail($id);
-		// if ((int)$ending > 0) 
+		if ((int)$ending > 0) 
 			self::adjust_procurement_numbers($consumptions, $ending, $kits, 'ending');
 		if ((int)$wasted > 0)
 			self::adjust_procurement_numbers($consumptions, $wasted, $kits, 'wasted');
@@ -2650,7 +2650,7 @@ class Random
     	echo "==> Getting Patients\n";
     	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
     	echo "==> Getting Patients Samples\n";
-    	$excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
+    	$excelColumns = ['Patient', 'Current Regimen', 'Former Result', 'Recent Result', 'Age Category'];
     	ini_set("memory_limit", "-1");
     	foreach ($patients as $key => $patient) {
     		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
@@ -2659,10 +2659,12 @@ class Random
     			if ($newsamples->count() == 2){
     				echo ".";
     				$newsample = $newsamples->first();
+    				$oldsample = $newsamples->last();
     				$data[] = [
     					'patient' => $patient->patient,
     					'regimen' => $newsample->prophylaxis_name,
-    					'result' => $newsample->result,
+    					'result1' => $oldsample->result,
+    					'result2' => $newsample->result,
     					'agecategory' => self::getMakeShiftAgeCategory($patient->dob),
     				];
     			}
