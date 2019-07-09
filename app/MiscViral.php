@@ -58,12 +58,12 @@ class MiscViral extends Common
         ],
     ];
 
-	public static function requeue($worksheet_id)
+	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
         $samples = Viralsample::whereIn('id', $samples_array)->get();
 
-        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
+        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0, 'datetested' => $daterun]);
 
 		// Default value for repeatt is 0
 
@@ -486,8 +486,8 @@ class MiscViral extends Common
         if(is_numeric($numeric_result)){
             $result = (int) $numeric_result;
             if($result < 401) return ['rcategory' => 1];
-            else if($result > 400 && $result < 1001) return ['rcategory' => 2];
-            else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
+            else if($result > 400 && $result < 1000) return ['rcategory' => 2];
+            else if($result >= 1000 && $result < 5001) return ['rcategory' => 3];
             else if($result > 5000) return ['rcategory' => 4];
         }
         $str = strtolower($result);

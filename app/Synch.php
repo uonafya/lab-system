@@ -231,6 +231,8 @@ class Synch
 
 			$body = json_decode($response->getBody());
 
+			// dd($body);
+
 			foreach ($body->patients as $key => $value) {
 				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
 				Patient::where('id', $value->original_id)->update($update_data);
@@ -759,6 +761,7 @@ class Synch
 								->where('datereceived', '>', '2017-09-31')
 								->whereNull('worksheet_id')
 								->whereNull('approvedby')
+								->whereNull('datedispatched')
 								->whereIn('receivedstatus', [1, 3])
 								->whereRaw("(result is null or result=0)")
 								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => $lab_id])
