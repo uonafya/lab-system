@@ -13,12 +13,12 @@ use App\Lookup;
 class Misc extends Common
 {
 
-	public static function requeue($worksheet_id)
+	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
 		$samples = Sample::whereIn('id', $samples_array)->get();
 
-        Sample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
+        Sample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
 
 		// Default value for repeatt is 0
 

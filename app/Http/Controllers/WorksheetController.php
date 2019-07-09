@@ -417,6 +417,7 @@ class WorksheetController extends Controller
         {
             $date_tested = $request->input('daterun');
             $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -529,7 +530,7 @@ class WorksheetController extends Controller
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
-        Misc::requeue($worksheet->id);
+        Misc::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
 
         return redirect('worksheet/approve/' . $worksheet->id);
