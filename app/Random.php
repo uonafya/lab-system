@@ -1849,7 +1849,7 @@ class Random
 			$kits = (object)self::$abbottKits;
 		}
 		$consumptions = $consumption::findOrFail($id);
-		if ((int)$ending > 0) 
+		// if ((int)$ending > 0) 
 			self::adjust_procurement_numbers($consumptions, $ending, $kits, 'ending');
 		if ((int)$wasted > 0)
 			self::adjust_procurement_numbers($consumptions, $wasted, $kits, 'wasted');
