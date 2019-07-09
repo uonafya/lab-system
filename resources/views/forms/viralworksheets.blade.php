@@ -19,7 +19,7 @@
 
    <div class="content">
             
-        @if(($create || in_array(env('APP_LAB'), [8, 9])))
+        @if(($create || in_array(env('APP_LAB'), [8, 9])) && $count)
 
 
             @if (isset($worksheet))
