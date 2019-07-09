@@ -47,7 +47,7 @@
 
                 @endif
 
-                <!-- The shared view below has forms for deleting samples hence this difference -->
+                <!-- The partial view below has forms for deleting samples hence the form will start after this row for other labs -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">
