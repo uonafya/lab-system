@@ -762,6 +762,7 @@ class Synch
 								->where('datereceived', '>', '2017-09-31')
 								->whereNull('worksheet_id')
 								->whereNull('approvedby')
+								->whereNull('datedispatched')
 								->whereIn('receivedstatus', [1, 3])
 								->whereRaw("(result is null or result=0)")
 								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => $lab_id])
