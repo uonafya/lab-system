@@ -708,7 +708,8 @@ class MiscViral extends Common
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
-        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $test = false;
         $user = auth()->user();
         \App\Viralbatch::where(['received_by' => $user->id, 'input_complete' => 0])->update(['input_complete' => 1]);
 
