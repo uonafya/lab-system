@@ -2650,7 +2650,7 @@ class Random
     	echo "==> Getting Patients\n";
     	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
     	echo "==> Getting Patients Samples\n";
-    	$excelColumns = ['Patient', 'Current Regimen', 'Former Result', 'Recent Result', 'Age Category'];
+    	$data[] = ['Patient', 'Current Regimen', 'Former Result', 'Recent Result', 'Age Category'];
     	ini_set("memory_limit", "-1");
     	foreach ($patients as $key => $patient) {
     		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
@@ -2696,5 +2696,24 @@ class Random
     		return '1- <5';
     	if ($age > 5.9999 && $age < 10)
     		return '5-<10';
+    }
+
+    public static function linelist(){
+    	echo "==> Getting Unique patients\n";
+    	$patients = Viralpatient::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->toArray();
+    	echo "==> Getting patients` tests\n";
+    	$tests = ViralsampleCompleteView::select()
+    						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients)
+    						->orderBy('datetested', 'desc')->limit(1)->get();
+    	ini_set("memory_limit", "-1");
+    	$file = 'VL Unique Patients Line List';
+    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
+    	Excel::create($file, function($excel) use($tests)  {
+		    $excel->sheet('Sheetname', function($sheet) use($tests) {
+		        $sheet->fromArray($tests);
+		    });
+		})->store('csv');
+		$data = [storage_path("exports/" . $file . ".csv")];
+		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
     }
 }
