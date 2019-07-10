@@ -88,6 +88,10 @@ class MiscViral extends Common
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
         $sample->fill($original->only($fields['sample_rerun']));
+        if(env('APP_LAB') == 9){
+            $sample->label_id = $original->label_id;
+            $sample->areaname = $original->areaname;
+        }
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
@@ -708,7 +712,8 @@ class MiscViral extends Common
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
-        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $test = false;
         $user = auth()->user();
         \App\Viralbatch::where(['received_by' => $user->id, 'input_complete' => 0])->update(['input_complete' => 1]);
 
