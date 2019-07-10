@@ -97,10 +97,17 @@ width:1180px;
 			</tr>
 			<tr class="even">
 				<td><strong>Sorted By	</strong>    </td>
-				<td> {{ $worksheet->sorter->full_name ?? '' }} </td>
+				<td colspan="2"> {{ $worksheet->sorter->full_name ?? '' }} </td>
 						
 				<td><strong>Run By	</strong>    </td>
-				<td> {{ $worksheet->runner->full_name ?? '' }} </td>
+				<td colspan="2"> {{ $worksheet->runner->full_name ?? '' }} </td>
+			</tr>
+			<tr class="even">
+				<td><strong>Aliquoted By	</strong>    </td>
+				<td colspan="2"> {{ $worksheet->quoter->full_name ?? '' }} </td>
+						
+				<td><strong>Archived By	</strong>    </td>
+				<td colspan="2"> {{ $worksheet->bulker->full_name ?? '' }} </td>
 			</tr>
 		</table>
 		<table>
@@ -139,28 +146,10 @@ width:1180px;
 					@php $count++; @endphp
 
 					@if($count % 7 == 0)
-						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
+						</tr><tr><td colspan=8>&nbsp;</td></tr><tr>
 					@endif
 
 				@endforeach
-
-
-				{{--@foreach($samples->where('parentid', 0) as $sample)
-
-					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
-
-					@php $count++; @endphp
-
-					@if($count % 7 == 0)
-						</tr><tr><td colspan=7>&nbsp;</td></tr><tr>
-					@endif
-				@endforeach
-
-				@if($vl) 
-					<td align='center' > LPC </td><td align='center' > HPC </td><td  align='center' > NC </td>
-				@else
-					<td align='center' > PC </td><td  align='center' > NC </td>
-				@endif--}}
 			</tr>
 				
 		</table>

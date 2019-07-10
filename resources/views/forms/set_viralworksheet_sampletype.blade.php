@@ -64,7 +64,6 @@
                             </div>
                         </div>
 
-                        @if(env('APP_LAB') != 1)
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Samples Entered By/Received By</label>
@@ -90,7 +89,6 @@
                                 </div>
                             </div>
 
-                        @endif
 
                         <div class="hr-line-dashed"></div>
 
