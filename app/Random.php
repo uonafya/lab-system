@@ -2700,7 +2700,7 @@ class Random
 
     public static function linelist(){
     	echo "==> Getting Unique patients\n";
-    	$patients = Viralpatient::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->toArray();
+    	$patients = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->toArray();
     	echo "==> Getting patients` tests\n";
     	$tests = ViralsampleCompleteView::select()
     						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients)
