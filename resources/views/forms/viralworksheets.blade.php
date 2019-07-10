@@ -26,8 +26,28 @@
                 {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
             @else
 
+                @if(env('APP_LAB') == 8)
             
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="hpanel">
+                                <div class="panel-body"> 
+                                    <div class="alert alert-warning">
+                                        <center>
+                                            Please select the samples that you want to enter the worksheet.
+                                        </center>
+                                    </div>
+                                <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+
+                @endif
+
+                <!-- The partial view below has forms for deleting samples hence the form will start after this row for other labs -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">
@@ -41,7 +61,9 @@
                     </div>                
                 </div>
                 
-                {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+                @if(env('APP_LAB') != 8)
+                    {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+                @endif
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
                 <input type="hidden" value="{{ $sampletype }}" name="sampletype" >

@@ -97,10 +97,17 @@ width:1180px;
 			</tr>
 			<tr class="even">
 				<td><strong>Sorted By	</strong>    </td>
-				<td> {{ $worksheet->sorter->full_name ?? '' }} </td>
+				<td colspan="2"> {{ $worksheet->sorter->full_name ?? '' }} </td>
 						
 				<td><strong>Run By	</strong>    </td>
-				<td> {{ $worksheet->runner->full_name ?? '' }} </td>
+				<td colspan="2"> {{ $worksheet->runner->full_name ?? '' }} </td>
+			</tr>
+			<tr class="even">
+				<td><strong>Aliquoted By	</strong>    </td>
+				<td colspan="2"> {{ $worksheet->quoter->full_name ?? '' }} </td>
+						
+				<td><strong>Archived By	</strong>    </td>
+				<td colspan="2"> {{ $worksheet->bulker->full_name ?? '' }} </td>
 			</tr>
 		</table>
 		<table>

@@ -32,6 +32,11 @@ class Worksheet extends BaseModel
         return $this->belongsTo('App\User', 'bulkedby');
     }
 
+    public function quoter()
+    {
+        return $this->belongsTo('App\User', 'alliquotedby');
+    }
+
     public function creator()
     {
     	return $this->belongsTo('App\User', 'createdby');
