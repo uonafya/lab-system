@@ -2705,11 +2705,14 @@ class Random
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
     	foreach ($patientsGroups as $key => $patients) {
     		echo "==> Getting patients` tests {$key}\n";
-    		$dataArray[] = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
+    		$tests = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
     						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients->toArray())
     						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
-    						->orderBy('datetested', 'desc')->limit(1)->get()->toArray();
+    						->orderBy('datetested', 'desc')->limit(1)->get();
+    		foreach ($tests as $key => $test) {
+    			$dataArray[] = $test->toArray();
+    		}
     	}
     	dd($dataArray);
     	$file = 'VL Unique Patients Line List';
