@@ -2711,7 +2711,7 @@ class Random
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						->orderBy('datetested', 'desc')->limit(1)->get()->toArray();
     	}
-    	
+    	dd($dataArray);
     	$file = 'VL Unique Patients Line List';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
     	Excel::create($file, function($excel) use($dataArray)  {
