@@ -2714,7 +2714,7 @@ class Random
     			$dataArray[] = $test->toArray();
     		}
     	}
-    	dd($dataArray);
+    	// dd($dataArray);
     	$file = 'VL Unique Patients Line List';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
     	Excel::create($file, function($excel) use($dataArray)  {
