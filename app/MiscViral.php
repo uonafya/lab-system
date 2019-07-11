@@ -88,7 +88,7 @@ class MiscViral extends Common
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
         $sample->fill($original->only($fields['sample_rerun']));
-        if(env('APP_LAB') == 9){
+        if(env('APP_LAB') == 8){
             $sample->label_id = $original->label_id;
             $sample->areaname = $original->areaname;
         }
