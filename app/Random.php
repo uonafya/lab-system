@@ -2704,11 +2704,11 @@ class Random
     	ini_set("memory_limit", "-1");
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
     	foreach ($patientsGroups as $key => $patients) {
-    		$dataArray[] = ViralsampleCompleteView::select('id','original_batch_id','patient','labdesc','county','subcounty','partner','facility','facilitycode','gender_description','dob','age','sampletype','datecollected','justification','datereceived','datetested','datedispatched','initiation_date','receivedstatus','reason_for_repeat','rejectedreason','regimen', 'regimenline','pmtct','result')
-    						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients->toArray())
+    		echo "==> Getting patients` tests {$key}\n";
+    		$dataArray[] = ViralsampleCompleteView::select('id','original_batch_id','patient','labdesc','county','subcounty','partner','facility','facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
+    						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients->toArray())->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
     						->orderBy('datetested', 'desc')->limit(1)->get()->toArray();
     	}
-    	echo "==> Getting patients` tests\n";
     	
     	$file = 'VL Unique Patients Line List';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
