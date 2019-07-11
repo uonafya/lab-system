@@ -2701,7 +2701,8 @@ class Random
     public static function linelist(){
     	echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
-    	$patients = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->toArray();
+    	$patients = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->count();
+    	dd($patients);
     	echo "==> Getting patients` tests\n";
     	$tests = ViralsampleCompleteView::select('id','original_batch_id','patient','labdesc','county','subcounty','partner','facility','facilitycode','gender_description','dob','age','sampletype','datecollected','justification','datereceived','datetested','datedispatched','initiation_date','receivedstatus','reason_for_repeat','rejectedreason','regimen', 'regimenline','pmtct','result')
     						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients)
