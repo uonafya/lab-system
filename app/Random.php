@@ -2704,7 +2704,8 @@ class Random
     	ini_set("memory_limit", "-1");
     	// $patientsGroups = Sample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
     	// foreach ($patientsGroups as $key => $patients) {
-    		echo "==> Getting patients` tests {$key}\n";
+    		// echo "==> Getting patients` tests {$key}\n";
+    		echo "==> Getting tests \n";
     		$tests = SampleCompleteView::select('sample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
@@ -2719,6 +2720,7 @@ class Random
     		}
     	// }
     	// dd($dataArray);
+    	echo "==> Preparing excel \n";
     	$file = 'EID Unique Patients Line List';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
     	Excel::create($file, function($excel) use($dataArray)  {
