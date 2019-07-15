@@ -2707,7 +2707,7 @@ class Random
     		// echo "==> Getting patients` tests {$key}\n";
     		echo "==> Getting tests \n";
     		// $tests = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
-    		$tests = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrolment_ccc_no','datecollected','datereceived','datetested','datedispatched','infantprophylaxis','receivedstatus','labcomment','reason_for_repeat','spots','feeding_name','entrypoint','infantresult','motherprophylaxis','motherresult','mother_age','mother_ccc_no','mother_last_result')
+    		$tests = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','infantprophylaxis','receivedstatus','labcomment','reason_for_repeat','spots','feeding_name','entrypoint','infantresult','motherprophylaxis','motherresult','mother_age','mother_ccc_no','mother_last_result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
     						// ->whereIn('patient_id', $patients->toArray())
