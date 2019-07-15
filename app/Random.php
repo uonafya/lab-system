@@ -2706,14 +2706,14 @@ class Random
     	// foreach ($patientsGroups as $key => $patients) {
     		// echo "==> Getting patients` tests {$key}\n";
     		echo "==> Getting tests \n";
-    		$tests = SampleCompleteView::select('sample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
+    		$tests = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
     						// ->whereIn('patient_id', $patients->toArray())
     						->whereYear('datetested', 2019)
     						->whereRaw("month(datetested) IN (4, 5, 6)")
-    						->join('labs', 'labs.id', '=', 'sample_complete_view.lab_id')
-    						->join('view_facilitys', 'view_facilitys.id', '=', 'sample_complete_view.facility_id')
+    						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
+    						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						->orderBy('datetested', 'desc')->limit(1)->get();
     		foreach ($tests as $key => $test) {
     			$dataArray[] = $test->toArray();
