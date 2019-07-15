@@ -2700,22 +2700,26 @@ class Random
 
     public static function linelist(){
     	$dataArray = [];
-    	echo "==> Getting Unique patients\n";
+    	// echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
-    	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
-    	foreach ($patientsGroups as $key => $patients) {
+    	// $patientsGroups = Sample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
+    	// foreach ($patientsGroups as $key => $patients) {
     		echo "==> Getting patients` tests {$key}\n";
-    		$tests = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
-    						->where('repeatt', 0)->whereIn('rcategory', [1,2,3,4])->whereIn('patient_id', $patients->toArray())
-    						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
-    						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
+    		$tests = SampleCompleteView::select('sample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
+    						->where('repeatt', 0)
+    						// ->whereIn('rcategory', [1,2,3,4])
+    						// ->whereIn('patient_id', $patients->toArray())
+    						->whereYear('datetested', 2019)
+    						->whereRaw("month(datetested) IN (4, 5, 6)")
+    						->join('labs', 'labs.id', '=', 'sample_complete_view.lab_id')
+    						->join('view_facilitys', 'view_facilitys.id', '=', 'sample_complete_view.facility_id')
     						->orderBy('datetested', 'desc')->limit(1)->get();
     		foreach ($tests as $key => $test) {
     			$dataArray[] = $test->toArray();
     		}
-    	}
+    	// }
     	// dd($dataArray);
-    	$file = 'VL Unique Patients Line List';
+    	$file = 'EID Unique Patients Line List';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
     	Excel::create($file, function($excel) use($dataArray)  {
 		    $excel->sheet('Sheetname', function($sheet) use($dataArray) {
@@ -2726,3 +2730,5 @@ class Random
 		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
     }
 }
+
+// id	patient	original_batch_id	labdesc	county	subcounty	partner	facility	facilitycode	gender_description	dob	age	pcrtype	enrolment_ccc_no	datecollected	datereceived	datetested	datedispatched	infantprophylaxis	receivedstatus	labcomment	reason_for_repeat	spots	feeding_name	entrypoint	infantresult	motherprophylaxis	motherresult	mother_age	mother_ccc_no	mother_last_result
