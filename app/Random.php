@@ -2706,8 +2706,8 @@ class Random
     	// foreach ($patientsGroups as $key => $patients) {
     		// echo "==> Getting patients` tests {$key}\n";
     		echo "==> Getting tests \n";
-    		// $tests = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
-    		$tests = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
+    		$tests = ViralsampleCompleteView::select('viralsample_complete_view.id','original_batch_id','patient','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','sampletype','datecollected','justification_name','datereceived','datetested','datedispatched','initiation_date','receivedstatus_name','reason_for_repeat','rejected_name','prophylaxis_name', 'regimenline','pmtct_name','result')
+    		// $tests = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
     						// ->whereIn('patient_id', $patients->toArray())
@@ -2715,15 +2715,15 @@ class Random
     						->whereRaw("month(datetested) IN (4, 5, 6)")
     						->join('labs', 'labs.id', '=', 'sample_complete_view.lab_id')
     						->join('view_facilitys', 'view_facilitys.id', '=', 'sample_complete_view.facility_id')
-    						->join('results', 'results.id', '=', 'sample_complete_view.result')
-    						->orderBy('datetested', 'desc')->limit(1)->get();
-    		foreach ($tests as $key => $test) {
+    						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
+    						->orderBy('datetested', 'desc')->get()->toArray();
+    		// foreach ($tests as $key => $test) {
     			$dataArray[] = $test->toArray();
-    		}
+    		// }
     	// }
     	// dd($dataArray);
     	echo "==> Preparing excel \n";
-    	$file = 'EID Unique Patients Line List';
+    	$file = 'EID Line List 2019 Quarter 2';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
     	Excel::create($file, function($excel) use($dataArray)  {
 		    $excel->sheet('Sheetname', function($sheet) use($dataArray) {
