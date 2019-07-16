@@ -246,6 +246,7 @@ class ViralsampleController extends Controller
         $user = auth()->user();
 
         $batch = session('viral_batch');
+        if($batch) $batch = Viralbatch::find($batch->id);
 
         if($submit_type == "cancel"){
             if($batch) $batch->premature();
