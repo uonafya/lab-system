@@ -2715,7 +2715,7 @@ class Random
     						->whereRaw("month(datetested) IN (4, 5, 6)")
     						->join('labs', 'labs.id', '=', 'sample_complete_view.lab_id')
     						->join('view_facilitys', 'view_facilitys.id', '=', 'sample_complete_view.facility_id')
-    						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
+    						->join('results', 'results.id', '=', 'sample_complete_view.result')
     						->orderBy('datetested', 'desc')->toSql();
     		// foreach ($tests as $key => $test) {
     			// $dataArray[] = $test->toArray();
