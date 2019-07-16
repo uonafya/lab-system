@@ -16,6 +16,9 @@
             <a href="{{ url('worksheet/index/1') }}" title="In-Process Worksheets">
                 In-Process Worksheets
             </a> |
+            <a href="{{ url('worksheet/index/12') }}" title="In-Process Worksheets">
+                In-Process Worksheets (With Reruns)
+            </a> |
             <a href="{{ url('worksheet/index/2') }}" title="Tested Worksheets">
                 Tested Worksheets
             </a> |
