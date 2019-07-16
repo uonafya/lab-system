@@ -532,7 +532,7 @@ class Lookup
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
             $pmtct_types = DB::table('viralpmtcttype')->get();
             $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
-            $justifications = DB::table('viraljustifications')->orderBy('displaylabel', 'asc')->get();
+            $justifications = DB::table('viraljustifications')->orderBy('displaylabel', 'asc')->where('flag', 1)->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
             $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
             $vl_result_guidelines = DB::table('vlresultsguidelines')->get();
