@@ -2716,12 +2716,12 @@ class Random
     						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
-    						->orderBy('datetested', 'desc')->get()->toArray();
+    						->orderBy('datetested', 'desc')->toSql();
     		// foreach ($tests as $key => $test) {
     			// $dataArray[] = $test->toArray();
     		// }
     	// }
-    	// dd($dataArray);
+    	dd($dataArray);
     	echo "==> Preparing excel \n";
     	$file = 'VL Line List 2019 Quarter 2';
     	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
