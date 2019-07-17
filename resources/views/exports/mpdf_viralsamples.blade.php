@@ -259,7 +259,7 @@ p.breakhere {page-break-before: always}
 					$vlmessage='';
 				}
 				else if($sample->receivedstatus != 2 && $sample->result == "Collect New Sample"){
-					$vlmessage='Failed Test';
+					// $vlmessage='Failed Test';
 				}
 				else{
 					if($sample->result <= 1000){
