@@ -27,7 +27,14 @@ class WorksheetController extends Controller
             return $query->where('worksheets.id', $worksheet_id);
         })
         ->when($state, function ($query) use ($state){
-            if($state == 1) $query->orderBy('worksheets.id', 'asc');
+            if($state == 1 || $state == 12) $query->orderBy('worksheets.id', 'asc');
+            if($state == 12){
+                return $query->where('status_id', 1)->whereRaw("worksheets.id in (
+                    SELECT DISTINCT worksheet_id
+                    FROM samples_view
+                    WHERE parentid > 0 AND site_entry != 2
+                )");
+            }
             return $query->where('status_id', $state);
         })
         ->when($date_start, function($query) use ($date_start, $date_end){
