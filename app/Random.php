@@ -2718,7 +2718,7 @@ class Random
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
     						->orderBy('datetested', 'desc')->get();
-    		dd($tests);
+    		// dd($tests);
     		foreach ($tests as $key => $test) {
     			$dataArray[] = $test->toArray();
     		}
