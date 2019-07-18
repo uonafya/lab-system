@@ -2717,7 +2717,8 @@ class Random
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
-    						->orderBy('datetested', 'desc')->limit(1);
+    						->orderBy('datetested', 'desc')->limit(1)->get();
+    		dd($tests);
     		foreach ($tests as $key => $test) {
     			$dataArray[] = $test->toArray();
     		}
