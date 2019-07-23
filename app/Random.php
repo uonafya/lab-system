@@ -2740,7 +2740,9 @@ class Random
 			})->store('csv');
 			$data = [storage_path("exports/" . $file . ".csv")];
 			Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
+			echo "\t Completed month {$value}\n";
     	}
+    	echo "==> Completed everything";
 
     	// dd($dataArray);
     	
