@@ -147,7 +147,7 @@ class Random
 
     	foreach ($samples as $samp) {
     		if(in_array($samp->parentid, $parent_ids)) continue;
-    		$runs = \App\SampleView::whereRaw("(id={$samp->parentid} OR parentid={$samp->parentid})")->get();
+    		$runs = \App\SampleView::selectRaw($sql)->whereRaw("(id={$samp->parentid} OR parentid={$samp->parentid})")->get();
 
     		foreach ($runs as $run) {
     			$r = $run->toArray();
