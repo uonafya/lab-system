@@ -2705,7 +2705,7 @@ class Random
     	echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
-    	echo "==> Getting patients' data\n"
+    	echo "==> Getting patients' data\n";
     	foreach ($patientsGroups as $key => $patients) {
     		echo "\tGetting patients` batch {$key}\n";
     		// echo "==> Getting tests \n";
