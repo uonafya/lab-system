@@ -2718,7 +2718,7 @@ class Random
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
     						->orderBy('datetested', 'desc')->get();
-    		// dd($tests);
+    		dd($tests->count());
     		$dataArray = $tests->toArray();
 	    	echo "==> Preparing excel {$key} \n";
 	    	$file = 'VL Line List 2018 Unique patients ' . $key;
