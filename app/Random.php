@@ -2723,7 +2723,7 @@ class Random
     						->orderBy('datetested', 'desc')->get();
     		// dd($tests);
     		foreach ($tests as $key => $test) {
-    			$data[] = $test->toArray();
+    			$data[] = $test;
     		}
     	}
     	echo "==> Splitting to months\n";
