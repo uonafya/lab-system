@@ -143,7 +143,7 @@ class Random
 
     	$rows = $parent_ids = [];
 
-    	$sql = "id AS `Lab ID`, parentid AS `Original Lab ID`, run, patient as `HEI Number`, facilitycode as `MFL Code`, facilityname as `Facility`, batch_id AS `Batch`, worksheet_id AS `Worksheet`, datetested AS `Date Tested`, interpretation as `Raw Result`, result, datedispatched AS `Date Dispatched` ";
+    	$sql = "id AS `Lab ID`, parentid AS `Original Lab ID`, run, patient as `HEI Number`, facilitycode as `MFL Code`, facilityname as `Facility`, batch_id AS `Batch`, worksheet_id AS `Worksheet`, datetested AS `Date Tested`, interpretation as `Raw Result`, result, repeatt as `Final Result`, datedispatched AS `Date Dispatched` ";
 
     	foreach ($samples as $samp) {
     		if(in_array($samp->parentid, $parent_ids)) continue;
@@ -152,6 +152,11 @@ class Random
     		foreach ($runs as $run) {
     			$r = $run->toArray();
     			$r['result'] = $run->result_name;
+    			if($r['Final Result']) $r['Final Result'] = 'No';
+    			else{
+    				$r['Final Result'] = 'Yes';
+    			}
+    			
     			$rows[] = $r;
     		}
     	}
