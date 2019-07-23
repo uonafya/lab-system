@@ -2723,7 +2723,7 @@ class Random
     						->orderBy('datetested', 'desc')->get();
     		// dd($tests);
     		foreach ($tests as $key => $test) {
-    			$data[] = $test->toArray();
+    			$data[] = $test;
     		}
     	}
     	echo "==> Splitting to months\n";
@@ -2732,7 +2732,7 @@ class Random
     		$dataArray = $data->where('testmonth', $value)->toArray();
     		
     		echo "\tPreparing excel {$value}\n";
-	    	$file = 'VL Line List 2018 Unique patients ' . $value;
+	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
 	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
 	    	Excel::create($file, function($excel) use($dataArray)  {
 			    $excel->sheet('Sheetname', function($sheet) use($dataArray) {
