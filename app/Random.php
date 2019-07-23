@@ -2742,7 +2742,7 @@ class Random
 			$data = [storage_path("exports/" . $file . ".csv")];
 			Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
 			echo "\t Completed month {$value}\n";
-			dd('Only the first');
+			// dd('Only the first');
     	}
     	echo "==> Completed everything";
 
