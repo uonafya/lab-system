@@ -2729,7 +2729,7 @@ class Random
     	echo "==> Splitting to months\n";
     	$data = collect($data);
     	foreach ($months as $key => $value) {
-    		$dataArray = collect($data)->where('testmonth', $value)->toArray();
+    		$dataArray = collect($data)->where('testmonth', $value)->flatten(1)->toArray();
     		dd($dataArray);
     		echo "\tPreparing excel {$value}\n";
 	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
