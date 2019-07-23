@@ -2729,7 +2729,7 @@ class Random
     	echo "==> Splitting to months\n";
     	$data = collect($data);
     	foreach ($months as $key => $value) {
-    		$dataArray = collect($data)->where('testmonth', $value)->flatten(1)->toArray();
+    		$dataArray = collect(array_values($data))->where('testmonth', $value)->flatten(1)->slice(0, 10)->toArray();
     		// dd($dataArray);
     		echo "\tPreparing excel {$value}\n";
 	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
@@ -2742,6 +2742,7 @@ class Random
 			$data = [storage_path("exports/" . $file . ".csv")];
 			Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
 			echo "\t Completed month {$value}\n";
+			dd('Only the first');
     	}
     	echo "==> Completed everything";
 
