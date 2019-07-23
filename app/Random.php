@@ -2719,7 +2719,7 @@ class Random
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
     						->orderBy('datetested', 'desc')->get();
     		// dd($tests);
-    		$dataArray = $test->toArray();
+    		$dataArray = $tests->toArray();
 	    	echo "==> Preparing excel {$key} \n";
 	    	$file = 'VL Line List 2018 Unique patients ' . $key;
 	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
