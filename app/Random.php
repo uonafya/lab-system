@@ -2730,7 +2730,7 @@ class Random
     	$data = collect($data);
     	foreach ($months as $key => $value) {
     		$dataArray = collect($data)->where('testmonth', $value)->toArray();
-    		
+    		dd($dataArray);
     		echo "\tPreparing excel {$value}\n";
 	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
 	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
