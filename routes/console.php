@@ -469,4 +469,14 @@ Artisan::command('missing', function(){
     $this->info($str);
 })->describe('merge Missing Kemri Results');
 
+
+Artisan::command('get:ken', function(){
+    $str = \App\Random::run_ken_request();
+    $this->info($str);
+});
+
+Artisan::command('get:linelist', function(){
+    $str = \App\Random::linelist();
+    $this->info($str);
+});
 //Quick fixes
