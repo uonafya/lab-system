@@ -576,11 +576,13 @@ class ReportController extends Controller
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            $receivedOnly=false;
+            $receivedOnly=$useDateCollected=false;
             if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
                 $receivedOnly=true;
+
+            if ($request->input('types') == 'awaitingtesting') $useDateCollected=true;
             
-            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
+            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
 
         $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
