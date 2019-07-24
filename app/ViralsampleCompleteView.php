@@ -12,7 +12,7 @@ class ViralsampleCompleteView extends ViewModel
 	public static function run() {
 		DB::statement("CREATE OR REPLACE VIEW viralsample_complete_view AS
         (
-          SELECT s.*, b.batch_id, b.highpriority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, b.facility_id, b.batch_complete,
+          SELECT s.*, b.id, b.highpriority, b.datereceived, b.datedispatched, b.site_entry, b.lab_id, b.facility_id, b.batch_complete,
           p.patient_id, p.patient_status, p.patient, p.sex, p.dob, p.initiation_date, g.gender_description, rs.name as receivedstatus_name, vp.name as prophylaxis_name, vj.name as justification_name, vs.name as sampletype_name, vpt.name as pmtct_name, vr.name as rejected_name
 
           FROM viralsamples s
