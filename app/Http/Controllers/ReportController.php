@@ -201,6 +201,11 @@ class ReportController extends Controller
                 $data = $this->__getTATData($request, $dateString)->get();
                 $this->__getTATExcel($data, $dateString);
             }else {
+                // if($request->input('types') == 'awaitingtesting'){
+                //     DB::enableQueryLog();
+                //     $data = self::__getDateData($request,$dateString)->get();
+                //     return DB::getQueryLog();
+                // }
                 $data = self::__getDateData($request,$dateString)->get();
                 $this->__getExcel($data, $dateString, $request);
             }
@@ -285,12 +290,12 @@ class ReportController extends Controller
             if(is_array($param)){
                 $model = $model->whereIn('view_facilitys.county_id', $param);
                 $names = DB::table('countys')->whereIn('id', $param)->get()->pluck('name')->toArray();
-                $title .= implode(',', $names).'counties ';
+                $title .= implode(',', $names).' counties ';
             }
             else{
                 $model = $model->where('view_facilitys.county_id', '=', $param);
-                $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
-                $title .= $county->county.'county ';
+                $county = ViewFacility::where('county_id', '=', $param)->get()->first();
+                $title .= $county->county.' county ';
             }
 
         } else if ($request->input('category') == 'subcounty') {
@@ -576,11 +581,13 @@ class ReportController extends Controller
     		$dateString = date('d-M-Y', strtotime($request->input('specificDate')));
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
-            $receivedOnly=false;
+            $receivedOnly=$useDateCollected=false;
             if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
                 $receivedOnly=true;
+
+            if ($request->input('types') == 'awaitingtesting') $useDateCollected=true;
             
-            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly);
+            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
 
         $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
@@ -592,7 +599,7 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "=", '2');
             $report .= 'rejected outcomes ';
         } else if ($request->input('types') == 'awaitingtesting') {
-            $model = $model->where("$table.receivedstatus", "<>", '2')->whereNull("$table.datetested")->whereNull("$table.datedispatched");
+            $model = $model->whereRaw("({$table}.receivedstatus is null OR {$table}.receivedstatus != 2)")->whereNull("$table.datetested")->whereNull("$table.datedispatched");
             $report .= 'awaiting testing ';
         } else if ($request->input('types') == 'positives') {
             $model = $model->where("$table.result", "=", 2);
