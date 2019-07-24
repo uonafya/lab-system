@@ -30,12 +30,19 @@ class ViralworksheetController extends Controller
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
-                if($state == 1) $query->orderBy('viralworksheets.id', 'asc');
+                if($state == 1 || $state == 12) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
                         SELECT DISTINCT worksheet_id
                         FROM viralsamples_view
                         WHERE facility_id IN (50001, 3475)
+                    )");
+                }
+                if($state == 12){
+                    return $query->where('status_id', 1)->whereRaw("viralworksheets.id in (
+                        SELECT DISTINCT worksheet_id
+                        FROM viralsamples_view
+                        WHERE parentid > 0 AND site_entry != 2
                     )");
                 }
                 return $query->where('status_id', $state);                
@@ -131,24 +138,35 @@ class ViralworksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new Viralworksheet;
-        $worksheet->fill($request->except('_token', 'limit', 'entered_by'));
+        $worksheet->fill($request->except(['_token', 'limit', 'entered_by', 'samples']));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
-        $sampletype = $worksheet->sampletype;
 
-        $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'), $request->input('entered_by'));
-
-        if(!$data || (!$data['create'])){
-            dd($data);
-            $worksheet->delete();
-            session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
-            return back();            
+        if(env('APP_LAB') == 8){
+            $sample_ids = $request->input('samples');
+            if(!$sample_ids){
+                $worksheet->delete();
+                session(['toast_error' => 1, 'toast_message' => 'Please select the samples that you would like to run.']);
+                return back();            
+            }
         }
-        
-        $samples = $data['samples'];
+        else{
+            $sampletype = $worksheet->sampletype;
 
-        $sample_ids = $samples->pluck('id');
+            $data = MiscViral::get_worksheet_samples($worksheet->machine_type, $worksheet->calibration, $worksheet->sampletype, $request->input('limit'), $request->input('entered_by'));
+
+            if(!$data || (!$data['create'])){
+                // dd($data);
+                $worksheet->delete();
+                session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
+                return back();            
+            }
+            
+            $samples = $data['samples'];
+
+            $sample_ids = $samples->pluck('id');
+        }
         Viralsample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
         return redirect()->route('viralworksheet.print', ['worksheet' => $worksheet->id]);
     }

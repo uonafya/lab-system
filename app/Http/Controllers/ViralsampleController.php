@@ -246,6 +246,7 @@ class ViralsampleController extends Controller
         $user = auth()->user();
 
         $batch = session('viral_batch');
+        if($batch) $batch = Viralbatch::find($batch->id);
 
         if($submit_type == "cancel"){
             if($batch) $batch->premature();
@@ -367,7 +368,8 @@ class ViralsampleController extends Controller
         if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->patient = $patient_string;
-        $viralpatient->save();
+        $viralpatient->pre_update();
+        
 
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample = new Viralsample;
@@ -378,6 +380,10 @@ class ViralsampleController extends Controller
         }
         $viralsample->patient_id = $viralpatient->id;
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
+        if($viralsample->age > 2 && $viralsample->justification == 10){
+            session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the justification cannot be baseline when the client is over 2 years of age.']);
+            return back();
+        }
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 

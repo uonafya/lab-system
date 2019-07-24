@@ -3,6 +3,9 @@
 		<thead>
 			<tr>
 				<th>#</th>
+				@if(env('APP_LAB') == 8)
+					<th>Select (to enter worksheet)</th>
+				@endif
 				<th>Lab ID</th>
 				<th>Patient</th>
 				<th>Facility</th>
@@ -15,13 +18,22 @@
 				<th>Entered By</th>
 				<th>Release as Redraw</th>
 				<th>Update</th>
-				<th>Delete</th>
+				@if(env('APP_LAB') != 8)
+					<th>Delete</th>
+				@endif
 			</tr>
 		</thead>
 		<tbody>
 			@foreach($samples as $key => $sample)
 				<tr>
 					<td> {{ ($key+1) }} </td>
+					@if(env('APP_LAB') == 8)
+						<td>
+                            <div align='center'>
+                                <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' checked="checked" />
+                            </div>
+                        </td>
+					@endif
 					<td> {{ $sample->id }} </td>
 					<td> {{ $sample->patient }} </td>
 					<td> {{ $sample->name }} </td>
@@ -49,11 +61,13 @@
 
 	                <td> <a href="{{ url('viralsample/release/' . $sample->id) }}" class="confirmAction"> Release</a> </td>
 	                <td> <a href="{{ url('viralsample/' . $sample->id . '/edit') }}"> Edit</a> </td>
-	                <td> 
-	                    {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?');"]) }}
-	                        <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-	                    {{ Form::close() }} 
-	                </td>
+					@if(env('APP_LAB') != 8)
+		                <td> 
+		                    {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?');"]) }}
+		                        <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+		                    {{ Form::close() }} 
+		                </td>
+					@endif
 				</tr>
 			@endforeach
 		</tbody>
