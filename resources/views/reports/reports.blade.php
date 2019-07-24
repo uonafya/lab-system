@@ -103,7 +103,7 @@
                                     <input type="radio" name="category" value="county" class="i-checks">Select County
                                 </label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="report_county_search" name="county" multiple="multiple"></select>
+                                    <select class="form-control" id="report_county_search" name="county[]" multiple="multiple"></select>
                                 </div>
                             </div>
                             <div class="row">
