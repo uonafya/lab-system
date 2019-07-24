@@ -201,6 +201,11 @@ class ReportController extends Controller
                 $data = $this->__getTATData($request, $dateString)->get();
                 $this->__getTATExcel($data, $dateString);
             }else {
+                if($request->input('types') == 'awaitingtesting'){
+                    DB::enableQueryLog();
+                    $data = self::__getDateData($request,$dateString)->get();
+                    return DB::getQueryLog();
+                }
                 $data = self::__getDateData($request,$dateString)->get();
                 $this->__getExcel($data, $dateString, $request);
             }
@@ -285,12 +290,12 @@ class ReportController extends Controller
             if(is_array($param)){
                 $model = $model->whereIn('view_facilitys.county_id', $param);
                 $names = DB::table('countys')->whereIn('id', $param)->get()->pluck('name')->toArray();
-                $title .= implode(',', $names).'counties ';
+                $title .= implode(',', $names).' counties ';
             }
             else{
                 $model = $model->where('view_facilitys.county_id', '=', $param);
-                $county = ViewFacility::where('county_id', '=', $request->input('county'))->get()->first();
-                $title .= $county->county.'county ';
+                $county = ViewFacility::where('county_id', '=', $param)->get()->first();
+                $title .= $county->county.' county ';
             }
 
         } else if ($request->input('category') == 'subcounty') {
