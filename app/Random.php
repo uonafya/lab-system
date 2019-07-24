@@ -2738,7 +2738,7 @@ class Random
     public static function linelist(){
     	$dataArray = [];
     	$data = [];
-    	$months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    	$months = ['Q1' => [1, 2, 3], 'Q2' => [4, 5, 6], 'Q3' => [7, 8, 9], 'Q4' => [10, 11, 12]];
     	echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
@@ -2766,7 +2766,7 @@ class Random
     	echo "==> Splitting to months\n";
     	$data = collect($data);
     	foreach ($months as $key => $value) {
-    		$dataArray = array_values(collect($data)->where('testmonth', $value)->flatten(1)->toArray());
+    		$dataArray = array_values(collect($data)->whereIn('testmonth', $value)->flatten(1)->toArray());
     		// dd($dataArray);
     		echo "\tPreparing excel {$value}\n";
 	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
