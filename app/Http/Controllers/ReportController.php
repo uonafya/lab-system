@@ -592,7 +592,7 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "=", '2');
             $report .= 'rejected outcomes ';
         } else if ($request->input('types') == 'awaitingtesting') {
-            $model = $model->where("$table.receivedstatus", "<>", '2')->whereNull("$table.datetested")->whereNull("$table.datedispatched");
+            $model = $model->whereRaw("({$table}.receivedstatus is null OR {$table}.receivedstatus=1)")->whereNull("$table.datetested")->whereNull("$table.datedispatched");
             $report .= 'awaiting testing ';
         } else if ($request->input('types') == 'positives') {
             $model = $model->where("$table.result", "=", 2);
