@@ -2768,7 +2768,7 @@ class Random
     	foreach ($months as $key => $value) {
     		$dataArray = array_values(collect($data)->whereIn('testmonth', $value)->flatten(1)->toArray());
     		// dd($dataArray);
-    		echo "\tPreparing excel {$value}\n";
+    		echo "\tPreparing excel {$key}\n";
 	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
 	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
 	    	Excel::create($file, function($excel) use($dataArray)  {
