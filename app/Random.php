@@ -137,6 +137,43 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+    public static function rerun_data()
+    {
+    	$samples = \App\SampleView::where('run', '>', 2)->where('datedispatched', '>', '2017-01-01')->get();
+
+    	$rows = $parent_ids = [];
+
+    	$sql = "id AS `Lab ID`, parentid AS `Original Lab ID`, run, patient as `HEI Number`, facilitycode as `MFL Code`, facilityname as `Facility`, batch_id AS `Batch`, worksheet_id AS `Worksheet`, datetested AS `Date Tested`, interpretation as `Raw Result`, result, repeatt as `Final Result`, datedispatched AS `Date Dispatched` ";
+
+    	foreach ($samples as $samp) {
+    		if(in_array($samp->parentid, $parent_ids)) continue;
+    		$runs = \App\SampleView::selectRaw($sql)->whereRaw("(id={$samp->parentid} OR parentid={$samp->parentid})")->get();
+
+    		foreach ($runs as $run) {
+    			$r = $run->toArray();
+    			$r['result'] = $run->result_name;
+    			if($r['Final Result']) $r['Final Result'] = 'No';
+    			else{
+    				$r['Final Result'] = 'Yes';
+    			}
+    			
+    			$rows[] = $r;
+    		}
+    	}
+
+		$file = 'multiple_runs_data';
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$files = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function enter_samples()
     {
     	$file = public_path('machakos.csv');
