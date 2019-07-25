@@ -98,10 +98,22 @@
 
         <br />
         <br />
+
+        <table style="display: inline-block;">
+            <th><b>LAB CONTACTS </b> </td>
+            <tr><td><b> {{ $lab->labname }} </b></td></tr>
+            <tr><td>{{ $lab->name }} </td></tr>
+            <tr><td>{{ $lab->lablocation }} </td></tr>
+            <tr><td>{{ $lab->labtel1 }} </td></tr>
+            <tr><td>{{ $lab->labtel2 }} </td></tr>
+            <tr><td>{{ $lab->email }} </td></tr>
+        </table>
+                
         <br />
         <br />
 
     <!-- </div> -->
+
 
     <!-- Footer-->
     <footer class="footer">
