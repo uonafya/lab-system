@@ -663,17 +663,18 @@ class TaskController extends Controller
                         
             if ($value == 'received') {
                 $column = 'datereceived';
-                $model = $model->whereRaw("((parentid=0)||(parentid IS NULL))");
+                $model = $model->where('receivedstatus', '<>', 2);
             } else if ($value == 'rejected') {
                 $column = 'datereceived';
-                $model = $model->where('receivedstatus', '=', 2)->where('repeatt', '=', 0);
+                $model = $model->where('receivedstatus', '=', 2);
             } else if ($value == 'tested') {
                 $column = 'datetested';
+                $model = $model->where('receivedstatus', '<>', 2)->whereNotNull('datetested');
             } else if ($value == 'logged') {
                 $column = 'created_at';
-                $model = $model->whereRaw("((parentid=0)||(parentid IS NULL))");
+                // $model = $model->whereRaw("((parentid=0)||(parentid IS NULL))");
             }
-            $result[$value] = $model->whereRaw("YEAR($column) = $year")->whereRaw("MONTH($column) = $month")->count();
+            $result[$value] = $model->whereRaw("YEAR($column) = $year")->whereRaw("MONTH($column) = $month")->where('lab_id', env('APP_LAB'))->count();
         }
         return $result;
     }
