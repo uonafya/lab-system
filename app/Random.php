@@ -2738,7 +2738,7 @@ class Random
     public static function linelist(){
     	$dataArray = [];
     	$data = [];
-    	$months = ['Q1' => [1, 2, 3], 'Q2' => [4, 5, 6], 'Q3' => [7, 8, 9], 'Q4' => [10, 11, 12]];
+    	$months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     	echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
@@ -2768,8 +2768,8 @@ class Random
     	foreach ($months as $key => $value) {
     		$dataArray = array_values(collect($data)->whereIn('testmonth', $value)->flatten(1)->toArray());
     		// dd($dataArray);
-    		echo "\tPreparing excel {$key}\n";
-	    	$file = 'New VL Line List 2018 Unique patients ' . $key;
+    		echo "\tPreparing excel {$value}\n";
+	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
 	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
 	    	Excel::create($file, function($excel) use($dataArray)  {
 			    $excel->sheet('Sheetname', function($sheet) use($dataArray) {
