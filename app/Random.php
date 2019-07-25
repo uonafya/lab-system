@@ -80,6 +80,7 @@ class Random
 		$rows = [];
 
 		foreach ($data as $key => $value) {
+			$value = collect($value);
 			$rows[] = $value->toArray();
 			// dd($value->toArray());
 		}
