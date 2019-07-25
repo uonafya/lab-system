@@ -73,7 +73,7 @@ class Random
 
     public static function export_facilities()
     {
-        $data = DB::table('hcm.view_facilitys v')->selectRaw("v.DHIScode, v.facilitycode AS `MFL Code`, v.NAME, v.is_surge, v.WardDHISCode, v.wardname, v.SubCountyDHISCode, v.subcounty, v.CountyDHISCode, v.countyname AS `County`, v.partnername AS `Partner`")->get();
+        $data = DB::table('hcm.view_facilitys')->selectRaw("DHIScode, facilitycode AS `MFL Code`, NAME, is_surge, WardDHISCode, wardname, SubCountyDHISCode, subcounty, CountyDHISCode, countyname AS `County`, partnername AS `Partner`")->get();
 
         $file = 'facilities';
 
