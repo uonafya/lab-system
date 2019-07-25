@@ -2769,7 +2769,7 @@ class Random
     		$dataArray = array_values(collect($data)->whereIn('testmonth', $value)->flatten(1)->toArray());
     		// dd($dataArray);
     		echo "\tPreparing excel {$key}\n";
-	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
+	    	$file = 'New VL Line List 2018 Unique patients ' . $key;
 	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
 	    	Excel::create($file, function($excel) use($dataArray)  {
 			    $excel->sheet('Sheetname', function($sheet) use($dataArray) {
