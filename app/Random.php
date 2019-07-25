@@ -71,6 +71,30 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public function export_facilities()
+    {
+        $data = DB::table('hcm.view_facilitys v')->selectRaw("v.DHIScode, v.facilitycode AS `MFL Code`, v.NAME, v.is_surge, v.WardDHISCode, v.wardname, v.SubCountyDHISCode, v.subcounty, v.CountyDHISCode, v.countyname AS `County`, v.partnername AS `Partner`")->get();
+
+        $file = 'facilities';
+
+		$rows = [];
+
+		foreach ($data as $key => $value) {
+			$rows[] = $value->toArray();
+			// dd($value->toArray());
+		}
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+    }
+
 
     public static function delete_site_entry()
     {
@@ -133,6 +157,43 @@ class Random
 
 			$files = [storage_path("exports/" . $file . ".csv")];
     	}		
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
+    public static function rerun_data()
+    {
+    	$samples = \App\SampleView::where('run', '>', 2)->where('datedispatched', '>', '2017-01-01')->get();
+
+    	$rows = $parent_ids = [];
+
+    	$sql = "id AS `Lab ID`, parentid AS `Original Lab ID`, run, patient as `HEI Number`, facilitycode as `MFL Code`, facilityname as `Facility`, batch_id AS `Batch`, worksheet_id AS `Worksheet`, datetested AS `Date Tested`, interpretation as `Raw Result`, result, repeatt as `Final Result`, datedispatched AS `Date Dispatched` ";
+
+    	foreach ($samples as $samp) {
+    		if(in_array($samp->parentid, $parent_ids)) continue;
+    		$runs = \App\SampleView::selectRaw($sql)->whereRaw("(id={$samp->parentid} OR parentid={$samp->parentid})")->get();
+
+    		foreach ($runs as $run) {
+    			$r = $run->toArray();
+    			$r['result'] = $run->result_name;
+    			if($r['Final Result']) $r['Final Result'] = 'No';
+    			else{
+    				$r['Final Result'] = 'Yes';
+    			}
+    			
+    			$rows[] = $r;
+    		}
+    	}
+
+		$file = 'multiple_runs_data';
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$files = [storage_path("exports/" . $file . ".csv")];
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
@@ -2701,7 +2762,7 @@ class Random
     public static function linelist(){
     	$dataArray = [];
     	$data = [];
-    	$months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    	$months = ['Q1' => [1, 2, 3], 'Q2' => [4, 5, 6], 'Q3' => [7, 8, 9], 'Q4' => [10, 11, 12]];
     	echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
@@ -2709,7 +2770,7 @@ class Random
     	foreach ($patientsGroups as $key => $patients) {
     		echo "\tGetting patients` batch {$key}\n";
     		// echo "==> Getting tests \n";
-    		$tests = ViralsampleCompleteView::selectRaw("distinct patient_id,viralsample_complete_view.id,original_batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
+    		$tests = ViralsampleCompleteView::selectRaw("distinct patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
     		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
@@ -2729,7 +2790,7 @@ class Random
     	echo "==> Splitting to months\n";
     	$data = collect($data);
     	foreach ($months as $key => $value) {
-    		$dataArray = array_values(collect($data)->where('testmonth', $value)->flatten(1)->toArray());
+    		$dataArray = array_values(collect($data)->whereIn('testmonth', $value)->flatten(1)->toArray());
     		// dd($dataArray);
     		echo "\tPreparing excel {$value}\n";
 	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
