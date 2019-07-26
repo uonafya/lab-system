@@ -80,9 +80,7 @@ class Random
 		$rows = [];
 
 		foreach ($data as $key => $value) {
-			$value = collect($value);
-			$rows[] = $value->toArray();
-			// dd($value->toArray());
+			$rows[] = get_object_vars($value);
 		}
 
 		Excel::create($file, function($excel) use($rows){
