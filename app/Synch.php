@@ -22,10 +22,8 @@ use App\FacilityChange;
 
 class Synch
 {
-	// public static $base = 'http://127.0.0.1:9000/api/';
-	// public static $base = 'http://eid-dash.nascop.org/api/';
+	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
-	// public static $base = 'http://lab-nat.test/api/';
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -133,13 +131,50 @@ class Synch
 		return $body->message;
 	}
 
+	public static function synch_time()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		try {
+			$response = $client->request('get', 'time', ['timeout' => 1]);
+			$body = json_decode($response->getBody());
+			exec("date +%Y%m%d -s '" . $body->date . "'");
+			exec("date +%T -s '" . $body->time . "'");			
+		} catch (Exception $e) {
+			
+		}
+	}
+
 	public static function test_nascop()
 	{
-		$base = 'https://api.nascop.org/eid';
+		$base = 'https://api.nascop.org/eid/ver2.0';
 		$client = new Client(['base_uri' => $base]);
 		$response = $client->request('get', '', ['timeout' => 1]);
 		$body = json_decode($response->getBody());
-		return $body->message;
+		if($response->getStatusCode() < 399) return true;
+		return false;
+	}
+
+	public static function clean_emails()
+	{
+		$base = 'https://api.mailgun.net/v3/nascop.or.ke/complaints';
+		$client = new Client(['base_uri' => $base]);
+		$response = $client->request('get', '', [
+			'auth' => ['api', env('MAIL_API_KEY')],
+		]);
+		$body = json_decode($response->getBody());
+		if($response->getStatusCode() > 399) return false;
+
+		$emails = [];
+
+		foreach ($body->items as $key => $value) {
+			$emails[] = $value->address;
+		}
+
+		\App\Facility::whereIn('email', $emails)->update(['email' => null]);
+		\App\Facility::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
+
+		\App\FacilityContact::whereIn('email', $emails)->update(['email' => null]);
+		\App\FacilityContact::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
 	}
 
 	public static function login()
@@ -196,6 +231,8 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+
+			// dd($body);
 
 			foreach ($body->patients as $key => $value) {
 				$update_data = ['national_patient_id' => $value->national_patient_id, 'synched' => 1, 'datesynched' => $today,];
@@ -693,40 +730,40 @@ class Synch
 		$data['yeartodate'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereYear('datetested', date('Y'))
 								->where(['flag' => 1, 'repeatt' => 0, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['monthtodate'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereYear('datetested', date('Y'))
 								->whereMonth('datetested', date('m'))
 								->where(['flag' => 1, 'repeatt' => 0, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['receivedsamples'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('datereceived', $today)
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['enteredsamplesatlab'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereDate('created_at', $today)
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => $lab_id, 'site_entry' => 0])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['enteredsamplesatsite'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereDate('created_at', $today)
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => $lab_id, 'site_entry' => 1])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['enteredreceivedsameday'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereDate('created_at', $today)
 								->where('datereceived', $today)
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['enterednotreceivedsameday'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereDate('created_at', $today)
 								->where('datereceived', '!=', date('Y-m-d'))
 								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['inqueuesamples'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('datereceived', '>', '2017-09-31')
@@ -738,19 +775,20 @@ class Synch
 								->when(($type == 'vl'), function($query){
 									return $query->where('sampletype', '>', 0);
 								})
-								->get()->first()->totals;
+								->first()->totals;
 
 		$mindate = $sampleview_class::selectRaw('MIN(datereceived) as mindate')
 								->where('datereceived', '>', '2017-09-31')
 								->whereNull('worksheet_id')
 								->whereNull('approvedby')
+								->whereNull('datedispatched')
 								->whereIn('receivedstatus', [1, 3])
 								->whereRaw("(result is null or result=0)")
 								->where(['flag' => 1, 'input_complete' => 1, 'lab_id' => $lab_id])
 								->when(($type == 'vl'), function($query){
 									return $query->where('sampletype', '>', 0);
 								})
-								->get()->first()->mindate;
+								->first()->mindate;
 
 		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
 
@@ -758,28 +796,28 @@ class Synch
 						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['abbottinprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where('machine_type', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['rocheinprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where('machine_type', 1)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['panthainprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, self::join_worksheets($type))
 						->where('status_id', 1)
 						->where('machine_type', 4)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		// Check error in Tim's code
 		$data['processedsamples'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
@@ -787,7 +825,7 @@ class Synch
 						->where('status_id', 2)
 						->where('datetested', $today)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['abbottprocessed'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, self::join_worksheets($type))
@@ -795,7 +833,7 @@ class Synch
 						->where('machine_type', 2)
 						->where('datetested', $today)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['rocheprocessed'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, self::join_worksheets($type))
@@ -803,7 +841,7 @@ class Synch
 						->where('machine_type', 1)
 						->where('datetested', $today)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['panthaprocessed'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->when(true, self::join_worksheets($type))
@@ -811,17 +849,17 @@ class Synch
 						->where('machine_type', 4)
 						->where('datetested', $today)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['updatedresults'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('datemodified', $today)
 								->where(['flag' => 1, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['approvedresults'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('dateapproved', $today)
 								->where(['flag' => 1, 'lab_id' => $lab_id])
-								->get()->first()->totals;
+								->first()->totals;
 
 
 		$data['pendingapproval'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
@@ -829,13 +867,13 @@ class Synch
 						->where('status_id', 2)
 						->whereNull('approvedby')
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => $lab_id])
-						->get()->first()->totals;
+						->first()->totals;
 
 
 		$data['dispatchedresults'] = $sampleview_class::selectRaw('count(id) as totals')
 								->where('datedispatched', $today)
 								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0])
-								->get()->first()->totals;
+								->first()->totals;
 
 
 		$data['oneweek'] = $sampleview_class::selectRaw('count(id) as totals')
@@ -843,28 +881,28 @@ class Synch
 								->whereYear('datereceived', date('Y'))
 								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 1 AND 7")
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['twoweeks'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
 								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 8 AND 14")
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['threeweeks'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
 								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) BETWEEN 15 AND 28")
-								->get()->first()->totals;
+								->first()->totals;
 
 		$data['aboveamonth'] = $sampleview_class::selectRaw('count(id) as totals')
 								->whereNull('datedispatched')
 								->whereYear('datereceived', date('Y'))
 								->where(['flag' => 1, 'lab_id' => $lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
 								->whereRaw("DATEDIFF(NOW(), datereceived) > 28")
-								->get()->first()->totals;
+								->first()->totals;
 
 		$client = new Client(['base_uri' => self::$base]);
 
@@ -907,7 +945,7 @@ class Synch
 			$message = 
 			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
 			$message .=
-			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
+			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nC8800 Tests - {$vl['c8800_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
 
 	        $client = new Client(['base_uri' => \App\Common::$sms_url]);
 
@@ -963,7 +1001,7 @@ class Synch
 						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['abbott_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
@@ -971,7 +1009,15 @@ class Synch
 						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
-						->get()->first()->totals;
+						->first()->totals;
+
+		$data['c8800_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
+						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
+						->where('machine_type', 3)
+						->where('site_entry', '!=', 2)
+						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
+						->whereBetween('datetested', [$weekstartdate, $today])
+						->first()->totals;
 
 		$data['pantha_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
@@ -979,7 +1025,7 @@ class Synch
 						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
 						->whereBetween('datetested', [$weekstartdate, $today])
-						->get()->first()->totals;
+						->first()->totals;
 
 		$data['tested'] = $data['roche_tested'] + $data['abbott_tested'] + $data['pantha_tested'];
 
@@ -988,7 +1034,7 @@ class Synch
 						->where('status_id', 1)
 						->where('site_entry', '!=', 2)
 						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
-						->get()->first()->totals;
+						->first()->totals;
 
 
 		$samples = $sampleview_class::select('datereceived', 'datedispatched')
@@ -1026,7 +1072,7 @@ class Synch
 								->where('site_entry', '!=', 2)
 								->whereRaw("(result is null or result=0)")
 								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
-								->get()->first()->mindate;
+								->first()->mindate;
 
 		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
 		return $data;
@@ -1065,28 +1111,32 @@ class Synch
 
 	public static function get_backlogs(){    	
     	/**** Total samples run ****/
-    	$totaleidsamplesrun = Sample::selectRaw("count(*) as samples_run")
-    								->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-    								->where('repeatt', '=', 0)
+    	$totaleidsamplesrun = SampleView::selectRaw("count(*) as samples_run")
+    								->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+    								->where('site_entry', '!=', 2)
+    								->where(['samples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('worksheets.status_id', '<', 3)->first()->samples_run;
-    	$totalvlsamplesrun = Viralsample::selectRaw("count(*) as samples_run")
-    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-    								->where('repeatt', '=', 0)
+    	$totalvlsamplesrun = ViralsampleView::selectRaw("count(*) as samples_run")
+    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+    								->where('site_entry', '!=', 2)
+    								->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
     								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
 
     	/**** Samples pending results ****/
-    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")
+							    	->whereNull('worksheet_id')
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result = 0 ))")->where('input_complete', '=', 1)
+    								->whereRaw("((result IS NULL ) OR (result = 0 ))")
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
+    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1, 'input_complete' => 1])
     								->where('flag', '=', 1)->first()->pending_samples;
-    	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")->whereNull('worksheet_id')
+    	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")
+							    	->whereNull('worksheet_id')
     								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result =0 ) OR (result !='Collect New Sample') )")
-    								->where('input_complete', '=', 1)->where('sampletype', '>', 0)
+    								->whereRaw("((result IS NULL ) OR (result ='0' ) OR (result !='Collect New Sample') )")
+    								->where('sampletype', '>', 0)
     								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
+    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1, 'input_complete' => 1])
     								->where('flag', '=', 1)->first()->pending_samples;
 
     	return (object)[
@@ -1459,11 +1509,17 @@ class Synch
         foreach ($facilities as $facility) {
 
             $response = $client->request('get', "facility/{$facility->id}", [
+            	'http_errors' => false,
                 'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . self::get_token(),
                 ],
             ]);
+
+            if($response->getStatusCode() > 399){
+            	echo "Facility {$facility->id} not found.\n";
+            	continue;
+            }
             
             $body = json_decode($response->getBody());
 

@@ -27,6 +27,14 @@ class WorksheetController extends Controller
             return $query->where('worksheets.id', $worksheet_id);
         })
         ->when($state, function ($query) use ($state){
+            if($state == 1 || $state == 12) $query->orderBy('worksheets.id', 'asc');
+            if($state == 12){
+                return $query->where('status_id', 1)->whereRaw("worksheets.id in (
+                    SELECT DISTINCT worksheet_id
+                    FROM samples_view
+                    WHERE parentid > 0 AND site_entry != 2
+                )");
+            }
             return $query->where('status_id', $state);
         })
         ->when($date_start, function($query) use ($date_start, $date_end){
@@ -251,13 +259,16 @@ class WorksheetController extends Controller
 
     public function convert_worksheet($machine_type, Worksheet $worksheet)
     {
-        if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        if($worksheet->status_id != 1){
             session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
             return back();            
         }
         $worksheet->machine_type = $machine_type;
         $worksheet->save();
-        return redirect('worksheet/' . $worksheet->id . '/edit');
+        session(['toast_message' => 'The worksheet has been converted.']);
+        return back();
+        // return redirect('worksheet/' . $worksheet->id . '/edit');
     }
 
     public function cancel(Worksheet $worksheet)
@@ -310,6 +321,10 @@ class WorksheetController extends Controller
 
     public function reverse_upload(Worksheet $worksheet)
     {
+        if($worksheet->status_id != 3){
+            session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            return back();
+        }
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -368,6 +383,10 @@ class WorksheetController extends Controller
 
     public function upload(Worksheet $worksheet)
     {
+        if(!in_array($worksheet->status_id, [1, 4])){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
         $worksheet->load(['creator']);
         $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
@@ -385,6 +404,14 @@ class WorksheetController extends Controller
      */
     public function save_results(Request $request, Worksheet $worksheet)
     {
+        if(!in_array($worksheet->status_id, [1, 4])){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
+
+        $cancelled = false;
+        if($worksheet->status_id == 4) $cancelled =  true;
+
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
@@ -397,6 +424,7 @@ class WorksheetController extends Controller
         {
             $date_tested = $request->input('daterun');
             $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
                 $reader->toArray();
@@ -433,8 +461,11 @@ class WorksheetController extends Controller
                     $sample_id = (int) $sample_id;
                     $sample = Sample::find($sample_id);
                     if(!$sample) continue;
-                    if($sample->worksheet_id != $worksheet->id) continue;
+
                     $sample->fill($data_array);
+                    if($cancelled) $sample->worksheet_id = $worksheet->id;
+                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+
                     $sample->save();
                 }
 
@@ -470,8 +501,11 @@ class WorksheetController extends Controller
                 // $sample_id = substr($sample_id, 0, -1);
                 $sample = Sample::find($sample_id);
                 if(!$sample) continue;
-                if($sample->worksheet_id != $worksheet->id) continue;
+
                 $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                    
                 $sample->save();
 
             }
@@ -503,7 +537,7 @@ class WorksheetController extends Controller
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
-        Misc::requeue($worksheet->id);
+        Misc::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
 
         return redirect('worksheet/approve/' . $worksheet->id);
@@ -518,7 +552,7 @@ class WorksheetController extends Controller
         $samples = Sample::join('batches', 'samples.batch_id', '=', 'batches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
-                    ->where('worksheet_id', $worksheet->id)
+                    ->where('worksheet_id', $worksheet->id) 
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');

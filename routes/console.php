@@ -17,6 +17,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+
+Artisan::command('clean:emails', function(){
+    $str = \App\Synch::clean_emails();
+    $this->info($str);
+})->describe('Clean emails which have an issue.');
+
 Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
     $this->info($str);
@@ -65,6 +71,12 @@ Artisan::command('dispatch:results', function(){
     $this->info($str);
 })->describe('Send emails for dispatched batches.');
 
+Artisan::command('dispatch:critical', function(){
+    $str = \App\Common::critical_results('eid');
+    $str = \App\Common::critical_results('vl');
+    $this->info($str);
+})->describe('Send emails for critical results.');
+
 Artisan::command('dispatch:mlab', function(){
     $str = \App\Misc::send_to_mlab();
     $str .= \App\MiscViral::send_to_mlab();
@@ -107,6 +119,12 @@ Artisan::command('delete:delayed-batches', function(){
 Artisan::command('transfer:missing-samples', function(){
     $str = \App\Common::transfer_delayed_samples('eid');
     $str .= \App\Common::transfer_delayed_samples('vl');
+    $this->info($str);
+})->describe('Transfer samples delaying batches to new batches.');
+
+Artisan::command('transfer:delayed-samples', function(){
+    $str = \App\Common::transfer_delayed_samples('eid', false);
+    $str .= \App\Common::transfer_delayed_samples('vl', false);
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
@@ -158,6 +176,13 @@ Artisan::command('send:nodata', function(){
     $str = \App\Common::no_data_report('vl');
     $this->info($str);
 })->describe('Send no data report.');
+
+
+Artisan::command('send:gender', function(){
+    $str = \App\Nat::save_gender_results();
+    $str = \App\Nat::save_gender_ordering_results();
+    $this->info($str);
+})->describe('Send gender suppression data.');
 
 Artisan::command('send:communication', function(){
     $str = \App\Common::send_communication();
@@ -348,6 +373,11 @@ Artisan::command('test:connection', function(){
     $this->info($str);
 })->describe('Check connection to lab-2.test.nascop.org.');
 
+Artisan::command('set:time', function(){
+    $str = \App\Synch::synch_time();
+    $this->info($str);
+})->describe('Check time at lab-2.test.nascop.org and set the time to that.');
+
 Artisan::command('send:labtracker {year} {month}', function($year, $month){
     $str = \App\Common::send_lab_tracker($year, $month);
     $this->info($str);
@@ -403,6 +433,11 @@ Artisan::command('edarp:lab', function(){
     $this->info($str);
 })->describe('Extract Moved samples');
 
+Artisan::command('edarp:labwks', function(){
+    $str = \App\Random::export_edarp_results_worksheet();
+    $this->info($str);
+})->describe('Extract Moved samples');
+
 Artisan::command('edarp:labdelete', function(){
     $str = \App\Random::delete_edarp_imported_batches();
     $this->info($str);
@@ -417,5 +452,31 @@ Artisan::command('edarp:confirm  {received_by}', function($received_by){
     $str = \App\Random::confirm_edarp_upload($received_by);
     $this->info($str);
 })->describe('Check EDARP request');
+
+Artisan::command('edarp:delete', function(){
+    $str = \App\Random::delete_uploads();
+    $this->info($str);
+})->describe('Delete Transfered');
 //Quick fix add EDARP samples to KEMRI
+
+Artisan::command('check:mb', function(){
+    $str = \App\Random::checkMbNo();
+    $this->info($str);
+})->describe('Get MB No');
+
+Artisan::command('missing', function(){
+    $str = \App\Random::consolidate();
+    $this->info($str);
+})->describe('merge Missing Kemri Results');
+
+
+Artisan::command('get:ken', function(){
+    $str = \App\Random::run_ken_request();
+    $this->info($str);
+});
+
+Artisan::command('get:linelist', function(){
+    $str = \App\Random::linelist();
+    $this->info($str);
+});
 //Quick fixes

@@ -58,12 +58,12 @@ class MiscViral extends Common
         ],
     ];
 
-	public static function requeue($worksheet_id)
+	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
         $samples = Viralsample::whereIn('id', $samples_array)->get();
 
-        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0]);
+        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0, 'datetested' => $daterun]);
 
 		// Default value for repeatt is 0
 
@@ -88,6 +88,10 @@ class MiscViral extends Common
 		$sample = new Viralsample;        
         $fields = \App\Lookup::viralsamples_arrays();
         $sample->fill($original->only($fields['sample_rerun']));
+        if(env('APP_LAB') == 8){
+            $sample->label_id = $original->label_id;
+            $sample->areaname = $original->areaname;
+        }
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
@@ -486,8 +490,8 @@ class MiscViral extends Common
         if(is_numeric($numeric_result)){
             $result = (int) $numeric_result;
             if($result < 401) return ['rcategory' => 1];
-            else if($result > 400 && $result < 1001) return ['rcategory' => 2];
-            else if($result > 1000 && $result < 5001) return ['rcategory' => 3];
+            else if($result > 400 && $result < 1000) return ['rcategory' => 2];
+            else if($result >= 1000 && $result < 5001) return ['rcategory' => 3];
             else if($result > 5000) return ['rcategory' => 4];
         }
         $str = strtolower($result);
@@ -634,7 +638,7 @@ class MiscViral extends Common
     {
         // English
         if($sample->preferred_language == 1){
-            if($sample->rcategory == 1 || $sample->rcategory == 2){
+            if($sample->rcategory == 1){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
                 }
@@ -642,7 +646,7 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
                 }
             }
-            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+            else if(in_array($sample->rcategory, [2, 3, 4])){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Your VL results are ready. Please come to the facility as soon you can!";
                 }
@@ -656,7 +660,7 @@ class MiscViral extends Common
         }
         // Kiswahili
         else{
-            if($sample->rcategory == 1 || $sample->rcategory == 2){
+            if($sample->rcategory == 1){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo!";
                 }
@@ -664,12 +668,12 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Pongezi! Matokeo yako ya VL iko kiwango kizuri! Endelea kuzingatia maagizo ya daktari. Kumbuka tarehe yako ya kuja cliniki!";                        
                 }
             }
-            else if($sample->rcategory == 3 || $sample->rcategory == 4){
+            else if(in_array($sample->rcategory, [2, 3, 4])){
                 if($sample->age > 15 && $sample->age < 24){
                     $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo!";
                 }
                 else{
-                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";                        
+                    $message = $sample->patient_name . ", Matokeo yako ya VL yako tayari. Tafadhali tembelea kituo cha afya umwone daktari!";
                 }
             }
             else if($sample->rcategory == 5 || $sample->receivedstatus == 2){
@@ -679,9 +683,9 @@ class MiscViral extends Common
 
         if(!$message){
             print_r($sample);
-            die();
             return;
         }
+        if(!preg_match('/[2][5][4][7][0-9]{8}/', $sample->patient_phone_no)) return;
 
         $client = new Client(['base_uri' => self::$sms_url]);
 
@@ -708,7 +712,8 @@ class MiscViral extends Common
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
-        $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
+        $test = false;
         $user = auth()->user();
         \App\Viralbatch::where(['received_by' => $user->id, 'input_complete' => 0])->update(['input_complete' => 1]);
 

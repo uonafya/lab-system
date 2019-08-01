@@ -139,7 +139,8 @@ class LoginController extends Controller
             if(!$facility){
                 $tasks = $this->pendingTasks();
                 if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0) {
-                    session(['pendingTasks' => true]);
+                    if (env('APP_LAB') != 5)
+                        session(['pendingTasks' => true]);
                     return '/pending';
                 }
             }

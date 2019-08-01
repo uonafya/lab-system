@@ -71,7 +71,7 @@ class ViralpatientController extends Controller
     {
         $samples = $viralpatient->sample;
         $viralpatient->load(['facility']);
-        $samples->load(['batch']);
+        // $samples->load(['batch']);
         $data = Lookup::get_viral_lookups();
         $data['samples'] = $samples;
         $data['patient'] = $viralpatient;

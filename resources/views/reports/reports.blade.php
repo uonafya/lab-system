@@ -103,7 +103,7 @@
                                     <input type="radio" name="category" value="county" class="i-checks">Select County
                                 </label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="report_county_search" name="county"></select>
+                                    <select class="form-control" id="report_county_search" name="county[]" multiple="multiple"></select>
                                 </div>
                             </div>
                             <div class="row">
@@ -252,6 +252,7 @@
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
                                 <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
+                                <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
                                 @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')
                                 <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
