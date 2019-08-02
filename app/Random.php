@@ -71,6 +71,29 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public static function export_facilities()
+    {
+        $data = DB::table('hcm.view_facilitys')->selectRaw("DHIScode, facilitycode AS `MFL Code`, NAME, is_surge, WardDHISCode, wardname, SubCountyDHISCode, subcounty, CountyDHISCode, countyname AS `County`, partnername AS `Partner`")->get();
+
+        $file = 'facilities';
+
+		$rows = [];
+
+		foreach ($data as $key => $value) {
+			$rows[] = get_object_vars($value);
+		}
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+    }
+
 
     public static function delete_site_entry()
     {
