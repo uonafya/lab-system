@@ -91,10 +91,10 @@ class RandomController extends Controller
 				$month = session('lablogmonth');
 			} else {
 				$month = null;
-				// $currentMonth = date('m');
-				// $prevMonth = $currentMonth - 1;
-				// if ($currentMonth == 1)
-				// 	$prevMonth = 12;
+				$currentMonth = date('m');
+				$prevMonth = $currentMonth - 1;
+				if ($currentMonth == 1)
+					$prevMonth = 12;
 				// $set = session(['lablogmonth' => $prevMonth]);
 			}
 		} else {
