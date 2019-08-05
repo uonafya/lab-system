@@ -90,11 +90,12 @@ class RandomController extends Controller
 			if (null !== session('lablogmonth')) {
 				$month = session('lablogmonth');
 			} else {
-				$currentMonth = date('m');
-				$prevMonth = $currentMonth - 1;
-				if ($currentMonth == 1)
-					$prevMonth = 12;
-				$set = session(['lablogmonth' => $prevMonth]);
+				$month = null;
+				// $currentMonth = date('m');
+				// $prevMonth = $currentMonth - 1;
+				// if ($currentMonth == 1)
+				// 	$prevMonth = 12;
+				// $set = session(['lablogmonth' => $prevMonth]);
 			}
 		} else {
 			$set = session(['lablogmonth' => $month]);
@@ -114,7 +115,7 @@ class RandomController extends Controller
 		}
 		
 		$year = session('lablogyear');
-		$month = session('lablogmonth');
+		// $month = session('lablogmonth');
 		$data = Random::__getLablogsData($year, $month);
 
 		if ($request->method() == 'POST') {
