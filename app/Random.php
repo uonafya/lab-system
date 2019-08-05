@@ -1645,23 +1645,42 @@ class Random
         \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
 
-	public static function __getLablogsData($year, $month) {
+	public static function __getLablogsData($year, $month = null) {
 		
 		$performance = LabPerformanceTracker::where('year', $year)
 							->when($month, function($query) use($month){
 								return $query->where('month', $month);
 							})->get();
-		dd($performance);
-		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', '=', 1)->first()->tests;
-		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->whereMonth('samples_view.datereceived', $month)->get();
+		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('datetested', $month);
+							})->where('flag', '=', 1)->first()->tests;
+		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->when($month, function($query) use ($month){
+								return $query->whereMonth('samples_view.datereceived', $month);
+							})->get();
 
-		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
-		$vlplasmarejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
+		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('datetested', $month);
+							})->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
+		$vlplasmarejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->whereYear('viralsamples_view.datereceived', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('viralsamples_view.datereceived', $month);
+							})->get();
 
-		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
-		$vldbsrejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
+		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('datetested', $month);
+							})->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
+		$vldbsrejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->whereYear('viralsamples_view.datereceived', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('viralsamples_view.datereceived', $month);
+							})->get();
 		
-		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
+		$equipment = LabEquipmentTracker::where('year', $year)
+							->when($month, function($query) use ($month){
+								return $query->where('month', $month);
+							})->get();
 		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
 	}
 
