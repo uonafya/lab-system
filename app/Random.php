@@ -1645,7 +1645,7 @@ class Random
         \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
 
-	public static function __getLablogsData($year, $month) {
+	public static function __getLablogsData($year, $month = null) {
 		
 		$performance = LabPerformanceTracker::where('year', $year)
 							->when($month, function($query) use($month){
