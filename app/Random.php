@@ -1647,7 +1647,11 @@ class Random
 
 	public static function __getLablogsData($year, $month) {
 		
-		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
+		$performance = LabPerformanceTracker::where('year', $year)
+							->when($month, function($query) use($month){
+								return $query->where('month', $month);
+							})->get();
+		dd($performance);
 		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', '=', 1)->first()->tests;
 		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->whereMonth('samples_view.datereceived', $month)->get();
 
