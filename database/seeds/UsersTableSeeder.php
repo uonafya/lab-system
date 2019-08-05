@@ -14,17 +14,17 @@ class UsersTableSeeder extends Seeder
     {
         
 
-  //       DB::table('user_types')->insert([
-		//     ['id' => '1', 'user_type' => 'Lab User'],
-		//     ['id' => '2', 'user_type' => 'System Administrator'],
-		//     ['id' => '3', 'user_type' => 'Program Officers'],
-		//     ['id' => '4', 'user_type' => 'Data Clerk'],
-		//     ['id' => '5', 'user_type' => 'Facility Users'],
-		//     ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
-		//     ['id' => '7', 'user_type' => 'POC Admin'],
-		//     ['id' => '8', 'user_type' => 'EDARP Admin'],
-		//     ['id' => '9', 'user_type' => 'NHRL Admin'],
-		// ]);
+        DB::table('user_types')->insert([
+		    ['id' => '1', 'user_type' => 'Lab User'],
+		    ['id' => '2', 'user_type' => 'System Administrator'],
+		    ['id' => '3', 'user_type' => 'Program Officers'],
+		    ['id' => '4', 'user_type' => 'Data Clerk'],
+		    ['id' => '5', 'user_type' => 'Facility Users'],
+		    ['id' => '6', 'user_type' => 'Hub Data Uploaders'],
+		    ['id' => '7', 'user_type' => 'POC Admin'],
+		    ['id' => '8', 'user_type' => 'EDARP Admin'],
+		    ['id' => '9', 'user_type' => 'NHRL Admin'],
+		]);
 
 		// $old_users = DB::connection('old')->table('users')->get();
 

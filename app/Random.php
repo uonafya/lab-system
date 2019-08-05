@@ -71,6 +71,29 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public static function export_facilities()
+    {
+        $data = DB::table('hcm.view_facilitys')->selectRaw("DHIScode, facilitycode AS `MFL Code`, NAME, is_surge, WardDHISCode, wardname, SubCountyDHISCode, subcounty, CountyDHISCode, countyname AS `County`, partnername AS `Partner`")->get();
+
+        $file = 'facilities';
+
+		$rows = [];
+
+		foreach ($data as $key => $value) {
+			$rows[] = get_object_vars($value);
+		}
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+    }
+
 
     public static function delete_site_entry()
     {
@@ -133,6 +156,43 @@ class Random
 
 			$files = [storage_path("exports/" . $file . ".csv")];
     	}		
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
+    public static function rerun_data()
+    {
+    	$samples = \App\SampleView::where('run', '>', 2)->where('datedispatched', '>', '2017-01-01')->get();
+
+    	$rows = $parent_ids = [];
+
+    	$sql = "id AS `Lab ID`, parentid AS `Original Lab ID`, run, patient as `HEI Number`, facilitycode as `MFL Code`, facilityname as `Facility`, batch_id AS `Batch`, worksheet_id AS `Worksheet`, datetested AS `Date Tested`, interpretation as `Raw Result`, result, repeatt as `Final Result`, datedispatched AS `Date Dispatched` ";
+
+    	foreach ($samples as $samp) {
+    		if(in_array($samp->parentid, $parent_ids)) continue;
+    		$runs = \App\SampleView::selectRaw($sql)->whereRaw("(id={$samp->parentid} OR parentid={$samp->parentid})")->get();
+
+    		foreach ($runs as $run) {
+    			$r = $run->toArray();
+    			$r['result'] = $run->result_name;
+    			if($r['Final Result']) $r['Final Result'] = 'No';
+    			else{
+    				$r['Final Result'] = 'Yes';
+    			}
+    			
+    			$rows[] = $r;
+    		}
+    	}
+
+		$file = 'multiple_runs_data';
+
+		Excel::create($file, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$files = [storage_path("exports/" . $file . ".csv")];
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
@@ -1585,19 +1645,42 @@ class Random
         \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
 
-	public static function __getLablogsData($year, $month) {
+	public static function __getLablogsData($year, $month = null) {
 		
-		$performance = LabPerformanceTracker::where('year', $year)->where('month', $month)->get();
-		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', '=', 1)->first()->tests;
-		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->whereMonth('samples_view.datereceived', $month)->get();
+		$performance = LabPerformanceTracker::where('year', $year)
+							->when($month, function($query) use($month){
+								return $query->where('month', $month);
+							})->get();
+		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('datetested', $month);
+							})->where('flag', '=', 1)->first()->tests;
+		$eidrejected = SampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereYear('samples_view.datereceived', $year)->when($month, function($query) use ($month){
+								return $query->whereMonth('samples_view.datereceived', $month);
+							})->get();
 
-		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
-		$vlplasmarejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
+		$vlplasmacount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('datetested', $month);
+							})->where('flag', 1)->whereBetween('sampletype', [1,2])->first()->tests;
+		$vlplasmarejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [1,2])->whereYear('viralsamples_view.datereceived', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('viralsamples_view.datereceived', $month);
+							})->get();
 
-		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)->whereMonth('datetested', $month)->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
-		$vldbsrejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->whereYear('viralsamples_view.datereceived', $year)->whereMonth('viralsamples_view.datereceived', $month)->get();
+		$vldbscount = Viralsample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('datetested', $month);
+							})->where('flag', 1)->whereBetween('sampletype', [3,4])->first()->tests;
+		$vldbsrejected = ViralsampleView::selectRaw('distinct rejectedreasons.name')->join('rejectedreasons', 'rejectedreasons.id', '=', 'viralsamples_view.rejectedreason')->where('receivedstatus', '=', 2)->whereBetween('sampletype', [3,4])->whereYear('viralsamples_view.datereceived', $year)
+							->when($month, function($query) use ($month){
+								return $query->whereMonth('viralsamples_view.datereceived', $month);
+							})->get();
 		
-		$equipment = LabEquipmentTracker::where('year', $year)->where('month', $month)->get();
+		$equipment = LabEquipmentTracker::where('year', $year)
+							->when($month, function($query) use ($month){
+								return $query->where('month', $month);
+							})->get();
 		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
 	}
 
@@ -2321,7 +2404,6 @@ class Random
                 }
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
-				dd($data_array);
 
                 if ($sample) {
                 	$sample->fill($data_array);
@@ -2341,14 +2423,14 @@ class Random
             		$patient = $sample->patient;
 		            $sampleExcel = $excelData->where(3, $patient->patient)->first();
 		            // dd($excelResult);
-		            if (!$excelResult)
+		            if (!$sampleExcel)
 		            	continue;
 		            $sampleExcel = $sampleExcel->toArray();
 		            /* File worksheet reagion */
 
 		            $sampleExcel[19] = $sample->rejectedreason ?? null;
 		            $sampleExcel[20] = $sample->reason_for_repeat ?? null;
-		            $sampleExcel[21] = $sample->labcomment ?? $excelResult[12] ?? null;
+		            $sampleExcel[21] = $sample->labcomment ?? null;
 		            $sampleExcel[22] = (isset($sample->datetested)) ? date('m/d/Y', strtotime($sample->datetested)) : null;
 		            $sampleExcel[23] = (isset($sample->datedispatched)) ? date('m/d/Y', strtotime($sample->datedispatched)) : null;
 		            // $sample[22] = $dbsample->datetested;
@@ -2644,5 +2726,110 @@ class Random
             });
         })->store('csv');
         echo "==> Data consolidation complete\n";
+    }
+
+    public static function run_ken_request() {
+    	$data = [];
+    	echo "==> Getting Patients\n";
+    	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
+    	echo "==> Getting Patients Samples\n";
+    	$data[] = ['Patient', 'Current Regimen', 'Former Result', 'Recent Result', 'Age Category'];
+    	ini_set("memory_limit", "-1");
+    	foreach ($patients as $key => $patient) {
+    		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
+    		if ($samples->count() == 2) {
+    			$newsamples = $samples->whereIn('rcategory', [3,4]);
+    			if ($newsamples->count() == 2){
+    				echo ".";
+    				$newsample = $newsamples->first();
+    				$oldsample = $newsamples->last();
+    				$data[] = [
+    					'patient' => $patient->patient,
+    					'regimen' => $newsample->prophylaxis_name,
+    					'result1' => $oldsample->result,
+    					'result2' => $newsample->result,
+    					'agecategory' => self::getMakeShiftAgeCategory($patient->dob),
+    				];
+    			}
+    		}
+    	}
+    	$file = 'Requested Report '.(date('Y-m-d H:i:s'));
+    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
+    	Excel::create($file, function($excel) use($data)  {
+		    $excel->sheet('Sheetname', function($sheet) use($data) {
+		        $sheet->fromArray($data);
+		    });
+		})->store('csv');
+		$data = [storage_path("exports/" . $file . ".csv")];
+		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
+    }
+
+    private static function getMakeShiftAgeCategory($dob) {
+		$date2 = date('Y-m-d');
+		$diff = abs(strtotime($date2) - strtotime($dob));
+		$years = floor($diff / (365*60*60*24));
+		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+		$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+		$age = $years + (($months + ($days / 365)) / 12);
+
+		// dd("%d years, %d months, %d days\n", $years, $months, $days);
+    	if ($age < 1)
+    		return '0-1';
+    	if ($age > 0.9999 && $age < 5)
+    		return '1- <5';
+    	if ($age > 5.9999 && $age < 10)
+    		return '5-<10';
+    }
+
+    public static function linelist(){
+    	$dataArray = [];
+    	$data = [];
+    	$months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    	echo "==> Getting Unique patients\n";
+    	ini_set("memory_limit", "-1");
+    	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
+    	echo "==> Getting patients' data\n";
+    	foreach ($patientsGroups as $key => $patients) {
+    		echo "\tGetting patients` batch {$key}\n";
+    		// echo "==> Getting tests \n";
+    		$tests = ViralsampleCompleteView::selectRaw("distinct patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
+    		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
+    						->where('repeatt', 0)
+    						// ->whereIn('rcategory', [1,2,3,4])
+    						->whereIn('patient_id', $patients->toArray())
+    						->whereYear('datetested', 2018)
+    						// ->whereRaw("month(datetested) IN (4, 5, 6)")
+    						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
+    						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
+    						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
+    						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
+    						->orderBy('datetested', 'desc')->get();
+    		// dd($tests);
+    		foreach ($tests as $key => $test) {
+    			$data[] = $test;
+    		}
+    	}
+    	echo "==> Splitting to months\n";
+    	$data = collect($data);
+    	foreach ($months as $key => $value) {
+    		$dataArray = array_values(collect($data)->whereIn('testmonth', $value)->flatten(1)->toArray());
+    		// dd($dataArray);
+    		echo "\tPreparing excel {$value}\n";
+	    	$file = 'New VL Line List 2018 Unique patients ' . $value;
+	    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
+	    	Excel::create($file, function($excel) use($dataArray)  {
+			    $excel->sheet('Sheetname', function($sheet) use($dataArray) {
+			        $sheet->fromArray($dataArray);
+			    });
+			})->store('csv');
+			$data = [storage_path("exports/" . $file . ".csv")];
+			Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
+			echo "\t Completed month {$value}\n";
+			// dd('Only the first');
+    	}
+    	echo "==> Completed everything";
+
+    	// dd($dataArray);
+    	
     }
 }

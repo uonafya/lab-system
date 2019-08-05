@@ -330,6 +330,7 @@
 
                                     <option></option>
                                     @foreach ($entry_points as $entry_point)
+                                        @continue(auth()->user()->user_type_id == 5 && $entry_point->id == 7)
                                         <option value="{{ $entry_point->id }}"
 
                                         @if (isset($sample) && $sample->patient->entry_point == $entry_point->id)
@@ -353,6 +354,7 @@
 
                                     <option></option>
                                     @foreach ($iprophylaxis as $ip)
+                                        @continue(auth()->user()->user_type_id == 5 && $ip->id == 14)
                                         <option value="{{ $ip->id }}"
 
                                         @if (isset($sample) && $sample->regimen == $ip->id)
@@ -376,6 +378,7 @@
 
                                     <option></option>
                                     @foreach ($feedings as $feeding)
+                                        @continue(auth()->user()->user_type_id == 5 && $feeding->id == 5)
                                         <option value="{{ $feeding->id }}"
 
                                         @if (isset($sample) && $sample->feeding == $feeding->id)
@@ -462,6 +465,7 @@
 
                                 <option></option>
                                 @foreach ($interventions as $intervention)
+                                    @continue(auth()->user()->user_type_id == 5 && $intervention->id == 7)
                                     <option value="{{ $intervention->id }}"
 
                                     @if (isset($sample) && $sample->mother_prophylaxis == $intervention->id)
