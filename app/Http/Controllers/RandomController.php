@@ -125,7 +125,7 @@ class RandomController extends Controller
 	        $this->lab = \App\Lab::find(env('APP_LAB'));
 	        $lab = $this->lab;
 	        $pageData = ['data' => $data, 'lab' => $lab, 'download' => true];
-	        dd($pageData);
+	        // dd($pageData);
 	        $view_data = view('exports.mpdf_labtracker', $pageData)->render();
 	        $mpdf->WriteHTML($view_data);
 	        $mpdf->Output('monthlabtracker ' . $data->year .  $data->month .'.pdf', \Mpdf\Output\Destination::DOWNLOAD);
