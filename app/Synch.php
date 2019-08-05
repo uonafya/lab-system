@@ -624,7 +624,7 @@ class Synch
 				foreach ($value->details as $key => $detailvalue) {
 					$detail_update_data = ['national_id' => $detailvalue->id, 'synched' => 1, 'datesynched' => $today];
 					AllocationDetail::where('id', $detailvalue->original_allocation_detail_id)->update($detail_update_data);
-					foreach ($detailvalue->breakdown as $key => $breakdownvalue) {
+					foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
 						$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
 						AllocationDetailsBreakdown::where('id', $breakdownvalue->original_allocation_details_breakdown_id)->update($breakdown_update_data);
 					}
