@@ -424,6 +424,13 @@ class Lookup
         self::cacher();       
         $my_array = Cache::get('prophylaxis');       
         return $my_array->where('category', $val)->first()->id ?? 16;
+    }  
+
+    public static function viral_prophylaxis($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('prophylaxis');       
+        return $my_array->where('code', $val)->first()->id ?? 16;
     }    
 
     public static function justification($val)
