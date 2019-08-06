@@ -534,7 +534,7 @@
                                             selected
                                         @endif
 
-                                        > {!! $justification->displaylabel !!}
+                                        > {{ $justification->rank . ' ' . $justification->name }}
                                         </option>
                                     @endforeach
                                 </select>

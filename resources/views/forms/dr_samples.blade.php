@@ -163,7 +163,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="dr_reasons" id="dr_reasons">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($drug_resistance_reasons as $reason)
                                         <option value="{{ $reason->id }}"
 
@@ -182,7 +182,7 @@
                             <label class="col-sm-3 control-label">Previous Regimen</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="prev_prophylaxis" id="prev_prophylaxis">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($prophylaxis as $proph)
                                         <option value="{{ $proph->id }}"
 
@@ -203,7 +203,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($prophylaxis as $proph)
                                         <option value="{{ $proph->id }}"
 
@@ -248,7 +248,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="sample_type" id="sample_type">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($dr_sample_types as $sample_type)
                                         <option value="{{ $sample_type->id }}"
 
@@ -269,7 +269,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="sampletype" id="sampletype">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($sampletypes as $sampletype)
                                         <option value="{{ $sample_type->id }}"
 
@@ -357,7 +357,7 @@
                             <div class="col-sm-9">
 
                                 <select class="form-control" name="tb_treatment_phase_id" id="tb_treatment_phase_id">
-                                    <option value=""> Select One </option>
+                                    <option></option>
                                     @foreach ($tb_treatment_phases as $tb_treatment_phase)
                                         <option value="{{ $tb_treatment_phase->id }}"
 
@@ -574,7 +574,7 @@
                                 <div class="col-sm-9">
                                         <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
-                                        <option value=""> Select One </option>
+                                        <option></option>
                                         @foreach ($received_statuses as $receivedstatus)
                                             <option value="{{ $receivedstatus->id }}"
 
@@ -595,7 +595,7 @@
                                 <div class="col-sm-9">
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
-                                        <option value=""> Select One </option>
+                                        <option></option>
                                         @foreach ($dr_rejected_reasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 

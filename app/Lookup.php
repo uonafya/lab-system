@@ -481,6 +481,9 @@ class Lookup
             'warning_codes' => DB::table('dr_warning_codes')->get(),
             'regimens' => DB::table('dr_viralprophylaxis')->get(),
             'regimen_classes' => DB::table('regimen_classes')->get(),
+
+            'regimen_age' => ['', 'Adult', 'Paediatric'],
+            'regimen_line' => ['', 'First Line', 'Second Line', 'Third Line'],
         ];
 
         if(env('APP_LAB') == 7){
@@ -542,7 +545,7 @@ class Lookup
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
             $pmtct_types = DB::table('viralpmtcttype')->get();
             $prophylaxis = DB::table('viralregimen')->get();
-            $justifications = DB::table('viraljustifications')->orderBy('displaylabel', 'asc')->where('flag', 1)->get();
+            $justifications = DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
             // $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
             $vl_result_guidelines = DB::table('vlresultsguidelines')->get();

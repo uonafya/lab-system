@@ -12,6 +12,7 @@ class AlterRegimen
 	public static function work()
 	{
 		self::alter_sampletype();
+		self::alter_justification();
 		self::create_new_viralprophylaxis();
 		self::alter_columns();
 		if(env('NATIONAL')) self::recreate_views_national();
@@ -28,6 +29,12 @@ class AlterRegimen
 		DB::table('viralsampletype')->where('id', 2)->update(['name' => 'Whole Blood', 'sampletype' => 2]);	
 
 		Viralsample::where(['sampletype' => 4])->update(['sampletype' => 3]);
+	}
+
+	public static function alter_justification()
+	{
+		DB::table('viraljustifications')->insert(['id' => 11, 'rank' => 6, 'name' => 'Confirmation of Persistent Low Level Viremia (PLLV)']);
+		DB::table('viraljustifications')->where('id', 7)->update(['rank' => 8]);		
 	}
 
 	public static function create_new_viralprophylaxis()
