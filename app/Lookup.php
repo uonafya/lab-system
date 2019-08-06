@@ -396,7 +396,7 @@ class Lookup
             'prophylaxis' => Cache::get('prophylaxis'),
             'justifications' => Cache::get('justifications'),
             'sampletypes' => Cache::get('sample_types'),
-            'regimenlines' => Cache::get('regimen_lines'),
+            // 'regimenlines' => Cache::get('regimen_lines'),
 
             'languages' => Cache::get('languages'),
 
@@ -404,6 +404,9 @@ class Lookup
             'facility_name' => session('viral_facility_name', 0),
             'amrs' => self::$amrs,
             'sms' => self::$sms,
+
+            'regimen_age' => ['', 'Adult', 'Paediatric'],
+            'regimen_line' => ['', 'First Line', 'Second Line', 'Third Line'],
         ];
     }
 
@@ -430,7 +433,7 @@ class Lookup
     {
         self::cacher();       
         $my_array = Cache::get('prophylaxis');       
-        return $my_array->where('code', $val)->first()->id ?? 16;
+        return $my_array->where('code', $val)->first()->id ?? NULL;
     }    
 
     public static function justification($val)
@@ -495,13 +498,13 @@ class Lookup
 
             'patient' => ['sex', 'patient_name', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
-            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated'],
+            'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated'],
 
-            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid', 'age'],
+            'sample_rerun' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'batch_id', 'patient_id', 'run', 'parentid', 'age'],
 
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'caregiver_phone', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'initiation_date', 'highpriority'],
 
-            'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'regimenline', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
+            'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
             'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name'],
 
@@ -538,10 +541,10 @@ class Lookup
             // Viralload Lookup Data
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
             $pmtct_types = DB::table('viralpmtcttype')->get();
-            $prophylaxis = DB::table('viralprophylaxis')->orderBy('category', 'asc')->get();
+            $prophylaxis = DB::table('viralregimen')->get();
             $justifications = DB::table('viraljustifications')->orderBy('displaylabel', 'asc')->where('flag', 1)->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
-            $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
+            // $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
             $vl_result_guidelines = DB::table('vlresultsguidelines')->get();
 
             // Worksheet Lookup Data
@@ -593,7 +596,7 @@ class Lookup
             Cache::put('interventions', $interventions, 60);
             Cache::put('justifications', $justifications, 60);
             Cache::put('sample_types', $sample_types, 60);
-            Cache::put('regimen_lines', $regimen_lines, 60);
+            // Cache::put('regimen_lines', $regimen_lines, 60);
             Cache::put('vl_result_guidelines', $vl_result_guidelines, 60);
 
             Cache::put('machines', $machines, 60);
