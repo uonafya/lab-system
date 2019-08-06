@@ -72,6 +72,14 @@ class Viralsample extends BaseModel
         }
     }
 
+    /*public function setProphylaxisAttribute($value)
+    {
+        if(!is_numeric($value)) $this->attributes['prophylaxis'] = \App\Lookup::viral_prophylaxis($value);
+        else{
+            $this->attributes['prophylaxis'] = $value;
+        }
+    }*/
+
 
 
     public function last_test()
