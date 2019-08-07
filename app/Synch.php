@@ -619,6 +619,7 @@ class Synch
 			$body = json_decode($response->getBody());
 			
 			foreach ($body->allocations as $key => $value) {
+				dd($value);
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
 				Allocation::where('id', $value->original_allocation_id)->update($update_data);
 				foreach ($value->details as $key => $detailvalue) {
