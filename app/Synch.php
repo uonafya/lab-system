@@ -620,13 +620,21 @@ class Synch
 			// dd($body);
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
-				$allocationUpdate = Allocation::find($value->original_allocation_id)->update($update_data);
-				foreach ($value->details as $key => $detailvalue) {
-					$detail_update_data = ['national_id' => $detailvalue->id, 'synched' => 1, 'datesynched' => $today];
-					AllocationDetail::find($detailvalue->original_allocation_detail_id)->update($detail_update_data);
-					foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
-						$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
-						AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id)->update($breakdown_update_data);
+				$allocationUpdate = Allocation::find($value->original_allocation_id);
+				if (isset($allocationUpdate)){
+					$allocationUpdate->update($update_data);
+					foreach ($value->details as $key => $detailvalue) {
+						$detail_update_data = ['national_id' => $detailvalue->id, 'synched' => 1, 'datesynched' => $today];
+						$allocationDetailUpdate = AllocationDetail::find($detailvalue->original_allocation_detail_id);
+						if (isset($allocationDetailUpdate)) {
+							$allocationDetailUpdate->update($detail_update_data);
+							foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
+								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
+								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);
+								if (isset($allocationDetailBreakdownUpdate))
+									$allocationDetailBreakdownUpdate->update($breakdown_update_data);
+							}
+						}
 					}
 				}
 			}
