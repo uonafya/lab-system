@@ -628,7 +628,7 @@ class Synch
 						$allocationDetailUpdate = AllocationDetail::find($detailvalue->original_allocation_detail_id);
 						if (isset($allocationDetailUpdate)) {
 							$allocationDetailUpdate->update($detail_update_data);
-							foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
+							foreach ($detailvalue->breakdown as $key => $breakdownvalue) {
 								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
 								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);
 								if (isset($allocationDetailBreakdownUpdate))
