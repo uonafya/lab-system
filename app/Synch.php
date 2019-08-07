@@ -620,8 +620,9 @@ class Synch
 			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
-				$allocationUpdate = Allocation::where('id', $value->original_allocation_id)->update($update_data);
+				$allocationUpdate = Allocation::find($value->original_allocation_id);
 				dd($allocationUpdate);
+				// ->update($update_data)
 				foreach ($value->details as $key => $detailvalue) {
 					$detail_update_data = ['national_id' => $detailvalue->id, 'synched' => 1, 'datesynched' => $today];
 					AllocationDetail::where('id', $detailvalue->original_allocation_detail_id)->update($detail_update_data);
