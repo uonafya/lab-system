@@ -465,7 +465,7 @@ class AlterRegimen
 			$samples = ViralsampleView::where(['sex' => 2, 'regimen' => $old_reg])->whereBetween('age', [10, 49])->limit(200)->offset($offset)->get();
 			if($samples->isEmpty()) break;
 
-			foreach ($samples as $s) {
+			foreach ($samples as $sample) {
 				$s = Viralsample::find($sample->id);
 
 				$other_reg_sample = Viralsample::where(['patient_id' => $s->patient_id])->where('regimen', '!=', $old_reg)->where('id', '<', $s->id)->first();
