@@ -463,7 +463,7 @@
                                     @foreach ($prophylaxis as $key => $proph)
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
-                                        @if($prophylaxis[$key-1]->age != $proph->age && $prophylaxis[$key-1]->line != $proph->line)
+                                        @if(!$key || ($prophylaxis[$key-1]->age != $proph->age && $prophylaxis[$key-1]->line != $proph->line))
                                             <optgroup label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
                                         @endif
                                         <option value="{{ $proph->id }}"
