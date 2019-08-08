@@ -461,8 +461,9 @@ class AlterRegimen
 	public static function women_regimen($old_reg, $first_line, $second_line)
 	{
 		$offset = 0;
+		$limit = 200;
 		while (true) {
-			$samples = ViralsampleView::where(['sex' => 2, 'regimen' => $old_reg])->whereBetween('age', [10, 49])->limit(200)->offset($offset)->get();
+			$samples = ViralsampleView::where(['sex' => 2, 'regimen' => $old_reg])->whereBetween('age', [10, 49])->limit($limit)->offset($offset)->get();
 			if($samples->isEmpty()) break;
 
 			foreach ($samples as $sample) {
@@ -475,6 +476,7 @@ class AlterRegimen
 					Viralsample::where(['id' => $s->id])->update(['prophylaxis' => $first_line]);	
 				}
 			}
+			$offset += $limit;
 		}
 	}
 }
