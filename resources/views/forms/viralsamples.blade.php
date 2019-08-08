@@ -496,27 +496,6 @@
                             </div>                            
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <select class="form-control requirable" required name="regimenline" id="regimenline">
-                                    <option></option>
-                                    @foreach ($regimenlines as $regimenline)
-                                        <option value="{{ $regimenline->id }}"
-
-                                        @if (isset($viralsample) && $viralsample->regimenline == $regimenline->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $regimenline->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="hr-line-dashed"></div>  
 
                         <div class="form-group">
