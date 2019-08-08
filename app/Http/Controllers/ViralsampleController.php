@@ -375,7 +375,7 @@ class ViralsampleController extends Controller
         $viralsample = new Viralsample;
         $viralsample->fill($data);
         if($request->input('dateseparated') && $request->input('separating_hour')){
-            $viralsample->dateseparated .= $request->input('separating_hour') . ':00:00';
+            $viralsample->dateseparated .= ' ' . $request->input('separating_hour') . ':00:00';
         }
         if(env('APP_LAB') == 8){
             $viralsample->areaname = $request->input('areaname');
@@ -551,7 +551,7 @@ class ViralsampleController extends Controller
 
 
         if($request->input('dateseparated') && $request->input('separating_hour')){
-            $viralsample->dateseparated .= $request->input('separating_hour') . ':00:00';
+            $viralsample->dateseparated .=  ' ' . $request->input('separating_hour') . ':00:00';
         }
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
         $viralsample->patient_id = $viralpatient->id;
