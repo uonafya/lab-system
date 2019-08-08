@@ -117,6 +117,45 @@ class Random
         }
     }
 
+    public static function tat_report($year, $month)
+    {
+    	$d = [
+    		'eid' => [
+    			'model' => \App\SampleView::class,
+    		],
+    		'vl' => [
+    			'model' => \App\ViralsampleView::class,
+    		],
+    	];
+
+    	$sql = "year(datetested) AS `Year`, month(datetested) AS `Month`, AVG(tat1) AS `Collection to Receipt at the Lab (TAT 1)`, AVG(tat2) AS `Receipt to Testing (TAT 2)`, AVG(tat3) AS `Testing to Dispatch (TAT 3)`, AVG(tat4) AS `Collection to Dispatch (TAT 4)`, AVG(tat5) AS `Receipt to Dispatch (Lab TAT)`, COUNT(id) AS `Number of Samples` ";
+
+    	foreach ($d as $key => $value) {
+    		$m = $value['model'];
+
+    		$data = $m::selectRaw($sql)->groupBy('year', 'month')->orderBy('year', 'asc')->orderBy('month', 'asc')->get();
+    		$rows[];
+
+    		foreach ($data as $row) {
+    			// $row['Month'] = date('M', strtotime("2019-{$row['Month']}-01"));
+    			$rows[] = $row->toArray();
+    		}
+
+    		$file = $key . '_tat_data';
+
+			Excel::create($file, function($excel) use($rows){
+				$excel->sheet('Sheetname', function($sheet) use($rows) {
+					$sheet->fromArray($rows);
+				});
+			})->store('csv');
+
+			$files = [storage_path("exports/" . $file . ".csv")];
+
+    	}
+
+
+    }
+
     public static function tat_data()
     {
     	$months = [3, 4, 5];
