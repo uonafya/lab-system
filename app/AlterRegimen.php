@@ -40,9 +40,9 @@ class AlterRegimen
 
 	public static function alter_facilitys()
 	{		
-		DB::statement('ALTER TABLE facilitys ADD COLUMN `clinician_phone` VARCHAR(15) UNSIGNED DEFAULT NULL after `telephone3`;');
-		DB::statement('ALTER TABLE facilitys ADD COLUMN `clinician_name` VARCHAR(25) UNSIGNED DEFAULT NULL after `clinician_phone`;');
-		DB::statement('ALTER TABLE facilitys ADD COLUMN `hubcontacttelephone` VARCHAR(25) UNSIGNED DEFAULT NULL after `PostalAddress`;');
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `clinician_phone` VARCHAR(15) DEFAULT NULL after `telephone3`;');
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `clinician_name` VARCHAR(25) DEFAULT NULL after `clinician_phone`;');
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `hubcontacttelephone` VARCHAR(25) DEFAULT NULL after `PostalAddress`;');
 
 		DB::statement("
 			CREATE OR REPLACE
