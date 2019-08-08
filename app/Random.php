@@ -133,7 +133,7 @@ class Random
     	foreach ($d as $key => $value) {
     		$m = $value['model'];
 
-    		$data = $m::selectRaw($sql)->groupBy('year', 'month')->orderBy('year', 'asc')->orderBy('month', 'asc')->get();
+    		$data = $m::selectRaw($sql)->where('datetested', '>=', "{$year}-{$month}-01")->groupBy('year', 'month')->orderBy('year', 'asc')->orderBy('month', 'asc')->get();
     		$rows[];
 
     		foreach ($data as $row) {
