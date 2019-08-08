@@ -15,9 +15,10 @@ class AlterRegimen
 		self::alter_justification();
 		self::create_new_viralprophylaxis();
 		self::alter_columns();
-		if(env('NATIONAL')) self::recreate_views_national();
+		if(env('NATIONAL_SYSTEM')) self::recreate_views_national();
 		else{
 			self::recreate_views();
+			self::alter_facilitys();
 		}
 		self::alter_regimen();
 	}
@@ -35,6 +36,33 @@ class AlterRegimen
 	{
 		DB::table('viraljustifications')->insert(['id' => 11, 'rank' => 6, 'name' => 'Confirmation of Persistent Low Level Viremia (PLLV)']);
 		DB::table('viraljustifications')->where('id', 7)->update(['rank' => 8]);		
+	}
+
+	public static function alter_facilitys()
+	{		
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `clinician_phone` VARCHAR(15) UNSIGNED DEFAULT NULL after `telephone3`;');
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `clinician_name` VARCHAR(25) UNSIGNED DEFAULT NULL after `clinician_phone`;');
+		DB::statement('ALTER TABLE facilitys ADD COLUMN `hubcontacttelephone` VARCHAR(25) UNSIGNED DEFAULT NULL after `PostalAddress`;');
+
+		DB::statement("
+			CREATE OR REPLACE
+			VIEW view_facilitys AS
+			SELECT  
+
+			fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, dis.id as subcounty_id, countys.name as county, countys.id as county_id, dis.province as province_id,
+			labs.name as lab, partners.name as partner, partners.id as partner_id, fac.poc,  fac.smsprinter, fac.clinician_phone, fac.clinician_name,
+			fac.hubcontacttelephone, fc.physicaladdress, fc.PostalAddress, fc.telephone, fc.telephone2, fc.fax, 
+			fc.email, fc.contactperson, fc.ContactEmail, fc.contacttelephone, fc.contacttelephone2, 
+			fc.sms_printer_phoneno, fc.G4Sbranchname, fc.G4Slocation, fc.G4Sphone1, fc.G4Sphone2, fc.G4Sphone3, fc.G4Sfax
+
+			FROM facilitys fac
+			LEFT JOIN facility_contacts fc ON fac.id=fc.facility_id
+			LEFT JOIN districts dis ON fac.district=dis.id
+			LEFT JOIN countys ON dis.county=countys.id
+			LEFT JOIN partners ON fac.partner=partners.id
+			LEFT JOIN labs ON fac.lab=labs.id
+			WHERE fac.Flag=1;
+		");
 	}
 
 	public static function create_new_viralprophylaxis()
@@ -189,8 +217,6 @@ class AlterRegimen
 		");
 
 		DB::statement("INSERT INTO `viralregimen` (`id`, `name`, `code`, `age`, `line`) VALUES (45,	'None',	'',	0, 0), (46,	'No Data',	'',	0, 0); ");
-
-
 	}
 
 	public static function alter_columns()
@@ -334,6 +360,30 @@ class AlterRegimen
 		$atv2 = DB::table('viralregimen')->where('code', 'AS2C')->first()->id;
 		self::women_regimen(9, $atv1, $atv2);
 		Viralsample::where(['regimen' => 9, 'prophylaxis' => 0])->update(['prophylaxis' => $atv1]);
+
+
+
+		$other = DB::table('viralregimen')->where('code', 'AS6X')->first()->id;
+		Viralsample::where(['regimen' => 14, 'regimenline' => 2])->where('age', '>', 14)->update(['prophylaxis' => $other]);
+
+		$other = DB::table('viralregimen')->where('code', 'AT2X')->first()->id;
+		Viralsample::where(['regimen' => 14, 'regimenline' => 3])->where('age', '>', 14)->update(['prophylaxis' => $other]);
+
+		$other = DB::table('viralregimen')->where('code', 'AF5X')->first()->id;
+		Viralsample::where(['regimen' => 14, 'regimenline' => 1])->where('age', '>', 14)->update(['prophylaxis' => $other]);
+		Viralsample::where(['regimen' => 14, 'prophylaxis' => 0])->where('age', '>', 14)->update(['prophylaxis' => $other]);
+
+
+
+		$other = DB::table('viralregimen')->where('code', 'CS4X')->first()->id;
+		Viralsample::where(['regimen' => 14, 'regimenline' => 2])->whereBetween('age', [0, 14])->update(['prophylaxis' => $other]);
+
+		$other = DB::table('viralregimen')->where('code', 'CT3X')->first()->id;
+		Viralsample::where(['regimen' => 14, 'regimenline' => 3])->whereBetween('age', [0, 14])->update(['prophylaxis' => $other]);
+
+		$other = DB::table('viralregimen')->where('code', 'CF5X')->first()->id;
+		Viralsample::where(['regimen' => 14, 'regimenline' => 1])->whereBetween('age', [0, 14])->update(['prophylaxis' => $other]);
+		Viralsample::where(['regimen' => 14, 'prophylaxis' => 0])->whereBetween('age', [0, 14])->update(['prophylaxis' => $other]);
 
 
 

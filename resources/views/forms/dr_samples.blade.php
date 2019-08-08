@@ -184,14 +184,25 @@
                                 <select class="form-control" name="prev_prophylaxis" id="prev_prophylaxis">
                                     <option></option>
                                     @foreach ($prophylaxis as $proph)
+                                        @continue($proph->code == '' && auth()->user()->user_type_id == 5)
+
+                                        @if($prophylaxis[$key-1]->age != $proph->age && $prophylaxis[$key-1]->line != $proph->line)
+                                            <optgroup label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
+                                        @endif
                                         <option value="{{ $proph->id }}"
 
-                                        @if (isset($sample) && $sample->prev_prophylaxis == $proph->id)
+                                        @if (isset($sample) && $sample->prophylaxis == $proph->id)
                                             selected
                                         @endif
 
-                                        > {{ $proph->displaylabel }}
+                                        > {{ $proph->code . ' ' . $proph->name }}
                                         </option>
+
+
+                                        @if(!$prophylaxis[$key+1] || ($prophylaxis[$key+1]->age != $proph->age && $prophylaxis[$key+1]->line != $proph->line))
+                                            </optgroup>
+                                        @endif
+
                                     @endforeach
                                 </select>
                             </div>
@@ -205,14 +216,26 @@
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
                                     @foreach ($prophylaxis as $proph)
+                                        @continue($proph->code == '' && auth()->user()->user_type_id == 5)
+
+                                        @if($prophylaxis[$key-1]->age != $proph->age && $prophylaxis[$key-1]->line != $proph->line)
+                                            <optgroup label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
+                                        @endif
                                         <option value="{{ $proph->id }}"
 
                                         @if (isset($sample) && $sample->prophylaxis == $proph->id)
                                             selected
                                         @endif
 
-                                        > {!! $proph->displaylabel !!}
+                                        > {{ $proph->code . ' ' . $proph->name }}
                                         </option>
+
+
+                                        @if(!$prophylaxis[$key+1] || ($prophylaxis[$key+1]->age != $proph->age && $prophylaxis[$key+1]->line != $proph->line))
+                                            </optgroup>
+                                        @endif
+
+
                                     @endforeach
                                 </select>
                             </div>
