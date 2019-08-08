@@ -93,8 +93,7 @@ The following fields are common to eid requests
 The following fields are common to vl requests
 > - initiation_date *(date inititated on treatment)*
 > - dateinitiatedonregimen *(date inititated on current regimen)*
-> - prophylaxis **Required**
-> - regimenline **Required**
+> - prophylaxis **Required** Give the 4 character code as appears on the form.
 > - sampletype **Required**
 > - justification **Required**
 > - pmtct *(**Required** if sex is **2** i.e. **female**. 1 for pregnant, 2 for breast-feeding and 3 is for none of the above)*
