@@ -72,6 +72,7 @@ The following fields are common to complete requests
 - **patient_name** - *The name of the patient.*
 - **specimenlabelID** - *for use by the lab*
 - **editted** - *indicates whether the record is an update of an existing record*
+
 ` Editted may be removed so that editted records are sent to another route`
 
 ---
