@@ -4,7 +4,7 @@
 
 
 All links are **POST** requests. All post requests are validated using a header called **apikey**. The postman collection has already added them.
-*Open the link in **POSTMAN** and then set the request to **POST** *
+Open the link below in **POSTMAN** and then set the request to **POST** 
 > Get data by request type [click here](http://lab.test.nascop.org/api/function)
 Fields
 - **test** - **1 for eid, 2 for vl **required**
@@ -85,8 +85,8 @@ The following fields are common to eid requests
  - **mother_age** - **integer**
  - **ccc_no** - *(The ccc number of the mother)*
  - **mother_last_result** - *(The most recent vl of the mother)*
- - **hiv_status** - *The HIV status of the mother. It was removed from the form but the system still supports it.* **integer**
- - **pcrtype** -  **required**  *(**integer between 1 and 5**)*
+ - **hiv_status** - **integer** *The HIV status of the mother. It was removed from the form but the system still supports it.*
+ - **pcrtype** - **required**  *(**integer between 1 and 5**)*
  - **redraw** - *(Fill with any non zero integer if the sample is a redraw)*
  - **enrollment_ccc_no** - *(ccc number of the infant if he/she is already enrolled)*
 
