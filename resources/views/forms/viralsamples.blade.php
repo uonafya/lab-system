@@ -476,7 +476,7 @@
                                         </option>
 
 
-                                        @if(!$prophylaxis[$key+1] || ($prophylaxis[$key+1]->age != $proph->age && $prophylaxis[$key+1]->line != $proph->line))
+                                        @if(!isset($prophylaxis[$key+1]) || ($prophylaxis[$key+1]->age != $proph->age && $prophylaxis[$key+1]->line != $proph->line))
                                             </optgroup>
                                         @endif
 
