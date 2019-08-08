@@ -127,6 +127,7 @@ class Random
     			'model' => \App\ViralsampleView::class,
     		],
     	];
+    	$files = [];
 
     	$sql = "year(datetested) AS `Year`, month(datetested) AS `Month`, AVG(tat1) AS `Collection to Receipt at the Lab (TAT 1)`, AVG(tat2) AS `Receipt to Testing (TAT 2)`, AVG(tat3) AS `Testing to Dispatch (TAT 3)`, AVG(tat4) AS `Collection to Dispatch (TAT 4)`, AVG(tat5) AS `Receipt to Dispatch (Lab TAT)`, COUNT(id) AS `Number of Samples` ";
 
@@ -150,10 +151,7 @@ class Random
 			})->store('csv');
 
 			$files = [storage_path("exports/" . $file . ".csv")];
-
     	}
-
-
     }
 
     public static function tat_data()
