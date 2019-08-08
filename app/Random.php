@@ -135,7 +135,7 @@ class Random
     		$m = $value['model'];
 
     		$data = $m::selectRaw($sql)->where('datetested', '>=', "{$year}-{$month}-01")->groupBy('year', 'month')->orderBy('year', 'asc')->orderBy('month', 'asc')->get();
-    		$rows[];
+    		$rows = [];
 
     		foreach ($data as $row) {
     			// $row['Month'] = date('M', strtotime("2019-{$row['Month']}-01"));
