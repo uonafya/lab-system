@@ -472,7 +472,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $proph->code . ' ' . $proph->name }}
+                                        > {{ $proph->code . ' - ' . $proph->name }}
                                         </option>
 
 
