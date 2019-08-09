@@ -7,7 +7,7 @@ All links are **POST** requests. All post requests are validated using a header 
 Open the link below in **POSTMAN** and then set the request to **POST** 
 > Get data by request type [click here](http://lab.test.nascop.org/api/function)
 Fields
-- **test** - **1 for eid, 2 for vl **required**
+- **test** - 1 for eid, 2 for vl **required**
 - **start_date** - (required when *end_date* is set). It filters using the date collected.
 - **end_date** - *greater than or equal to **start_date**)*
 - **date_dispatched_start** - (required when *date_dispatched_end* is set)
