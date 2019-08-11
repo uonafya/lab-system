@@ -8019,6 +8019,9 @@ CREATE TABLE `facility_contacts` (
 ) ENGINE=InnoDB;
 
 alter table facilitys add column poc tinyint unsigned default 0 after latitude;
+ALTER TABLE facilitys ADD COLUMN `clinician_phone` VARCHAR(15) UNSIGNED DEFAULT NULL after `telephone3`;
+ALTER TABLE facilitys ADD COLUMN `clinician_name` VARCHAR(25) UNSIGNED DEFAULT NULL after `clinician_phone`;
+ALTER TABLE facilitys ADD COLUMN `hubcontacttelephone` VARCHAR(25) UNSIGNED DEFAULT NULL after `PostalAddress`;
 
 
 CREATE OR REPLACE
@@ -8026,7 +8029,8 @@ VIEW view_facilitys AS
 SELECT  
 
 fac.id, fac.facilitycode, fac.name as name, dis.name as subcounty, dis.id as subcounty_id, countys.name as county, countys.id as county_id, dis.province as province_id,
-labs.name as lab, partners.name as partner, partners.id as partner_id, fac.poc, fac.smsprinter, fc.physicaladdress, fc.PostalAddress, fc.telephone, fc.telephone2, fc.fax, 
+labs.name as lab, partners.name as partner, partners.id as partner_id, fac.poc,  fac.smsprinter, fac.clinician_phone, fac.clinician_name,
+fac.hubcontacttelephone, fc.physicaladdress, fc.PostalAddress, fc.telephone, fc.telephone2, fc.fax, 
 fc.email, fc.contactperson, fc.ContactEmail, fc.contacttelephone, fc.contacttelephone2, 
 fc.sms_printer_phoneno, fc.G4Sbranchname, fc.G4Slocation, fc.G4Sphone1, fc.G4Sphone2, fc.G4Sphone3, fc.G4Sfax
 

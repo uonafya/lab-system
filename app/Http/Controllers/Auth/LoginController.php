@@ -65,11 +65,17 @@ class LoginController extends Controller
         if($batch){
             if($batch->outdated() && !in_array(env('APP_LAB'), [2, 4])) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
-                $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
+                $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->first();
                 
                 if($user){
                     Auth::login($user);
                     return redirect($this->set_session(true));                    
+                }
+                else{
+                    \App\Common::create_facility_users();
+                    $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->first();
+                    Auth::login($user);
+                    return redirect($this->set_session(true));
                 }
             }
         }
@@ -79,11 +85,17 @@ class LoginController extends Controller
         if($batch){
             if($batch->outdated() && !in_array(env('APP_LAB'), [2, 4])) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
-                $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->get()->first();
+                $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->first();
                 
                 if($user){
                     Auth::login($user);
                     return redirect($this->set_session(true));                    
+                }
+                else{
+                    \App\Common::create_facility_users();
+                    $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->first();
+                    Auth::login($user);
+                    return redirect($this->set_session(true));
                 }
 
                 // if(Auth::attempt(['email' => $user->email, 'password' => 'password'])){

@@ -378,14 +378,52 @@
                         </div>                      
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Separation</label>
+                            <label class="col-sm-4 control-label">Date of Separation / Centrifugation</label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dateseparated" class="form-control" value="{{ $viralsample->dateseparated ?? '' }}" name="dateseparated">
+                                    <input type="text" id="dateseparated" class="form-control"
+
+                                        @if (isset($viralsample))
+                                            value="{{ $viralsample->my_date_format('dateseparated', 'Y-m-d') }}"
+                                        @endif
+
+                                      name="dateseparated">
                                 </div>
                             </div>                            
-                        </div>  
+                        </div> 
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Time of Separation / Centrifugation</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="separating_hour" name="separating_hour">
+
+                                    <option></option>
+                                    @for($i=1; $i<13; $i++)
+                                        <option value="{{ $i }}"
+
+                                        @if (isset($viralsample) && $viralsample->my_date_format('dateseparated', 'H') == $i)
+                                            selected
+                                        @endif
+
+                                        > {{ $i }} A.M.
+                                        </option>
+                                    @endfor
+
+                                    @for($i=1; $i<13; $i++)
+                                        <option value="{{ $i+12 }}"
+
+                                        @if (isset($viralsample) && $viralsample->my_date_format('dateseparated', 'H') == ($i + 12))
+                                            selected
+                                        @endif
+
+                                        > {{ $i }} P.M.
+                                        </option>
+                                    @endfor
+
+                                </select>
+                            </div>
+                        </div> 
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Started on ART
@@ -422,20 +460,26 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
-                                    @foreach ($prophylaxis as $proph)
-                                        @continue($proph->id == 16 && auth()->user()->user_type_id == 5)
+                                    @foreach ($prophylaxis as $key => $proph)
+                                        @continue($proph->code == '' && auth()->user()->user_type_id == 5)
+
+                                        @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
+                                            <optgroup label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
+                                        @endif
                                         <option value="{{ $proph->id }}"
 
                                         @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
                                             selected
                                         @endif
 
-                                        > {!! $proph->displaylabel !!}
+                                        > {{ $proph->code . ' - ' . $proph->name }}
                                         </option>
 
-                                        @if($proph->id == 9)
-                                            <option value="18">12 &nbsp;ABC+3TC+DTG</option>
+
+                                        @if(!isset($prophylaxis[$key+1]) || $prophylaxis[$key+1]->age != $proph->age || $prophylaxis[$key+1]->line != $proph->line)
+                                            </optgroup>
                                         @endif
+
                                     @endforeach
                                     
                                 </select>
@@ -450,27 +494,6 @@
                                     <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen">
                                 </div>
                             </div>                            
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">1st or 2nd Line Regimen
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <select class="form-control requirable" required name="regimenline" id="regimenline">
-                                    <option></option>
-                                    @foreach ($regimenlines as $regimenline)
-                                        <option value="{{ $regimenline->id }}"
-
-                                        @if (isset($viralsample) && $viralsample->regimenline == $regimenline->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $regimenline->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
 
                         <div class="hr-line-dashed"></div>  
@@ -490,7 +513,7 @@
                                             selected
                                         @endif
 
-                                        > {!! $justification->displaylabel !!}
+                                        > {{ $justification->rank . ' ' . $justification->name }}
                                         </option>
                                     @endforeach
                                 </select>
