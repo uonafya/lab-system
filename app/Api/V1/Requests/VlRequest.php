@@ -15,6 +15,7 @@ class VlRequest extends BaseRequest
 
         $val = array_merge($base, $vl);
         $val['dob'] = array_merge($val['dob'], [new BeforeOrEqual($this->input('datecollected'), 'datecollected')]);
+        $val['prophylaxis'] = ['required', 'exists:viralregimen,code'];
 
         if($this->input('editted')) return [];
         return $val;

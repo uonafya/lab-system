@@ -20,6 +20,7 @@ class SampleObserver
      * @param  \App\Sample  $sample
      * @return void
      */
+    /*
 	public function created(Sample $sample)
 	{
 		$sample->load(['batch', 'patient.mother']);
@@ -148,7 +149,7 @@ class SampleObserver
 
 	}
 
-
+	*/
 
 
 }
