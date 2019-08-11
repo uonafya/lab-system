@@ -20,7 +20,7 @@ class VlCompleteRequest extends BaseRequest
         $val['datecollected'] = array_merge($val['datecollected'], [new BeforeOrEqual($this->input('datereceived'), 'datereceived')]);
         $val['datereceived'] = array_merge($val['datereceived'], [new BeforeOrEqual($this->input('datetested'), 'datetested')]);
         $val['datetested'] = array_merge($val['datetested'], [new BeforeOrEqual($this->input('datedispatched'), 'datedispatched')]);
-        // $val['prophylaxis'] = ['required', 'exists:viralprophylaxis,code'];
+        $val['prophylaxis'] = ['required', 'exists:viralregimen,code'];
 
         if($this->input('editted')) return [];
         return $val;

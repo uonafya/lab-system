@@ -19,6 +19,7 @@ class ViralsampleObserver
      * @param  \App\Viralsample  $viralsample
      * @return void
      */
+    /*
 	public function created(Viralsample $viralsample)
 	{
 		$viralsample->load(['batch', 'patient']);
@@ -133,6 +134,6 @@ class ViralsampleObserver
 		$old_sample->save();
 
 	}
-
+	*/
 
 }
