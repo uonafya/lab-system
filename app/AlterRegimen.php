@@ -400,7 +400,7 @@ class AlterRegimen
 		$nvp1 = DB::table('viralregimen')->where('code', 'CF1A')->first()->id;
 		$nvp2 = DB::table('viralregimen')->where('code', 'AF1A')->first()->id;
 		Viralsample::where(['regimen' => 1])->whereBetween('age', [0, 3])->update(['prophylaxis' => $nvp1]);
-		Viralsample::where(['regimen' => 1])->whereBetween('age', '>', 3)->update(['prophylaxis' => $nvp2]);
+		Viralsample::where(['regimen' => 1])->where('age', '>', 3)->update(['prophylaxis' => $nvp2]);
 
 
 		$lpv1 = DB::table('viralregimen')->where('code', 'CF1C')->first()->id;
@@ -408,7 +408,7 @@ class AlterRegimen
 		$lpv3 = DB::table('viralregimen')->where('code', 'AS1A')->first()->id;
 		Viralsample::where(['regimen' => 5])->whereBetween('age', [0, 3])->update(['prophylaxis' => $lpv1]);
 		Viralsample::where(['regimen' => 5])->whereBetween('age', [4, 14])->update(['prophylaxis' => $lpv2]);
-		Viralsample::where(['regimen' => 5])->whereBetween('age', '>', 14)->update(['prophylaxis' => $lpv3]);
+		Viralsample::where(['regimen' => 5])->where('age', '>', 14)->update(['prophylaxis' => $lpv3]);
 
 
 		$dtg = DB::table('viralregimen')->where('code', 'AF1D')->first()->id;
@@ -429,7 +429,7 @@ class AlterRegimen
 		$nvp1 = DB::table('viralregimen')->where('code', 'CF2A')->first()->id;
 		$nvp2 = DB::table('viralregimen')->where('code', 'AF4A')->first()->id;
 		Viralsample::where(['regimen' => 11])->whereBetween('age', [0, 3])->update(['prophylaxis' => $nvp1]);
-		Viralsample::where(['regimen' => 11])->whereBetween('age', '>', 3)->update(['prophylaxis' => $nvp2]);
+		Viralsample::where(['regimen' => 11])->where('age', '>', 3)->update(['prophylaxis' => $nvp2]);
 
 
 		$lpv1 = DB::table('viralregimen')->where('code', 'CF2D')->first()->id;
@@ -437,14 +437,14 @@ class AlterRegimen
 		$lpv3 = DB::table('viralregimen')->where('code', 'AS5A')->first()->id;
 		Viralsample::where(['regimen' => 13])->whereBetween('age', [0, 3])->update(['prophylaxis' => $lpv1]);
 		Viralsample::where(['regimen' => 13])->whereBetween('age', [4, 14])->update(['prophylaxis' => $lpv2]);
-		Viralsample::where(['regimen' => 13])->whereBetween('age', '>', 14)->update(['prophylaxis' => $lpv3]);
+		Viralsample::where(['regimen' => 13])->where('age', '>', 14)->update(['prophylaxis' => $lpv3]);
 
 
 
 		$efv1 = DB::table('viralregimen')->where('code', 'CF2B')->first()->id;
 		$efv2 = DB::table('viralregimen')->where('code', 'AF4B')->first()->id;
 		Viralsample::where(['regimen' => 12])->whereBetween('age', [0, 14])->update(['prophylaxis' => $efv1]);
-		Viralsample::where(['regimen' => 12])->whereBetween('age', '>', 14)->update(['prophylaxis' => $efv2]);
+		Viralsample::where(['regimen' => 12])->where('age', '>', 14)->update(['prophylaxis' => $efv2]);
 
 
 		
