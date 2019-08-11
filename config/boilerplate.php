@@ -96,9 +96,9 @@ return [
     'vl' => [
         'initiation_date' => ['date_format:Y-m-d', 'before_or_equal:today','after_or_equal:1990-01-01'],
         'dateinitiatedonregimen' => ['date_format:Y-m-d', 'before_or_equal:today',],
-        'prophylaxis' => ['required', 'integer', 'max:30'],
-        'regimenline' => ['required', 'integer', 'max:10'],
-        'sampletype' => ['required', 'integer', 'between:1,5'],
+        'prophylaxis' => ['required', 'integer', 'max:50'],
+        // 'regimenline' => ['required', 'integer', 'max:10'],
+        'sampletype' => ['required', 'integer', 'between:1,3'],
         'justification' => ['required', 'integer', 'max:15'],
         'pmtct' => ['integer', 'between:1,3', 'required_if:sex,==,2'],
     ],

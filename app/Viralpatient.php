@@ -28,6 +28,14 @@ class Viralpatient extends BaseModel
         return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_no]);
     }
 
+    public function setPatientPhoneNoAttribute($value)
+    {
+        if(preg_match('/[2][5][4][7][0-9]{8}/', $value)) $this->attributes['patient_phone_no'] = $value;
+        else{
+            $this->attributes['patient_phone_no'] = null;
+        }
+    }
+
 
     /**
      * Get the patient's gender
