@@ -2778,7 +2778,7 @@ class Random
     		// dd($tests);
     		if ($tests->count() == 2) {
     			foreach ($tests as $key => $test) {
-	    			$data[] = $test;
+	    			$data[] = $test->toArray();
 	    		}
     		}
     	}
