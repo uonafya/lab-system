@@ -2731,6 +2731,7 @@ class Random
     public static function run_ken_request() {
     	$data = [];
     	echo "==> Getting Patients\n";
+    	ini_set("memory_limit", "-1");
     	$patients = Viralpatient::select('id')->get();
     	// echo "==> Getting Patients Samples\n";
     	// $excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
