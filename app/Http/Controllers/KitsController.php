@@ -7,6 +7,7 @@ use App\Abbotdeliveries;
 use App\Taqmandeliveries;
 use App\Allocation;
 use App\AllocationDetail;
+use App\AllocationDetailsBreakdown;
 
 class KitsController extends Controller
 {    
@@ -131,40 +132,74 @@ class KitsController extends Controller
                 return back();
             }
         }
+        $allocationSQL = "`allocations`.`id`, `year`, `month`, `testtype`,
+                        COUNT(IF(approve=0, 1, NULL)) AS `pending`,
+                        COUNT(IF(approve=1, 1, NULL)) AS `approved`,
+                        COUNT(IF(approve=2, 1, NULL)) AS `rejected`";
+        $data = [
+            'allocations' => AllocationDetail::selectRaw($allocationSQL)->groupBy(['year','month','testtype','id'])
+                                ->orderBy('id','desc')->orderBy('year','desc')->orderBy('month','desc')
+                                ->join('allocations', 'allocations.id', '=', 'allocation_details.allocation_id')->get(),
+            'badge' => function($value, $type) {
+                $badge = "success";
+                if ($type == 1) {// Pending approval
+                    if ($value > 0)
+                        $badge = "warning";
+                } else if ($type == 2) {// Approved
+                    if ($value == 0)
+                        $badge = "warning";
+                } else if ($type == 3) { // Rejected
+                    if ($value > 0)
+                        $badge = "danger";
+                }
+                return $badge;
+            }
+        ];
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 
-    public function allocation($testtype = 1, $year, $month, $approval = null) {
-        if (!($testtype == 1 || $testtype == 2)) abort(404);
-        $allocations = Allocation::where('testtype', '=', $testtype)->where(['year' => $year, 'month' => $month])
-                                    ->when($approval, function($query) use ($approval) {
-                                        return $query->where('approve', '=', 2);
-                                    })->get();
+    public function allocation(Allocation $allocation, $type, $approval = null) {
+        $type = strtoupper($type);
+        if (!($type == 'EID' || $type == 'VL' || $type == 'CONSUMABLES')) abort(404);
+        $allocation_details = $allocation->details->when($type, function($details) use ($type){
+                                        if ($type == 'EID')
+                                            return $details->where('testtype', 1);
+                                        if ($type == 'VL')
+                                            return $details->where('testtype', 2);
+                                        if ($type == 'CONSUMABLES')
+                                                return $details->where('testtype', NULL);
+                                    })->when($approval, function($details) use ($approval) {
+                                        return $details->where('approve', 2);
+                                    });
+        
         $data = (object)[
-            'allocations' => $allocations,
-            'year' => $year, 
+            'allocations' => $allocation_details,
             'last_year' => $this->last_year,
             'last_month' => $this->last_month,
-            'month' => $month,
-            'testtype' => ($testtype == 1) ? 'EID' : 'VL',
+            'testtype' => $type,
             'approval' => $approval,
         ];
         return view('reports.kitreports-allocations-details', compact('data'))->with('pageTitle', $data->testtype . ' Kits Allocations');
     }
 
-    public function editallocation(Request $request, Allocation $allocation) {
-        $details = $allocation->details;
-        foreach ($details as $key => $detail) {
-            $detail->allocated = $request->input($detail->id);
-            $detail->pre_update();
+    public function editallocation(Request $request, $allocation_details) {
+        $allocation_details = AllocationDetail::findOrFail($allocation_details);
+        $data = $request->except(['_method', '_token', 'allocationcomments', 'allocation-form']);
+        foreach($data as $key => $breakdown) {
+            $breakdown_data = AllocationDetailsBreakDown::find($key);
+            $breakdown_data->allocated = $breakdown;
+            $breakdown_data->pre_update();
         }
-        $allocation->allocationcomments = $request->input('allocationcomments');
-        $allocation->approve = 0;
-        $allocation->submissions = $allocation->submissions + 1;
-        $allocation->pre_update();
+        $allocation_details->approve = 0;
+        $allocation_details->allocationcomments = $request->input('allocationcomments');
+        $allocation_details->submissions = $allocation_details->submissions + 1;
+        $allocation_details->pre_update();
+        $allocation = $allocation_details->allocation;
+        $allocation->synched = 2;
+        $allocation->save();
         session(['toast_message' => 'Allocation(s) edited successfully.']);
         \App\Synch::synch_allocations_updates();
-        return back();
+        return redirect('reports/kits');
     }
 
     // public function 

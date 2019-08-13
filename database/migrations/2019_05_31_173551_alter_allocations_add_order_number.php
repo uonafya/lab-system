@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGeneralConsumablesTable extends Migration
+class AlterAllocationsAddOrderNumber extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateGeneralConsumablesTable extends Migration
      */
     public function up()
     {
-        Schema::create('general_consumables', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->softDeletes();
-            $table->timestamps();
+        Schema::table('allocations', function(Blueprint $table){
+            $table->string('order_num', 20)->after('month')->nullable();
         });
     }
 
@@ -28,6 +25,6 @@ class CreateGeneralConsumablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('general_consumables');
+        //
     }
 }

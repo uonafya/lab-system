@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGeneralConsumablesTable extends Migration
+class AlterAllocationDetailsBreakdown extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,7 @@ class CreateGeneralConsumablesTable extends Migration
      */
     public function up()
     {
-        Schema::create('general_consumables', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->softDeletes();
+        Schema::table('allocation_details_breakdowns', function(Blueprint $table){
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ class CreateGeneralConsumablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('general_consumables');
+        //
     }
 }

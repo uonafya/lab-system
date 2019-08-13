@@ -43,26 +43,31 @@ class KitsSeeder extends Seeder
     	foreach ($roche as $key => $rocheMachine) {
     		foreach ($this->taqmanKits as $key => $kit) {
     			$kit = (object) $kit;
-    			\App\Kits::create([
-    				'name' => $kit->name,
-    				'alias' => $kit->alias,
-    				'unit' => $kit->unit,
-    				'machine_id' => $rocheMachine,
-    				'factor' => json_encode($kit->factor),
-					'testFactor' => json_encode($kit->testFactor)
-    			]);
+                $data = [
+                    'name' => $kit->name,
+                    'alias' => $kit->alias,
+                    'unit' => $kit->unit,
+                    'machine_id' => $rocheMachine,
+                    'factor' => json_encode($kit->factor),
+                    'testFactor' => json_encode($kit->testFactor)
+                ];
+                $model = new \App\Kits;
+                $model->fill($data);
+                $model->save();
     		}
     	}
 
     	foreach ($this->abbottKits as $key => $kit) {
     			$kit = (object) $kit;
-    			\App\Kits::create([
+                $model = new \App\Kits;
+    			$model->fill([
     				'name' => $kit->name,
     				'alias' => $kit->alias,
     				'machine_id' => 2,
     				'factor' => json_encode($kit->factor),
 					'testFactor' => json_encode($kit->testFactor)
     			]);
+                $model->save();
     		}
     }
 }
