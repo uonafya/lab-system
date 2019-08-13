@@ -2751,11 +2751,11 @@ class Random
     	// 		}
     	// 	}
     	// }
-    	$file = 'VL_Line_List_TLD_2019_LLV';
+    	$file = 'VL_Line_List_TLD_LLV';
     	
     	// New TLD patients
     	ini_set("memory_limit", "-1");
-    	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2019')->get()->split(10600);
+    	$patientsGroups = Viralpatient::select('id')->get()->split(10600);
     	echo "==> Getting patients' data\n";
     	foreach ($patientsGroups as $key => $patients) {
     		echo "\tGetting patients` batch {$key}\n";
@@ -2765,7 +2765,7 @@ class Random
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
     						->whereIn('patient_id', $patients->toArray())
-    						->whereYear('datetested', 2019)
+    						// ->whereYear('datetested', 2019)
     						->whereIn('rcategory', [3,4])
     						->where('regimen', 17)
     						// ->whereRaw("month(datetested) IN (4, 5, 6)")
