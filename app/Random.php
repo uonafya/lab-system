@@ -2807,7 +2807,7 @@ class Random
     						// ->whereIn('rcategory', [1,2,3,4])
     						->whereIn('patient_id', $patients->toArray())
     						->whereYear('datetested', 2019)
-    						->where('rcategory', 2)
+    						->whereIn('rcategory', [3,4])
     						->where('regimen', 17)
     						// ->whereRaw("month(datetested) IN (4, 5, 6)")
     						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
