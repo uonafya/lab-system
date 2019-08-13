@@ -2772,40 +2772,40 @@ class Random
     public static function run_ken_request() {
     	$data = [];
     	echo "==> Getting Patients\n";
-    	// $patients = Viralpatient::select('id', 'dob')->whereYear('dob', '>', '2009')->get();
+    	$patients = Viralpatient::select('id')->get();
     	// echo "==> Getting Patients Samples\n";
     	// $excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
     	// ini_set("memory_limit", "-1");
     	// foreach ($patients as $key => $patient) {
-    	// 	$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
-    	// 	if ($samples->count() == 2) {
-    	// 		$newsamples = $samples->whereIn('rcategory', [3,4]);
-    	// 		if ($newsamples->count() == 2){
-    	// 			echo ".";
-    	// 			$newsample = $newsamples->first();
-    	// 			$data[] = [
-    	// 				'patient' => $patient->patient,
-    	// 				'regimen' => $newsample->prophylaxis_name,
-    	// 				'result' => $newsample->result,
-    	// 				'agecategory' => self::getMakeShiftAgeCategory($newsample->age),
-    	// 			];
-    	// 		}
-    	// 	}
+    		// $samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
+    		// if ($samples->count() == 2) {
+    		// 	$newsamples = $samples->whereIn('rcategory', [3,4]);
+    		// 	if ($newsamples->count() == 2){
+    		// 		echo ".";
+    		// 		$newsample = $newsamples->first();
+    		// 		$data[] = [
+    		// 			'patient' => $patient->patient,
+    		// 			'regimen' => $newsample->prophylaxis_name,
+    		// 			'result' => $newsample->result,
+    		// 			'agecategory' => self::getMakeShiftAgeCategory($newsample->age),
+    		// 		];
+    		// 	}
+    		// }
     	// }
-    	$file = 'VL_Line_List_TLD_LLV_TRUE';
+    	$file = 'VL_Line_List_TLD_LLV_LAST2';
     	
     	// New TLD patients
     	ini_set("memory_limit", "-1");
-    	$patientsGroups = Viralpatient::select('id')->get()->split(10600);
+    	// $patientsGroups = Viralpatient::select('id')->get()->split(10600);
     	echo "==> Getting patients' data\n";
-    	foreach ($patientsGroups as $key => $patients) {
+    	foreach ($patients as $key => $patient) {
     		echo "\tGetting patients` batch {$key}\n";
     		// echo "==> Getting tests \n";
     		$tests = ViralsampleCompleteView::selectRaw("distinct patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
     		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
-    						->whereIn('patient_id', $patients->toArray())
+    						->where('patient_id', $patient->id)
     						// ->whereYear('datetested', 2019)
     						->where('rcategory', 2)
     						->where('regimen', 17)
@@ -2814,10 +2814,12 @@ class Random
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
-    						->orderBy('datetested', 'desc')->get();
+    						->orderBy('datetested', 'desc')->limit(2)->get();
     		// dd($tests);
-    		foreach ($tests as $key => $test) {
-    			$data[] = $test;
+    		if ($tests->count() == 2) {
+    			foreach ($tests as $key => $test) {
+	    			$data[] = $test;
+	    		}
     		}
     	}
 
