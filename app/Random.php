@@ -2792,7 +2792,7 @@ class Random
     	// 		}
     	// 	}
     	// }
-    	$file = 'VL_Line_List_TLD_LLV';
+    	$file = 'VL_Line_List_TLD_2019_LLV';
     	
     	// New TLD patients
     	ini_set("memory_limit", "-1");
@@ -2807,7 +2807,7 @@ class Random
     						// ->whereIn('rcategory', [1,2,3,4])
     						->whereIn('patient_id', $patients->toArray())
     						->whereYear('datetested', 2019)
-    						->whereIn('rcategory', 2)
+    						->where('rcategory', 2)
     						->where('regimen', 17)
     						// ->whereRaw("month(datetested) IN (4, 5, 6)")
     						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
@@ -2820,7 +2820,7 @@ class Random
     			$data[] = $test;
     		}
     	}
-    	// dd($data);
+
     	echo "=> Creating excel\n";
     	Excel::create($file, function($excel) use($data)  {
 		    $excel->sheet('Sheetname', function($sheet) use($data) {
