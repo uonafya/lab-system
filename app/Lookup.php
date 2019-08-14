@@ -509,9 +509,9 @@ class Lookup
 
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'datetested', 'result'],
 
-            'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name'],
+            // 'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name'],
 
-            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
+            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'project', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
         ];
     }
 
@@ -562,7 +562,7 @@ class Lookup
             $drug_resistance_reasons = DB::table('drug_resistance_reasons')->get();
             $dr_primers = DB::table('dr_primers')->get();
             $dr_patient_statuses = DB::table('dr_patient_statuses')->get();
-            $dr_sample_types = DB::table('dr_sample_types')->get();
+            $dr_projects = DB::table('dr_projects')->get();
             $tb_treatment_phases = DB::table('tb_treatment_phases')->get();
             $clinical_indications = DB::table('clinical_indications')->get();
             $arv_toxicities = DB::table('arv_toxicities')->get();
@@ -612,7 +612,7 @@ class Lookup
             Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
             Cache::put('dr_primers', $dr_primers, 60);
             Cache::put('dr_patient_statuses', $dr_patient_statuses, 60);
-            Cache::put('dr_sample_types', $dr_sample_types, 60);
+            Cache::put('dr_projects', $dr_projects, 60);
             Cache::put('tb_treatment_phases', $tb_treatment_phases, 60);
             Cache::put('clinical_indications', $clinical_indications, 60);
             Cache::put('arv_toxicities', $arv_toxicities, 60);

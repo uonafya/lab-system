@@ -97,7 +97,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function is_lab_user()
     {
-        if($this->user_type_id == 0 || $this->user_type_id == 1 || $this->user_type_id == 4) return true;
+        if(in_array($this->user_type_id, [0, 1, 4])) return true;
         return false;
     }
 

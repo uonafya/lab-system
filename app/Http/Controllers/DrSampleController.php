@@ -166,9 +166,11 @@ class DrSampleController extends Controller
         }
 
         $drSample = new DrSample;
-        $data = $request->only($viralsamples_arrays['dr_sample']);
+        // $data = $request->only($viralsamples_arrays['dr_sample']);
+        $except = array_merge($viralsamples_arrays['patient'], ['other_medications', 'other_medications_text', 'submit_type', '_token']);
+        $data = $request->except($except);
         $data['user_id'] = auth()->user()->id;
-        if(auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) $data['received_by'] = auth()->user()->id;
+        if(auth()->user()->is_lab_user()) $data['received_by'] = auth()->user()->id;
         $drSample->fill($data);
 
         if(env('APP_LAB') == 7) $drSample->patient_id = $viralpatient->id;
@@ -241,11 +243,10 @@ class DrSampleController extends Controller
         }
 
 
-        $data = $request->only($viralsamples_arrays['dr_sample']);
+        $except = array_merge($viralsamples_arrays['patient'], ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
+        $data = $request->except($except);
 
-        if((auth()->user()->user_type_id == 1 || auth()->user()->user_type_id == 4) && !$drSample->received_by){
-            $data['received_by'] = auth()->user()->id;
-        }
+        if((auth()->user()->is_lab_user()) && !$drSample->received_by) $data['received_by'] = auth()->user()->id;
 
         $drSample->fill($data);
 

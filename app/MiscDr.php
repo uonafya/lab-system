@@ -49,6 +49,16 @@ class MiscDr extends Common
             'resistance_colour' => "#00ff00",
             'cells' => [],
         ],
+        'L' => [
+            'resistance' => 'Low Level',
+            'resistance_colour' => "#00ff00",
+            'cells' => [],
+        ],
+        'PL' => [
+            'resistance' => 'Potential Low Level',
+            'resistance_colour' => "#00ff00",
+            'cells' => [],
+        ],
     ];
 
     public static function get_drug_score($score)
@@ -56,15 +66,10 @@ class MiscDr extends Common
     	$c = self::$call_array;
     	// susceptible
     	if($score < 10) return $c['S'];
-    	// potential low level
-    	else if($score < 15) return $c['L'];
-		// low level
+    	else if($score < 15) return $c['PL'];
     	else if($score < 30) return $c['L'];
-		// intermediate
     	else if($score < 60) return $c['I'];
-		// resistant
     	else if($score > 59) return $c['R'];
-		//low coverage
     	else{
     		return $c['LC'];
     	}

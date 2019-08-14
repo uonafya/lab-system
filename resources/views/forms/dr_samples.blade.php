@@ -266,20 +266,20 @@
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Sample Type
+                            <label class="col-sm-3 control-label">Project Name
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control requirable" required name="sample_type" id="sample_type">
+                                <select class="form-control requirable" required name="project" id="project">
                                     <option></option>
-                                    @foreach ($dr_sample_types as $sample_type)
-                                        <option value="{{ $sample_type->id }}"
+                                    @foreach ($dr_projects as $dr_project)
+                                        <option value="{{ $dr_project->id }}"
 
-                                        @if (isset($sample) && $sample->sample_type == $sample_type->id)
+                                        @if (isset($sample) && $sample->project == $dr_project->id)
                                             selected
                                         @endif
 
-                                        > {{ $sample_type->name }}
+                                        > {{ $dr_project->name }}
                                         </option>
                                     @endforeach
                                 </select>
