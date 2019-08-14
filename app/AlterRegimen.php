@@ -364,7 +364,7 @@ class AlterRegimen
 
 
 		$other = DB::table('viralregimen')->where('code', 'AS6X')->first()->id;
-		Viralsample::where(['regimen' => 14, 'regimenline' => , 'prophylaxis' => 0])->where('age', '>', 14)->update(['prophylaxis' => $other]);
+		Viralsample::where(['regimen' => 14, 'regimenline' => 2, 'prophylaxis' => 0])->where('age', '>', 14)->update(['prophylaxis' => $other]);
 
 		$other = DB::table('viralregimen')->where('code', 'AT2X')->first()->id;
 		Viralsample::where(['regimen' => 14, 'regimenline' => 3, 'prophylaxis' => 0])->where('age', '>', 14)->update(['prophylaxis' => $other]);
