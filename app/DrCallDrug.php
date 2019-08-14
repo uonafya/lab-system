@@ -59,5 +59,7 @@ class DrCallDrug extends BaseModel
     	return "<td style='background-color:{$colour};' bgcolor='{$colour}'></td>";
     }
 
+    
+
 
 }

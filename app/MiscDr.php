@@ -51,6 +51,18 @@ class MiscDr extends Common
         ],
     ];
 
+    public static function get_drug_score($score)
+    {
+    	if($score < 10) // susceptible
+    	else if($score < 15) // potential low level
+    	else if($score < 30) // low level
+    	else if($score < 60) // intermediate
+    	else if($score > 59) // resistant
+    	else{
+    		//low coverage
+    	}
+    }
+
     public static function dump_log($postData, $encode_it=true)
     {
     	if(!is_dir(storage_path('app/logs/'))) mkdir(storage_path('app/logs/'), 0777);
@@ -319,10 +331,10 @@ class MiscDr extends Common
 
 		$included = print_r($body->included, true);
 
-		$file = fopen(public_path('res.json'), 'w+');
-		fwrite($file, $included);
-		fclose($file);
-		die();
+		// $file = fopen(public_path('res.json'), 'w+');
+		// fwrite($file, $included);
+		// fclose($file);
+		// die();
 
 		// dd($body);
 
@@ -353,7 +365,7 @@ class MiscDr extends Common
 			}
 
 			$worksheet->status_id = 6;
-			// $worksheet->save();
+			$worksheet->save();
 
 			// dd($body->included);
 
@@ -422,7 +434,7 @@ class MiscDr extends Common
 
 						// $c->save();
 
-						dd($call);
+						// dd($call);
 
 						$c = DrCall::firstOrCreate([
 							'sample_id' => $sample->id,
@@ -441,6 +453,7 @@ class MiscDr extends Common
 								'short_name' => $drug->short_name,
 								'short_name_id' => self::get_short_name_id($drug->short_name),
 								'call' => $drug->call,
+								'score' => $drug->score ?? null,
 							]);
 						}
 					}
