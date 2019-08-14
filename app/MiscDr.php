@@ -318,7 +318,7 @@ class MiscDr extends Common
 		$body = json_decode($response->getBody());
 
 		$file = fopen(public_path('res.json'), 'w+');
-		fwrite($file, $response->getBody()));
+		fwrite($file, $response->getBody());
 		fclose($file);
 		die();
 
