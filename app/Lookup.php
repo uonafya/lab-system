@@ -460,7 +460,7 @@ class Lookup
             'dr_primers' => Cache::get('dr_primers'),
             'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
             'dr_sample_types' => Cache::get('dr_sample_types'),
-            'sampletypes' => Cache::get('sample_types'),
+            'dr_projects' => Cache::get('dr_projects'),
             'tb_treatment_phases' => Cache::get('tb_treatment_phases'),
             'clinical_indications' => Cache::get('clinical_indications'),
             'arv_toxicities' => Cache::get('arv_toxicities'),
