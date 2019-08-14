@@ -294,7 +294,7 @@
                                 <select class="form-control requirable" required name="sampletype" id="sampletype">
                                     <option></option>
                                     @foreach ($sampletypes as $sampletype)
-                                        <option value="{{ $sample_type->id }}"
+                                        <option value="{{ $sampletype->id }}"
 
                                         @if (isset($sample) && $sample->sampletype == $sampletype->id)
                                             selected
