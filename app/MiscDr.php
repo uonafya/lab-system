@@ -317,6 +317,11 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
+		$file = fopen(public_path('res.json'), 'w+');
+		fwrite($file, $body);
+		fclose($file);
+		die();
+
 		// dd($body);
 
 		if($response->getStatusCode() == 200)
@@ -348,7 +353,7 @@ class MiscDr extends Common
 			$worksheet->status_id = 6;
 			// $worksheet->save();
 
-			dd($body->included);
+			// dd($body->included);
 
 			foreach ($body->included as $key => $value) {
 
