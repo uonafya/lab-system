@@ -208,7 +208,7 @@ class Nat
 				(
 					SELECT id, patient_id, max(datetested) as maxdate
 					FROM viralsamples_view
-					WHERE datetested > '2018-03-01'
+					WHERE datetested > '2018-01-01'
 					AND patient != '' AND patient != 'null' AND patient is not null
 					AND flag=1 AND repeatt=0 AND result > 400
 					AND justification != 10 and facility_id != 7148

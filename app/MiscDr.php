@@ -22,11 +22,11 @@ use App\DrResidue;
 class MiscDr extends Common
 {
 
-	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
-	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
+	// public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
+	// public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
-	// public static $hyrax_url = 'https://sanger.api.exatype.com'; 
-	// public static $ui_url = 'https://sanger.exatype.com';
+	public static $hyrax_url = 'https://sanger.api.exatype.com'; 
+	public static $ui_url = 'https://sanger.exatype.com';
 
     public static $call_array = [
         'LC' => [
@@ -50,6 +50,18 @@ class MiscDr extends Common
             'cells' => [],
         ],
     ];
+
+    public static function get_drug_score($score)
+    {
+    	if($score < 10) // susceptible
+    	else if($score < 15) // potential low level
+    	else if($score < 30) // low level
+    	else if($score < 60) // intermediate
+    	else if($score > 59) // resistant
+    	else{
+    		//low coverage
+    	}
+    }
 
     public static function dump_log($postData, $encode_it=true)
     {
@@ -317,6 +329,13 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
+		$included = print_r($body->included, true);
+
+		// $file = fopen(public_path('res.json'), 'w+');
+		// fwrite($file, $included);
+		// fclose($file);
+		// die();
+
 		// dd($body);
 
 		if($response->getStatusCode() == 200)
@@ -434,6 +453,7 @@ class MiscDr extends Common
 								'short_name' => $drug->short_name,
 								'short_name_id' => self::get_short_name_id($drug->short_name),
 								'call' => $drug->call,
+								'score' => $drug->score ?? null,
 							]);
 						}
 					}
@@ -583,80 +603,83 @@ class MiscDr extends Common
 	}
 
 
-	public static function generate_samples()
-	{
-		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(300)->get();
 
-		foreach ($potential_patients as $patient) {
-	        $data = $patient->only(['patient_id', 'dr_reason_id']);
-	        $data['user_id'] = 0;
-	        $data['receivedstatus'] = 1;
-	        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
-	        $data['datereceived'] = date('Y-m-d');
-	        // $sample = DrSample::create($data);
-	        $sample = new DrSample;
-	        $sample->fill($data);
-	        $facility = $sample->patient->facility;
-	        $sample->facility_id = $facility->id;
-	        $sample->save();      
+	/*
 
-	        $patient->status_id=2;
-	        $patient->save();
-		}
-	}
+		public static function generate_samples()
+		{
+			$potential_patients = \App\DrPatient::where('status_id', 1)->limit(300)->get();
 
+			foreach ($potential_patients as $patient) {
+		        $data = $patient->only(['patient_id', 'dr_reason_id']);
+		        $data['user_id'] = 0;
+		        $data['receivedstatus'] = 1;
+		        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
+		        $data['datereceived'] = date('Y-m-d');
+		        // $sample = DrSample::create($data);
+		        $sample = new DrSample;
+		        $sample->fill($data);
+		        $facility = $sample->patient->facility;
+		        $sample->facility_id = $facility->id;
+		        $sample->save();      
 
-	public static function regimens()
-	{
-		$calls = \App\DrCallView::all();
-
-		foreach ($calls as $key => $value) {
-			$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
-
-			if(!$reg){
-				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name]);
+		        $patient->status_id=2;
+		        $patient->save();
 			}
 		}
-	}
 
 
-	public static function seed()
-	{		
-    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 2, 'date_gel_documentation' => date('Y-m-d')]);
+		public static function regimens()
+		{
+			$calls = \App\DrCallView::all();
 
-    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
+			foreach ($calls as $key => $value) {
+				$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    	]);
+				if(!$reg){
+					DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name]);
+				}
+			}
+		}
 
-    	$samples = [6, 10, 14, 17, 20, 22, 99, 2009695759, 2012693909, 2012693911, 2012693943, 3005052934, 3005052959, ];
 
-    	foreach ($samples as $key => $sample) {
-    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
-    	}
-	}
+		public static function seed()
+		{		
+	    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 2, 'date_gel_documentation' => date('Y-m-d')]);
 
-	public static function seed_nhrl()
-	{		
-    	$u = \App\User::where('user_type_id', 0)->first();
-    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => $u->id, 'date_gel_documentation' => date('Y-m-d')]);
+	    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
 
-    	$w = \App\DrWorksheet::create(['lab_id' => env('APP_LAB'), 'extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
+	    	DB::table('dr_samples')->insert([
+	    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
+	    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
+	    	]);
 
-    	$samples = [1, 2, 3, 4, 5, 6, 7, 9, 10, 14, 17, 20, 22, ];
+	    	$samples = [6, 10, 14, 17, 20, 22, 99, 2009695759, 2012693909, 2012693911, 2012693943, 3005052934, 3005052959, ];
 
-    	foreach ($samples as $key => $sample) {
-    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
-    	}
+	    	foreach ($samples as $key => $sample) {
+	    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
+	    	}
+		}
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    	]);
-	}
+		public static function seed_nhrl()
+		{		
+	    	$u = \App\User::where('user_type_id', 0)->first();
+	    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => $u->id, 'date_gel_documentation' => date('Y-m-d')]);
 
+	    	$w = \App\DrWorksheet::create(['lab_id' => env('APP_LAB'), 'extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
+
+	    	$samples = [1, 2, 3, 4, 5, 6, 7, 9, 10, 14, 17, 20, 22, ];
+
+	    	foreach ($samples as $key => $sample) {
+	    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
+	    	}
+
+	    	DB::table('dr_samples')->insert([
+	    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
+	    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
+	    	]);
+		}
+	*/
 
 	/*
 		Start of Console Commands
