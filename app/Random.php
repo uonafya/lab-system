@@ -2815,7 +2815,7 @@ class Random
     	$dataArray = [];
     	$data = [];
     	$months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    	echo "==> Getting Unique patients\n";
+    	// echo "==> Getting Unique patients\n";
     	ini_set("memory_limit", "-1");
     	$patientsGroups = Viralsample::selectRaw('distinct patient_id')->whereYear('datetested', '=', '2018')->get()->split(10600);
     	echo "==> Getting patients' data\n";
