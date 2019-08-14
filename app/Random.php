@@ -2809,7 +2809,7 @@ class Random
     						->where('patient_id', $patient->id)
     						// ->whereYear('datetested', 2019)
     						->whereIn('rcategory', [3,4])
-    						->where('regimen', 17)
+    						->where('regimen', 18)
     						// ->whereRaw("month(datetested) IN (4, 5, 6)")
     						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
