@@ -240,7 +240,8 @@ class Nat
 					LEFT JOIN view_facilitys f ON f.id=v.facility_id
 			";
 
-			$p = DB::select($sql)->first();
+			$p = DB::select($sql);
+			dd($p);
 
 			if(!$p) continue;
 			if($p->result <= 400) continue;
