@@ -241,9 +241,11 @@ class Nat
 			";
 
 			$p = DB::select($sql);
-			dd($p);
 
 			if(!$p) continue;
+			else{
+				dd($p);
+			}
 			if($p->result <= 400) continue;
 
 			$data[] = [
