@@ -202,7 +202,7 @@ class Nat
 	{
 		$data = [];
 
-		$sql = "SELECT id, patient_id, datetested, result
+		$sql = "SELECT v.id, v.patient_id, v.datetested, v.result
 				FROM viralsamples_view v
 				RIGHT JOIN 
 				(
@@ -222,7 +222,7 @@ class Nat
 
 		foreach ($rows as $key => $row) {
 
-			$sql = "SELECT v.id, patient_id, patient, facility_id, datetested, result, f.name, f.facilitycode, f.subcounty, f.county
+			$sql = "SELECT v.id, v.patient_id, v.patient, v.facility_id, v.datetested, v.result, f.name, f.facilitycode, f.subcounty, f.county
 					FROM viralsamples_view v
 					RIGHT JOIN 
 					(
