@@ -53,13 +53,20 @@ class MiscDr extends Common
 
     public static function get_drug_score($score)
     {
-    	if($score < 10) // susceptible
-    	else if($score < 15) // potential low level
-    	else if($score < 30) // low level
-    	else if($score < 60) // intermediate
-    	else if($score > 59) // resistant
+    	$c = self::$call_array;
+    	// susceptible
+    	if($score < 10) return $c['S'];
+    	// potential low level
+    	else if($score < 15) 
+		// low level
+    	else if($score < 30) 
+		// intermediate
+    	else if($score < 60) return $c['I'];
+		// resistant
+    	else if($score > 59) return $c['R'];
+		//low coverage
     	else{
-    		//low coverage
+    		return $c['LC'];
     	}
     }
 
