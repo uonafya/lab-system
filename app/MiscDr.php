@@ -57,9 +57,9 @@ class MiscDr extends Common
     	// susceptible
     	if($score < 10) return $c['S'];
     	// potential low level
-    	else if($score < 15) 
+    	else if($score < 15) return $c['L'];
 		// low level
-    	else if($score < 30) 
+    	else if($score < 30) return $c['L'];
 		// intermediate
     	else if($score < 60) return $c['I'];
 		// resistant
