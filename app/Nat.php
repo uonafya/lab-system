@@ -197,4 +197,80 @@ class Nat
 		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org'])->send(new TestMail($data));
 	}*/
 
+
+	public static function dtg_llv()
+	{
+		$data = [];
+
+		$sql = "SELECT id, patient_id, datetested, result
+				FROM viralsamples_view v
+				RIGHT JOIN 
+				(
+					SELECT id, patient_id, max(datetested) as maxdate
+					FROM viralsamples_view
+					WHERE datetested > '2018-03-01'
+					AND patient != '' AND patient != 'null' AND patient is not null
+					AND flag=1 AND repeatt=0 AND result > 400
+					AND justification != 10 and facility_id != 7148
+					AND prophylaxis=1
+					GROUP BY patient_id
+				) gv
+				ON v.id=gv.id
+		";
+
+		$rows = DB::select($sql);
+
+		foreach ($rows as $key => $row) {
+
+			$sql = "SELECT v.id, patient_id, patient, facility_id, datetested, result, f.name, f.facilitycode, f.subcounty, f.county
+					FROM viralsamples_view v
+					RIGHT JOIN 
+					(
+						SELECT id, patient_id, max(datetested) as maxdate
+						FROM viralsamples_view
+						WHERE datetested < '{$row->datetested}'
+						AND patient_id = {$row->patient_id}
+						AND patient != '' AND patient != 'null' AND patient is not null
+						AND flag=1 AND repeatt=0 AND result > 400
+						AND justification != 10 and facility_id != 7148
+						AND prophylaxis=1
+						GROUP BY patient_id
+					) gv
+					ON v.id=gv.id
+					LEFT JOIN view_facilitys f ON f.id=v.facility_id
+			";
+
+			$p = DB::select($sql)->first();
+
+			if(!$p) continue;
+			if($p->result <= 400) continue;
+
+			$data[] = [
+				'CCC Number' => $p->patient,
+				'Facility' => $p->name,
+				'Facility MFL Code' => $p->facilitycode,
+				'Subcounty' => $p->subcounty,
+				'County' => $p->county,
+				'Most Recent Result' => $row->result,
+				'Most Recent Test Date' => $row->datetested,
+				'Second Most Recent Result' => $p->result,
+				'Second Most Recent Test Date' => $p->datetested,
+			];
+		}
+
+		$file = "dtg_llv";
+		
+		Excel::create($file, function($excel) use($data){
+			$excel->sheet('Sheetname', function($sheet) use($data) {
+				$sheet->fromArray($data);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+
+
+	}
+
 }

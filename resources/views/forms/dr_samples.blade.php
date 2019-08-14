@@ -183,7 +183,7 @@
                             <div class="col-sm-9">
                                 <select class="form-control" name="prev_prophylaxis" id="prev_prophylaxis">
                                     <option></option>
-                                    @foreach ($prophylaxis as $proph)
+                                    @foreach ($prophylaxis as $key => $proph)
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
@@ -215,7 +215,7 @@
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
-                                    @foreach ($prophylaxis as $proph)
+                                    @foreach ($prophylaxis as $key => $proph)
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
