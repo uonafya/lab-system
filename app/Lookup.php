@@ -466,6 +466,7 @@ class Lookup
             'clinical_indications' => Cache::get('clinical_indications'),
             'arv_toxicities' => Cache::get('arv_toxicities'),
             'other_medications' => Cache::get('other_medications'),
+            'container_types' => Cache::get('container_types'),
 
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'received_statuses' => Cache::get('received_statuses'),
