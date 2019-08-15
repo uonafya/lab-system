@@ -2732,7 +2732,7 @@ class Random
     	$data = [];
     	echo "==> Getting Patients\n";
     	ini_set("memory_limit", "-1");
-    	$patients = Viralpatient::select('id')->get()->split(10600);
+    	$patients = Viralpatient::select('id')->get();
     	// echo "==> Getting Patients Samples\n";
     	// $excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
     	// ini_set("memory_limit", "-1");
@@ -2752,7 +2752,7 @@ class Random
     		// 	}
     		// }
     	// }
-    	$file = 'VL_Line_List_TLD_TX_Unique';
+    	$file = 'VL_Line_List_TLD_TX_LAST2';
     	
     	// New TLD patients
     	ini_set("memory_limit", "-1");
@@ -2765,7 +2765,7 @@ class Random
     		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
-    						->whereIn('patient_id', $patient->toArray())
+    						->where('patient_id', $patient->id)
     						// ->whereYear('datetested', 2019)
     						->whereIn('rcategory', [3,4])
     						->where('regimen', 18)
@@ -2774,7 +2774,7 @@ class Random
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
-    						->orderBy('datetested', 'desc')->get();
+    						->orderBy('datetested', 'desc')->limit(2)->get();
     		// dd($tests);
     		// if ($tests->count() == 2) {
     			foreach ($tests as $key => $test) {
