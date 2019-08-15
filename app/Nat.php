@@ -274,6 +274,7 @@ class Nat
 
 	public static function dtg_llv_two()
 	{
+		ini_set('memory_limit', '-1');
 		$data = [];
 
 		$sql = "SELECT v.id, v.patient_id, v.datetested, v.result
