@@ -69,6 +69,15 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Nat ID
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-9">
+                                <input class="form-control requirable" required name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
+                            </div>
+                        </div>
+
                         @if(env('APP_LAB') == 7)
 
                             <div class="hr-line-dashed"></div>
@@ -243,6 +252,22 @@
                                 </div>
                             </div>                            
                         </div> 
+
+                        <div class="hr-line-dashed"></div>                    
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">VL Result</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" name="vl_result1" type="text" value="{{ $sample->vl_result1 ?? '' }}" id="vl_result1">
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="input-group date date-art">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="date_current_regimen" class="form-control" value="{{ $sample->vl_result1 ?? '' }}" name="date_current_regimen">
+                                </div>
+                            </div>                            
+                        </div> 
+
 
                         <div class="hr-line-dashed"></div>
 
@@ -601,7 +626,9 @@
                         required: '#dob:blank'
                     },
                 @endif
-
+                nat: {
+                    regex: '/^[N][A][T]/'
+                },
                 date_prev_regimen: {
                     lessThanTwo: ["#date_current_regimen", "Date of Previous Regimen", "Date of Current Regimen"]
                 },
@@ -650,7 +677,8 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: '-24y',
+            // startDate: '-24y',
+            startDate: '1990-01-01',
             endDate: new Date(),
             format: "yyyy-mm-dd"
         });
