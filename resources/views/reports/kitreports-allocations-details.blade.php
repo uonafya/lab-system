@@ -41,48 +41,55 @@
                         else if ($allocation->approve == 2) $badge = 'danger';
                     @endphp
                     <div class="alert alert-{{ $badge }}">
-                        <center>Allocation for {{ $allocation->machine->machine}}, {{ $globaltesttype }}</center>
+                        <center>Allocation for {{ $allocation->machine->machine ?? ''}} @if ($allocation->machine) , @endif {{ ucfirst(strtolower($globaltesttype)) }}</center>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th>Name of Commodity</th>
+                                    @if ($globaltesttype != 'CONSUMABLES')
                                     <th>Average Monthly Consumption(AMC)</th>
                                     <th>Months of Stock(MOS)</th>
                                     <th>Ending Balance</th>
                                     <th>Recommended Quantity to Allocate (by System)</th>
+                                    @endif
                                     <th>Quantity Allocated by Lab</th>
                                 </tr>
                             </thead>
                             <tbody>
                             @php
-                                $tests = $allocation->machine->testsforLast3Months()->$globaltesttype;
-                                $qualamc = 0;
+                                if ($globaltesttype != 'CONSUMABLES') {
+                                    $tests = $allocation->machine->testsforLast3Months()->$globaltesttype;
+                                    $qualamc = 0;
+                                }
                             @endphp
-                            @foreach($allocation->details as $detail)
+                            @foreach($allocation->breakdowns as $detail)
                                 @php
-                                    $test_factor = json_decode($detail->kit->testFactor);
-                                    $factor = json_decode($detail->kit->factor);
-                                    if ($detail->kit->alias == 'qualkit')
-                                        $qualamc = (($tests / $test_factor->$globaltesttype) / 3);
+                                    if ($globaltesttype != 'CONSUMABLES') {
+                                        $test_factor = json_decode($detail->breakdown->testFactor);
+                                        $factor = json_decode($detail->breakdown->factor);
+                                        if ($detail->breakdown->alias == 'qualkit')
+                                            $qualamc = (($tests / $test_factor->$globaltesttype) / 3);
 
-                                    if ($allocation->machine->id == 2)
-                                        $amc = $qualamc * $factor->$globaltesttype;
-                                    else
-                                        $amc = $qualamc * $factor;
+                                        if ($allocation->machine->id == 2)
+                                            $amc = $qualamc * $factor->$globaltesttype;
+                                        else
+                                            $amc = $qualamc * $factor;
 
-                                    $ending = 0;
-                                    $consumption = $detail->kit->consumption
-                                                        ->where('month', $data->last_month)->where('year', $data->last_year)
-                                                        ->where('testtype', $globaltesttypevalue)->pluck('ending');
-                                    foreach($consumption as $value) {
-                                        $ending += $value;
+                                        $ending = 0;
+                                        $consumption = $detail->breakdown->consumption
+                                                            ->where('month', $data->last_month)->where('year', $data->last_year)
+                                                            ->where('testtype', $globaltesttypevalue)->pluck('ending');
+                                        foreach($consumption as $value) {
+                                            $ending += $value;
+                                        }
+                                        $mos = @($ending / $amc);
                                     }
-                                    $mos = @($ending / $amc);
                                 @endphp
                                 <tr>
-                                    <td>{{ str_replace("REPLACE", $replace, $detail->kit->name) }}</td>
+                                    <td>{{ str_replace("REPLACE", $replace, $detail->breakdown->name) }}</td>
+                                    @if ($globaltesttype != 'CONSUMABLES') {
                                     <td>{{ $amc }}</td>
                                     <td>
                                     @if(is_nan($mos))
@@ -93,9 +100,10 @@
                                     </td>
                                     <td>{{ $ending }}</td>
                                     <td>{{ ($amc * 2) - $ending }}</td>
+                                    @endif
                                     <td>
                                         @if ($allocation->approve == 2)
-                                        <input class="form-control input-edit" type="text" name="{{ $detail->id }}" id="{{ $detail->id }}" value="{{ $detail->allocated }}" />
+                                    <input class="form-control input-edit" type="text" name="{{ $detail->id }}" id="{{ $allocation->id }}-{{ $detail->breakdown->alias ?? $detail->breakdown->consumption }}" value="{{ $detail->allocated }}" />
                                         @else
                                             {{ $detail->allocated }}
                                         @endif
@@ -113,7 +121,8 @@
                             <textarea @if($allocation->approve != 2) disabled @endif class="form-control input-edit" name="allocationcomments">{{ $allocation->allocationcomments }}</textarea>
                         </div>                            
                     </div>
-                    <div class="form-group">
+                    <br />
+                    <div class="form-group" style="margin-top:2em;">
                         <label class="col-md-4 control-label">Allocation Committee Feedback</label>
                         <div class="col-md-8">
                             <textarea disabled class="form-control">{{ $allocation->issuedcomments }}</textarea>
@@ -122,7 +131,7 @@
                     
                     @if($allocation->approve == 2)
                     <center>
-                        <button type="submit" name="allocation-form" class="btn btn-primary btn-lg" value="true" style="margin-top: 2em;margin-bottom: 2em; width: 200px; height: 30px;">Save {{ $globaltesttype }} Allocations</button>
+                        <button type="submit" name="allocation-form" class="btn btn-primary btn-lg" value="true" style="margin-top: 2em;margin-bottom: 2em; width: 200px; height: 30px;">Save {{ ucfirst(strtolower($globaltesttype)) }} Allocations</button>
                     </center>
                     {{ Form::close() }}
                     @endif
@@ -143,7 +152,37 @@
     @endcomponent
     <script type="text/javascript">
         $(document).ready(function(){
-            
+            @if($globaltesttype != 'CONSUMABLES')
+                @foreach ($data->allocations as $allocation)
+                    @if($allocation->approve == 2)
+                        @foreach($allocation->breakdowns as $detail)
+                            @if($detail->breakdown->alias == 'qualkit')
+                                $("#{{ $allocation->id }}-{{ $detail->breakdown->alias }}").change(function(){
+                                    qualkitval = $(this).val();
+                                    computevalues("{{ $allocation->id }}", qualkitval);
+                                });
+                            @endif
+                        @endforeach
+                    @endif
+                @endforeach
+            @endif
         });
+        
+        function computevalues(allocation, qualkitvalue) {
+            @foreach ($data->allocations as $allocation)
+                if("{{ $allocation->id }}" == allocation) {
+                    @foreach($allocation->breakdowns as $detail)
+                        @if($detail->breakdown->alias != 'qualkit')
+                            @php
+                                $factor = json_decode($detail->breakdown->factor);
+                                if(isset($factor->$globaltesttype))
+                                    $factor = $factor->$globaltesttype;
+                            @endphp
+                            $("#" + allocation + "-{{ $detail->breakdown->alias }}").val(qualkitvalue * {{ $factor }});
+                        @endif
+                    @endforeach
+                }
+            @endforeach
+        }
     </script>
 @endsection

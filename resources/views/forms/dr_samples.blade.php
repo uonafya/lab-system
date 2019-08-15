@@ -157,33 +157,14 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Reason for DR test
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-9">
-                                <select class="form-control requirable" required name="dr_reasons" id="dr_reasons">
-                                    <option></option>
-                                    @foreach ($drug_resistance_reasons as $reason)
-                                        <option value="{{ $reason->id }}"
-
-                                        @if (isset($sample) && $sample->dr_reason_id == $reason->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $reason->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'dr_reason_id', 'drops' => $drug_resistance_reasons, 'label' => 'Reason for DR test', 'required' => true])
 
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Previous Regimen</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="prev_prophylaxis" id="prev_prophylaxis">
                                     <option></option>
-                                    @foreach ($prophylaxis as $proph)
+                                    @foreach ($prophylaxis as $key => $proph)
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
@@ -215,7 +196,7 @@
                             <div class="col-sm-9">
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
-                                    @foreach ($prophylaxis as $proph)
+                                    @foreach ($prophylaxis as $key => $proph)
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
@@ -265,45 +246,19 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Sample Type
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-9">
-                                <select class="form-control requirable" required name="sample_type" id="sample_type">
-                                    <option></option>
-                                    @foreach ($dr_sample_types as $sample_type)
-                                        <option value="{{ $sample_type->id }}"
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'project', 'drops' => $dr_projects, 'label' => 'Project Name', 'required' => true])
 
-                                        @if (isset($sample) && $sample->sample_type == $sample_type->id)
-                                            selected
-                                        @endif
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'sampletype', 'drops' => $sampletypes, 'label' => 'Sample Type', 'required' => true])
 
-                                        > {{ $sample_type->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'container_type', 'drops' => $container_types, 'label' => 'Containter Type', 'required' => false])
+
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'amount_unit', 'drops' => $amount_units, 'label' => 'Amount Unit', 'required' => false])    
+
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Specimen Type
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
+                            <label class="col-sm-3 control-label">Sample Amount</label>
                             <div class="col-sm-9">
-                                <select class="form-control requirable" required name="sampletype" id="sampletype">
-                                    <option></option>
-                                    @foreach ($sampletypes as $sampletype)
-                                        <option value="{{ $sample_type->id }}"
-
-                                        @if (isset($sample) && $sample->sampletype == $sampletype->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $sampletype->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input class="form-control" name="sample_amount" type="text" value="{{ $sample->sample_amount ?? '' }}" id="sample_amount">
                             </div>
                         </div>
 
@@ -590,49 +545,9 @@
                                 </div>                            
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Received Status
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-9">
-                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+                            @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'receivedstatus', 'drops' => $received_statuses, 'label' => 'Received Status', 'required' => true])
 
-                                        <option></option>
-                                        @foreach ($received_statuses as $receivedstatus)
-                                            <option value="{{ $receivedstatus->id }}"
-
-                                            @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $receivedstatus->name }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group" id="rejection" >
-                                <label class="col-sm-3 control-label">Rejected Reason</label>
-                                <div class="col-sm-9">
-                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
-
-                                        <option></option>
-                                        @foreach ($dr_rejected_reasons as $rejectedreason)
-                                            <option value="{{ $rejectedreason->id }}"
-
-                                            @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $rejectedreason->name }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
+                            @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'rejectedreason', 'drops' => $dr_rejected_reasons, 'label' => 'Rejected Reason', 'required' => true, 'disabled' => true, 'form_div' => 'rejection'])
 
                         @endif
 

@@ -13,7 +13,15 @@ class AllocationDetail extends BaseModel
      */
     protected $guarded = [];
 
-    public function kit(){
-    	return $this->belongsTo('App\Kits');
+    public function allocation() {
+        return $this->belongsTo('App\Allocation');
+    }
+    
+    public function breakdowns() {
+        return $this->hasMany('App\AllocationDetailsBreakdown');
+    }
+
+    public function machine(){
+        return $this->belongsTo('App\Machine');
     }
 }

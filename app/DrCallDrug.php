@@ -48,16 +48,12 @@ class DrCallDrug extends BaseModel
     public function getResistanceCellAttribute()
     {
     	$colour = MiscDr::$call_array[$this->call]['resistance_colour'];
-    	// return "<div style='background-color:" . $colour . ";'><td bgcolor='" . $colour . "'></td></div>";
-    	return "<td bgcolor='" . $colour . "'><div style='background-color:" . $colour . ";'></div></td>";
-    }
-
-
-    public function getResistanceCellTwoAttribute()
-    {
-    	$colour = MiscDr::$call_array[$this->call]['resistance_colour'];
+        // return "<div style='background-color:" . $colour . ";'><td bgcolor='" . $colour . "'></td></div>";
+        // return "<td bgcolor='" . $colour . "'><div style='background-color:" . $colour . ";'></div></td>";
     	return "<td style='background-color:{$colour};' bgcolor='{$colour}'></td>";
     }
+
+    
 
 
 }

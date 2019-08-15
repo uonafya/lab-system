@@ -47,6 +47,7 @@ $api->version('v1', function (Router $api) {
             $api->post('viralsample/transfer', 'ViralsampleController@transfer');
             $api->resource('viralsample', 'ViralsampleController');
 
+            $api->put('allocation', 'AllocationController@update');
             $api->resource('allocation', 'AllocationController');
         });
 
