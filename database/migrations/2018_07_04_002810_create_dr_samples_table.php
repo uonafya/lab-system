@@ -37,6 +37,7 @@ class CreateDrSamplesTable extends Migration
 
             // Specimen Type
             $table->tinyInteger('sampletype')->unsigned()->nullable();
+            $table->tinyInteger('container_type')->unsigned()->nullable();
             $table->tinyInteger('age')->unsigned()->nullable();
             // Multiple
             $table->string('clinical_indications', 50)->nullable(); 

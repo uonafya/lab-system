@@ -313,6 +313,7 @@ class Nat
 					'CCC Number' => $p->patient,
 					'Facility' => $p->name,
 					'Result' => $p->result,
+					'Date Tested' => $p->datetested,
 					'Regimen' => $p->regimen,
 					'Facility MFL Code' => $p->facilitycode,
 					'Subcounty' => $p->subcounty,
