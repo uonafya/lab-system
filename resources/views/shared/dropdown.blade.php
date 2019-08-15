@@ -1,5 +1,5 @@
 
-                        <div class="form-group">
+                        <div class="form-group" @if(isset($form_div)) id="{{ $form_div }}"  @endif >
                             <label class="col-sm-3 control-label"> {{ $label }}
                                 @if($required)
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -13,6 +13,10 @@
                                     " 
                                     @if($required) 
                                         required 
+                                    @endif
+
+                                    @if(isset($disabled)) 
+                                        disabled 
                                     @endif
 
                                         name="{{ $attr }}" id="{{ $attr }}">

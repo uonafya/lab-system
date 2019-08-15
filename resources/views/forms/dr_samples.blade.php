@@ -553,29 +553,10 @@
                                     </div>
                                 </div>                            
                             </div>
-                            
+
                             @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'receivedstatus', 'drops' => $received_statuses, 'label' => 'Received Status', 'required' => true])
 
-                            <div class="form-group" id="rejection" >
-                                <label class="col-sm-3 control-label">Rejected Reason</label>
-                                <div class="col-sm-9">
-                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
-
-                                        <option></option>
-                                        @foreach ($dr_rejected_reasons as $rejectedreason)
-                                            <option value="{{ $rejectedreason->id }}"
-
-                                            @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $rejectedreason->name }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
+                            @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'rejectedreason', 'drops' => $dr_rejected_reasons, 'label' => 'Rejected Reason', 'required' => true, 'disabled' => true, 'form_div' => 'rejection'])
 
                         @endif
 
