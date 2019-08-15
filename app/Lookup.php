@@ -27,7 +27,7 @@ class Lookup
         return '';
     }
 
-    public function retrieve_val($key, $id, $attr='name')
+    public static function retrieve_val($key, $id, $attr='name')
     {
         self::cacher();
         $collection = Cache::get($key);
