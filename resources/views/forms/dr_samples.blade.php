@@ -287,7 +287,7 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Sample Amount</label>
                             <div class="col-sm-9">
-                                <input class="form-control" name="sample_amount" type="text" value="{{ $sample->sample_amount ?? '' }}" id="sample_amount">
+                                <input class="form-control" name="sample_amount" type="text" number='number' value="{{ $sample->sample_amount ?? '' }}" id="sample_amount">
                             </div>
                         </div>
 

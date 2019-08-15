@@ -155,11 +155,14 @@ class DrSampleController extends Controller
             return back();            
         }
 
+        $patient_array = $viralsamples_arrays['patient'];
+        $patient_array[] = 'nat';
+
         if(env('APP_LAB') == 7){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
             if(!$viralpatient) $viralpatient = new Viralpatient;
 
-            $data = $request->only($viralsamples_arrays['patient']);
+            $data = $request->only($patient_array);
             if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
             $viralpatient->fill($data);
             $viralpatient->save();
@@ -167,7 +170,7 @@ class DrSampleController extends Controller
 
         $drSample = new DrSample;
         // $data = $request->only($viralsamples_arrays['dr_sample']);
-        $except = array_merge($viralsamples_arrays['patient'], ['other_medications', 'other_medications_text', 'submit_type', '_token']);
+        $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token']);
         $data = $request->except($except);
         $data['user_id'] = auth()->user()->id;
         if(auth()->user()->is_lab_user()) $data['received_by'] = auth()->user()->id;
@@ -234,16 +237,17 @@ class DrSampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
 
         $viralpatient = $drSample->patient;
+        $patient_array = $viralsamples_arrays['patient'];
+        $patient_array[] = 'nat';
 
         if(env('APP_LAB') == 7){
-            $data = $request->only($viralsamples_arrays['patient']);
+            $data = $request->only($patient_array);
             if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
             $viralpatient->fill($data);
             $viralpatient->save();
         }
 
-
-        $except = array_merge($viralsamples_arrays['patient'], ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
+        $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
         $data = $request->except($except);
 
         if((auth()->user()->is_lab_user()) && !$drSample->received_by) $data['received_by'] = auth()->user()->id;

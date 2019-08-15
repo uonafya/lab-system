@@ -15,6 +15,20 @@ use App\Mail\TestMail;
 
 class Nat
 {
+
+	public static function email_csv($filename, $data, $emails=['joelkith@gmail.com'])
+	{		
+		Excel::create($filename, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $filename . ".csv")];
+
+		Mail::to($emails)->send(new TestMail($data));
+	}
+
 	public static function get_current_gender_query($facility_id, $date_params=null)
 	{
     	$sql = 'SELECT sex, rcategory, count(*) as totals ';

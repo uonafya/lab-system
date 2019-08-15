@@ -565,13 +565,6 @@ class Common
 
 
 
-
-
-
-
-
-
-
 	public static function no_data_report($type)
 	{
 		$noage = self::no_data($type, 'age');

@@ -265,6 +265,8 @@ Route::middleware(['auth'])->group(function(){
 
 		});
 		Route::resource('dr_worksheet', 'DrWorksheetController');
+		
+		Route::resource('dr_bulk_registration', 'DrBulkRegistrationController');
 	});
 
 	// End of Drug Resistance Routes

@@ -27,6 +27,14 @@ class Lookup
         return '';
     }
 
+    public function retrieve_val($key, $id, $attr='name')
+    {
+        self::cacher();
+        $collection = Cache::get($key);
+        if(!$collection) return null;
+        return $collection->where('id', $id)->first()->$attr ?? null;
+    }
+
     public static function other_date($value)
     {
         if(!$value) return null;
@@ -573,6 +581,7 @@ class Lookup
                 $arv_toxicities = DB::table('arv_toxicities')->get();
                 $other_medications = DB::table('other_medications')->get();
                 $container_types = DB::table('container_types')->get();
+                $amount_units = DB::table('amount_units')->get();
             }
 
             if(env('APP_LAB') == 5) {
@@ -626,6 +635,7 @@ class Lookup
                 Cache::put('arv_toxicities', $arv_toxicities, 60);
                 Cache::put('other_medications', $other_medications, 60);
                 Cache::put('container_types', $container_types, 60);
+                Cache::put('amount_units', $amount_units, 60);
             }
 
             if(env('APP_LAB') == 5) {
