@@ -2773,7 +2773,7 @@ class Random
     	$data = [];
     	echo "==> Getting Patients\n";
     	ini_set("memory_limit", "-1");
-    	$patients = Viralpatient::select('id')->get();
+    	$patients = Viralpatient::select('id')->get()->split(10600);
     	// echo "==> Getting Patients Samples\n";
     	// $excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
     	// ini_set("memory_limit", "-1");
@@ -2793,7 +2793,7 @@ class Random
     		// 	}
     		// }
     	// }
-    	$file = 'VL_Line_List_TLD_LLV_LAST2';
+    	$file = 'VL_Line_List_TLD_LLV_Unique';
     	
     	// New TLD patients
     	ini_set("memory_limit", "-1");
@@ -2802,11 +2802,11 @@ class Random
     	foreach ($patients as $key => $patient) {
     		echo "\tGetting patients` batch {$key}\n";
     		// echo "==> Getting tests \n";
-    		$tests = ViralsampleCompleteView::selectRaw("patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
+    		$tests = ViralsampleCompleteView::selectRaw("distinct patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
     		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
     						->where('repeatt', 0)
     						// ->whereIn('rcategory', [1,2,3,4])
-    						->where('patient_id', $patient->id)
+    						->whereIn('patient_id', $patient->toArray())
     						// ->whereYear('datetested', 2019)
     						->whereIn('rcategory', [2])
     						->where('regimen', 18)
@@ -2815,13 +2815,13 @@ class Random
     						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
     						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
     						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
-    						->orderBy('datetested', 'desc')->limit(2)->get();
+    						->orderBy('datetested', 'desc')->get();
     		// dd($tests);
-    		if ($tests->count() == 2) {
+    		// if ($tests->count() == 2) {
     			foreach ($tests as $key => $test) {
 	    			$data[] = $test->toArray();
 	    		}
-    		}
+    		// }
     	}
 
     	echo "=> Creating excel\n";
