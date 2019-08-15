@@ -6,6 +6,7 @@ use App\DrBulkRegistration;
 use App\DrSample;
 use App\Lookup;
 use Illuminate\Http\Request;
+use Excel;
 
 class DrBulkRegistrationController extends Controller
 {

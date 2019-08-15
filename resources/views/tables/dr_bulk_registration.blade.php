@@ -28,7 +28,7 @@
                                         <td> {{ $template->created_at }} </td>
                                         <td> {{ $template->sample_count }} </td>
                                         <td>
-                                            <a href="{{ url('/dr_bulk_registration/' . $template->id) }} " target='_blank'>Download</a>
+                                            <a href="{{ url('/dr_bulk_registration/' . $template->id) }}">Download</a>
                                         </td>
                                     </tr>
                                 @endforeach
