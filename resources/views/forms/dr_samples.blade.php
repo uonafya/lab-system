@@ -253,20 +253,24 @@
                             </div>                            
                         </div> 
 
-                        <div class="hr-line-dashed"></div>                    
+                        <div class="hr-line-dashed"></div>   
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">VL Result</label>
-                            <div class="col-sm-4">
-                                <input class="form-control" name="vl_result1" type="text" value="{{ $sample->vl_result1 ?? '' }}" id="vl_result1">
-                            </div>
-                            <div class="col-sm-5">
-                                <div class="input-group date date-art">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="date_current_regimen" class="form-control" value="{{ $sample->vl_result1 ?? '' }}" name="date_current_regimen">
+                        @foreach([1, 2, 3] as $v)                 
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">VL Result</label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" name="{{ 'vl_result' . $v }}" type="text" value="{{ $sample->{'vl_result' . $v} ?? '' }}" id="{{ 'vl_result' . $v }}">
                                 </div>
-                            </div>                            
-                        </div> 
+                                <div class="col-sm-5">
+                                    <div class="input-group date date-art">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="{{ 'vl_date_result' . $v }}" class="form-control" value="{{ $sample->{'vl_date_result' . $v} ?? '' }}" name="{{ 'vl_date_result' . $v }}">
+                                    </div>
+                                </div>                            
+                            </div>
+
+                        @endforeach 
 
 
                         <div class="hr-line-dashed"></div>
@@ -711,7 +715,9 @@
                     $('.requirable').removeAttr("required");
                 }
                 else{
-                    $('.requirable').attr("required", "required");
+                    @if(env('APP_LAB') != 7)
+                        $('.requirable').attr("required", "required");
+                    @endif
                 }
             }); 
 
