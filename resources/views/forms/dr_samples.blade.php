@@ -157,26 +157,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Reason for DR test
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-9">
-                                <select class="form-control requirable" required name="dr_reasons" id="dr_reasons">
-                                    <option></option>
-                                    @foreach ($drug_resistance_reasons as $reason)
-                                        <option value="{{ $reason->id }}"
-
-                                        @if (isset($sample) && $sample->dr_reason_id == $reason->id)
-                                            selected
-                                        @endif
-
-                                        > {{ $reason->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'dr_reason_id', 'drops' => $drug_resistance_reasons, 'label' => 'Reason for DR test', 'required' => true])
 
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Previous Regimen</label>
