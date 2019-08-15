@@ -17,7 +17,7 @@ class DrBulkRegistrationController extends Controller
     public function index()
     {
         $templates = DrBulkRegistration::withCount(['sample'])->get();
-        return view('tables.dr_bulk_registration', ['templates' => $templates])
+        return view('tables.dr_bulk_registration', ['templates' => $templates]);
     }
 
     /**
