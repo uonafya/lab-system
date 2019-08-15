@@ -307,7 +307,7 @@
                             </div>
                         </div>
 
-                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'container_type', 'drops' => 'container_types', 'label' => 'Containter Type', 'required' => true])
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'container_type', 'drops' => $container_types, 'label' => 'Containter Type', 'required' => true])
 
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Container Type
