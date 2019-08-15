@@ -242,30 +242,44 @@ INSERT INTO `dr_patient_statuses` (`id`, `name`) VALUES
 (5, 'Failed Test');
 
 
-DROP TABLE IF EXISTS `dr_sample_types`;
-CREATE TABLE `dr_sample_types` (
+DROP TABLE IF EXISTS `dr_projects`;
+CREATE TABLE `dr_projects` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `dr_sample_types` (`id`, `name`) VALUES
+INSERT INTO `dr_projects` (`id`, `name`) VALUES
 (1, 'Public'),
 (2, 'Surveillance'),
-(3, 'Study');
+(3, 'Study'),
+(4, 'ADR'),
+(5, 'Mortuary Study'),
+(6, 'PDR'),
+(7, 'Pediatric DR Study'),
+(8, 'PSC Request'),
+(9, 'Research World Limited Requests');
 
 
 DROP TABLE IF EXISTS `dr_rejected_reasons`;
 CREATE TABLE `dr_rejected_reasons` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(150) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `dr_rejected_reasons` (`id`, `name`) VALUES
 (1, 'Insufficient sample volumes'),
 (2, 'EID sample over 3 weeks old from time collected'),
-(3, 'Haemolysed sample');
+(3, 'Haemolysed sample'),
+(4, 'Specimen collected in tubes other than the specified (EDTA &PPT)'),
+(5, 'Clotted sample'),
+(6, 'Leaking samples due to broken tubes or properly unscrewed vials'),
+(7, 'Unlabelled or mislabeled specimen'),
+(8, 'Poor storage and transportation of the sample as per the specific SOPs'),
+(9, 'Incomplete request form or form not matching the corresponding tube'),
+(10, 'Specimen shipped without request forms'),
+(11, 'Plasma separated after 6 hours and PPT samples received beyond 24 hour after draw.');
 
 
 DROP TABLE IF EXISTS `tb_treatment_phases`;
@@ -279,6 +293,17 @@ INSERT INTO `tb_treatment_phases` (`id`, `name`) VALUES
 (1, 'None'),
 (2, 'Intensive'),
 (3, 'Continuation');
+
+DROP TABLE IF EXISTS `container_types`;
+CREATE TABLE `container_types` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `container_types` (`id`, `name`) VALUES
+(1, 'PPT Tube'),
+(2, 'EDTA Tube');
 
 
 DROP TABLE IF EXISTS `clinical_indications`;

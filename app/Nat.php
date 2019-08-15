@@ -270,6 +270,68 @@ class Nat
 		$data = [storage_path("exports/" . $file . ".csv")];
 
 		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+	}
+
+	public static function dtg_llv_two()
+	{
+		$data = [];
+
+		$sql = "SELECT v.id, v.patient_id, v.datetested, v.result
+				FROM viralsamples_view v
+				RIGHT JOIN 
+				(
+					SELECT id, patient_id, max(datetested) as maxdate
+					FROM viralsamples_view
+					WHERE datetested > '2018-07-01'
+					AND patient != '' AND patient != 'null' AND patient is not null
+					AND flag=1 AND repeatt=0 AND result > 400
+					AND justification != 10 and facility_id != 7148
+					AND prophylaxis=1
+					GROUP BY patient_id
+				) gv
+				ON v.id=gv.id
+		";
+
+		$rows = DB::select($sql);
+
+		foreach ($rows as $key => $row) {
+
+			$sql = "SELECT v.id, v.patient_id, v.patient, v.facility_id, v.datetested, v.result, r.name AS `regimen`, f.name, f.facilitycode, f.subcounty, f.county
+					FROM viralsamples_view v
+					LEFT JOIN view_facilitys f ON f.id=v.facility_id
+					LEFT JOIN viralregimen r ON r.id=v.prophylaxis
+					WHERE patient_id = {$row->patient_id} AND datetested > '2018-07-01' and repeatt=0 and rcategory IN (1,2,3,4)
+					ORDER BY datetested asc
+			";
+
+			$results = DB::select($sql);
+
+			foreach ($results as $key2 => $p) {
+				$data[] = [
+					'Patient' => $key+1,
+					'Order' => $key2+1,
+					'CCC Number' => $p->patient,
+					'Facility' => $p->name,
+					'Result' => $p->result,
+					'Regimen' => $p->regimen,
+					'Facility MFL Code' => $p->facilitycode,
+					'Subcounty' => $p->subcounty,
+					'County' => $p->county,
+				];
+			}
+		}
+
+		$file = "dtg_llv";
+		
+		Excel::create($file, function($excel) use($data){
+			$excel->sheet('Sheetname', function($sheet) use($data) {
+				$sheet->fromArray($data);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
 
 
 	}
