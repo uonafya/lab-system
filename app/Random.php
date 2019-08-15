@@ -2752,7 +2752,7 @@ class Random
     		// 	}
     		// }
     	// }
-    	$file = 'VL_Line_List_TLD_LLV_LAST2';
+    	$file = 'VL_Line_List_TLD_TX_LAST2';
     	
     	// New TLD patients
     	ini_set("memory_limit", "-1");
@@ -2767,7 +2767,7 @@ class Random
     						// ->whereIn('rcategory', [1,2,3,4])
     						->where('patient_id', $patient->id)
     						// ->whereYear('datetested', 2019)
-    						->whereIn('rcategory', [2])
+    						->whereIn('rcategory', [3,4])
     						->where('regimen', 18)
     						// ->whereRaw("month(datetested) IN (4, 5, 6)")
     						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
