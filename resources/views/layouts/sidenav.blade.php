@@ -204,6 +204,8 @@
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet List</a></li>
                 <hr />
+                <li><a href="{{ url('dr_bulk_registration') }}">Bulk Template List</a></li>
+                <hr />
                 
             @endif
             <!-- <li>
