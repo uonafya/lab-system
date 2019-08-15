@@ -287,7 +287,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Specimen Type
+                            <label class="col-sm-3 control-label">Sample Type
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-9">
@@ -301,6 +301,29 @@
                                         @endif
 
                                         > {{ $sampletype->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'container_type', 'drops' => 'container_types', 'label' => 'Containter Type', 'required' => true])
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Container Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control requirable" required name="container_type" id="container_type">
+                                    <option></option>
+                                    @foreach ($container_types as $container_type)
+                                        <option value="{{ $sampletype->id }}"
+
+                                        @if (isset($sample) && $sample->container_type == $container_type->id)
+                                            selected
+                                        @endif
+
+                                        > {{ $container_type->name }}
                                         </option>
                                     @endforeach
                                 </select>

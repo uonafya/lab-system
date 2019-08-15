@@ -294,6 +294,17 @@ INSERT INTO `tb_treatment_phases` (`id`, `name`) VALUES
 (2, 'Intensive'),
 (3, 'Continuation');
 
+DROP TABLE IF EXISTS `container_types`;
+CREATE TABLE `container_types` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `container_types` (`id`, `name`) VALUES
+(1, 'PPT Tube'),
+(2, 'EDTA Tube');
+
 
 DROP TABLE IF EXISTS `clinical_indications`;
 CREATE TABLE `clinical_indications` (

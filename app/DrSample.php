@@ -269,6 +269,8 @@ class DrSample extends BaseModel
             if($child->parentid == 0) $child->parentid = $this->id;
             $child->save();
 
+            // $child = $this->replicate(['exatype_id', 'datetested', ]);
+
             if($data) $this->fill($data);
             $this->collect_new_sample = 0;
             $this->repeatt = 1;

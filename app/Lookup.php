@@ -558,16 +558,20 @@ class Lookup
             $dilutions = DB::table('viraldilutionfactors')->get();
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
-            // Drug Resistance Lookup Data
-            $dr_rejected_reasons = DB::table('dr_rejected_reasons')->get();
-            $drug_resistance_reasons = DB::table('drug_resistance_reasons')->get();
-            $dr_primers = DB::table('dr_primers')->get();
-            $dr_patient_statuses = DB::table('dr_patient_statuses')->get();
-            $dr_projects = DB::table('dr_projects')->get();
-            $tb_treatment_phases = DB::table('tb_treatment_phases')->get();
-            $clinical_indications = DB::table('clinical_indications')->get();
-            $arv_toxicities = DB::table('arv_toxicities')->get();
-            $other_medications = DB::table('other_medications')->get();
+
+            if(env('APP_LAB') == 7){
+                // Drug Resistance Lookup Data
+                $dr_rejected_reasons = DB::table('dr_rejected_reasons')->get();
+                $drug_resistance_reasons = DB::table('drug_resistance_reasons')->get();
+                $dr_primers = DB::table('dr_primers')->get();
+                $dr_patient_statuses = DB::table('dr_patient_statuses')->get();
+                $dr_projects = DB::table('dr_projects')->get();
+                $tb_treatment_phases = DB::table('tb_treatment_phases')->get();
+                $clinical_indications = DB::table('clinical_indications')->get();
+                $arv_toxicities = DB::table('arv_toxicities')->get();
+                $other_medications = DB::table('other_medications')->get();
+                $container_types = DB::table('container_types')->get();
+            }
 
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
@@ -609,15 +613,18 @@ class Lookup
             Cache::put('dilutions', $dilutions, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
 
-            Cache::put('dr_rejected_reasons', $dr_rejected_reasons, 60);
-            Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
-            Cache::put('dr_primers', $dr_primers, 60);
-            Cache::put('dr_patient_statuses', $dr_patient_statuses, 60);
-            Cache::put('dr_projects', $dr_projects, 60);
-            Cache::put('tb_treatment_phases', $tb_treatment_phases, 60);
-            Cache::put('clinical_indications', $clinical_indications, 60);
-            Cache::put('arv_toxicities', $arv_toxicities, 60);
-            Cache::put('other_medications', $other_medications, 60);
+            if(env('APP_LAB') == 7){
+                Cache::put('dr_rejected_reasons', $dr_rejected_reasons, 60);
+                Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
+                Cache::put('dr_primers', $dr_primers, 60);
+                Cache::put('dr_patient_statuses', $dr_patient_statuses, 60);
+                Cache::put('dr_projects', $dr_projects, 60);
+                Cache::put('tb_treatment_phases', $tb_treatment_phases, 60);
+                Cache::put('clinical_indications', $clinical_indications, 60);
+                Cache::put('arv_toxicities', $arv_toxicities, 60);
+                Cache::put('other_medications', $other_medications, 60);
+                Cache::put('container_types', $container_types, 60);
+            }
 
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
