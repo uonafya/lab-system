@@ -466,7 +466,6 @@ class Lookup
             'clinical_indications' => Cache::get('clinical_indications'),
             'arv_toxicities' => Cache::get('arv_toxicities'),
             'other_medications' => Cache::get('other_medications'),
-            'container_types' => Cache::get('container_types'),
 
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'received_statuses' => Cache::get('received_statuses'),
@@ -478,6 +477,8 @@ class Lookup
             'resistance_colours' => \App\MiscDr::$call_array,
             'double_approval' => self::$double_approval,
 
+            'container_types' => DB::table('container_types')->get(),
+            'amount_units' => DB::table('amount_units')->get(),
             'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),
             'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
             'warning_codes' => DB::table('dr_warning_codes')->get(),
@@ -513,7 +514,7 @@ class Lookup
 
             // 'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name'],
 
-            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'project', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
+            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'project', 'sampletype', 'sample_amount', 'container_type', 'amount_unit', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
         ];
     }
 

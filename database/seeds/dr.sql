@@ -306,6 +306,18 @@ INSERT INTO `container_types` (`id`, `name`) VALUES
 (2, 'EDTA Tube');
 
 
+DROP TABLE IF EXISTS `amount_units`;
+CREATE TABLE `amount_units` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `amount_units` (`id`, `name`) VALUES
+(1, 'uL'),
+(2, 'spots');
+
+
 DROP TABLE IF EXISTS `clinical_indications`;
 CREATE TABLE `clinical_indications` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
