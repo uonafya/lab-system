@@ -6,7 +6,11 @@
                                 @endif
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control requirable" 
+                                <select class="form-control 
+                                    @if($required) 
+                                        requirable 
+                                    @endif
+                                    " 
                                     @if($required) 
                                         required 
                                     @endif
