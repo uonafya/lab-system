@@ -63,7 +63,25 @@ class DrBulkRegistrationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = MiscDr::get_bulk_registration_samples($request->input('samples'), 16);
+
+        if(!$data['create']){
+            session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
+            return back();
+        }
+
+        $drBulkRegistration = new DrBulkRegistration;
+        $drBulkRegistration->fill($request->except(['_token', 'samples']));
+        $drBulkRegistration->save();        
+
+        $samples = $data['samples'];
+
+        foreach ($samples as $s) {
+            $sample = DrSample::find($s->id);
+            $sample->bulk_registration_id = $drBulkRegistration->id;
+            $sample->save();
+        }
+        return redirect('dr_worksheet/print/' . $dr_worksheet->id);
     }
 
     /**

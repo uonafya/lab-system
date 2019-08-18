@@ -615,6 +615,29 @@ class MiscDr extends Common
 	}
 
 
+	public static function get_bulk_registration_samples($sample_ids=[], $limit=null)
+	{
+		$samples = DrSampleView::whereNull('bulk_registration_id')
+		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
+		->where(['receivedstatus' => 1, 'control' => 0])
+		->when($sample_ids, function($query) use ($sample_ids){
+			return $query->whereIn('id', $sample_ids);
+		})
+		->orderBy('run', 'desc')
+		->orderBy('datereceived', 'asc')
+		->orderBy('id', 'asc')
+		->when($limit, function($query) use ($limit){
+			return $query->limit($limit);
+		})
+		->get();
+
+		if($samples->count() > 0) ){
+			return ['samples' => $samples, 'create' => true];
+		}
+		return ['samples' => $samples, 'create' => false];
+	}
+
+
 
 	/*
 
