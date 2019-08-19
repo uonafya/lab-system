@@ -191,7 +191,7 @@ class DrSampleController extends Controller
         else{
             $drSample->other_medications = $others;
         }
-        
+        $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
 
         session(['toast_message' => 'The sample has been created.']);
@@ -265,6 +265,7 @@ class DrSampleController extends Controller
         else{
             $drSample->other_medications = $others;
         }
+        $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
