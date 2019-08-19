@@ -258,14 +258,18 @@
                         @foreach([1, 2, 3] as $v)                 
 
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">VL Result</label>
+                                <label class="col-sm-3 control-label">VL Result
+                                    @if($v == 1)
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    @endif
+                                </label>
                                 <div class="col-sm-4">
-                                    <input class="form-control" name="{{ 'vl_result' . $v }}" type="text" value="{{ $sample->{'vl_result' . $v} ?? '' }}" id="{{ 'vl_result' . $v }}">
+                                    <input class="form-control  @if($v == 1) requirable  @endif" name="{{ 'vl_result' . $v }}" type="text" value="{{ $sample->{'vl_result' . $v} ?? '' }}" id="{{ 'vl_result' . $v }}" @if($v == 1) required  @endif>
                                 </div>
                                 <div class="col-sm-5">
                                     <div class="input-group date date-art">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="{{ 'vl_date_result' . $v }}" class="form-control" value="{{ $sample->{'vl_date_result' . $v} ?? '' }}" name="{{ 'vl_date_result' . $v }}">
+                                        <input type="text" id="{{ 'vl_date_result' . $v }}" class="form-control  @if($v == 1) requirable  @endif" value="{{ $sample->{'vl_date_result' . $v} ?? '' }}" name="{{ 'vl_date_result' . $v }}" @if($v == 1) required  @endif>
                                     </div>
                                 </div>                            
                             </div>
