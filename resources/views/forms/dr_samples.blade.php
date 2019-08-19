@@ -28,8 +28,6 @@
 
         @endif
 
-        <input type="hidden" value=0 name="new_patient" id="new_patient">
-
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
@@ -825,7 +823,7 @@
 
                     console.log(data);
 
-                    $("#new_patient").val(data[0]);
+                    // $("#new_patient").val(data[0]);
                     var patient = data[1];
 
                     if(data[0] == 0){
