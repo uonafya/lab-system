@@ -76,10 +76,6 @@ class DrWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        $dr_worksheet = new DrWorksheet;
-        $dr_worksheet->fill($request->except(['_token', 'samples']));
-        $dr_worksheet->save();
-
         $data = MiscDr::get_worksheet_samples($request->input('dr_samples'), 16);
 
         if(!$data['create']){
@@ -87,6 +83,9 @@ class DrWorksheetController extends Controller
             return back();
         }
 
+        $dr_worksheet = new DrWorksheet;
+        $dr_worksheet->fill($request->except(['_token', 'samples']));
+        $dr_worksheet->save();
         $samples = $data['samples'];
 
         foreach ($samples as $s) {
@@ -94,6 +93,8 @@ class DrWorksheetController extends Controller
             $sample->worksheet_id = $dr_worksheet->id;
             $sample->save();
         }
+        return $this->download($dr_worksheet);
+
         return redirect('dr_worksheet/print/' . $dr_worksheet->id);
     }
 
@@ -258,6 +259,7 @@ class DrWorksheetController extends Controller
         $worksheet->dateuploaded = $worksheet->uploadedby = null;
         $worksheet->datecancelled = date('Y-m-d');
         $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->status_id = 4;
         $worksheet->save();
 
         session(['toast_message' => 'The worksheet has been cancelled.']);
