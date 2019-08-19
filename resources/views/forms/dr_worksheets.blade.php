@@ -86,7 +86,7 @@
                                     <div class="panel-body"> 
                                         <div class="alert alert-warning">
                                             <center>
-                                                No worksheet could be created from extraction worksheet {{ $extraction_worksheet_id }}.
+                                                You cannot create a worksheet now.
                                             </center>
                                         </div>
                                     <br />
