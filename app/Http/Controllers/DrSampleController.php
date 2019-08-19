@@ -171,6 +171,7 @@ class DrSampleController extends Controller
 
         $drSample = new DrSample;
         // $data = $request->only($viralsamples_arrays['dr_sample']);
+        unset($patient_array['facility_id']);
         $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token']);
         $data = $request->except($except);
         $data['user_id'] = auth()->user()->id;
@@ -248,6 +249,7 @@ class DrSampleController extends Controller
             $viralpatient->save();
         }
 
+        unset($patient_array['facility_id']);
         $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
         $data = $request->except($except);
 
