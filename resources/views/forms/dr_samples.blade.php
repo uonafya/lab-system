@@ -631,7 +631,7 @@
                     },
                 @endif
                 nat: {
-                    regex: '/^[N][A][T]/'
+                    regex: '^[N][A][T]'
                 },
                 date_prev_regimen: {
                     lessThanTwo: ["#date_current_regimen", "Date of Previous Regimen", "Date of Current Regimen"]
