@@ -619,11 +619,10 @@ class MiscDr extends Common
 		->limit(16)
 		->get();
 
-		if($samples->count() > 0){
-			// return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
-			return ['samples' => $samples, 'create' => true];
-		}
-		return ['create' => false];
+		$create = false;
+		if($samples->count() > 0) $create = true;
+
+		return ['samples' => $samples, 'create' => $create];
 	}
 
 
