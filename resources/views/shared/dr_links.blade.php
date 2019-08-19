@@ -1,6 +1,7 @@
 <a href="{{ url('dr_worksheet/download/' . $worksheet->id) }}" title="Click to View Download Bulk Template">
 	Download Bulk Template
 </a> | 
+<br />
 
 @if($worksheet->status_id == 1)
 
