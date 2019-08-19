@@ -6,18 +6,10 @@
                                 @endif
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control 
-                                    @if($required) 
-                                        requirable 
-                                    @endif
-                                    " 
-                                    @if($required) 
-                                        required 
-                                    @endif
+                                <select class="form-control @if($required) requirable @endif " 
+                                    @if($required) required @endif
 
-                                    @if(isset($disabled)) 
-                                        disabled 
-                                    @endif
+                                    @if(isset($disabled)) disabled @endif
 
                                         name="{{ $attr }}" id="{{ $attr }}">
                                     <option></option>
