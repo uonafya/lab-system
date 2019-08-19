@@ -64,7 +64,7 @@ class DrWorksheetController extends Controller
         // $data['dr_samples'] = $samples;
 
         $data = Lookup::get_dr();
-        $data = array_merge($data, MiscDr::get_worksheet_samples($extraction_worksheet_id));
+        $data = array_merge($data, MiscDr::get_worksheet_samples());
         return view('forms.dr_worksheets', $data);
     }
 
