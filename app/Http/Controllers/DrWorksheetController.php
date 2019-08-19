@@ -156,6 +156,48 @@ class DrWorksheetController extends Controller
         //
     }
 
+    /**
+     * Download the specified resource as csv.
+     *
+     * @param  \App\DrWorksheet $worksheet
+     * @return \Illuminate\Http\Response
+     */
+    public function download(DrWorksheet $worksheet)
+    {
+        $samples = DrSample::with(['patient'])->where(['worksheet_id' => $worksheet->id])->get();
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $data[] = [
+                'Patient ID' => $sample->patient->nat,
+                'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
+                'Full Name' => $sample->patient->patient_names,
+                'DOB' => $sample->patient->dob,
+                'Sex' => $sample->patient->gender,
+                'Date of Sample Collection' => $sample->datecollected,
+                'Sample Type' => Lookup::retrieve_val('sample_types', $sample->sampletype),
+                'Most Current HIV VL Result (copies/mL)' => $sample->vl_result1,
+                'Most Current HIV VL Result Date' => $sample->vl_date_result1,
+                'Patient Regimen' => Lookup::retrieve_val('prophylaxis', $sample->prophylaxis),
+                'Most Recent CD4 Count' => $sample->cd4_result,
+                'Patient Current Age' => $sample->age,
+                'Amount' => $sample->sample_amount,
+                'Amount Unit' => Lookup::retrieve_val('amount_units', $sample->amount_unit),
+                'Container Type' => Lookup::retrieve_val('container_types', $sample->container_type),
+                'Location Barcode' => '',
+            ];
+        }
+
+        $filename = 'bulk_template_' . $worksheet->id;
+
+        Excel::create($filename, function($excel) use($data){
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
+    }
+
+
     public function upload(DrWorksheet $worksheet)
     {
         $worksheet->load(['creator']);

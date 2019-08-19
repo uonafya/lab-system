@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Cache;
 use DB;
 
 use App\Common;
+
+use App\DrWorksheet;
+use App\DrBulkRegistration;
+
 use App\DrSample;
 use App\DrSampleView;
 
@@ -216,7 +220,8 @@ class MiscDr extends Common
 	{
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
 
-		$samples = $worksheet->sample;
+		$samples = $worksheet->sample_view;
+		// $samples = $worksheet->sample;
 		// $samples->load(['result']);
 
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
@@ -234,7 +239,8 @@ class MiscDr extends Common
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
-					'sample_name' => "{$sample->mid}",
+					// 'sample_name' => "{$sample->mid}",
+					'sample_name' => "{$sample->nat}",
 					'pathogen' => 'hiv',
 					'assay' => 'thermo_PR_RT',
 					// 'assay' => 'cdc-hiv',
@@ -257,7 +263,8 @@ class MiscDr extends Common
 					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
 				else{
-					$errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
 				}
 			}
 			if(!$abs) continue;
@@ -289,7 +296,8 @@ class MiscDr extends Common
 			}
 			else{
 				// if(starts_with($file, $sample->mid . $primer)){
-				if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
+				// if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
+				if(starts_with($file, $sample->nat . '-') && str_contains($file, $primer))
 				{
 					$a = [
 						'file_name' => $file,
@@ -598,10 +606,13 @@ class MiscDr extends Common
 		return ['samples' => $samples, 'create' => false];
 	}
 
-	public static function get_worksheet_samples($extraction_worksheet_id)
+	// public static function get_worksheet_samples($extraction_worksheet_id)
+	public static function get_worksheet_samples()
 	{
 		$samples = DrSampleView::whereNull('worksheet_id')
-		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		// ->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
+		->where(['receivedstatus' => 1, 'control' => 0])
 		->orderBy('control', 'desc')
 		->orderBy('run', 'desc')
 		->orderBy('id', 'asc')
@@ -609,9 +620,10 @@ class MiscDr extends Common
 		->get();
 
 		if($samples->count() > 0){
-			return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
+			// return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
+			return ['samples' => $samples, 'create' => true];
 		}
-		return ['create' => false, 'extraction_worksheet_id' => $extraction_worksheet_id];
+		return ['create' => false];
 	}
 
 
@@ -723,6 +735,7 @@ class MiscDr extends Common
 	public static function send_to_exatype()
 	{
 		$worksheets = DrWorksheet::where(['status_id' => 2])->get();
+		// $worksheets = DrBulkRegistration::where(['status_id' => 2])->get();
 		foreach ($worksheets as $key => $worksheet) {
 			self::create_plate($worksheet);
 		}
@@ -732,6 +745,7 @@ class MiscDr extends Common
 	{
 		$max_time = date('Y-m-d H:i:s', strtotime('-10 minutes'));
 		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
+		// $worksheets = DrBulkRegistration::where(['status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			echo "Getting results for {$worksheet->id} \n";
 			self::get_plate_result($worksheet);
@@ -739,6 +753,7 @@ class MiscDr extends Common
 
 		$max_time = date('Y-m-d H:i:s', strtotime('-1 hour'));
 		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
+		// $worksheets = DrBulkRegistration::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			self::get_plate_result($worksheet);
 		}

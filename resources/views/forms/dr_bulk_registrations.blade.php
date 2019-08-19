@@ -14,7 +14,7 @@
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
-                    Drug Resistance Worksheet
+                    Drug Resistance Bulk Registration
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -22,7 +22,6 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Sample Type</th>
                                     <th>Sample Code / Patient ID</th>
                                     <th>NAT ID</th>
                                     <th>Facility</th>
@@ -36,7 +35,6 @@
                                 @foreach($samples as $key => $dr_sample)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $dr_sample->control_type }} </td>
                                         <td> {{ $dr_sample->patient ?? '' }} </td>
                                         <td> {{ $dr_sample->nat ?? '' }} </td>
                                         <td> {{ $dr_sample->facilityname ?? '' }} </td>
@@ -54,27 +52,24 @@
                         </table>
                     </div>
 
+                    @if(isset($create) && $create)
 
-                    @if($create)
-
-                        @if (isset($worksheet))
-                            {{ Form::open(['url' => '/dr_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                        @if (isset($drBulkRegistration))
+                            {{ Form::open(['url' => '/dr_bulk_registration/' . $drBulkRegistration->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
                         @else
-                            {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-
+                            {{ Form::open(['url'=>'/dr_bulk_registration', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
                             <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
                             <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
-                            {{--<input type="hidden" value="{{ $extraction_worksheet_id }}" name="extraction_worksheet_id">--}}
                         @endif
+
 
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-4">
                                         <button class="btn btn-success" type="submit"
 
-                                        >Save & Print Worksheet</button>
+                                        >Create Bulk Registration</button>
                                     </div>
                                 </div>
-
 
                         {{ Form::close() }}
 
@@ -86,7 +81,7 @@
                                     <div class="panel-body"> 
                                         <div class="alert alert-warning">
                                             <center>
-                                                No worksheet could be created from extraction worksheet {{ $extraction_worksheet_id }}.
+                                                There are only {{ $samples->count() }} samples that qualify to be in a worksheet.
                                             </center>
                                         </div>
                                     <br />

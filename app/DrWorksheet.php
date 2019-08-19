@@ -13,6 +13,11 @@ class DrWorksheet extends BaseModel
         return $this->hasMany('App\DrSample', 'worksheet_id');
     }
 
+    public function sample_view()
+    {
+        return $this->hasMany('App\DrSampleView', 'worksheet_id');
+    }
+
     public function warning()
     {
         return $this->hasMany('App\DrWorksheetWarning', 'worksheet_id');
