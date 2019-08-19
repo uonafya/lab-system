@@ -643,7 +643,7 @@ class MiscDr extends Common
 		})
 		->get();
 
-		if($samples->count() > 0) ){
+		if($samples->count() > 0){
 			return ['samples' => $samples, 'create' => true];
 		}
 		return ['samples' => $samples, 'create' => false];
