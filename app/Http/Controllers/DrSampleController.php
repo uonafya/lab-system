@@ -37,7 +37,8 @@ class DrSampleController extends Controller
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::select(['dr_samples.*'])
             ->with(['patient.facility'])
-            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
             ->where(['control' => 0, 'repeatt' => 0])
             ->when(($user->user_type_id == 5), function($query) use ($string){
                 return $query->whereRaw($string);
@@ -172,7 +173,7 @@ class DrSampleController extends Controller
 
         $drSample = new DrSample;
         // $data = $request->only($viralsamples_arrays['dr_sample']);
-        unset($patient_array['facility_id']);
+        // unset($patient_array['facility_id']);
         $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token']);
         $data = $request->except($except);
         $data['user_id'] = auth()->user()->id;
@@ -192,7 +193,7 @@ class DrSampleController extends Controller
         else{
             $drSample->other_medications = $others;
         }
-        $drSample->facility_id = $request->input('facility_id');
+        // $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
 
         session(['toast_message' => 'The sample has been created.']);
@@ -250,7 +251,7 @@ class DrSampleController extends Controller
             $viralpatient->save();
         }
 
-        unset($patient_array['facility_id']);
+        // unset($patient_array['facility_id']);
         $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
         $data = $request->except($except);
 
@@ -266,7 +267,7 @@ class DrSampleController extends Controller
         else{
             $drSample->other_medications = $others;
         }
-        $drSample->facility_id = $request->input('facility_id');
+        // $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
@@ -339,7 +340,8 @@ class DrSampleController extends Controller
 
         $samples = DrSample::select('dr_samples.*')
             ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
-            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
             ->with(['dr_call.call_drug', 'patient'])
             ->when(($user->user_type_id == 5), function($query) use ($string){
                 return $query->whereRaw($string);
