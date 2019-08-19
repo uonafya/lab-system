@@ -192,6 +192,8 @@
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
                 <hr />
+                <li><a href="{{ url('dr_sample/index/11') }}">Verify Site Entry Samples</a></li>
+                <hr />
                 @if(env('APP_LAB') != 7)
                     <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
                     <hr />

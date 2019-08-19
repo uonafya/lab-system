@@ -275,21 +275,7 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'project', 'drops' => $dr_projects, 'label' => 'Project Name', 'required' => true])
-
                         @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'sampletype', 'drops' => $sampletypes, 'label' => 'Sample Type', 'required' => true])
-
-                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'container_type', 'drops' => $container_types, 'label' => 'Containter Type', 'required' => false])
-
-                        @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'amount_unit', 'drops' => $amount_units, 'label' => 'Amount Unit', 'required' => false])    
-
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Sample Amount</label>
-                            <div class="col-sm-9">
-                                <input class="form-control" name="sample_amount" type="text" number='number' value="{{ $sample->sample_amount ?? '' }}" id="sample_amount">
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Clinical Indication
@@ -560,7 +546,21 @@
                             </div>                            
                         </div> 
 
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->user_type_id <= 1)
+
+                            @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'project', 'drops' => $dr_projects, 'label' => 'Project Name', 'required' => true])
+
+                            @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'container_type', 'drops' => $container_types, 'label' => 'Container Type', 'required' => false])
+
+                            @include('shared.dropdown', ['model' => $sample ?? null, 'attr' => 'amount_unit', 'drops' => $amount_units, 'label' => 'Amount Unit', 'required' => false])    
+
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Sample Amount</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" name="sample_amount" type="text" number='number' value="{{ $sample->sample_amount ?? '' }}" id="sample_amount">
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Date Received

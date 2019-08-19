@@ -43,6 +43,7 @@ class DrSampleController extends Controller
                 return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
+                if($sample_status == 11) return $query->whereNull('datereceived');
                 return $query->where('status_id', $sample_status);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
