@@ -55,7 +55,7 @@
                                                     <input name='samples[]' type='checkbox' class='checks' value='{{ $dr_sample->id }}' />
                                                 </div>
                                             </td>
-                                            <td> {{ $dr_sample->control_type }} </td>
+                                            <td> {{ $sampletypes->where('id', $dr_sample->sampletype)->first()->name ?? '' }} </td>
                                             <td> {{ $dr_sample->patient ?? '' }} </td>
                                             <td> {{ $dr_sample->nat ?? '' }} </td>
                                             <td> {{ $dr_sample->facilityname ?? '' }} </td>
