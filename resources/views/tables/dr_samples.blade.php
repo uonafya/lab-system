@@ -241,7 +241,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if(!$sample->worksheet_id || $sample->receivedstatus != 2)
+                                            @if(!$sample->worksheet_id)
                                                 {{ Form::open(['url' => 'dr_sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
                                                     <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
                                                 {{ Form::close() }} 
