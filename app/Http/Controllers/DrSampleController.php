@@ -281,7 +281,13 @@ class DrSampleController extends Controller
      */
     public function destroy(DrSample $drSample)
     {
-        //
+        if($sample->worksheet_id){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot delete this sample.']);
+            return back();
+        }
+        $drSample->delete();
+        session(['toast_message' => 'The sample has been deleted.']);
+        return back();
     }
 
     public function facility_edit(Request $request, User $user, DrSample $sample)

@@ -208,6 +208,7 @@
                                     <th>Has Warnings</th>
                                     <th>Has Mutations</th>
                                     <th>Tasks</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -237,6 +238,13 @@
                                             @if(in_array($sample->status_id, [1, 2, 3]))
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if(!$sample->worksheet_id || $sample->receivedstatus != 2)
+                                                {{ Form::open(['url' => 'dr_sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
+                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
+                                                {{ Form::close() }} 
                                             @endif
                                         </td>
                                     </tr>
