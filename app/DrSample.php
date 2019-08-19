@@ -39,7 +39,7 @@ class DrSample extends BaseModel
 
     public function facility()
     {
-        return $this->belongsTo('App\Facility');
+        return $this->belongsTo('App\Facility', 'facility_id');
     }
 
     public function view_facility()
