@@ -11,6 +11,7 @@ use App\User;
 use App\Lookup;
 use App\MiscDr;
 
+use Excel;
 use Illuminate\Http\Request;
 
 class DrWorksheetController extends Controller
