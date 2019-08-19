@@ -607,16 +607,21 @@ class MiscDr extends Common
 	}
 
 	// public static function get_worksheet_samples($extraction_worksheet_id)
-	public static function get_worksheet_samples()
+	public static function get_worksheet_samples($sample_ids=[], $limit=null)
 	{
 		$samples = DrSampleView::whereNull('worksheet_id')
 		// ->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		->when($sample_ids, function($query) use ($sample_ids){
+			return $query->whereIn('id', $sample_ids);
+		})
 		->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
 		->where(['receivedstatus' => 1, 'control' => 0])
 		->orderBy('control', 'desc')
 		->orderBy('run', 'desc')
 		->orderBy('id', 'asc')
-		->limit(16)
+		->when($limit, function($query) use ($limit){
+			return $query->limit($limit);
+		})
 		->get();
 
 		$create = false;

@@ -64,7 +64,7 @@ class DrWorksheetController extends Controller
         // $data['dr_samples'] = $samples;
 
         $data = Lookup::get_dr();
-        $data = array_merge($data, MiscDr::get_worksheet_samples());
+        $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
         return view('forms.dr_worksheets', $data);
     }
 
@@ -77,10 +77,10 @@ class DrWorksheetController extends Controller
     public function store(Request $request)
     {
         $dr_worksheet = new DrWorksheet;
-        $dr_worksheet->fill($request->except(['_token']));
+        $dr_worksheet->fill($request->except(['_token', 'samples']));
         $dr_worksheet->save();
 
-        $data = MiscDr::get_worksheet_samples($dr_worksheet->extraction_worksheet_id);
+        $data = MiscDr::get_worksheet_samples($request->input('dr_samples'), 16);
 
         if(!$data['create']){
             session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
