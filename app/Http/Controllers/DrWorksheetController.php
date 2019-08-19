@@ -41,7 +41,7 @@ class DrWorksheetController extends Controller
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
-        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets');
+        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets (Bulk Templates)');
     }
 
     /**
@@ -49,7 +49,8 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($extraction_worksheet_id)
+    // public function create($extraction_worksheet_id)
+    public function create()
     {
         // $samples = DrSample::selectRaw("dr_samples.*")
         //                 ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
