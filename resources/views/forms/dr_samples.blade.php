@@ -395,7 +395,7 @@
                                 @foreach ($arv_toxicities as $arv_toxicity)
                                     <div>
                                         <label> 
-                                            <input name="arv_toxicities[]" id="arv_toxicities" type="checkbox" class="i-checks" required
+                                            <input name="arv_toxicities[]" id="arv_toxicities" type="checkbox" class="i-checks"
                                                 value="{{ $arv_toxicity->id }}" 
 
                                                 @if(isset($sample) && is_array($sample->arv_toxicities_array) &&
