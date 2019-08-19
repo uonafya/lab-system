@@ -198,16 +198,21 @@ DROP TABLE IF EXISTS `drug_resistance_reasons`;
 
 CREATE TABLE `drug_resistance_reasons` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `rank` TINYINT UNSIGNED NOT NULL,
+  -- `rank` TINYINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`, `rank`) VALUES
-(1, 'Consistent Non-Suppression',  'Two consecutive tests with viralloads above 1000.', 1),
-(2, 'Paed Non-Suppression',  'Patient aged 19 and under with a viralload above 1000.', 2),
-(3, 'PMTCT Non-Suppression',  'PMTCT patient viralload above 1000.', 3);
+INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`) VALUES
+(1, 'Consistent Non-Suppression',  'Two consecutive tests with viralloads above 1000.'),
+(2, 'Paed Non-Suppression',  'Patient aged 19 and under with a viralload above 1000.'),
+(3, 'PMTCT Non-Suppression',  'PMTCT patient viralload above 1000.'),
+(4, 'Confirmed 2nd line treatment failure',  'Confirmed 2nd line treatment failure.'),
+(5, 'Patient failing 1st line PI based regimen',  'Patient failing 1st line PI based regimen.'),
+(6, 'Third line request',  'Third line request.'),
+(7, 'Study request',  'Study request'),
+(8, 'Other',  'Other');
 
 DROP TABLE IF EXISTS `dr_primers`;
 
