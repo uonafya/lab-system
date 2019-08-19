@@ -63,6 +63,7 @@ class DrSampleController extends Controller
             ->when($partner_id, function($query) use ($partner_id){
                 return $query->where('facilitys.partner', $partner_id);
             })
+            ->orderBy('id', 'desc')
             ->paginate();
 
         $data['dr_samples']->setPath(url()->current());
