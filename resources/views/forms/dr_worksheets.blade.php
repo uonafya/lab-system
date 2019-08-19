@@ -77,7 +77,7 @@
                                     <div class="col-sm-8 col-sm-offset-4">
                                         <button class="btn btn-success" type="submit"
 
-                                        >Save & Print Worksheet</button>
+                                        >Save & Download Bulk Template</button>
                                     </div>
                                 </div>
 
