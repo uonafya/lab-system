@@ -76,7 +76,7 @@ class DrWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        $data = MiscDr::get_worksheet_samples($request->input('dr_samples'), 16);
+        $data = MiscDr::get_worksheet_samples($request->input('samples'), 16);
 
         if(!$data['create']){
             session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
