@@ -134,12 +134,14 @@
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
                                     <li class="">
-                                        <a href="{{ url('reports/kits') }}">Kits
-                                            {{-- <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
-                                               {{ $widgets['rejectedAllocations'] }}
-                                            </span> --}}
-                                        </a>
-                                    </li>
+            @if(env('APP_LAB') != 7)
+                <a href="{{ url('reports/kits') }}">Kits
+                <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                {{ $widgets['rejectedAllocations'] }}
+                </span>
+                </a>       
+            @endif    
+        </li>
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
                                             <a href="{{ url('user') }}">Users</a>
@@ -288,13 +290,13 @@
                                         {{ 'https://eid.nascop.org/labPerformance' }}
                                     @endif">Nascop Dashboard</a>
                             </li>
-                            <li class="">
-                                <a href="{{ url('reports/kits') }}">Kits
-                                    {{-- <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
-                                       {{ $widgets['rejectedAllocations'] }}
-                                    </span> --}}
-                                </a>
+                            @if(env('APP_LAB') != 7)
+                            <li class="">                   <a href="{{ url('reports/kits') }}">Kits
+            <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+            {{ $widgets['rejectedAllocations'] }}
+            </span></a>
                             </li>
+                            @endif
                             @if(Auth::user()->user_type_id == 0)
                                 <li>
                                     <a href="{{ url($widgets['prefix'] . 'sample/transfer_samples') }}">Transfer</a>
