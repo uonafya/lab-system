@@ -18,6 +18,9 @@ use App\Consumption;
 use App\Machine;
 use App\Allocation;
 use App\AllocationDetail;
+use App\AllocationDetailsBreakdown;
+use App\GeneralConsumables;
+use App\Synch;
 
 use DB;
 
@@ -332,8 +335,8 @@ class TaskController extends Controller
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0) {
-            // return redirect()->route('allocation');
-            return redirect()->route('pending');
+            return redirect()->route('allocation');
+            // return redirect()->route('pending');
         }
         
         $data['taqmanKits'] = $this->taqmanKits;
@@ -375,92 +378,122 @@ class TaskController extends Controller
 
     public function allocation(Request $request) {
         if ($request->method() == "GET") {
-            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->count();
-            if ($currentMonthAllocation > 0){
+            $currentMonthAllocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->where('lab_id', '=', env('APP_LAB'))->count();
+            if ($currentMonthAllocation > 0){ // Ensure that allocation is not repeated if entered
                 session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
                 return back();
-            } else {
+            } else { // Ensure that that allocation once rejected is not done
                 $tasks = (object) $this->pendingTasks();
                 if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
                     session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
                     return back();
                 }
             }
-            
+            // If no allocation is not done and not declined, show the form to select the machines for allocations
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
-            
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
-            if ($request->has(['machine-form'])){
+            if ($request->has(['machine-form'])){ // This is to fill the allocation form for the previously slected machines
                 $machines = Machine::whereIn('id',$request->input('machine'))->get();
+                $generalconsumables = GeneralConsumables::get();
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;
+                $data['generalconsumables'] = $generalconsumables;
                 $data = (object) $data;
                 
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
-            } else {
+            } else { // Save the allocations from the previous if section
                 $saveAllocation = $this->saveAllocation($request);
-                \App\Synch::synch_allocations();
+                $synch = Synch::synch_allocations();
                 return redirect()->route('pending');
             }
         }
     }
 
     protected function saveAllocation($request) {
+        $orderNumber = date('Y') . "-" . substr(date('F', mktime(0, 0, 0, date('m'), 10)), 0, 3);
         $form = $request->except(['_token', 'kits-form']);
-        $allocation_data = $this->getAllocationData($form);
-        foreach ($allocation_data as $allocationkey => $allocation) {
-            $allocations_details_data = array_pull($allocation, 'allocationDetails');
-            $allocations = Allocation::create($allocation);
-            foreach ($allocations_details_data as $detailkey => $detail) {
-                $allocation_details = new AllocationDetail();
-                $allocation_details->allocation_id = $allocations->id;
-                $allocation_details->fill($detail);
-                $allocation_details->save();
-            }
+        $allocation = Allocation::where('year', '=', $this->year)->where('month', '=', $this->month)->first();
+        if (!$allocation){
+            $allocation = Allocation::create([
+                        'year' => $this->year,
+                        'month' => $this->month,
+                        'order_num' => $orderNumber,
+                        'datesubmitted' => date('Y-m-d'),
+                        'submittedby' => auth()->user()->full_name,
+                        'lab_id' => env('APP_LAB'),
+                    ]);
+            $allocation_details = $this->saveAllocationDetails($allocation, $form);
         }
         return $allocation;
     }
 
-    protected function getAllocationData($form_data) {
-        $allocation_data = [];
+    protected function saveAllocationDetails($allocation, $form_data) {
         foreach ($form_data as $key => $datum) {
             $column = explode('-', $key);
+            $build = false;
+            $machine_id = NULL;
+            $testtype = NULL;
             if ($column[0] == 'allocation') { // Create a new allocation at this point
                 $machine_id = $column[1];
                 $testtype = $column[2];
                 $allocationcomments = 'allocationcomments-'.$machine_id.'-'.$testtype;
-                $allocation_data[] = [
+                $build = true;
+            } else if ($key == 'consumablecomments'){
+                $allocationcomments = 'consumablecomments';
+                $build = true;
+            }
+            if ($build) {
+                $allocation_details = AllocationDetail::create([
+                    'allocation_id' => $allocation->id,
                     'machine_id' => $machine_id,
                     'testtype' => $testtype,
-                    'year' => $this->year,
-                    'month' => $this->month,
-                    'datesubmitted' => date('Y-m-d'),
-                    'submittedby' => auth()->user()->full_name,
-                    'lab_id' => env('APP_LAB'),
-                    'allocationcomments' => $form_data[$allocationcomments],
-                    'allocationDetails' => $this->getAllocationDetailsData($machine_id, $testtype, $form_data)
-                ];
+                    'allocationcomments' => $form_data[$allocationcomments]]);
+                $allocationDetailsBreakdown = $this->getAllocationDetailsBreakdownData($allocation_details, $machine_id, $testtype, $form_data);
             }
         }
-        return $allocation_data;
+        return $allocation_details;
     }
 
-    protected function getAllocationDetailsData($machine, $testtype, $form_data) {
-        $kits = Kits::where('machine_id', '=', $machine)->get();
-        $allocation_details_array = [];
-        foreach ($kits as $key => $kit) {
-            foreach ($form_data as $formkey => $form) {
-                $column = 'allocate-'.$testtype.'-'.$kit->id;
-                if ($column == $formkey){
-                    $allocation_details_array[] = [
-                        'kit_id' => $kit->id,
-                        'allocated' => $form
-                    ];
+    // Format the Allocation Details data to fit laravel way to insert
+    protected function getAllocationDetailsBreakdownData($allocation_details, $machine, $testtype, $form_data) {
+        if (!$machine)
+            $this->getConsumableAllocationData($allocation_details, $form_data);
+        else {
+            $kits = Kits::where('machine_id', '=', $machine)->get();
+            $allocation_details_array = [];
+            foreach ($kits as $key => $kit) {
+                foreach ($form_data as $formkey => $form) {
+                    $column = 'allocate-'.$testtype.'-'.$kit->id;
+                    if ($column == $formkey){
+                        $allocation_detail = AllocationDetailsBreakdown::create([
+                            'allocation_detail_id' => $allocation_details->id,
+                            'breakdown_id' => $kit->id,
+                            'breakdown_type' => Kits::class,
+                            'allocated' => $form
+                        ]);
+                    }
                 }
             }
         }
-        return $allocation_details_array;
+        
+        return true;
+    }
+
+    // Format the consumable allocation data to fit laravel way to insert
+    protected function getConsumableAllocationData($allocation_detail, $form_data) {
+        $consumables = GeneralConsumables::get();
+        $consumables_array = [];
+        foreach($consumables as $key => $consumable) {
+            $column = 'consumable-'.$consumable->id;
+            $allocation_details = AllocationDetailsBreakdown::create([
+                'allocation_detail_id' => $allocation_detail->id,
+                'breakdown_id' => $consumable->id,
+                'breakdown_type' => GeneralConsumables::class,
+                'allocated' => $form_data[$column]
+            ]);
+        }
+        return true;
     }
 
     public function performancelog(Request $request)

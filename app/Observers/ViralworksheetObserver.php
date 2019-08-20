@@ -7,7 +7,7 @@ use \App\Viralworksheet;
 
 class ViralworksheetObserver
 {
-
+	/*
 	public function created(Viralworksheet $viralworksheet)
 	{
 		$old_worksheet = new OldWorksheet;
@@ -80,7 +80,7 @@ class ViralworksheetObserver
 		$old_worksheet->save();
 	}
 
-
+	*/
 
 
 }

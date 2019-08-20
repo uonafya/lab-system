@@ -107,6 +107,7 @@ class Synch
 			'allocations' => [
 				'class' => Allocation::class,
 				'child_class' => AllocationDetail::class,
+				'grand_child_class' => AllocationDetailsBreakdown::class,
 				'update_url' => 'update/allocations',
 				'delete_url' => 'delete/allocations',
 			]
@@ -192,7 +193,7 @@ class Synch
 			],
 		]);
 		$status_code = $response->getStatusCode();
-		if($status_code > 399) die();
+		if($status_code > 399)  die();
 		$body = json_decode($response->getBody());
 		Cache::store('file')->put('api_token', $body->token, 60);
 
@@ -463,8 +464,11 @@ class Synch
 		
 		foreach ($updates as $key => $value) {
 			$update_class = $value['class'];
-			if (isset($value['child_class']))
+			if (isset($value['child_class'])) {
 				$update_child_class = $value['child_class'];
+				if (isset($value['grand_child_class']))
+					$update_grand_child_class = $value['grand_child_class'];
+			}
 			$column = self::$column_array[$key];
 
 			$sheet = $sample = $eid_patient = $allocate = false;
@@ -472,23 +476,28 @@ class Synch
 			if($key == 'samples') $sample = true;
 			if($key == 'patients' && $type == 'eid') $eid_patient = true;
 			if($key == 'allocations') $allocate = true;
-
+			// dd($column);
 			while(true){
 				$models = $update_class::where('synched', 2)
 										->when($sample, function($query){
 							                return $query->with(['batch', 'patient']);
 										})->when($allocate, function($query){
-											return $query->with(['details']);
+											return $query->with(array('details' => function($childquery){
+												return $childquery->where('synched', 2);
+											}, 'details.breakdowns' => function($childquery){
+												return $childquery->where('synched', 2);
+											}));
 										})->when($sheet, function($query){
 							                return $query->where('status_id', 3);
 										})->limit(20)->get();
-				if($models->isEmpty()) break;
 				
+				if($models->isEmpty()) break;
 				if($key == 'batches'){
 					foreach ($models as $batch) {
 						$my->save_tat($sampleview_class, $sample_class, $batch->id);
 					}
 				}
+				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
@@ -502,14 +511,22 @@ class Synch
 				]);
 
 				$body = json_decode($response->getBody());
-				
+				// dd($body);
+				$original_column = 'original_id';
+				if ($type == 'allocations')
+					$original_column = 'original_allocation_id';
+				// dd($body);
 				foreach ($body->$key as $row) {
 					$update_data = [$column => $row->$column, 'synched' => 1, 'datesynched' => $today,];
-					$update_class::where('id', $row->original_id)->update($update_data);
+					$update_class::where('id', $row->$original_column)->update($update_data);
 					if ($type == 'allocations') {
 						foreach ($row->details as $key => $new) {
-								$update_child_data = ['national_id' => $row->$column, 'synched' => 1, 'datesynched' => $today];
-								$update_child_class::where('id', $new->original_id)->update($update_child_data);
+							$update_child_data = ['national_id' => $new->$column, 'synched' => 1, 'datesynched' => $today];
+							$update_child_class::where('id', $new->original_allocation_detail_id)->update($update_child_data);
+							foreach($new->breakdowns as $new_breakdown) {
+								$update_data = ['national_id' => $new_breakdown->$column, 'synched' => 1, 'datesynched' => $today];
+								$update_grand_child_class::where('id', $new_breakdown->original_allocation_details_breakdown_id)->update($update_data);
+							}
 						}
 					}
 				}
@@ -520,8 +537,12 @@ class Synch
 						$update_class::where('id', $row->id)->update($update_data);
 						if ($type == 'allocations') {
 							foreach ($row->details as $key => $new) {
-									$update_child_data = ['synched' => 1, 'datesynched' => $today];
-									$update_child_class::where('id', $new->id)->update($update_child_data);
+								$update_child_data = ['synched' => 1, 'datesynched' => $today];
+								$update_child_class::where('id', $new->id)->update($update_child_data);
+								foreach($new->breakdowns as $breakdown) {
+									$update_data = ['synched' => 1, 'datesynched' => $today];
+									$update_grand_child_class::where('id', $breakdown->id)->update($update_data);
+								}
 							}
 						}
 					}
@@ -573,19 +594,16 @@ class Synch
 	}
 
 	public static function synch_allocations() {
-		echo "==> Starting allocations synch";
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
 
 		while (true) {
-			echo "\n\t Getting allocations data 20\n";
-			$allocations = Allocation::with(['details'])->where('synched', 0)->limit(20)->get();
+			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
 			if($allocations->isEmpty())
 				break;
 			
-			echo "\t Pushing allocations data to national DB\n";
 			$response = $client->request('post', $url, [
 				'headers' => [
 					'Accept' => 'application/json',
@@ -598,20 +616,30 @@ class Synch
 
 			]);
 			
-			echo "\t Receiving national db respose\n";
 			$body = json_decode($response->getBody());
-			
-			echo "\t Updating allocations data\n";
+			// dd($body);
 			foreach ($body->allocations as $key => $value) {
-				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
-				Allocation::where('id', $value->original_id)->update($update_data);
-				foreach ($value->details as $key => $detailvalue) {
-					$detail_update_data = ['national_id' => $detailvalue->national_id, 'synched' => 1, 'datesynched' => $today];
-					AllocationDetail::where('id', $detailvalue->original_id)->update($detail_update_data);
+				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
+				$allocationUpdate = Allocation::find($value->original_allocation_id);
+				if (isset($allocationUpdate)){
+					$allocationUpdate->update($update_data);
+					foreach ($value->details as $key => $detailvalue) {
+						$detail_update_data = ['national_id' => $detailvalue->id, 'synched' => 1, 'datesynched' => $today];
+						$allocationDetailUpdate = AllocationDetail::find($detailvalue->original_allocation_detail_id);
+						if (isset($allocationDetailUpdate)) {
+							$allocationDetailUpdate->update($detail_update_data);
+							foreach ($detailvalue->breakdown as $key => $breakdownvalue) {
+								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
+								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);
+								if (isset($allocationDetailBreakdownUpdate))
+									$allocationDetailBreakdownUpdate->update($breakdown_update_data);
+							}
+						}
+					}
 				}
 			}
 		}
-		echo "==> Completed allocations synch\n";	
+		return true;
 	}
 
 	public static function synch_allocations_updates() {

@@ -72,13 +72,13 @@ class Viralsample extends BaseModel
         }
     }
 
-    /*public function setProphylaxisAttribute($value)
+    public function setProphylaxisAttribute($value)
     {
         if(!is_numeric($value)) $this->attributes['prophylaxis'] = \App\Lookup::viral_prophylaxis($value);
         else{
             $this->attributes['prophylaxis'] = $value;
         }
-    }*/
+    }
 
 
 
@@ -189,10 +189,10 @@ class Viralsample extends BaseModel
      */
     public function getSampleTypeOutputAttribute()
     {
-        if($this->sampletype == 1) return "PLASMA";
-        else if($this->sampletype == 2) return "EDTA";
-        else if($this->sampletype == 3) return "DBS Capillary";
-        else if($this->sampletype == 4) return "DBS Venous";
+        if($this->sampletype == 1) return "FROZEN PLASMA";
+        else if($this->sampletype == 2) return "WHOLE BLOOD";
+        else if($this->sampletype == 3) return "DBS";
+        // else if($this->sampletype == 4) return "DBS Venous";
         return "";
     }
 

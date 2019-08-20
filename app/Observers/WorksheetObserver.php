@@ -8,7 +8,7 @@ use \App\Worksheet;
 class WorksheetObserver
 {
 
-	public function created(Worksheet $worksheet)
+	/*public function created(Worksheet $worksheet)
 	{
 		$old_worksheet = new OldWorksheet;
 		$old_worksheet->id = $worksheet->id;
@@ -70,7 +70,7 @@ class WorksheetObserver
 		$old_worksheet->synched = $worksheet->synched;
 
 		$old_worksheet->save();
-	}
+	}*/
 
 
 

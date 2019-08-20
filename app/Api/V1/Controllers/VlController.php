@@ -94,9 +94,11 @@ class VlController extends BaseController
 
         $sample = new Viralsample;
         $sample->fill($request->only($fields['sample']));
+        if(!$sample->prophylaxis) return $this->response->errorBadRequest("The prophylaxis provided does not exist.");
+
         $sample->amrs_location = Lookup::get_mrslocation($sample->amrs_location);
         $sample->justification = Lookup::justification($sample->justification);
-        $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
+        // $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
         $sample->batch_id = $batch->id;
         $sample->patient_id = $patient->id;
         $sample->age = $age;
@@ -198,8 +200,9 @@ class VlController extends BaseController
 
         $sample->fill($request->only($fields['sample_api']));
         $sample->fill(MiscViral::sample_result($sample->result));
+        if(!$sample->prophylaxis) return $this->response->errorBadRequest("The prophylaxis provided does not exist.");
         $sample->justification = Lookup::justification($sample->justification);
-        $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
+        // $sample->prophylaxis = Lookup::viral_regimen($sample->prophylaxis);
         $sample->age = $age;
         $sample->comments = $specimenlabelID;
         $sample->dateapproved = $sample->dateapproved2 = $sample->datetested;

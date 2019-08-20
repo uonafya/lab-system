@@ -35,7 +35,7 @@
             if(o[this.name] == '') o[this.name] = null;
         });
         return o;
-    }
+    };
 
     $(document).ready(function(){
     	$(".form-control").attr('autocomplete', 'off');
@@ -159,6 +159,13 @@
 
         }, dynamicErrorMsg);
 
+        jQuery.validator.addMethod("regex", function(value, element, param) {
+
+            var re = new RegExp(param);
+            return this.optional(element) || re.test(value);
+
+        }, "Please check your input.");
+
         $(".form-horizontal").validate({
             errorPlacement: function (error, element)
             {
@@ -170,6 +177,13 @@
         {{ $slot }}
 
     });
+
+    function diff_in_years(dt2, dt1)
+    {
+        var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+        diff /= (60 * 60 * 24);
+        return Math.abs(Math.round(diff/365.25));
+    }
 
 
 $.fn.serializeObject = function() {
@@ -202,6 +216,6 @@ $.fn.serializeObject = function() {
         if(o[this.name] == '') o[this.name] = null;
     });
     return o;
-}
+};
 
 </script>

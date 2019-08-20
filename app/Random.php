@@ -117,6 +117,47 @@ class Random
         }
     }
 
+    public static function tat_report($year, $month)
+    {
+    	$d = [
+    		'eid' => [
+    			'model' => \App\SampleView::class,
+    		],
+    		'vl' => [
+    			'model' => \App\ViralsampleView::class,
+    		],
+    	];
+    	$files = [];
+
+    	$sql = "year(datetested) AS `Year`, month(datetested) AS `Month`, AVG(tat1) AS `Collection to Receipt at the Lab (TAT 1)`, AVG(tat2) AS `Receipt to Testing (TAT 2)`, AVG(tat3) AS `Testing to Dispatch (TAT 3)`, AVG(tat4) AS `Collection to Dispatch (TAT 4)`, AVG(tat5) AS `Receipt to Dispatch (Lab TAT)`, COUNT(id) AS `Number of Samples` ";
+
+    	foreach ($d as $key => $value) {
+    		$m = $value['model'];
+
+    		$data = $m::selectRaw($sql)->where('datetested', '>=', "{$year}-{$month}-01")
+    		->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
+    		->where('site_entry', '!=', 2)
+    		->groupBy('year', 'month')->orderBy('year', 'asc')->orderBy('month', 'asc')
+    		->get();
+    		$rows = [];
+
+    		foreach ($data as $row) {
+    			// $row['Month'] = date('M', strtotime("2019-{$row['Month']}-01"));
+    			$rows[] = $row->toArray();
+    		}
+
+    		$file = $key . '_tat_data';
+
+			Excel::create($file, function($excel) use($rows){
+				$excel->sheet('Sheetname', function($sheet) use($rows) {
+					$sheet->fromArray($rows);
+				});
+			})->store('csv');
+
+			$files = [storage_path("exports/" . $file . ".csv")];
+    	}
+    }
+
     public static function tat_data()
     {
     	$months = [3, 4, 5];
@@ -377,120 +418,6 @@ class Random
 			Facility::where(['facilitycode' => $row->code])->update(['smsprinter' => 1]);
 		}
 	} 
-
-	public static function create_new_viralprophylaxis()
-	{
-		DB::statement("DROP TABLE IF EXISTS `viralregimen` ;");
-		DB::statement("
-			CREATE TABLE IF NOT EXISTS `viralregimen` (
-				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-				`name` VARCHAR(30) NOT NULL,
-				`code` VARCHAR(7) NOT NULL,
-				`age` tinyint(3) unsigned NOT NULL,
-				`line` tinyint(3) unsigned NOT NULL,
-
-				`regimen1` VARCHAR(7) DEFAULT NULL,
-				`regimen2` VARCHAR(7) DEFAULT NULL,
-				`regimen3` VARCHAR(7) DEFAULT NULL,
-				`regimen4` VARCHAR(7) DEFAULT NULL,
-				`regimen5` VARCHAR(7) DEFAULT NULL,
-
-				`regimen1_class_id` tinyint(3) unsigned DEFAULT NULL,
-				`regimen2_class_id` tinyint(3) unsigned DEFAULT NULL,
-				`regimen3_class_id` tinyint(3) unsigned DEFAULT NULL,
-				`regimen4_class_id` tinyint(3) unsigned DEFAULT NULL,
-				`regimen5_class_id` tinyint(3) unsigned DEFAULT NULL,
-
-				PRIMARY KEY (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
-		");
-
-		DB::statement("INSERT INTO `viralregimen` (`name`, `code`, `age`, `line`) VALUES
-			# Adult First Line
-			('TDF+3TC+DTG', 'AF2E', 1, 1),
-			('TDF+3TC+EFV', 'AF2B', 1, 1),
-			('AZT+3TC+DTG', 'AF1D', 1, 1),
-			('AZT+3TC+EFV', 'AF1B', 1, 1),
-			('ABC+3TC+EFV', 'AF4B', 1, 1),
-			('ABC+3TC+DTG', 'AF4C', 1, 1),
-			('TDF+3TC+ATV/r', 'AF2D', 1, 1),
-			('TDF+3TC+LPV/r', 'AF2F', 1, 1),
-			('AZT+3TC+LPV/r', 'AF1E', 1, 1),
-			('AZT+3TC+ATV/r', 'AF1F', 1, 1),
-			('TDF+3TC+NVP', 'AF2A', 1, 1),
-			('AZT+3TC+NVP', 'AF1A', 1, 1),
-			('ABC+3TC+NVP', 'AF4A', 1, 1),
-			('Other', 'AF5X', 1, 1),
-
-			#Adult Second Line
-			('AZT+3TC+LPV/r', 'AS1A', 1, 2),
-			('AZT+3TC+ATV/r', 'AS1B', 1, 2),
-			('AZT+3TC+DTG', 'AS1C', 1, 2),
-			('TDF+3TC+LPV/r', 'AS2A', 1, 2),
-			('TDF+3TC+DTG', 'AS2B', 1, 2),
-			('TDF+3TC+ATV/r', 'AS2C', 1, 2),
-			('ABC+3TC+LPV/r', 'AS5A', 1, 2),
-			('ABC+3TC+ATV/r', 'AS5B', 1, 2),
-			('ABC+3TC+DTG', 'AS5C', 1, 2),
-			('Other', 'AS6X', 1, 2),
-
-
-			#Adult Third Line
-			('TDF+3TC+DTG+DRV/r', 'AT2D', 1, 3),
-			('TDF+3TC+RAL+DRV/r', 'AT2E', 1, 3),
-			('TDF+3TC+DTG+ETV+DRV/r', 'AT2F', 1, 3),
-			('Other', 'AT2X', 1, 3),
-
-
-			# Paediatric First Line
-			('ABC+3TC+EFV', 'CF2B', 2, 1),
-			('ABC+3TC+LPV/r', 'CF2D', 2, 1),
-			('ABC+3TC+NVP', 'CF2A', 2, 1),
-			('ABC+3TC+RAL', 'CF2F', 2, 1),
-			('AZT+3TC+NVP', 'CF1A', 2, 1),
-			('AZT+3TC+EFV', 'CF1B', 2, 1),
-			('AZT+3TC+LPV/r', 'CF1C', 2, 1),
-			('Other', 'CF5X', 2, 1),
-
-
-			# Paediatric Second Line
-			('AZT+3TC+LPV/r', 'CS1A', 2, 2),
-			('ABC+3TC+LPV/r', 'CS2A', 2, 2),
-			('AZT+3TC+DRV/r+RAL', 'CS1C', 2, 2),
-			('ABC+3TC+DRV/r+RAL', 'CS1C', 2, 2),
-			('Other', 'CS4X', 2, 2),
-
-
-			# Paediatric Third Line
-			('AZT+3TC+DRV/r+RAL', 'CT1H', 2, 3),
-			('ABC+3TC+DRV/r+RAL', 'CT2D', 2, 3),
-			('Other', 'CT3X', 2, 3);
-		");
-
-		$regimens = DB::table('viralregimen')->where('name', '!=', 'Other')->get();
-
-		foreach ($regimens as $reg) {
-			$drugs = explode('+', $reg->name);
-			$data = [];
-			foreach ($drugs as $key => $drug) {
-				$no = $key+1;
-				$data['regimen' . $no] = $drug;
-				$data['regimen' . $no . '_class_id'] = DB::table('regimen_classes')->where('short_name', $drug)->first()->id ?? null;
-			}
-			DB::table('viralregimen')->where('id', $reg->id)->update($data);
-		}
-	}
-
-	public static function alter_regimen()
-	{
-		DB::statement('ALTER TABLE viralsamples CHANGE `prophylaxis` `regimen` TINYINT UNSIGNED DEFAULT 0;');
-		DB::statement('ALTER TABLE viralsamples ADD COLUMN `prophylaxis` TINYINT UNSIGNED DEFAULT 0 after `sampletype`;');
-		// DB::statement('RENAME TABLE `viralprophylaxis` TO `viralregimen`;');
-
-		
-
-
-	}
 
 	public static function locations()
 	{
@@ -1845,7 +1772,7 @@ class Random
         DB::statement("
         CREATE OR REPLACE VIEW samples_view AS
         (
-          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete,  p.national_patient_id, p.patient, p.sex, p.dob, p.mother_id, p.entry_point, p.patient_name, p.patient_phone_no, p.preferred_language, p.dateinitiatedontreatment,
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete, b.datedispatchedfromfacility,  p.national_patient_id, p.patient, p.sex, p.dob, p.mother_id, p.entry_point, p.patient_name, p.patient_phone_no, p.preferred_language, p.dateinitiatedontreatment,
           p.hei_validation, p.enrollment_ccc_no, p.enrollment_status, p.referredfromsite, p.otherreason
 
           FROM samples s
@@ -1858,7 +1785,7 @@ class Random
         DB::statement("
         CREATE OR REPLACE VIEW viralsamples_view AS
         (
-          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete,
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete, b.datedispatchedfromfacility,
           p.national_patient_id, p.patient, p.initiation_date, p.sex, p.dob, p.patient_name, p.patient_phone_no, p.preferred_language
 
           FROM viralsamples s
@@ -2278,8 +2205,8 @@ class Random
 	}
 
 	public static function export_edarp_results() {
-        echo "==> Retrival Begin \n";
-		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
+        // echo "==> Retrival Begin \n";
+		$file = 'public/docs/MISSING RESULTS.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2316,7 +2243,7 @@ class Random
         $newData = [];
         $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
         // dd($data);
-        echo "==> Getting Results \n";
+        // echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
         $worksheet = [];
@@ -2845,36 +2772,66 @@ class Random
     public static function run_ken_request() {
     	$data = [];
     	echo "==> Getting Patients\n";
-    	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
-    	echo "==> Getting Patients Samples\n";
-    	$data[] = ['Patient', 'Current Regimen', 'Former Result', 'Recent Result', 'Age Category'];
     	ini_set("memory_limit", "-1");
+    	$patients = Viralpatient::select('id')->get();
+    	// echo "==> Getting Patients Samples\n";
+    	// $excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
+    	// ini_set("memory_limit", "-1");
+    	// foreach ($patients as $key => $patient) {
+    		// $samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
+    		// if ($samples->count() == 2) {
+    		// 	$newsamples = $samples->whereIn('rcategory', [3,4]);
+    		// 	if ($newsamples->count() == 2){
+    		// 		echo ".";
+    		// 		$newsample = $newsamples->first();
+    		// 		$data[] = [
+    		// 			'patient' => $patient->patient,
+    		// 			'regimen' => $newsample->prophylaxis_name,
+    		// 			'result' => $newsample->result,
+    		// 			'agecategory' => self::getMakeShiftAgeCategory($newsample->age),
+    		// 		];
+    		// 	}
+    		// }
+    	// }
+    	$file = 'VL_Line_List_TLD_LLV_LAST2';
+    	
+    	// New TLD patients
+    	ini_set("memory_limit", "-1");
+    	// $patientsGroups = Viralpatient::select('id')->get()->split(10600);
+    	echo "==> Getting patients' data\n";
     	foreach ($patients as $key => $patient) {
-    		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
-    		if ($samples->count() == 2) {
-    			$newsamples = $samples->whereIn('rcategory', [3,4]);
-    			if ($newsamples->count() == 2){
-    				echo ".";
-    				$newsample = $newsamples->first();
-    				$oldsample = $newsamples->last();
-    				$data[] = [
-    					'patient' => $patient->patient,
-    					'regimen' => $newsample->prophylaxis_name,
-    					'result1' => $oldsample->result,
-    					'result2' => $newsample->result,
-    					'agecategory' => self::getMakeShiftAgeCategory($patient->dob),
-    				];
-    			}
-    		}
+    		echo "\tGetting patients` batch {$key}\n";
+    		// echo "==> Getting tests \n";
+    		$tests = ViralsampleCompleteView::selectRaw("patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
+    		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
+    						->where('repeatt', 0)
+    						// ->whereIn('rcategory', [1,2,3,4])
+    						->where('patient_id', $patient->id)
+    						// ->whereYear('datetested', 2019)
+    						->whereIn('rcategory', [2])
+    						->where('regimen', 18)
+    						// ->whereRaw("month(datetested) IN (4, 5, 6)")
+    						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
+    						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
+    						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
+    						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
+    						->orderBy('datetested', 'desc')->limit(2)->get();
+    		// dd($tests);
+    		// if ($tests->count() == 2) {
+    			foreach ($tests as $key => $test) {
+	    			$data[] = $test->toArray();
+	    		}
+    		// }
     	}
-    	$file = 'Requested Report '.(date('Y-m-d H:i:s'));
-    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
+
+    	echo "=> Creating excel\n";
     	Excel::create($file, function($excel) use($data)  {
 		    $excel->sheet('Sheetname', function($sheet) use($data) {
 		        $sheet->fromArray($data);
 		    });
 		})->store('csv');
 		$data = [storage_path("exports/" . $file . ".csv")];
+		echo "==> Mailing excel";
 		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
     }
 

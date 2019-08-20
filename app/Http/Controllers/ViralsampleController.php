@@ -374,6 +374,9 @@ class ViralsampleController extends Controller
         $data = $request->only($viralsamples_arrays['sample']);
         $viralsample = new Viralsample;
         $viralsample->fill($data);
+        if($request->input('dateseparated') && $request->input('separating_hour')){
+            $viralsample->dateseparated .= ' ' . $request->input('separating_hour') . ':00:00';
+        }
         if(env('APP_LAB') == 8){
             $viralsample->areaname = $request->input('areaname');
             $viralsample->label_id = $request->input('label_id');
@@ -546,6 +549,10 @@ class ViralsampleController extends Controller
         $viralpatient->fill($data);
         $viralpatient->pre_update();
 
+
+        if($request->input('dateseparated') && $request->input('separating_hour')){
+            $viralsample->dateseparated .=  ' ' . $request->input('separating_hour') . ':00:00';
+        }
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
         $viralsample->patient_id = $viralpatient->id;
 
@@ -998,7 +1005,8 @@ class ViralsampleController extends Controller
 
                 $sample->areaname = $row[5];
                 $sample->label_id = $row[1];
-                $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+                // $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+                $sample->prophylaxis = $row[10];
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->pmtct = 3;
                 $sample->receivedstatus = 1;
@@ -1081,7 +1089,8 @@ class ViralsampleController extends Controller
                 $sample->datecollected = $datecollected;
                 $sample->age = $row[6];
                 if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
-                $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+                // $sample->prophylaxis = Lookup::viral_regimen($row[10]);
+                $sample->prophylaxis = $row[10];
                 $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->sampletype = (int) $row[7];
