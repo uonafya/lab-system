@@ -67,7 +67,7 @@
                                 <tr>
                                     <td>{{ str_replace("REPLACE", "", $kit->name) }}</td>
                                     <td>{{ $amc }}</td>
-                                    @forelse($kit->consumption as $consumption)
+                                    @forelse($kit->consumption->where('year', $year)->where('month', $currentmonth - 1) as $consumption)
                                         @if($consumption->testtype == $testtype)
                                             @php
                                                 $mos = @($consumption->ending / $amc);
