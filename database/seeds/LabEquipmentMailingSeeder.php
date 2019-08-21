@@ -11,6 +11,7 @@ class LabEquipmentMailingSeeder extends Seeder
      */
     public function run()
     {
+        \App\EquipmentMailingList::truncate();
     	if (env('APP_LAB') == 1) //nairobi
 			$labemails = [['email' => 'emmahmaina1@gmail.com', 'type' => 2],
         					['email' => 'nafisa.lillian@gmail.com', 'type' => 2]];
