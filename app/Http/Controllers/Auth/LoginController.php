@@ -150,7 +150,6 @@ class LoginController extends Controller
         } else {
             if(!$facility){
                 $tasks = $this->pendingTasks();
-                // dd($tasks);
                 if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0) {
                     if (env('APP_LAB') != 5)
                         session(['pendingTasks' => true]);
@@ -158,6 +157,20 @@ class LoginController extends Controller
                 }
             }
         }
+
+        /*
+         * Section Added for the Allocation Pilot
+         * Will be removed once pilot is done to be prompted when the commodity consumption is submitted
+         */
+        if (($user->user_type_id == 1) || ($user->user_type_id == 0)){
+            $tasks = $this->pilotAllocation();
+            if ($tasks) {
+                return '/allocation';
+            }
+        }
+        /*
+         * End Section Added for the Allocation Pilot
+         */
 
         if(in_array(env('APP_LAB'), [8, 9])) session(['testingSystem' => 'Viralload']);
 

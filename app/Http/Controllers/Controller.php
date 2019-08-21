@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Abbotdeliveries;
+use App\Abbotprocurement;
+use App\Allocation;
+use App\LabEquipmentTracker;
+use App\LabPerformanceTracker;
+use App\Taqmandeliveries;
+use App\Taqmanprocurement;
+
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-use App\LabEquipmentTracker;
-use App\LabPerformanceTracker;
-use App\Taqmanprocurement;
-use App\Abbotprocurement;
-use App\Taqmandeliveries;
-use App\Abbotdeliveries;
 
 class Controller extends BaseController
 {
@@ -139,8 +141,17 @@ class Controller extends BaseController
 
         if ($abbottoday > 0 || $taqmantoday > 0)
             $today = true;
-
+        // dd($submittedstatus);
         return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker, 'filledtoday' => $today];
+    }
+
+    public function pilotAllocation()
+    {
+        $return = false;
+        $currentAllocation = Allocation::where('year', '=', date('Y'))->where('month', date('m'))->get();
+        if ($currentAllocation->isEmpty())
+            $return = true;
+        return $return;
     }
 
     public static function _getMonthQuarter($month=1, &$range=null){

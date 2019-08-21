@@ -45,7 +45,7 @@
                                         </center>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Please note that you have responded with <strong>NO</strong> to kit allocation. Before anything is set to stone, ensure you have enough stock to last this month. If not select Cancel, but if stock is sufficient enough you can select OK and proceed.</p>
+                                        <p>Please note that you have responded with <strong>NO</strong> to kit allocation. Before proceeding, ensure you have enough stock to last this month. If not, select Cancel to proceed with allocation. but if you have sufficient stock, select OK to skip this month`s allocation.</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>

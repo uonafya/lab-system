@@ -1772,7 +1772,7 @@ class Random
         DB::statement("
         CREATE OR REPLACE VIEW samples_view AS
         (
-          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete,  p.national_patient_id, p.patient, p.sex, p.dob, p.mother_id, p.entry_point, p.patient_name, p.patient_phone_no, p.preferred_language, p.dateinitiatedontreatment,
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete, b.datedispatchedfromfacility,  p.national_patient_id, p.patient, p.sex, p.dob, p.mother_id, p.entry_point, p.patient_name, p.patient_phone_no, p.preferred_language, p.dateinitiatedontreatment,
           p.hei_validation, p.enrollment_ccc_no, p.enrollment_status, p.referredfromsite, p.otherreason
 
           FROM samples s
@@ -1785,7 +1785,7 @@ class Random
         DB::statement("
         CREATE OR REPLACE VIEW viralsamples_view AS
         (
-          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete,
+          SELECT s.*, b.national_batch_id, b.highpriority, b.datereceived, b.datedispatched, b.tat5, b.site_entry, b.batch_complete, b.lab_id, b.user_id, b.received_by, b.entered_by, f.facilitycode, f.name as facilityname, b.facility_id, b.input_complete, b.datedispatchedfromfacility,
           p.national_patient_id, p.patient, p.initiation_date, p.sex, p.dob, p.patient_name, p.patient_phone_no, p.preferred_language
 
           FROM viralsamples s
@@ -2205,8 +2205,8 @@ class Random
 	}
 
 	public static function export_edarp_results() {
-        echo "==> Retrival Begin \n";
-		$file = 'public/docs/EDARP_samples_on_KEMRI_752019.xlsx';
+        // echo "==> Retrival Begin \n";
+		$file = 'public/docs/MISSING RESULTS.xlsx';
         // $batch = null;
         // $lookups = Lookup::get_viral_lookups();
         // dd($lookups);
@@ -2243,7 +2243,7 @@ class Random
         $newData = [];
         $newData[] = ['Test Type','TestingLab','SpecimenLabelID','SpecimenClientCode','FacilityName','MFLCode','Sex','PMTCT','Age','DOB','SampleType','DateCollected','CurrentRegimen','regimenLine','ART Init Date','Justification','DateReceived','loginDate','ReceivedStatus','RejectedReason','ReasonforRepeat','LabComment','Datetested','DateDispatched','Results','Edited'];
         // dd($data);
-        echo "==> Getting Results \n";
+        // echo "==> Getting Results \n";
         $count = 0;
         $availablecount = 0;
         $worksheet = [];
@@ -2772,36 +2772,66 @@ class Random
     public static function run_ken_request() {
     	$data = [];
     	echo "==> Getting Patients\n";
-    	$patients = Viralpatient::select('id', 'dob', 'patient')->whereYear('dob', '>', '2009')->get();
-    	echo "==> Getting Patients Samples\n";
-    	$data[] = ['Patient', 'Current Regimen', 'Former Result', 'Recent Result', 'Age Category'];
     	ini_set("memory_limit", "-1");
+    	$patients = Viralpatient::select('id')->get();
+    	// echo "==> Getting Patients Samples\n";
+    	// $excelColumns = ['Patient', 'Current Regimen', 'Recent Result', 'Age Category'];
+    	// ini_set("memory_limit", "-1");
+    	// foreach ($patients as $key => $patient) {
+    		// $samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
+    		// if ($samples->count() == 2) {
+    		// 	$newsamples = $samples->whereIn('rcategory', [3,4]);
+    		// 	if ($newsamples->count() == 2){
+    		// 		echo ".";
+    		// 		$newsample = $newsamples->first();
+    		// 		$data[] = [
+    		// 			'patient' => $patient->patient,
+    		// 			'regimen' => $newsample->prophylaxis_name,
+    		// 			'result' => $newsample->result,
+    		// 			'agecategory' => self::getMakeShiftAgeCategory($newsample->age),
+    		// 		];
+    		// 	}
+    		// }
+    	// }
+    	$file = 'VL_Line_List_TLD_TX_LAST2';
+    	
+    	// New TLD patients
+    	ini_set("memory_limit", "-1");
+    	// $patientsGroups = Viralpatient::select('id')->get()->split(10600);
+    	echo "==> Getting patients' data\n";
     	foreach ($patients as $key => $patient) {
-    		$samples = ViralsampleCompleteView::where('patient_id', $patient->id)->orderBy('datetested', 'desc')->limit(2)->get();
-    		if ($samples->count() == 2) {
-    			$newsamples = $samples->whereIn('rcategory', [3,4]);
-    			if ($newsamples->count() == 2){
-    				echo ".";
-    				$newsample = $newsamples->first();
-    				$oldsample = $newsamples->last();
-    				$data[] = [
-    					'patient' => $patient->patient,
-    					'regimen' => $newsample->prophylaxis_name,
-    					'result1' => $oldsample->result,
-    					'result2' => $newsample->result,
-    					'agecategory' => self::getMakeShiftAgeCategory($patient->dob),
-    				];
-    			}
-    		}
+    		echo "\tGetting patients` batch {$key}\n";
+    		// echo "==> Getting tests \n";
+    		$tests = ViralsampleCompleteView::selectRaw("patient_id,viralsample_complete_view.id,batch_id,patient,labdesc,county,subcounty,partner,view_facilitys.name,view_facilitys.facilitycode,gender_description,dob,age,sampletype,datecollected,justification_name,datereceived,datetested,datedispatched,initiation_date,receivedstatus_name,reason_for_repeat,rejected_name,prophylaxis_name, regimenline,pmtct_name,result, month(datetested) as testmonth")
+    		// $dataArray = SampleCompleteView::select('sample_complete_view.id','patient','original_batch_id','labdesc','county','subcounty','partner','view_facilitys.name','view_facilitys.facilitycode','gender_description','dob','age','pcrtype','enrollment_ccc_no','datecollected','datereceived','datetested','datedispatched','regimen_name','receivedstatus_name','labcomment','reason_for_repeat','spots','feeding_name','entry_points.name as entrypoint','results.name as infantresult','mother_prophylaxis_name','motherresult','mother_age','mother_ccc_no','mother_last_result')
+    						->where('repeatt', 0)
+    						// ->whereIn('rcategory', [1,2,3,4])
+    						->where('patient_id', $patient->id)
+    						// ->whereYear('datetested', 2019)
+    						->whereIn('rcategory', [3,4])
+    						->where('regimen', 18)
+    						// ->whereRaw("month(datetested) IN (4, 5, 6)")
+    						->join('labs', 'labs.id', '=', 'viralsample_complete_view.lab_id')
+    						->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_complete_view.facility_id')
+    						// ->join('results', 'results.id', '=', 'sample_complete_view.result')
+    						// ->join('entry_points', 'entry_points.id', '=', 'sample_complete_view.entry_point')
+    						->orderBy('datetested', 'desc')->limit(2)->get();
+    		// dd($tests);
+    		// if ($tests->count() == 2) {
+    			foreach ($tests as $key => $test) {
+	    			$data[] = $test->toArray();
+	    		}
+    		// }
     	}
-    	$file = 'Requested Report '.(date('Y-m-d H:i:s'));
-    	// return (new NhrlExport($data, $excelColumns))->store("$file.csv");
+
+    	echo "=> Creating excel\n";
     	Excel::create($file, function($excel) use($data)  {
 		    $excel->sheet('Sheetname', function($sheet) use($data) {
 		        $sheet->fromArray($data);
 		    });
 		})->store('csv');
 		$data = [storage_path("exports/" . $file . ".csv")];
+		echo "==> Mailing excel";
 		Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
     }
 
@@ -2872,5 +2902,11 @@ class Random
 
     	// dd($dataArray);
     	
+    }
+
+    public static function migrateConsumptions()
+    {
+        $machines = Machine::get();
+        dd($machines);
     }
 }

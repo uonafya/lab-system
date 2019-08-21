@@ -13,16 +13,16 @@ class CreateKitsTable extends Migration
      */
     public function up()
     {
-        // Schema::create('kits', function (Blueprint $table) {
-        //     $table->bigIncrements('id');
-        //     $table->text('name');
-        //     $table->string('alias');
-        //     $table->string('unit')->nullable();
-        //     $table->integer('machine_id');
-        //     $table->string('factor');
-        //     $table->string('testFactor');
-        //     $table->timestamps();
-        // });
+        Schema::create('kits', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->text('name');
+            $table->string('alias');
+            $table->string('unit')->nullable();
+            $table->integer('machine_id');
+            $table->string('factor');
+            $table->string('testFactor');
+            $table->timestamps();
+        });
     }
 
     /**

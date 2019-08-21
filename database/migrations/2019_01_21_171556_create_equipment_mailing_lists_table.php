@@ -13,14 +13,14 @@ class CreateEquipmentMailingListsTable extends Migration
      */
     public function up()
     {
-        // Schema::create('equipment_mailing_lists', function (Blueprint $table) {
-        //     $table->increments('id');
-        //     $table->string('email')->unique();
-        //     $table->boolean('type')->comment('1:to; 2:cc');
-        //     $table->date('datesent')->nullable();
-        //     $table->softDeletes();
-        //     $table->timestamps();
-        // });
+        Schema::create('equipment_mailing_lists', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('email')->unique();
+            $table->boolean('type')->comment('1:to; 2:cc');
+            $table->date('datesent')->nullable();
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**

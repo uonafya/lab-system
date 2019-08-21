@@ -159,6 +159,13 @@
 
         }, dynamicErrorMsg);
 
+        jQuery.validator.addMethod("regex", function(value, element, param) {
+
+            var re = new RegExp(param);
+            return this.optional(element) || re.test(value);
+
+        }, "Please check your input.");
+
         $(".form-horizontal").validate({
             errorPlacement: function (error, element)
             {
