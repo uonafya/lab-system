@@ -4,7 +4,6 @@ use Illuminate\Database\Seeder;
 
 class KitsSeeder extends Seeder
 {
-
 	public $taqmanKits = [
         ['name'=>"Ampliprep, HIV-1 REPLACE Test kits HIVQCAP", 'alias'=>'qualkit', 'unit'=>'48 Tests' ,'factor'=>1, 'testFactor' => ['EID'=>44,'VL'=>42]],
         ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent', 'unit'=>'350 Tests' ,'factor'=>0.15, 'testFactor' => 0.15],
@@ -38,6 +37,7 @@ class KitsSeeder extends Seeder
      */
     public function run()
     {
+        \App\Kits::truncate();
 		$roche = [1,3];
 		// dd($this->taqmanKits);
     	foreach ($roche as $key => $rocheMachine) {
