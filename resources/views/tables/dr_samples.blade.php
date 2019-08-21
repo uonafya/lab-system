@@ -202,12 +202,13 @@
                                     <th>Date Collected</th>
                                     <th>Date Received</th>
                                     <th>Reason</th>
-                                    <th>Extraction Worksheet</th>
+                                    <!-- <th>Extraction Worksheet</th> -->
                                     <th>Sequencing Worksheet</th>
                                     <th>Has Errors</th>
                                     <th>Has Warnings</th>
                                     <th>Has Mutations</th>
                                     <th>Tasks</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -221,7 +222,7 @@
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
-                                        <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
+                                        <!-- <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td> -->
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_boolean_format('has_errors') }} </td>
                                         <td> {{ $sample->my_boolean_format('has_warnings') }} </td>
@@ -230,9 +231,20 @@
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
 
+                                            @if(!$sample->datereceived && auth()->user()->user_type_id <= 1)
+                                                <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Verify Sample </a> | 
+                                            @endif
+
                                             @if(in_array($sample->status_id, [1, 2, 3]))
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if(!$sample->worksheet_id)
+                                                {{ Form::open(['url' => 'dr_sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
+                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
+                                                {{ Form::close() }} 
                                             @endif
                                         </td>
                                     </tr>

@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Cache;
 use DB;
 
 use App\Common;
+
+use App\DrWorksheet;
+use App\DrBulkRegistration;
+
 use App\DrSample;
 use App\DrSampleView;
 
@@ -22,11 +26,11 @@ use App\DrResidue;
 class MiscDr extends Common
 {
 
-	public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
-	public static $ui_url = 'http://sangelamerkel.exatype.co.za';
+	// public static $hyrax_url = 'https://sanger20181106v2-sanger.hyraxbio.co.za';
+	// public static $ui_url = 'http://sangelamerkel.exatype.co.za';
 
-	// public static $hyrax_url = 'https://sanger.api.exatype.com'; 
-	// public static $ui_url = 'https://sanger.exatype.com';
+	public static $hyrax_url = 'https://sanger.api.exatype.com'; 
+	public static $ui_url = 'https://sanger.exatype.com';
 
     public static $call_array = [
         'LC' => [
@@ -49,7 +53,31 @@ class MiscDr extends Common
             'resistance_colour' => "#00ff00",
             'cells' => [],
         ],
+        'L' => [
+            'resistance' => 'Low Level',
+            'resistance_colour' => "#00ff00",
+            'cells' => [],
+        ],
+        'PL' => [
+            'resistance' => 'Potential Low Level',
+            'resistance_colour' => "#00ff00",
+            'cells' => [],
+        ],
     ];
+
+    public static function get_drug_score($score)
+    {
+    	$c = self::$call_array;
+    	// susceptible
+    	if($score < 10) return $c['S'];
+    	else if($score < 15) return $c['PL'];
+    	else if($score < 30) return $c['L'];
+    	else if($score < 60) return $c['I'];
+    	else if($score > 59) return $c['R'];
+    	else{
+    		return $c['LC'];
+    	}
+    }
 
     public static function dump_log($postData, $encode_it=true)
     {
@@ -192,7 +220,8 @@ class MiscDr extends Common
 	{
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
 
-		$samples = $worksheet->sample;
+		$samples = $worksheet->sample_view;
+		// $samples = $worksheet->sample;
 		// $samples->load(['result']);
 
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
@@ -210,7 +239,8 @@ class MiscDr extends Common
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
-					'sample_name' => "{$sample->mid}",
+					// 'sample_name' => "{$sample->mid}",
+					'sample_name' => "{$sample->nat}",
 					'pathogen' => 'hiv',
 					'assay' => 'thermo_PR_RT',
 					// 'assay' => 'cdc-hiv',
@@ -233,7 +263,8 @@ class MiscDr extends Common
 					// $abs2[] = ['file_name' => $ab['file_name']];
 				}
 				else{
-					$errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
 				}
 			}
 			if(!$abs) continue;
@@ -265,7 +296,8 @@ class MiscDr extends Common
 			}
 			else{
 				// if(starts_with($file, $sample->mid . $primer)){
-				if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
+				// if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
+				if(starts_with($file, $sample->nat . '-') && str_contains($file, $primer))
 				{
 					$a = [
 						'file_name' => $file,
@@ -316,6 +348,13 @@ class MiscDr extends Common
 		]);
 
 		$body = json_decode($response->getBody());
+
+		$included = print_r($body->included, true);
+
+		// $file = fopen(public_path('res.json'), 'w+');
+		// fwrite($file, $included);
+		// fclose($file);
+		// die();
 
 		// dd($body);
 
@@ -434,6 +473,7 @@ class MiscDr extends Common
 								'short_name' => $drug->short_name,
 								'short_name_id' => self::get_short_name_id($drug->short_name),
 								'call' => $drug->call,
+								'score' => $drug->score ?? null,
 							]);
 						}
 					}
@@ -566,97 +606,131 @@ class MiscDr extends Common
 		return ['samples' => $samples, 'create' => false];
 	}
 
-	public static function get_worksheet_samples($extraction_worksheet_id)
+	// public static function get_worksheet_samples($extraction_worksheet_id)
+	public static function get_worksheet_samples($sample_ids=[], $limit=null)
 	{
 		$samples = DrSampleView::whereNull('worksheet_id')
-		->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		// ->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $extraction_worksheet_id])
+		->when($sample_ids, function($query) use ($sample_ids){
+			return $query->whereIn('id', $sample_ids);
+		})
+		->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
+		->where(['receivedstatus' => 1, 'control' => 0])
 		->orderBy('control', 'desc')
 		->orderBy('run', 'desc')
 		->orderBy('id', 'asc')
-		->limit(16)
+		->when($limit, function($query) use ($limit){
+			return $query->limit($limit);
+		})
+		->get();
+
+		$create = false;
+		if($samples->count() > 0) $create = true;
+
+		return ['samples' => $samples, 'create' => $create];
+	}
+
+
+	public static function get_bulk_registration_samples($sample_ids=[], $limit=null)
+	{
+		$samples = DrSampleView::whereNull('bulk_registration_id')
+		->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
+		->where(['receivedstatus' => 1, 'control' => 0])
+		->when($sample_ids, function($query) use ($sample_ids){
+			return $query->whereIn('id', $sample_ids);
+		})
+		->orderBy('run', 'desc')
+		->orderBy('datereceived', 'asc')
+		->orderBy('id', 'asc')
+		->when($limit, function($query) use ($limit){
+			return $query->limit($limit);
+		})
 		->get();
 
 		if($samples->count() > 0){
-			return ['samples' => $samples, 'create' => true, 'extraction_worksheet_id' => $extraction_worksheet_id];
+			return ['samples' => $samples, 'create' => true];
 		}
-		return ['create' => false, 'extraction_worksheet_id' => $extraction_worksheet_id];
+		return ['samples' => $samples, 'create' => false];
 	}
 
 
-	public static function generate_samples()
-	{
-		$potential_patients = \App\DrPatient::where('status_id', 1)->limit(300)->get();
 
-		foreach ($potential_patients as $patient) {
-	        $data = $patient->only(['patient_id', 'dr_reason_id']);
-	        $data['user_id'] = 0;
-	        $data['receivedstatus'] = 1;
-	        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
-	        $data['datereceived'] = date('Y-m-d');
-	        // $sample = DrSample::create($data);
-	        $sample = new DrSample;
-	        $sample->fill($data);
-	        $facility = $sample->patient->facility;
-	        $sample->facility_id = $facility->id;
-	        $sample->save();      
+	/*
 
-	        $patient->status_id=2;
-	        $patient->save();
-		}
-	}
+		public static function generate_samples()
+		{
+			$potential_patients = \App\DrPatient::where('status_id', 1)->limit(300)->get();
 
+			foreach ($potential_patients as $patient) {
+		        $data = $patient->only(['patient_id', 'dr_reason_id']);
+		        $data['user_id'] = 0;
+		        $data['receivedstatus'] = 1;
+		        $data['datecollected'] = date('Y-m-d', strtotime('-2 days'));
+		        $data['datereceived'] = date('Y-m-d');
+		        // $sample = DrSample::create($data);
+		        $sample = new DrSample;
+		        $sample->fill($data);
+		        $facility = $sample->patient->facility;
+		        $sample->facility_id = $facility->id;
+		        $sample->save();      
 
-	public static function regimens()
-	{
-		$calls = \App\DrCallView::all();
-
-		foreach ($calls as $key => $value) {
-			$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
-
-			if(!$reg){
-				DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name]);
+		        $patient->status_id=2;
+		        $patient->save();
 			}
 		}
-	}
 
 
-	public static function seed()
-	{		
-    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 2, 'date_gel_documentation' => date('Y-m-d')]);
+		public static function regimens()
+		{
+			$calls = \App\DrCallView::all();
 
-    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
+			foreach ($calls as $key => $value) {
+				$reg = DB::table('regimen_classes')->where(['drug_class' => $value->drug_class, 'short_name' => $value->short_name])->first();
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
-    	]);
+				if(!$reg){
+					DB::table('regimen_classes')->insert(['drug_class' => $value->drug_class, 'short_name' => $value->short_name]);
+				}
+			}
+		}
 
-    	$samples = [6, 10, 14, 17, 20, 22, 99, 2009695759, 2012693909, 2012693911, 2012693943, 3005052934, 3005052959, ];
 
-    	foreach ($samples as $key => $sample) {
-    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
-    	}
-	}
+		public static function seed()
+		{		
+	    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => 2, 'date_gel_documentation' => date('Y-m-d')]);
 
-	public static function seed_nhrl()
-	{		
-    	$u = \App\User::where('user_type_id', 0)->first();
-    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => $u->id, 'date_gel_documentation' => date('Y-m-d')]);
+	    	$w = \App\DrWorksheet::create(['extraction_worksheet_id' => $e->id]);
 
-    	$w = \App\DrWorksheet::create(['lab_id' => env('APP_LAB'), 'extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
+	    	DB::table('dr_samples')->insert([
+	    		['id' => 1, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
+	    		['id' => 2, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s')],
+	    	]);
 
-    	$samples = [1, 2, 3, 4, 5, 6, 7, 9, 10, 14, 17, 20, 22, ];
+	    	$samples = [6, 10, 14, 17, 20, 22, 99, 2009695759, 2012693909, 2012693911, 2012693943, 3005052934, 3005052959, ];
 
-    	foreach ($samples as $key => $sample) {
-    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
-    	}
+	    	foreach ($samples as $key => $sample) {
+	    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
+	    	}
+		}
 
-    	DB::table('dr_samples')->insert([
-    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
-    	]);
-	}
+		public static function seed_nhrl()
+		{		
+	    	$u = \App\User::where('user_type_id', 0)->first();
+	    	$e = \App\DrExtractionWorksheet::create(['lab_id' => env('APP_LAB'), 'createdby' => $u->id, 'date_gel_documentation' => date('Y-m-d')]);
 
+	    	$w = \App\DrWorksheet::create(['lab_id' => env('APP_LAB'), 'extraction_worksheet_id' => $e->id, 'createdby' => $u->id, ]);
+
+	    	$samples = [1, 2, 3, 4, 5, 6, 7, 9, 10, 14, 17, 20, 22, ];
+
+	    	foreach ($samples as $key => $sample) {
+	    		$s = DrSample::create(['id' => $sample, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'lab_id' => env('APP_LAB')]);
+	    	}
+
+	    	DB::table('dr_samples')->insert([
+	    		['id' => 23, 'control' => 1, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
+	    		['id' => 24, 'control' => 2, 'patient_id' => 1, 'worksheet_id' => $w->id, 'extraction_worksheet_id' => $e->id, 'created_at' => date('Y-m-d H:i:s'), 'lab_id' => env('APP_LAB')],
+	    	]);
+		}
+	*/
 
 	/*
 		Start of Console Commands
@@ -665,6 +739,7 @@ class MiscDr extends Common
 	public static function send_to_exatype()
 	{
 		$worksheets = DrWorksheet::where(['status_id' => 2])->get();
+		// $worksheets = DrBulkRegistration::where(['status_id' => 2])->get();
 		foreach ($worksheets as $key => $worksheet) {
 			self::create_plate($worksheet);
 		}
@@ -674,6 +749,7 @@ class MiscDr extends Common
 	{
 		$max_time = date('Y-m-d H:i:s', strtotime('-10 minutes'));
 		$worksheets = DrWorksheet::where(['status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
+		// $worksheets = DrBulkRegistration::where(['status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			echo "Getting results for {$worksheet->id} \n";
 			self::get_plate_result($worksheet);
@@ -681,6 +757,7 @@ class MiscDr extends Common
 
 		$max_time = date('Y-m-d H:i:s', strtotime('-1 hour'));
 		$worksheets = DrWorksheet::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
+		// $worksheets = DrBulkRegistration::where(['status_id' => 6, 'exatype_status_id' => 5])->where('time_sent_to_exatype', '<', $max_time)->get();
 		foreach ($worksheets as $key => $worksheet) {
 			self::get_plate_result($worksheet);
 		}

@@ -4,7 +4,6 @@ use Illuminate\Database\Seeder;
 
 class KitsSeeder extends Seeder
 {
-
 	public $taqmanKits = [
         ['name'=>"Ampliprep, HIV-1 REPLACE Test kits HIVQCAP", 'alias'=>'qualkit', 'unit'=>'48 Tests' ,'factor'=>1, 'testFactor' => ['EID'=>44,'VL'=>42]],
         ['name'=>"Ampliprep Specimen Pre-Extraction Reagent", 'alias'=>'spexagent', 'unit'=>'350 Tests' ,'factor'=>0.15, 'testFactor' => 0.15],
@@ -38,31 +37,37 @@ class KitsSeeder extends Seeder
      */
     public function run()
     {
+        \App\Kits::truncate();
 		$roche = [1,3];
 		// dd($this->taqmanKits);
     	foreach ($roche as $key => $rocheMachine) {
     		foreach ($this->taqmanKits as $key => $kit) {
     			$kit = (object) $kit;
-    			\App\Kits::create([
-    				'name' => $kit->name,
-    				'alias' => $kit->alias,
-    				'unit' => $kit->unit,
-    				'machine_id' => $rocheMachine,
-    				'factor' => json_encode($kit->factor),
-					'testFactor' => json_encode($kit->testFactor)
-    			]);
+                $data = [
+                    'name' => $kit->name,
+                    'alias' => $kit->alias,
+                    'unit' => $kit->unit,
+                    'machine_id' => $rocheMachine,
+                    'factor' => json_encode($kit->factor),
+                    'testFactor' => json_encode($kit->testFactor)
+                ];
+                $model = new \App\Kits;
+                $model->fill($data);
+                $model->save();
     		}
     	}
 
     	foreach ($this->abbottKits as $key => $kit) {
     			$kit = (object) $kit;
-    			\App\Kits::create([
+                $model = new \App\Kits;
+    			$model->fill([
     				'name' => $kit->name,
     				'alias' => $kit->alias,
     				'machine_id' => 2,
     				'factor' => json_encode($kit->factor),
 					'testFactor' => json_encode($kit->testFactor)
     			]);
+                $model->save();
     		}
     }
 }

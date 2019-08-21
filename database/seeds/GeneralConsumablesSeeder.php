@@ -37,8 +37,9 @@ class GeneralConsumablesSeeder extends Seeder
      */
     public function run()
     {
+        \App\GeneralConsumables::truncate();
         foreach($this->consumables as $consumable){
-            \App\GeneralConsumable::create($consumable);
+            \App\GeneralConsumables::create($consumable);
         }
     }
 }

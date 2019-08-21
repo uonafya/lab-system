@@ -46,7 +46,7 @@
 							@endif
 								<td>{{ $call_drug->short_name }} </td>
 								<td>{{ $call_drug->resistance }} </td>
-								{!! $call_drug->resistance_cell_two !!}
+								{!! $call_drug->resistance_cell !!}
 							<tr/>	
 						@endforeach
 
