@@ -66,7 +66,7 @@
                                 @endphp
                                 <tr>
                                     <td>{{ str_replace("REPLACE", "", $kit->name) }}</td>
-                                    <td>{{ $amc }}</td>
+                                    <td>{{ round($amc) }}</td>
                                     @forelse($kit->consumption->where('year', $year)->where('month', $currentmonth - 1) as $consumption)
                                         @if($consumption->testtype == $testtype)
                                             @php
@@ -76,11 +76,16 @@
                                             @if(is_nan($mos))
                                                 {{ 0 }}
                                             @else
-                                                {{ $mos }}
+                                                {{ round($mos) }}
                                             @endif
                                             </td>
                                             <td>{{ $consumption->ending }}</td>
-                                            <td>{{ ($amc * 2) -$consumption->ending }}</td>
+                                            @php
+                                                $recommended = ($amc * 2) - $consumption->ending;
+                                                if ($recommended < 0)
+                                                    $recommended = 0;
+                                            @endphp
+                                            <td>{{ round($recommended) }}</td>
                                         @endif
                                     @empty
                                         <td></td>
