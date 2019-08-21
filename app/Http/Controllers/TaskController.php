@@ -394,7 +394,8 @@ class TaskController extends Controller
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
             if ($request->has(['machine-form'])){ // This is to fill the allocation form for the previously slected machines
-                $machines = Machine::whereIn('id',$request->input('machine'))->get();
+                $machines = Machine::with(['kits', 'kits.consumption'])->whereIn('id',$request->input('machine'))->get();
+                dd($machines);
                 $generalconsumables = GeneralConsumables::get();
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;

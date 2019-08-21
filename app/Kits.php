@@ -28,7 +28,7 @@ class Kits extends BaseModel
     }
 
     public function consumption(){
-    	return $this->hasMany('App\Consumption', 'Kit_id');
+    	return $this->hasMany('App\Consumption', 'kit_id');
     }
 
     public function lastMonth(){

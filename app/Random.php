@@ -2903,4 +2903,10 @@ class Random
     	// dd($dataArray);
     	
     }
+
+    public static function migrateConsumptions()
+    {
+        $machines = Machine::get();
+        dd($machines);
+    }
 }

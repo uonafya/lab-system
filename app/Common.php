@@ -845,7 +845,7 @@ class Common
 						'disapprovereason' => $consumption->disapprovereason,
 						'synched' => $consumption->synched,
 						'datesynched' => $consumption->datesynched,
-						'deleted_at' => $consumption->deleted_at,
+						// 'deleted_at' => $consumption->deleted_at,
 						'created_at' => $consumption->created_at,
 						'updated_at' => $consumption->updated_at,
 		    		];
@@ -867,11 +867,12 @@ class Common
 							->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
 							->whereIn('machine_type', [1,3])
 							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
+				// dd($vlsamples);
 				foreach ($consumptions as $key => $consumption) {
 					if ($consumption->testtype == 1)
 		    			$model = $eidsamples;
 		    		else if ($consumption->testtype == 2)
-		    			$model = $eidsamples;
+		    			$model = $vlsamples;
 		    		if ($model->taqman == 0 && $model->C8800 == 0) {
 
 		    		} else {
@@ -906,7 +907,7 @@ class Common
 										'disapprovereason' => $consumption->disapprovereason,
 										'synched' => $consumption->synched,
 										'datesynched' => $consumption->datesynched,
-										'deleted_at' => $consumption->deleted_at,
+										// 'deleted_at' => $consumption->deleted_at,
 										'created_at' => $consumption->created_at,
 										'updated_at' => $consumption->updated_at,
 						    		];
@@ -940,7 +941,7 @@ class Common
 										'disapprovereason' => $consumption->disapprovereason,
 										'synched' => $consumption->synched,
 										'datesynched' => $consumption->datesynched,
-										'deleted_at' => $consumption->deleted_at,
+										// 'deleted_at' => $consumption->deleted_at,
 										'created_at' => $consumption->created_at,
 										'updated_at' => $consumption->updated_at,
 						    		];
