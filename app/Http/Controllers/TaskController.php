@@ -383,18 +383,19 @@ class TaskController extends Controller
                 session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' already completed']);
                 return back();
             } else { // Ensure that that allocation once rejected is not done
-                $tasks = (object) $this->pendingTasks();
-                if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
-                    session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
-                    return back();
-                }
+                // $tasks = (object) $this->pendingTasks();
+                // if ($tasks->submittedstatus == 1 && $tasks->labtracker == 1 && !$tasks->filledtoday){
+                //     session(['toast_message' => 'Allocation for ' . date("F", mktime(null, null, null, $this->month)) . ', ' . $this->year . ' was skipped please wait till next month']);
+                //     return back();
+                // }
             }
             // If no allocation is not done and not declined, show the form to select the machines for allocations
             $machines = DB::table('machines')->where('id', '<>', 4)->get();
             return view('tasks.allocation', compact('machines'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
         } else if ($request->method() == "POST") {
             if ($request->has(['machine-form'])){ // This is to fill the allocation form for the previously slected machines
-                $machines = Machine::whereIn('id',$request->input('machine'))->get();
+                $machines = Machine::/*with(['kits', 'kits.consumption'])->*/whereIn('id',$request->input('machine'))->get();
+                // dd($machines);
                 $generalconsumables = GeneralConsumables::get();
                 $data['machines'] = $machines;
                 $data['testtypes'] = $this->testtypes;

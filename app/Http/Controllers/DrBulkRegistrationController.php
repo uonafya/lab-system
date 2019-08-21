@@ -2,46 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\DrWorksheet;
-use App\DrPatient;
+use App\DrBulkRegistration;
 use App\DrSample;
-use App\DrSampleView;
-use App\User;
-
 use App\Lookup;
-use App\MiscDr;
-
-use Excel;
 use Illuminate\Http\Request;
+use Excel;
 
-class DrWorksheetController extends Controller
+class DrBulkRegistrationController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
+    public function index()
     {
-        $worksheets = DrWorksheet::with(['creator', 'reviewer'])->withCount(['sample'])
-            ->when($state, function ($query) use ($state){
-                return $query->where('status_id', $state);
-            })
-            ->when($date_start, function($query) use ($date_start, $date_end){
-                if($date_end)
-                {
-                    return $query->whereDate('dr_worksheets.created_at', '>=', $date_start)
-                    ->whereDate('dr_worksheets.created_at', '<=', $date_end);
-                }
-                return $query->whereDate('dr_worksheets.created_at', $date_start);
-            })
-            ->orderBy('dr_worksheets.created_at', 'desc')
-            ->get();
-
-        $data = Lookup::get_dr();
-        $data['worksheets'] = $worksheets;
-        $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
-        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets (Bulk Templates)');
+        $templates = DrBulkRegistration::withCount(['sample'])->get();
+        return view('tables.dr_bulk_registration', ['templates' => $templates]);
     }
 
     /**
@@ -49,23 +26,37 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function create($extraction_worksheet_id)
     public function create()
     {
-        // $samples = DrSample::selectRaw("dr_samples.*")
-        //                 ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-        //                 ->orderBy('drug_resistance_reasons.rank', 'asc')
-        //                 ->whereNull('worksheet_id')
-        //                 ->where('receivedstatus', 1)
-        //                 ->limit(16)
-        //                 ->get();
+        // $samples = DrSample::whereNull('bulk_registration_id')
+        // ->whereNull('worksheet_id')
+        // ->whereNull('extraction_worksheet_id')
+        // ->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
+        // ->where(['receivedstatus' => 1, 'control' => 0])
+        // ->orderBy('run', 'desc')
+        // ->orderBy('datereceived', 'asc')
+        // ->orderBy('id', 'asc')
+        // ->get();
 
-        // $samples->load(['patient.facility']);
-        // $data['dr_samples'] = $samples;
+        // if($samples->first()){
+        //     $b = DrBulkRegistration::create(['createdby' => auth()->user()->id, 'lab_id' => env('APP_LAB')]);
+        //     DrSample::whereNull('bulk_registration_id')
+        //         ->whereNull('worksheet_id')
+        //         ->whereNull('extraction_worksheet_id')
+        //         ->where('datereceived', '>', date('Y-m-d', strtotime('-1 year')))
+        //         ->where(['receivedstatus' => 1, 'control' => 0])
+        //         ->update(['bulk_registration_id' => $b->id]);
+
+        //     session(['toast_message' => 'The bulk registration template has been created.']);
+        //     return back();
+        // }
+
+        // session(['toast_error' => 1, 'toast_message' => 'The bulk registration template could not be created.']);
+        // return back();
 
         $data = Lookup::get_dr();
-        $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
-        return view('forms.dr_worksheets', $data);
+        $data = array_merge($data, MiscDr::get_bulk_registration_samples());
+        return view('forms.dr_bulk_registrations', $data);
     }
 
     /**
@@ -76,98 +67,39 @@ class DrWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        $data = MiscDr::get_worksheet_samples($request->input('samples'), 16);
+        $data = MiscDr::get_bulk_registration_samples($request->input('samples'), 16);
 
         if(!$data['create']){
-            session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
+            session(['toast_error' => 1, 'toast_message' => 'The bulk registration could not be created.']);
             return back();
         }
 
-        $dr_worksheet = new DrWorksheet;
-        $dr_worksheet->fill($request->except(['_token', 'samples']));
-        $dr_worksheet->save();
+        $drBulkRegistration = new DrBulkRegistration;
+        $drBulkRegistration->fill($request->except(['_token', 'samples']));
+        $drBulkRegistration->save();        
+
         $samples = $data['samples'];
 
         foreach ($samples as $s) {
             $sample = DrSample::find($s->id);
-            $sample->worksheet_id = $dr_worksheet->id;
+            $sample->bulk_registration_id = $drBulkRegistration->id;
             $sample->save();
         }
-        return $this->download($dr_worksheet);
 
-        return redirect('dr_worksheet/print/' . $dr_worksheet->id);
+        session(['toast_message' => 'The bulk registration has been created.']);
+
+        return redirect('dr_bulk_registration/');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\DrWorksheet  $drWorksheet
+     * @param  \App\DrBulkRegistration  $drBulkRegistration
      * @return \Illuminate\Http\Response
      */
-    public function show(DrWorksheet $drWorksheet, $print=false)
+    public function show(DrBulkRegistration $drBulkRegistration)
     {
-        $data = Lookup::get_dr();
-        // $data['samples'] = $drWorksheet->sample;
-        $data['samples'] = DrSample::where(['worksheet_id' => $drWorksheet->id])->orderBy('id', 'asc')->get();
-        $data['date_created'] = $drWorksheet->my_date_format('created_at', "Y-m-d");
-        if($print) $data['print'] = true;
-        return view('worksheets.dr_worksheet', $data);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\DrWorksheet  $drWorksheet
-     * @return \Illuminate\Http\Response
-     */
-    public function print(DrWorksheet $worksheet)
-    {
-        return $this->show($worksheet, true);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\DrWorksheet  $drWorksheet
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DrWorksheet $drWorksheet)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DrWorksheet  $drWorksheet
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DrWorksheet $drWorksheet)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\DrWorksheet  $drWorksheet
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DrWorksheet $drWorksheet)
-    {
-        //
-    }
-
-    /**
-     * Download the specified resource as csv.
-     *
-     * @param  \App\DrWorksheet $worksheet
-     * @return \Illuminate\Http\Response
-     */
-    public function download(DrWorksheet $worksheet)
-    {
-        $samples = DrSample::with(['patient'])->where(['worksheet_id' => $worksheet->id])->get();
+        $samples = DrSample::with(['patient'])->where(['bulk_registration_id' => $drBulkRegistration->id])->get();
         $data = [];
 
         foreach ($samples as $key => $sample) {
@@ -191,7 +123,7 @@ class DrWorksheetController extends Controller
             ];
         }
 
-        $filename = 'bulk_template_' . $worksheet->id;
+        $filename = 'bulk_template_' . $drBulkRegistration->id;
 
         Excel::create($filename, function($excel) use($data){
             $excel->sheet('Sheetname', function($sheet) use($data) {
@@ -200,7 +132,39 @@ class DrWorksheetController extends Controller
         })->download('csv');
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\DrBulkRegistration  $drBulkRegistration
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(DrBulkRegistration $drBulkRegistration)
+    {
+        //
+    }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\DrBulkRegistration  $drBulkRegistration
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, DrBulkRegistration $drBulkRegistration)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\DrBulkRegistration  $drBulkRegistration
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(DrBulkRegistration $drBulkRegistration)
+    {
+        //
+    }
     public function upload(DrWorksheet $worksheet)
     {
         $worksheet->load(['creator']);
@@ -259,7 +223,6 @@ class DrWorksheetController extends Controller
         $worksheet->dateuploaded = $worksheet->uploadedby = null;
         $worksheet->datecancelled = date('Y-m-d');
         $worksheet->cancelledby = auth()->user()->id;
-        $worksheet->status_id = 4;
         $worksheet->save();
 
         session(['toast_message' => 'The worksheet has been cancelled.']);
@@ -371,21 +334,5 @@ class DrWorksheetController extends Controller
         return redirect('dr_worksheet');
     }
 
-    public function create_plate(DrWorksheet $worksheet)
-    {
-        \App\MiscDr::create_plate($worksheet);
-        // session(['toast_message' => 'The samples have been uploaded to exatype and will be ready later.']);
-        return back();
-    }
 
-    public function get_plate_result(DrWorksheet $worksheet)
-    {
-        \App\MiscDr::get_plate_result($worksheet);
-        // session(['toast_message' => 'The results have been retrieved.']);
-        return back();
-    }
-
-
-
-    
 }

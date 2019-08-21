@@ -37,12 +37,14 @@ class DrSampleController extends Controller
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::select(['dr_samples.*'])
             ->with(['patient.facility'])
-            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
             ->where(['control' => 0, 'repeatt' => 0])
             ->when(($user->user_type_id == 5), function($query) use ($string){
                 return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
+                if($sample_status == 11) return $query->whereNull('datereceived');
                 return $query->where('status_id', $sample_status);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
@@ -62,6 +64,7 @@ class DrSampleController extends Controller
             ->when($partner_id, function($query) use ($partner_id){
                 return $query->where('facilitys.partner', $partner_id);
             })
+            ->orderBy('id', 'desc')
             ->paginate();
 
         $data['dr_samples']->setPath(url()->current());
@@ -155,11 +158,14 @@ class DrSampleController extends Controller
             return back();            
         }
 
+        $patient_array = $viralsamples_arrays['patient'];
+        $patient_array[] = 'nat';
+
         if(env('APP_LAB') == 7){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
             if(!$viralpatient) $viralpatient = new Viralpatient;
 
-            $data = $request->only($viralsamples_arrays['patient']);
+            $data = $request->only($patient_array);
             if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
             $viralpatient->fill($data);
             $viralpatient->save();
@@ -167,7 +173,8 @@ class DrSampleController extends Controller
 
         $drSample = new DrSample;
         // $data = $request->only($viralsamples_arrays['dr_sample']);
-        $except = array_merge($viralsamples_arrays['patient'], ['other_medications', 'other_medications_text', 'submit_type', '_token']);
+        // unset($patient_array['facility_id']);
+        $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token']);
         $data = $request->except($except);
         $data['user_id'] = auth()->user()->id;
         if(auth()->user()->is_lab_user()) $data['received_by'] = auth()->user()->id;
@@ -186,7 +193,7 @@ class DrSampleController extends Controller
         else{
             $drSample->other_medications = $others;
         }
-        
+        // $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
 
         session(['toast_message' => 'The sample has been created.']);
@@ -234,16 +241,18 @@ class DrSampleController extends Controller
         $viralsamples_arrays = Lookup::viralsamples_arrays();
 
         $viralpatient = $drSample->patient;
+        $patient_array = $viralsamples_arrays['patient'];
+        $patient_array[] = 'nat';
 
         if(env('APP_LAB') == 7){
-            $data = $request->only($viralsamples_arrays['patient']);
+            $data = $request->only($patient_array);
             if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
             $viralpatient->fill($data);
             $viralpatient->save();
         }
 
-
-        $except = array_merge($viralsamples_arrays['patient'], ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
+        // unset($patient_array['facility_id']);
+        $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
         $data = $request->except($except);
 
         if((auth()->user()->is_lab_user()) && !$drSample->received_by) $data['received_by'] = auth()->user()->id;
@@ -258,6 +267,7 @@ class DrSampleController extends Controller
         else{
             $drSample->other_medications = $others;
         }
+        // $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
 
         session(['toast_message' => 'The sample has been updated.']);
@@ -273,7 +283,13 @@ class DrSampleController extends Controller
      */
     public function destroy(DrSample $drSample)
     {
-        //
+        if($drSample->worksheet_id){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot delete this sample.']);
+            return back();
+        }
+        $drSample->delete();
+        session(['toast_message' => 'The sample has been deleted.']);
+        return back();
     }
 
     public function facility_edit(Request $request, User $user, DrSample $sample)
@@ -324,7 +340,8 @@ class DrSampleController extends Controller
 
         $samples = DrSample::select('dr_samples.*')
             ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
-            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
+            ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
             ->with(['dr_call.call_drug', 'patient'])
             ->when(($user->user_type_id == 5), function($query) use ($string){
                 return $query->whereRaw($string);

@@ -238,15 +238,15 @@ p.breakhere {page-break-before: always}
 
 				$test_no = $sample->previous_tests->count();
 				$test_no++;
-
-				if(($sample->result > 1000 && $s_type->typecode == 2)
-					 || ($sample->result > 5000 && $s_type->typecode == 1))
+				$outcome_code = "";
+				if(($sample->result > 1000 && (isset($s_type) && $s_type->typecode == 2))
+					 || ($sample->result > 5000 && (isset($s_type) && $s_type->typecode == 1)))
 				{
 					$outcome_code = "b";
 				}
 
-				else if(($sample->result < 1000 && $s_type->typecode == 2)
-					 || ($sample->result < 5000 && $s_type->typecode == 1))
+				else if(($sample->result < 1000 && (isset($s_type) && $s_type->typecode == 2))
+					 || ($sample->result < 5000 && (isset($s_type) && $s_type->typecode == 1)))
 				{
 					$outcome_code = "a";
 				}
