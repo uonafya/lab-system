@@ -194,7 +194,7 @@ class ReportController extends Controller
             } else 
                 $this->__getExcel($data, $dateString, $request);
         }else {
-            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
+            if($request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
                 $this->__getSiteEntryExcel($data, $dateString, $request);
             } else if ($request->input('types') == 'tat') {
@@ -612,6 +612,9 @@ class ReportController extends Controller
         } else {
             $report .= 'samples log ';    
         }
+
+        if ($request->input('types') == 'remoteentry')
+            $model = $model->where('site_entry', '=', 1);
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')
