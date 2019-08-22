@@ -582,8 +582,7 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=$useDateCollected=false;
-            if (in_array($request->input('types'), ['rejected', 'manifest'] || $request->input('samples_log') == 1)
-                $receivedOnly=true;
+            if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
 
             if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
             
