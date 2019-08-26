@@ -320,6 +320,7 @@ class Synch
 
 			if($response->getStatusCode() > 399)
 			{
+				echo 'Status code is ' . $response->getStatusCode();
 				dd($body);
 			}
 
