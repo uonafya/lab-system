@@ -1,5 +1,3 @@
-use kemri_nairobi;
-
 -- Dumping structure for table nhrl_db.dr_calls
 DROP TABLE IF EXISTS `dr_calls`;
 CREATE TABLE IF NOT EXISTS `dr_calls` (
