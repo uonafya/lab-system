@@ -300,7 +300,7 @@ class Synch
 		while (true) {
 			$batches = $batch_class::with(['sample.patient:id,national_patient_id,patient'])
 			->where('synched', 0)->where('id', 159819)->where('batch_complete', 1)->limit(20)->get();
-			// dd($batches);
+			dd($batches);
 			if($batches->isEmpty()) break;
 
 			$response = $client->request('post', $url, [
