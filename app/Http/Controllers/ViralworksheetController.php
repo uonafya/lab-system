@@ -637,7 +637,7 @@ class ViralworksheetController extends Controller
                 if(!$sample) continue;
 
                 $sample->fill($data_array);
-                $sample->worksheet_id = $worksheet->id;
+                // $sample->worksheet_id = $worksheet->id;
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 
