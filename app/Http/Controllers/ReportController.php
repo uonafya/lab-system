@@ -194,7 +194,7 @@ class ReportController extends Controller
             } else 
                 $this->__getExcel($data, $dateString, $request);
         }else {
-            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
+            if($request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
                 $this->__getSiteEntryExcel($data, $dateString, $request);
             } else if ($request->input('types') == 'tat') {
@@ -582,10 +582,9 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=$useDateCollected=false;
-            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
-                $receivedOnly=true;
+            if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
 
-            if ($request->input('types') == 'awaitingtesting') $useDateCollected=true;
+            if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
@@ -612,6 +611,9 @@ class ReportController extends Controller
         } else {
             $report .= 'samples log ';    
         }
+
+        if ($request->input('types') == 'remoteentry')
+            $model = $model->where('site_entry', '=', 1)->whereNull('datereceived');
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')
