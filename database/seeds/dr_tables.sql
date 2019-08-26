@@ -11,27 +11,7 @@ CREATE TABLE IF NOT EXISTS `dr_calls` (
   PRIMARY KEY (`id`),
   KEY `dr_calls_sample_id_index` (`sample_id`),
   KEY `dr_calls_drug_class_id_index` (`drug_class_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- Data exporting was unselected.
--- Dumping structure for view nhrl_db.dr_calls_view
-DROP VIEW IF EXISTS `dr_calls_view`;
--- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `dr_calls_view` (
-	`id` INT(10) UNSIGNED NOT NULL,
-	`call_id` INT(10) UNSIGNED NOT NULL,
-	`short_name` VARCHAR(20) NULL COLLATE 'utf8_unicode_ci',
-	`short_name_id` TINYINT(3) UNSIGNED NULL,
-	`call` VARCHAR(5) NULL COLLATE 'utf8_unicode_ci',
-	`created_at` TIMESTAMP NULL,
-	`updated_at` TIMESTAMP NULL,
-	`sample_id` INT(10) UNSIGNED NULL,
-	`drug_class` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`drug_class_id` TINYINT(3) UNSIGNED NULL,
-	`mutations` VARCHAR(255) NULL COLLATE 'utf8_unicode_ci',
-	`patient_id` INT(10) UNSIGNED NULL,
-	`facility_id` INT(10) UNSIGNED NULL
-) ENGINE=MyISAM;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table nhrl_db.dr_call_drugs
 DROP TABLE IF EXISTS `dr_call_drugs`;
@@ -48,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `dr_call_drugs` (
   KEY `dr_call_drugs_call_id_index` (`call_id`),
   KEY `dr_call_drugs_short_name_id_index` (`short_name_id`),
   KEY `dr_call_drugs_call_index` (`call`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table nhrl_db.dr_genotypes
@@ -63,26 +43,7 @@ CREATE TABLE IF NOT EXISTS `dr_genotypes` (
   PRIMARY KEY (`id`),
   KEY `dr_genotypes_sample_id_index` (`sample_id`),
   KEY `dr_genotypes_locus_id_index` (`locus_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- Data exporting was unselected.
--- Dumping structure for view nhrl_db.dr_genotypes_views
-DROP VIEW IF EXISTS `dr_genotypes_views`;
--- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `dr_genotypes_views` (
-	`id` INT(10) UNSIGNED NULL,
-	`genotype_id` INT(10) UNSIGNED NULL,
-	`residue` VARCHAR(10) NULL COLLATE 'utf8_unicode_ci',
-	`residue_id` SMALLINT(5) UNSIGNED NULL,
-	`position` SMALLINT(5) UNSIGNED NULL,
-	`created_at` TIMESTAMP NULL,
-	`updated_at` TIMESTAMP NULL,
-	`sample_id` INT(10) UNSIGNED NOT NULL,
-	`locus` VARCHAR(10) NULL COLLATE 'utf8_unicode_ci',
-	`locus_id` SMALLINT(5) UNSIGNED NULL,
-	`patient_id` INT(10) UNSIGNED NULL,
-	`facility_id` INT(10) UNSIGNED NULL
-) ENGINE=MyISAM;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table nhrl_db.dr_residues
 DROP TABLE IF EXISTS `dr_residues`;
@@ -97,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `dr_residues` (
   PRIMARY KEY (`id`),
   KEY `dr_residues_genotype_id_index` (`genotype_id`),
   KEY `dr_residues_residue_id_index` (`residue_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1978 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table nhrl_db.dr_samples
@@ -197,107 +158,7 @@ CREATE TABLE IF NOT EXISTS `dr_samples` (
   KEY `dr_samples_user_id_index` (`user_id`),
   KEY `dr_samples_status_id_index` (`status_id`),
   KEY `bulk_registration_id` (`bulk_registration_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- Data exporting was unselected.
--- Dumping structure for view nhrl_db.dr_samples_view
-DROP VIEW IF EXISTS `dr_samples_view`;
--- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `dr_samples_view` (
-	`id` INT(10) UNSIGNED NOT NULL,
-	`patient_id` INT(10) UNSIGNED NOT NULL,
-	`facility_id` INT(10) UNSIGNED NOT NULL,
-	`lab_id` TINYINT(3) UNSIGNED NOT NULL,
-	`clinician_name` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`control` TINYINT(3) UNSIGNED NULL,
-	`exatype_id` BIGINT(20) UNSIGNED NULL,
-	`prev_prophylaxis` TINYINT(3) UNSIGNED NULL,
-	`prophylaxis` TINYINT(3) UNSIGNED NULL,
-	`receivedstatus` TINYINT(3) UNSIGNED NULL,
-	`rejectedreason` TINYINT(3) UNSIGNED NULL,
-	`project` TINYINT(3) UNSIGNED NULL,
-	`sampletype` TINYINT(3) UNSIGNED NULL,
-	`container_type` TINYINT(3) UNSIGNED NULL,
-	`amount_unit` TINYINT(3) UNSIGNED NULL,
-	`sample_amount` SMALLINT(5) UNSIGNED NULL,
-	`age` TINYINT(3) UNSIGNED NULL,
-	`clinical_indications` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`has_opportunistic_infections` TINYINT(1) NOT NULL,
-	`opportunistic_infections` VARCHAR(100) NULL COLLATE 'utf8_unicode_ci',
-	`has_tb` TINYINT(1) NOT NULL,
-	`tb_treatment_phase_id` TINYINT(3) UNSIGNED NULL,
-	`has_arv_toxicity` TINYINT(1) NOT NULL,
-	`arv_toxicities` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`cd4_result` VARCHAR(30) NULL COLLATE 'utf8_unicode_ci',
-	`has_missed_pills` TINYINT(1) NOT NULL,
-	`missed_pills` SMALLINT(5) UNSIGNED NULL,
-	`has_missed_visits` TINYINT(1) NOT NULL,
-	`missed_visits` SMALLINT(5) UNSIGNED NULL,
-	`has_missed_pills_because_missed_visits` TINYINT(1) NOT NULL,
-	`other_medications` VARCHAR(100) NULL COLLATE 'utf8_unicode_ci',
-	`vl_result1` VARCHAR(20) NULL COLLATE 'utf8_unicode_ci',
-	`vl_result2` VARCHAR(20) NULL COLLATE 'utf8_unicode_ci',
-	`vl_result3` VARCHAR(20) NULL COLLATE 'utf8_unicode_ci',
-	`vl_date_result1` DATE NULL,
-	`vl_date_result2` DATE NULL,
-	`vl_date_result3` DATE NULL,
-	`repeatt` TINYINT(1) NOT NULL,
-	`run` TINYINT(3) UNSIGNED NOT NULL,
-	`parentid` INT(10) UNSIGNED NULL,
-	`collect_new_sample` TINYINT(1) NOT NULL,
-	`date_prev_regimen` DATE NULL,
-	`date_current_regimen` DATE NULL,
-	`bulk_registration_id` INT(10) UNSIGNED NULL,
-	`extraction_worksheet_id` INT(10) UNSIGNED NULL,
-	`worksheet_id` INT(10) UNSIGNED NULL,
-	`datecollected` DATE NULL,
-	`datereceived` DATE NULL,
-	`datetested` DATE NULL,
-	`datedispatched` DATE NULL,
-	`approvedby` INT(10) UNSIGNED NULL,
-	`approvedby2` INT(10) UNSIGNED NULL,
-	`dateapproved` DATE NULL,
-	`dateapproved2` DATE NULL,
-	`dr_reason_id` TINYINT(3) UNSIGNED NULL,
-	`user_id` INT(10) UNSIGNED NULL,
-	`received_by` INT(10) UNSIGNED NULL,
-	`passed_gel_documentation` TINYINT(1) NULL,
-	`status_id` TINYINT(3) UNSIGNED NULL,
-	`qc_pass` TINYINT(1) NULL,
-	`qc_stop_codon_pass` TINYINT(1) NULL,
-	`qc_plate_contamination_pass` TINYINT(1) NULL,
-	`qc_frameshift_codon_pass` TINYINT(1) NULL,
-	`qc_distance_to_sample` SMALLINT(5) UNSIGNED NULL,
-	`qc_distance_from_sample` SMALLINT(5) UNSIGNED NULL,
-	`qc_distance_difference` DOUBLE(4,3) UNSIGNED NULL,
-	`qc_distance_strain_name` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`qc_distance_compare_to_name` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`qc_distance_sample_name` VARCHAR(20) NULL COLLATE 'utf8_unicode_ci',
-	`has_errors` TINYINT(1) NOT NULL,
-	`has_warnings` TINYINT(1) NOT NULL,
-	`has_mutations` TINYINT(1) NOT NULL,
-	`pending_manual_intervention` TINYINT(1) NOT NULL,
-	`had_manual_intervention` TINYINT(1) NOT NULL,
-	`assembled_sequence` TEXT NULL COLLATE 'utf8_unicode_ci',
-	`chromatogram_url` VARCHAR(50) NULL COLLATE 'utf8_unicode_ci',
-	`exatype_version` VARCHAR(30) NULL COLLATE 'utf8_unicode_ci',
-	`algorithm` VARCHAR(20) NULL COLLATE 'utf8_unicode_ci',
-	`synched` TINYINT(4) NULL,
-	`datesynched` DATE NULL,
-	`created_at` TIMESTAMP NULL,
-	`updated_at` TIMESTAMP NULL,
-	`facilitycode` INT(10) NULL COMMENT 'Facility Name',
-	`facilityname` VARCHAR(100) NULL COMMENT 'Facility Name' COLLATE 'latin1_swedish_ci',
-	`national_patient_id` INT(10) UNSIGNED NULL,
-	`patient` VARCHAR(25) NULL COLLATE 'utf8_unicode_ci',
-	`nat` VARCHAR(25) NULL COLLATE 'utf8_unicode_ci',
-	`initiation_date` DATE NULL,
-	`sex` TINYINT(3) UNSIGNED NULL,
-	`dob` DATE NULL,
-	`patient_name` VARCHAR(30) NULL COLLATE 'utf8_unicode_ci',
-	`patient_phone_no` VARCHAR(15) NULL COLLATE 'utf8_unicode_ci',
-	`preferred_language` TINYINT(4) NULL
-) ENGINE=MyISAM;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table nhrl_db.dr_warnings
 DROP TABLE IF EXISTS `dr_warnings`;
@@ -312,18 +173,7 @@ CREATE TABLE IF NOT EXISTS `dr_warnings` (
   PRIMARY KEY (`id`),
   KEY `dr_warnings_sample_id_index` (`sample_id`),
   KEY `dr_warnings_warning_id_index` (`warning_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- Data exporting was unselected.
--- Dumping structure for table nhrl_db.dr_warning_codes
-DROP TABLE IF EXISTS `dr_warning_codes`;
-CREATE TABLE IF NOT EXISTS `dr_warning_codes` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `error` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(30) DEFAULT NULL,
-  `description` varchar(80) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table nhrl_db.dr_worksheets
@@ -359,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `dr_worksheets` (
   KEY `dr_worksheets_extraction_worksheet_id_index` (`extraction_worksheet_id`),
   KEY `dr_worksheets_status_id_index` (`status_id`),
   KEY `dr_worksheets_sanger_status_id_index` (`exatype_status_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table nhrl_db.dr_worksheet_warnings
@@ -375,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `dr_worksheet_warnings` (
   PRIMARY KEY (`id`),
   KEY `dr_worksheet_warnings_worksheet_id_index` (`worksheet_id`),
   KEY `dr_worksheet_warnings_warning_id_index` (`warning_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for view nhrl_db.dr_calls_view
