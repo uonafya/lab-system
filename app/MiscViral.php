@@ -807,7 +807,7 @@ class MiscViral extends Common
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
-        if(in_array(env('APP_LAB'), [8])) $create = true;
+        if(in_array(env('APP_LAB'), [8, 5])) $create = true;
 
         return [
             'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,

@@ -67,16 +67,17 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Nat ID
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-9">
-                                <input class="form-control requirable" required name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
-                            </div>
-                        </div>
-
                         @if(env('APP_LAB') == 7)
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Nat ID
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-9">
+                                    <input class="form-control requirable" required name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
+                                </div>
+                            </div>
+
 
                             <div class="hr-line-dashed"></div>
 
@@ -631,10 +632,10 @@
                     age: {
                         required: '#dob:blank'
                     },
+                    nat: {
+                        regex: '^[N][A][T]'
+                    },
                 @endif
-                nat: {
-                    regex: '^[N][A][T]'
-                },
                 date_prev_regimen: {
                     lessThanTwo: ["#date_current_regimen", "Date of Previous Regimen", "Date of Current Regimen"]
                 },
