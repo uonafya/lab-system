@@ -30,4 +30,13 @@ class ViralsampleView extends ViewModel
         else if($this->sampletype == 4) return "DBS Venous";
         return "";
     }
+
+    public function get_previous_test()
+    {    
+        $sample = \App\ViralsampleView::where('patient_id', $this->patient_id)
+                    ->whereRaw("datetested=
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$this->datetested}')")
+                    ->first();
+        return $sample;
+    }
 }

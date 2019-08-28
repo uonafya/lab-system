@@ -909,7 +909,7 @@
                         var patient = data[1];
                         var prev = data[2];
 
-                        console.log(patient.dob);
+                        // console.log(patient.dob);
 
                         $("#dob").val(patient.dob);
                         $("#initiation_date").val(patient.initiation_date);
