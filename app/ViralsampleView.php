@@ -35,7 +35,7 @@ class ViralsampleView extends ViewModel
     {    
         $sample = \App\ViralsampleView::where('patient_id', $this->patient_id)
                     ->whereRaw("datetested=
-                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$this->datetested}')")
+                    (SELECT max(datetested) FROM viralsamples WHERE patient_id={$this->patient_id} AND repeatt=0  AND rcategory between 1 AND 4 AND datetested < '{$this->datetested}')")
                     ->first();
         return $sample;
     }
