@@ -464,21 +464,21 @@ class Lookup
     {
         self::cacher();
         $data =  [
-            'drug_resistance_reasons' => Cache::get('drug_resistance_reasons'),
-            'dr_primers' => Cache::get('dr_primers'),
-            'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
+            'drug_resistance_reasons' => DB::table('drug_resistance_reasons')->get(),
+            'dr_primers' => DB::table('dr_primers')->get(),
+            'dr_patient_statuses' => DB::table('dr_patient_statuses')->get(),
             // 'dr_sample_types' => Cache::get('dr_sample_types'),
-            'dr_projects' => Cache::get('dr_projects'),
+            'dr_projects' => DB::table('dr_projects')->get(),
             'sampletypes' => Cache::get('sample_types'),
-            'tb_treatment_phases' => Cache::get('tb_treatment_phases'),
-            'clinical_indications' => Cache::get('clinical_indications'),
-            'arv_toxicities' => Cache::get('arv_toxicities'),
-            'other_medications' => Cache::get('other_medications'),
+            'tb_treatment_phases' => DB::table('tb_treatment_phases')->get(),
+            'clinical_indications' => DB::table('clinical_indications')->get(),
+            'arv_toxicities' => DB::table('arv_toxicities')->get(),
+            'other_medications' => DB::table('other_medications')->get(),
 
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'received_statuses' => Cache::get('received_statuses'),
             'prophylaxis' => Cache::get('prophylaxis'),
-            'dr_rejected_reasons' => Cache::get('dr_rejected_reasons'),
+            'dr_rejected_reasons' => DB::table('dr_rejected_reasons')->get(),
 
             'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
             'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
@@ -493,15 +493,12 @@ class Lookup
             // 'regimens' => DB::table('dr_viralprophylaxis')->get(),
             'regimen_classes' => DB::table('regimen_classes')->get(),
 
+            'genders' => Cache::get('genders'),
+
             'regimen_age' => ['', 'Adult', 'Paediatric'],
             'regimen_line' => ['', 'First Line', 'Second Line', 'Third Line'],
         ];
 
-        if(env('APP_LAB') == 7){
-            $data = array_merge($data, [
-                'genders' => Cache::get('genders'),
-            ]);
-        }
         return $data;
     }
 
@@ -569,7 +566,7 @@ class Lookup
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
 
-            if(env('APP_LAB') == 7){
+            if(in_array(env('APP_LAB'), [1, 7])){
                 // Drug Resistance Lookup Data
                 $dr_rejected_reasons = DB::table('dr_rejected_reasons')->get();
                 $drug_resistance_reasons = DB::table('drug_resistance_reasons')->get();
@@ -624,7 +621,7 @@ class Lookup
             Cache::put('dilutions', $dilutions, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
 
-            if(env('APP_LAB') == 7){
+            if(in_array(env('APP_LAB'), [1, 7])){
                 Cache::put('dr_rejected_reasons', $dr_rejected_reasons, 60);
                 Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
                 Cache::put('dr_primers', $dr_primers, 60);
