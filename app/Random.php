@@ -1954,7 +1954,7 @@ class Random
 					$total += $row[$rvalue];
 				}
 
-                $row['Failed'] = $data->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                $row['Failed'] = $data2->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
                 $total += $row['Failed'];
 
 				$row['Total'] = $total;
