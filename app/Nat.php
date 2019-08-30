@@ -100,7 +100,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals All Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals All Facilities'));
 	}
 
 
@@ -152,7 +152,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 	}
 
 	/*
@@ -283,7 +283,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 	}
 
 	public static function dtg_llv_two()
@@ -347,7 +347,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 
 
 	}
@@ -382,7 +382,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com'], 'Children Data')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	} 
 
 }
