@@ -368,7 +368,8 @@ class Nat
 		$rows = DB::select($sql);
 
 		foreach ($rows as $key => $row) {
-			$data[] = $row->toArray();
+			// $data[] = $row->toArray();
+			$data[] = get_object_vars($row);
 		}
 
 		$file = "2018-06-01_2019-05-30_children_below_15_with_date_started_on_treatment";
