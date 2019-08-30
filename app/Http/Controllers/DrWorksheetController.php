@@ -76,7 +76,10 @@ class DrWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        $data = MiscDr::get_worksheet_samples($request->input('samples'), 16);
+        $limit = 16;
+        $c = $request->input('control_samples');
+        if($c) $limit = 14;
+        $data = MiscDr::get_worksheet_samples($request->input('samples'), $limit);
 
         if(!$data['create']){
             session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
@@ -84,7 +87,7 @@ class DrWorksheetController extends Controller
         }
 
         $dr_worksheet = new DrWorksheet;
-        $dr_worksheet->fill($request->except(['_token', 'samples']));
+        $dr_worksheet->fill($request->except(['_token', 'samples', 'control_samples']));
         $dr_worksheet->save();
         $samples = $data['samples'];
 
@@ -93,8 +96,13 @@ class DrWorksheetController extends Controller
             $sample->worksheet_id = $dr_worksheet->id;
             $sample->save();
         }
-        return $this->download($dr_worksheet);
 
+        if($c){
+            $positive_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 2]);
+            $negative_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 1]);
+        }
+
+        if(env('APP_LAB') == 7) return $this->download($dr_worksheet);
         return redirect('dr_worksheet/print/' . $dr_worksheet->id);
     }
 

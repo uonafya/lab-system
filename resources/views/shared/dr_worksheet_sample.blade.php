@@ -19,12 +19,28 @@
 					<br />
 
 					&nbsp;&nbsp;&nbsp;<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($bar, 'C128') }}" alt="barcode" height="30" width="80"  />
+					@if($sample->control == 2)
+						<br> Positive
+						<br> Control
+					@elseif($sample->control == 1)
+						<br> Negative
+						<br> Control (Water)
+					@else
+						<br /> <b>Facility:</b> {{ $sample->patient->facility->name ?? '' }}
+						<br /> <b>Patient:</b> {{ $sample->patient->patient ?? '' }}
+					@endif
 				</td>
 	@endforeach
 
-@else
+@else	
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
 	
-	@if($row == 7)
+	{{--@if($row == 7)
 			<td>Water</td>
 			<td>Water</td>
 			<td>Water</td>
@@ -45,7 +61,7 @@
 			<td></td>
 			<td></td>
 			<td></td>
-	@endif
+	@endif--}}
 
 @endif
 

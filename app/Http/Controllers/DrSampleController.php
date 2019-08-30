@@ -159,17 +159,15 @@ class DrSampleController extends Controller
         }
 
         $patient_array = $viralsamples_arrays['patient'];
-        $patient_array[] = 'nat';
+        if(env('APP_LAB') == 7) $patient_array[] = 'nat';
 
-        if(env('APP_LAB') == 7){
-            $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
-            if(!$viralpatient) $viralpatient = new Viralpatient;
+        $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+        if(!$viralpatient) $viralpatient = new Viralpatient;
 
-            $data = $request->only($patient_array);
-            if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
-            $viralpatient->fill($data);
-            $viralpatient->save();
-        }
+        $data = $request->only($patient_array);
+        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        $viralpatient->fill($data);
+        $viralpatient->save();
 
         $drSample = new DrSample;
         // $data = $request->only($viralsamples_arrays['dr_sample']);
@@ -177,10 +175,11 @@ class DrSampleController extends Controller
         $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token']);
         $data = $request->except($except);
         $data['user_id'] = auth()->user()->id;
+        $data['lab_id'] = auth()->user()->lab_id;
         if(auth()->user()->is_lab_user()) $data['received_by'] = auth()->user()->id;
         $drSample->fill($data);
 
-        if(env('APP_LAB') == 7) $drSample->patient_id = $viralpatient->id;
+        $drSample->patient_id = $viralpatient->id;
 
         if(!$viralpatient) $viralpatient = $drSample->patient;
 
@@ -242,14 +241,13 @@ class DrSampleController extends Controller
 
         $viralpatient = $drSample->patient;
         $patient_array = $viralsamples_arrays['patient'];
-        $patient_array[] = 'nat';
+        if(env('APP_LAB') == 7) $patient_array[] = 'nat';
 
-        if(env('APP_LAB') == 7){
-            $data = $request->only($patient_array);
-            if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
-            $viralpatient->fill($data);
-            $viralpatient->save();
-        }
+
+        $data = $request->only($patient_array);
+        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        $viralpatient->fill($data);
+        $viralpatient->save();
 
         // unset($patient_array['facility_id']);
         $except = array_merge($patient_array, ['other_medications', 'other_medications_text', 'submit_type', '_token', '_method']);
