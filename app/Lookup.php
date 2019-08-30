@@ -27,6 +27,14 @@ class Lookup
         return '';
     }
 
+    public static function retrieve_val($key, $id, $attr='name')
+    {
+        self::cacher();
+        $collection = Cache::get($key);
+        if(!$collection) return null;
+        return $collection->where('id', $id)->first()->$attr ?? null;
+    }
+
     public static function other_date($value)
     {
         if(!$value) return null;
@@ -456,43 +464,41 @@ class Lookup
     {
         self::cacher();
         $data =  [
-            'drug_resistance_reasons' => Cache::get('drug_resistance_reasons'),
-            'dr_primers' => Cache::get('dr_primers'),
-            'dr_patient_statuses' => Cache::get('dr_patient_statuses'),
+            'drug_resistance_reasons' => DB::table('drug_resistance_reasons')->get(),
+            'dr_primers' => DB::table('dr_primers')->get(),
+            'dr_patient_statuses' => DB::table('dr_patient_statuses')->get(),
             // 'dr_sample_types' => Cache::get('dr_sample_types'),
-            'dr_projects' => Cache::get('dr_projects'),
+            'dr_projects' => DB::table('dr_projects')->get(),
             'sampletypes' => Cache::get('sample_types'),
-            'tb_treatment_phases' => Cache::get('tb_treatment_phases'),
-            'clinical_indications' => Cache::get('clinical_indications'),
-            'arv_toxicities' => Cache::get('arv_toxicities'),
-            'other_medications' => Cache::get('other_medications'),
-            'container_types' => Cache::get('container_types'),
+            'tb_treatment_phases' => DB::table('tb_treatment_phases')->get(),
+            'clinical_indications' => DB::table('clinical_indications')->get(),
+            'arv_toxicities' => DB::table('arv_toxicities')->get(),
+            'other_medications' => DB::table('other_medications')->get(),
 
             'worksheet_statuses' => Cache::get('worksheet_statuses'),
             'received_statuses' => Cache::get('received_statuses'),
             'prophylaxis' => Cache::get('prophylaxis'),
-            'dr_rejected_reasons' => Cache::get('dr_rejected_reasons'),
+            'dr_rejected_reasons' => DB::table('dr_rejected_reasons')->get(),
 
             'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'],
             'rows' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
             'resistance_colours' => \App\MiscDr::$call_array,
             'double_approval' => self::$double_approval,
 
+            'container_types' => DB::table('container_types')->get(),
+            'amount_units' => DB::table('amount_units')->get(),
             'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),
             'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
             'warning_codes' => DB::table('dr_warning_codes')->get(),
             // 'regimens' => DB::table('dr_viralprophylaxis')->get(),
             'regimen_classes' => DB::table('regimen_classes')->get(),
 
+            'genders' => Cache::get('genders'),
+
             'regimen_age' => ['', 'Adult', 'Paediatric'],
             'regimen_line' => ['', 'First Line', 'Second Line', 'Third Line'],
         ];
 
-        if(env('APP_LAB') == 7){
-            $data = array_merge($data, [
-                'genders' => Cache::get('genders'),
-            ]);
-        }
         return $data;
     }
 
@@ -513,7 +519,7 @@ class Lookup
 
             // 'dr_sample' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'sample_type', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name'],
 
-            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'project', 'sampletype', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
+            'dr_sample_rerun' => ['patient_id', 'facility_id', 'datecollected', 'datereceived', 'rejectedreason', 'receivedstatus', 'prophylaxis', 'prev_prophylaxis', 'date_current_regimen', 'date_prev_regimen', 'project', 'sampletype', 'sample_amount', 'container_type', 'amount_unit', 'clinical_indications', 'has_opportunistic_infections', 'opportunistic_infections', 'has_tb', 'tb_treatment_phase_id', 'has_arv_toxicity', 'arv_toxicities', 'cd4_result', 'has_missed_pills', 'missed_pills', 'has_missed_visits', 'missed_visits', 'has_missed_pills_because_missed_visits', 'other_medications', 'clinician_name', 'run', 'parentid', 'age', ],
         ];
     }
 
@@ -560,7 +566,7 @@ class Lookup
             $worksheet_statuses = DB::table('worksheetstatus')->get();
 
 
-            if(env('APP_LAB') == 7){
+            if(in_array(env('APP_LAB'), [1, 7])){
                 // Drug Resistance Lookup Data
                 $dr_rejected_reasons = DB::table('dr_rejected_reasons')->get();
                 $drug_resistance_reasons = DB::table('drug_resistance_reasons')->get();
@@ -572,6 +578,7 @@ class Lookup
                 $arv_toxicities = DB::table('arv_toxicities')->get();
                 $other_medications = DB::table('other_medications')->get();
                 $container_types = DB::table('container_types')->get();
+                $amount_units = DB::table('amount_units')->get();
             }
 
             if(env('APP_LAB') == 5) {
@@ -614,7 +621,7 @@ class Lookup
             Cache::put('dilutions', $dilutions, 60);
             Cache::put('worksheet_statuses', $worksheet_statuses, 60);
 
-            if(env('APP_LAB') == 7){
+            if(in_array(env('APP_LAB'), [1, 7])){
                 Cache::put('dr_rejected_reasons', $dr_rejected_reasons, 60);
                 Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
                 Cache::put('dr_primers', $dr_primers, 60);
@@ -625,6 +632,7 @@ class Lookup
                 Cache::put('arv_toxicities', $arv_toxicities, 60);
                 Cache::put('other_medications', $other_medications, 60);
                 Cache::put('container_types', $container_types, 60);
+                Cache::put('amount_units', $amount_units, 60);
             }
 
             if(env('APP_LAB') == 5) {

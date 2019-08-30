@@ -194,7 +194,7 @@ class ReportController extends Controller
             } else 
                 $this->__getExcel($data, $dateString, $request);
         }else {
-            if($request->input('types') == 'remoteentry' || $request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
+            if($request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
                 $this->__getSiteEntryExcel($data, $dateString, $request);
             } else if ($request->input('types') == 'tat') {
@@ -535,8 +535,8 @@ class ReportController extends Controller
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
-            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
-            // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralprophylaxis.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
+            // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
             $model = ViralsampleView::selectRaw($columns)->where("$table.lab_id", '=', env('APP_LAB'))
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
                     // ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
@@ -547,7 +547,7 @@ class ReportController extends Controller
     				->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
     				->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
     				->leftJoin('viralrejectedreasons', 'viralrejectedreasons.id', '=', 'viralsamples_view.rejectedreason')
-    				->leftJoin('viralprophylaxis', 'viralprophylaxis.id', '=', 'viralsamples_view.prophylaxis')
+    				->leftJoin('viralregimen', 'viralregimen.id', '=', 'viralsamples_view.prophylaxis')
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
                     ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct');
     	} else if ($testtype == 'EID') {
@@ -582,10 +582,9 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=$useDateCollected=false;
-            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
-                $receivedOnly=true;
+            if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
 
-            if ($request->input('types') == 'awaitingtesting') $useDateCollected=true;
+            if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
@@ -612,6 +611,9 @@ class ReportController extends Controller
         } else {
             $report .= 'samples log ';    
         }
+
+        if ($request->input('types') == 'remoteentry')
+            $model = $model->where('site_entry', '=', 1)->whereNull('datereceived');
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')

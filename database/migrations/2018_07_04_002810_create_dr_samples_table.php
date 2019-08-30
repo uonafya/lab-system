@@ -38,6 +38,8 @@ class CreateDrSamplesTable extends Migration
             // Specimen Type
             $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->tinyInteger('container_type')->unsigned()->nullable();
+            $table->tinyInteger('amount_unit')->unsigned()->nullable();
+            $table->smallInteger('sample_amount')->unsigned()->nullable();
             $table->tinyInteger('age')->unsigned()->nullable();
             // Multiple
             $table->string('clinical_indications', 50)->nullable(); 
@@ -65,6 +67,14 @@ class CreateDrSamplesTable extends Migration
             // Multiple and mixed
             $table->string('other_medications', 100)->nullable();
 
+            $table->string('vl_result1', 20)->nullable();
+            $table->string('vl_result2', 20)->nullable();
+            $table->string('vl_result3', 20)->nullable();
+
+            $table->date('vl_date_result1')->nullable(); 
+            $table->date('vl_date_result2')->nullable(); 
+            $table->date('vl_date_result3')->nullable(); 
+
 
             $table->boolean('repeatt')->default(0);
             $table->tinyInteger('run')->default(1)->unsigned();
@@ -76,6 +86,7 @@ class CreateDrSamplesTable extends Migration
             $table->date('date_prev_regimen')->nullable(); 
             $table->date('date_current_regimen')->nullable(); 
 
+            $table->integer('bulk_registration_id')->nullable()->unsigned()->index();
             $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
             $table->integer('worksheet_id')->nullable()->unsigned()->index();
 

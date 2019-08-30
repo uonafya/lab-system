@@ -11,6 +11,7 @@ use App\User;
 use App\Lookup;
 use App\MiscDr;
 
+use Excel;
 use Illuminate\Http\Request;
 
 class DrWorksheetController extends Controller
@@ -40,7 +41,7 @@ class DrWorksheetController extends Controller
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('dr_worksheet/index/' . $state . '/');
-        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets');
+        return view('tables.dr_worksheets', $data)->with('pageTitle', 'Worksheets (Bulk Templates)');
     }
 
     /**
@@ -48,7 +49,8 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($extraction_worksheet_id)
+    // public function create($extraction_worksheet_id)
+    public function create()
     {
         // $samples = DrSample::selectRaw("dr_samples.*")
         //                 ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
@@ -62,7 +64,7 @@ class DrWorksheetController extends Controller
         // $data['dr_samples'] = $samples;
 
         $data = Lookup::get_dr();
-        $data = array_merge($data, MiscDr::get_worksheet_samples($extraction_worksheet_id));
+        $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
         return view('forms.dr_worksheets', $data);
     }
 
@@ -74,17 +76,19 @@ class DrWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        $dr_worksheet = new DrWorksheet;
-        $dr_worksheet->fill($request->except(['_token']));
-        $dr_worksheet->save();
-
-        $data = MiscDr::get_worksheet_samples($dr_worksheet->extraction_worksheet_id);
+        $limit = 16;
+        $c = $request->input('control_samples');
+        if($c) $limit = 14;
+        $data = MiscDr::get_worksheet_samples($request->input('samples'), $limit);
 
         if(!$data['create']){
             session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
             return back();
         }
 
+        $dr_worksheet = new DrWorksheet;
+        $dr_worksheet->fill($request->except(['_token', 'samples', 'control_samples']));
+        $dr_worksheet->save();
         $samples = $data['samples'];
 
         foreach ($samples as $s) {
@@ -92,6 +96,13 @@ class DrWorksheetController extends Controller
             $sample->worksheet_id = $dr_worksheet->id;
             $sample->save();
         }
+
+        if($c){
+            $positive_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 2]);
+            $negative_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 1]);
+        }
+
+        if(env('APP_LAB') == 7) return $this->download($dr_worksheet);
         return redirect('dr_worksheet/print/' . $dr_worksheet->id);
     }
 
@@ -156,6 +167,48 @@ class DrWorksheetController extends Controller
         //
     }
 
+    /**
+     * Download the specified resource as csv.
+     *
+     * @param  \App\DrWorksheet $worksheet
+     * @return \Illuminate\Http\Response
+     */
+    public function download(DrWorksheet $worksheet)
+    {
+        $samples = DrSample::with(['patient'])->where(['worksheet_id' => $worksheet->id])->get();
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $data[] = [
+                'Patient ID' => $sample->patient->nat,
+                'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
+                'Full Name' => $sample->patient->patient_names,
+                'DOB' => $sample->patient->dob,
+                'Sex' => $sample->patient->gender,
+                'Date of Sample Collection' => $sample->datecollected,
+                'Sample Type' => Lookup::retrieve_val('sample_types', $sample->sampletype),
+                'Most Current HIV VL Result (copies/mL)' => $sample->vl_result1,
+                'Most Current HIV VL Result Date' => $sample->vl_date_result1,
+                'Patient Regimen' => Lookup::retrieve_val('prophylaxis', $sample->prophylaxis),
+                'Most Recent CD4 Count' => $sample->cd4_result,
+                'Patient Current Age' => $sample->age,
+                'Amount' => $sample->sample_amount,
+                'Amount Unit' => Lookup::retrieve_val('amount_units', $sample->amount_unit),
+                'Container Type' => Lookup::retrieve_val('container_types', $sample->container_type),
+                'Location Barcode' => '',
+            ];
+        }
+
+        $filename = 'bulk_template_' . $worksheet->id;
+
+        Excel::create($filename, function($excel) use($data){
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
+    }
+
+
     public function upload(DrWorksheet $worksheet)
     {
         $worksheet->load(['creator']);
@@ -214,6 +267,7 @@ class DrWorksheetController extends Controller
         $worksheet->dateuploaded = $worksheet->uploadedby = null;
         $worksheet->datecancelled = date('Y-m-d');
         $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->status_id = 4;
         $worksheet->save();
 
         session(['toast_message' => 'The worksheet has been cancelled.']);

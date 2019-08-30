@@ -22,6 +22,11 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\DrExtractionWorksheet', 'extraction_worksheet_id');
     }
 
+    public function bulk_registration()
+    {
+        return $this->hasMany('App\DrBulkRegistration', 'bulk_registration_id');
+    }
+
     public function receiver()
     {
         return $this->belongsTo('App\User', 'received_by');
@@ -32,15 +37,15 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\User', 'user_id');
     }
 
-    public function facility()
+    /*public function facility()
     {
-        return $this->belongsTo('App\Facility');
+        return $this->belongsTo('App\Facility', 'facility_id');
     }
 
     public function view_facility()
     {
         return $this->belongsTo('App\ViewFacility', 'facility_id');
-    }
+    }*/
 
 
     // Parent sample

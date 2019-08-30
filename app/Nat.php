@@ -15,6 +15,20 @@ use App\Mail\TestMail;
 
 class Nat
 {
+
+	public static function email_csv($filename, $data, $emails=['joelkith@gmail.com'])
+	{		
+		Excel::create($filename, function($excel) use($rows){
+			$excel->sheet('Sheetname', function($sheet) use($rows) {
+				$sheet->fromArray($rows);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $filename . ".csv")];
+
+		Mail::to($emails)->send(new TestMail($data));
+	}
+
 	public static function get_current_gender_query($facility_id, $date_params=null)
 	{
     	$sql = 'SELECT sex, rcategory, count(*) as totals ';
@@ -337,5 +351,37 @@ class Nat
 
 
 	}
+
+	public static function kids_data()
+	{
+		$sql =  "SELECT patient AS `CCC Number`, f.facilitycode AS `MFL Code`, f.NAME AS `Facility`, 
+			s.initiation_date AS `Date Started on Treatment`, r.name AS `Regimen`, s.dob, s.age, 
+			s.result, s.datecollected, s.datetested, s.datedispatched
+			FROM viralsamples_view s
+			LEFT JOIN facilitys f ON f.id=s.facility_id
+			LEFT JOIN viralregimen r ON r.id=s.regimen
+			WHERE s.age < 15 AND s.initiation_date IS NOT NULL AND repeatt=0 AND datetested BETWEEN '2018-06-01' AND '2019-05-30'";
+
+
+		ini_set('memory_limit', '-1');
+		$data = [];
+		$rows = DB::select($sql);
+
+		foreach ($rows as $key => $row) {
+			$data[] = $row->toArray();
+		}
+
+		$file = "2018-06-01_2019-05-30_children_below_15_with_date_started_on_treatment";
+		
+		Excel::create($file, function($excel) use($data){
+			$excel->sheet('Sheetname', function($sheet) use($data) {
+				$sheet->fromArray($data);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'], 'Children Data')->send(new TestMail($data));
+	} 
 
 }

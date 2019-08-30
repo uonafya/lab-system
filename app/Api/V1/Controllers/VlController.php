@@ -32,7 +32,7 @@ class VlController extends BaseController
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $dob = $request->input('dob');
-        $lab = $request->input('lab') ?? env('APP_LAB');
+        $lab = $request->input('lab', env('APP_LAB'));
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_viralage($datecollected, $dob);

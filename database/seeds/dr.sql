@@ -80,45 +80,45 @@ INSERT INTO `dr_warning_codes` (`id`, `error`, `name`, `description`) VALUES
 
 
 
-DROP TABLE IF EXISTS `dr_viralprophylaxis`;
-CREATE TABLE IF NOT EXISTS `dr_viralprophylaxis` (
-  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
-  `displaylabel` varchar(50) NOT NULL,
-  `name` varchar(30) NOT NULL,
-  `regimen1` varchar(10) NULL,
-  `regimen1_class_id` TINYINT unsigned NULL,
-  `regimen2` varchar(10) NULL,
-  `regimen2_class_id` TINYINT unsigned NULL,
-  `regimen3` varchar(10) NULL,
-  `regimen3_class_id` TINYINT unsigned NULL,
-  `description` varchar(100) NULL,
-  `line` TINYINT unsigned NOT NULL,
-  `ptype` TINYINT unsigned NOT NULL DEFAULT '2',
-  `category` TINYINT unsigned NOT NULL DEFAULT '3',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+-- DROP TABLE IF EXISTS `dr_viralprophylaxis`;
+-- CREATE TABLE IF NOT EXISTS `dr_viralprophylaxis` (
+--   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+--   `displaylabel` varchar(50) NOT NULL,
+--   `name` varchar(30) NOT NULL,
+--   `regimen1` varchar(10) NULL,
+--   `regimen1_class_id` TINYINT unsigned NULL,
+--   `regimen2` varchar(10) NULL,
+--   `regimen2_class_id` TINYINT unsigned NULL,
+--   `regimen3` varchar(10) NULL,
+--   `regimen3_class_id` TINYINT unsigned NULL,
+--   `description` varchar(100) NULL,
+--   `line` TINYINT unsigned NOT NULL,
+--   `ptype` TINYINT unsigned NOT NULL DEFAULT '2',
+--   `category` TINYINT unsigned NOT NULL DEFAULT '3',
+--   PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `dr_viralprophylaxis` (`id`, `displaylabel`, `name`, `regimen1`, `regimen1_class_id`, `regimen2`, `regimen2_class_id`, `regimen3`, `regimen3_class_id`, `line`, `ptype`, `category`) VALUES
-	(1, '4 &nbsp;AZT+3TC+NVP', 'AZT+3TC+NVP', 'AZT', 12, '3TC', 10, 'NVP', 8, 0, 0, 4),
-	(2, '5 &nbsp;AZT+3TC+EFV', 'AZT+3TC+EFV', 'AZT', 12, '3TC', 10, 'EFV', 6, 0, 0, 5),
-	(3, '2 &nbsp;TDF+3TC+NVP', 'TDF+3TC+NVP', 'TDF', 16, '3TC', 10, 'NVP', 8, 0, 0, 2),
-	(4, '1 &nbsp;TDF+3TC+EFV', 'TDF+3TC+EFV', 'TDF', 16, '3TC', 10, 'EFV', 6, 0, 0, 1),
-	(5, '10 &nbsp;AZT+3TC+LPVr', 'AZT+3TC+LPVr', 'AZT', 12, '3TC', 10, 'LPVr', 21, 0, 0, 10),
-	(6, '17 &nbsp;AZT+3TC+ABC', 'AZT+3TC+ABC', 'AZT', 12, '3TC', 10, 'ABC', 11, 0, 0, 17),
-	(7, '18 &nbsp;TDF+3TC+LPVr', 'TDF+3TC+LPVr', 'TDF', 16, '3TC', 10, 'LPVr', 21, 0, 0, 18),
-	(8, '14 &nbsp;AZT+3TC+ATVr', 'AZT+3TC+ATVr', 'AZT', 12, '3TC', 10, 'ATVr', 17, 0, 0, 14),
-	(9, '11 &nbsp;TDF+3TC+ATVr', 'TDF+3TC+ATVr', 'TDF', 16, '3TC', 10, 'ATVr', 17, 0, 0, 11),
-	(10, '13 &nbsp;ABC+3TC+ATVr', 'ABC+3TC+ATVr', 'ABC', 11, '3TC', 10, 'ATVr', 17, 0, 0, 13),
-	(11, '6 &nbsp;ABC+3TC+NVP', 'ABC+3TC+NVP', 'ABC', 11, '3TC', 10, 'NVP', 8, 0, 0, 6),
-	(12, '7 &nbsp;ABC+3TC+EFV', 'ABC+3TC+EFV', 'ABC', 11, '3TC', 10, 'EFV', 6, 0, 0, 7),
-	(13, '9 &nbsp;ABC+3TC+LPVr', 'ABC+3TC+LPVr', 'ABC', 11, '3TC', 10, 'LPVr', 21, 0, 0, 9),
-	(14, '16 &nbsp;Other', 'Other', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 16),
-	(15, '19 &nbsp;None', 'None', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 19),
-	(16, '20 &nbsp;No Data', 'No Data', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 20),
-	(17, '3 &nbsp;TDF+3TC+DTG', 'TLD', 'TDF', 16, '3TC', 10, 'DTG', 2, 0, 0, 3),
-	(18, '8 &nbsp;ABC+3TC+DTG', 'ABC+3TC+DTG', 'ABC', 11, '3TC', 10, 'DTG', 2, 0, 0, 8),
-	(19, '15 &nbsp;AZT+3TC+DRV/r', 'AZT+3TC+DRV/r', 'AZT', 12, '3TC', 10, 'DRV/r', 18, 0, 0, 15);
+-- INSERT INTO `dr_viralprophylaxis` (`id`, `displaylabel`, `name`, `regimen1`, `regimen1_class_id`, `regimen2`, `regimen2_class_id`, `regimen3`, `regimen3_class_id`, `line`, `ptype`, `category`) VALUES
+-- 	(1, '4 &nbsp;AZT+3TC+NVP', 'AZT+3TC+NVP', 'AZT', 12, '3TC', 10, 'NVP', 8, 0, 0, 4),
+-- 	(2, '5 &nbsp;AZT+3TC+EFV', 'AZT+3TC+EFV', 'AZT', 12, '3TC', 10, 'EFV', 6, 0, 0, 5),
+-- 	(3, '2 &nbsp;TDF+3TC+NVP', 'TDF+3TC+NVP', 'TDF', 16, '3TC', 10, 'NVP', 8, 0, 0, 2),
+-- 	(4, '1 &nbsp;TDF+3TC+EFV', 'TDF+3TC+EFV', 'TDF', 16, '3TC', 10, 'EFV', 6, 0, 0, 1),
+-- 	(5, '10 &nbsp;AZT+3TC+LPVr', 'AZT+3TC+LPVr', 'AZT', 12, '3TC', 10, 'LPVr', 21, 0, 0, 10),
+-- 	(6, '17 &nbsp;AZT+3TC+ABC', 'AZT+3TC+ABC', 'AZT', 12, '3TC', 10, 'ABC', 11, 0, 0, 17),
+-- 	(7, '18 &nbsp;TDF+3TC+LPVr', 'TDF+3TC+LPVr', 'TDF', 16, '3TC', 10, 'LPVr', 21, 0, 0, 18),
+-- 	(8, '14 &nbsp;AZT+3TC+ATVr', 'AZT+3TC+ATVr', 'AZT', 12, '3TC', 10, 'ATVr', 17, 0, 0, 14),
+-- 	(9, '11 &nbsp;TDF+3TC+ATVr', 'TDF+3TC+ATVr', 'TDF', 16, '3TC', 10, 'ATVr', 17, 0, 0, 11),
+-- 	(10, '13 &nbsp;ABC+3TC+ATVr', 'ABC+3TC+ATVr', 'ABC', 11, '3TC', 10, 'ATVr', 17, 0, 0, 13),
+-- 	(11, '6 &nbsp;ABC+3TC+NVP', 'ABC+3TC+NVP', 'ABC', 11, '3TC', 10, 'NVP', 8, 0, 0, 6),
+-- 	(12, '7 &nbsp;ABC+3TC+EFV', 'ABC+3TC+EFV', 'ABC', 11, '3TC', 10, 'EFV', 6, 0, 0, 7),
+-- 	(13, '9 &nbsp;ABC+3TC+LPVr', 'ABC+3TC+LPVr', 'ABC', 11, '3TC', 10, 'LPVr', 21, 0, 0, 9),
+-- 	(14, '16 &nbsp;Other', 'Other', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 16),
+-- 	(15, '19 &nbsp;None', 'None', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 19),
+-- 	(16, '20 &nbsp;No Data', 'No Data', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 20),
+-- 	(17, '3 &nbsp;TDF+3TC+DTG', 'TLD', 'TDF', 16, '3TC', 10, 'DTG', 2, 0, 0, 3),
+-- 	(18, '8 &nbsp;ABC+3TC+DTG', 'ABC+3TC+DTG', 'ABC', 11, '3TC', 10, 'DTG', 2, 0, 0, 8),
+-- 	(19, '15 &nbsp;AZT+3TC+DRV/r', 'AZT+3TC+DRV/r', 'AZT', 12, '3TC', 10, 'DRV/r', 18, 0, 0, 15);
 
 
 
@@ -198,16 +198,21 @@ DROP TABLE IF EXISTS `drug_resistance_reasons`;
 
 CREATE TABLE `drug_resistance_reasons` (
   `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `rank` TINYINT UNSIGNED NOT NULL,
+  -- `rank` TINYINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`, `rank`) VALUES
-(1, 'Consistent Non-Suppression',  'Two consecutive tests with viralloads above 1000.', 1),
-(2, 'Paed Non-Suppression',  'Patient aged 19 and under with a viralload above 1000.', 2),
-(3, 'PMTCT Non-Suppression',  'PMTCT patient viralload above 1000.', 3);
+INSERT INTO `drug_resistance_reasons` (`id`, `name`, `description`) VALUES
+(1, 'Consistent Non-Suppression',  'Two consecutive tests with viralloads above 1000.'),
+(2, 'Paed Non-Suppression',  'Patient aged 19 and under with a viralload above 1000.'),
+(3, 'PMTCT Non-Suppression',  'PMTCT patient viralload above 1000.'),
+(4, 'Confirmed 2nd line treatment failure',  'Confirmed 2nd line treatment failure.'),
+(5, 'Patient failing 1st line PI based regimen',  'Patient failing 1st line PI based regimen.'),
+(6, 'Third line request',  'Third line request.'),
+(7, 'Study request',  'Study request'),
+(8, 'Other',  'Other');
 
 DROP TABLE IF EXISTS `dr_primers`;
 
@@ -304,6 +309,18 @@ CREATE TABLE `container_types` (
 INSERT INTO `container_types` (`id`, `name`) VALUES
 (1, 'PPT Tube'),
 (2, 'EDTA Tube');
+
+
+DROP TABLE IF EXISTS `amount_units`;
+CREATE TABLE `amount_units` (
+  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `amount_units` (`id`, `name`) VALUES
+(1, 'uL'),
+(2, 'spots');
 
 
 DROP TABLE IF EXISTS `clinical_indications`;

@@ -220,7 +220,7 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 	Route::group(['middleware' => ['utype:4']], function () {
-		Route::resource('dr', 'DrPatientController');
+		Route::resource('dr_patient', 'DrPatientController');
 
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 			Route::get('create/{patient}', 'DrSampleController@create_from_patient');
@@ -249,7 +249,7 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrWorksheetController@index')->name('list');
 
-			Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
+			// Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
 			Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 			Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
 
@@ -263,8 +263,13 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('cancel/{worksheet}', 'DrWorksheetController@cancel')->name('cancel');
 			Route::get('cancel_upload/{worksheet}', 'DrWorksheetController@cancel_upload')->name('cancel_upload');
 
+			// Download bulk template
+			Route::get('download/{worksheet}', 'DrWorksheetController@download')->name('download');
+
 		});
 		Route::resource('dr_worksheet', 'DrWorksheetController');
+		
+		Route::resource('dr_bulk_registration', 'DrBulkRegistrationController');
 	});
 
 	// End of Drug Resistance Routes

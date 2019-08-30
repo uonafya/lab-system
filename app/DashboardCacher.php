@@ -425,7 +425,7 @@ class DashboardCacher
 
         // $rejectedAllocations = self::rejectedAllocations();
         
-        if(env('APP_LAB') != 7) $rejectedAllocations = self::rejectedAllocations();
+        // if(env('APP_LAB') != 7) $rejectedAllocations = self::rejectedAllocations();
         Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
         Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
         Cache::put('vl_batchesForApproval', $batchesForApproval, $minutes);
@@ -459,7 +459,7 @@ class DashboardCacher
             Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
         }
         // Neutral Cache
-        if(env('APP_LAB') != 7) Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
+        // if(env('APP_LAB') != 7) Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
     }
 
     public static function clear_cache()

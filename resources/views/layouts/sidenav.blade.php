@@ -192,17 +192,21 @@
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
                 <hr />
+                <li><a href="{{ url('dr_sample/index/11') }}">Verify Site Entry Samples</a></li>
+                <hr />
                 @if(env('APP_LAB') != 7)
-                    <li><a href="{{ url('dr') }}">Potential DR Patients List</a></li>
+                    <li><a href="{{ url('dr_patient') }}">Potential DR Patients List</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
+                <!-- <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
+                <hr /> -->
+                <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet (Bulk Template)</a></li>
                 <hr />
-                <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet List</a></li>
+                <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
                 
             @endif
