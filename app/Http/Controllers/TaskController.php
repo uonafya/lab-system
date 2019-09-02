@@ -26,6 +26,7 @@ use App\Synch;
 use DB;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class TaskController extends Controller
 {
