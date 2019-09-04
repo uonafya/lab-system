@@ -142,7 +142,11 @@
 
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
-                                        <td> {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }} </td>
+                                        <td> 
+                                            {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }}
+                                            @if($sample->receivedstatus == 2)
+                                               <b>({{ $sample->get_prop_name($rejectedreasons, 'rejectedreason') }})</b>
+                                            @endif </td>
                                         <td> {{ $sample->spots }} </td>
 
                                         <td> {{ $sample->patient->mother->ccc_no ?? '' }} </td>
