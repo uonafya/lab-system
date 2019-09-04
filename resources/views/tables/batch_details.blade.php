@@ -138,56 +138,24 @@
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td> {{ $sample->age }} </td>
-                                        <td>
-                                            @foreach($iprophylaxis as $iproph)
-                                                @if($sample->regimen == $iproph->id)
-                                                    {{ $iproph->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->get_prop_name($iprophylaxis, 'regimen') }} </td>
 
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
-                                        <td>
-                                            @foreach($received_statuses as $received_status)
-                                                @if($sample->receivedstatus == $received_status->id)
-                                                    {{ $received_status->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> 
+                                            {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }}
+                                            @if($sample->receivedstatus == 2)
+                                               <b>({{ $sample->get_prop_name($rejectedreasons, 'rejectedreason') }})</b>
+                                            @endif </td>
                                         <td> {{ $sample->spots }} </td>
 
                                         <td> {{ $sample->patient->mother->ccc_no ?? '' }} </td>
                                         <td> {{ $sample->mother_age }} </td>
                                         <td> {{ $sample->mother_last_result }} </td>
-                                        <td>
-                                            @foreach($interventions as $intervention)
-                                                @if($sample->mother_prophylaxis == $intervention->id)
-                                                    {{ $intervention->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach($feedings as $feeding)
-                                                @if($sample->feeding == $feeding->id)
-                                                    {{ $feeding->feeding }}
-                                                @endif
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach($entry_points as $entry_point)
-                                                @if($sample->patient->entry_point == $entry_point->id)
-                                                    {{ $entry_point->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach($results as $result)
-                                                @if($sample->result == $result->id)
-                                                    {{ $result->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->get_prop_name($interventions, 'mother_prophylaxis') }} </td>
+                                        <td> {{ $sample->get_prop_name($feedings, 'feeding') }} </td>
+                                        <td> {{ $sample->patient->get_prop_name($entry_points, 'entry_point') }} </td>
+                                        <td> {{ $sample->get_prop_name($results, 'result') }} </td>
                                         <td>
                                             @if(auth()->user()->user_type_id != 5 && $batch->batch_complete == 0 && env('APP_LAB') == 3 && !$sample->worksheet_id && $sample->receivedstatus == 1 && (($sample->sample_received_by && $sample->sample_received_by != auth()->user()->id) || 
                                             (!$sample->sample_received_by && $batch->received_by != auth()->user()->id) ))
