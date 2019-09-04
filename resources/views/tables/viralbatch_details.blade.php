@@ -149,41 +149,17 @@
                                     <tr>
                                         <td> {{ $i++ }} </td>
                                         <td> {{ $sample->id }} </td>
-                                        <td>  {!! $sample->patient->hyperlink !!} </td>
+                                        <td> {!! $sample->patient->hyperlink !!} </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
-                                        <td>
-                                            @foreach($sample_types as $sample_type)
-                                                @if($sample->sampletype == $sample_type->id)
-                                                    {{ $sample_type->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->get_prop_name($sample_types, 'sampletype') }} </td>
                                         <td> {{ $sample->datecollected }} </td>
-                                        <td>
-                                            @foreach($received_statuses as $received_status)
-                                                @if($sample->receivedstatus == $received_status->id)
-                                                    {{ $received_status->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
-                                        <td>{!! $sample->get_link('worksheet_id') !!} </td>
-                                        <td>
-                                            @foreach($prophylaxis as $proph)
-                                                @if($sample->prophylaxis == $proph->id)
-                                                    {{ $proph->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
+                                        <td> {{ $sample->get_prop_name($prophylaxis, 'prophylaxis') }} </td>
                                         <td> {{ $sample->patient->my_date_format('initiation_date') }} </td>
-                                        <td>
-                                            @foreach($justifications as $justification)
-                                                @if($sample->justification == $justification->id)
-                                                    {{ $justification->name }}
-                                                @endif
-                                            @endforeach
-                                        </td>
+                                        <td> {{ $sample->get_prop_name($justifications, 'justification') }} </td>
                                         <td> {{ $sample->result }}  
                                             @if(is_numeric($sample->result))
                                                 {{ $sample->units }}
