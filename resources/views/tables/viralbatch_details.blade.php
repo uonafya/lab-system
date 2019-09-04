@@ -155,7 +155,11 @@
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td> {{ $sample->get_prop_name($sample_types, 'sampletype') }} </td>
                                         <td> {{ $sample->datecollected }} </td>
-                                        <td> {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }} </td>
+                                        <td> {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }}
+                                            @if($sample->receivedstatus == 2)
+                                                {{ $sample->get_prop_name($viral_rejected_reasons, 'rejectedreason') }}
+                                            @endif
+                                        </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->get_prop_name($prophylaxis, 'prophylaxis') }} </td>
                                         <td> {{ $sample->patient->my_date_format('initiation_date') }} </td>
