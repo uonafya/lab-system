@@ -1026,6 +1026,7 @@ class ViralbatchController extends Controller
     {
         if($batch->site_entry == 2 && !$batch->datedispatched){
             $batch->site_entry = 1;
+            $batch->lab_id = env('APP_LAB');
             $batch->save();
             session(['toast_message' => 'The batch has been converted to a site entry']);
             return back();

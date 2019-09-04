@@ -220,7 +220,7 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 	Route::group(['middleware' => ['utype:4']], function () {
-		Route::resource('dr', 'DrPatientController');
+		Route::resource('dr_patient', 'DrPatientController');
 
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 			Route::get('create/{patient}', 'DrSampleController@create_from_patient');

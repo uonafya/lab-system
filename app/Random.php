@@ -1924,10 +1924,19 @@ class Random
 			->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
 			->where('site_entry', '!=', 2)
 			->whereYear('daterun', $year)
-			->where(['viralsamples_view.lab_id' => env('APP_LAB')])
+			->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'repeatt' => 0,])
 			->groupBy('year', 'month', 'machine_type', 'rcategory')
 			->orderBy('year', 'month', 'machine_type', 'rcategory')
 			->get();
+
+        $data2 = \App\ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as tests ")
+            ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+            ->where('site_entry', '!=', 2)
+            ->whereYear('daterun', $year)
+            ->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'repeatt' => 1, 'rcategory' => 5])
+            ->groupBy('year', 'month', 'machine_type')
+            ->orderBy('year', 'month', 'machine_type')
+            ->get();
 
 		$results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 4000', 4 => '> 4000', 5 => 'Collect New Sample', 0 => 'Not Yet Dispatched'];
 		$machines = [1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
@@ -1944,6 +1953,9 @@ class Random
 					$row[$rvalue] = $data->where('rcategory', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
 					$total += $row[$rvalue];
 				}
+
+                $row['Failed'] = $data2->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                $total += $row['Failed'];
 
 				$row['Total'] = $total;
 				$rows[] = $row;

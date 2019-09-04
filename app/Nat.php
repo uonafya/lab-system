@@ -100,7 +100,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals All Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals All Facilities'));
 	}
 
 
@@ -152,7 +152,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 	}
 
 	/*
@@ -283,7 +283,7 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 	}
 
 	public static function dtg_llv_two()
@@ -347,9 +347,42 @@ class Nat
 
 		$data = [storage_path("exports/" . $file . ".csv")];
 
-		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'], 'Gender Totals Ordering Facilities')->send(new TestMail($data));
+		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
 
 
 	}
+
+	public static function kids_data()
+	{
+		$sql =  "SELECT patient AS `CCC Number`, f.facilitycode AS `MFL Code`, f.NAME AS `Facility`, 
+			s.initiation_date AS `Date Started on Treatment`, r.name AS `Regimen`, s.dob, s.age, 
+			s.result, s.datecollected, s.datetested, s.datedispatched
+			FROM viralsamples_view s
+			LEFT JOIN facilitys f ON f.id=s.facility_id
+			LEFT JOIN viralregimen r ON r.id=s.regimen
+			WHERE s.age < 15 AND s.initiation_date IS NOT NULL AND repeatt=0 AND datetested BETWEEN '2018-06-01' AND '2019-05-30'";
+
+
+		ini_set('memory_limit', '-1');
+		$data = [];
+		$rows = DB::select($sql);
+
+		foreach ($rows as $key => $row) {
+			// $data[] = $row->toArray();
+			$data[] = get_object_vars($row);
+		}
+
+		$file = "2018-06-01_2019-05-30_children_below_15_with_date_started_on_treatment";
+		
+		Excel::create($file, function($excel) use($data){
+			$excel->sheet('Sheetname', function($sheet) use($data) {
+				$sheet->fromArray($data);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+	} 
 
 }
