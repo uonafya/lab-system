@@ -156,7 +156,8 @@
                                         <td> {{ $sample->get_prop_name($sample_types, 'sampletype') }} </td>
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> 
-                                            {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }}
+                                            {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }} 
+                                            <!-- Hidden Text -->
                                             @if($sample->receivedstatus == 2)
                                                 ({{ $sample->get_prop_name($viral_rejected_reasons, 'rejectedreason') }})
                                             @endif
