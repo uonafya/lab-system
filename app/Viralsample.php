@@ -271,6 +271,18 @@ class Viralsample extends BaseModel
         return "<small>{$str}</small>";
     }
 
+    public function release_redraw()
+    {   
+        $this->labcomment = "Failed Test";
+        $this->repeatt = 0;
+        $this->result = "Collect New Sample";
+        $this->approvedby = auth()->user()->id;
+        $this->approvedby2 = auth()->user()->id;
+        $this->dateapproved = date('Y-m-d');
+        $this->dateapproved2 = date('Y-m-d');
+        $this->save();
+    }
+
 
     
 }
