@@ -153,7 +153,7 @@
                                         <td> {{ $sample->mother_age }} </td>
                                         <td> {{ $sample->mother_last_result }} </td>
                                         <td> {{ $sample->get_prop_name($interventions, 'mother_prophylaxis') }} </td>
-                                        <td> {{ $sample->get_prop_name($feedings, 'feeding') }} </td>
+                                        <td> {{ $sample->get_prop_name($feedings, 'feeding', 'feeding') }} </td>
                                         <td> {{ $sample->patient->get_prop_name($entry_points, 'entry_point') }} </td>
                                         <td> {{ $sample->get_prop_name($results, 'result') }} </td>
                                         <td>
