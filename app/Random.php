@@ -2912,7 +2912,7 @@ class Random
         echo "==> Getting patient level data\n";
         $model = SampleCompleteView::selectRaw("sample_complete_view.patient_id AS `uniqueOf`, sample_complete_view.id, sample_complete_view.result, sample_complete_view.receivedstatus, sample_complete_view.tat1, sample_complete_view.tat2, sample_complete_view.tat3, sample_complete_view.tat4, vf.name AS `facility`, vf.facilitycode")
             ->join('view_facilitys as vf', 'vf.id', '=', 'sample_complete_view.facility_id')
-            ->whereRaw("DATE(datetested) BETWEEN '2018-07-01' AND '2019-06-30' AND sample_complete_view.repeatt = 0")->get()->unique('patient_id');
+            ->whereRaw("DATE(datetested) BETWEEN '2018-07-01' AND '2019-06-30' AND sample_complete_view.repeatt = 0")->get()->unique('uniqueOf');
         echo "==> Getting the unique facilities\n";
         $facilities = $model->pluck('facilitycode');
         dd($facilities);
