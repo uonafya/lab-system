@@ -145,7 +145,7 @@
                                         <td> 
                                             {{ $sample->get_prop_name($received_statuses, 'receivedstatus') }}
                                             @if($sample->receivedstatus == 2)
-                                               <b>({{ $sample->get_prop_name($rejectedreasons, 'rejectedreason') }})</b>
+                                               <b>({{ $sample->get_prop_name($rejected_reasons, 'rejectedreason') }})</b>
                                             @endif </td>
                                         <td> {{ $sample->spots }} </td>
 
