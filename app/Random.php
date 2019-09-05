@@ -2927,7 +2927,7 @@ class Random
             ->whereRaw("DATE(datetested) BETWEEN '2018-07-01' AND '2019-06-30' AND sample_complete_view.repeatt = 0")->get()->unique('patient_id');
         echo "==> Getting the unique facilities\n";
         $facilities = $model->pluck('facilitycode');
-
+        dd($facilities);
         echo "==> Getting facilites data\n";
         foreach ($facilities as $key => $value) {
             $facilityData = $model->where('facilitycode', $value);
