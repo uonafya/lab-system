@@ -2953,6 +2953,7 @@ class Random
                 round($tat4, 2)
             ];
         }
+        dd($data);
         $file = "excel export";
         echo "=> Creating excel\n";
         Excel::create($file, function($excel) use($data)  {
