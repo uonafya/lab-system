@@ -2928,8 +2928,10 @@ class Random
         echo "==> Getting the unique facilities\n";
         $facilities = $model->pluck('facilitycode');
 
-        echo "==> Getting facilites data\n";
+        echo "==> Getting facilites data of {$facilities->count()}\n";
+
         foreach ($facilities as $key => $value) {
+            echo "{$key} - ";
             $facilityData = $model->where('facilitycode', $value);
             $facility = $facilityData->first()->facility;
             $totalTests = $facilityData->count();
@@ -2955,7 +2957,7 @@ class Random
         }
         
         $file = "excel export";
-        echo "=> Creating excel\n";
+        echo "\n==> Creating excel\n";
         Excel::create($file, function($excel) use($data)  {
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $sheet->fromArray($data);
