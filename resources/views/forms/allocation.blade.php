@@ -76,7 +76,7 @@
                                             @if(is_nan($mos))
                                                 {{ 0 }}
                                             @else
-                                                {{ round($mos) }}
+                                                {{ round($mos,1) }}
                                             @endif
                                             </td>
                                             <td>{{ $consumption->ending }}</td>
