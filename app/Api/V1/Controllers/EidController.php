@@ -39,7 +39,7 @@ class EidController extends BaseController
 
         $facility = Lookup::facility_mfl($code);
         $age = Lookup::calculate_age($datecollected, $dob);
-        $lab = $request->input('lab') ?? env('APP_LAB');
+        $lab_id = $request->input('lab', env('APP_LAB'));
 
         $sample_exists = SampleView::sample($facility, $hei_number, $datecollected)->get()->first();
         $fields = Lookup::samples_arrays();
@@ -72,7 +72,7 @@ class EidController extends BaseController
             $batch = new Batch;
         }
 
-        $batch->lab_id = $lab;
+        $batch->lab_id = $lab_id;
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         // if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');

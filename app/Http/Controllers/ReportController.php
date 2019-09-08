@@ -582,10 +582,9 @@ class ReportController extends Controller
     		$model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
     	}else {
             $receivedOnly=$useDateCollected=false;
-            if ($request->input('types') == 'rejected' || $request->input('samples_log') == 1 || $request->input('types') == 'manifest')
-                $receivedOnly=true;
+            if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
 
-            if ($request->input('types') == 'awaitingtesting') $useDateCollected=true;
+            if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
             
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
@@ -614,7 +613,7 @@ class ReportController extends Controller
         }
 
         if ($request->input('types') == 'remoteentry')
-            $model = $model->where('site_entry', '=', 1);
+            $model = $model->where('site_entry', '=', 1)->whereNull('datereceived');
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')
