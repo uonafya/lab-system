@@ -86,4 +86,27 @@ class Viralworksheet extends BaseModel
         }
         return '';
     }
+
+    public function release_as_redraw()
+    {
+        $today = date('Y-m-d');
+
+        $this->status_id = 3;
+        $this->daterun = $this->datereviewed = $this->datereviewed2 = $today;
+        $this->save();
+
+        $samples = \App\ViralsampleView::where('worksheet_id', $this->id)->where('site_entry', '!=', 2)->get();
+
+        foreach ($samples as $key => $sample) {
+            $s = \App\Viralsample::find($sample->id);
+
+            $s->labcomment = "Failed Test";
+            $s->repeatt = 0;
+            $s->result = "Collect New Sample";
+            $s->dateapproved = $s->dateapproved2 = $today; 
+
+            $s->save();
+            \App\MiscViral::check_batch($s->batch_id);
+        }
+    }
 }

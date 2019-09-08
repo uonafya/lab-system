@@ -42,7 +42,7 @@
                         <br />
 
 
-                        <input type="hidden" value="{{ $sample->patient_id ?? 0 }}" name="patient_id" id="patient_id">
+                        <input disabled="disabled" type="hidden" value="{{ $sample->patient_id ?? 0 }}" name="patient_id" id="patient_id">
 
    
                         <div class="form-group">
@@ -67,91 +67,93 @@
                             </div>
                         </div>
 
+                        @if(env('APP_LAB') == 7)
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Nat ID
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-9">
+                                    <input class="form-control requirable" required name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
+                                </div>
+                            </div>
+
+                        @endif
+
+
+                        <div class="hr-line-dashed"></div>
+
+
+
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Nat ID
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-9">
-                                <input class="form-control requirable" required name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
+                            <label class="col-sm-4 control-label">Patient Names</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
                             </div>
                         </div>
 
-                        @if(env('APP_LAB') == 7)
-
-                            <div class="hr-line-dashed"></div>
-
-
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Patient Names</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" name="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Of Birth
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group date date-dob">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="dob" class="form-control lockable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
                                 </div>
+                            </div>                            
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Age (In Years)</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $sample->age ?? '' }}">
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Of Birth
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date date-dob">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="dob" class="form-control lockable" value="{{ $sample->patient->dob ?? '' }}" name="dob">
-                                    </div>
-                                </div>                            
-                            </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Sex
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <select class="form-control lockable requirable" required name="sex" id="sex">
 
+                                    <option></option>
+                                    @foreach ($genders as $gender)
+                                        <option value="{{ $gender->id }}"
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Age (In Years)</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $sample->age ?? '' }}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Sex
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <select class="form-control lockable requirable" required name="sex" id="sex">
-
-                                        <option></option>
-                                        @foreach ($genders as $gender)
-                                            <option value="{{ $gender->id }}"
-
-                                            @if (isset($sample) && $sample->patient->sex == $gender->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $gender->gender_description }}
-                                            </option>
-                                        @endforeach
-
-
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Started on ART
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date date-art">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="initiation_date" 
-                                        @if(!isset($sample) || ($sample && $sample->patient->initiation_date))
-                                            required 
+                                        @if (isset($sample) && $sample->patient->sex == $gender->id)
+                                            selected
                                         @endif
-                                        class="form-control lockable requirable" value="{{ $sample->patient->initiation_date ?? '' }}" name="initiation_date">
-                                    </div>
-                                </div>                            
+
+                                        > {{ $gender->gender_description }}
+                                        </option>
+                                    @endforeach
+
+
+                                </select>
                             </div>
+                        </div>
 
 
-                        @endif
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Date Started on ART
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="input-group date date-art">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="initiation_date" 
+                                    @if(!isset($sample) || ($sample && $sample->patient->initiation_date))
+                                        required 
+                                    @endif
+                                    class="form-control lockable requirable" value="{{ $sample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                </div>
+                            </div>                            
+                        </div>
+
+
 
                         <div class="hr-line-dashed"></div>
 
@@ -631,10 +633,10 @@
                     age: {
                         required: '#dob:blank'
                     },
+                    nat: {
+                        regex: '^[N][A][T]'
+                    },
                 @endif
-                nat: {
-                    regex: '^[N][A][T]'
-                },
                 date_prev_regimen: {
                     lessThanTwo: ["#date_current_regimen", "Date of Previous Regimen", "Date of Current Regimen"]
                 },
@@ -699,6 +701,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#rejection").hide();
+            $('.requirable').removeAttr("required");
 
             @if(env('APP_LAB') != 7)
                 $("#patient").blur(function(){
@@ -707,7 +710,7 @@
                     check_new_patient(patient, facility);
                 });
             @else
-                $('.requirable').removeAttr("required");
+                // $('.requirable').removeAttr("required");
             @endif
 
             $("#facility_id").change(function(){
@@ -718,7 +721,7 @@
                 }
                 else{
                     @if(env('APP_LAB') != 7)
-                        $('.requirable').attr("required", "required");
+                        // $('.requirable').attr("required", "required");
                     @endif
                 }
             }); 
@@ -734,7 +737,7 @@
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
                     @if(env('APP_LAB') != 7)
-                        $('.requirable').attr("required", "required");
+                        // $('.requirable').attr("required", "required");
                     @endif
                 }
             });   
@@ -827,11 +830,14 @@
                     var patient = data[1];
 
                     if(data[0] == 0){
-                        $("#submit_form_button").removeAttr("disabled");
+                        // $("#submit_form_button").removeAttr("disabled");
                         $("#patient_id").val(patient.id);
+                        $("#dob").val(patient.dob);
+                        $("#initiation_date").val(patient.initiation_date);
+                        $("#sex").val(patient.sex).change();
                     }
                     else{
-                        $("#submit_form_button").attr("disabled", "disabled");
+                        // $("#submit_form_button").attr("disabled", "disabled");
                         set_warning("This patient was not found.")
                     }
 

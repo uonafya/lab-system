@@ -134,7 +134,7 @@
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
                                     <li class="">
-            @if(env('APP_LAB') != 7)
+            @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
                 <a href="{{ url('reports/kits') }}">Kits
                 <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
                 {{ $widgets['rejectedAllocations'] }}
@@ -290,7 +290,7 @@
                                         {{ 'https://eid.nascop.org/labPerformance' }}
                                     @endif">Nascop Dashboard</a>
                             </li>
-                            @if(env('APP_LAB') != 7)
+                            @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
                             <li class="">                   <a href="{{ url('reports/kits') }}">Kits
             <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
             {{ $widgets['rejectedAllocations'] }}

@@ -73,13 +73,27 @@
                             </table>
                         </div>
 
-                                <div class="form-group">
-                                    <div class="col-sm-8 col-sm-offset-4">
-                                        <button class="btn btn-success" type="submit"
+                        @if(env('APP_LAB') != 7)
 
-                                        >Save & Download Bulk Template</button>
+                            <div class="form-group"  >
+                                <label class="col-sm-3 control-label">Create Control Samples </label>
+                                <div class="col-sm-9">
+                                    <div>
+                                        <label> 
+                                            <input name="control_samples" type="checkbox" class="i-checks" value="1" checked="checked" /> 
+                                            Yes 
+                                        </label>
                                     </div>
                                 </div>
+                            </div>
+
+                        @endif
+
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-4">
+                                <button class="btn btn-success" type="submit">Save & Download Worksheet</button>
+                            </div>
+                        </div>
 
 
                         {{ Form::close() }}

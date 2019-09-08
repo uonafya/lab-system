@@ -536,7 +536,7 @@ class MiscViral extends Common
     {
         ini_set("memory_limit", "-1");
 
-        $min_date = Carbon::now()->subMonths(3)->toDateString();
+        $min_date = Carbon::now()->subMonths(4)->toDateString();
 
         $samples = ViralsampleView::select('patient_id', 'datereceived', 'result', 'rcategory', 'age', 'pmtct', 'datetested')
             ->where('batch_complete', 1)
@@ -550,29 +550,35 @@ class MiscViral extends Common
         foreach ($samples as $sample) {
             $data = $sample->only(['patient_id', 'datereceived', 'result', 'rcategory']);
             if($sample->age < 10) continue;
-            else if($sample->age < 19){
-                $pat = new DrPatient;
-                $pat->fill($data);
-                $pat->dr_reason_id = 2;
-                $pat->save();
-                continue;
-            }
-            else if($sample->pmtct == 1 || $sample->pmtct == 2){
-                $pat = new DrPatient;
-                $pat->fill($data);
-                $pat->dr_reason_id = 3;
-                $pat->save();
-                continue;
-            }
-            else{
-                if(self::get_previous_test($sample->patient_id, $sample->datetested)){
-                    $pat = new DrPatient;
-                    $pat->fill($data);
-                    $pat->dr_reason_id = 1;
-                    $pat->save();
-                    continue; 
-                }
-            }
+            $prev = $sample->get_previous_test();
+            if(!$prev || !in_array($prev->rcategory, [3, 4])) continue;
+
+            $prev2 = $prev->get_previous_test();
+            if(!$prev2 || !in_array($prev2->rcategory, [3, 4])) continue;
+
+            $pat = new DrPatient;
+            $pat->fill($data);
+            $pat->dr_reason_id = 1;
+            $pat->save();
+
+            // else if($sample->age < 19){
+            //     $pat = new DrPatient;
+            //     $pat->fill($data);
+            //     $pat->dr_reason_id = 2;
+            //     $pat->save();
+            //     continue;
+            // }
+            // else if($sample->pmtct == 1 || $sample->pmtct == 2){
+            //     $pat = new DrPatient;
+            //     $pat->fill($data);
+            //     $pat->dr_reason_id = 3;
+            //     $pat->save();
+            //     continue;
+            // }
+            // else{
+            // if(self::get_previous_test($sample->patient_id, $sample->datetested)){
+            // }
+            // }
         }
     }
 
@@ -807,7 +813,7 @@ class MiscViral extends Common
         $create = false; 
         if($count == $machine->vl_limit || ($calibration && $count == $machine->vl_calibration_limit)) $create = true;
         if($temp_limit && $count == $temp_limit) $create = true;
-        if(in_array(env('APP_LAB'), [8])) $create = true;
+        if(in_array(env('APP_LAB'), [8, 5])) $create = true;
 
         return [
             'count' => $count, 'limit' => $temp_limit, 'entered_by' => $entered_by,
