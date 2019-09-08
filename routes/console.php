@@ -459,8 +459,8 @@ Artisan::command('edarp:delete', function(){
 })->describe('Delete Transfered');
 //Quick fix add EDARP samples to KEMRI
 
-Artisan::command('check:mb', function(){
-    $str = \App\Random::checkMbNo();
+Artisan::command('check:maryland', function(){
+    $str = \App\Random::getElvis();
     $this->info($str);
 })->describe('Get MB No');
 
