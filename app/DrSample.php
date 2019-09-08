@@ -37,7 +37,7 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\User', 'user_id');
     }
 
-    public function facility()
+    /*public function facility()
     {
         return $this->belongsTo('App\Facility', 'facility_id');
     }
@@ -45,7 +45,7 @@ class DrSample extends BaseModel
     public function view_facility()
     {
         return $this->belongsTo('App\ViewFacility', 'facility_id');
-    }
+    }*/
 
 
     // Parent sample
