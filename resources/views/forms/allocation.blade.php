@@ -60,9 +60,9 @@
                                     if ($kit->alias == 'qualkit')
                                         $qualamc = (($tests / $test_factor->$testtypeKey) / 3);
                                     if ($machine->id == 2)
-                                        $amc = $qualamc * $factor->$testtypeKey;
+                                        $amc = round($qualamc * $factor->$testtypeKey);
                                     else
-                                        $amc = $qualamc * $factor;
+                                        $amc = round($qualamc * $factor);
                                 @endphp
                                 <tr>
                                     <td>{{ str_replace("REPLACE", "", $kit->name) }}</td>
@@ -76,11 +76,11 @@
                                             @if(is_nan($mos))
                                                 {{ 0 }}
                                             @else
-                                                {{ $mos }}
+                                                {{ round($mos, 1) }}
                                             @endif
                                             </td>
                                             <td>{{ $consumption->ending }}</td>
-                                            <td>{{ ($amc * 2) -$consumption->ending }}</td>
+                                            <td>{{ round(($amc * 2) - $consumption->ending) }}</td>
                                         @endif
                                     @empty
                                         <td></td>
@@ -113,6 +113,7 @@
                         <thead>               
                             <tr>
                                 <th>Name of Consumable</th>
+                                <th>Unit of Issue</th>
                                 <th>Last Month Allocation</th>
                                 <th>Quantity Allocated by Lab</th>
                             </tr>
@@ -121,6 +122,7 @@
                         @foreach($data->generalconsumables as $consumable)
                             <tr>
                                 <td>{{ $consumable->name ?? '' }}</td>
+                                <td>{{ $consumable->unit ?? '' }}</td>
                                 <td></td>
                                 <td><input class="form-control input-edit" type="number" min="0" name="consumable-{{ $consumable->id }}" value="0" required></td>
                             </tr>
