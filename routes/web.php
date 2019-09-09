@@ -210,6 +210,8 @@ Route::middleware(['auth'])->group(function(){
 
 	// Start of Drug Resistance Routes
 
+	Route::post('dr_report', 'DrReportController@reports');
+
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 		Route::group(['middleware' => ['utype:5']], function () {
 			Route::post('index', 'DrSampleController@sample_search');

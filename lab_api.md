@@ -13,7 +13,7 @@ Fields
 - **date_dispatched_start** - (required when *date_dispatched_end* is set)
 - **date_dispatched_end** - *(greater than or equal to **date_dispatched_start**)*
 - **patient_id** - *Either a single patient_id or a comma separated list of patient ids with no spaces. Patient id is hei number for eid and ccc number for vl*
-- **facility_code** - *The five digit MFL code*
+- **facility_code** - *The five digit MFL code* Either a single MFL code or a comma separated list of MFL codes with no spaces.*
 - **order_numbers** - *Either a single mrs order number or a comma separated list of mrs order numbers with no spaces.*
 - **location** - *AMRS location*
 - **dispatched** - *Boolean* When true, only samples that have been dispatched will be returned.
