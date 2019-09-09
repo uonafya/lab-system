@@ -257,7 +257,8 @@
                             <div class="col-sm-9">
                                 <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
                                 <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
-                                @if(Auth::user()->user_type_id != 5 && Session('testingSystem') != 'DR')
+                                @if(Session('testingSystem') != 'DR')
+                                @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')
                                 <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
                                 @endif
@@ -275,6 +276,7 @@
                                 <label><input type="radio" name="types" value="failed" class="i-checks" required> Failed Tests</label>
                                 @if(Auth::user()->user_type_id == 5)
                                 <label><input type="radio" name="types" value="manifest" class="i-checks" required> Print/Generate Sample Manifest</label>
+                                @endif
                                 @endif
                             </div>
                         </div>
