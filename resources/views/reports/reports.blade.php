@@ -21,7 +21,7 @@
     <div class="content animate-panel" data-child="hpanel">
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1">
-                @if(Auth::user()->user_type_id != 5)
+                @if(Auth::user()->user_type_id != 5 && Session('testingSystem') != 'DR')
                 <div class="hpanel">
                     <div class="alert alert-success">
                         <center>Sample Log [ All Recevied Samples ]</center>
@@ -87,7 +87,11 @@
                             <center>Please select Overall <strong>or Province or County or District or Facility & Period To generate the report based on your criteria.</strong></center>
                         </div>
                         @endif
+                        @if(session('testingSystem') == 'DR'))
+                        {{ Form::open(['url'=>'/dr_report', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
+                        @else
                         {{ Form::open(['url'=>'/reports', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
+                        @endif
                         <div class="form-group">
                             <div class="row">
                                 <label class="col-sm-3 control-label">
@@ -253,7 +257,7 @@
                             <div class="col-sm-9">
                                 <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
                                 <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
-                                @if(Auth::user()->user_type_id != 5)
+                                @if(Auth::user()->user_type_id != 5 || Session('testingSystem') != 'DR')
                                 @if(Session('testingSystem') == 'EID')
                                 <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
                                 @endif
