@@ -87,7 +87,7 @@
                             <center>Please select Overall <strong>or Province or County or District or Facility & Period To generate the report based on your criteria.</strong></center>
                         </div>
                         @endif
-                        @if(session('testingSystem') == 'DR'))
+                        @if(session('testingSystem') == 'DR')
                         {{ Form::open(['url'=>'/dr_report', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
                         @else
                         {{ Form::open(['url'=>'/reports', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}

@@ -54,6 +54,7 @@ class DrReportController extends Controller
 
 	public function divisions_filter($request)
 	{
+		$param = $column = null;
         if ($request->input('category') == 'county') {
             $param = $request->input('county');
             $column = 'view_facilitys.county_id';
@@ -69,6 +70,7 @@ class DrReportController extends Controller
         }
 
 		return function($query) use($param, $column){
+			if(!$param) return null;
 			if(is_array($param)) return $query->whereIn($column, $param);
 			return $query->where($column, $param);			
 		};
