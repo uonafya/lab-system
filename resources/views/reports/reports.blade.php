@@ -255,9 +255,11 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
+                                @if(Session('testingSystem') == 'DR')
+                                <label> <input type="radio" name="types" value="susceptibility" class="i-checks" required> Susceptibility Report </label>
+                                @else
                                 <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
                                 <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
-                                @if(Session('testingSystem') != 'DR')
                                 @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')
                                 <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
