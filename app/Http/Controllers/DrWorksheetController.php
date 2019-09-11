@@ -356,8 +356,10 @@ class DrWorksheetController extends Controller
         $samples = DrSample::whereIn('id', $rerun)->get();
         unset($data['datedispatched']);
 
-        foreach ($samples as $key => $sample){
-            $sample->create_rerun($data);
+        if($samples){
+            foreach ($samples as $key => $sample){
+                $sample->create_rerun($data);
+            }
         }
 
         session(['toast_message' => 'The worksheet has been approved.']);
