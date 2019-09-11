@@ -191,8 +191,8 @@
                     </li>
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">
-                        <a href="{{ url('dr_sample/report') }}">Report</a>
-                    </li>                
+                        <a href="{{ url('reports') }}">Report</a>
+                    </li>                          
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
