@@ -288,6 +288,9 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('email', 'EmailController');
 
+		Route::get('lab', 'RandomController@labcontacts')->name('lab.edit');
+		Route::put('lab', 'RandomController@savelabcontact')->name('lab.update');
+
 		Route::resource('muser', 'MuserController');
 	});
 
