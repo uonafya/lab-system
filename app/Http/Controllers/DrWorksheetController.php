@@ -348,6 +348,8 @@ class DrWorksheetController extends Controller
 
         $cns_data = array_merge($data, ['collect_new_sample' => 1]);
 
+        $worksheet_id = $worksheet->id;
+
         if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
         if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
 
