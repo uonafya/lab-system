@@ -210,6 +210,8 @@ Route::middleware(['auth'])->group(function(){
 
 	// Start of Drug Resistance Routes
 
+	Route::post('dr_report', 'DrReportController@reports');
+
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 		Route::group(['middleware' => ['utype:5']], function () {
 			Route::post('index', 'DrSampleController@sample_search');
@@ -286,6 +288,9 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('email', 'EmailController');
 
+		Route::get('lab', 'RandomController@labcontacts')->name('lab.edit');
+		Route::put('lab', 'RandomController@savelabcontact')->name('lab.update');
+
 		Route::resource('muser', 'MuserController');
 	});
 
@@ -317,6 +322,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('reports/kitdeliveries', 'KitsController@kits');
 	Route::get('report/allocation/{allocation?}/{type?}/{approval?}', 'KitsController@allocation')->name('report.allocation');
 	Route::put('kitallocation/{allocation}/edit', 'KitsController@editallocation');
+	Route::get('printallocation/{allocation}/{testtype}', 'KitsController@printallocation');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');

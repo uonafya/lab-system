@@ -35,6 +35,29 @@ class Lookup
         return $collection->where('id', $id)->first()->$attr ?? null;
     }
 
+    public static function date_range_month($year, $month=null)
+    {
+        if(!$month) return ["{$year}-01-01", "{$year}-12-31"];
+        if($month < 10) $month = '0' . $month;
+
+
+        $date_range[0] = ($year) . '-' . $month . '-01';
+
+        $d = Carbon::createFromFormat('Y-m-d', $date_range[0]);
+        $d->addMonth();
+        $d->subDay();
+
+        $date_range[1] = $d->toDateString();
+        return $date_range;     
+    }
+
+    public static function get_date_range($year, $month, $year2, $month2)
+    {
+        $d1 = self::date_range_month($year, $month);
+        $d2 = self::date_range_month($year2, $month2);
+        return [$d1[0], $d2[1]];
+    }
+
     public static function other_date($value)
     {
         if(!$value) return null;
