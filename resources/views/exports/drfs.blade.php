@@ -43,7 +43,7 @@
 			</tr>
 			<tr>
 				<td colspan="7" align="center" style="border: none;">
-					<h5>{{ $lab->name }} MONTHLY LAB TRACKER FOR {{ $data->year }} {{ date("F", mktime(null, null, null, $data->month)) }}</h5>
+					<h5>{{-- $lab->name --}} MONTHLY LAB TRACKER FOR {{-- $data->year --}} {{-- date("F", mktime(null, null, null, $data->month)) --}}</h5>
 				</td>
 			</tr>
 		</table>
