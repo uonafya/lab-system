@@ -876,7 +876,7 @@
                 }
             });
 
-            $("#dob").change(function(){
+            /*$("#dob").change(function(){
                 var val = $(this).val();
                 var dt1 = new Date();
                 var dt2 = new Date(val);
@@ -886,7 +886,7 @@
                     $('.regimen_age_2').hide();
                     $('.regimen_age_2').attr("disabled", "disabled");
                 }
-            });
+            });*/
 
 
             @if(!in_array(env('APP_LAB'), $amrs))
