@@ -464,9 +464,9 @@
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
-                                            <optgroup label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
+                                            <optgroup class="regimen_age_{{ $proph->age }}" label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
                                         @endif
-                                        <option value="{{ $proph->id }}"
+                                        <option value="{{ $proph->id }}" class="regimen_age_{{ $proph->age }}"
 
                                         @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
                                             selected
@@ -875,6 +875,18 @@
                     $('.requirable').attr("required", "required");
                 }
             });
+
+            /*$("#dob").change(function(){
+                var val = $(this).val();
+                var dt1 = new Date();
+                var dt2 = new Date(val);
+                var age = diff_in_years(dt2, dt1);
+                if(age > 18){
+                    set_message('Age is ' + age);
+                    $('.regimen_age_2').hide();
+                    $('.regimen_age_2').attr("disabled", "disabled");
+                }
+            });*/
 
 
             @if(!in_array(env('APP_LAB'), $amrs))
