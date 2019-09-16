@@ -464,7 +464,7 @@
                                         @continue($proph->code == '' && auth()->user()->user_type_id == 5)
 
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
-                                            <optgroup label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
+                                            <optgroup id="regimen_age_{{ $proph->age }}" label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
                                         @endif
                                         <option value="{{ $proph->id }}"
 
