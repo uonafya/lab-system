@@ -881,6 +881,7 @@
                 var dt1 = new Date();
                 var dt2 = new Date(val);
                 var age = diff_in_years(dt2, dt1);
+                set_message('Age is ' + age);
                 if(age > 18){
                     $('.regimen_age_2').hide();
                 }
