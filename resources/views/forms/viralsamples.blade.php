@@ -881,9 +881,10 @@
                 var dt1 = new Date();
                 var dt2 = new Date(val);
                 var age = diff_in_years(dt2, dt1);
-                set_message('Age is ' + age);
                 if(age > 18){
+                    set_message('Age is ' + age);
                     $('.regimen_age_2').hide();
+                    $('.regimen_age_2').attr("disabled", "disabled");
                 }
             });
 
