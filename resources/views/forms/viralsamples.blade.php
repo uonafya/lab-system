@@ -876,6 +876,16 @@
                 }
             });
 
+            $("#dob").change(function(){
+                var val = $(this).val();
+                var dt1 = new Date();
+                var dt2 = new Date(val);
+                var age = diff_in_years(dt2, dt1);
+                if(age > 18){
+                    $('.regimen_age_2').hide();
+                }
+            });
+
 
             @if(!in_array(env('APP_LAB'), $amrs))
                 $(".ampath-div").hide();
