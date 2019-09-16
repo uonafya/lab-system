@@ -466,7 +466,7 @@
                                         @if(!$key || $prophylaxis[$key-1]->age != $proph->age || $prophylaxis[$key-1]->line != $proph->line)
                                             <optgroup class="regimen_age_{{ $proph->age }}" label="{{ $regimen_age[$proph->age] . ' ' . $regimen_line[$proph->line] }} ">
                                         @endif
-                                        <option value="{{ $proph->id }}"
+                                        <option value="{{ $proph->id }}" class="regimen_age_{{ $proph->age }}"
 
                                         @if (isset($viralsample) && $viralsample->prophylaxis == $proph->id)
                                             selected
