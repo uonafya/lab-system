@@ -75,7 +75,7 @@ class FunctionController extends BaseController
             $facilities = explode(',', $facilities);
         }
  
-        $result = $class::when(($facilities && !$patients), function($query) use($facilities){
+        $result = $class::when(($facilities), function($query) use($facilities){
                 return $query->whereIn('facilitycode', $facilities);
             })
             ->when($dispatched, function($query){
