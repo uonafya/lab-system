@@ -70,8 +70,9 @@ class AllocationController extends Controller
         $allocation->synched = 1;
         $allocation->datesynched = date('Y-m-d');
         $allocation->save();
+        $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
         $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
-
+        \App\Synch::sendAllocationReviewSms($allocationReactionCounts);
         return response()->json([
                 'message' => 'The update was successful.',
                 'status_code' => 200,
@@ -79,7 +80,7 @@ class AllocationController extends Controller
     }
 
     protected function updateAllocationDetails($allocation_details, &$allocationReactionCounts) {
-        $allocationReactionCounts = (object)['approved' => 0, 'rejected' => 0];
+        $allocationReactionCounts = (object)['approved' => 0, 'rejected' => 0, 'month' => $allocationReactionCounts['month'], 'year' => $allocationReactionCounts['year']];
         foreach($allocation_details as $details) {
             $allocation_details_breakdown = $details->breakdowns;
             $new_alloc_details = AllocationDetail::findOrFail($details->original_allocation_detail_id);

@@ -1541,5 +1541,34 @@ class Synch
 
 
 
+	public static function sendAllocationReviewSms($allocationReactionCounts = null)
+	{
+		$users = new User;
+		$users = $users->notifiedAllocation()->orWhere('user_type_id', 0)->get();
+		$lab = Lab::find(env('APP_LAB'));
+		$message = "";
 
+		foreach ($users as $user) {
+			if (null !== $user->telephone) {
+				if ($allocationReactionCounts->approved > 0)
+					$message .= "{$lab->labname}, {$allocationReactionCounts->approved} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation has been approved. The commodities will be the delivered between {date('d M, Y')} and {date('d M, Y')} by KEMSA.\n\n";
+				if ($allocationReactionCounts->rejected > 0)
+					$message .= "{$lab->labname}, {$allocationReactionCounts->rejected} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation has been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
+				$client = new Client(['base_uri' => \App\Common::$sms_url]);
+
+				$response = $client->request('post', '', [
+					'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+					// 'debug' => true,
+					'http_errors' => false,
+					'json' => [
+						'sender' => env('SMS_SENDER_ID'),
+						// 'recipient' => '254702266217',
+						'recipient' => $user->telephone,
+						'message' => $message,
+					],
+				]);
+				$body = json_decode($response->getBody());
+			}
+		}
+	}
 }
