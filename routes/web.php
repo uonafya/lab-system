@@ -410,6 +410,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('user/add', 'UserController@create')->name('user.add');
 		Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 		Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
+		Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
 	});
 	Route::resource('user', 'UserController');	
 
