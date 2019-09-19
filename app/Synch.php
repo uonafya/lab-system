@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use DB;
 
 use App\Sample;
@@ -19,6 +20,8 @@ use App\Viralworksheet;
 
 use App\Facility;
 use App\FacilityChange;
+
+use App\Mail\AllocationReview;
 
 class Synch
 {
@@ -1555,13 +1558,12 @@ class Synch
 	public static function sendAllocationReviewSms($allocationReactionCounts = null, $users, $lab, $from, $to)
 	{	
 		$message = "";
-
 		foreach ($users as $user) {
 			if (null !== $user->telephone) {
 				if ($allocationReactionCounts->approved > 0)
-					$message .= "{$lab->labname}, {$allocationReactionCounts->approved} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation has been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
+					$message .= "{$lab->labname}, {$allocationReactionCounts->approved} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
 				if ($allocationReactionCounts->rejected > 0)
-					$message .= "{$lab->labname}, {$allocationReactionCounts->rejected} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation has been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
+					$message .= "{$lab->labname}, {$allocationReactionCounts->rejected} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
 				$client = new Client(['base_uri' => \App\Common::$sms_url]);
 
 				$response = $client->request('post', '', [
@@ -1580,6 +1582,9 @@ class Synch
 
 	public static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab)
 	{
-
+		if ($allocationReactionCounts->approved > 0)
+			Mail::to($users->pluck()->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, true));
+		if ($allocationReactionCounts->rejected > 0)
+			Mail::to($users->pluck()->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, false, true));
 	}
 }
