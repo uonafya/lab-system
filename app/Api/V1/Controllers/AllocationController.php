@@ -72,7 +72,7 @@ class AllocationController extends Controller
         $allocation->save();
         $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
         $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
-        \App\Synch::sendAllocationReviewSms($allocationReactionCounts);
+        \App\Synch::sendAllocationReview($allocationReactionCounts);
         return response()->json([
                 'message' => 'The update was successful.',
                 'status_code' => 200,
