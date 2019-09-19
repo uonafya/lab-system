@@ -57,6 +57,7 @@ class AllocationController extends Controller
      */
     public function update(ApiRequest $request)
     {
+        $allocationReactionCounts = null;
         $fields = json_decode($request->input('allocation'));
         $allocation_details = $fields->details;
         $allocation = Allocation::findOrFail($fields->original_allocation_id);
@@ -69,7 +70,7 @@ class AllocationController extends Controller
         $allocation->synched = 1;
         $allocation->datesynched = date('Y-m-d');
         $allocation->save();
-        $allocation_details = $this->updateAllocationDetails($allocation_details);
+        $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
 
         return response()->json([
                 'message' => 'The update was successful.',
@@ -77,7 +78,8 @@ class AllocationController extends Controller
             ], 200);
     }
 
-    protected function updateAllocationDetails($allocation_details) {
+    protected function updateAllocationDetails($allocation_details, &$allocationReactionCounts) {
+        $allocationReactionCounts = (object)['approved' => 0, 'rejected' => 0];
         foreach($allocation_details as $details) {
             $allocation_details_breakdown = $details->breakdowns;
             $new_alloc_details = AllocationDetail::findOrFail($details->original_allocation_detail_id);
@@ -90,6 +92,10 @@ class AllocationController extends Controller
             $new_alloc_details->synched = 1;
             $new_alloc_details->datesynched = date('Y-m-d');
             $new_alloc_details->save();
+            if ($new_alloc_details->approve == 1)
+                $allocationReactionCounts->approved += 1;
+            else if ($new_alloc_details->approve == 2)
+                $allocationReactionCounts->rejected += 1;
             $allocation_detail_breakdown = $this->updateAllocationDetailBreakdown($allocation_details_breakdown);
         }
         return $new_alloc_details;
