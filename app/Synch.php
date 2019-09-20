@@ -644,7 +644,7 @@ class Synch
 				}
 			}
 		}
-		return true;
+		return 'All Allocations Synched';
 	}
 
 	public static function synch_allocations_updates() {
