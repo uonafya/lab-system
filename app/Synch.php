@@ -1589,9 +1589,9 @@ class Synch
 	public static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab, $from, $to)
 	{
 		if ($allocationReactionCounts->approved > 0)
-			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, true));
+			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true));
 		if ($allocationReactionCounts->rejected > 0)
-			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, false, true));
+			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, false, true));
 
 	}
 }
