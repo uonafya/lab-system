@@ -1573,10 +1573,17 @@ class Synch
 		$message = "";
 		foreach (self::$users as $user) {
 			if (null !== $user->telephone) {
+				$labname = self::$lab->labname;
+				$approved = self::$allocationReactionCounts->approved;
+				$rejected = self::$allocationReactionCounts->rejected;
+				$month = self::$allocationReactionCounts->month;
+				$year = self::$allocationReactionCounts->year;
+				$from = self::$from;
+				$to = self::$to;
 				if (self::$allocationReactionCounts->approved > 0)
-					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->approved} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been approved. The commodities will be the delivered between {self::$from} and {self::$to} by KEMSA.\n\n";
+					$message .= "{$labname}, {$approved} of your {$month} {$year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
 				if (self::$allocationReactionCounts->rejected > 0)
-					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->rejected} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
+					$message .= "{$labname}, {$rejected} of your {self::$allocationReactionCounts->month} {$year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
 				$client = new Client(['base_uri' => \App\Common::$sms_url]);
 
 				$response = $client->request('post', '', [
