@@ -61,23 +61,24 @@ class AllocationController extends Controller
         $fields = json_decode($request->input('allocation'));
         $allocation_details = $fields->details;
         $allocation = Allocation::findOrFail($fields->original_allocation_id);
-        return response()->json([
-                'message' => 'The update was successful.',
-                'data' => $allocation,
-                'status_code' => 200,
-            ], 200);
         $allocation->national_id = $fields->id;
         $unset_array = ['id', 'original_allocation_id', 'created_at', 'updated_at', 'details', 'orderdate'];
         foreach ($unset_array as $value) {
             unset($fields->$value);
         }
+        $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
+        $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
+        \App\Synch::sendAllocationReview($allocationReactionCounts);
+        return response()->json([
+                'message' => 'The update was successful.',
+                'data' => $allocation,
+                'status_code' => 200,
+            ], 200);
         $allocation->fill(get_object_vars($fields));
         $allocation->synched = 1;
         $allocation->datesynched = date('Y-m-d');
         $allocation->save();
-        $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
-        $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
-        \App\Synch::sendAllocationReview($allocationReactionCounts);
+        
         return response()->json([
                 'message' => 'The update was successful.',
                 'status_code' => 200,
