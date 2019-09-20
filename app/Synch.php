@@ -1546,7 +1546,7 @@ class Synch
     {
     	$users = new User;
 		$users = $users->notifiedAllocation()->orWhere('user_type_id', 0)->get();
-		dd($users);
+		// dd($users);
 		$lab = Lab::find(env('APP_LAB'));
 		$date = date('Y-m-d');
 		$fromAllocationDate = date('d M, Y', strtotime($date));
