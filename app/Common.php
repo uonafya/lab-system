@@ -538,6 +538,7 @@ class Common
 		$view_table = self::$my_classes[$type]['view_table'];
 		$dt = date('Y-m-d', strtotime('-1 day'));
 		$q = 'rcategory IN (3, 4)';
+		$lab = \App\Lab::find(env('APP_LAB'));
 		if($type == 'eid') $q = 'result=2';
 
 		$facilities = Facility::whereRaw("id IN (SELECT DISTINCT facility_id FROM {$view_table} WHERE datedispatched = '{$dt}' AND repeatt=0 AND {$q})")->get();
@@ -553,7 +554,7 @@ class Common
 
 			try {				
 				$comm = new CriticalResults($facility, $type, $samples, $dt);
-				Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
 			} catch (Exception $e) {
 				
 			}
