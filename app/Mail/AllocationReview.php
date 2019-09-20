@@ -25,6 +25,7 @@ class AllocationReview extends Mailable
         $this->to = $to;
         $this->approved = $approved;
         $this->rejected = $rejected;
+        dd($this->data);
     }
 
     /**
