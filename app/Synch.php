@@ -1561,7 +1561,7 @@ class Synch
     }
 
 
-	public static function sendAllocationReviewSms($allocationReactionCounts = null, $users, $lab, $from, $to)
+	public static function sendAllocationReviewSms($allocationReactionCounts, $users, $lab, $from, $to)
 	{	
     	return $allocationReactionCounts;
 		$message = "";
