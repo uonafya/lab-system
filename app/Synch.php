@@ -1603,6 +1603,7 @@ class Synch
 
 	private static function sendAllocationReviewEmail()
 	{
+		dd(self::$allocationReactionCounts);
 		$allocationReactionCounts = self::$allocationReactionCounts;
 		$lab = self::$lab;
 		$from = self::$from;
