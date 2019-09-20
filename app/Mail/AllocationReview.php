@@ -11,7 +11,7 @@ class AllocationReview extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $data, $lab, $from, $to, $approved, $rejected;
+    public $allocationReactionCounts, $lab, $from, $to, $approved, $rejected;
     /**
      * Create a new message instance.
      *
@@ -19,13 +19,13 @@ class AllocationReview extends Mailable
      */
     public function __construct($allocationReactionCounts, $lab, $from, $to, $approved, $rejected)
     {
-        $this->data = $allocationReactionCounts;
+        $this->allocationReactionCounts = $allocationReactionCounts;
         $this->lab = $lab;
         $this->from = $from;
         $this->to = $to;
         $this->approved = $approved;
         $this->rejected = $rejected;
-        dd($this->data);
+        // dd($this->data);
     }
 
     /**

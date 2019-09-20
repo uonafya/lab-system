@@ -5,7 +5,7 @@
 	<br />
 	<br />
 
-	{{$data->approved}} of your {{$data->month}}-{{$data->year}} have been 
+	{{$allocationReactionCounts->approved}} of your {{$allocationReactionCounts->month}}-{{$allocationReactionCounts->year}} have been 
 	@if($approved){{'approved'}}@endif
 	@if($rejected){{'rejected'}}@endif.
 
