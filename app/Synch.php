@@ -1576,6 +1576,7 @@ class Synch
 	private static function sendAllocationReviewSms()
 	{
 		$message = "";
+		$body = null;
 		foreach (self::$users as $user) {
 			if (null !== $user->telephone) {
 				$labname = self::$lab->labname;
@@ -1601,9 +1602,9 @@ class Synch
 					],
 				]);
 				$body = json_decode($response->getBody());
-				print_r($body);
 			}
 		}
+		return $body;
 	}
 
 	private static function sendAllocationReviewEmail()
