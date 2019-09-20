@@ -1557,14 +1557,14 @@ class Synch
 		self::$lab = $lab;
 		self::$from = $fromAllocationDate;
 		self::$to = $toAllocationDate;
-		
-		// self::sendAllocationReviewSms();
+		return self::$users;
+		self::sendAllocationReviewSms();
 		// self::sendAllocationReviewEmail();
-		if (self::$allocationReactionCounts->approved > 0)
-			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
-			// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
-		if (self::$allocationReactionCounts->rejected > 0)
-			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, false, true));
+		// if (self::$allocationReactionCounts->approved > 0)
+		// 	Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
+		// 	// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
+		// if (self::$allocationReactionCounts->rejected > 0)
+		// 	Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, false, true));
 		foreach ($users as $key => $user) {
 			$user->allocation_notification_date = date('Y-m-d H:i:s');
 			$user->save();
