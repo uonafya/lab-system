@@ -1557,9 +1557,9 @@ class Synch
 		self::$lab = $lab;
 		self::$from = $fromAllocationDate;
 		self::$to = $toAllocationDate;
-		return self::$allocationReactionCounts;
+		// return self::$allocationReactionCounts;
 		self::sendAllocationReviewSms();
-		self::sendAllocationReviewEmail($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
+		self::sendAllocationReviewEmail();
 		foreach ($users as $key => $user) {
 			$user->allocation_notification_date = date('Y-m-d H:i:s');
 			$user->save();
@@ -1569,15 +1569,14 @@ class Synch
 
 
 	private static function sendAllocationReviewSms()
-	{	
-    	return $users;
+	{
 		$message = "";
 		foreach ($users as $user) {
 			if (null !== $user->telephone) {
-				if ($allocationReactionCounts->approved > 0)
-					$message .= "{$lab->labname}, {$allocationReactionCounts->approved} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
-				if ($allocationReactionCounts->rejected > 0)
-					$message .= "{$lab->labname}, {$allocationReactionCounts->rejected} of your {$allocationReactionCounts->month} {$allocationReactionCounts->year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
+				if (self::$allocationReactionCounts->approved > 0)
+					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->approved} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
+				if (self::$allocationReactionCounts->rejected > 0)
+					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->rejected} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
 				$client = new Client(['base_uri' => \App\Common::$sms_url]);
 
 				$response = $client->request('post', '', [
@@ -1594,9 +1593,8 @@ class Synch
 		}
 	}
 
-	private static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab, $from, $to)
+	private static function sendAllocationReviewEmail()
 	{
-		dd($allocationReactionCounts);
 		if ($allocationReactionCounts->approved > 0)
 			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
 			// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
