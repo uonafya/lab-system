@@ -1551,6 +1551,7 @@ class Synch
 		$date = date('Y-m-d');
 		$fromAllocationDate = date('d M, Y', strtotime($date));
 		$toAllocationDate = date('d M, Y', strtotime($date. ' + 14 days'));
+		return $allocationReactionCounts;
 		self::sendAllocationReviewSms($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
 		self::sendAllocationReviewEmail($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
 		foreach ($users as $key => $user) {
