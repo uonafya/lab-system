@@ -1571,10 +1571,10 @@ class Synch
 	private static function sendAllocationReviewSms()
 	{
 		$message = "";
-		foreach ($users as $user) {
+		foreach (self::$users as $user) {
 			if (null !== $user->telephone) {
 				if (self::$allocationReactionCounts->approved > 0)
-					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->approved} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
+					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->approved} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been approved. The commodities will be the delivered between {self::$from} and {self::$to} by KEMSA.\n\n";
 				if (self::$allocationReactionCounts->rejected > 0)
 					$message .= "{self::$lab->labname}, {self::$allocationReactionCounts->rejected} of your {self::$allocationReactionCounts->month} {self::$allocationReactionCounts->year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
 				$client = new Client(['base_uri' => \App\Common::$sms_url]);
@@ -1596,10 +1596,10 @@ class Synch
 	private static function sendAllocationReviewEmail()
 	{
 		if ($allocationReactionCounts->approved > 0)
-			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
+			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
 			// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
 		if ($allocationReactionCounts->rejected > 0)
-			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, false, true));
+			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, false, true));
 
 	}
 }
