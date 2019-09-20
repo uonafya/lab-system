@@ -19,6 +19,7 @@ class AllocationReview extends Mailable
      */
     public function __construct($allocationReactionCounts, $lab, $from, $to, $approved, $rejected)
     {
+        dd($allocationReactionCounts);
         $this->allocationReactionCounts = $allocationReactionCounts;
         $this->lab = $lab;
         $this->from = $from;
