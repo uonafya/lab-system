@@ -1557,7 +1557,7 @@ class Synch
 		self::$lab = $lab;
 		self::$from = $fromAllocationDate;
 		self::$to = $toAllocationDate;
-		return self::$users;
+		// return self::$users;
 		self::sendAllocationReviewSms();
 		// self::sendAllocationReviewEmail();
 		// if (self::$allocationReactionCounts->approved > 0)
