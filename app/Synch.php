@@ -1552,6 +1552,11 @@ class Synch
 		$toAllocationDate = date('d M, Y', strtotime($date. ' + 14 days'));
 		self::sendAllocationReviewSms($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
 		self::sendAllocationReviewEmail($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
+		foreach ($users as $key => $user) {
+			$user->allocation_notification_date = date('Y-m-d H:i:s');
+			$user->save();
+		}
+		return true;
     }
 
 
@@ -1586,5 +1591,6 @@ class Synch
 			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, true));
 		if ($allocationReactionCounts->rejected > 0)
 			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, false, true));
+
 	}
 }
