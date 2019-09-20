@@ -68,17 +68,7 @@ class AllocationController extends Controller
         }
         $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
         $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
-        $return = \App\Synch::sendAllocationReview($allocationReactionCounts);        
-        return response()->json([
-                'message' => 'The update was successful.',
-                'data' => $return,
-                'status_code' => 200,
-            ], 200);
-        return response()->json([
-                'message' => 'The update was successful.',
-                'data' => $allocation,
-                'status_code' => 200,
-            ], 200);
+        $return = \App\Synch::sendAllocationReview($allocationReactionCounts);
         $allocation->fill(get_object_vars($fields));
         $allocation->synched = 1;
         $allocation->datesynched = date('Y-m-d');
