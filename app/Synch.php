@@ -1544,7 +1544,6 @@ class Synch
 
     public static function sendAllocationReview($allocationReactionCounts = null)
     {
-    	return $allocationReactionCounts;
     	$users = new User;
 		$users = $users->notifiedAllocation()->orWhere('user_type_id', 0)->get();
 		// dd($users);
@@ -1564,6 +1563,7 @@ class Synch
 
 	public static function sendAllocationReviewSms($allocationReactionCounts = null, $users, $lab, $from, $to)
 	{	
+    	return $allocationReactionCounts;
 		$message = "";
 		foreach ($users as $user) {
 			if (null !== $user->telephone) {
