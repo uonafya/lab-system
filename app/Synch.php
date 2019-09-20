@@ -27,6 +27,7 @@ class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	private static $allocationReactionCounts, $users, $lab, $from, $to;
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -1551,8 +1552,13 @@ class Synch
 		$date = date('Y-m-d');
 		$fromAllocationDate = date('d M, Y', strtotime($date));
 		$toAllocationDate = date('d M, Y', strtotime($date. ' + 14 days'));
-		// return $allocationReactionCounts;
-		self::sendAllocationReviewSms($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
+		self::$allocationReactionCounts = $allocationReactionCounts;
+		self::$users = $users;
+		self::$lab = $lab;
+		self::$from = $fromAllocationDate;
+		self::$to; = $toAllocationDate;
+		return self::$allocationReactionCounts;
+		self::sendAllocationReviewSms();
 		self::sendAllocationReviewEmail($allocationReactionCounts, $users, $lab, $fromAllocationDate, $toAllocationDate);
 		foreach ($users as $key => $user) {
 			$user->allocation_notification_date = date('Y-m-d H:i:s');
@@ -1562,7 +1568,7 @@ class Synch
     }
 
 
-	public static function sendAllocationReviewSms($allocationReactionCounts, $users, $lab, $from, $to)
+	private static function sendAllocationReviewSms()
 	{	
     	return $users;
 		$message = "";
@@ -1588,7 +1594,7 @@ class Synch
 		}
 	}
 
-	public static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab, $from, $to)
+	private static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab, $from, $to)
 	{
 		dd($allocationReactionCounts);
 		if ($allocationReactionCounts->approved > 0)
