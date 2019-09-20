@@ -1583,7 +1583,7 @@ class Synch
 				if (self::$allocationReactionCounts->approved > 0)
 					$message .= "{$labname}, {$approved} of your {$month} {$year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
 				if (self::$allocationReactionCounts->rejected > 0)
-					$message .= "{$labname}, {$rejected} of your {self::$allocationReactionCounts->month} {$year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
+					$message .= "{$labname}, {$rejected} of your {$month} {$year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
 				$client = new Client(['base_uri' => \App\Common::$sms_url]);
 
 				$response = $client->request('post', '', [
