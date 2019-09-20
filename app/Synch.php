@@ -1602,10 +1602,10 @@ class Synch
 
 	private static function sendAllocationReviewEmail()
 	{
-		if ($allocationReactionCounts->approved > 0)
+		if (self::$allocationReactionCounts->approved > 0)
 			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
 			// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
-		if ($allocationReactionCounts->rejected > 0)
+		if (self::$allocationReactionCounts->rejected > 0)
 			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, false, true));
 
 	}
