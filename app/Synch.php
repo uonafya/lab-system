@@ -1596,6 +1596,7 @@ class Synch
 					],
 				]);
 				$body = json_decode($response->getBody());
+				print_r($body);
 			}
 		}
 	}
