@@ -1557,8 +1557,8 @@ class Synch
 		self::$lab = $lab;
 		self::$from = $fromAllocationDate;
 		self::$to = $toAllocationDate;
-		return self::$allocationReactionCounts;
-		self::sendAllocationReviewSms();
+		
+		// self::sendAllocationReviewSms();
 		// self::sendAllocationReviewEmail();
 		if (self::$allocationReactionCounts->approved > 0)
 			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
