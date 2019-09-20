@@ -1586,7 +1586,7 @@ class Synch
 		}
 	}
 
-	public static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab)
+	public static function sendAllocationReviewEmail($allocationReactionCounts = null, $users, $lab, $from, $to)
 	{
 		if ($allocationReactionCounts->approved > 0)
 			Mail::to($users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $fromAllocationDate, $toAllocationDate, true));
