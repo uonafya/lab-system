@@ -68,12 +68,12 @@ class AllocationController extends Controller
         }
         $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
         $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
+        $return = \App\Synch::sendAllocationReview($allocationReactionCounts);        
         return response()->json([
                 'message' => 'The update was successful.',
-                'data' => $allocationReactionCounts,
+                'data' => $return,
                 'status_code' => 200,
             ], 200);
-        \App\Synch::sendAllocationReview($allocationReactionCounts);
         return response()->json([
                 'message' => 'The update was successful.',
                 'data' => $allocation,
