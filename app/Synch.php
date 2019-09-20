@@ -1607,6 +1607,7 @@ class Synch
 		$lab = self::$lab;
 		$from = self::$from;
 		$to = self::$to;
+		dd($allocationReactionCounts);
 		if (self::$allocationReactionCounts->approved > 0)
 			Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
 			// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
