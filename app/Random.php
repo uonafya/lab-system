@@ -254,6 +254,7 @@ class Random
                 continue;
                 dd($fac);
             }
+            continue;
             $b = \App\Batch::create(['site_entry' => 0, 'user_id' => 0, 'facility_id' => $f->id, 'lab_id' => env('APP_LAB')]);
             $row = [];
             foreach ($fac as $key => $value) {
@@ -262,6 +263,8 @@ class Random
             $row['Batch Number'] = $b->id;
             $rows[] = $row;
         }
+
+        dd($un);
 
         $file = "afya_transitioned_sites_with_batch_numbers";
         
