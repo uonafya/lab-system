@@ -112,7 +112,7 @@ class Facility extends BaseModel
             unset($this->facility_contact);
         }
         if($this->contact_email != trim($this->contact_email)){
-            $this->contact_email = trim($this->contact_email);
+            $this->ContactEmail = trim($this->contact_email);
             $this->save();
             unset($this->facility_contact);
         }
@@ -124,7 +124,7 @@ class Facility extends BaseModel
         }
 
         if(($this->contact_email && !filter_var($this->contact_email, FILTER_VALIDATE_EMAIL)) || $this->contact_email == ''){
-            $this->contact_email = null;
+            $this->ContactEmail = null;
             $this->save();
             unset($this->facility_contact);
         }
