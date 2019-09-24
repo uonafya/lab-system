@@ -238,6 +238,16 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+    public static function to_ampath()
+    {
+        $path = public_path('afya_transitioned_sites.csv');
+        config(['excel.import.heading' => true]);
+        $data = Excel::load($path, function($reader){})->get();
+
+        dd($data);
+
+    }
+
     public static function enter_samples()
     {
     	$file = public_path('machakos.csv');
