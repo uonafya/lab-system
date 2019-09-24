@@ -106,9 +106,32 @@ class Facility extends BaseModel
 
     public function getEmailArrayAttribute()
     {
+        if($this->email != trim($this->email)){
+            $this->email = trim($this->email);
+            $this->save();
+            unset($this->facility_contact);
+        }
+        if($this->contact_email != trim($this->contact_email)){
+            $this->contact_email = trim($this->contact_email);
+            $this->save();
+            unset($this->facility_contact);
+        }
+
+        if(($this->email && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) || $this->email == ''){
+            $this->email = null;
+            $this->save();
+            unset($this->facility_contact);
+        }
+
+        if(($this->contact_email && !filter_var($this->contact_email, FILTER_VALIDATE_EMAIL)) || $this->contact_email == ''){
+            $this->contact_email = null;
+            $this->save();
+            unset($this->facility_contact);
+        }
+
         $emails = [];
-        if($this->email && $this->email != '') $emails[] = $this->email;
-        if($this->contact_email && $this->contact_email != '') $emails[] = $this->contact_email;
+        if($this->email) $emails[] = $this->email;
+        if($this->contact_email) $emails[] = $this->contact_email;
         // $f = ['dmltemail', 'dtlcemail', 'subcountyemail', 'countyemail', 'partneremail', 'partnerlabmail', 'partnerpointmail'];
 
         // foreach ($f as $val) {
