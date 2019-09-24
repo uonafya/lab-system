@@ -26,14 +26,14 @@ class CriticalResults extends Mailable
      *
      * @return void
      */
-    public function __construct($facility, $type, $samples, $datedispatched)
+    public function __construct($facility, $type, $samples, $datedispatched, $lab)
     {
         $this->facility = $facility;
         $this->type = $type;
         $this->samples = $samples;
         $this->datedispatched = $datedispatched;
         $this->file_path = storage_path('app/critical/' . $type . '_' . $facility->id . '.pdf');
-        $this->lab = \App\Lab::find(env('APP_LAB'));
+        $this->lab = $lab;
         $this->tests = [
             'eid' => [
                 'name' => 'EID',
@@ -46,7 +46,7 @@ class CriticalResults extends Mailable
         if(!is_dir(storage_path("app/critical/"))) mkdir(storage_path("app/critical/"), 0777, true);
 
         $mpdf = new Mpdf(['format' => 'A4-L']);
-        $view_data = view('exports.mpdf_critical', ['samples' => $samples, 'facility' => $facility, 'type' => $type])->render();
+        $view_data = view('exports.mpdf_critical', ['samples' => $samples, 'facility' => $facility, 'type' => $type, 'lab' => $lab])->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->file_path, \Mpdf\Output\Destination::FILE);
     }
