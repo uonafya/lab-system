@@ -162,12 +162,12 @@ class LoginController extends Controller
          * Section Added for the Allocation Pilot
          * Will be removed once pilot is done to be prompted when the commodity consumption is submitted
          */
-        if (($user->user_type_id == 1) || ($user->user_type_id == 0)){
-            $tasks = $this->pilotAllocation();
-            if ($tasks) {
-                return '/allocation';
-            }
-        }
+        // if (($user->user_type_id == 1) || ($user->user_type_id == 0)){
+        //     $tasks = $this->pilotAllocation();
+        //     if ($tasks) {
+        //         return '/allocation';
+        //     }
+        // }
         /*
          * End Section Added for the Allocation Pilot
          */
