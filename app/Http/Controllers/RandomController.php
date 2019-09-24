@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Lab;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
 use App\Sample;
@@ -79,6 +80,21 @@ class RandomController extends Controller
 	}
 
 	
+	public function labcontacts()
+	{
+		$lab = Lab::find(env('APP_LAB'));
+		return view('forms.lab', ['lab' => $lab]);
+	}
+
+	public function savelabcontact(Request $request)
+	{
+		$lab = Lab::find(env('APP_LAB'));
+		$lab->fill($request->except(['_token', '_method']));
+		$lab->save();
+		session(['toast_message' => 'The lab contacts have been updated.']);
+		return redirect('/home');
+	}
+
 
 	public function lablogs(Request $request, $year = null, $month = null){
 		if ($request->method() == 'POST') {
