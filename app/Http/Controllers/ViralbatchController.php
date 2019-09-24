@@ -1006,6 +1006,7 @@ class ViralbatchController extends Controller
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
             $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Date Email Sent'] = $sample->my_date_format('dateemailsent');
             $data[$key]['Date Individual Results Printed'] = $sample->my_date_format('dateindividualresultprinted');
             $data[$key]['Date Batch Printed'] = $sample->my_date_format('datebatchprinted');
             $data[$key]['Lab TAT'] = $sample->tat5;
