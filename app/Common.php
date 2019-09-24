@@ -553,7 +553,7 @@ class Common
 						->get();
 
 			try {				
-				$comm = new CriticalResults($facility, $type, $samples, $dt);
+				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
 				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
 			} catch (Exception $e) {
 				dd($e->getMessage());
