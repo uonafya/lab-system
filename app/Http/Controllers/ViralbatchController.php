@@ -939,8 +939,14 @@ class ViralbatchController extends Controller
 
     public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
+        ini_set('memory_limit', '-1');
         $date_column = "datereceived";
         if(in_array($batch_complete, [1, 6])) $date_column = "datedispatched";
+
+        if(!$date_start){
+            session(['toast_error' => 1, 'toast_message' => 'Please select a date range.']);
+            return back();
+        }
 
         $samples = ViralsampleView::select(['viralsamples_view.*', 'view_facilitys.subcounty',])
             ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -1000,6 +1006,8 @@ class ViralbatchController extends Controller
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
             $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Date Individual Results Printed'] = $sample->my_date_format('dateindividualresultprinted');
+            $data[$key]['Date Batch Printed'] = $sample->my_date_format('datebatchprinted');
             $data[$key]['Lab TAT'] = $sample->tat5;
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
