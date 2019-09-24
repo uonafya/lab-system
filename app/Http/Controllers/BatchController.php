@@ -898,7 +898,7 @@ class BatchController extends Controller
                 if(in_array($batch_complete, [1, 6])) return $query->orderBy('datedispatched', 'desc');
                 return $query->orderBy('created_at', 'desc');
             })
-            ->where('samples_view.lab_id', env('APP_LAB'))
+            ->where(['samples_view.lab_id' => env('APP_LAB'), 'repeatt' => 0])
             // ->where('batch_complete', 1)
             // ->orderBy($date_column, 'desc')
             // ->orderBy('batch_id', 'desc')
