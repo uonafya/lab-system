@@ -263,7 +263,6 @@ class Random
             $row['Batch Number'] = $b->id;
             $rows[] = $row;
         }
-
         dd($un);
 
         $file = "afya_transitioned_sites_with_batch_numbers";
