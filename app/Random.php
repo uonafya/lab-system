@@ -248,6 +248,7 @@ class Random
 
         foreach ($facilities as $fac) {
             $f = \App\Facility::locate($fac->mfl_code)->first();
+            if(!$f) dd($fac);
             $b = \App\Batch::create(['site_entry' => 0, 'user_id' => 0, 'facility_id' => $f->id, 'lab_id' => env('APP_LAB')]);
             $row = [];
             foreach ($fac as $key => $value) {
