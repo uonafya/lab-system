@@ -252,7 +252,7 @@ class Random
             if(!$f){
                 $un[] = $fac;
                 continue;
-                dd($fac);
+                // dd($fac);
             }
             continue;
             $b = \App\Batch::create(['site_entry' => 0, 'user_id' => 0, 'facility_id' => $f->id, 'lab_id' => env('APP_LAB')]);
