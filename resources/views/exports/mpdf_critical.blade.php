@@ -73,7 +73,6 @@
                     <td align="center">
                         <h5>MINISTRY OF HEALTH</h5>
                         <h5>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</h5>
-                        <h5>EARLY INFANT HIV DIAGNOSIS (DNA-PCR) RESULT FORM</h5>
                     </td>
                 </tr>
             </table>
