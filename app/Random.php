@@ -238,6 +238,49 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+    public static function to_ampath()
+    {
+        $path = public_path('afya_transitioned_sites.csv');
+        config(['excel.import.heading' => true]);
+        $facilities = Excel::load($path, function($reader){})->get();
+
+        $rows = [];
+        $un = [];
+
+        foreach ($facilities as $fac) {
+            $f = \App\Facility::locate($fac->mfl_code)->first();
+            if(!$f){
+                $un[] = $fac;
+                continue;
+                // dd($fac);
+            }
+            
+            $b = \App\Batch::create(['site_entry' => 0, 'user_id' => 0, 'facility_id' => $f->id, 'lab_id' => env('APP_LAB')]);
+            $row = [];
+            foreach ($fac as $key => $value) {
+                $row[$key] = $value;
+            }
+            $row['Batch Number'] = $b->id;
+            $rows[] = $row;
+        }
+        // dd($un);
+
+        $file = "afya_transitioned_sites_with_batch_numbers";
+        
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+        $data = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($data, 'Afya Transitioned Sites With Batch Numbers'));
+
+        // dd($facilities);
+
+    }
+
     public static function enter_samples()
     {
     	$file = public_path('machakos.csv');

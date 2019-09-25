@@ -852,8 +852,14 @@ class BatchController extends Controller
 
     public function dispatch_report($batch_complete, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
+        ini_set('memory_limit', '-1');
         $date_column = "datereceived";
         if(in_array($batch_complete, [1, 6])) $date_column = "datedispatched";
+
+        if(!$date_start){
+            session(['toast_error' => 1, 'toast_message' => 'Please select a date range.']);
+            return back();
+        }
 
         $samples = SampleView::select(['samples_view.*', 'view_facilitys.subcounty', ])
             ->leftJoin('view_facilitys', 'view_facilitys.id', '=', 'samples_view.facility_id')
@@ -892,7 +898,7 @@ class BatchController extends Controller
                 if(in_array($batch_complete, [1, 6])) return $query->orderBy('datedispatched', 'desc');
                 return $query->orderBy('created_at', 'desc');
             })
-            ->where('samples_view.lab_id', env('APP_LAB'))
+            ->where(['samples_view.lab_id' => env('APP_LAB'), 'repeatt' => 0])
             // ->where('batch_complete', 1)
             // ->orderBy($date_column, 'desc')
             // ->orderBy('batch_id', 'desc')
@@ -913,6 +919,9 @@ class BatchController extends Controller
             $data[$key]['Date Received'] = $sample->my_date_format('datereceived');
             $data[$key]['Date Tested'] = $sample->my_date_format('datetested');
             $data[$key]['Date Dispatched'] = $sample->my_date_format('datedispatched');
+            $data[$key]['Date Email Sent'] = $sample->my_date_format('dateemailsent');
+            $data[$key]['Date Individual Results Printed'] = $sample->my_date_format('dateindividualresultprinted');
+            $data[$key]['Date Batch Printed'] = $sample->my_date_format('datebatchprinted');
             $data[$key]['Lab TAT'] = $sample->tat5;
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';

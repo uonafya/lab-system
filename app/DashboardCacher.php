@@ -388,7 +388,7 @@ class DashboardCacher
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 3;
+    	$minutes = 5;
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
