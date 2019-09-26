@@ -336,7 +336,7 @@ class Random
                 $samples = \App\Viralsample::where(['patient_id' => $old_patient->id])->get();
                 foreach ($samples as $s) {
                     $s->patient_id = $patient->id;
-                    $s->pre_update;
+                    $s->pre_update();
                 }
             }
         }
@@ -368,7 +368,7 @@ class Random
 
             foreach ($samples as $s) {
                 $s->patient_id = $patient_id;
-                $s->pre_update;
+                $s->pre_update();
             }
         }*/
         // dd($un);
