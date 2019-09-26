@@ -16,7 +16,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \App\Http\Middleware\CheckForMaintenanceMode::class,
     ];
 
     /**
@@ -33,6 +33,10 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+            \App\Http\Middleware\TrimStrings::class,
+            \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+            // \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         ],
 
         'api' => [
@@ -57,6 +61,8 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+
+        // ConvertEmptyStringsToNull
 
         'jwt.auth' => GetUserFromToken::class,
         'jwt.refresh' => RefreshToken::class,
