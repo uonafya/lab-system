@@ -54,7 +54,7 @@ class Batch extends BaseModel
     {
         $now = \Carbon\Carbon::now();
 
-        if($now->diffInMonths($this->created_at) > 6) return true;
+        if($now->diffInMonths($this->created_at) > 12) return true;
         return false;
     }
 
