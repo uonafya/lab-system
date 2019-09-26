@@ -35,6 +35,9 @@
 			<br /> Date Received - {{ $sample->batch->my_date_format('datereceived') }} 
 			<br /> Batch Number - {{ $sample->batch_id }} 
 		@endif
+		@if(env('APP_LAB') == 4 && $sample->parentid)
+			<br /> Previous Worksheet - {{ $sample->prev_worksheet }}
+		@endif
 	</span>
 	<br />
 

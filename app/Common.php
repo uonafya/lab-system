@@ -538,6 +538,7 @@ class Common
 		$view_table = self::$my_classes[$type]['view_table'];
 		$dt = date('Y-m-d', strtotime('-1 day'));
 		$q = 'rcategory IN (3, 4)';
+		$lab = \App\Lab::find(env('APP_LAB'));
 		if($type == 'eid') $q = 'result=2';
 
 		$facilities = Facility::whereRaw("id IN (SELECT DISTINCT facility_id FROM {$view_table} WHERE datedispatched = '{$dt}' AND repeatt=0 AND {$q})")->get();
@@ -547,15 +548,17 @@ class Common
 	        $mail_array = ['joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com'];
 	        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
+	        if(!$mail_array) continue;
+
 			$samples = $sampleview_class::whereRaw($q)
 						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' => 0])
 						->get();
 
 			try {				
-				$comm = new CriticalResults($facility, $type, $samples, $dt);
-				Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
+				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
 			} catch (Exception $e) {
-				
+				// dd($e->getMessage());
 			}
 		}
 	}
