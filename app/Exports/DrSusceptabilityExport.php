@@ -26,7 +26,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
     {
     	$request = $this->request;
         $cell_array = MiscDr::$call_array;
-        dd($cell_array);
+        // dd($cell_array);
         $regimen_classes = DB::table('regimen_classes')->get();
         $date_column = "datedispatched";
         $user = auth()->user();
@@ -85,7 +85,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             }
             $rows[] = $row;
         }
-        // dd($samples);
+        dd($cell_array);
         $this->cell_array = $cell_array;
         return $rows;
     }
