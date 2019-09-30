@@ -77,6 +77,20 @@ class Common
     	return \App\Viralpatient::class;
     }
 
+    public static function downloadCSV($data, $filename='export.csv', $delimiter=";")
+    {
+    	$f = fopen('php://memory', 'w');
+    	fputcsv($f, array_keys($data[0]), $delimiter);
+
+    	foreach ($data as $line) {
+    		fputcsv($f, $line, $delimiter);
+    	}
+    	fseek($f, 0);
+    	header('Content-Type: application/csv');
+    	header('Content-Disposition: attachment; filename="'.$filename.'";');
+    	fpassthru($f);
+    }
+
 	public static function get_days($start, $finish, $with_holidays=true)
 	{
 		if(!$start || !$finish) return null;
