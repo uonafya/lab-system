@@ -13,8 +13,8 @@ use \App\DrSample;
 
 class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
 {
-	protected $cell_array;
-	protected $request;
+	public $cell_array;
+	public $request;
 
 	public function __construct($request)
 	{
@@ -83,8 +83,8 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             }
             $rows[] = $row;
         }
-        // dd($cell_array);
-        $this->cell_array = $cell_array;
+        $cell_array = $cell_array;
+        dd($this->cell_array);
         return $rows;
     }
 
