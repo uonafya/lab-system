@@ -79,13 +79,12 @@ class Common
 
     public static function downloadCSV($data, $filename='export.csv', $delimiter=";")
     {
-    	$f = fopen('php://memory', 'w');
+    	$f = fopen('php://output', 'w');
     	fputcsv($f, array_keys($data[0]), $delimiter);
 
     	foreach ($data as $line) {
     		fputcsv($f, $line, $delimiter);
     	}
-    	fseek($f, 0);
     	header('Content-Type: application/csv');
     	header('Content-Disposition: attachment; filename="'.$filename.'";');
     	fpassthru($f);
