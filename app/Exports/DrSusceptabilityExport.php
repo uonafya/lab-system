@@ -118,7 +118,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
 
             	$event->sheet->styleCells($my_cell, [
             		'fill' => [
-            			'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+            			'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_PATTERN_LIGHTUP,
             			'startColor' => [
             				'argb' => $my_call['resistance_colour']
             				// 'argb' => 'FFA0A0A0'
