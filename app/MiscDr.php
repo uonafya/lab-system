@@ -42,7 +42,7 @@ class MiscDr extends Common
         'R' => [
             'resistance' => 'Resistant',
             'resistance_colour' => "#ff0000",
-            'resistance_color' => "ff0000",
+            'resistance_color' => "f0190a",
             'cells' => [],
         ],
         'I' => [
