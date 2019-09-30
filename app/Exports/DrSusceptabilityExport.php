@@ -19,6 +19,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
 	public function __construct($request)
 	{
 		$this->request = $request;
+		$this->cell_array = [];
 	}
 
     public function array(): array
