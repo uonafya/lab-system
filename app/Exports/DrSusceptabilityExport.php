@@ -86,6 +86,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             $rows[] = $row;
         }
         $this->cell_array = $cell_array;
+        session(['cell_array' => $cell_array]);
         return $rows;
     }
 
@@ -106,7 +107,8 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
 
     public static function afterSheet(AfterSheet $event)
     {
-        $cell_array = $this->cell_array;
+        // $cell_array = $this->cell_array;
+        $cell_array = session()->pull('cell_array');
         foreach ($cell_array as $my_call) {
             foreach ($my_call['cells'] as $my_cell) {
             	$event->sheet->getActiveSheet()->getStyle($my_cell)->getFill()->getStartColor()->setARGB($my_call['resistance_colour']);
