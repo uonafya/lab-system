@@ -36,37 +36,31 @@ class MiscDr extends Common
         'LC' => [
             'resistance' => 'Low Coverage',
             'resistance_colour' => "#595959",
-            'resistance_color' => "595959",
             'cells' => [],
         ],
         'R' => [
             'resistance' => 'Resistant',
             'resistance_colour' => "#ff0000",
-            'resistance_color' => "f0190a",
             'cells' => [],
         ],
         'I' => [
             'resistance' => 'Intermediate Resistance',
             'resistance_colour' => "#ff9900",
-            'resistance_color' => "ff9900",
             'cells' => [],
         ],
         'S' => [
             'resistance' => 'Susceptible',
             'resistance_colour' => "#00ff00",
-            'resistance_color' => "00ff00",
             'cells' => [],
         ],
         'L' => [
             'resistance' => 'Low Level',
             'resistance_colour' => "#00ff00",
-            'resistance_color' => "00ff00",
             'cells' => [],
         ],
         'PL' => [
             'resistance' => 'Potential Low Level',
             'resistance_colour' => "#00ff00",
-            'resistance_color' => "00ff00",
             'cells' => [],
         ],
     ];

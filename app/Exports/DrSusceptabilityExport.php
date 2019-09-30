@@ -108,8 +108,10 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             			'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_PATTERN_LIGHTUP,
             			'startColor' => [
             				'argb' => $colour,
-            				// 'argb' => 'FFA0A0A0'
-            			]
+            			],
+            			'endColor' => [
+            				'argb' => $colour,
+            			],
             		]
             	]);
             }
