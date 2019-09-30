@@ -68,7 +68,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
                     foreach ($dr_call->call_drug as $call_drug) {
                         if($call_drug->short_name_id == $regimen->id){
                             $call = $call_drug->call;
-                            $cell_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 4);
+                            $cell_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 3);
                             
                             // $beginning = '';
 
@@ -120,7 +120,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             		'fill' => [
             			'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_PATTERN_LIGHTUP,
             			'startColor' => [
-            				'argb' => $my_call['resistance_colour']
+            				'argb' => $my_call['resistance_color']
             				// 'argb' => 'FFA0A0A0'
             			]
             		]
