@@ -10,7 +10,6 @@ use App\User;
 
 use App\Lookup;
 use App\MiscDr;
-use App\Common;
 
 use Excel;
 use Illuminate\Http\Request;
@@ -202,7 +201,7 @@ class DrWorksheetController extends Controller
 
         $filename = 'bulk_template_' . $worksheet->id . '.csv';
 
-        Common::downloadCSV($data, $filename);
+        MiscDr::downloadCSV($data, $filename);
 
         /*Excel::create($filename, function($excel) use($data){
             $excel->sheet('Sheetname', function($sheet) use($data) {
