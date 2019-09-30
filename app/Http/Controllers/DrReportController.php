@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistance;
 
+// use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DrSusceptabilityExport;
+
 
 
 class DrReportController extends Controller
@@ -78,7 +81,8 @@ class DrReportController extends Controller
 
 	public function reports(Request $request)
 	{
-		return $this->susceptability($request);
+		// return $this->susceptability($request);        
+        return Excel::download(new DrSusceptabilityExport, 'susceptability_report.xlsx');
 	}
 
     public function susceptability($request)
