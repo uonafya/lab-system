@@ -90,6 +90,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
     public function registerEvents(): array
     {
         $cell_array = $this->call_array;
+        dd($cell_array);
     	return [
     		AfterSheet::class => function(AfterSheet $event) use ($cell_array){
                 foreach ($cell_array as $my_call) {
