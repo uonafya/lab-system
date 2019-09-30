@@ -10,6 +10,7 @@ use App\User;
 
 use App\Lookup;
 use App\MiscDr;
+use App\Common;
 
 use Excel;
 use Illuminate\Http\Request;
