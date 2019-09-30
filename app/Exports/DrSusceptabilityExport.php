@@ -85,7 +85,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             $rows[] = $row;
         }
         $this->cell_array = $cell_array;
-        // dd($this->cell_array);
+        dd($this->cell_array);
         return $rows;
     }
 
