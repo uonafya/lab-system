@@ -119,7 +119,8 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             	$event->sheet->styleCells($my_cell, [
             		'fill' => [
             			'startColor' => [
-            				'argb' => $my_call['resistance_colour']
+            				// 'argb' => $my_call['resistance_colour']
+            				'argb' => 'FFA0A0A0'
             			]
             		]
             	]);
