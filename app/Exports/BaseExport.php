@@ -1,9 +1,14 @@
 <?php
 
 namespace App\Exports;
+use \Maatwebsite\Excel\Sheet;
 
 class BaseExport
 {
+
+	Sheet::macro('styleCells', function (Sheet $sheet, string $cellRange, array $style) {
+	    $sheet->getDelegate()->getStyle($cellRange)->applyFromArray($style);
+	});
 
 	public function date_filter($request, $column)
 	{
