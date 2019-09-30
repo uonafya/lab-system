@@ -82,7 +82,7 @@ class DrReportController extends Controller
 	public function reports(Request $request)
 	{
 		// return $this->susceptability($request);        
-        return Excel::download(new DrSusceptabilityExport, 'susceptability_report.xlsx');
+        return Excel::download(new DrSusceptabilityExport($request), 'susceptability_report.xlsx');
 	}
 
     public function susceptability($request)
