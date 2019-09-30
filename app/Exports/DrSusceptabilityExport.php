@@ -14,14 +14,12 @@ use \App\DrSample;
 
 class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
 {
-	public $cell_array;
 	public $request;
 
 	public function __construct($request)
 	{
 		parent::__construct();
 		$this->request = $request;
-		// $this->cell_array = [];
 	}
 
     public function array(): array
@@ -87,40 +85,29 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             }
             $rows[] = $row;
         }
-        $this->cell_array = $cell_array;
         session(['cell_array' => $cell_array]);
         return $rows;
     }
 
     public function registerEvents(): array
     {
-        // dd($this->cell_array);
     	return [
     		AfterSheet::class => [self::class, 'afterSheet'],
-    		/*AfterSheet::class => function(AfterSheet $event) use ($cell_array){
-                foreach ($cell_array as $my_call) {
-                    foreach ($my_call['cells'] as $my_cell) {
-                    	$event->sheet->getActiveSheet()->getStyle($my_cell)->getFill()->getStartColor()->setARGB($my_call['resistance_colour']);
-                    }
-                }    			
-    		},*/
     	];
     }
 
     public static function afterSheet(AfterSheet $event)
     {
-        // $cell_array = $this->cell_array;
         $cell_array = session()->pull('cell_array');
-        // dd($cell_array);
         foreach ($cell_array as $my_call) {
             foreach ($my_call['cells'] as $my_cell) {
-            	// $event->sheet->getStyle($my_cell)->getFill()->getStartColor()->setARGB($my_call['resistance_colour']);
+            	$colour = ltrim($my_call['resistance_colour'], '#');
 
             	$event->sheet->styleCells($my_cell, [
             		'fill' => [
             			'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_PATTERN_LIGHTUP,
             			'startColor' => [
-            				'argb' => $my_call['resistance_colour']
+            				'argb' => $colour,
             				// 'argb' => 'FFA0A0A0'
             			]
             		]
