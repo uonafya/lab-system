@@ -13,7 +13,7 @@ use \App\DrSample;
 
 class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
 {
-	protected $call_array;
+	protected $cell_array;
 	protected $request;
 
 	public function __construct($request)
@@ -24,7 +24,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
     public function array(): array
     {
     	$request = $this->request;
-        $call_array = MiscDr::$call_array;
+        $cell_array = MiscDr::$call_array;
         $regimen_classes = DB::table('regimen_classes')->get();
         $date_column = "datedispatched";
         $user = auth()->user();
@@ -64,7 +64,7 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
                     foreach ($dr_call->call_drug as $call_drug) {
                         if($call_drug->short_name_id == $regimen->id){
                             $call = $call_drug->call;
-                            $call_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 4);
+                            $cell_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 4);
                             
                             // $beginning = '';
 
@@ -83,14 +83,15 @@ class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
             }
             $rows[] = $row;
         }
-        $this->call_array = $call_array;
+        dd($cell_array);
+        $this->cell_array = $cell_array;
         return $rows;
     }
 
     public function registerEvents(): array
     {
-        $cell_array = $this->call_array;
-        dd($cell_array);
+        $cell_array = $this->cell_array;
+        // dd($cell_array);
     	return [
     		AfterSheet::class => function(AfterSheet $event) use ($cell_array){
                 foreach ($cell_array as $my_call) {
