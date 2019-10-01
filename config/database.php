@@ -146,8 +146,8 @@ return [
             'database' => 0,
         ],*/
 
-        // 'client' => env('REDIS_CLIENT', 'phpredis'),
-        'client' => 'predis',
+        'client' => env('REDIS_CLIENT', 'predis'),
+        // 'client' => 'predis',
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
