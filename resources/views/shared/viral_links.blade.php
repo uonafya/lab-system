@@ -64,9 +64,11 @@
 		Update (In Case of Accidental Deletion)
 	</a> |
 
-	{{ Form::open(['url' => 'viralworksheet/' . $worksheet->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following worksheet?');"]) }}
+    <form action="{{ url('viralworksheet/' . $worksheet->id) }}" method="POST" onSubmit="return confirm('Are you sure you want to delete the following worksheet?');">
+        @csrf
+        @method('DELETE')
         <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-    {{ Form::close() }} 
+    </form>
 
 @else
 @endif

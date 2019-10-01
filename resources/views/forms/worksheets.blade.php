@@ -11,7 +11,8 @@
         @if($create)
 
             @if (isset($worksheet))
-                {{ Form::open(['url' => '/worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                <form action="{{ url('/worksheet/' . $worksheet->id) }}" class="form-horizontal" method="POST" target="_blank">
+                    @method('PUT')
             @else
 
                 <div class="row">
@@ -27,7 +28,7 @@
                     </div>                
                 </div>
             
-                {{ Form::open(['url'=>'/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+                <form action="{{ url('/worksheet') }}" class="form-horizontal" method="POST" target="_blank">
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
@@ -35,6 +36,8 @@
                     <input type="hidden" value="{{ $limit }}" name="limit" >
                 @endif
             @endif
+
+            @csrf
 
             <div class="row">
                 <div class="col-lg-12">
@@ -190,8 +193,7 @@
                     </div>
                 </div>
             </div>
-
-            {{ Form::close() }}
+            </form>
             
         @else
 

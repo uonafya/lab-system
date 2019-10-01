@@ -19,7 +19,7 @@
             <div class="hpanel" style="width: 430px;">
                 <div class="panel-body" style="padding: 20px;">
                     <form class="form-horizontal" method="POST" action="{{ url('login/facility') }}">
-                        {{ csrf_field() }}
+                        @csrf
                         <div class="form-group" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 16px;margin-top: 10px;">
                             <label class="control-label" for="email" style="color: black;margin-bottom: 8px;">Facility:</label>
                                 <select class="form-control" required name="facility_id" id="facility_id">

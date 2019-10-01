@@ -7,7 +7,7 @@
             <div class="hpanel" style="width: 430px;">
                 <div class="panel-body" style="padding: 20px;">
                     <form class="form-horizontal" method="POST" action="{{ route('login') }}">
-                        {{ csrf_field() }}
+                        @csrf
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 0px;">
                             <label class="control-label" for="email" style="color: black;">Email:</label>
                             <div class="input-group m-b">

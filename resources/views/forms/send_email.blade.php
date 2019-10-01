@@ -18,8 +18,8 @@
    <div class="content">
         <div>
 
-        {{ Form::open(['url'=>'/email/preview/' . $email->id, 'method' => 'post', 'class'=>'form-horizontal']) }}
-
+        <form action="{{ url('/email/preview/' . $email->id) }}" class="form-horizontal" method="POST">
+            @csrf
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2">
                     <div class="hpanel">
@@ -47,9 +47,7 @@
                     </div>
                 </div>
             </div>
-
-        {{ Form::close() }}
-
+        </form>
       </div>
     </div>
 

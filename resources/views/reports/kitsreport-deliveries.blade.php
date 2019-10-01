@@ -3,7 +3,8 @@
         Please select the parameters from the options below to generate the Kits Deliveries query.
     </div>
     <div style="margin-top: 2em;">
-    {{ Form::open(['url'=>'/reports/kitdeliveries', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_kits']) }}
+    <form action="{{ url('/reports/kitdeliveries') }}" class="form-horizontal" method="POST" id='reports_kits'>
+        @csrf
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Select Test Type</label>
             <div class="col-sm-9">
@@ -134,6 +135,6 @@
                 <button type="reset" class="btn btn-default">Reset Options</button>
             </center>
         </div>  
-    {{ Form::close() }}
+    </form>
     </div>
 </div>

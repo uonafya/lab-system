@@ -59,7 +59,8 @@
                     </div>
 
                     <div id="allocationForm" style="display: none;">
-                    {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                    <form action="{{ url('/allocation') }}" method="POST" class='form-horizontal'>
+                        @csrf
                         <div class="form-group">
                             <label class="col-sm-4 control-label"><center>Machines:<br><small>(Select Multiple)</small></center></label>
                             <div class="col-sm-8">
@@ -73,7 +74,7 @@
                             </div>
                         </div>
                         <center><button type="submit" name="machine-form" class="btn btn-primary btn-lg" value="true">Proceed to Allocate</button></center>
-                    {{ Form::close() }}
+                    </form>
                     </div>
                     <!-- <div id="allocationForm" style="display: none;">
                         <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">

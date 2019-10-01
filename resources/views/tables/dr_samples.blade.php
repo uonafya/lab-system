@@ -69,7 +69,8 @@
     <br />
     <br />
 
-    {{ Form::open(['url' => 'dr_sample/index', 'method' => 'post', 'class' => 'my_form']) }}
+    <form method="post" action="{{ url('/dr_sample/index') }}" class='my_form'>
+        @csrf
 
         <div class="row">
 
@@ -176,8 +177,7 @@
 
         <br />
         <br />
-
-    {{ Form::close() }}
+    </form>
 
     <div class="row">
         <div class="col-lg-12">
@@ -242,9 +242,11 @@
                                         </td>
                                         <td>
                                             @if(!$sample->worksheet_id)
-                                                {{ Form::open(['url' => 'dr_sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
-                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                                {{ Form::close() }} 
+                                                <form action="{{ url('dr_sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                                </form>
                                             @endif
                                         </td>
                                     </tr>

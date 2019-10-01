@@ -36,8 +36,9 @@
                     <br />
                 @endif
 
-
-                    {{ Form::open(['url' => '/batch/site_approval_group/' . $batch->id, 'method' => 'put', 'id' => 'approve_batch_form', 'class'=>'form-horizontal', ]) }}
+                    <form action="{{ url('/batch/site_approval_group/' . $batch->id) }}" class="form-horizontal" method="POST" id='approve_batch_form'>
+                        @csrf
+                        @method('PUT')
 
                         <input type="hidden" name="received_by" value="{{ auth()->user()->id }}">
 
@@ -229,9 +230,7 @@
                             </div>                        
                         </div>
 
-                    {{ Form::close() }}
-
-
+                    </form>
                 </div>
             </div>
         </div>

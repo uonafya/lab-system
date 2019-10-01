@@ -32,8 +32,9 @@
             <div class="hpanel">
                 @foreach ($data->allocations as $allocation)
                 @if($allocation->approve == 2)
-                {{ Form::open(['url' => '/kitallocation/'. $allocation->id . '/edit', 'method' => 'put', 'class'=>'form-horizontal']) }}
-                @endif
+                <form action="{{ url('/kitallocation/'. $allocation->id . '/edit') }}" class="form-horizontal" method="POST" >
+                    @csrf
+                    @method('PUT')
                 <div class="panel-body">
                     @php
                         if ($allocation->approve == 0) $badge = 'warning';
@@ -133,7 +134,7 @@
                     <center>
                         <button type="submit" name="allocation-form" class="btn btn-primary btn-lg" value="true" style="margin-top: 2em;margin-bottom: 2em; width: 200px; height: 30px;">Save {{ ucfirst(strtolower($globaltesttype)) }} Allocations</button>
                     </center>
-                    {{ Form::close() }}
+                    </form>
                     @endif
                 </div>
                 @endforeach

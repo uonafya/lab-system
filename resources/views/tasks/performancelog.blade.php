@@ -26,7 +26,8 @@
 <div class="row">
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 18%;">
-        {{ Form::open(['url' => '/performancelog', 'method' => 'post', 'class'=>'form-horizontal']) }}
+        <form action="{{ url('/performancelog') }}" method="POST" class='form-horizontal'>
+            @csrf
             @foreach($data->sampletypes as $sampletype)
             <div class="alert alert-warning">
                     <center>
@@ -87,7 +88,7 @@
             <center>
                 <button class="btn btn-success" type="submit" name="submit" value="submit" style="margin-bottom: 3em;margin-top: 1em;font-size: 14px;">Submit Lab Activity Log</button>
             </center>
-        {{ Form::close() }}
+        </form>
         </div>
     </div>
 </div>

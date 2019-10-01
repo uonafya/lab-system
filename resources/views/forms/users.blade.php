@@ -19,11 +19,14 @@
 @section('content')
     <div class="content">
         <div>
+
             @if(isset($user))
-            {{ Form::open(['url' => '/user/' . $user->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+            <form action="{{ url('/user/' . $user->id) }}" class="form-horizontal" method="POST">
+                @method('PUT')
             @else
-            {{ Form::open(['url' => '/user', 'method' => 'post', 'class'=>'form-horizontal']) }}
+            <form action="{{ url('/user') }}" class="form-horizontal" method="POST">
             @endif
+                @csrf
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">
@@ -130,7 +133,7 @@
                         </div>
                     </div>
                 </div>
-            {{ Form::close() }}
+            </form>
         </div>
     </div>
 @endsection

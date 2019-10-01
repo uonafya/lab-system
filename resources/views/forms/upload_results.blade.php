@@ -54,141 +54,143 @@
         @endif
 
         @if(isset($type))
-            {{ Form::open(['url'=>'/viralworksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
+        <form action="{{ url('/viralworksheet/upload/' . $worksheet->id) }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
         @else
-            {{ Form::open(['url'=>'/worksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
+        <form action="{{ url('/worksheet/upload/' . $worksheet->id) }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
         @endif
 
-        <input type="hidden" value="{{ auth()->user()->id }}" name="uploadedby">
-        <input type="hidden" value="{{ date('Y-m-d') }}" name="dateuploaded">
-        <input type="hidden" value="2" name="status_id">
+            @csrf
+            @method('PUT')
+
+            <input type="hidden" value="{{ auth()->user()->id }}" name="uploadedby">
+            <input type="hidden" value="{{ date('Y-m-d') }}" name="dateuploaded">
+            <input type="hidden" value="2" name="status_id">
 
 
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <div class="hpanel">
-                    <div class="panel-heading">
-                        <center>Worksheet Information</center>
-                    </div>
-                    <div class="panel-body">
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Worksheet No</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->id ?? '' }}" disabled>
-                            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <div class="hpanel">
+                        <div class="panel-heading">
+                            <center>Worksheet Information</center>
                         </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Created</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->my_date_format('created_at') ?? '' }}" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Created By</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" required type="text" value="{{ $worksheet->creator->full_name ?? '' }}" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Sorted By</label>
-                            <div class="col-sm-8"><select class="form-control" required name="sortedby" id="sortedby">
-
-                                <option value=""> Select One </option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">
-                                     {{ $user->full_name }}
-                                    </option>
-                                @endforeach
-
-                            </select></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Run By</label>
-                            <div class="col-sm-8"><select class="form-control" name="runby" id="runby">
-                                
-                                <option value=""> Select One </option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">
-                                     {{ $user->full_name }}
-                                    </option>
-                                @endforeach
-
-                            </select></div>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>
-
-                        @if($worksheet->machine_type == 2)
+                        <div class="panel-body">
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date of Testing (if not set, the default is today)</label>
+                                <label class="col-sm-4 control-label">Worksheet No</label>
                                 <div class="col-sm-8">
-                                    <div class="input-group date">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="daterun" class="form-control" name="daterun">
+                                    <input class="form-control" required type="text" value="{{ $worksheet->id ?? '' }}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date Created</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" required type="text" value="{{ $worksheet->my_date_format('created_at') ?? '' }}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Created By</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" required type="text" value="{{ $worksheet->creator->full_name ?? '' }}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Sorted By</label>
+                                <div class="col-sm-8"><select class="form-control" required name="sortedby" id="sortedby">
+
+                                    <option value=""> Select One </option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">
+                                         {{ $user->full_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Run By</label>
+                                <div class="col-sm-8"><select class="form-control" name="runby" id="runby">
+                                    
+                                    <option value=""> Select One </option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">
+                                         {{ $user->full_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select></div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            @if($worksheet->machine_type == 2)
+
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Date of Testing (if not set, the default is today)</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input type="text" id="daterun" class="form-control" name="daterun">
+                                        </div>
+                                    </div>                            
+                                </div>
+
+                                <p>The file must be an excel file eg {{ $worksheet->id }}.xlsx </p>
+
+
+                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                    <div class="form-control" data-trigger="fileinput">
+                                        <i class="glyphicon glyphicon-file fileinput-exists"></i> 
+                                        <span class="fileinput-filename"></span>
                                     </div>
-                                </div>                            
-                            </div>
-
-                            <p>The file must be an excel file eg {{ $worksheet->id }}.xlsx </p>
-
-
-                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                                <div class="form-control" data-trigger="fileinput">
-                                    <i class="glyphicon glyphicon-file fileinput-exists"></i> 
-                                    <span class="fileinput-filename"></span>
+                                    <span class="input-group-addon btn btn-default btn-file">
+                                        <span class="fileinput-new">Select Excel</span>
+                                        <span class="fileinput-exists">Change</span>
+                                        <input id="upload" type="file" required accept=".xlsx, .xls, .csv" name="upload" >
+                                    </span>
+                                    <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                                 </div>
-                                <span class="input-group-addon btn btn-default btn-file">
-                                    <span class="fileinput-new">Select Excel</span>
-                                    <span class="fileinput-exists">Change</span>
-                                    <input id="upload" type="file" required accept=".xlsx, .xls, .csv" name="upload" >
-                                </span>
-                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-                            </div>
 
 
-                        @else
-                            <p>The file must be a csv file eg {{ $worksheet->id }}.csv </p>
+                            @else
+                                <p>The file must be a csv file eg {{ $worksheet->id }}.csv </p>
 
 
-                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                                <div class="form-control" data-trigger="fileinput">
-                                    <i class="glyphicon glyphicon-file fileinput-exists"></i> 
-                                    <span class="fileinput-filename"></span>
+                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                    <div class="form-control" data-trigger="fileinput">
+                                        <i class="glyphicon glyphicon-file fileinput-exists"></i> 
+                                        <span class="fileinput-filename"></span>
+                                    </div>
+                                    <span class="input-group-addon btn btn-default btn-file">
+                                        <span class="fileinput-new">Select CSV</span>
+                                        <span class="fileinput-exists">Change</span>
+                                        <input id="upload" type="file" required accept=".csv" name="upload" >
+                                    </span>
+                                    <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                                 </div>
-                                <span class="input-group-addon btn btn-default btn-file">
-                                    <span class="fileinput-new">Select CSV</span>
-                                    <span class="fileinput-exists">Change</span>
-                                    <input id="upload" type="file" required accept=".csv" name="upload" >
-                                </span>
-                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+
+
+
+                            @endif
+
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <button class="btn btn-success" type="submit">Submit</button>
+                                </div>
                             </div>
 
 
-
-                        @endif
-
-
-                        <div class="hr-line-dashed"></div>
-
-                        <div class="form-group">
-                            <div class="col-sm-8 col-sm-offset-4">
-                                <button class="btn btn-success" type="submit">Submit</button>
-                            </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
-        </div>
-
-        {{ Form::close() }}
+        </form>
 
       </div>
     </div>
