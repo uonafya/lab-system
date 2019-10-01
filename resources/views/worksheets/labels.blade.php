@@ -45,10 +45,10 @@ width:1180px;
 		<table border="0" class="data-table" align='center'>
 			@foreach($samples as $sample)
 				<tr>
-					<td align="center">
+					<td >
 						<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
 						<br />
-						{{ $sample->id }}
+						<div align="center"> {{ $sample->id }} </div> 
 					</td>
 				</tr>
 			@endforeach				
