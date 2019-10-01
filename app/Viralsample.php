@@ -284,5 +284,24 @@ class Viralsample extends BaseModel
     }
 
 
+
+    /**
+     * Get the sample's previous worksheet
+     *
+     * @return string
+     */
+    public function getPrevWorksheetAttribute()
+    {
+        if($this->run < 2) return null;
+        else{
+            if($this->run == 2) $this->prev_run = $this->parent;
+            else{
+                $this->prev_run = Viralsample::where(['parentid' => $this->parentid, 'run' => $this->run-1])->first();
+            }
+            return $this->prev_run->worksheet_id;
+        }
+    }
+
+
     
 }

@@ -39,14 +39,14 @@
                             </div>
                         </div> 
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label class="col-sm-4 control-label">Lab Name
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
                                 <input class="form-control" required type="text" name="labname" value="{{ $lab->labname ?? null }}">
                             </div>
-                        </div> 
+                        </div>  -->
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Lab Location
