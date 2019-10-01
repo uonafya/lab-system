@@ -36,11 +36,7 @@ width:1180px;
 }
 
 </STYLE> 
-<body 
-	@isset($print)
-		onLoad="JavaScript:window.print();"
-	@endisset
->
+<body onLoad="JavaScript:window.print();">
 	<div align="center">
 		<table border="0" class="data-table" align='center'>
 			@foreach($samples as $sample)
