@@ -42,7 +42,6 @@
 
 	@if($batch->site_entry != 2)
 		Regards, <br />
-		{{ $batch->lab->labname }} <br />
 		{{ $batch->lab->name }}  <br />
 		{{ $batch->lab->lablocation }} <br />
 		{{ $batch->lab->labtel1 }}  <br />

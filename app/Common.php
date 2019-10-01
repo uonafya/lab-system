@@ -548,15 +548,17 @@ class Common
 	        $mail_array = ['joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com'];
 	        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
+	        if(!$mail_array) continue;
+
 			$samples = $sampleview_class::whereRaw($q)
 						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' => 0])
 						->get();
 
 			try {				
-				$comm = new CriticalResults($facility, $type, $samples, $dt);
+				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
 				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
 			} catch (Exception $e) {
-				
+				// dd($e->getMessage());
 			}
 		}
 	}
