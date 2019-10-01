@@ -238,6 +238,142 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+    public static function to_ampath()
+    {
+        $path = public_path('afya_transitioned_sites.csv');
+        config(['excel.import.heading' => true]);
+        $facilities = Excel::load($path, function($reader){})->get();
+
+        $rows = [];
+        $un = [];
+
+        foreach ($facilities as $fac) {
+            $f = \App\Facility::locate($fac->mfl_code)->first();
+            if(!$f){
+                $un[] = $fac;
+                continue;
+                // dd($fac);
+            }
+            
+            $b = \App\Batch::create(['site_entry' => 0, 'user_id' => 0, 'facility_id' => $f->id, 'lab_id' => env('APP_LAB')]);
+            $row = [];
+            foreach ($fac as $key => $value) {
+                $row[$key] = $value;
+            }
+            $row['Batch Number'] = $b->id;
+            $rows[] = $row;
+        }
+        // dd($un);
+
+        $file = "afya_transitioned_sites_with_batch_numbers";
+        
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+        $data = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($data, 'Afya Transitioned Sites With Batch Numbers'));
+
+        // dd($facilities);
+
+    }
+
+    public static function merge_patients()
+    {
+        $path = public_path('duplicate_clients.csv');
+        config(['excel.import.heading' => true]);
+        $patients = Excel::load($path, function($reader){})->get();
+
+        $rows = [];
+        $un = [];
+
+        $skip = 0;
+
+        foreach ($patients as $key => $pat1) {
+            if($skip){
+                $skip--;
+                continue;
+            }
+
+            $ps = $counts = [];
+            $ps[] = $pat1;
+            $current_key = $key;
+
+            while(true){
+                $current_key++;
+                $pat = $patients[$current_key] ?? null;
+                if(!$pat || $pat->person_id != $pat1->person_id) break;
+                $skip++;
+                $ps[] = $pat;
+            }
+
+            foreach ($ps as $p) {
+                $counts[] = \App\Viralsample::where(['patient_id' => $p->id, 'repeatt' => 0])->count();
+            }
+
+            $max_key = array_keys($ps, max($ps))[0];
+            $patient = \App\Viralpatient::where(['patient' => $ps[$max_key]->patient_id])->first();
+
+            if(!$patient) {
+                // echo "\nError at {$key}: ";
+                // print_r($ps);
+                continue;
+            }
+
+            foreach ($ps as $pkey => $p) {
+                if($pkey == $max_key) continue;
+
+                $old_patient = \App\Viralpatient::where(['patient' => $p->patient_id])->first();
+
+                if(!$old_patient){
+                    // echo "\nError at {$key}: Could not find patient {$p->patient_id}.";
+                    continue;
+                }
+
+                $samples = \App\Viralsample::where(['patient_id' => $old_patient->id])->get();
+                foreach ($samples as $s) {
+                    $s->patient_id = $patient->id;
+                    $s->pre_update();
+                }
+            }
+        }
+
+        /*foreach ($patients as $key => $pat1) {
+            $pat2 = $patients[$key+1] ?? null;
+            if(!$pat2) break;
+
+            $p1 = \App\Viralpatient::where(['patient' => $pat1->patient_id])->first();
+            $p2 = \App\Viralpatient::where(['patient' => $pat2->patient_id])->first();
+
+            // if(!$p1 || !$p2 || $p1->facility_id != $p2->facility_id) continue;
+            if(!$p1 || !$p2 || $pat1->person_id != $pat2->person_id) continue;
+
+            $s1 = \App\Viralsample::where(['patient_id' => $p1->id, 'repeatt' => 0])->count();
+            $s2 = \App\Viralsample::where(['patient_id' => $p2->id, 'repeatt' => 0])->count();
+
+            $patient_id = null;
+
+            if($s1 > $s2){
+                $samples = \App\Viralsample::where(['patient_id' => $p2->id])->get();
+                $patient_id = $p1->id;
+            }
+            else{
+                $samples = \App\Viralsample::where(['patient_id' => $p1->id])->get();
+                $patient_id = $p2->id;
+
+            }
+
+            foreach ($samples as $s) {
+                $s->patient_id = $patient_id;
+                $s->pre_update();
+            }
+        }*/
+        // dd($un);
+    }
+
     public static function enter_samples()
     {
     	$file = public_path('machakos.csv');
