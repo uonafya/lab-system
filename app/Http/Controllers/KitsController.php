@@ -9,6 +9,8 @@ use App\Allocation;
 use App\AllocationDetail;
 use App\AllocationDetailsBreakdown;
 
+use Mpdf\Mpdf;
+
 class KitsController extends Controller
 {    
 	/**
@@ -173,6 +175,7 @@ class KitsController extends Controller
                                     });
         
         $data = (object)[
+            'parent_allocation' => $allocation,
             'allocations' => $allocation_details,
             'last_year' => $this->last_year,
             'last_month' => $this->last_month,
@@ -200,6 +203,35 @@ class KitsController extends Controller
         session(['toast_message' => 'Allocation(s) edited successfully.']);
         \App\Synch::synch_allocations_updates();
         return redirect('reports/kits');
+    }
+
+    public function printallocation(Allocation $allocation, $testtype)
+    {
+        $type = strtoupper($testtype);
+        if (!($type == 'EID' || $type == 'VL' || $type == 'CONSUMABLES')) abort(404);
+        $allocation_details = $allocation->details->when($type, function($details) use ($type){
+                                        if ($type == 'EID')
+                                            return $details->where('testtype', 1);
+                                        if ($type == 'VL')
+                                            return $details->where('testtype', 2);
+                                        if ($type == 'CONSUMABLES')
+                                                return $details->where('testtype', NULL);
+                                    });
+        
+        $data = [
+            'parent_allocation' => $allocation,
+            'allocations' => $allocation_details,
+            'last_year' => $this->last_year,
+            'last_month' => $this->last_month,
+            'testtype' => $type,
+        ];
+        $fileName = strtoupper($type . ' ALLOCATION PRINTOUT ' . $this->last_year . ' '. date('F', mktime(null, null, null, $this->last_month)));
+        // return view('exports.mpdf_allocation', $data);
+        $mpdf = new Mpdf();
+        $view_data = view('exports.mpdf_allocation', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($fileName.'.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        // return view('exports.mpdf_allocation', compact('data'));
     }
 
     // public function 

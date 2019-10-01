@@ -322,6 +322,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('reports/kitdeliveries', 'KitsController@kits');
 	Route::get('report/allocation/{allocation?}/{type?}/{approval?}', 'KitsController@allocation')->name('report.allocation');
 	Route::put('kitallocation/{allocation}/edit', 'KitsController@editallocation');
+	Route::get('printallocation/{allocation}/{testtype}', 'KitsController@printallocation');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');
