@@ -318,8 +318,8 @@ class Random
             $patient = \App\Viralpatient::where(['patient' => $ps[$max_key]->patient_id])->first();
 
             if(!$patient) {
-                echo "\nError at {$key}: ";
-                print_r($ps);
+                // echo "\nError at {$key}: ";
+                // print_r($ps);
                 continue;
             }
 
@@ -329,7 +329,7 @@ class Random
                 $old_patient = \App\Viralpatient::where(['patient' => $p->patient_id])->first();
 
                 if(!$old_patient){
-                    echo "\nError at {$key}: Could not find patient {$p->patient_id}.";
+                    // echo "\nError at {$key}: Could not find patient {$p->patient_id}.";
                     continue;
                 }
 
