@@ -9,6 +9,11 @@
 	<a href="{{ url('viralworksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet->id}}?');">		
 		Cancel
 	</a> | 
+	@if(env('APP_LAB') == 1)
+		<a href="{{ url('viralworksheet/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
+			Print Labels
+		</a> | 
+	@endif
 	
 	@if($worksheet->machine_type == 2)
 		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" target='_blank'>

@@ -211,6 +211,12 @@ class ViralworksheetController extends Controller
         }
     }
 
+    public function labels(Viralworksheet $worksheet)
+    {
+        $samples = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples]);
+    }
+
     public function find(Viralworksheet $worksheet)
     {
         session(['toast_message' => 'Found 1 worksheet.']);
