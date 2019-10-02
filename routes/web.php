@@ -410,6 +410,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('user/add', 'UserController@create')->name('user.add');
 		Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 		Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
+		Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
 	});
 	Route::resource('user', 'UserController');	
 
@@ -477,6 +478,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('create/{machine_type}/{limit?}', 'WorksheetController@create')->name('create_any');
 			Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
+			Route::get('labels/{worksheet}', 'WorksheetController@labels')->name('labels');
 			Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
 			Route::get('convert/{machine_type}/{worksheet}', 'WorksheetController@convert_worksheet')->name('convert');
 
@@ -506,6 +508,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('create/{sampletype}/{machine_type?}/{calibration?}/{limit?}/{entered_by?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
+			Route::get('labels/{worksheet}', 'ViralworksheetController@labels')->name('labels');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
 			Route::get('convert/{worksheet}/{machine_type}/', 'ViralworksheetController@convert_worksheet')->name('convert');
 

@@ -480,3 +480,9 @@ Artisan::command('get:linelist', function(){
     $this->info($str);
 });
 //Quick fixes
+
+Artisan::command('alloc', function(){
+    $str = \App\Synch::sendAllocationReviewEmail();
+    $this->info($str);
+});
+

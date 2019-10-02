@@ -16,7 +16,7 @@ class UserController extends Controller
      **/
     public function index()
     {
-        $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access','Action']);
+        $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
         $row = "";
 
         $users = User::select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')->where('users.user_type_id', '<>', 5)->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
@@ -26,13 +26,18 @@ class UserController extends Controller
             $passreset = url("user/passwordReset/$id");
             $statusChange = url("user/status/$id");
             $delete = url("user/delete/$id");
+            $alocationNotificationStatus = ($value->allocation_notification == 1) ? "<span class='badge badge-success'>YES</span>" : '';
+            $allocationNotificationDate = (null !== $value->allocation_notification_date) ? date('l, d F Y', strtotime($value->allocation_notification_date)) : '';
+            $allocationLinkText = ($value->allocation_notification == 0) ? 'Set' : 'Remove';
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
             $row .= '<td>'.$value->full_name.'</td>';
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
-            $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a></td>';
+            $row .= '<td>'.date('l, d F Y', strtotime($value->last_access)).'</td>';
+            $row .= '<td>'. $alocationNotificationStatus .'</td>';
+            $row .= '<td>'. $allocationNotificationDate .'</td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
         }
 
@@ -213,6 +218,20 @@ class UserController extends Controller
             $user = self::__unHashUser($id);
             return view('forms.passwordReset', compact('user'))->with('pageTitle', 'Password Reset');
         }
+    }
+
+    public function allocationcontact(User $user)
+    {
+        $text = '';
+        if ($user->allocation_notification == 0){
+            $user->allocation_notification = 1;
+        } else {
+            $user->allocation_notification = 0;
+            $text = 'not';
+        }
+        $user->save();
+        session(['toast_message' => $user->full_name . ' will ' . $text . ' be receiving allocation notifications']);
+        return back();
     }
 
     private static function __unHashUser($hashed){
