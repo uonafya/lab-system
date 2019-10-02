@@ -188,6 +188,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
+            'debug' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -207,10 +208,11 @@ class Synch
 
 	public static function get_token()
 	{
-		if(Cache::store('file')->has('api_token')){}
-		else{
-			self::login();
-		}
+		self::login();
+		// if(Cache::store('file')->has('api_token')){}
+		// else{
+		// 	self::login();
+		// }
 		return Cache::store('file')->get('api_token');
 	}
 
@@ -604,7 +606,7 @@ class Synch
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
-
+		dd(self::get_token());
 		while (true) {
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
 			
