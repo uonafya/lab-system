@@ -605,7 +605,7 @@ class Synch
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
-		dd(self::get_token());
+		
 		while (true) {
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
 			
