@@ -620,7 +620,7 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
-					'allocations' => $allocations->toArray(),
+					'allocations' => $allocations->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 
@@ -1563,7 +1563,7 @@ class Synch
 		self::$to = $toAllocationDate;
 		// return self::$users;
 		self::sendAllocationReviewSms();
-		// self::sendAllocationReviewEmail();
+		self::sendAllocationReviewEmail();
 		// if (self::$allocationReactionCounts->approved > 0)
 		// 	Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
 		// 	// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
@@ -1613,7 +1613,6 @@ class Synch
 
 	private static function sendAllocationReviewEmail()
 	{
-		
-
+		Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview(self::$allocationReactionCounts));
 	}
 }
