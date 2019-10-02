@@ -187,8 +187,8 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'auth/login', [
-            'http_errors' => true,
-            'debug' => true,
+            'http_errors' => false,
+            'debug' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -208,11 +208,10 @@ class Synch
 
 	public static function get_token()
 	{
-		self::login();
-		// if(Cache::store('file')->has('api_token')){}
-		// else{
-		// 	self::login();
-		// }
+		if(Cache::store('file')->has('api_token')){}
+		else{
+			self::login();
+		}
 		return Cache::store('file')->get('api_token');
 	}
 
