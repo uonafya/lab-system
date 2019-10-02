@@ -643,8 +643,9 @@ class Synch
 							foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
 								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
 								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);
-								if (isset($allocationDetailBreakdownUpdate))
+								if (isset($allocationDetailBreakdownUpdate)){
 									// $allocationDetailBreakdownUpdate->update($breakdown_update_data);
+								}
 							}
 						}
 					}
