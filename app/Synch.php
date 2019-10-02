@@ -608,7 +608,7 @@ class Synch
 		
 		while (true) {
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
-			
+			print_r($allocations);die();
 			if($allocations->isEmpty())
 				break;
 			
