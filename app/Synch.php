@@ -612,12 +612,13 @@ class Synch
 				break;
 			
 			$response = $client->request('post', $url, [
+				'debug' => true,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
-					'allocations' => $allocations->toJson(),
+					'allocations' => $allocations->toArray(),
 					'lab_id' => env('APP_LAB', null),
 				],
 
