@@ -612,6 +612,7 @@ class Synch
 				break;
 			
 			$response = $client->request('post', $url, [
+				'http_errors' => false,
 				'debug' => true,
 				'headers' => [
 					'Accept' => 'application/json',
@@ -623,9 +624,9 @@ class Synch
 				],
 
 			]);
-			
+			print_r($response);die();
 			$body = json_decode($response->getBody());
-			print_r($body);die();
+			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
 				$allocationUpdate = Allocation::find($value->original_allocation_id);
