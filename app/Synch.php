@@ -187,8 +187,8 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'auth/login', [
-            'http_errors' => false,
-            'debug' => false,
+            'http_errors' => true,
+            'debug' => true,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
