@@ -614,7 +614,7 @@ class Synch
 			
 			$response = $client->request('post', $url, [
 				'http_errors' => false,
-				'debug' => true,
+				'debug' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -627,7 +627,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			print_r($response);die();
+			print_r($body);die();
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
 				$allocationUpdate = Allocation::find($value->original_allocation_id);
