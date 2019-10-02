@@ -627,7 +627,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			print_r($body);
+			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
 				$allocationUpdate = Allocation::find($value->original_allocation_id);
@@ -639,7 +639,7 @@ class Synch
 						if (isset($allocationDetailUpdate)) {
 							$allocationDetailUpdate->update($detail_update_data);
 							
-							foreach ($detailvalue->breakdown as $key => $breakdownvalue) {
+							foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
 								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
 								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);
 								if (isset($allocationDetailBreakdownUpdate))
