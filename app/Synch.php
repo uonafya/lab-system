@@ -608,7 +608,7 @@ class Synch
 		
 		while (true) {
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
-			print_r($allocations);die();
+			
 			if($allocations->isEmpty())
 				break;
 			
@@ -638,7 +638,7 @@ class Synch
 						$allocationDetailUpdate = AllocationDetail::find($detailvalue->original_allocation_detail_id);
 						if (isset($allocationDetailUpdate)) {
 							$allocationDetailUpdate->update($detail_update_data);
-							print_r($detailvalue);die();
+							
 							foreach ($detailvalue->breakdown as $key => $breakdownvalue) {
 								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
 								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);

@@ -414,7 +414,6 @@ class TaskController extends Controller
             } else { // Save the allocations from the previous if section
                 $saveAllocation = $this->saveAllocation($request);
                 $synch = Synch::synch_allocations();
-                dd("After Synch");
                 return redirect()->route('pending');
             }
         }
