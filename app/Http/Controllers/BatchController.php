@@ -282,7 +282,7 @@ class BatchController extends Controller
 
     public function labels(Batch $batch)
     {
-        $samples = SampleView::select('id')->where(['batch_id' => $batch->id, 'repeatt' => 0])->where('receivedstatus', '!=', 2)->get();
+        $samples = SampleView::select('id')->where(['batch_id' => $batch->id])->where('receivedstatus', '!=', 1)->where('receivedstatus', '!=', 2)->get();
         return view('worksheets.labels', ['samples' => $samples]);
     }
 
