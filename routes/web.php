@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
 		Route::get('site_approval_group/{batch}', 'BatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
+		Route::get('labels/{batch}', 'BatchController@labels');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
@@ -171,6 +172,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
 		Route::get('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
+		Route::get('labels/{batch}', 'ViralbatchController@labels');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 

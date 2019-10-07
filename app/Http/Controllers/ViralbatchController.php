@@ -281,6 +281,12 @@ class ViralbatchController extends Controller
         return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }
 
+    public function labels(Viralbatch $batch)
+    {
+        $samples = SampleView::select('id')->where(['batch_id' => $batch->id, 'repeatt' => 0])->where('receivedstatus', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples]);
+    }
+
     public function transfer(Viralbatch $viralbatch)
     {
         $viralsamples = $viralbatch->sample;
