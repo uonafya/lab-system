@@ -292,6 +292,7 @@ class FacilityController extends Controller
             session(['toast_error' => 1, 'toast_message'=>'The facility that you are trying to create already exists.']);
             return back();            
         }
+        if(!$fac->DHIScode) $fac->DHIScode = '';
         $facility->save();
 
         session(['toast_message'=>'Facility Created Successfully']);
