@@ -292,7 +292,6 @@ class FacilityController extends Controller
             session(['toast_error' => 1, 'toast_message'=>'The facility that you are trying to create already exists.']);
             return back();            
         }
-        if(!$facility->DHIScode) $facility->DHIScode = '';
         foreach ($facility->toArray() as $key => $value) {
             if(!$value) unset($facility->$key);
         }
