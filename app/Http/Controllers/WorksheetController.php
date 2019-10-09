@@ -559,6 +559,7 @@ class WorksheetController extends Controller
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
                     ->where('worksheet_id', $worksheet->id) 
+                    ->where('site_entry', '!=', 2) 
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
