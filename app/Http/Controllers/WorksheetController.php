@@ -203,6 +203,12 @@ class WorksheetController extends Controller
         }
     }
 
+    public function labels(Worksheet $worksheet)
+    {
+        $samples = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples]);
+    }
+
     public function find(Worksheet $worksheet)
     {
         session(['toast_message' => 'Found 1 worksheet.']);
@@ -553,6 +559,7 @@ class WorksheetController extends Controller
                     ->with(['approver', 'final_approver'])
                     ->select('samples.*', 'batches.facility_id')
                     ->where('worksheet_id', $worksheet->id) 
+                    ->where('site_entry', '!=', 2) 
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');

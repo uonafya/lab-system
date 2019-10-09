@@ -12,7 +12,7 @@ class BaseModel extends Model
     // protected $historyLimit = 500; 
     
     // protected $guarded = ['created_at'];
-    protected $guarded = [];
+    protected $guarded = ['id'];
     // protected $hidden = [];
 
     protected static function boot()
@@ -97,6 +97,15 @@ class BaseModel extends Model
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 
         return $full_link;
+    }
+
+    public function get_prop_name($coll, $attr, $attr2='name')
+    {
+        if(!$this->$attr) return '';
+        foreach ($coll as $value) {
+            if($value->id == $this->$attr) return $value->$attr2;
+        }
+        return '';
     }
     
 

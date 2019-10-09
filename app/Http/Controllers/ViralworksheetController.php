@@ -23,9 +23,10 @@ class ViralworksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples.id) AS samples_no, users.surname, users.oname')
-            ->leftJoin('viralsamples', 'viralsamples.worksheet_id', '=', 'viralworksheets.id')
+        $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples_view.id) AS samples_no, users.surname, users.oname')
+            ->leftJoin('viralsamples_view', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id')
             ->join('users', 'users.id', '=', 'viralworksheets.createdby')
+            ->where('site_entry', '!=', 2)
             ->when($worksheet_id, function ($query) use ($worksheet_id){
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
@@ -209,6 +210,12 @@ class ViralworksheetController extends Controller
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
+    }
+
+    public function labels(Viralworksheet $worksheet)
+    {
+        $samples = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples]);
     }
 
     public function find(Viralworksheet $worksheet)
@@ -696,7 +703,8 @@ class ViralworksheetController extends Controller
         $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
                     ->with(['approver', 'final_approver'])
                     ->select('viralsamples.*', 'viralbatches.facility_id')
-                    ->where('worksheet_id', $worksheet->id) 
+                    ->where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
                         if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
@@ -846,7 +854,6 @@ class ViralworksheetController extends Controller
     {
         return MiscViral::dump_worksheet($worksheet->id);
     }
-
 
 
 

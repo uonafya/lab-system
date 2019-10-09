@@ -19,6 +19,12 @@
 		</a> |
 	@endif
 
+	@if(in_array(env('APP_LAB'), [1, 5]))
+		<a href="{{ url('worksheet/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
+			Print Labels
+		</a> | 
+	@endif
+
 	<a href="{{ url('worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet->id}}?');">		
 		Cancel
 	</a> | 

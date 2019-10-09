@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('site_approval/{batch}', 'BatchController@site_entry_approval');
 		Route::get('site_approval_group/{batch}', 'BatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'BatchController@site_entry_approval_group_save');
+		Route::get('labels/{batch}', 'BatchController@labels');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
@@ -171,6 +172,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('site_approval/{batch}', 'ViralbatchController@site_entry_approval');
 		Route::get('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group');
 		Route::put('site_approval_group/{batch}', 'ViralbatchController@site_entry_approval_group_save');
+		Route::get('labels/{batch}', 'ViralbatchController@labels');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
 
@@ -209,6 +211,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('district', 'DistrictController');
 
 	// Start of Drug Resistance Routes
+
+	Route::post('dr_report', 'DrReportController@reports');
 
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 		Route::group(['middleware' => ['utype:5']], function () {
@@ -285,6 +289,9 @@ Route::middleware(['auth'])->group(function(){
 			Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
 		});
 		Route::resource('email', 'EmailController');
+
+		Route::get('lab', 'RandomController@labcontacts')->name('lab.edit');
+		Route::put('lab', 'RandomController@savelabcontact')->name('lab.update');
 
 		Route::resource('muser', 'MuserController');
 	});
@@ -471,6 +478,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('create/{machine_type}/{limit?}', 'WorksheetController@create')->name('create_any');
 			Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
+			Route::get('labels/{worksheet}', 'WorksheetController@labels')->name('labels');
 			Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
 			Route::get('convert/{machine_type}/{worksheet}', 'WorksheetController@convert_worksheet')->name('convert');
 
@@ -500,6 +508,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('create/{sampletype}/{machine_type?}/{calibration?}/{limit?}/{entered_by?}', 'ViralworksheetController@create')->name('create_any');		
 			Route::get('find/{worksheet}', 'ViralworksheetController@find')->name('find');
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
+			Route::get('labels/{worksheet}', 'ViralworksheetController@labels')->name('labels');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
 			Route::get('convert/{worksheet}/{machine_type}/', 'ViralworksheetController@convert_worksheet')->name('convert');
 

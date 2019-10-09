@@ -271,6 +271,37 @@ class Viralsample extends BaseModel
         return "<small>{$str}</small>";
     }
 
+    public function release_redraw()
+    {   
+        $this->labcomment = "Failed Test";
+        $this->repeatt = 0;
+        $this->result = "Collect New Sample";
+        $this->approvedby = auth()->user()->id;
+        $this->approvedby2 = auth()->user()->id;
+        $this->dateapproved = date('Y-m-d');
+        $this->dateapproved2 = date('Y-m-d');
+        $this->save();
+    }
+
+
+
+    /**
+     * Get the sample's previous worksheet
+     *
+     * @return string
+     */
+    public function getPrevWorksheetAttribute()
+    {
+        if($this->run < 2) return null;
+        else{
+            if($this->run == 2) $this->prev_run = $this->parent;
+            else{
+                $this->prev_run = Viralsample::where(['parentid' => $this->parentid, 'run' => $this->run-1])->first();
+            }
+            return $this->prev_run->worksheet_id;
+        }
+    }
+
 
     
 }

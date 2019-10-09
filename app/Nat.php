@@ -385,4 +385,49 @@ class Nat
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	} 
 
+	public static function gt_k()
+	{
+		ini_set('memory_limit', '-1');
+		$data = [];
+
+		$sql = "SELECT v.patient AS `ccc_number`, v.patient_name, v.dob AS `date_of_birth`, v.age, g.gender, v.initiation_date AS `date_enrolled`, v.dateinitiatedonregimen AS `start_regimen_date`, vr.name AS `current_regimen`, v.result AS `VL>1000`
+				FROM viralsamples_view v
+				RIGHT JOIN 
+				(
+					SELECT id, patient_id, max(datetested) as maxdate
+					FROM viralsamples_view
+					WHERE datetested BETWEEN '2017-07-01' AND '2019-06-30'
+					AND patient != '' AND patient != 'null' AND patient is not null
+					AND flag=1 AND repeatt=0 AND result > 1000
+					AND justification != 10 and facility_id != 7148
+					AND prophylaxis=1
+					GROUP BY patient_id
+				) gv
+				ON v.id=gv.id
+				LEFT JOIN gender g on g.id=v.sex
+				LEFT JOIN viralregimen vr on vr.id=v.prophylaxis
+
+		";
+
+		$rows = DB::select($sql);
+
+		foreach ($rows as $key => $row) {
+			// $data[] = $row->toArray();
+			$data[] = get_object_vars($row);
+		}
+
+		$file = "data";
+		
+		Excel::create($file, function($excel) use($data){
+			$excel->sheet('Sheetname', function($sheet) use($data) {
+				$sheet->fromArray($data);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+
+	}
+
 }

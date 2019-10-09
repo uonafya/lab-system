@@ -10,9 +10,9 @@ $api->version('v1', function (Router $api) {
         $api->group(['prefix' => 'auth'], function(Router $api) {
             $api->post('signup', 'SignUpController@signUp');
 
-            $api->group(['middleware' => 'api.throttle', 'limit' => 1, 'expires' => 1], function(Router $api) {
+            // $api->group(['middleware' => 'api.throttle', 'limit' => 1, 'expires' => 1], function(Router $api) {
                 $api->post('login', 'LoginController@login');
-            });
+            // });
 
             $api->post('recovery', 'ForgotPasswordController@sendResetEmail');
             $api->post('reset', 'ResetPasswordController@resetPassword');
@@ -67,9 +67,9 @@ $api->version('v1', function (Router $api) {
             $api->post('crag', 'CragController@partial');
             // $api->post('crag_complete', 'CragController@complete_result');
 
-            $api->group(['middleware' => 'api.throttle', 'limit' => 100, 'expires' => 1], function(Router $api) {
+            // $api->group(['middleware' => 'api.throttle', 'limit' => 100, 'expires' => 1], function(Router $api) {
                 $api->post('function', 'FunctionController@data_functions');
-            });
+            // });
             
         // });
     });
