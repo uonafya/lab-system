@@ -50,13 +50,15 @@ width:1180px;
 								</span>
 							</div>
 						@endif
-							<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
+						<div align="center">
+							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
 							@if(in_array(env('APP_LAB'), [5]))
 								height="50" width="250"
 							@else
 								height="30" width="80"
 							@endif
 							   />
+						</div>
 						<br />
 						<div align="center">Lab ID: {{ $sample->id }} </div> 
 					</td>
