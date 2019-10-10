@@ -51,7 +51,13 @@ width:1180px;
 							</div>
 						@endif
 						<div align="center">
-							<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+							<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
+							@if(in_array(env('APP_LAB'), [5]))
+								height="6" width="16"
+							@else
+								height="30" width="80"
+							@endif
+							   />
 						</div>
 						<br />
 						<div align="center"> {{ $sample->id }} </div> 
