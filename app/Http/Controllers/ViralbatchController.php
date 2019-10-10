@@ -283,7 +283,7 @@ class ViralbatchController extends Controller
 
     public function labels(Viralbatch $batch)
     {
-        $samples = ViralsampleView::select('id')->where(['batch_id' => $batch->id])->where('repeatt', '!=', 1)->whereRaw('(receivedstatus IS NULL or receivedstatus=1)')->get();
+        $samples = ViralsampleView::where(['batch_id' => $batch->id])->where('repeatt', '!=', 1)->whereRaw('(receivedstatus IS NULL or receivedstatus=1)')->get();
         return view('worksheets.labels', ['samples' => $samples]);
     }
 
