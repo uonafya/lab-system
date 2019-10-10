@@ -45,7 +45,7 @@ width:1180px;
 						@if(in_array(env('APP_LAB'), [5]))
 							<div align="center">
 								<span style="font-size: 12px;">
-									Date Ordered{{ $sample->datecollected }} <br />
+									Date Ordered: {{ $sample->datecollected }} <br />
 									Patient ID: {{ $sample->patient }} <br />
 								</span>
 							</div>
@@ -53,7 +53,7 @@ width:1180px;
 						<div align="center">
 							<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
 							@if(in_array(env('APP_LAB'), [5]))
-								height="40" width="100"
+								height="50" width="200"
 							@else
 								height="30" width="80"
 							@endif
