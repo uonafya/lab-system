@@ -46,7 +46,9 @@ width:1180px;
 							<div align="center"> {{ $sample->patient }} </div> <br />
 							<div align="center"> Date Collected: {{ $sample->datecollected }} </div> <br />
 						@endif
-						<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+						<div align="center">
+							<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+						</div>
 						<br />
 						<div align="center"> {{ $sample->id }} </div> 
 					</td>
