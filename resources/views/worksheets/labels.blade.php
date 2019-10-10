@@ -33,7 +33,7 @@
 							   />
 						<!-- </div> -->
 						<br />
-						/*<div align="center" style="font-size: 12px;"> </div> */
+						<!-- <div align="center" style="font-size: 12px;"> </div>  -->
 						<span style="font-size: 12px;"> Lab ID: {{ $sample->id }} </span>
 					<!-- </td> -->
 				<!-- </tr> -->
