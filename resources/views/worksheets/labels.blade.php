@@ -44,6 +44,7 @@ width:1180px;
 					<td >
 						@if(in_array(env('APP_LAB'), [5]))
 							<div align="center"> {{ $sample->patient }} </div> <br />
+							<div align="center"> Date Collected: {{ $sample->datecollected }} </div> <br />
 						@endif
 						<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
 						<br />
