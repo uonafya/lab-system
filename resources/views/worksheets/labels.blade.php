@@ -44,7 +44,7 @@ width:1180px;
 					<td >
 						@if(in_array(env('APP_LAB'), [5]))
 							<div align="center">
-								<span style="font-size: 8px;">
+								<span style="font-size: 10px;">
 									{{ $sample->patient }} <br />
 									{{ $sample->datecollected }} <br />
 								</span>
@@ -53,7 +53,7 @@ width:1180px;
 						<div align="center">
 							<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
 							@if(in_array(env('APP_LAB'), [5]))
-								height="6" width="16"
+								height="40" width="100"
 							@else
 								height="30" width="80"
 							@endif
