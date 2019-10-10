@@ -44,7 +44,7 @@ width:1180px;
 					<td >
 						@if(in_array(env('APP_LAB'), [5]))
 							<div align="center">
-								<span style="font-size: 12px;">
+								<span style="font-size: 14px;">
 									Date Ordered: {{ $sample->datecollected }} <br />
 									Patient ID: {{ $sample->patient }} <br />
 								</span>
