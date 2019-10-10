@@ -1,13 +1,14 @@
 <html>
-<link rel="stylesheet" type="text/css" href="{{ asset('css/worksheet_style.css') }}" media="screen" />
+<head>
+	
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="{{ asset('css/worksheet_style.css') }}" media="screen" />
 
 
-<style type="text/css">
-     P.breakhere {page-break-before: always}
-
-}
-
-</style> 
+	<style type="text/css">
+	    P.breakhere {page-break-before: always}
+	</style> 
+</head>
 <body onLoad="JavaScript:window.print();">
 	<div align="center">
 		<table border="0" class="data-table">
