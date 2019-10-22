@@ -405,7 +405,6 @@ class Nat
 				ON v.id=gv.id
 				LEFT JOIN gender g on g.id=v.sex
 				LEFT JOIN viralregimen vr on vr.id=v.prophylaxis
-
 		";
 
 		$rows = DB::select($sql);
