@@ -396,7 +396,7 @@ class Nat
 				(
 					SELECT id, patient_id, max(datetested) as maxdate
 					FROM viralsamples_view
-					WHERE datetested BETWEEN '2017-07-01' AND '2019-06-30'
+					WHERE datetested BETWEEN '2016-07-01' AND '2019-06-30'
 					AND patient != '' AND patient != 'null' AND patient is not null
 					AND flag=1 AND repeatt=0 AND result > 1000
 					AND justification != 10 and facility_id != 7148
@@ -416,7 +416,7 @@ class Nat
 			$data[] = get_object_vars($row);
 		}
 
-		$file = "data";
+		$file = "three_years_nonsuppressed";
 		
 		Excel::create($file, function($excel) use($data){
 			$excel->sheet('Sheetname', function($sheet) use($data) {
