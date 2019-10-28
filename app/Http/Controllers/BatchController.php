@@ -280,6 +280,12 @@ class BatchController extends Controller
         return view('tables.batch_details', $data)->with('pageTitle', 'Batches');
     }
 
+    public function labels(Batch $batch)
+    {
+        $samples = SampleView::where(['batch_id' => $batch->id])->where('repeatt', '!=', 1)->whereRaw('(receivedstatus IS NULL or receivedstatus=1)')->get();
+        return view('worksheets.labels', ['samples' => $samples]);
+    }
+
     public function transfer(Batch $batch)
     {
         $samples = $batch->sample;
