@@ -19,7 +19,7 @@
 		</a> |
 	@endif
 
-	@if(in_array(env('APP_LAB'), [1, 5]))
+	@if(in_array(env('APP_LAB'), [1, 4, 5]))
 		<a href="{{ url('worksheet/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
 			Print Labels
 		</a> | 
