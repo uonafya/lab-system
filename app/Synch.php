@@ -154,15 +154,16 @@ class Synch
 		return false;
 	}
 
-	public static function clean_emails()
+	public static function clean_emails($base = 'https://api.mailgun.net/v3/nascop.or.ke/complaints', $iter=0)
 	{
-		$base = 'https://api.mailgun.net/v3/nascop.or.ke/complaints';
+		// $base = 'https://api.mailgun.net/v3/nascop.or.ke/complaints';
 		$client = new Client(['base_uri' => $base]);
 		$response = $client->request('get', '', [
 			'auth' => ['api', env('MAIL_API_KEY')],
 		]);
 		$body = json_decode($response->getBody());
 		if($response->getStatusCode() > 399) return false;
+		// dd($body);
 
 		$emails = [];
 
@@ -175,6 +176,8 @@ class Synch
 
 		\App\FacilityContact::whereIn('email', $emails)->update(['email' => null]);
 		\App\FacilityContact::whereIn('ContactEmail', $emails)->update(['ContactEmail' => null]);
+		if($iter > 200) die();
+		self::clean_emails($body->next, $iter++);
 	}
 
 	public static function login()
