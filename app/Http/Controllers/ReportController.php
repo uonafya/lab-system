@@ -453,7 +453,7 @@ class ReportController extends Controller
         $kits->whereYear('datereceived', $year);
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
-
+        
         $report = $model->get();
         $kits = $kits->get();
         $tests = $tests->first()->tests;
@@ -466,6 +466,7 @@ class ReportController extends Controller
         $newdata = [];
         $prevnewdata = [];
         $kitsdata = [];
+        // dd($data);
         foreach ($data->parent as $parentkey => $parentvalue) {
             foreach ($data->child as $childkey => $childvalue) {
                 $newdata[$parentvalue.$childvalue->alias] = 0;
