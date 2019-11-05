@@ -56,7 +56,8 @@ class Common
 
     public static function test_email()
     {
-        Mail::to(['joelkith@gmail.com'])->send(new TestMail());
+        // Mail::to(['joelkith@gmail.com'])->send(new TestMail());
+        Mail::to(['aaron.mbowa@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@clintonhealthaccess.org', 'joel.kithinji@dataposit.co.ke'])->send(new TestMail());
     }
 
     public static function get_misc_class($type)
