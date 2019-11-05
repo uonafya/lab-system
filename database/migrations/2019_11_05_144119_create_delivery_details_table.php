@@ -14,11 +14,15 @@ class CreateDeliveryDetailsTable extends Migration
     public function up()
     {
         Schema::create('delivery_details', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->bigInteger('national_id')->nullable();
             $table->bigInteger('delivery_id');
             $table->integer('kit_id');
-            $table0->string('kit_type', 100);
+            $table->string('kit_type', 100);
+            $table->string('lotno')->nullable();
+            $table->date('expiry')->nullable();
+            $table->integer('received');
+            $table->integer('damaged');
             $table->tinyInteger('synched')->default(0);
             $table->dateTime('datesynched')->nullable();
             $table->softDeletes();

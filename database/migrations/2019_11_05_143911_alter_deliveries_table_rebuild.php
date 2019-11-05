@@ -15,7 +15,7 @@ class AlterDeliveriesTableRebuild extends Migration
     {
         Schema::dropIfExists('deliveries');
         Schema::create('deliveries', function(Blueprint $table){
-            $table->bigIncrements();
+            $table->bigIncrements('id');
             $table->bigInteger('national_id')->nullable();
             $table->tinyInteger('quarter')->comment('This is the quarter in which the delivery was done');
             $table->integer('year')->comment('This is the quarter in which the delivery was done');
@@ -24,7 +24,7 @@ class AlterDeliveriesTableRebuild extends Migration
             $table->tinyInteger('labfrom')->nullable()->comment("If Source is lab");
             $table->tinyInteger('lab_id');
             $table->bigInteger('receivedby');
-            $table->dete('datereceived');
+            $table->date('datereceived');
             $table->bigInteger('enteredby');
             $table->date('dateentered');
             $table->tinyInteger('synched')->default(0);
