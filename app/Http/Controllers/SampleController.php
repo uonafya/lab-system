@@ -177,7 +177,7 @@ class SampleController extends Controller
         $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
         $mother->fill($data);
 
-        if(env('APP_LAB') == 4) $mother->ccc_no = $fac->facilitycode . '/' . $mother->ccc_no;
+        if(env('APP_LAB') == 4 && !starts_with($mother->ccc_no, $fac->facilitycode)) $mother->ccc_no = $fac->facilitycode . '/' . $mother->ccc_no;
 
         $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->first();
         if($viralpatient) $mother->patient_id = $viralpatient->id;
