@@ -20,6 +20,8 @@ class AlterDeliveriesTableRebuild extends Migration
             $table->tinyInteger('quarter')->comment('This is the quarter in which the delivery was done');
             $table->integer('year')->comment('This is the quarter in which the delivery was done');
             $table->tinyInteger('type')->nullable()->comment("Indicates if this is an EID, VL, Consumable delivery");
+            $table->tinyInteger('source')->default('3')->comment('Default source is KEMSA');
+            $table->tinyInteger('labfrom')->nullable()->comment("If Source is lab");
             $table->tinyInteger('lab_id');
             $table->bigInteger('receivedby');
             $table->dete('datereceived');
