@@ -17,7 +17,7 @@
 			@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
 			<div class="row">
 			@endif
-				<div @if(in_array(env('APP_LAB'), [4])) class="col-xs-5" @else class="col-xs-12" @endif >
+				<div @if(in_array(env('APP_LAB'), [4])) class="col-xs-6" @else class="col-xs-12" @endif >
 					<div align="center">
 						@if(in_array(env('APP_LAB'), [5]))								
 							<span style="font-size: 12px;">
@@ -48,7 +48,7 @@
 
 			@if(!$loop->last)
 				@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
-					<p class="breakhere"></p>
+					<div class="breakhere"></div>
 				@endif
 			@endif
 		@endforeach	
