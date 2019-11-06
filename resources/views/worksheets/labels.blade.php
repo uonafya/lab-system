@@ -2,6 +2,7 @@
 <head>
 	
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/worksheet_style.css') }}" media="screen" />
 
 
@@ -10,14 +11,14 @@
 	</style> 
 </head>
 <body onLoad="JavaScript:window.print();">
-	<div align="center">
-		<table border="0" class="data-table">
+	<div class="container" align="center">
+		<!-- <table border="0" class="data-table"> -->
 			@foreach($samples as $key => $sample)
 				@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
-				<tr>
+				<div class="row">
 				@endif
-					<td >
-						<div align="center">
+					<!-- <td > -->
+						<div @if(in_array(env('APP_LAB'), [4])) class="col-md-6" @else class="col-md-12" @endif >
 							@if(in_array(env('APP_LAB'), [5]))								
 								<span style="font-size: 12px;">
 									Date Ordered: {{ $sample->datecollected }} <br />
@@ -34,9 +35,9 @@
 							<br />
 							<span style="font-size: 12px;"> Lab ID: {{ $sample->id }} </span>
 						</div>
-					</td>
+					<!-- </td> -->
 				@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
-				</tr>
+				</div>
 				@endif
 
 				@if(!$loop->last)
@@ -45,7 +46,11 @@
 					@endif
 				@endif
 			@endforeach				
-		</table>
+		<!-- </table> -->
 	</div>
 </body>
+
+<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ asset('vendor/jquery-ui/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 </html>
