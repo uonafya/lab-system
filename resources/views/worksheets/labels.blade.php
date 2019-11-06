@@ -24,7 +24,7 @@
 								Patient ID: {{ $sample->patient }} <br />
 							</span>
 						@endif
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
+						<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
 						@if(in_array(env('APP_LAB'), [5]))
 							height="50" width="250"
 						@else
