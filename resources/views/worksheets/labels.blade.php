@@ -16,7 +16,7 @@
 			@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
 			<div class="row">
 			@endif
-				<div @if(in_array(env('APP_LAB'), [4])) class="col-sm-6" @else class="col-sm-12" @endif >
+				<div @if(in_array(env('APP_LAB'), [4])) class="col-md-6" @else class="col-md-12" @endif >
 					<div align="center">
 						@if(in_array(env('APP_LAB'), [4, 5]))								
 							<span style="font-size: 12px;">
@@ -24,7 +24,7 @@
 								Patient ID: {{ $sample->patient }} <br />
 							</span>
 						@endif
-						<img align="middle" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
 						@if(in_array(env('APP_LAB'), [5]))
 							height="50" width="250"
 						@else
