@@ -16,18 +16,20 @@
 		@foreach($samples as $key => $sample)
 			@if(in_array(env('APP_LAB'), [4]))
 				@if(($key % 2) == 2)
-				<div class="row">
+				<table><tr>
 				@endif
 
-				<div align="left">
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
-					<br />
-					<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>					
-				</div>
+				<td>
+					<div align="center">
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						<br />
+						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
+					</div>			
+				</td>
 
 
 				@if(($key % 2) == 1)
-				</div>
+				</tr></table>
 				<div class="breakhere"></div>
 				@endif
 
