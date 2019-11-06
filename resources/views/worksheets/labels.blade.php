@@ -41,7 +41,7 @@
 
 				@if(!$loop->last)
 					@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
-						<div class="breakhere"></div>
+						<p class="breakhere"></p>
 					@endif
 				@endif
 			@endforeach				
