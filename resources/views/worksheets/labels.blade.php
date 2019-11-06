@@ -21,7 +21,7 @@
 						@if(in_array(env('APP_LAB'), [4, 5]))								
 							<span style="font-size: 12px;">
 								Date Ordered: {{ $sample->datecollected }} <br />
-								Patient ID: {{ $sample->patient ?? 'PT' }} <br />
+								Patient ID: {{ $sample->patient }} <br />
 							</span>
 						@endif
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
