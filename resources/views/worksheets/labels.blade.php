@@ -18,9 +18,15 @@
 			@endif
 				<div @if(in_array(env('APP_LAB'), [4])) class="col-md-6" @else class="col-md-12" @endif >
 					<div align="center">
-						@if(in_array(env('APP_LAB'), [4, 5]))								
+						@if(in_array(env('APP_LAB'), [5]))								
 							<span style="font-size: 12px;">
 								Date Ordered: {{ $sample->datecollected }} <br />
+								Patient ID: {{ $sample->patient }} <br />
+							</span>
+						@endif
+						@if(in_array(env('APP_LAB'), [4]))								
+							<span style="font-size: 8px;">
+								Date Collected: {{ $sample->datecollected }} <br />
 								Patient ID: {{ $sample->patient }} <br />
 							</span>
 						@endif
