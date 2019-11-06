@@ -10,7 +10,7 @@
 	</style> 
 </head>
 <body onLoad="JavaScript:window.print();">
-	<!-- <div align="center"> -->
+	<div align="center">
 		<table border="0" class="data-table">
 			@foreach($samples as $key => $sample)
 				@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
@@ -46,6 +46,6 @@
 				@endif
 			@endforeach				
 		</table>
-	<!-- </div> -->
+	</div>
 </body>
 </html>
