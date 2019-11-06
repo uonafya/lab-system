@@ -11,42 +11,38 @@
 	</style> 
 </head>
 <body onLoad="JavaScript:window.print();">
-	<div class="container" align="center">
-		<!-- <table border="0" class="data-table"> -->
-			@foreach($samples as $key => $sample)
-				@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
-				<div class="row">
-				@endif
-					<!-- <td > -->
-						<div @if(in_array(env('APP_LAB'), [4])) class="col-md-6" @else class="col-md-12" @endif >
-							@if(in_array(env('APP_LAB'), [5]))								
-								<span style="font-size: 12px;">
-									Date Ordered: {{ $sample->datecollected }} <br />
-									Patient ID: {{ $sample->patient }} <br />
-								</span>
-							@endif
-								<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
-								@if(in_array(env('APP_LAB'), [5]))
-									height="50" width="250"
-								@else
-									height="30" width="80"
-								@endif
-								   />
-							<br />
-							<span style="font-size: 12px;"> Lab ID: {{ $sample->id }} </span>
-						</div>
-					<!-- </td> -->
-				@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
-				</div>
-				@endif
-
-				@if(!$loop->last)
-					@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
-						<p class="breakhere"></p>
+	<div class="container">
+		@foreach($samples as $key => $sample)
+			@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
+			<div class="row">
+			@endif
+				<div @if(in_array(env('APP_LAB'), [4])) class="col-md-6" @else class="col-md-12" @endif >
+					@if(in_array(env('APP_LAB'), [5]))								
+						<span style="font-size: 12px;">
+							Date Ordered: {{ $sample->datecollected }} <br />
+							Patient ID: {{ $sample->patient }} <br />
+						</span>
 					@endif
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"
+						@if(in_array(env('APP_LAB'), [5]))
+							height="50" width="250"
+						@else
+							height="30" width="80"
+						@endif
+						   />
+					<br />
+					<span style="font-size: 12px;"> Lab ID: {{ $sample->id }} </span>
+				</div>
+			@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
+			</div>
+			@endif
+
+			@if(!$loop->last)
+				@if((($key % 2) == 1) || !in_array(env('APP_LAB'), [4]))
+					<p class="breakhere"></p>
 				@endif
-			@endforeach				
-		<!-- </table> -->
+			@endif
+		@endforeach	
 	</div>
 </body>
 
