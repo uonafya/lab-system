@@ -21,6 +21,7 @@
 
 				<td>
 					<div align="left">
+						<span style="font-size: 11px;"> Patient ID: {{ $sample->patient }} </span>	<br />
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
 						<br />
 						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
