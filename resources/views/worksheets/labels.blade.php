@@ -35,7 +35,16 @@
 				@endif
 
 				@if(($key % 2) == 0 && $loop->last)
-				<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table>
+
+				<td>
+					<div align="left">
+						<span style="font-size: 8px;"> P.ID: {{ $sample->patient }} </span>	
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						<br />
+						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
+					</div>			
+				</td>
+				</tr></table>
 				@endif
 
 
