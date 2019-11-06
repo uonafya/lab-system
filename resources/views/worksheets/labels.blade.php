@@ -15,7 +15,7 @@
 	<div class="container">
 		@foreach($samples as $key => $sample)
 			@if(in_array(env('APP_LAB'), [4]))
-				@if(($key % 2) == 2)
+				@if(($key % 2) == 0)
 				<table><tr>
 				@endif
 
