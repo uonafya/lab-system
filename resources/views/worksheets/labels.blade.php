@@ -14,7 +14,7 @@
 	<div class="container">
 		@foreach($samples as $key => $sample)
 			@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
-			<div class="row" style="margin-top:2px;">
+			<div class="row" style="margin-top:5px;">
 			@endif
 				<div @if(in_array(env('APP_LAB'), [4])) class="col-sm-6" @else class="col-sm-12" @endif >
 					<div align="center">
