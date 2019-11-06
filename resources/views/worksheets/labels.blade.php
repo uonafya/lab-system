@@ -10,7 +10,8 @@
 	    .breakhere {page-break-before: always}
 	</style> 
 </head>
-<body onLoad="JavaScript:window.print();">
+<!-- <body onLoad="JavaScript:window.print();"> -->
+<body >
 	<div class="container">
 		@foreach($samples as $key => $sample)
 			@if((($key % 2) == 2) || !in_array(env('APP_LAB'), [4]))
@@ -57,4 +58,11 @@
 <script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/jquery-ui/jquery-ui.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+<script type="text/javascript">
+	
+    $(document).ready(function(){
+    	window.print();
+    });
+</script>
 </html>
