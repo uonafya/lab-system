@@ -21,7 +21,7 @@
 
 				<td>
 					<div align="left">
-						<span style="font-size: 8px;"> Patient ID:<br /> {{ $sample->patient }} </span>	
+						<span style="font-size: 8px;"> P.ID: {{ $sample->patient }} </span>	
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
 						<br />
 						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
@@ -33,6 +33,12 @@
 				</tr></table>
 				<div class="breakhere"></div>
 				@endif
+
+				@if(($key % 2) == 0 && $loop->last)
+				<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table>
+				@endif
+
+
 
 			@else
 				<div class="row" align="center">
