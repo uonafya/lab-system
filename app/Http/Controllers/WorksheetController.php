@@ -205,7 +205,7 @@ class WorksheetController extends Controller
 
     public function labels(Worksheet $worksheet)
     {
-        $samples = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
+        $samples = SampleView::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
         return view('worksheets.labels', ['samples' => $samples]);
     }
 
