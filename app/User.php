@@ -194,4 +194,9 @@ class User extends Authenticatable implements JWTSubject
         // $eid_sampels = \App\Sample::
     }
 
+    public function notifiedAllocation()
+    {
+        return $this->where('allocation_notification', 1);
+    }
+
 }
