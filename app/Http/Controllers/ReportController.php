@@ -19,6 +19,7 @@ use App\ViewFacility;
 use App\Lab;
 use App\Batch;
 use App\Viralbatch;
+use App\Kits;
 
 class ReportController extends Controller
 {
@@ -392,8 +393,13 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
-        // dd($request->all());
         $data = [];
+        $kitsdisplay = Kits::when($request, function ($query) use ($request){
+                            if ($request->input('platform') == 'abbott')
+                                return $query->where('machine_id', '=', 2);
+                            else 
+                                return $query->where('machine_id', '=', 1);
+                        })->get();
         $platform = $request->input('platform');
         if ($platform == 'abbott') {
             $model = Abbotprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
@@ -453,9 +459,9 @@ class ReportController extends Controller
         $kits->whereYear('datereceived', $year);
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
-
+        
         $report = $model->get();
-        $kits = $kits->get();
+        $kits = $kits->get()->first();
         $tests = $tests->first()->tests;
         
         $data = json_decode(json_encode([
@@ -463,55 +469,59 @@ class ReportController extends Controller
                     'child' => $sub,
                     'kitsuffix' => self::$suffix
                 ]));
+        
         $newdata = [];
         $prevnewdata = [];
         $kitsdata = [];
-        foreach ($data->parent as $parentkey => $parentvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                $newdata[$parentvalue.$childvalue->alias] = 0;
-                $prevnewdata[$parentvalue.$childvalue->alias] = 0;
-            }
-        }
-        foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                $kitsdata[$childvalue->alias.$kitsuffixvalue] = 0;
-                $kitsdata[$childvalue->alias.'lotno'] = '';
-            }
-        }
+        // dd($data);
+        // foreach ($data->parent as $parentkey => $parentvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         $newdata[$parentvalue.$childvalue->alias] = 0;
+        //         $prevnewdata[$parentvalue.$childvalue->alias] = 0;
+        //     }
+        // }
+        // foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         $kitsdata[$childvalue->alias.$kitsuffixvalue] = 0;
+        //         $kitsdata[$childvalue->alias.'lotno'] = '';
+        //     }
+        // }
 
-        foreach ($data->parent as $parentkey => $parentvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                foreach ($report as $reportkey => $reportvalue) {
-                    $column = $parentvalue.$childvalue->alias;
-                    if ($month == $reportvalue->month) {
-                        $newdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
-                    } else if ($previousMonth == $reportvalue->month) {
-                        $prevnewdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
-                    }
-                }
-            }
-        }
-        foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                foreach ($kits as $kitskey => $kitsvalue) {
-                    $column = $childvalue->alias.$kitsuffixvalue;
-                    $columnlot = $childvalue->alias.'lotno';
-                    $kitsdata[$childvalue->alias.$kitsuffixvalue] += $kitsvalue->$column;
-                    $kitsdata[$childvalue->alias.'lotno'] .= $kitsvalue->$columnlot;
-                }
-            }
-        }
+        // foreach ($data->parent as $parentkey => $parentvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         foreach ($report as $reportkey => $reportvalue) {
+        //             $column = $parentvalue.$childvalue->alias;
+        //             if ($month == $reportvalue->month) {
+        //                 $newdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
+        //             } else if ($previousMonth == $reportvalue->month) {
+        //                 $prevnewdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
+        //             }
+        //         }
+        //     }
+        // }
+        // foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         foreach ($kits as $kitskey => $kitsvalue) {
+        //             $column = $childvalue->alias.$kitsuffixvalue;
+        //             $columnlot = $childvalue->alias.'lotno';
+        //             $kitsdata[$childvalue->alias.$kitsuffixvalue] += $kitsvalue->$column;
+        //             $kitsdata[$childvalue->alias.'lotno'] .= $kitsvalue->$columnlot;
+        //         }
+        //     }
+        // }
         $viewdata = (object)[
-                        'reports' => $newdata,
-                        'prevreport' => $prevnewdata,
-                        'kitsreport' => $kitsdata,
+                        'reports' => $report->where('month', $month)->first(),
+                        // 'prevreport' => $prevnewdata,
+                        'prevreport' => $report->where('month', $previousMonth)->first(),
+                        'kitsreport' => $kits,
                         'tests' => $tests,
                         'type' => $type,
                         'platform' => $platform,
                         'month' => $monthName,
-                        'year' => $year
+                        'year' => $year,
+                        'kits' => $kitsdisplay,
                     ];
-        
+        // dd($viewdata);
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
