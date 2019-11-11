@@ -2112,28 +2112,105 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public static function backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested) {
+        $procClass = self::getProcurementClass($plartform);
+        if ($procClass->consumption::where('month', $month)->where('year', $year)->get()->isEmpty()){
+            $prevMonth = ($month - 1);
+            $prevYear = $year;
+            $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->first();
+            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
+            $prefices = ['wasted','issued','request','pos','ending'];
+            $consumption = $procClass->consumption;
+            $testsModel = ($testtype == 1) ? SampleCompleteView::class : ViralsampleCompleteView::class;
+            $testsModel = $testsModel::whereMonth('datetested', $month)->whereYear('datetested', $year)
+                            ->with(['worksheets' => function($query) use ($consumption){
+                                $query->when($consumption, function($innerquery) use ($consumption){
+                                    $classname = get_class($consumption);
+                                    if ($classname == "App\Abbotprocurement")
+                                        return $innerquery->where('machine', '=', 2);
+                                    else
+                                        return $innerquery->whereIn('machine', '=', [1, 3]);
+                                });
+                            }])->where('repeatt', 0)->count();
+            $consumption->year = $year;
+            $consumption->month = $month;
+            $consumption->testtype = $testtype;
+            $consumption->tests = $testsModel;
+            $consumption->datesubmitted = date('Y-m-d');
+            $consumption->submittedBy = 88;
+            $consumption->lab_id = env('APP_LAB');
+            foreach ($procClass->kits as $key => $kit) {
+                $kit = (object)$kit;
+                $alias = $kit->alias;
+                $factor = $kit->factor;
+                $classname = get_class($consumption);
+                if ($classname == "App\Abbotprocurement"){
+                    if (!($factor = $kit->factor['EID']))
+                        $factor = $kit->factor['VL'];
+                }
+                
+                
+                $received = $deliveries->$alias ?? 0;
+                foreach ($prefices as $key => $prefix) {
+                    $column = $prefix.$alias;
+                    $beginning = $prevConsumption->column ?? 0;
+                    $used = ($used * $factor);
+                    if ($prefix == 'wasted'){
+                       $wasted = ($wasted * $factor);
+                       $consumption->$column = $wasted;
+                    }
+                    if ($prefix == 'issued'){
+                       $negative = ($negAdj * $factor);
+                       $consumption->$column = $negative;
+                    }
+                    if ($prefix == 'request'){
+                       $requested = ($requested * $factor);
+                       $consumption->$column = $requested;
+                    }
+                    if ($prefix == 'pos'){
+                       $positive = ($posAdj * $factor);
+                       $consumption->$column = $positive;
+                    }
+
+                }
+                $ending = (($beginning + $received + $positive) - ($negative + $wasted + $used));
+                $column = 'ending'.$alias;
+                $consumption->$column = ($ending < 0) ? 0 : $ending;
+            }    
+            $consumption->save();
+        }
+        echo "==> DOne back-dating";
+    }
+
 	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {
-		if ($plartform == 1) {
-			$consumption = Taqmanprocurement::class;
-			$kits = (object)self::$taqmanKits;
-		} else if ($plartform == 2) {
-			$consumption = Abbotprocurement::class;
-			$kits = (object)self::$abbottKits;
-		}
-		$consumptions = $consumption::findOrFail($id);
+		$procClass = self::getProcurementClass($plartform);
+		$consumptions = $procClass->consumption::findOrFail($id);
 		if ((int)$ending > 0) 
-			self::adjust_procurement_numbers($consumptions, $ending, $kits, 'ending');
+			self::adjust_procurement_numbers($consumptions, $ending, $procClass->kits, 'ending');
 		if ((int)$wasted > 0)
-			self::adjust_procurement_numbers($consumptions, $wasted, $kits, 'wasted');
+			self::adjust_procurement_numbers($consumptions, $wasted, $procClass->kits, 'wasted');
 		if ((int)$issued > 0) 
-			self::adjust_procurement_numbers($consumptions, $issued, $kits, 'issued');
+			self::adjust_procurement_numbers($consumptions, $issued, $procClass->kits, 'issued');
 		if ((int)$request > 0)
-			self::adjust_procurement_numbers($consumptions, $request, $kits, 'request');
+			self::adjust_procurement_numbers($consumptions, $request, $procClass->kits, 'request');
 		if ((int)$pos > 0)
-			self::adjust_procurement_numbers($consumptions, $pos, $kits, 'pos');
+			self::adjust_procurement_numbers($consumptions, $pos, $procClass->kits, 'pos');
 		if($consumptions->isDirty());
 			$consumptions->pre_update();
 	}
+
+    protected static function getProcurementClass($plartform) {
+        if ($plartform == 1) {
+            $consumption = new Taqmanprocurement;
+            $deliveries = new Taqmandeliveries;
+            $kits = (object)self::$taqmanKits;
+        } else if ($plartform == 2) {
+            $consumption = new Abbotprocurement;
+            $deliveries = new Abbotdeliveries;
+            $kits = (object)self::$abbottKits;
+        }
+        return (object)['consumption' => $consumption, 'deliveries' => $deliveries, 'kits' => $kits,];
+    }
 
 	protected static function adjust_procurement_numbers(&$model, $qualquantity, $kits, $type) {
 		$qualkitvalue = 0;
