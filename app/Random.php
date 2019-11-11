@@ -2114,6 +2114,7 @@ class Random
 
     public static function backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested) {
         $procClass = self::getProcurementClass($plartform);
+        dd($procClass->consumption::where('month', $month)->where('year', $year)->get());
         if ($procClass->consumption::where('month', $month)->where('year', $year)->get()->isEmpty()){
             $prevMonth = ($month - 1);
             $prevYear = $year;
