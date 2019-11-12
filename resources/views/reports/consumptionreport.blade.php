@@ -76,7 +76,7 @@
                                     $requested = 'request'.$kit->alias;
 
                                     // Calculations
-                                    $receivedQty = ($viewdata->kitsreport->$recevied - $viewdata->kitsreport->$damaged);
+                                    $receivedQty = (($viewdata->kitsreport->$recevied ?? 0) - ($viewdata->kitsreport->$damaged ?? 0));
 
                                     if ($kit->alias == 'qualkit') {
                                         $testfactor = json_decode($kit->testFactor);
