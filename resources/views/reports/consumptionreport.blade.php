@@ -89,15 +89,15 @@
                                         $consumed = ($qualkit * $factor);
                                     }
                                 @endphp
-                                <td>{{ $viewdata->prevreport->$begining }}</td>
+                                <td>{{ $viewdata->prevreport->$begining ?? 0 }}</td>
                                 <td>{{ $receivedQty }}</td>
-                                <td>{{ $viewdata->kitsreport->$lotno }}</td>
-                                <td>{{ $consumed }}</td>
-                                <td>{{ $viewdata->reports->$wastage }}</td>
-                                <td>{{ $viewdata->reports->$positiveAdj }}</td>
-                                <td>{{ $viewdata->reports->$negativeAdj }}</td>
-                                <td>{{ $viewdata->reports->$ending }}</td>
-                                <td>{{ $viewdata->reports->$requested }}</td>
+                                <td>{{ $viewdata->kitsreport->$lotno ?? '' }}</td>
+                                <td>{{ $consumed ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$wastage ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$positiveAdj ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$negativeAdj ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$ending ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$requested ?? 0 }}</td>
                                 {{-- <td>
                                 @if($sub->alias == 'qualkit')
                                     @php
@@ -108,9 +108,9 @@
                                     {{ $sub->name }}
                                 @endif
                                 </td>
-                                <td>{{ $viewdata->prevreport['ending'.$sub->alias] }}</td>
-                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
-                                <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
+                                <td>{{ $viewdata->prevreport['ending'.$sub->alias] ?? '' }}</td>
+                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] ?? '' }}</td>
+                                <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] ?? '' }}</td>
                                 <td>
                                     @if($viewdata->platform == 'abbott')
                                         @if($viewdata->type == 'EID')
