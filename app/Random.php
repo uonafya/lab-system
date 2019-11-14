@@ -2162,11 +2162,12 @@ class Random
             $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
             $prefices = ['wasted','issued','request','pos','ending'];
             echo "\t Get test data\n";
+            $consumptionClass = $procClass->consumption;
             $testsModel = ($testtype == 1) ? SampleCompleteView::class : ViralsampleCompleteView::class;
             $testsModel = $testsModel::whereMonth('datetested', $month)->whereYear('datetested', $year)
-                            ->with(['worksheets' => function($query) use ($consumption){
-                                $query->when($consumption, function($innerquery) use ($consumption){
-                                    $classname = get_class($consumption);
+                            ->with(['worksheets' => function($query) use ($consumptionClass){
+                                $query->when($consumptionClass, function($innerquery) use ($consumptionClass){
+                                    $classname = get_class($consumptionClass);
                                     if ($classname == "App\Abbotprocurement")
                                         return $innerquery->where('machine', '=', 2);
                                     else
@@ -2174,7 +2175,10 @@ class Random
                                 });
                             }])->where('repeatt', 0)->count();
             echo "\t Computing qual kits\n";
-            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $testsModel, $wasted, $posAdj, $negAdj, $requested);
+            $kit = (object)collect($procClass->kits)->first();
+            $typetest = ($testtype == 1) ? 'EID' : 'VL';
+            $testFactor = $kit->testFactor[$typetest];
+            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, @($testsModel/$testFactor), $wasted, $posAdj, $negAdj, $requested);
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
             
