@@ -2161,11 +2161,7 @@ class Random
             echo "\t Getting deliveries made\n";
             $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
             $prefices = ['wasted','issued','request','pos','ending'];
-            echo "\t Computing qual kits\n";
-            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $used, $wasted, $posAdj, $negAdj, $requested);
-            echo "\t Computing other kits\n";
-            $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
-            
+            echo "\t Get test data\n";
             $testsModel = ($testtype == 1) ? SampleCompleteView::class : ViralsampleCompleteView::class;
             $testsModel = $testsModel::whereMonth('datetested', $month)->whereYear('datetested', $year)
                             ->with(['worksheets' => function($query) use ($consumption){
@@ -2177,6 +2173,11 @@ class Random
                                         return $innerquery->whereIn('machine', '=', [1, 3]);
                                 });
                             }])->where('repeatt', 0)->count();
+            echo "\t Computing qual kits\n";
+            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $testsModel, $wasted, $posAdj, $negAdj, $requested);
+            echo "\t Computing other kits\n";
+            $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
+            
             $consumption->year = $year;
             $consumption->month = $month;
             $consumption->testtype = $testtype;
