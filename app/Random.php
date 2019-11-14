@@ -2112,16 +2112,60 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    private static function computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $used, $wasted, $posAdj, $negAdj, $requested)
+    {
+        $consumption = $procClass->consumption;
+        $beginning = $prevConsumption->endingqualkit;
+        // dd($prevConsumption);
+        $received = (isset($deliveries)) ? ($deliveries->qualkitreceived - $deliveries->qualkitdamaged) : 0;
+        $positive = (int) $posAdj;$negative = (int) $negAdj;$wasted = (int) $wasted;$used = (int) $used;$requested = (int) $requested;
+        $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
+        $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
+        foreach ($prefices as $key => $prefix) {
+            $column = $prefix.'qualkit';
+            $consumption->$column = $data[$prefix];
+        }
+        return $consumption;
+    }
+
+    private static function computeOtherKits($prefices, $kits, $consumption)
+    {
+        foreach ($prefices as $key => $prefix) {
+            $qualkit = 0;
+            foreach ($kits as $key => $kit) {
+                $kit = (object)$kit;
+                $column = $prefix.$kit->alias;
+                if ($kit->alias == 'qualkit'){
+                    $qualkit = $consumption->$column;
+                }
+                $factor = $kit->factor;
+                $classname = get_class($consumption);
+                if ($classname == "App\Abbotprocurement"){
+                    if (!($factor = $kit->factor['EID']))
+                        $factor = $kit->factor['VL'];
+                }
+                $consumption->$column = round(($qualkit * $factor),2);
+            }
+        }
+        return $consumption;
+    }
+
     public static function backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested) {
         $procClass = self::getProcurementClass($plartform);
-        // dd($procClass->consumption::where('month', $month)->where('year', $year)->where('testtype', $testtype)->get());
+        echo "==> Checking existing record\n";
         if ($procClass->consumption::where('month', $month)->where('year', $year)->where('testtype', $testtype)->get()->isEmpty()){
             $prevMonth = ($month - 1);
             $prevYear = $year;
-            $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->first();
+            echo "\t Getting previous month consumptions\n";
+            $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->where('testtype', $testtype)->first();
+            echo "\t Getting deliveries made\n";
             $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
             $prefices = ['wasted','issued','request','pos','ending'];
-            $consumption = $procClass->consumption;
+            echo "\t Computing qual kits\n";
+            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $used, $wasted, $posAdj, $negAdj, $requested);
+            echo "\t Computing other kits\n";
+            $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
+            
             $testsModel = ($testtype == 1) ? SampleCompleteView::class : ViralsampleCompleteView::class;
             $testsModel = $testsModel::whereMonth('datetested', $month)->whereYear('datetested', $year)
                             ->with(['worksheets' => function($query) use ($consumption){
@@ -2140,47 +2184,12 @@ class Random
             $consumption->datesubmitted = date('Y-m-d');
             $consumption->submittedBy = 88;
             $consumption->lab_id = env('APP_LAB');
-            foreach ($procClass->kits as $key => $kit) {
-                $kit = (object)$kit;
-                $alias = $kit->alias;
-                $factor = $kit->factor;
-                $classname = get_class($consumption);
-                if ($classname == "App\Abbotprocurement"){
-                    if (!($factor = $kit->factor['EID']))
-                        $factor = $kit->factor['VL'];
-                }
-                
-                
-                $received = $deliveries->$alias ?? 0;
-                foreach ($prefices as $key => $prefix) {
-                    $column = $prefix.$alias;
-                    $beginning = $prevConsumption->column ?? 0;
-                    $used = ($used * $factor);
-                    if ($prefix == 'wasted'){
-                       $wasted = ($wasted * $factor);
-                       $consumption->$column = $wasted;
-                    }
-                    if ($prefix == 'issued'){
-                       $negative = ($negAdj * $factor);
-                       $consumption->$column = $negative;
-                    }
-                    if ($prefix == 'request'){
-                       $requested = ($requested * $factor);
-                       $consumption->$column = $requested;
-                    }
-                    if ($prefix == 'pos'){
-                       $positive = ($posAdj * $factor);
-                       $consumption->$column = $positive;
-                    }
-
-                }
-                $ending = (($beginning + $received + $positive) - ($negative + $wasted + $used));
-                $column = 'ending'.$alias;
-                $consumption->$column = ($ending < 0) ? 0 : $ending;
-            }    
+            echo "\t Saving consumption\n"; 
             $consumption->save();
+        } else {
+            echo "==> Record exists\n";
         }
-        echo "==> DOne back-dating";
+        echo "==> Done back-dating";
     }
 
 	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {
