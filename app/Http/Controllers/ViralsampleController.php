@@ -245,8 +245,15 @@ class ViralsampleController extends Controller
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
 
+        $site_entry = $request->input('site_entry');
+
         $batch = session('viral_batch');
-        if($batch) $batch = Viralbatch::find($batch->id);
+        if($batch){
+            $batch = Viralbatch::find($batch->id);
+            if($site_entry && $batch->site_entry != $site_entry) $batch = null;
+        }
+
+
 
         if($submit_type == "cancel"){
             if($batch) $batch->premature();
@@ -318,7 +325,7 @@ class ViralsampleController extends Controller
             $facility = Facility::find($facility_id);
             session(['viral_facility_name' => $facility->name, 'viral_batch_total' => 0]);
 
-            $batch = Viralbatch::eligible($facility_id, $request->input('datereceived'))->first();
+            $batch = Viralbatch::eligible($facility_id, $request->input('datereceived'), $site_entry)->first();
 
             if(!$batch) $batch = new Viralbatch;
             $batch->user_id = $user->id;
