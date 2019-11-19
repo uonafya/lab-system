@@ -37,13 +37,13 @@
 	<table class="table" border="0" style="border: none; width: 100%;">
 		<tr>
 			<td colspan="13" align="center">
-				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP LOGO">
+				<img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP LOGO">
 			</td>
 		</tr>
 		<tr>
 			<td colspan="13" align="center">
 				{{-- <img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">
-				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP">--}}
+				<img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP">--}}
 				HIV {{ strtoupper($testtype) }} SAMPLE MANIFEST {{ $period }}
 			</td>
 		</tr>		
