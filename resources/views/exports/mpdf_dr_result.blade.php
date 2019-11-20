@@ -11,9 +11,9 @@
 
 		<div class="row" style="text-align: center;">
 			@if(env('APP_LAB') == 7)
-				<img src="http://lab-2.test.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP">
+				<img src="https://eiddash.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP">
 			@else
-				<img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
+				<img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
 				<b>
 					MINISTRY OF HEALTH <br />
 					NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />

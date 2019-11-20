@@ -94,7 +94,12 @@ class SampleController extends Controller
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
 
+        $site_entry = $request->input('site_entry');
         $batch = session('batch');
+        if($batch){
+            $batch = Batch::find($batch->id);
+            if($site_entry && $batch->site_entry != $site_entry) $batch = null;
+        }
 
         if($submit_type == "cancel"){
             if($batch) $batch->premature();
@@ -140,7 +145,7 @@ class SampleController extends Controller
             $facility = Facility::find($facility_id);
             session(['facility_name' => $facility->name, 'batch_total' => 0]);
 
-            $batch = Batch::eligible($facility_id, $request->input('datereceived'))->first();
+            $batch = Batch::eligible($facility_id, $request->input('datereceived'), $site_entry)->first();
 
             if(!$batch) $batch = new Batch;
             $batch->user_id = $user->id;
@@ -417,6 +422,7 @@ class SampleController extends Controller
 
         if($patient->patient != $request->input('patient')){
             $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            $different_patient = true;
 
             if(!$patient){
                 $patient = new Patient;
@@ -552,7 +558,7 @@ class SampleController extends Controller
             session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
         }
 
-        if(isset($created_patient)){
+        if(isset($different_patient)){
             if($sample->run == 1 && $sample->has_rerun){
                 $children = $sample->child;
 
