@@ -544,6 +544,7 @@ class ViralsampleController extends Controller
 
         if($viralpatient->patient != $request->input('patient')){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            $different_patient = true;
 
             if(!$viralpatient){
                 $viralpatient = new Viralpatient;
@@ -621,7 +622,7 @@ class ViralsampleController extends Controller
             session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
         }
 
-        if(isset($created_patient)){
+        if(isset($different_patient)){
             if($viralsample->run == 1 && $viralsample->has_rerun){
                 $children = $viralsample->child;
 
