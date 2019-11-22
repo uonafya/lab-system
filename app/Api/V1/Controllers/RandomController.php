@@ -66,7 +66,13 @@ class RandomController extends BaseController
         $email = Email::find($email_id);
         $attachment = $email->attachment()->offset($request->input('attachment'))->first();
 
-        if($attachment) return null;
+        // return response()->json([
+        //         'email_contents' => $str,
+        //         'attachment' => $attachments,
+        //     ], 200);
+
+
+        if(!$attachment) return null;
 
         return response()->download($attachment->path);
     }
