@@ -204,6 +204,7 @@ class Email extends BaseModel
             for ($i=0; $i < $body->attachments; $i++) { 
 
                 $response = $client->request('post', 'attachment', [
+                    'stream' => true,
                     'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $token,
@@ -214,8 +215,12 @@ class Email extends BaseModel
                         'lab_id' => env('APP_LAB'),
                     ],
                 ]);
+                $body = $response->getBody();
+                while (!$body->eof()){
+                    echo $body->read(1024);
+                }
 
-                dd($response->getBody());
+                // dd();
             }
         }
     }
