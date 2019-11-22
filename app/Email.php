@@ -180,10 +180,8 @@ class Email extends BaseModel
             ],
         ]);
         $status_code = $response->getStatusCode();
-        if($status_code > 399){
-            dd($response->getBody());
-            die();
-        }
+        if($status_code > 399) die();
+
         $body = json_decode($response->getBody());
 
         $response = $client->request('post', 'email', [
@@ -202,7 +200,22 @@ class Email extends BaseModel
 
         if($body->attachments)
         {
+            for ($i=0; $i < $body->attachments; $i++) { 
 
+                $response = $client->request('post', 'attachment', [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $body->token,
+                    ],
+                    'json' => [
+                        'email' => $this->id,
+                        'attachment' => $i,
+                        'lab_id' => env('APP_LAB'),
+                    ],
+                ]);
+
+                dd($response->getBody());
+            }
         }
     }
 }
