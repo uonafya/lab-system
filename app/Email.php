@@ -170,7 +170,7 @@ class Email extends BaseModel
 
         $response = $client->request('post', 'auth/login', [
             'http_errors' => false,
-            'debug' => true,
+            // 'debug' => true,
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -183,11 +183,12 @@ class Email extends BaseModel
         if($status_code > 399) die();
 
         $body = json_decode($response->getBody());
+        $token = $body->token;
 
         $response = $client->request('post', 'email', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $body->token,
+                'Authorization' => 'Bearer ' . $token,
             ],
             'json' => [
                 'email' => $this->id,
@@ -205,7 +206,7 @@ class Email extends BaseModel
                 $response = $client->request('post', 'attachment', [
                     'headers' => [
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . $body->token,
+                        'Authorization' => 'Bearer ' . $token,
                     ],
                     'json' => [
                         'email' => $this->id,

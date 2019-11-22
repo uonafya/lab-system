@@ -60,7 +60,7 @@ class RandomController extends BaseController
             ], 200);
     }
 
-    public function attachments(ApiRequest $request)
+    public function attachment(ApiRequest $request)
     {
         $email_id = $request->input('email');
         $email = Email::find($email_id);
