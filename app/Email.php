@@ -200,10 +200,11 @@ class Email extends BaseModel
         $this->save_raw($body->email_contents);
 
         // dd($body);
+        $attachments = $body->attachments;
 
-        if($body->attachments)
+        if($attachments)
         {
-            for ($i=0; $i < $body->attachments; $i++) { 
+            for ($i=0; $i < $attachments; $i++) { 
 
                 $response = $client->request('post', 'attachment', [
                     'stream' => true,
@@ -223,7 +224,7 @@ class Email extends BaseModel
                     echo $body->read(1024);
                 }
 
-                // dd();
+                dd($body);
             }
         }
     }
