@@ -192,7 +192,7 @@ class Email extends BaseModel
                 'Authorization' => 'Bearer ' . $body->token,
             ],
             'json' => [
-                'email' => $email->id,
+                'email' => $this->id,
                 'lab_id' => env('APP_LAB'),
             ],
         ]);
