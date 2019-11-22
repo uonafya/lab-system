@@ -165,11 +165,12 @@ class Email extends BaseModel
 
     public function request_files()
     {
-        $base = env('APP_URL') . '/api';
+        $base = env('APP_URL') . '/api/';
         $client = new Client(['base_uri' => $base]);
 
         $response = $client->request('post', 'auth/login', [
             'http_errors' => false,
+            'debug' => true,
             'headers' => [
                 'Accept' => 'application/json',
             ],
