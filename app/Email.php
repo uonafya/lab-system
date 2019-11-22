@@ -199,11 +199,16 @@ class Email extends BaseModel
         $body = json_decode($response->getBody());
         $this->save_raw($body->email_contents);
 
-        if($body->attachments)
+        // dd($body);
+        // $attachments = $body->attachments;
+
+        /*if($attachments)
         {
-            for ($i=0; $i < $body->attachments; $i++) { 
+            for ($i=0; $i < $attachments; $i++) { 
 
                 $response = $client->request('post', 'attachment', [
+                    'stream' => true,
+                    'debug' => true,
                     'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $token,
@@ -214,9 +219,13 @@ class Email extends BaseModel
                         'lab_id' => env('APP_LAB'),
                     ],
                 ]);
+                $body = $response->getBody();
+                while (!$body->eof()){
+                    echo $body->read(1024);
+                }
 
-                dd($response->getBody());
+                dd($body);
             }
-        }
+        }*/
     }
 }
