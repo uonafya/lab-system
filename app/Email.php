@@ -165,11 +165,12 @@ class Email extends BaseModel
 
     public function request_files()
     {
-        $base = env('APP_URL') . '/api';
+        $base = env('APP_URL') . '/api/';
         $client = new Client(['base_uri' => $base]);
 
         $response = $client->request('post', 'auth/login', [
             'http_errors' => false,
+            'debug' => true,
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -179,10 +180,8 @@ class Email extends BaseModel
             ],
         ]);
         $status_code = $response->getStatusCode();
-        if($status_code > 399){
-            dd($response->getBody());
-            die();
-        }
+        if($status_code > 399) die();
+
         $body = json_decode($response->getBody());
 
         $response = $client->request('post', 'email', [
@@ -191,7 +190,7 @@ class Email extends BaseModel
                 'Authorization' => 'Bearer ' . $body->token,
             ],
             'json' => [
-                'email' => $email->id,
+                'email' => $this->id,
                 'lab_id' => env('APP_LAB'),
             ],
         ]);
@@ -201,7 +200,22 @@ class Email extends BaseModel
 
         if($body->attachments)
         {
+            for ($i=0; $i < $body->attachments; $i++) { 
 
+                $response = $client->request('post', 'attachment', [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $body->token,
+                    ],
+                    'json' => [
+                        'email' => $this->id,
+                        'attachment' => $i,
+                        'lab_id' => env('APP_LAB'),
+                    ],
+                ]);
+
+                dd($response->getBody());
+            }
         }
     }
 }
