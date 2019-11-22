@@ -207,7 +207,7 @@ class Email extends BaseModel
 
                 $response = $client->request('post', 'attachment', [
                     'stream' => true,
-                    'debug' => true,
+                    // 'debug' => true,
                     'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $token,
@@ -219,11 +219,16 @@ class Email extends BaseModel
                     ],
                 ]);
                 $body = $response->getBody();
+                $pdf = '';
                 while (!$body->eof()){
-                    echo $body->read(1024);
+                    $pdf .= $body->read(1024);
                 }
+                $attachment = $this->attachment()->offset($i)->first();
+                if(file_exists($attachment->path)) unlink($attachment->path);
+                file_put_contents($attachment->path, $path);
 
-                dd($body);
+
+                // dd($body);
             }
         }
     }
