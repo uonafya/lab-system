@@ -61,7 +61,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="7" align="center">
-					<strong><img src="http://lab-2.test.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+					<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
 					  NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
@@ -381,7 +381,7 @@ p.breakhere {page-break-before: always}
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
 		@else
-			<br/> <br/> <img src="http://lab-2.test.nascop.org/img/but_cut.gif"> <br/><br/> 
+			<br/> <br/> <img src="https://eiddash.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
 
 
