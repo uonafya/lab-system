@@ -199,7 +199,7 @@ class Email extends BaseModel
         $body = json_decode($response->getBody());
         $this->save_raw($body->email_contents);
 
-        dd($body);
+        // dd($body);
 
         if($body->attachments)
         {
@@ -207,6 +207,7 @@ class Email extends BaseModel
 
                 $response = $client->request('post', 'attachment', [
                     'stream' => true,
+                    'debug' => true,
                     'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $token,
