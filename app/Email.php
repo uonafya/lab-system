@@ -226,7 +226,7 @@ class Email extends BaseModel
                 }
                 $attachment = $this->attachment()->offset($i)->first();
                 if(file_exists($attachment->path)) unlink($attachment->path);
-                file_put_contents($attachment->path, $path);
+                file_put_contents($attachment->path, $pdf);
 
 
                 // dd($body);
