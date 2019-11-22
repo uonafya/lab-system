@@ -179,7 +179,10 @@ class Email extends BaseModel
             ],
         ]);
         $status_code = $response->getStatusCode();
-        if($status_code > 399)  die();
+        if($status_code > 399){
+            dd($response->getBody());
+            die();
+        }
         $body = json_decode($response->getBody());
 
         $response = $client->request('post', 'email', [
@@ -198,7 +201,7 @@ class Email extends BaseModel
 
         if($body->attachments)
         {
-            
+
         }
     }
 }
