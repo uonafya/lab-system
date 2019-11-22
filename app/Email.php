@@ -199,6 +199,8 @@ class Email extends BaseModel
         $body = json_decode($response->getBody());
         $this->save_raw($body->email_contents);
 
+        dd($body);
+
         if($body->attachments)
         {
             for ($i=0; $i < $body->attachments; $i++) { 
