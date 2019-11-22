@@ -198,6 +198,7 @@ class Email extends BaseModel
 
         $body = json_decode($response->getBody());
         $this->save_raw($body->email_contents);
+        if(!is_dir(storage_path('app/attachments'))) mkdir(storage_path('app/attachments'), 0777, true);
 
         $attachments = $body->attachments;
 
