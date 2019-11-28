@@ -2157,6 +2157,32 @@ class Random
         return $consumption;
     }
 
+    private static function getTests($testtype, $platform, $year, $month)
+    {
+        if ($testtype == 2)
+            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
+                            ->where('receivedstatus', '=', '1')
+                            ->when($platform, function($query) use ($platform) {
+                                if ($platform == 2)
+                                    return $query->where("viralworksheets.machine_type", "=", 2);
+                                if ($platform == 1)
+                                    return $query->whereIn("viralworksheets.machine_type", [1,3]);
+                            });
+        if ($testtype == 1)
+            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('worksheets.lab_id', '=', env('APP_LAB'))
+                            ->where('receivedstatus', '=', '1')
+                            ->when($platform, function($query) use ($platform) {
+                                if ($platform == 'abbott')
+                                    return $query->where("worksheets.machine_type", "=", 2);
+                                if ($platform == 'taqman')
+                                    return $query->whereIn("worksheets.machine_type", [1,3]);
+                            });
+
+        $tests->whereYear('datetested', $year);
+        $tests->whereMonth('datetested', $month);
+        return $tests->first()->tests;
+    }
+
     public static function backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested) {
         $procClass = self::getProcurementClass($plartform);
         echo "==> Checking existing record\n";
@@ -2170,18 +2196,7 @@ class Random
             $prefices = ['wasted','issued','request','pos','ending'];
             echo "\t Get test data\n";
             $consumptionClass = $procClass->consumption;
-            $testsModel = ($testtype == 1) ? SampleCompleteView::class : ViralsampleCompleteView::class;
-            $testsModel = $testsModel::whereMonth('datetested', $month)->whereYear('datetested', $year)
-                            ->with(['worksheets' => function($query) use ($consumptionClass){
-                                $query->when($consumptionClass, function($innerquery) use ($consumptionClass){
-                                    $classname = get_class($consumptionClass);
-                                    if ($classname == "App\Abbotprocurement")
-                                        return $innerquery->where('machine', '=', 2);
-                                    else
-                                        return $innerquery->whereIn('machine', '=', [1, 3]);
-                                });
-                            }])->where('repeatt', 0)->where('lab_id', env('APP_LAB'))->count();
-
+            $testsModel = self::getTests($testtype, $plartform, $year, $month);
             echo "\t Computing qual kits\n";
             $kit = (object)collect($procClass->kits)->first();
             $typetest = ($testtype == 1) ? 'EID' : 'VL';
