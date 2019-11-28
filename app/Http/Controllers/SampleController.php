@@ -422,6 +422,7 @@ class SampleController extends Controller
 
         if($patient->patient != $request->input('patient')){
             $patient = Patient::existing($request->input('facility_id'), $request->input('patient'))->first();
+            $different_patient = true;
 
             if(!$patient){
                 $patient = new Patient;
@@ -557,7 +558,7 @@ class SampleController extends Controller
             session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
         }
 
-        if(isset($created_patient)){
+        if(isset($different_patient)){
             if($sample->run == 1 && $sample->has_rerun){
                 $children = $sample->child;
 
