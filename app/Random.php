@@ -2116,22 +2116,22 @@ class Random
     {
         $consumption = $procClass->consumption;
         $beginning = $prevConsumption->endingqualkit;
-/**/
+/*
         print_r("Beginning -->" . $beginning);echo "\n";
-/**/
+*/
         $received = (isset($deliveries)) ? ($deliveries->qualkitreceived - $deliveries->qualkitdamaged) : 0;
         $positive = (int) $posAdj;$negative = (int) $negAdj;$wasted = (int) $wasted;$used = (int) $used;$requested = (int) $requested;
-/**/
+/*
         print_r("Received -->" . $received);echo "\n";
         print_r("Used -->" . $used);echo "\n";
-/**/
+*/
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
             $consumption->$column = $data[$prefix];
         }
-/**/        dd($consumption);
+//        dd($consumption);
         return $consumption;
     }
 
@@ -2187,7 +2187,7 @@ class Random
             $typetest = ($testtype == 1) ? 'EID' : 'VL';
             $testFactor = $kit->testFactor[$typetest];
             $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, @($testsModel/$testFactor), $wasted, $posAdj, $negAdj, $requested);
-/**/            dd($consumption);
+//            dd($consumption);
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
             
