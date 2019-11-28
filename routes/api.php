@@ -33,6 +33,8 @@ $api->version('v1', function (Router $api) {
                 $api->get('refresh', 'RandomController@refresh_route');
             });
 
+            $api->post('email', 'RandomController@email');
+            $api->post('attachment', 'RandomController@attachment');
             $api->resource('facility', 'FacilityController');
 
             $api->resource('batch', 'BatchController');

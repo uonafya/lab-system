@@ -4,6 +4,9 @@ namespace App\Api\V1\Controllers;
 
 use App\Api\V1\Controllers\BaseController;
 use Exception;
+use App\Api\V1\Requests\ApiRequest;
+use App\Email;
+use App\Attachment;
 
 class RandomController extends BaseController
 {
@@ -41,4 +44,37 @@ class RandomController extends BaseController
                 'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
             ], 200);
     }
+
+    public function email(ApiRequest $request)
+    {
+        $email_id = $request->input('email');
+        $email = Email::find($email_id);
+        $attachments = $email->attachment->count();
+
+        $filename = storage_path('app/emails') . '/' . $email->id . '.txt';        
+        $str = file_get_contents($filename);
+
+        return response()->json([
+                'email_contents' => $str,
+                'attachments' => $attachments,
+            ], 200);
+    }
+
+    public function attachment(ApiRequest $request)
+    {
+        $email_id = $request->input('email');
+        $email = Email::find($email_id);
+        $attachment = $email->attachment()->offset($request->input('attachment'))->first();
+
+        // return response()->json([
+        //         'email_contents' => $str,
+        //         'attachment' => $attachments,
+        //     ], 200);
+
+
+        if(!$attachment) return null;
+
+        return response()->download($attachment->path);
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App;
 use App\BaseModel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use GuzzleHttp\Client;
 use App\Mail\CustomMail;
 use App\Mail\CustomEmailFiles;
 use Exception;
@@ -60,6 +61,7 @@ class Email extends BaseModel
 
     public function dispatch()
     {
+        if(env('APP_LAB') == 1) $this->request_files();
         $this->save_blade();
         ini_set("memory_limit", "-1");
         $min_date = date('Y-m-d', strtotime('-2years'));
@@ -159,5 +161,76 @@ class Email extends BaseModel
             if(str_contains($value, '@')) $mail_array[] = trim($value);
         }
         return $mail_array;
+    }
+
+    public function request_files()
+    {
+        $base = env('APP_URL') . '/api/';
+        $client = new Client(['base_uri' => $base]);
+
+        $response = $client->request('post', 'auth/login', [
+            'http_errors' => false,
+            // 'debug' => true,
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'json' => [
+                'email' => env('MASTER_USERNAME', null),
+                'password' => env('LAB_PASSWORD', null),
+            ],
+        ]);
+        $status_code = $response->getStatusCode();
+        if($status_code > 399) die();
+
+        $body = json_decode($response->getBody());
+        $token = $body->token;
+
+        $response = $client->request('post', 'email', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ],
+            'json' => [
+                'email' => $this->id,
+                'lab_id' => env('APP_LAB'),
+            ],
+        ]);
+
+        $body = json_decode($response->getBody());
+        $this->save_raw($body->email_contents);
+        if(!is_dir(storage_path('app/attachments'))) mkdir(storage_path('app/attachments'), 0777, true);
+
+        $attachments = $body->attachments;
+
+        if($attachments)
+        {
+            for ($i=0; $i < $attachments; $i++) { 
+
+                $response = $client->request('post', 'attachment', [
+                    'stream' => true,
+                    // 'debug' => true,
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $token,
+                    ],
+                    'json' => [
+                        'email' => $this->id,
+                        'attachment' => $i,
+                        'lab_id' => env('APP_LAB'),
+                    ],
+                ]);
+                $body = $response->getBody();
+                $pdf = '';
+                while (!$body->eof()){
+                    $pdf .= $body->read(1024);
+                }
+                $attachment = $this->attachment()->offset($i)->first();
+                if(file_exists($attachment->path)) unlink($attachment->path);
+                file_put_contents($attachment->path, $pdf);
+
+
+                // dd($body);
+            }
+        }
     }
 }
