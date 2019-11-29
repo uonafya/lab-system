@@ -2180,7 +2180,8 @@ class Random
 
         $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
-        return $tests->first()->tests;
+        dd($tests->toSql());
+        // return $tests->first()->tests;
     }
 
     public static function backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested) {
