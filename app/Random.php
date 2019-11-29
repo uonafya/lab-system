@@ -2172,15 +2172,15 @@ class Random
             $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('worksheets.lab_id', '=', env('APP_LAB'))
                             ->where('receivedstatus', '=', '1')
                             ->when($platform, function($query) use ($platform) {
-                                if ($platform == 'abbott')
+                                if ($platform == 2)
                                     return $query->where("worksheets.machine_type", "=", 2);
-                                if ($platform == 'taqman')
+                                if ($platform == 1)
                                     return $query->whereIn("worksheets.machine_type", [1,3]);
                             });
 
         $tests->whereYear('datetested', $year);
         $tests->whereMonth('datetested', $month);
-        dd($tests->toSql());
+        dd($tests->first()->tests);
         // return $tests->first()->tests;
     }
 
