@@ -154,13 +154,15 @@ class Random
 				});
 			})->store('csv');
 
-			$files = [storage_path("exports/" . $file . ".csv")];
-    	}
+			$files[] = storage_path("exports/" . $file . ".csv");
+    	}  
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
     public static function tat_data()
     {
-    	$months = [3, 4, 5];
+    	$months = [9, 10, 11];
     	$files = [];
     	$d = [
     		'eid' => [
@@ -170,7 +172,7 @@ class Random
     		],
     		'vl' => [
     			'model' => \App\ViralsampleView::class,
-    			'tat' => 5,
+    			'tat' => 7,
     			'failed_result' => 'Collect New Sample',
     		],
     	];
@@ -195,7 +197,7 @@ class Random
 				});
 			})->store('csv');
 
-			$files = [storage_path("exports/" . $file . ".csv")];
+			$files[] = storage_path("exports/" . $file . ".csv");
     	}		
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
