@@ -243,7 +243,7 @@ class Random
         $sql = "YEAR(datetested) AS `Year`, MONTH(datetested) AS `Month`, count(id) AS `Number of Valid Baseline Tests` ";
 
         $rows = \App\ViralsampleView::selectRaw($sql)
-            ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
+            ->where(['justification' => 10, 'repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
             ->whereBetween('rcategory', [1,4])
             ->where('datetested', '>', '2014-12-31')
             ->groupBy('Year', 'Month')
