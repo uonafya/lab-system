@@ -258,7 +258,7 @@ class Random
             });
         })->store('csv');
 
-        $files = [storage_path("exports/" . $file . ".csv")];
+        $files = [storage_path("exports/" . 'baseline_data' . ".csv")];
 
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
