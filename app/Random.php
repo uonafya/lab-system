@@ -252,13 +252,15 @@ class Random
             ->orderBy('Month')
             ->get()->toArray();
 
+        $file = 'baseline_data';
+
         Excel::create($file, function($excel) use($rows){
             $excel->sheet('Sheetname', function($sheet) use($rows) {
                 $sheet->fromArray($rows);
             });
         })->store('csv');
 
-        $files = [storage_path("exports/" . 'baseline_data' . ".csv")];
+        $files = [storage_path("exports/" . $file . ".csv")];
 
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
