@@ -251,6 +251,10 @@ class ViralsampleController extends Controller
         if($batch){
             $batch = Viralbatch::find($batch->id);
             if($site_entry && $batch->site_entry != $site_entry) $batch = null;
+            if($batch->sample->count() > 9){
+                $batch->full_batch();
+                $batch = null;
+            }
         }
 
 
