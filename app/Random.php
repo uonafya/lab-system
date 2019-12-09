@@ -267,6 +267,32 @@ class Random
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+    public static function confirmatory_data()
+    {
+        $sql = "YEAR(datetested) AS `Year`, MONTH(datetested) AS `Month`, count(id) AS `Number of Valid Baseline Tests` ";
+
+        $rows = \App\SampleView::selectRaw($sql)
+            ->where(['pcrtype' => 4, 'result' => 1, 'repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
+            ->where('datetested', '>', '2014-12-31')
+            ->groupBy('Year', 'Month')
+            ->orderBy('Year', 'asc')
+            ->orderBy('Month', 'asc')
+            ->orderBy('Month')
+            ->get()->toArray();
+
+        $file = 'eid_data';
+
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+        $files = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function to_ampath()
     {
         $path = public_path('afya_transitioned_sites.csv');
