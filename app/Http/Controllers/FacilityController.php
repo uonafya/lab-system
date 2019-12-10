@@ -49,7 +49,7 @@ class FacilityController extends Controller
             $table .= '<td>'.$value->G4Sbranchname.'</td>';
             $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|
                         <a href="'.route('facility.edit',$value->id).'">Edit</a>';
-            if(env('APP_LAB') == 7 && $user->is_lab_user()) $table .= '<a href="'.url('user/passwordReset/' . md5($value->facility_user->id)).'">Edit Login</a>';
+            if(env('APP_LAB') == 7 && $user->is_lab_user()) $table .= '|<a href="'.url('user/passwordReset/' . md5($value->facility_user->id)).'">Edit Login</a>';
             $table .= '</td>';
             $table .= '</tr>';
         }

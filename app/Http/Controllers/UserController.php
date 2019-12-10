@@ -46,9 +46,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        $accounts = UserType::whereNull('deleted_at')->when((env('APP_LAB') != 7), function($query){ 
+        /*$accounts = UserType::whereNull('deleted_at')->when((env('APP_LAB') != 7), function($query){ 
             return $query->where('id', '<>', 5);
-        })->get();
+        })->get();*/
+        $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
 
         return view('forms.users', compact('accounts'))->with('pageTitle', 'Add User');
     }
