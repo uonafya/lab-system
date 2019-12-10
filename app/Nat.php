@@ -16,7 +16,7 @@ use App\Mail\TestMail;
 class Nat
 {
 
-	public static function email_csv($filename, $data, $emails=['joelkith@gmail.com'])
+	public static function email_csv($filename, $rows, $emails=['joelkith@gmail.com'])
 	{		
 		Excel::create($filename, function($excel) use($rows){
 			$excel->sheet('Sheetname', function($sheet) use($rows) {
@@ -24,9 +24,9 @@ class Nat
 			});
 		})->store('csv');
 
-		$data = [storage_path("exports/" . $filename . ".csv")];
+		$attachments = [storage_path("exports/" . $filename . ".csv")];
 
-		Mail::to($emails)->send(new TestMail($data));
+		Mail::to($emails)->send(new TestMail($attachments));
 	}
 
 	public static function get_county_current_query($year, $paed=false, $suppressed=true)
