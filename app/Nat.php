@@ -74,17 +74,17 @@ class Nat
 			foreach ($counties as $county) {
 				$row = ['Year' => $year, 'County' => $county->name];
 
-				$row['Paedeatric Suppressed Male'] = $paeds_sup->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
-				$row['Paedeatric Suppressed Female'] = $paeds_sup->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+				$row['Paedeatric Suppressed Male'] = $paeds_sup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Paedeatric Suppressed Female'] = $paeds_sup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 
-				$row['Paedeatric Non-Suppressed Male'] = $paeds->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
-				$row['Paedeatric Non-Suppressed Female'] = $paeds->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+				$row['Paedeatric Non-Suppressed Male'] = $paeds->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Paedeatric Non-Suppressed Female'] = $paeds->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 
-				$row['Adult Suppressed Male'] = $adults_sup->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
-				$row['Adult Suppressed Female'] = $adults_sup->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+				$row['Adult Suppressed Male'] = $adults_sup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Adult Suppressed Female'] = $adults_sup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 
-				$row['Adult Non-Suppressed Male'] = $adults->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
-				$row['Adult Non-Suppressed Female'] = $adults->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+				$row['Adult Non-Suppressed Male'] = $adults->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Adult Non-Suppressed Female'] = $adults->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 
 				$data[] = $row;
 			}
