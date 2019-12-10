@@ -26,7 +26,7 @@ class FacilityController extends Controller
                             ->where('facilitys.flag', '=', 1)
                             ->get();*/
 
-        $facilities = ViewFacility::->when((env('APP_LAB') == 7), function($query){ 
+        $facilities = ViewFacility::when((env('APP_LAB') == 7), function($query){ 
             return $query->with(['facility_user']);
         })->get();
         $table = '';
