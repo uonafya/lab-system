@@ -34,7 +34,7 @@
             </li> -->--}}
         @endif
         
-        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
+        @if (Auth::user()->is_lab_user())
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -227,66 +227,73 @@
             </li> -->
         @endif
         @if (Auth::user()->user_type_id == 5)
-            <li>
-                <a href="{{ url('patient') }}">EID Patient List</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralpatient') }}">VL Patient List</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('sample/create') }}">Add EID Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/create') }}">Add VL Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('sample/create_poc') }}">Add POC EID Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/create_poc') }}">Add POC VL Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('sample/list_poc/1') }}">Update POC EID Results</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/list_poc/1') }}">Update POC VL Results</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
-            </li>
-            <hr>
-            <li>
-                <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
-            </li>
-            <hr>
-            <li>
-                <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
-            </li>
-            <li>
-                <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
-            </li>
-            <li>
-                <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
-            </li>
-            <li>
-                <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
-            </li>
+            @if(env('APP_LAB') == 7)
+                <li>
+                    <a href="{{ url('dr_sample') }}">Add DR Sample</a>
+                </li>
+            @else
+                <li>
+                    <a href="{{ url('patient') }}">EID Patient List</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralpatient') }}">VL Patient List</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/create') }}">Add EID Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/create') }}">Add VL Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/create_poc') }}">Add POC EID Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/create_poc') }}">Add POC VL Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/list_poc/1') }}">Update POC EID Results</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/list_poc/1') }}">Update POC VL Results</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
+                </li>
+                <hr>
+                <li>
+                    <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
+                </li>
+                <hr>
+                <li>
+                    <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
+                </li>
+                <li>
+                    <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
+                </li>
+                <li>
+                    <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
+                </li>
+                <li>
+                    <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
+                </li>
+            
+            @endif
             <hr />
         @endif
             <!-- <li>
