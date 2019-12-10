@@ -124,16 +124,17 @@ class LoginController extends Controller
         $user = auth()->user();
         $user->set_last_access();
 
-        if(in_array(env('APP_LAB'), [7])){
-            session(['testingSystem' => 'DR']);
-            return '/home';  
-        }
-
         if($user->user_type_id == 7) return "/sample/list_poc";
 
-        if($facility){
+        if($facility || $user->user_type_id == 5){
             $fac = \App\Facility::find($user->facility_id);
             session(['logged_facility' => $fac]);
+        }
+
+        if(in_array(env('APP_LAB'), [7])){
+            session(['testingSystem' => 'DR']);
+            if($user->user_type_id == 5) return '/dr_sample/create';
+            return '/home';  
         }
 
         // Checking for pending tasks if user is Lab user before redirecting to the respective page

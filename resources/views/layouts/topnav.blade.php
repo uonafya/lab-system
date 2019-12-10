@@ -64,6 +64,13 @@
                         <li class="">
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
+                    @elseif(session('testingSystem') == 'DR')
+                        <li>
+                            <a href="{{ url('facility') }}">Facilities</a>
+                        </li>   
+                        <li class="">
+                            <a href="{{ url('reports') }}">Report</a>
+                        </li>   
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                             @if (Auth::user()->user_type_id == 5)
@@ -133,15 +140,15 @@
                                     <li class="">
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
-                                    <li class="">
             @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
-                <a href="{{ url('reports/kits') }}">Kits
-                <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
-                {{ $widgets['rejectedAllocations'] }}
-                </span>
-                </a>       
-            @endif    
-        </li>
+                <li class="">
+                    <a href="{{ url('reports/kits') }}">Kits
+                    <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                    {{ $widgets['rejectedAllocations'] }}
+                    </span>
+                    </a>     
+                </li>    
+            @endif  
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
                                             <a href="{{ url('user') }}">Users</a>
@@ -190,9 +197,12 @@
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
+                    <li>
+                        <a href="{{ url('facility') }}">Facilities</a>
+                    </li>   
                     <li class="">
                         <a href="{{ url('reports') }}">Report</a>
-                    </li>                          
+                    </li>                       
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
