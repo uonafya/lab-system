@@ -214,8 +214,9 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 		Route::group(['middleware' => ['utype:5']], function () {
+			Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
 			Route::post('index', 'DrSampleController@sample_search');
-			Route::put('{drSample}', 'DrSampleController@update')->name('update');
+			// Route::put('{drSample}', 'DrSampleController@update')->name('update');
 			Route::get('results/{drSample}/{print?}', 'DrSampleController@results')->name('results');
 			Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
 		});
@@ -227,10 +228,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 			Route::get('create/{patient}', 'DrSampleController@create_from_patient');
 			Route::get('report', 'DrSampleController@susceptability')->name('report');
-			Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
 		});
+	});
 
-		Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
+	Route::resource('dr_sample', 'DrSampleController');
+
+	Route::group(['middleware' => ['utype:4']], function () {
 
 
 		Route::prefix('dr_extraction_worksheet')->name('dr_extraction_worksheet.')->group(function () {
