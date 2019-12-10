@@ -229,7 +229,10 @@
         @if (Auth::user()->user_type_id == 5)
             @if(env('APP_LAB') == 7)
                 <li>
-                    <a href="{{ url('dr_sample') }}">Add DR Sample</a>
+                    <a href="{{ url('dr_sample/create') }}">Add DR Sample</a>
+                </li>
+                <li>
+                    <a href="{{ url('dr_sample') }}">DR Sample List</a>
                 </li>
             @else
                 <li>
@@ -292,7 +295,7 @@
                 <li>
                     <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
                 </li>
-            
+
             @endif
             <hr />
         @endif
