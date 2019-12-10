@@ -29,6 +29,69 @@ class Nat
 		Mail::to($emails)->send(new TestMail($data));
 	}
 
+	public static function get_county_current_query($year, $paed=false, $suppressed=true)
+	{
+    	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.facility_id, v.sex, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		if($paed) $sql .= "AND age < 15 ";
+		else{
+			$sql .= "AND age > 14 ";
+		}
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
+		if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+		else{
+			$sql .= 'WHERE rcategory IN (3,4) ';
+		}
+		$sql .= 'GROUP BY f.county_id, sex ';
+		$sql .= 'ORDER BY f.county_id, sex ';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+	public static function get_county_current()
+	{
+		$data = [];
+
+		$counties = DB::table('countys')->get();
+
+		for ($year=2013; $year < 2020; $year++) { 
+			$paeds_sup = self::get_county_current_query($year, true);
+			$paeds = self::get_county_current_query($year, true, false);
+			$adults_sup = self::get_county_current_query($year, false);
+			$adults = self::get_county_current_query($year, false, false);
+			foreach ($counties as $county) {
+				$row = ['Year' => $year, 'County' => $county->name];
+
+				$row['Paedeatric Suppressed Male'] = $paeds_sup->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Paedeatric Suppressed Female'] = $paeds_sup->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['Paedeatric Non-Suppressed Male'] = $paeds->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Paedeatric Non-Suppressed Female'] = $paeds->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['Adult Suppressed Male'] = $adults_sup->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Adult Suppressed Female'] = $adults_sup->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['Adult Non-Suppressed Male'] = $adults->where('county_id', $county_id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Adult Non-Suppressed Female'] = $adults->where('county_id', $county_id)->where('sex', 2)->first()->totals ?? 0;
+
+				$data[] = $row;
+			}
+		}
+		self::email_csv('county_suppression', $data);
+	}
+
 	public static function get_current_gender_query($facility_id, $date_params=null)
 	{
     	$sql = 'SELECT sex, rcategory, count(*) as totals ';
