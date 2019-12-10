@@ -32,7 +32,7 @@ class DrSampleController extends Controller
         $user = auth()->user();
         $date_column = "datereceived";
         if(in_array($sample_status, [1, 6])) $date_column = "datedispatched";
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        $string = "(user_id='{$user->id}' OR dr_samples.facility_id='{$user->facility_id}')";
 
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::select(['dr_samples.*'])
@@ -56,7 +56,7 @@ class DrSampleController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when($facility_id, function($query) use ($facility_id){
-                return $query->where('facility_id', $facility_id);
+                return $query->where('dr_samples.facility_id', $facility_id);
             })
             ->when($subcounty_id, function($query) use ($subcounty_id){
                 return $query->where('facilitys.district', $subcounty_id);
