@@ -107,6 +107,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function notifiedAllocation()
+    {
+        return $this->where('allocation_notification', 1);
+    }
+
     public function samples_entered($testtype, $year, $month=null) {
         $id = $this->id;
         if ($testtype == 'EID') {
@@ -194,9 +199,35 @@ class User extends Authenticatable implements JWTSubject
         // $eid_sampels = \App\Sample::
     }
 
-    public function notifiedAllocation()
+    public function samplesLoggedToday()
     {
-        return $this->where('allocation_notification', 1);
+        return 0;
     }
+
+    public function samplesApprovedToday()
+    {
+        return 0;
+    }
+
+    public function worksheetsSortedToday()
+    {
+        return 0;
+    }
+
+    public function worksheetsAliquotedToday()
+    {
+        return 0;
+    }
+
+    public function worksheetsRunToday()
+    {
+        return 0;
+    }
+
+    public function worksheetDispatchedToday()
+    {
+        return 0;
+    }
+
 
 }

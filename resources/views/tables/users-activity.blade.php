@@ -65,6 +65,43 @@
                     </div>
                 </div>
             </div>
+            <div class="hpanel">
+                <div class="panel-head">
+                    Daily Individual Performance <small>(This part is not affected by the filters)</small>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" >
+                            <thead>
+                                <tr>
+                                    <th>Full Names</th>
+                                    <th>Samples Logged/Approved</th>
+                                    <th>Worksheets Sorted</th>
+                                    <th>Worksheets Aliquoted</th>
+                                    <th>Worksheets Run</th>
+                                    <th>Samples Dispatched</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($users as $key => $user)
+                                <tr>
+                                    <td>{{ $user->full_name }}</td>
+                                    <td>
+                                        {{ $user->samplesLoggedToday() }}
+                                        &nbsp;/&nbsp;
+                                        {{ $user->samplesApprovedToday }}
+                                    </td>
+                                    <td>{{ $user->worksheetsSortedToday() }}</td>
+                                    <td>{{ $user->worksheetsAliquotedToday() }}</td>
+                                    <td>{{ $user->worksheetsRunToday() }}</td>
+                                    <td>{{ $user->worksheetDispatchedToday() }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
