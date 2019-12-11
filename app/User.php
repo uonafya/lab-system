@@ -230,8 +230,8 @@ class User extends Authenticatable implements JWTSubject
         foreach ($testtypes as $key => $testtype) {
             $model = $this->getSampleTable($testtype);
             if ($model) {
-                $model = $model->where('approvedby', $user)->orWhere('approvedby2', $user)
-                            ->whereRaw("date(dateapproved) = '" . $date . "' or date(dateapproved2) = '" . $date . "'");
+                $model = $model->whereRaw("(approvedby = $user or approvedby2 = $user)")
+                            ->whereRaw("(date(dateapproved) = '" . $date . "' or date(dateapproved2) = '" . $date . "')");
                 $total += $model->first()->samples;
             }
         }
