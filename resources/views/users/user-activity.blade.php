@@ -4,11 +4,29 @@
     @endcomponent
 
 @section('content')
+<div class="content">
+    <div class="row">
+        <div class="col-lg-4 pull-right">
+            <div class="hpanel hgreen">
+                <div class="panel-body">
+                    <h3>{{ $user->full_name }}</h3>
+                    <p><strong>Last Login:</strong>&nbsp;{{ $user->last_login }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @foreach($user->dailyLogs() as $log)
+        @include('users.logs',['log' => $log]);
+    @endforeach
+</div>
 
+{{-- Old Section to this page keeping it coz might want this fancy display --}}
+{{-- 
 <div class="content">
 <div class="row">
     <div class="col-lg-3">
         <div class="hpanel hgreen">
+            <div class="panel-heading">Heading</div>
             <div class="panel-body">
                 <!-- <img alt="logo" class="img-circle m-b m-t-md" src="images/profile.jpg"> -->
                 <h3><a href="#">Max Simson</a></h3>
@@ -22,36 +40,6 @@
                     </div>
                 </div>
             </div>
-            <div class="border-right border-left">
-                <section id="map">
-                    <div id="map1" style="height: 200px"></div>
-                </section>
-            </div>
-            <div class="panel-body">
-                <dl>
-                    <dt>Description lists</dt>
-                    <dd>A description list is perfect for defining terms.</dd>
-                    <dt>Euismod</dt>
-                    <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
-                    <dd>Donec id elit non mi porta gravida at eget metus.</dd>
-                    <dt>Malesuada porta</dt>
-                    <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
-                </dl>
-            </div>
-            <div class="panel-footer contact-footer">
-                <div class="row">
-                    <div class="col-md-4 border-right">
-                        <div class="contact-stat"><span>Projects: </span> <strong>200</strong></div>
-                    </div>
-                    <div class="col-md-4 border-right">
-                        <div class="contact-stat"><span>Messages: </span> <strong>300</strong></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="contact-stat"><span>Views: </span> <strong>400</strong></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
     <div class="col-lg-3">
@@ -178,10 +166,8 @@
         </div>
     </div>
 </div>
-
 </div>
-
-
+ --}}
 @endsection
 
 @section('scripts') 
