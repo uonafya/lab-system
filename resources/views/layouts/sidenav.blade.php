@@ -234,6 +234,7 @@
                 <li>
                     <a href="{{ url('dr_sample') }}">DR Sample List</a>
                 </li>
+
             @else
                 <li>
                     <a href="{{ url('patient') }}">EID Patient List</a>
@@ -430,7 +431,7 @@
             <hr />
         @endif
         --}}
-        @if (!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
+        @if (!in_array(Auth::user()->user_type_id,[5, 8]) || env('APP_LAB') == 7)
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
