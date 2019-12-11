@@ -307,7 +307,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function worksheetReviewedToday()
     {
-        reviewedby
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
