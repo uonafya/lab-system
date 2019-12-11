@@ -112,8 +112,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->where('allocation_notification', 1);
     }
 
-    public function samples_entered($testtype, $year, $month=null) {
-        $id = $this->id;
+    private function getSampleTable($testtype)
+    {
+        $testtype = strtoupper($testtype);
         if ($testtype == 'EID') {
             $model = SampleView::selectRaw("COUNT(*) as samples");
         } else if ($testtype == 'VL') {
@@ -121,29 +122,39 @@ class User extends Authenticatable implements JWTSubject
         } else {
             return null;
         }
-        $model = $model->whereYear('created_at', $year)
-                    ->when($month, function($query) use ($month) {
-                        return $query->whereMonth('datereceived', $month);
+        return $model;
+    }
+
+    public function samples_entered($testtype, $year=null, $month=null, $today=null) {
+        $id = $this->id;
+        $model = $this->getSampleTable($testtype);
+        if ($model) {
+            $model = $model->when($year, function($query) use ($year, $month){
+                        return $query->whereYear('created_at', $year)
+                                ->when($month, function($innerQuery) use ($month) {
+                                    return $innerQuery->whereMonth('datereceived', $month);
+                                });
+                    })->when($today, function($query){
+                        return $query->whereDate('datereceived', date('Y-m-d'));
                     })->where('user_id', '=',$id);
 
-        return number_format($model->first()->samples);
+            return number_format($model->first()->samples);
+        }
+        return 0;
     }
 
     public function sitesamplesapproved($testtype, $year, $month=null) {
         $id = $this->id;
-        if ($testtype == 'EID') {
-            $model = SampleView::selectRaw("COUNT(*) as samples");
-        } else if ($testtype == 'VL') {
-            $model = ViralsampleView::selectRaw("COUNT(*) as samples");
-        } else {
-            return null;
-        }
-        $model = $model->whereYear('datereceived', $year)
+        $model = $this->getSampleTable($testtype);
+        if ($model) {
+            $model = $model->whereYear('datereceived', $year)
                     ->when($month, function($query) use ($month) {
                         return $query->whereMonth('datereceived', $month);
                     })->where('received_by', '=',$id)->where('site_entry', '=', 1);
 
-        return number_format($model->first()->samples);
+            return number_format($model->first()->samples);
+        }
+        return 0;
     }
 
     public function uploaded($from_date, $to_date = null) {
@@ -201,32 +212,114 @@ class User extends Authenticatable implements JWTSubject
 
     public function samplesLoggedToday()
     {
-        return 0;
+        return ($this->samples_entered('EID', null, null, true) + $this->samples_entered('VL', null, null, true));
     }
 
     public function samplesApprovedToday()
     {
-        return 0;
+        $user = $this->id;
+        $total = 0;
+        $testtypes = ['EID', 'VL'];
+        foreach ($testtypes as $key => $testtype) {
+            $model = $this->getSampleTable($testtype);
+            if ($model) {
+                $model = $model->where('approvedby', $user)->orWhere('approvedby2', $user)
+                            ->whereRaw("date(dateapproved) = '{date('Y-m-d')}' or date(dateapproved2) = '{date('Y-m-d')}'");
+                $total += $model->first()->samples;
+            }
+        }
+        return number_format($total);
+    }
+
+    public function samplesDispatchedToday()
+    {
+        $user = $this->id;
+        $total = 0;
+        $testtypes = ['EID', 'VL'];
+        foreach ($testtypes as $key => $testtype) {
+            $model = $this->getSampleTable($testtype);
+            if ($model) {
+                $model = $model->whereDate('datedispatched', date('Y-m-d'))
+                            ->where('user_id', $user);
+                $total += $model->first()->samples;
+            }
+        }
+        return $total;
+    }
+
+    private function getWorksheetTable($testtype)
+    {
+        $testtype = strtoupper($testtype);
+        if ($testtype == 'EID') {
+            $model = \App\Worksheet::selectRaw("COUNT(*) AS worksheets");
+        } else if ($testtype == 'VL') {
+            $model = \App\Viralworksheet::selectRaw("COUNT(*) AS worksheets");
+        } else {
+            return null;
+        }
+        return $model;
     }
 
     public function worksheetsSortedToday()
     {
-        return 0;
+        $user = $this->id;
+        $total = 0;
+        $testtypes = ['EID', 'VL'];
+        foreach ($testtypes as $key => $testtype) {
+            $model = $this->getSampleTable($testtype);
+            if ($model) {
+                $model = $model->where('sortedby', $user)->whereDate('created_at', date('Y-m-d'));
+                $total += $model->first()->worksheets;
+            }
+        }
+        return number_format($total);
     }
 
     public function worksheetsAliquotedToday()
     {
-        return 0;
+        $user = $this->id;
+        $total = 0;
+        $testtypes = ['EID', 'VL'];
+        foreach ($testtypes as $key => $testtype) {
+            $model = $this->getSampleTable($testtype);
+            if ($model) {
+                $model = $model->where('alliquotedby', $user)->whereDate('created_at', date('Y-m-d'));
+                $total += $model->first()->worksheets;
+            }
+        }
+        return number_format($total);
     }
 
     public function worksheetsRunToday()
     {
-        return 0;
+        $user = $this->id;
+        $total = 0;
+        $testtypes = ['EID', 'VL'];
+        foreach ($testtypes as $key => $testtype) {
+            $model = $this->getSampleTable($testtype);
+            if ($model) {
+                $model = $model->where('runby', $user)->whereDate('daterun', date('Y-m-d'));
+                $total += $model->first()->worksheets;
+            }
+        }
+        return number_format($total);
     }
 
-    public function worksheetDispatchedToday()
+    public function worksheetReviewedToday()
     {
-        return 0;
+        reviewedby
+        $user = $this->id;
+        $total = 0;
+        $testtypes = ['EID', 'VL'];
+        foreach ($testtypes as $key => $testtype) {
+            $model = $this->getSampleTable($testtype);
+            if ($model) {
+                $model = $model->whereRaw("reviewedby = {$user} or reviewedby2 = {$user}")
+                            ->whereRaw("datereviewed = '{date('Y-m-d')}' or datereviewed2 = '{date('Y-m-d')}'");
+                $total += $model->first()->worksheets;
+            }
+        }
+        return number_format($total);
     }
 
 

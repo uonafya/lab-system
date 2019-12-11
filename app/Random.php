@@ -154,13 +154,15 @@ class Random
 				});
 			})->store('csv');
 
-			$files = [storage_path("exports/" . $file . ".csv")];
-    	}
+			$files[] = storage_path("exports/" . $file . ".csv");
+    	}  
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
     public static function tat_data()
     {
-    	$months = [3, 4, 5];
+    	$months = [9, 10, 11];
     	$files = [];
     	$d = [
     		'eid' => [
@@ -170,7 +172,7 @@ class Random
     		],
     		'vl' => [
     			'model' => \App\ViralsampleView::class,
-    			'tat' => 5,
+    			'tat' => 7,
     			'failed_result' => 'Collect New Sample',
     		],
     	];
@@ -195,7 +197,7 @@ class Random
 				});
 			})->store('csv');
 
-			$files = [storage_path("exports/" . $file . ".csv")];
+			$files[] = storage_path("exports/" . $file . ".csv");
     	}		
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
@@ -236,6 +238,59 @@ class Random
 		$files = [storage_path("exports/" . $file . ".csv")];
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
+    public static function baseline_data()
+    {
+        $sql = "YEAR(datetested) AS `Year`, MONTH(datetested) AS `Month`, count(id) AS `Number of Valid Baseline Tests` ";
+
+        $rows = \App\ViralsampleView::selectRaw($sql)
+            ->where(['justification' => 10, 'repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
+            ->whereBetween('rcategory', [1,4])
+            ->where('datetested', '>', '2014-12-31')
+            ->groupBy('Year', 'Month')
+            ->orderBy('Year', 'asc')
+            ->orderBy('Month', 'asc')
+            ->orderBy('Month')
+            ->get()->toArray();
+
+        $file = 'baseline_data';
+
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+        $files = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
+    public static function confirmatory_data()
+    {
+        $sql = "YEAR(datetested) AS `Year`, MONTH(datetested) AS `Month`, count(id) AS `Number of Valid Baseline Tests` ";
+
+        $rows = \App\SampleView::selectRaw($sql)
+            ->where(['pcrtype' => 4, 'result' => 2, 'repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
+            ->where('datetested', '>', '2014-12-31')
+            ->groupBy('Year', 'Month')
+            ->orderBy('Year', 'asc')
+            ->orderBy('Month', 'asc')
+            ->orderBy('Month')
+            ->get()->toArray();
+
+        $file = 'eid_data';
+
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+        $files = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
     public static function to_ampath()
