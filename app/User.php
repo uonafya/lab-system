@@ -265,10 +265,11 @@ class User extends Authenticatable implements JWTSubject
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
+        $today = date('Y-m-d');
         foreach ($testtypes as $key => $testtype) {
-            $model = $this->getSampleTable($testtype);
+            $model = $this->getWorksheetTable($testtype);
             if ($model) {
-                $model = $model->where('sortedby', $user)->whereDate('created_at', date('Y-m-d'));
+                $model = $model->where('sortedby', $user)->whereDate('created_at', "$today");
                 $total += $model->first()->worksheets;
             }
         }
@@ -280,10 +281,11 @@ class User extends Authenticatable implements JWTSubject
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
+        $today = date('Y-m-d');
         foreach ($testtypes as $key => $testtype) {
-            $model = $this->getSampleTable($testtype);
+            $model = $this->getWorksheetTable($testtype);
             if ($model) {
-                $model = $model->where('alliquotedby', $user)->whereDate('created_at', date('Y-m-d'));
+                $model = $model->where('alliquotedby', $user)->whereDate('created_at', "$today");
                 $total += $model->first()->worksheets;
             }
         }
@@ -295,10 +297,11 @@ class User extends Authenticatable implements JWTSubject
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
+        $today = date('Y-m-d');
         foreach ($testtypes as $key => $testtype) {
-            $model = $this->getSampleTable($testtype);
+            $model = $this->getWorksheetTable($testtype);
             if ($model) {
-                $model = $model->where('runby', $user)->whereDate('daterun', date('Y-m-d'));
+                $model = $model->where('runby', $user)->whereDate('daterun', "$today");
                 $total += $model->first()->worksheets;
             }
         }
@@ -311,7 +314,7 @@ class User extends Authenticatable implements JWTSubject
         $total = 0;
         $testtypes = ['EID', 'VL'];
         foreach ($testtypes as $key => $testtype) {
-            $model = $this->getSampleTable($testtype);
+            $model = $this->getWorksheetTable($testtype);
             if ($model) {
                 $model = $model->whereRaw("reviewedby = {$user} or reviewedby2 = {$user}")
                             ->whereRaw("datereviewed = '" . date('Y-m-d') . "' or datereviewed2 = '" . date('Y-m-d') . "'");
