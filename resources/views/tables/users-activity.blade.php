@@ -89,12 +89,12 @@
                                     <td>
                                         {{ $user->samplesLoggedToday() }}
                                         &nbsp;/&nbsp;
-                                        {{ $user->samplesApprovedToday }}
+                                        {{ $user->samplesApprovedToday() }}
                                     </td>
                                     <td>{{ $user->worksheetsSortedToday() }}</td>
                                     <td>{{ $user->worksheetsAliquotedToday() }}</td>
                                     <td>{{ $user->worksheetsRunToday() }}</td>
-                                    <td>{{ $user->worksheetDispatchedToday() }}</td>
+                                    <td>{{ $user->samplesDispatchedToday() }}</td>
                                 </tr>
                             @endforeach
                             </tbody>
