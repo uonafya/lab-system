@@ -95,6 +95,13 @@ class User extends Authenticatable implements JWTSubject
         $this->save();
     }
 
+    public function getLastLoginAttribute()
+    {
+        if ($this->last_access)
+            return date('d M, Y', strtotime($this->last_access));
+        return null;
+    }
+
     public function is_lab_user()
     {
         if(in_array($this->user_type_id, [0, 1, 4])) return true;
@@ -125,7 +132,7 @@ class User extends Authenticatable implements JWTSubject
         return $model;
     }
 
-    public function samples_entered($testtype, $year=null, $month=null, $today=null) {
+    public function samples_entered($testtype, $year=null, $month=null, $date=null) {
         $id = $this->id;
         $model = $this->getSampleTable($testtype);
         if ($model) {
@@ -134,8 +141,8 @@ class User extends Authenticatable implements JWTSubject
                                 ->when($month, function($innerQuery) use ($month) {
                                     return $innerQuery->whereMonth('datereceived', $month);
                                 });
-                    })->when($today, function($query){
-                        return $query->whereDate('datereceived', date('Y-m-d'));
+                    })->when($date, function($query) use ($date){
+                        return $query->whereDate('datereceived', "$date");
                     })->where('user_id', '=',$id);
 
             return number_format($model->first()->samples);
@@ -210,12 +217,12 @@ class User extends Authenticatable implements JWTSubject
         // $eid_sampels = \App\Sample::
     }
 
-    public function samplesLoggedToday()
+    public function samplesLoggedToday($date)
     {
-        return ($this->samples_entered('EID', null, null, true) + $this->samples_entered('VL', null, null, true));
+        return ($this->samples_entered('EID', null, null, $date) + $this->samples_entered('VL', null, null, $date));
     }
 
-    public function samplesApprovedToday()
+    public function samplesApprovedToday($date)
     {
         $user = $this->id;
         $total = 0;
@@ -224,7 +231,7 @@ class User extends Authenticatable implements JWTSubject
             $model = $this->getSampleTable($testtype);
             if ($model) {
                 $model = $model->where('approvedby', $user)->orWhere('approvedby2', $user)
-                            ->whereRaw("date(dateapproved) = '" . date('Y-m-d') . "' or date(dateapproved2) = '" . date('Y-m-d') . "'");
+                            ->whereRaw("date(dateapproved) = '" . $date . "' or date(dateapproved2) = '" . $date . "'");
                 $total += $model->first()->samples;
             }
         }
@@ -260,55 +267,52 @@ class User extends Authenticatable implements JWTSubject
         return $model;
     }
 
-    public function worksheetsSortedToday()
+    public function worksheetsSortedToday($date)
     {
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
-        $today = date('Y-m-d');
         foreach ($testtypes as $key => $testtype) {
             $model = $this->getWorksheetTable($testtype);
             if ($model) {
-                $model = $model->where('sortedby', $user)->whereDate('created_at', "$today");
+                $model = $model->where('sortedby', $user)->whereDate('created_at', "$date");
                 $total += $model->first()->worksheets;
             }
         }
         return number_format($total);
     }
 
-    public function worksheetsAliquotedToday()
+    public function worksheetsAliquotedToday($date)
     {
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
-        $today = date('Y-m-d');
         foreach ($testtypes as $key => $testtype) {
             $model = $this->getWorksheetTable($testtype);
             if ($model) {
-                $model = $model->where('alliquotedby', $user)->whereDate('created_at', "$today");
+                $model = $model->where('alliquotedby', $user)->whereDate('created_at', "$date");
                 $total += $model->first()->worksheets;
             }
         }
         return number_format($total);
     }
 
-    public function worksheetsRunToday()
+    public function worksheetsRunToday($date)
     {
         $user = $this->id;
         $total = 0;
         $testtypes = ['EID', 'VL'];
-        $today = date('Y-m-d');
         foreach ($testtypes as $key => $testtype) {
             $model = $this->getWorksheetTable($testtype);
             if ($model) {
-                $model = $model->where('runby', $user)->whereDate('daterun', "$today");
+                $model = $model->where('runby', $user)->whereDate('daterun', "$date");
                 $total += $model->first()->worksheets;
             }
         }
         return number_format($total);
     }
 
-    public function worksheetReviewedToday()
+    public function worksheetReviewedToday($date)
     {
         $user = $this->id;
         $total = 0;
@@ -317,12 +321,29 @@ class User extends Authenticatable implements JWTSubject
             $model = $this->getWorksheetTable($testtype);
             if ($model) {
                 $model = $model->whereRaw("reviewedby = {$user} or reviewedby2 = {$user}")
-                            ->whereRaw("datereviewed = '" . date('Y-m-d') . "' or datereviewed2 = '" . date('Y-m-d') . "'");
+                            ->whereRaw("datereviewed = '" . $date . "' or datereviewed2 = '" . $date . "'");
                 $total += $model->first()->worksheets;
             }
         }
         return number_format($total);
     }
 
-
+    public function dailyLogs()
+    {
+        $data = [];
+        for ($i=0; $i < 14; $i++) { 
+            $date = date("Y-m-d", strtotime("-" .$i. " days"));
+            $data[] = (object)[
+                    'date' => $date,
+                    'samples_logged' => $this->samplesLoggedToday($date),
+                    'samples_approved' => $this->samplesApprovedToday($date),
+                    'worksheets_sorted' => $this->worksheetsSortedToday($date),
+                    'worksheets_aliquoted' => $this->worksheetsAliquotedToday($date),
+                    'worksheets_run' => $this->worksheetsRunToday($date),
+                    'samples_dispatched' => $this->samplesDispatchedToday($date)
+                ];
+        }        
+        
+        return $data;
+    }
 }

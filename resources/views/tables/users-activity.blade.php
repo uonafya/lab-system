@@ -57,7 +57,7 @@
                                     <td>{{ $user->samples_entered('VL', $data->year, $data->month) }}</td>
                                     <td>{{ $user->sitesamplesapproved('EID', $data->year, $data->month) }}</td>
                                     <td>{{ $user->sitesamplesapproved('VL', $data->year, $data->month) }}</td>
-                                    <!-- <td><a href='{{-- url("users/activity/$user->id") --}}'>View Log</a></td> -->
+                                    <td><a class='btn btn-success btn-xs' href='{{ url("users/activity/$user->id") }}'>View Log</a></td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <div class="hpanel">
+            {{-- <div class="hpanel">
                 <div class="panel-head">
                     Daily Individual Performance <small>(This part is not affected by the filters)</small>
                 </div>
@@ -101,7 +101,7 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>
