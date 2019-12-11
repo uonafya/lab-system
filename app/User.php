@@ -224,7 +224,7 @@ class User extends Authenticatable implements JWTSubject
             $model = $this->getSampleTable($testtype);
             if ($model) {
                 $model = $model->where('approvedby', $user)->orWhere('approvedby2', $user)
-                            ->whereRaw("date(dateapproved) = '{date('Y-m-d')}' or date(dateapproved2) = '{date('Y-m-d')}'");
+                            ->whereRaw("date(dateapproved) = '" . date('Y-m-d') . "' or date(dateapproved2) = '" . date('Y-m-d') . "'");
                 $total += $model->first()->samples;
             }
         }
@@ -314,7 +314,7 @@ class User extends Authenticatable implements JWTSubject
             $model = $this->getSampleTable($testtype);
             if ($model) {
                 $model = $model->whereRaw("reviewedby = {$user} or reviewedby2 = {$user}")
-                            ->whereRaw("datereviewed = '{date('Y-m-d')}' or datereviewed2 = '{date('Y-m-d')}'");
+                            ->whereRaw("datereviewed = '" . date('Y-m-d') . "' or datereviewed2 = '" . date('Y-m-d') . "'");
                 $total += $model->first()->worksheets;
             }
         }
