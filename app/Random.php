@@ -2242,8 +2242,13 @@ class Random
         $procClass = self::getProcurementClass($plartform);
         echo "==> Checking existing record\n";
         if ($procClass->consumption::where('month', $month)->where('year', $year)->where('testtype', $testtype)->get()->isEmpty()){
-            $prevMonth = ($month - 1);
-            $prevYear = $year;
+            if ($month == 1){
+                $prevMonth = 12;
+                $prevYear = ($year - 1);
+            } else {
+                $prevMonth = ($month - 1);
+                $prevYear = $year;
+            }            
             echo "\t Getting previous month consumptions\n";
             $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->where('testtype', $testtype)->first();
             echo "\t Getting deliveries made\n";
