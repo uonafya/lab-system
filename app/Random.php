@@ -2262,10 +2262,10 @@ class Random
             $typetest = ($testtype == 1) ? 'EID' : 'VL';
             $testFactor = $kit->testFactor[$typetest];
             $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, @($testsModel/$testFactor), $wasted, $posAdj, $negAdj, $requested);
-           dd($consumption);
+           
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
-            
+            dd($consumption); 
             $consumption->year = $year;
             $consumption->month = $month;
             $consumption->testtype = $testtype;
