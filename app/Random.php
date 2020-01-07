@@ -2176,7 +2176,7 @@ class Random
         $positive = (int) $posAdj;$negative = (int) $negAdj;$wasted = (int) $wasted;$used = (int) $used;$requested = (int) $requested;
 
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
-        return "Beginning -->" . $beginning . "     Received -->" . $received . "     Positive -->" . $positive;
+        // return "Beginning -->" . $beginning . "     Received -->" . $received . "     Positive -->" . $positive;
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
