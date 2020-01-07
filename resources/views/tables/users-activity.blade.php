@@ -40,7 +40,7 @@
                                     <th rowspan="2">Email</th>
                                     <th colspan="2"><center>Samples Entered ({{ $data->year }} {{ $data->monthName }})</center></th>
                                     <th colspan="2"><center>Site Samples Approved ({{ $data->year }} {{ $data->monthName }})</center></th>
-                                    <!-- <th rowspan="2">Action</th> -->
+                                    <th rowspan="2">Action</th>
                                 </tr>
                                 <tr>
                                     <th><center>EID</center></th>
