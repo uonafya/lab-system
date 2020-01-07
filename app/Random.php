@@ -2169,6 +2169,7 @@ class Random
 
     private static function computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $used, $wasted, $posAdj, $negAdj, $requested)
     {
+        return $used;
         $consumption = $procClass->consumption;
         $beginning = $prevConsumption->endingqualkit;
 /*
@@ -2262,7 +2263,7 @@ class Random
             $typetest = ($testtype == 1) ? 'EID' : 'VL';
             $testFactor = $kit->testFactor[$typetest];
             $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, @($testsModel/$testFactor), $wasted, $posAdj, $negAdj, $requested);
-            dd(@($testsModel/$testFactor));
+            dd($consumption);
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
             $consumption->year = $year;
