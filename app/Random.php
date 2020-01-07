@@ -2171,17 +2171,12 @@ class Random
     {
         $consumption = $procClass->consumption;
         $beginning = $prevConsumption->endingqualkit;
-/*
-        print_r("Beginning -->" . $beginning);echo "\n";
-*/
+
         $received = (isset($deliveries)) ? ($deliveries->qualkitreceived - $deliveries->qualkitdamaged) : 0;
         $positive = (int) $posAdj;$negative = (int) $negAdj;$wasted = (int) $wasted;$used = (int) $used;$requested = (int) $requested;
-/*
-        print_r("Received -->" . $received);echo "\n";
-        print_r("Used -->" . $used);echo "\n";
-*/
+
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
-        return ($beginning + $received + $positive);
+        return "Beginning -->" . $beginning . "     Received -->" . $received . "     Positive -->" . $positive;
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
