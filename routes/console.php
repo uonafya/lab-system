@@ -389,6 +389,7 @@ Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued}
     $this->info($str);
 })->describe('Adjust Consumptions');
 
+
 Artisan::command('backdate:consumption {plartform} {testtype} {month} {year} {used} {wasted} {posAdj} {negAdj} {requested}', function($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested){
     $str = \App\Random::backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested);
     $this->info($str);
