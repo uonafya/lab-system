@@ -2265,7 +2265,6 @@ class Random
            
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
-            dd($consumption); 
             $consumption->year = $year;
             $consumption->month = $month;
             $consumption->testtype = $testtype;
