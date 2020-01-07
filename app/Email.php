@@ -198,17 +198,17 @@ class Email extends BaseModel
 
         $body = json_decode($response->getBody());
         $this->save_raw($body->email_contents);
+        if(!is_dir(storage_path('app/attachments'))) mkdir(storage_path('app/attachments'), 0777, true);
 
-        // dd($body);
-        // $attachments = $body->attachments;
+        $attachments = $body->attachments;
 
-        /*if($attachments)
+        if($attachments)
         {
             for ($i=0; $i < $attachments; $i++) { 
 
                 $response = $client->request('post', 'attachment', [
                     'stream' => true,
-                    'debug' => true,
+                    // 'debug' => true,
                     'headers' => [
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $token,
@@ -220,12 +220,17 @@ class Email extends BaseModel
                     ],
                 ]);
                 $body = $response->getBody();
+                $pdf = '';
                 while (!$body->eof()){
-                    echo $body->read(1024);
+                    $pdf .= $body->read(1024);
                 }
+                $attachment = $this->attachment()->offset($i)->first();
+                if(file_exists($attachment->path)) unlink($attachment->path);
+                file_put_contents($attachment->path, $pdf);
 
-                dd($body);
+
+                // dd($body);
             }
-        }*/
+        }
     }
 }
