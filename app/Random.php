@@ -2181,7 +2181,7 @@ class Random
         print_r("Used -->" . $used);echo "\n";
 */
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
-        return $beginning;
+        return ($beginning + $received + $positive);
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
