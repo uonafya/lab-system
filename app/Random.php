@@ -2169,7 +2169,6 @@ class Random
 
     private static function computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $used, $wasted, $posAdj, $negAdj, $requested)
     {
-        return $used;
         $consumption = $procClass->consumption;
         $beginning = $prevConsumption->endingqualkit;
 /*
@@ -2182,6 +2181,7 @@ class Random
         print_r("Used -->" . $used);echo "\n";
 */
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
+        return $ending;
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
