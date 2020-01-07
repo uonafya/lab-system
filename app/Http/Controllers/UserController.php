@@ -167,7 +167,7 @@ class UserController extends Controller
         return back();
     }
 
-    public function activity($user_id = null, $year = null, $month = null) {
+    public function activity(User $user, $year = null, $month = null) {
         if ($year==null || $year=='null'){
             if (session('activityYear')==null)
                 session(['activityYear' => Date('Y')]);
@@ -189,14 +189,13 @@ class UserController extends Controller
             $monthName = "- ".date("F", mktime(null, null, null, $month));
 
         $data = (object)['year'=>$year,'monthName'=>$monthName, 'month'=>$month];
-        // dd($data);
-        // if (isset($user_id)) {
-        //     $users = User::whereNotIn('user_type_id', [2,5,6])->get();
-        //     return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
-        // } else {
+        
+        if (!empty($user->toArray())) {
+            return view('users.user-activity', compact('user'))->with('pageTitle', 'User Activity');
+        } else {
         $users = User::whereNotIn('user_type_id', [2,5,6])->get();
         return view('tables.users-activity', compact('users'), compact('data'))->with('pageTitle', 'Users Activity');
-        // }
+        }
     }
 
     public function switch_user($id)

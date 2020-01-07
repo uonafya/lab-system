@@ -108,7 +108,7 @@ class Batch extends BaseModel
         return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'lab_id' => $lab, 'batch_full' => 0]);
     }
 
-    public function scopeEligible($query, $facility, $datereceived)
+    public function scopeEligible($query, $facility, $datereceived, $site_entry=null)
     {
         $user = auth()->user();
         $user_id = $user->id ?? 66;
@@ -116,9 +116,18 @@ class Batch extends BaseModel
         $min_date = date('Y-m-d', strtotime('-4 days'));
         if(!$datereceived){
             return $query->where(['facility_id' => $facility, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0, ])
-                    ->whereDate('created_at', $today)->whereNull('datereceived')->whereNull('datedispatched');
+                    ->whereDate('created_at', $today)
+                    ->whereNull('datereceived')->whereNull('datedispatched')
+                    ->when($site_entry, function($query) use($site_entry){
+                        return $query->where('site_entry', $site_entry); 
+                    });
         }
-        return $query->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0, ])->where('created_at', '>', $min_date)->whereNull('datedispatched');
+        return $query->where('created_at', '>', $min_date)
+            ->where(['facility_id' => $facility, 'datereceived' => $datereceived, 'user_id' => $user_id, 'batch_full' => 0, 'batch_complete' => 0, ])
+            ->whereNull('datedispatched')
+            ->when($site_entry, function($query) use($site_entry){
+                return $query->where('site_entry', $site_entry); 
+            });
     }
 
     public function scopeEditing($query)
