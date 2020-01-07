@@ -2272,7 +2272,7 @@ class Random
             $consumption->datesubmitted = date('Y-m-d');
             $consumption->submittedBy = 88;
             $consumption->lab_id = env('APP_LAB');
-            dd($consumption);
+            // dd($consumption);
             echo "\t Saving consumption\n"; 
             $consumption->save();
         } else {
