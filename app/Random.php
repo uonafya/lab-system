@@ -2248,7 +2248,7 @@ class Random
             echo "\t Getting previous month consumptions\n";
             $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->where('testtype', $testtype)->first();
             echo "\t Getting deliveries made\n";
-            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
+            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->where('testtype', $testtype)->first();
             $prefices = ['wasted','issued','request','pos','ending'];
             echo "\t Get test data\n";
             $consumptionClass = $procClass->consumption;
