@@ -731,7 +731,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->result == NULL && $viralsample->run < 2 && $viralsample->worksheet_id == NULL){
+        if($viralsample->result == NULL && $viralsample->run < 2 && $viralsample->worksheet_id == NULL && !$viralsample->has_rerun){
             $batch = $viralsample->batch;
             $viralsample->delete();
             $samples = $batch->sample;
