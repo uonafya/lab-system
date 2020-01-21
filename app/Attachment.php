@@ -23,7 +23,7 @@ class Attachment extends BaseModel
 
     public function pre_delete()
     {
-    	if(file_exists($this->attachment_path)) unlink($this->attachment_path);
+    	if(file_exists($this->path)) unlink($this->path);
     	$this->delete();
     }
 }

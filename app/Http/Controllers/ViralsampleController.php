@@ -251,6 +251,10 @@ class ViralsampleController extends Controller
         if($batch){
             $batch = Viralbatch::find($batch->id);
             if($site_entry && $batch->site_entry != $site_entry) $batch = null;
+            if($batch->sample->count() > 9){
+                $batch->full_batch();
+                $batch = null;
+            }
         }
 
 
@@ -727,7 +731,7 @@ class ViralsampleController extends Controller
      */
     public function destroy(Viralsample $viralsample)
     {
-        if($viralsample->result == NULL && $viralsample->run < 2 && $viralsample->worksheet_id == NULL){
+        if($viralsample->result == NULL && $viralsample->run < 2 && $viralsample->worksheet_id == NULL && !$viralsample->has_rerun){
             $batch = $viralsample->batch;
             $viralsample->delete();
             $samples = $batch->sample;
