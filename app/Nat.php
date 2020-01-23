@@ -91,8 +91,8 @@ class Nat
 				$row['Adult Non-Suppressed Male'] = $adults->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
 				$row['Adult Non-Suppressed Female'] = $adults->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 
-				$row['All Male'] = $adults->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
-				$row['All Female'] = $adults->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+				$row['All Male'] = $all->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['All Female'] = $all->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
 
 				$data[] = $row;
 			}
