@@ -117,6 +117,56 @@ class Random
         }
     }
 
+    public static function recollection_report($year, $month)
+    {
+        $d = [
+            'EID' => [
+                'model' => \App\SampleView::class,
+            ],
+            'VL' => [
+                'model' => \App\ViralsampleView::class,
+            ],
+        ];
+        $rows = [];
+
+        $sql = "id, patient_id, datereceived";
+
+        foreach ($d as $type => $value) {
+            $m = $value['model'];
+            for($year=2016; $year < 2020; $year++){
+                $rejected_samples = $m::selectRaw($sql)
+                    ->where(['repeatt' => 0, 'receivedstatus' => 2, 'batch_complete' => 1])
+                    ->where('site_entry', '!=', 2)
+                    ->whereBetween('datereceived', [$year . '-01-01', $year . '-12-31'])
+                    ->get();
+                $recollected = 0;
+                foreach ($rejected_samples as $rejected_sample) {
+                    $s = $m::selectRaw($sql)
+                    ->where(['repeatt' => 0, 'receivedstatus' => 1, 'patient_id' => $rejected_sample->patient_id])
+                    ->where('site_entry', '!=', 2)
+                    ->where('datereceived', '>', $rejected_sample->datereceived)
+                    ->first();
+                    if($s) $recollected++;
+                }
+                $rows[] = [
+                    'Test' => $type,
+                    'Year' => $year,
+                    'Rejected' => $rejected_samples->count(),
+                    'Recollected' => $recollected,
+                ];
+            }
+        }
+
+        $file = 'recollection_report';
+
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+    }
+
     public static function tat_report($year, $month)
     {
     	$d = [
