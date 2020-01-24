@@ -117,7 +117,7 @@ class Random
         }
     }
 
-    public static function recollection_report($year, $month)
+    public static function recollection_report()
     {
         $d = [
             'EID' => [
