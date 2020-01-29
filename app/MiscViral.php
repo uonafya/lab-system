@@ -693,20 +693,9 @@ class MiscViral extends Common
         }
         if(!preg_match('/[2][5][4][7][0-9]{8}/', $sample->patient_phone_no)) return;
 
-        $client = new Client(['base_uri' => self::$sms_url]);
+        $response = self::sms($sample->patient_phone_no, $message);
 
-        $response = $client->request('post', '', [
-            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-            'http_errors' => false,
-            'json' => [
-                'sender' => env('SMS_SENDER_ID'),
-                'recipient' => $sample->patient_phone_no,
-                'message' => $message,
-            ],
-        ]);
-
-        $body = json_decode($response->getBody());
-        if($response->getStatusCode() == 201){
+        if($response){
             $s = Viralsample::find($sample->id);
             $s->time_result_sms_sent = date('Y-m-d H:i:s');
             $s->save();

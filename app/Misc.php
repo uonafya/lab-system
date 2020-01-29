@@ -367,64 +367,18 @@ class Misc extends Common
 
         if(!preg_match('/[2][5][4][7][0-9]{8}/', $sample->patient_phone_no)) return;
 
-        $client = new Client(['base_uri' => self::$sms_url]);
+        $response = self::sms($sample->patient_phone_no, $message);
 
-		$response = $client->request('post', '', [
-			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-			'http_errors' => false,
-			'json' => [
-				'sender' => env('SMS_SENDER_ID'),
-				'recipient' => $sample->patient_phone_no,
-				'message' => $message,
-			],
-		]);
-
-		$body = json_decode($response->getBody());
-		if($response->getStatusCode() == 201){
-			$s = Sample::find($sample->id);
-			$s->time_result_sms_sent = date('Y-m-d H:i:s');
-			$s->save();
-		}
+        if($response){
+            $s = Sample::find($sample->id);
+            $s->time_result_sms_sent = date('Y-m-d H:i:s');
+            $s->save();
+        }
     }
 
     public static function sms_test()
     {
-        $client = new Client(['base_uri' => self::$sms_url]);
-
-		$response = $client->request('post', '', [
-			'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-			'debug' => true,
-			'http_errors' => false,
-			'json' => [
-				'sender' => env('SMS_SENDER_ID'),
-				'recipient' => '254702266217',
-				'message' => 'This is a successful test.',
-			],
-		]);
-
-		$body = json_decode($response->getBody());
-		echo 'Status code is ' . $response->getStatusCode();
-		// dd($body);
-    }
-
-    public static function sms_random($number, $message)
-    {
-        $client = new Client(['base_uri' => self::$sms_url]);
-
-        $response = $client->request('post', '', [
-            'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-            'debug' => true,
-            'http_errors' => false,
-            'json' => [
-                'sender' => env('SMS_SENDER_ID'),
-                'recipient' => $number,
-                'message' => $message,
-            ],
-        ]);
-
-        $body = json_decode($response->getBody());
-        echo 'Status code is ' . $response->getStatusCode();
-        // dd($body);
+        self::sms('254702266217', 'This is a successful test.');
     }
 
     public static function get_worksheet_samples($machine_type, $temp_limit=null)
