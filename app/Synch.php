@@ -971,20 +971,7 @@ class Synch
 			$message .=
 			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nC8800 Tests - {$vl['c8800_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
 
-	        $client = new Client(['base_uri' => \App\Common::$sms_url]);
-
-			$response = $client->request('post', '', [
-				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-				// 'debug' => true,
-				'http_errors' => false,
-				'json' => [
-					'sender' => env('SMS_SENDER_ID'),
-					// 'recipient' => '254702266217',
-					'recipient' => $user->mobile,
-					'message' => $message,
-				],
-			]);
-			$body = json_decode($response->getBody());
+			\App\Common::sms($user->mobile, $message);
 		}
 	}
 
@@ -1114,22 +1101,8 @@ class Synch
 
 			$message = "Hi ".$user->name."\n"." BACK LOG ALERT AS OF ".$currentdaydisplay." " . $lab."\n". " EID "."\n"." Samples Logged in NOT in Worksheet : ". $logs->pendingeidsamples."\n"." Samples In Process : ".$logs->totaleidsamplesrun."\n"." VL "."\n". " Samples Logged in and NOT in Worksheet :".$logs->pendingvlsamples."\n"." Samples In Process:".$logs->totalvlsamplesrun;
 
-	        $client = new Client(['base_uri' => \App\Common::$sms_url]);
 
-			$response = $client->request('post', '', [
-				'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
-				// 'debug' => true,
-				'http_errors' => false,
-				'json' => [
-					'sender' => env('SMS_SENDER_ID'),
-					// 'recipient' => '254702266217',
-					'recipient' => $user->mobile,
-					'message' => $message,
-				],
-			]);
-			$body = json_decode($response->getBody());
-			// print_r($body);
-			// break;
+			\App\Common::sms($user->mobile, $message);
 		}
 	}
 
