@@ -191,7 +191,6 @@ class Random
             foreach ($divs as $div) {
 
                 $data = $m::selectRaw($div . $sql)->join('view_facilitys', 'view_facilitys.id', '=', $value['table'] . '.facility_id')
-                ->where('datetested', '>=', "{$year}-{$month}-01")
                 ->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
                 ->where('site_entry', '!=', 2)
                 ->whereBetween('datetested', [$year . '-01-01', $year . '-12-31'])
