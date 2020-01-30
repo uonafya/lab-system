@@ -167,6 +167,59 @@ class Random
 
     }
 
+    public static function county_tat_report($year)
+    {
+        $d = [
+            'Eid' => [
+                'model' => \App\SampleView::class,
+                'table' => 'samples_view',
+            ],
+            'VL' => [
+                'model' => \App\ViralsampleView::class,
+                'table' => 'viralsamples_view',
+            ],
+        ];
+        $files = [];
+
+        $divs = ['County', 'Subcounty'];
+
+        $sql = ", AVG(tat1) AS `Collection to Receipt at the Lab (TAT 1)`, AVG(tat2) AS `Receipt to Testing (TAT 2)`, AVG(tat3) AS `Testing to Dispatch (TAT 3)`, AVG(tat4) AS `Collection to Dispatch (TAT 4)`, AVG(tat5) AS `Receipt to Dispatch (Lab TAT)`, COUNT(id) AS `Number of Samples` ";
+
+        foreach ($d as $key => $value) {
+            $m = $value['model'];
+
+            foreach ($divs as $div) {
+
+                $data = $m::selectRaw($div . $sql)->join('view_facilitys', 'view_facilitys.id', '=', $value['table'] . '.facility_id')
+                ->where('datetested', '>=', "{$year}-{$month}-01")
+                ->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
+                ->where('site_entry', '!=', 2)
+                ->whereBetween('datetested', [$year . '-01-01', $year . '-12-31'])
+                ->groupBy($div)
+                ->orderBy($div, 'asc')
+                ->get();
+                $rows = [];
+
+                foreach ($data as $row) {
+                    // $row['Month'] = date('M', strtotime("2019-{$row['Month']}-01"));
+                    $rows[] = $row->toArray();
+                }
+
+                $file = $key . '_' . $div . '_tat_data';
+
+                Excel::create($file, function($excel) use($rows){
+                    $excel->sheet('Sheetname', function($sheet) use($rows) {
+                        $sheet->fromArray($rows);
+                    });
+                })->store('csv');
+
+                $files[] = storage_path("exports/" . $file . ".csv");
+            }
+        }  
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function tat_report($year, $month)
     {
     	$d = [
