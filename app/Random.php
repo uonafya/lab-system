@@ -189,8 +189,10 @@ class Random
             $m = $value['model'];
 
             foreach ($divs as $div) {
+                $query = $div . str_replace('id', $value['table'] . '.id', $sql);
+                if($div == 'Subcounty') $query = 'County, ' . $query;
 
-                $data = $m::selectRaw($div . str_replace('id', $value['table'] . '.id', $sql))
+                $data = $m::selectRaw($query)
                 ->join('view_facilitys', 'view_facilitys.id', '=', $value['table'] . '.facility_id')
                 ->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
                 ->where('site_entry', '!=', 2)
