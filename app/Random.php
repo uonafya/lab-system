@@ -190,7 +190,7 @@ class Random
 
             foreach ($divs as $div) {
 
-                $data = $m::selectRaw($div . str_replace('id', $value['table'] '.id' , $sql))
+                $data = $m::selectRaw($div . str_replace('id', $value['table'] . '.id', $sql))
                 ->join('view_facilitys', 'view_facilitys.id', '=', $value['table'] . '.facility_id')
                 ->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
                 ->where('site_entry', '!=', 2)
