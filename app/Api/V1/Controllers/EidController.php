@@ -72,7 +72,8 @@ class EidController extends BaseController
             $batch = new Batch;
         }
 
-        $batch->lab_id = $lab_id;
+        $batch->lab_id = env('APP_LAB');
+
         $batch->facility_id = $facility;
         $batch->datereceived = $datereceived;
         // if($batch->facility_id == 4840 && !$batch->datereceived) $batch->datereceived = date('Y-m-d');

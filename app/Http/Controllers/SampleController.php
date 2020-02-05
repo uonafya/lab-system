@@ -653,7 +653,7 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL){
+        if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL && !$sample->has_rerun){
             $batch = $sample->batch;
             $sample->delete();
             $samples = $batch->sample;

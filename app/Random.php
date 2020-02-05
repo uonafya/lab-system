@@ -117,6 +117,111 @@ class Random
         }
     }
 
+    public static function recollection_report()
+    {
+        $d = [
+            'EID' => [
+                'model' => \App\SampleView::class,
+            ],
+            'VL' => [
+                'model' => \App\ViralsampleView::class,
+            ],
+        ];
+        $rows = [];
+
+        $sql = "id, patient_id, datereceived";
+
+        foreach ($d as $type => $value) {
+            $m = $value['model'];
+            for($year=2016; $year < 2020; $year++){
+                $rejected_samples = $m::selectRaw($sql)
+                    ->where(['repeatt' => 0, 'receivedstatus' => 2, 'batch_complete' => 1])
+                    ->where('site_entry', '!=', 2)
+                    ->whereBetween('datereceived', [$year . '-01-01', $year . '-12-31'])
+                    ->get();
+                $recollected = 0;
+                foreach ($rejected_samples as $rejected_sample) {
+                    $s = $m::selectRaw($sql)
+                    ->where(['repeatt' => 0, 'receivedstatus' => 1, 'patient_id' => $rejected_sample->patient_id])
+                    ->where('site_entry', '!=', 2)
+                    ->where('datereceived', '>', $rejected_sample->datereceived)
+                    ->first();
+                    if($s) $recollected++;
+                }
+                $rows[] = [
+                    'Test' => $type,
+                    'Year' => $year,
+                    'Rejected' => $rejected_samples->count(),
+                    'Recollected' => $recollected,
+                ];
+            }
+        }
+
+        $file = 'recollection_report';
+
+        Excel::create($file, function($excel) use($rows){
+            $excel->sheet('Sheetname', function($sheet) use($rows) {
+                $sheet->fromArray($rows);
+            });
+        })->store('csv');
+
+    }
+
+    public static function county_tat_report($year)
+    {
+        $d = [
+            'Eid' => [
+                'model' => \App\SampleView::class,
+                'table' => 'samples_view',
+            ],
+            'VL' => [
+                'model' => \App\ViralsampleView::class,
+                'table' => 'viralsamples_view',
+            ],
+        ];
+        $files = [];
+
+        $divs = ['County', 'Subcounty'];
+
+        $sql = ", AVG(tat1) AS `Collection to Receipt at the Lab (TAT 1)`, AVG(tat2) AS `Receipt to Testing (TAT 2)`, AVG(tat3) AS `Testing to Dispatch (TAT 3)`, AVG(tat4) AS `Collection to Dispatch (TAT 4)`, AVG(tat5) AS `Receipt to Dispatch (Lab TAT)`, COUNT(id) AS `Number of Samples` ";
+
+        foreach ($d as $key => $value) {
+            $m = $value['model'];
+
+            foreach ($divs as $div) {
+                $query = $div . str_replace('id', $value['table'] . '.id', $sql);
+                if($div == 'Subcounty') $query = 'County, ' . $query;
+
+                $data = $m::selectRaw($query)
+                ->join('view_facilitys', 'view_facilitys.id', '=', $value['table'] . '.facility_id')
+                ->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
+                ->where('site_entry', '!=', 2)
+                ->whereBetween('datetested', [$year . '-01-01', $year . '-12-31'])
+                ->groupBy($div)
+                ->orderBy($div, 'asc')
+                ->get();
+                $rows = [];
+
+                foreach ($data as $row) {
+                    // $row['Month'] = date('M', strtotime("2019-{$row['Month']}-01"));
+                    $rows[] = $row->toArray();
+                }
+
+                $file = $key . '_' . $div . '_tat_data';
+
+                Excel::create($file, function($excel) use($rows){
+                    $excel->sheet('Sheetname', function($sheet) use($rows) {
+                        $sheet->fromArray($rows);
+                    });
+                })->store('csv');
+
+                $files[] = storage_path("exports/" . $file . ".csv");
+            }
+        }  
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function tat_report($year, $month)
     {
     	$d = [
