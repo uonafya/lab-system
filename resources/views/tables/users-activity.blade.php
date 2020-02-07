@@ -37,9 +37,10 @@
                                 <tr>
                                     <th rowspan="2">#</th>
                                     <th rowspan="2">Full Names</th>
+                                    <th rowspan="2">Email</th>
                                     <th colspan="2"><center>Samples Entered ({{ $data->year }} {{ $data->monthName }})</center></th>
                                     <th colspan="2"><center>Site Samples Approved ({{ $data->year }} {{ $data->monthName }})</center></th>
-                                    <!-- <th rowspan="2">Action</th> -->
+                                    <th rowspan="2">Action</th>
                                 </tr>
                                 <tr>
                                     <th><center>EID</center></th>
@@ -53,11 +54,12 @@
                                 <tr>
                                     <td>{{ $key+1 }}</td>
                                     <td>{{ $user->full_name }}</td>
+                                    <td>{{ $user->email ?? '' }}</td>
                                     <td>{{ $user->samples_entered('EID', $data->year, $data->month) }}</td>
                                     <td>{{ $user->samples_entered('VL', $data->year, $data->month) }}</td>
                                     <td>{{ $user->sitesamplesapproved('EID', $data->year, $data->month) }}</td>
                                     <td>{{ $user->sitesamplesapproved('VL', $data->year, $data->month) }}</td>
-                                    <!-- <td><a href='{{-- url("users/activity/$user->id") --}}'>View Log</a></td> -->
+                                    <td><a class='btn btn-success btn-xs' href='{{ url("users/activity/$user->id") }}'>View Log</a></td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -65,6 +67,44 @@
                     </div>
                 </div>
             </div>
+            {{-- <div class="hpanel">
+                <div class="panel-head">
+                    Daily Individual Performance <small>(This part is not affected by the filters)</small>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" >
+                            <thead>
+                                <tr>
+                                    <th>Full Names</th>
+                                    <th>Email</th>
+                                    <th>Samples Logged/Approved</th>
+                                    <th>Worksheets Sorted</th>
+                                    <th>Worksheets Aliquoted</th>
+                                    <th>Worksheets Run</th>
+                                    <th>Samples Dispatched</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($users as $key => $user)
+                                <tr>
+                                    <td>{{ $user->full_name }}</td>
+                                    <td>
+                                        {{ $user->samplesLoggedToday() }}
+                                        &nbsp;/&nbsp;
+                                        {{ $user->samplesApprovedToday() }}
+                                    </td>
+                                    <td>{{ $user->worksheetsSortedToday() }}</td>
+                                    <td>{{ $user->worksheetsAliquotedToday() }}</td>
+                                    <td>{{ $user->worksheetsRunToday() }}</td>
+                                    <td>{{ $user->samplesDispatchedToday() }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> --}}
         </div>
     </div>
 </div>
