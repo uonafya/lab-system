@@ -296,6 +296,7 @@
             <li>
                 <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
             </li>
+            <hr />
         
         @endif
             <!-- <li>
