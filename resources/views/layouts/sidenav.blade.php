@@ -420,7 +420,7 @@
             <hr />
         @endif
         --}}
-        @if (!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
+        @if (!(Auth::user()->user_type_id == 5))
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
