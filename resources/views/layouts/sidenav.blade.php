@@ -123,7 +123,7 @@
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                     <hr />
                 @endif
-                @if(env('APP_LAB') == 2 && (auth()->user()->user_type_id == 0 || auth()->user()->lab_id == 10))
+                @if(env('APP_LAB') == 2 && (in_array(auth()->user()->user_type_id, [0, 8]) || auth()->user()->lab_id == 10))
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
                     <hr />
                 @endif
