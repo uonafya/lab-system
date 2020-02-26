@@ -374,7 +374,7 @@ p.breakhere {page-break-before: always}
 
 			@if($sample->previous_tests->count() > 0)
 				@foreach($sample->previous_tests as $prev)
-					@break($loop > 3)
+					@break($loop->iteration > 3)
 					<br />
 
 					<tr class="evenrow">
