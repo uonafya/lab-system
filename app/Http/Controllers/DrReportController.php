@@ -88,7 +88,7 @@ class DrReportController extends Controller
         if($type == 'susceptibility'){
             return Excel::download(new DrSusceptabilityExport($request), 'susceptability_report.xlsx');
         }
-        else if($type == 'susceptibility'){
+        else if($type == 'detailed'){
             return new DrDetailedReportExport($request);
         }
 
