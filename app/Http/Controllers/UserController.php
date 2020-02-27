@@ -23,13 +23,12 @@ class UserController extends Controller
         $users = User::select('users.*','user_types.user_type')
             ->join('user_types', 'user_types.id', '=', 'users.user_type_id')
             ->when(true, function($query){
-                if(env('APP_LAB' != 7)) return $query->where('users.user_type_id', '<>', 5);
+                if(env('APP_LAB') != 7) return $query->where('users.user_type_id', '<>', 5);
                 return $query->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
                     ->addSelect('facilitys.name', 'facilitycode');
             })            
             ->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
             ->get();
-        dd($users);
 
         foreach ($users as $key => $value) {
             $id = md5($value->id);
