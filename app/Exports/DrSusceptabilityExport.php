@@ -12,7 +12,7 @@ use \App\MiscDr;
 use \App\DrSample;
 
 
-class DrSusceptabilityExport extends BaseExport implements FromArray, WithEvents
+class DrSusceptabilityExport extends Base implements FromArray, WithEvents
 {
 	public $request;
 

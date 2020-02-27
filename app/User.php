@@ -84,6 +84,18 @@ class User extends Authenticatable implements JWTSubject
         return "{$this->surname} {$this->oname}";
     }
 
+    public function getIsLabUserAttribute()
+    {
+        if(in_array($this->user_type_id, [0, 1, 4])) return true;
+        return false;
+    }
+
+    public function getIsFacilityAttribute()
+    {
+        if($this->user_type_id == 5) return true;
+        return false;
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');

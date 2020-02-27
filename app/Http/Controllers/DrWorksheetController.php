@@ -254,6 +254,7 @@ class DrWorksheetController extends Controller
             ]);
             return back();
         }
+        $worksheet->sample()->update(['datetested' => $worksheet->dateuploaded]);
         
         return redirect('dr_worksheet');
     }

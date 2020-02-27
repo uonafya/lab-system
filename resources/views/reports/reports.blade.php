@@ -259,7 +259,14 @@
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
                                 @if(Session('testingSystem') == 'DR')
-                                <label> <input type="radio" name="types" value="susceptibility" class="i-checks" required> Susceptibility Report </label>
+                                    <label> 
+                                        <input type="radio" name="types" value="susceptibility" class="i-checks" required> 
+                                        Susceptibility Report 
+                                    </label>
+                                    <label> 
+                                        <input type="radio" name="types" value="detailed" class="i-checks" required> 
+                                        Detailed Report 
+                                    </label>
                                 @else
                                 <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
                                 <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>

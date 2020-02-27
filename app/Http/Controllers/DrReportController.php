@@ -21,12 +21,13 @@ use App\Mail\DrugResistance;
 
 // use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DrSusceptabilityExport;
+use App\Exports\DrDetailedReportExport;
 
 
 
 class DrReportController extends Controller
 {
-
+/*
 	public function date_filter($request, $column)
 	{
 		return function($query) use($request, $column){
@@ -78,11 +79,19 @@ class DrReportController extends Controller
 			return $query->where($column, $param);			
 		};
 	}
-
+*/
 	public function reports(Request $request)
 	{
-		// return $this->susceptability($request);        
-        return Excel::download(new DrSusceptabilityExport($request), 'susceptability_report.xlsx');
+		// return $this->susceptability($request);
+        $type = $request->input('types');
+
+        if($type == 'susceptibility'){
+            return Excel::download(new DrSusceptabilityExport($request), 'susceptability_report.xlsx');
+        }
+        else if($type == 'susceptibility'){
+            return Excel::download(new DrDetailedReportExport($request), 'dr_detailed_report.xlsx');
+        }
+
 	}
 
     public function susceptability($request)

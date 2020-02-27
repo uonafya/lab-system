@@ -43,7 +43,7 @@ class HomeController extends Controller
             session(['toast_message' => 'Please make sure that your contact information is up to date.']);
             return redirect("/facility/{$user->facility_id}/edit");
         }
-        else if (in_array(auth()->user()->user_type_id, [0, 1, 4])) {
+        else if (auth()->user()->is_lab_user) {
             self::cacher();
             $chart = $this->getHomeGraph();
             $week_chart = $this->getHomeGraph('week');
