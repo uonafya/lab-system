@@ -27,7 +27,7 @@ class UserController extends Controller
                 return $query->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
                     ->addSelect('facilitys.name', 'facilitycode');
             })            
-            ->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
+            ->where('users.email', '!=', 'rufus.nyaga@ken.aphl.org')
             ->get();
 
         foreach ($users as $key => $value) {
