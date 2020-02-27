@@ -29,6 +29,7 @@ class UserController extends Controller
             })            
             ->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
             ->get();
+        dd($users);
 
         foreach ($users as $key => $value) {
             $id = md5($value->id);
