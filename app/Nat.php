@@ -301,6 +301,74 @@ class Nat
 		self::email_csv('county_fine_age_suppression', $data);
 	}
 
+	public static function get_national_ages_current_query($year, $suppressed=true, $ages=null)
+	{
+    	$sql = 'SELECT sex, count(*) as totals ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.facility_id, v.sex, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		if($ages) $sql .= "AND age > {$ages[0]} AND age <= {$ages[1]} ";
+
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		// if($suppression){
+			if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+			else{
+				$sql .= 'WHERE rcategory IN (3,4) ';
+			}
+		// }
+		$sql .= 'GROUP BY sex ';
+		$sql .= 'ORDER BY sex ';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+	public static function get_national_fine_ages()
+	{
+		$data = [];
+		$ages = [];
+		$i=0;
+
+		while(true){
+			$f = $i;
+			$i += 4;
+			if($i == 4) $i++;
+			if($i == 85) $i = 100;
+			$s = $i;
+			$ages['a_' . $f . '-' . $s] = [$f, $s];
+			if($i >= 100) break;
+			$i++;
+		}
+		$ages['a_all_ages'] = [];
+
+		for ($year=2014; $year < 2020; $year++) { 
+			$row = ['Year' => $year];
+			$suppressed = self::get_national_ages_current_query($year, true, $value);
+			$nonsuppressed = self::get_national_ages_current_query($year, false, $value);
+
+			foreach ($ages as $key => $value) {
+				$sup = $key . '_suppressed';
+				$nonsup = $key . '_nonsuppressed';
+
+				$row[$sup . '_male'] = $suppressed->where('sex', 1)->first()->totals ?? 0;
+				$row[$sup . '_female'] = $suppressed->where('sex', 2)->first()->totals ?? 0;
+				
+				$row[$nonsup . '_male'] = $nonsuppressed->where('sex', 1)->first()->totals ?? 0;
+				$row[$nonsup . '_female'] = $nonsuppressed->where('sex', 2)->first()->totals ?? 0;
+			}
+			$data[] = $row;
+		}
+		self::email_csv('national_fine_age_suppression', $data);
+	}
+
 	/*
 	public static function save_gender_results()
 	{
