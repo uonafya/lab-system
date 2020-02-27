@@ -65,9 +65,14 @@
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
                     @elseif(session('testingSystem') == 'DR')
-                        <li>
-                            <a href="{{ url('facility') }}">Facilities</a>
-                        </li>   
+                        @if(auth()->user()->is_admin)
+                            <li>
+                                <a href="{{ url('user') }}">Users</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('facility') }}">Facilities</a>
+                            </li>
+                        @endif   
                         <li class="">
                             <a href="{{ url('reports') }}">Report</a>
                         </li>   
