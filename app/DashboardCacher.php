@@ -131,9 +131,9 @@ class DashboardCacher
                 'dr_pending_receipt' => Cache::get('dr_pending_receipt'),
                 'dr_pending_testing' => Cache::get('dr_pending_testing'),
                 'dr_pending_update' => Cache::get('dr_pending_update'),
-                'dr_awaiting_hyrax' => Cache::get('dr_awaiting_hyrax')
-                'dr_requires_action' => Cache::get('dr_requires_action')
-                'dr_pending_approval' => Cache::get('dr_pending_approval')
+                'dr_awaiting_hyrax' => Cache::get('dr_awaiting_hyrax'),
+                'dr_requires_action' => Cache::get('dr_requires_action'),
+                'dr_pending_approval' => Cache::get('dr_pending_approval'),
             ]);
         }
     }
