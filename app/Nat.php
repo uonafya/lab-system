@@ -312,7 +312,12 @@ class Nat
 		$sql .= 'FROM viralsamples_view ';
 		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
 		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
-		if($ages) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
+		if($ages){
+			if($ages[0] == 0) $sql .= "AND age > {$ages[0]} AND age < {$ages[1]} ";
+			else{
+				$sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
+			}			
+		}
 
 		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
 		$sql .= 'AND justification != 10 and facility_id != 7148 ';
