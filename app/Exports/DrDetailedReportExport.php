@@ -24,9 +24,6 @@ class DrDetailedReportExport extends BaseExport
 		$row = DrSample::selectRaw($this->sql)
             ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('view_facilitys', 'viralpatients.facility_id', '=', 'view_facilitys.id')
-            ->when($string, function($query) use ($string){
-                return $query->whereRaw($string);
-            })
 			->first();
 
 		return collect($row)->keys()->all();
