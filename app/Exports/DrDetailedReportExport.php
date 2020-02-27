@@ -15,7 +15,7 @@ class DrDetailedReportExport extends BaseExport
 		$this->sql = "
             facilitycode AS `MFL Code`, view_facilitys.name AS `Facility`, patient AS `CCC Number`, dob AS `Date of Birth`,
             age, 
-            datecollected, datereceived, datetested, datedispatched
+            datecollected AS `Date Collected`, datereceived AS `Date Received`, datetested AS `Date Tested`, datedispatched AS `Date Dispatched`
 		";
     }
 

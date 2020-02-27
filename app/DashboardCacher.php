@@ -68,7 +68,7 @@ class DashboardCacher
 
     public static function dashboard()
     {
-        if (session('testingSystem') == 'Viralload') self::nhrl_cacher();
+        if (env('APP_LAB') == 7) self::nhrl_cacher();
         else{
         	self::cacher();
         }
@@ -398,7 +398,7 @@ class DashboardCacher
 
     public static function nhrl_cacher()
     {
-        if(Cache::has('dr_pending_receipt')) return true;
+        // if(Cache::has('dr_pending_receipt')) return true;
 
         $minutes = (15*60);
 
