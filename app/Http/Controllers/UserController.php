@@ -17,9 +17,18 @@ class UserController extends Controller
     public function index()
     {
         $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access','Action']);
+        if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access','Action']);
         $row = "";
 
-        $users = User::select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')->where('users.user_type_id', '<>', 5)->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
+        $users = User::select('users.*','user_types.user_type')
+            ->join('user_types', 'user_types.id', '=', 'users.user_type_id')
+            ->when(true, function($query){
+                if(env('APP_LAB' != 7)) return $query->where('users.user_type_id', '<>', 5);
+                return $query->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
+                    ->addSelect('facilitys.name', 'facilitycode');
+            })            
+            ->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
+            ->get();
 
         foreach ($users as $key => $value) {
             $id = md5($value->id);
@@ -29,6 +38,10 @@ class UserController extends Controller
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
             $row .= '<td>'.$value->full_name.'</td>';
+            if(env('APP_LAB') == 7){
+                $row .= '<td>'.$value->facilitycode.'</td>';                
+                $row .= '<td>'.$value->name.'</td>';                
+            }
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
@@ -160,7 +173,10 @@ class UserController extends Controller
 
     public function delete($id) {
         $user = self::__unHashUser($id);
-        $user->delete();
+        if(!$user->facility_id) $user->delete();
+        else{
+            session(['toast_error' => 1, 'toast_message' => 'You cannot delete this user. Update the password to lock the account.']);
+        }
 
         return back();
     }
