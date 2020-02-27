@@ -41,7 +41,7 @@ class DrDetailedReportExport extends BaseExport
                 return $query->whereRaw($string);
             })
             ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
-            ->when(true, $this->date_filter($request, 'datetested'))
-            ->when(true, $this->divisions_filter($request));
+            ->when(true, $this->date_filter($this->request, 'datetested'))
+            ->when(true, $this->divisions_filter($this->request));
     }
 }
