@@ -27,7 +27,7 @@
     <nav role="navigation">
         <div class="header-link hide-menu"><i class="fa fa-bars"></i></div>
         <div class="small-logo">
-            <span class="text-primary">@if(Auth::user()->user_type_id != 8) @if(Session('testingSystem') == 'CD4') CD4 @else EID - VL @endif @endif</span>
+            <span class="text-primary">@if(Auth::user()->user_type_id != 7) @if(Session('testingSystem') == 'CD4') CD4 @else EID - VL @endif @endif</span>
         </div>
         @if(Session('testingSystem') != 'CD4')
             @if(Session('pendingTasks') && !(env('APP_LAB') == 2 || env('APP_LAB') == 5))
@@ -44,7 +44,7 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                @if(Auth::user()->user_type_id != 8)
+                @if(!in_array(Auth::user()->user_type_id, [7,8]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
                             <a href="{{ url('home') }}">Home</a>
@@ -140,15 +140,17 @@
                                     <li class="">
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
-            @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
-                <li class="">
-                    <a href="{{ url('reports/kits') }}">Kits
-                    <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
-                    {{ $widgets['rejectedAllocations'] }}
-                    </span>
-                    </a>     
-                </li>    
-            @endif  
+
+                                    <li class="">
+                                        @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
+                                            <a href="{{ url('reports/kits') }}">Kits
+                                            <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                            {{ $widgets['rejectedAllocations'] }}
+                                            </span>
+                                            </a>       
+                                        @endif    
+                                    </li>
+                                    
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
                                             <a href="{{ url('user') }}">Users</a>
@@ -173,7 +175,7 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
-            @if(Auth::user()->user_type_id != 8)
+            @if(!in_array(Auth::user()->user_type_id, [7,8]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">

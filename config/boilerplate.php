@@ -60,11 +60,11 @@ return [
         'patient_identifier' => 'required',
         'mflCode' => ['required', 'integer', 'digits:5', 'exists:facilitys,facilitycode'], 
         'sex' => ['required', 'integer', 'max:3'], 
-        'lab' => 'integer',
-        'amrs_location' => 'integer',
+        'lab' => ['integer', 'nullable'],
+        'amrs_location' => ['integer', 'nullable'],
 
         // 'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
-        'preferred_language' => ['integer', 'between:1,2'],
+        'preferred_language' => ['integer', 'between:1,2', 'nullable'],
 
     ],
 
@@ -81,26 +81,26 @@ return [
     ], 
 
     'eid' => [
-        'hiv_status' => 'integer',
-        'entry_point' => 'integer',
-        'spots' => 'integer',
+        // 'hiv_status' => 'integer',
+        'entry_point' => ['integer', 'nullable'],
+        'spots' => ['integer', 'nullable'],
         'feeding' => ['required', 'integer'],
         'regimen' => ['required', 'integer', 'max:30'],
         'mother_prophylaxis' => ['required', 'integer', 'max:30'],
-        'mother_age' => ['integer', 'between:10,70'],
+        'mother_age' => ['integer', 'between:10,70', 'nullable'],
         // 'pcrtype' => ['required', 'integer', 'between:1,5'], 
-        'pcrtype' => ['integer', 'between:1,5'], 
-        'redraw' => 'integer', 
+        'pcrtype' => ['integer', 'between:1,5', 'nullable'], 
+        'redraw' => ['integer', 'nullable'],
     ],
 
     'vl' => [
-        'initiation_date' => ['date_format:Y-m-d', 'before_or_equal:today','after_or_equal:1990-01-01'],
-        'dateinitiatedonregimen' => ['date_format:Y-m-d', 'before_or_equal:today',],
+        'initiation_date' => ['date_format:Y-m-d', 'before_or_equal:today','after_or_equal:1990-01-01', 'nullable'],
+        'dateinitiatedonregimen' => ['date_format:Y-m-d', 'before_or_equal:today', 'nullable'],
         'prophylaxis' => ['required', 'integer', 'max:50'],
         // 'regimenline' => ['required', 'integer', 'max:10'],
         'sampletype' => ['required', 'integer', 'between:1,3'],
         'justification' => ['required', 'integer', 'max:15'],
-        'pmtct' => ['integer', 'between:1,3', 'required_if:sex,==,2'],
+        'pmtct' => ['integer', 'between:1,3', 'required_if:sex,==,2', 'nullable'],
     ],
 
     'cd4' => [
@@ -109,21 +109,21 @@ return [
         'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
         'mflCode' => ['required', 'integer', 'digits:5', 'exists:facilitys,facilitycode'], 
         'sex' => ['required', 'integer', 'max:3'], 
-        'lab' => 'integer',
-        'amrs_location' => 'integer',
+        'lab' => ['integer', 'nullable'],
+        'amrs_location' => ['integer', 'nullable'],
     ],
 
     'form_base' => [
         'patient' => 'required',
         'facility_id' => ['required', 'integer'], 
-        'dob' => ['required_without:age', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'dob' => ['required_without:age', 'before_or_equal:today', 'date_format:Y-m-d', 'nullable'],
         'datecollected' => ['required', 'after_or_equal:-6month', 'before_or_equal:today', 'date_format:Y-m-d'],
-        'datedispatchedfromfacility' => ['after_or_equal:-6month', 'before_or_equal:+7days', 'date_format:Y-m-d'],
+        'datedispatchedfromfacility' => ['after_or_equal:-6month', 'before_or_equal:+7days', 'date_format:Y-m-d', 'nullable'],
         'sex' => ['required', 'integer', 'between:1,2'], 
-        'amrs_location' => 'integer',
+        'amrs_location' => ['integer', 'nullable'],
 
         // 'patient_phone_no' => ["regex:/[2][5][4][7][0-9]{8}/", 'digits:12', ], 
-        'preferred_language' => ['integer', 'between:1,2'],
+        'preferred_language' => ['integer', 'between:1,2', 'nullable'],
 
     ],
 

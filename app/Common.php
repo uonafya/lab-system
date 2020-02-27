@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Facades\Mail;
+use GuzzleHttp\Client;
 use App\Mail\TestMail;
 use App\Mail\CriticalResults;
 use App\Mail\EidDispatch;
@@ -18,7 +19,9 @@ use App\Synch;
 
 class Common
 {
-	public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
+	// public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
+	public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
 
@@ -57,6 +60,7 @@ class Common
     public static function test_email()
     {
         Mail::to(['joelkith@gmail.com'])->send(new TestMail());
+        // Mail::to(['aaron.mbowa@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke', 'tngugi@clintonhealthaccess.org', 'joel.kithinji@dataposit.co.ke'])->send(new TestMail());
     }
 
     public static function get_misc_class($type)
@@ -107,6 +111,31 @@ class Common
 		if($with_holidays) $totaldays -= $holidays;
 		if ($totaldays < 1)		$totaldays=1;
 		return $totaldays;
+	}
+
+	public static function sms($recepient, $message)
+	{
+		$client = new Client(['base_uri' => self::$sms_url]);
+
+		$response = $client->request('post', '', [
+			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'http_errors' => false,
+			'json' => [
+				// 'sender' => env('SMS_SENDER_ID'),
+                'apiKey' => env('SMS_KEY'),
+                'shortCode' => env('SMS_SENDER_ID'),
+				'recipient' => $recepient,
+				'message' => $message,
+                'callbackURL' => self::$sms_callback,
+                'enqueue' => 0,
+			],
+		]);
+
+		$body = json_decode($response->getBody());
+        if($response->getStatusCode() == 402) die();
+		// if($response->getStatusCode() == 201){
+        if($response->getStatusCode() < 300) return true;
+
 	}
 
     public static function get_holidays($month)
@@ -561,15 +590,17 @@ class Common
 	        $mail_array = ['joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com'];
 	        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
+	        if(!$mail_array) continue;
+
 			$samples = $sampleview_class::whereRaw($q)
 						->where(['datedispatched' => $dt, 'facility_id' => $facility->id, 'repeatt' => 0])
 						->get();
 
 			try {				
-				$comm = new CriticalResults($facility, $type, $samples, $dt);
+				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
 				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
 			} catch (Exception $e) {
-				
+				// dd($e->getMessage());
 			}
 		}
 	}

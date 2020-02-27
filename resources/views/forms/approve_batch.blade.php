@@ -198,7 +198,7 @@
                                                 <a href="{{ url('/sample/' . $sample->id . '/edit') }} ">Edit</a>
                                             </td>
                                             <td style="width: 1000px;">
-                                                <select class="form-control" name="rejectedreason" id="rejectedreason_{{$sample->id}}">
+                                                <select class="form-control" name="rejectedreason[]" id="rejectedreason_{{$sample->id}}">
 
                                                     <option></option>
                                                     @foreach ($rejectedreasons as $rejectedreason)

@@ -125,6 +125,7 @@ class LoginController extends Controller
         $user->set_last_access();
 
         if($user->user_type_id == 7) return "/sample/list_poc";
+        if($user->user_type_id == 8) return "/viralsample/nhrl";
 
         if($facility || $user->user_type_id == 5){
             $fac = \App\Facility::find($user->facility_id);

@@ -348,6 +348,9 @@
                                                         | <a href="{{ url($pre . 'batch/envelope/' . $batch->id) }}"><i class='fa fa-envelope'></i> Envelope </a>
                                                         | <a href="{{ url($pre . 'batch/email/' . $batch->id) }}"><i class='fa fa-envelope'></i> Email </a>
                                                     @endif
+                                                    @if(in_array(env('APP_LAB'), [5]) && $batch->batch_complete == 0)
+                                                        | <a href="{{ url($pre . 'batch/labels/' . $batch->id) }}" target="_blank"><i class='fa fa-print'></i> Print Labels</a>                                                     
+                                                    @endif
 
                                                 @endif
                                             </td>

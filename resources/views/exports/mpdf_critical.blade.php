@@ -62,6 +62,21 @@
     <!-- <div class="content"> -->
 
         <div class="row">
+
+            <table class="table" border="0" style="border: 0px; width: 100%;">
+                <tr>
+                    <td align="center">
+                        <img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <h5>MINISTRY OF HEALTH</h5>
+                        <h5>NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)</h5>
+                    </td>
+                </tr>
+            </table>
+
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -101,7 +116,6 @@
 
         <table style="display: inline-block;">
             <th><b>LAB CONTACTS </b> </td>
-            <tr><td><b> {{ $lab->labname }} </b></td></tr>
             <tr><td>{{ $lab->name }} </td></tr>
             <tr><td>{{ $lab->lablocation }} </td></tr>
             <tr><td>{{ $lab->labtel1 }} </td></tr>

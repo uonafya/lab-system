@@ -16,7 +16,7 @@ use App\Mail\TestMail;
 class Nat
 {
 
-	public static function email_csv($filename, $data, $emails=['joelkith@gmail.com'])
+	public static function email_csv($filename, $rows, $emails=['joelkith@gmail.com'])
 	{		
 		Excel::create($filename, function($excel) use($rows){
 			$excel->sheet('Sheetname', function($sheet) use($rows) {
@@ -24,12 +24,83 @@ class Nat
 			});
 		})->store('csv');
 
-		$data = [storage_path("exports/" . $filename . ".csv")];
+		$attachments = [storage_path("exports/" . $filename . ".csv")];
 
-		Mail::to($emails)->send(new TestMail($data));
+		Mail::to($emails)->send(new TestMail($attachments));
 	}
 
-	public static function get_current_gender_query($facility_id, $date_params=null)
+	public static function get_county_current_query($year, $paed=false, $suppressed=true, $ages=true, $suppression=true)
+	{
+    	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.facility_id, v.sex, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		if($ages){
+			if($paed) $sql .= "AND age < 15 ";
+			else{
+				$sql .= "AND age > 14 ";
+			}
+		}
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
+		if($suppression){
+			if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+			else{
+				$sql .= 'WHERE rcategory IN (3,4) ';
+			}
+		}
+		$sql .= 'GROUP BY f.county_id, sex ';
+		$sql .= 'ORDER BY f.county_id, sex ';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+	public static function get_county_current()
+	{
+		$data = [];
+
+		$counties = DB::table('countys')->get();
+
+		for ($year=2019; $year < 2020; $year++) { 
+			$paeds_sup = self::get_county_current_query($year, true);
+			$paeds = self::get_county_current_query($year, true, false);
+			$adults_sup = self::get_county_current_query($year, false);
+			$adults = self::get_county_current_query($year, false, false);
+			$all = self::get_county_current_query($year, false, false, false, false);
+			foreach ($counties as $county) {
+				$row = ['Year' => $year, 'County' => $county->name];
+
+				$row['Paedeatric Suppressed Male'] = $paeds_sup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Paedeatric Suppressed Female'] = $paeds_sup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['Paedeatric Non-Suppressed Male'] = $paeds->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Paedeatric Non-Suppressed Female'] = $paeds->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['Adult Suppressed Male'] = $adults_sup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Adult Suppressed Female'] = $adults_sup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['Adult Non-Suppressed Male'] = $adults->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['Adult Non-Suppressed Female'] = $adults->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+
+				$row['All Male'] = $all->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row['All Female'] = $all->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+
+				$data[] = $row;
+			}
+		}
+		self::email_csv('county_suppression', $data);
+	}
+
+	public static function get_current_gender_query($facility_id, $date_params = ['2019-01-01', '2019-12-31'])
 	{
     	$sql = 'SELECT sex, rcategory, count(*) as totals ';
 		$sql .= 'FROM ';
@@ -38,10 +109,7 @@ class Nat
 		$sql .= 'RIGHT JOIN ';
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
-		if($date_params) $sql .= 'WHERE ( datetested between "' . $date_params[0] . '" and "' . $date_params[1] . '" ) ';
-		else {
-			$sql .= 'WHERE ( datetested between "2018-01-01" and "2018-12-31" ) ';
-		}
+		$sql .= 'WHERE ( datetested between "' . $date_params[0] . '" and "' . $date_params[1] . '" ) ';
 		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
 		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
 		$sql .= 'AND justification != 10 and facility_id != 7148 ';
@@ -153,6 +221,84 @@ class Nat
 		$data = [storage_path("exports/" . $file . ".csv")];
 
 		Mail::to(['joelkith@gmail.com', 'kmugambi@clintonhealthaccess.org', 'tngugi@clintonhealthaccess.org'])->send(new TestMail($data, 'Gender Totals Ordering Facilities'));
+	}
+
+	public static function get_county_ages_current_query($suppressed=true, $ages=null)
+	{
+		$year='2019';
+    	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.facility_id, v.sex, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		if($ages) $sql .= "AND age > {$ages[0]} AND age <= {$ages[1]} ";
+
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
+		// if($suppression){
+			if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+			else{
+				$sql .= 'WHERE rcategory IN (3,4) ';
+			}
+		// }
+		$sql .= 'GROUP BY f.county_id, sex ';
+		$sql .= 'ORDER BY f.county_id, sex ';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+	public static function get_county_fine_ages()
+	{
+		$data = [];
+		$ages = [];
+		$i=0;
+
+		while(true){
+			$f = $i;
+			$i += 4;
+			if($i == 4) $i++;
+			if($i == 85) $i = 100;
+			$s = $i;
+			$ages['a_' . $f . '-' . $s] = [$f, $s];
+			if($i >= 100) break;
+			$i++;
+		}
+		$ages['a_all_ages'] = [];
+		// return $ages;
+
+		$counties = DB::table('countys')->get();
+
+		foreach ($ages as $key => $value) {
+			$sup = $key . '_suppressed';
+			$nonsup = $key . '_nonsuppressed';
+			$$sup = self::get_county_ages_current_query(true, $value);
+			$$nonsup = self::get_county_ages_current_query(false, $value);
+		}
+
+		foreach ($counties as $county) {
+			$row = ['Year' => 2019, 'County' => $county->name];
+
+			foreach ($ages as $key => $value) {
+				$sup = $key . '_suppressed';
+				$nonsup = $key . '_nonsuppressed';
+
+				$row[$sup . '_male'] = $$sup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row[$sup . '_female'] = $$sup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+				
+				$row[$nonsup . '_male'] = $$nonsup->where('county_id', $county->id)->where('sex', 1)->first()->totals ?? 0;
+				$row[$nonsup . '_female'] = $$nonsup->where('county_id', $county->id)->where('sex', 2)->first()->totals ?? 0;
+			}
+			$data[] = $row;
+		}
+		self::email_csv('county_fine_age_suppression', $data);
 	}
 
 	/*
@@ -384,5 +530,57 @@ class Nat
 
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	} 
+
+	public static function gt_k()
+	{
+		ini_set('memory_limit', '-1');
+		$data = [];
+
+		$sql = "SELECT v.patient_id, v.patient AS `ccc_number`, f.name as `facility`, f.subcounty, f.county, v.patient_name, v.dob AS `date_of_birth`, v.age, g.gender, v.initiation_date AS `date_enrolled`, v.dateinitiatedonregimen AS `start_regimen_date`, vr.name AS `current_regimen`, v.result AS `VL>1000`
+				FROM viralsamples_view v
+				RIGHT JOIN 
+				(
+					SELECT id, patient_id, max(datetested) as maxdate
+					FROM viralsamples_view
+					WHERE datetested BETWEEN '2016-07-01' AND '2019-06-30'
+					AND patient != '' AND patient != 'null' AND patient is not null
+					AND flag=1 AND repeatt=0 AND result > 1000
+					AND justification != 10 and facility_id != 7148
+					GROUP BY patient_id
+				) gv
+				ON v.id=gv.id
+				LEFT JOIN gender g on g.id=v.sex
+				LEFT JOIN viralregimen vr on vr.id=v.prophylaxis
+				LEFT JOIN view_facilitys f on f.id=v.facility_id
+		";
+
+		$rows = DB::select($sql);
+
+		foreach ($rows as $key => $row) {
+			$sql2 = "SELECT * FROM viralsamples_view WHERE patient_id={$row->patient_id} AND repeatt=0 AND rcategory IN (1,2,3,4) ORDER BY datetested DESC LIMIT 3";
+
+			$samples = DB::select($sql2);
+
+			foreach ($samples as $s) {
+				if($s->rcategory < 3) continue 2;
+			}
+
+			// $data[] = $row->toArray();
+			$data[] = get_object_vars($row);
+		}
+
+		$file = "three_years_nonsuppressed_three_consecutive";
+		
+		Excel::create($file, function($excel) use($data){
+			$excel->sheet('Sheetname', function($sheet) use($data) {
+				$sheet->fromArray($data);
+			});
+		})->store('csv');
+
+		$data = [storage_path("exports/" . $file . ".csv")];
+
+		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+
+	}
 
 }
