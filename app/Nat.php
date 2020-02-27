@@ -351,12 +351,12 @@ class Nat
 
 		for ($year=2014; $year < 2020; $year++) { 
 			$row = ['Year' => $year];
-			$suppressed = self::get_national_ages_current_query($year, true, $value);
-			$nonsuppressed = self::get_national_ages_current_query($year, false, $value);
 
 			foreach ($ages as $key => $value) {
 				$sup = $key . '_suppressed';
 				$nonsup = $key . '_nonsuppressed';
+				$suppressed = self::get_national_ages_current_query($year, true, $value);
+				$nonsuppressed = self::get_national_ages_current_query($year, false, $value);
 
 				$row[$sup . '_male'] = $suppressed->where('sex', 1)->first()->totals ?? 0;
 				$row[$sup . '_female'] = $suppressed->where('sex', 2)->first()->totals ?? 0;
