@@ -24,7 +24,7 @@ class CreateViralsampleCompleteViewsTable extends Migration
             JOIN viralpatients p ON p.id=s.patient_id
             LEFT JOIN gender g on g.id=p.sex
             LEFT JOIN receivedstatus rs on rs.id=s.receivedstatus
-            LEFT JOIN viralprophylaxis vp on vp.id=s.prophylaxis
+            LEFT JOIN viralregimen vp on vp.id=s.prophylaxis
             LEFT JOIN viraljustifications vj on vj.id=s.justification
             LEFT JOIN viralsampletype vs on vs.id=s.sampletype
 

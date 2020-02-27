@@ -12,4 +12,9 @@ class GeneralConsumables extends Model
     {
         return $this->morphMany('App\AllocationDetailsBreakdown', 'breakdown');
     }
+   
+    public function deliveredkits()
+    {
+        return $this->morphMany('App\DeliveryDetail', 'kit');
+    }
 }

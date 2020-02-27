@@ -40,6 +40,7 @@
                 			<tr>
                 				<th rowspan="2">#</th>
                                 <th rowspan="2">DESCRIPTION OF GOODS</th>
+                                <th rowspan="2">UNIT</th>
                 				<th rowspan="2">BEGINING BALANCE</th>
                 				<th colspan="2">QUANTITY RECEIVED FROM CENTRAL WAREHOUSE (KEMSA, SCMS/RDC)</th>
                 				<th rowspan="2">QUANTITY USED</th>
@@ -56,10 +57,48 @@
                 			</tr>
                 		</thead>
                 		<tbody>
-            			@foreach($data->child as $key => $sub)
+            			{{-- @foreach($data->child as $key => $sub) --}}
+                        @foreach($viewdata->kits as $key => $kit)
                             <tr>
                 				<td>{{ $key+1 }}</td>
-                                <td>
+                                <td>{{ $kit->name ?? '' }}</td>
+                                <td>{{ $kit->unit ?? '' }}</td>
+                                @php
+                                    $type = $viewdata->type;
+                                    $recevied = $kit->alias.'received';
+                                    $damaged = $kit->alias.'damaged';
+                                    $lotno = $kit->alias.'lotno';
+                                    $begining = 'ending'.$kit->alias;
+                                    $positiveAdj = 'pos'.$kit->alias;
+                                    $negativeAdj = 'issued'.$kit->alias;
+                                    $wastage = 'wasted'.$kit->alias;
+                                    $ending = 'ending'.$kit->alias;
+                                    $requested = 'request'.$kit->alias;
+
+                                    // Calculations
+                                    $receivedQty = (($viewdata->kitsreport->$recevied ?? 0) - ($viewdata->kitsreport->$damaged ?? 0));
+
+                                    if ($kit->alias == 'qualkit') {
+                                        $testfactor = json_decode($kit->testFactor);
+                                        $testfactor = $testfactor->$type ?? $testfactor;
+                                        $qualkit = round(@((int) $tests / (int) $testfactor));
+                                        $consumed = $qualkit;
+                                    } else {
+                                        $factor = json_decode($kit->factor);
+                                        $factor = $factor->$type ?? $factor;
+                                        $consumed = ($qualkit * $factor);
+                                    }
+                                @endphp
+                                <td>{{ $viewdata->prevreport->$begining ?? 0 }}</td>
+                                <td>{{ $receivedQty }}</td>
+                                <td>{{ $viewdata->kitsreport->$lotno ?? '' }}</td>
+                                <td>{{ $consumed ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$wastage ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$positiveAdj ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$negativeAdj ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$ending ?? 0 }}</td>
+                                <td>{{ $viewdata->reports->$requested ?? 0 }}</td>
+                                {{-- <td>
                                 @if($sub->alias == 'qualkit')
                                     @php
                                         $name = $viewdata->type.'name';
@@ -69,9 +108,9 @@
                                     {{ $sub->name }}
                                 @endif
                                 </td>
-                                <td>{{ $viewdata->prevreport['ending'.$sub->alias] }}</td>
-                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] }}</td>
-                                <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] }}</td>
+                                <td>{{ $viewdata->prevreport['ending'.$sub->alias] ?? '' }}</td>
+                				<td>{{ $viewdata->kitsreport[$sub->alias.'received'] ?? '' }}</td>
+                                <td>{{ $viewdata->kitsreport[$sub->alias.'lotno'] ?? '' }}</td>
                                 <td>
                                     @if($viewdata->platform == 'abbott')
                                         @if($viewdata->type == 'EID')
@@ -119,7 +158,7 @@
                                 <td>{{ $viewdata->reports['pos'.$sub->alias] }}</td>
                                 <td>{{ $viewdata->reports['issued'.$sub->alias] }}</td>
                                 <td>{{ $viewdata->reports['ending'.$sub->alias] }}</td>
-                                <td>{{ $viewdata->reports['request'.$sub->alias] }}</td>
+                                <td>{{ $viewdata->reports['request'.$sub->alias] }}</td> --}}
                 			</tr>
             			@endforeach
                 		</tbody>

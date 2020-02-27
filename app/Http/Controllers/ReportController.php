@@ -19,6 +19,7 @@ use App\ViewFacility;
 use App\Lab;
 use App\Batch;
 use App\Viralbatch;
+use App\Kits;
 
 class ReportController extends Controller
 {
@@ -392,8 +393,13 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
-        // dd($request->all());
         $data = [];
+        $kitsdisplay = Kits::when($request, function ($query) use ($request){
+                            if ($request->input('platform') == 'abbott')
+                                return $query->where('machine_id', '=', 2);
+                            else 
+                                return $query->where('machine_id', '=', 1);
+                        })->get();
         $platform = $request->input('platform');
         if ($platform == 'abbott') {
             $model = Abbotprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
@@ -453,9 +459,9 @@ class ReportController extends Controller
         $kits->whereYear('datereceived', $year);
         $kits->whereMonth('datereceived', $month);
         // $kits->where('lab_id', env('APP_LAB'));
-
+        
         $report = $model->get();
-        $kits = $kits->get();
+        $kits = $kits->get()->first();
         $tests = $tests->first()->tests;
         
         $data = json_decode(json_encode([
@@ -463,55 +469,59 @@ class ReportController extends Controller
                     'child' => $sub,
                     'kitsuffix' => self::$suffix
                 ]));
+        
         $newdata = [];
         $prevnewdata = [];
         $kitsdata = [];
-        foreach ($data->parent as $parentkey => $parentvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                $newdata[$parentvalue.$childvalue->alias] = 0;
-                $prevnewdata[$parentvalue.$childvalue->alias] = 0;
-            }
-        }
-        foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                $kitsdata[$childvalue->alias.$kitsuffixvalue] = 0;
-                $kitsdata[$childvalue->alias.'lotno'] = '';
-            }
-        }
+        // dd($data);
+        // foreach ($data->parent as $parentkey => $parentvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         $newdata[$parentvalue.$childvalue->alias] = 0;
+        //         $prevnewdata[$parentvalue.$childvalue->alias] = 0;
+        //     }
+        // }
+        // foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         $kitsdata[$childvalue->alias.$kitsuffixvalue] = 0;
+        //         $kitsdata[$childvalue->alias.'lotno'] = '';
+        //     }
+        // }
 
-        foreach ($data->parent as $parentkey => $parentvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                foreach ($report as $reportkey => $reportvalue) {
-                    $column = $parentvalue.$childvalue->alias;
-                    if ($month == $reportvalue->month) {
-                        $newdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
-                    } else if ($previousMonth == $reportvalue->month) {
-                        $prevnewdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
-                    }
-                }
-            }
-        }
-        foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
-            foreach ($data->child as $childkey => $childvalue) {
-                foreach ($kits as $kitskey => $kitsvalue) {
-                    $column = $childvalue->alias.$kitsuffixvalue;
-                    $columnlot = $childvalue->alias.'lotno';
-                    $kitsdata[$childvalue->alias.$kitsuffixvalue] += $kitsvalue->$column;
-                    $kitsdata[$childvalue->alias.'lotno'] .= $kitsvalue->$columnlot;
-                }
-            }
-        }
+        // foreach ($data->parent as $parentkey => $parentvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         foreach ($report as $reportkey => $reportvalue) {
+        //             $column = $parentvalue.$childvalue->alias;
+        //             if ($month == $reportvalue->month) {
+        //                 $newdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
+        //             } else if ($previousMonth == $reportvalue->month) {
+        //                 $prevnewdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
+        //             }
+        //         }
+        //     }
+        // }
+        // foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
+        //     foreach ($data->child as $childkey => $childvalue) {
+        //         foreach ($kits as $kitskey => $kitsvalue) {
+        //             $column = $childvalue->alias.$kitsuffixvalue;
+        //             $columnlot = $childvalue->alias.'lotno';
+        //             $kitsdata[$childvalue->alias.$kitsuffixvalue] += $kitsvalue->$column;
+        //             $kitsdata[$childvalue->alias.'lotno'] .= $kitsvalue->$columnlot;
+        //         }
+        //     }
+        // }
         $viewdata = (object)[
-                        'reports' => $newdata,
-                        'prevreport' => $prevnewdata,
-                        'kitsreport' => $kitsdata,
+                        'reports' => $report->where('month', $month)->first(),
+                        // 'prevreport' => $prevnewdata,
+                        'prevreport' => $report->where('month', $previousMonth)->first(),
+                        'kitsreport' => $kits,
                         'tests' => $tests,
                         'type' => $type,
                         'platform' => $platform,
                         'month' => $monthName,
-                        'year' => $year
+                        'year' => $year,
+                        'kits' => $kitsdisplay,
                     ];
-        
+        // dd($viewdata);
         return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
@@ -531,7 +541,7 @@ class ReportController extends Controller
         $title = '';
     	if ($testtype == 'Viralload') {
             $table = 'viralsamples_view';
-            $columns = "$table.id,$table.batch_id,$table.worksheet_id,$table.patient,$table.patient_name,$table.provider_identifier, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, amrslocations.name as amrs_location, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
+            $columns = "$table.id,$table.batch_id,$table.worksheet_id,machines.machine as platform,$table.patient,$table.patient_name,$table.provider_identifier, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, amrslocations.name as amrs_location, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
@@ -549,10 +559,12 @@ class ReportController extends Controller
     				->leftJoin('viralrejectedreasons', 'viralrejectedreasons.id', '=', 'viralsamples_view.rejectedreason')
     				->leftJoin('viralregimen', 'viralregimen.id', '=', 'viralsamples_view.prophylaxis')
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
-                    ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct');
+                    ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct')
+                    ->leftJoin('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+                    ->leftJoin('machines', 'machines.id', '=', 'viralworksheets.machine_type');
     	} else if ($testtype == 'EID') {
             $table = 'samples_view';
-            $columns = "samples_view.id,samples_view.batch_id,$table.worksheet_id,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,";
+            $columns = "samples_view.id,samples_view.batch_id,$table.worksheet_id,machines.machine as platform,samples_view.patient, samples_view.patient_name, labs.labdesc, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,";
             if($request->input('types') == 'manifest')
                 $columns .= " $table.datedispatchedfromfacility,";
             $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, users.surname, users.oname";
@@ -572,7 +584,9 @@ class ReportController extends Controller
     				->leftJoin('entry_points', 'entry_points.id', '=', 'samples_view.entry_point')
     				->leftJoin('results as ir', 'ir.id', '=', 'samples_view.result')
     				->leftJoin('mothers', 'mothers.id', '=', 'samples_view.mother_id')
-    				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status');
+    				->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status')
+                    ->leftJoin('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+                    ->leftJoin('machines', 'machines.id', '=', 'worksheets.machine_type');
     	}
 
         $model = self::__getBelongingTo($request, $model, $dateString);
@@ -617,9 +631,9 @@ class ReportController extends Controller
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')
-                                    return $query->whereIn('result', [3,5])->where('repeatt', '=', 0);
+                                    return $query->whereIn('result', [3])->where('repeatt', '=', 0);
                                 if ($testtype == 'VL')
-                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed', 'Collect New Sample']);
+                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed');
                             });
         }
 
@@ -639,8 +653,8 @@ class ReportController extends Controller
     {
         $title = strtoupper($title);
         $dataArray = []; 
-        $vlDataArray = ['Lab ID', 'Batch #', 'Worksheet #', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
-        $eidDataArray = ['Lab ID', 'Batch #', 'Worksheet #', 'Sample Code', 'Infant Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By', 'Received By'];
+        $vlDataArray = ['Lab ID', 'Batch #', 'Worksheet #', 'Plaform', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
+        $eidDataArray = ['Lab ID', 'Batch #', 'Worksheet #', 'Plaform', 'Sample Code', 'Infant Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By', 'Received By'];
         $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
         // $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
         // $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
