@@ -340,14 +340,15 @@ class Nat
 		while(true){
 			$f = $i;
 			$i += 4;
-			if($i == 4) $i++;
-			if($i == 85) $i = 100;
+			// if($i == 4) $i++;
+			if($i == 54) $i = 100;
 			$s = $i;
-			$ages['a_' . $f . '-' . $s] = [$f, $s];
+			$ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
 			if($i >= 100) break;
 			$i++;
 		}
 		$ages['a_all_ages'] = [];
+		// return $ages;
 
 		for ($year=2014; $year < 2020; $year++) { 
 			$row = ['Year' => $year];
