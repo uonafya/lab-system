@@ -236,6 +236,9 @@
                                             @endif
 
                                             @if(in_array($sample->status_id, [1, 2, 3]))
+                                                @if(auth()->user()->is_lab_user)
+                                                    <a href="{{ url('dr_sample/email/' . $sample->id ) }}"> Email Results </a> | 
+                                                @endif
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 
                                             @endif

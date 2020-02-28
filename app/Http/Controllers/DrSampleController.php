@@ -12,11 +12,13 @@ use App\MiscDr;
 
 use DB;
 use Excel;
+use Exception;
 use Mpdf\Mpdf;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\DrugResistanceResult;
 use App\Mail\DrugResistance;
 
 
@@ -326,6 +328,22 @@ class DrSampleController extends Controller
         $view_data = view('exports.mpdf_dr_result', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
+
+    public function email(DrSample $drSample)
+    {
+        $facility = $drSample->facility; 
+        $mail_array = array('joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com');
+        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(!$mail_array) return null;
+
+        $new_mail = new DrugResistanceResult($drSample);
+        Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+            ->send($new_mail);
+
+        session(['toast_message' => "The results have been sent to the facility."]);
+        return back();
     }
 
 

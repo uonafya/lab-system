@@ -12,6 +12,16 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\Viralpatient', 'patient_id');
     }
 
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
+    }
+
     public function worksheet()
     {
         return $this->belongsTo('App\DrWorksheet', 'worksheet_id');
