@@ -17,12 +17,6 @@
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
-        <div class="alert alert-primary">
-            <center>
-                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b>
-            </center>
-        </div>
-        <br />
 
         @if ($errors->any())
             <div class="row">
@@ -51,6 +45,13 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body">
+                        
+                        <div class="alert alert-primary">
+                            <center>
+                                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b>
+                            </center>
+                        </div>
+                        <br />
 
                         <div class="alert alert-warning">
                             <center>
