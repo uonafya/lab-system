@@ -480,7 +480,6 @@ class AlterRegimen
 		}
 	}
 
-
 	public static function recency_testing()
 	{
 		DB::statement("INSERT INTO `viraljustifications` (`id`, `name`, `flag`, `rank`) VALUES
