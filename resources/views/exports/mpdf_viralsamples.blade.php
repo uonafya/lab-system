@@ -135,6 +135,15 @@ p.breakhere {page-break-before: always}
 					</span>
 				</td>
 			</tr>
+
+			@if($sample->recency_number)
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<strong>Recency Number:</strong> &nbsp; {{ $sample->recency_number  }}
+					</td>					
+				</tr>
+			@endif
+			
 			<tr >
 				<td colspan="1" class="style4 style1 comment"><strong>DOB & Age (Years)</strong></td>
 				<td colspan="3">
