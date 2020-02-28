@@ -95,7 +95,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('labels/{batch}', 'BatchController@labels');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
-
+			
 			Route::get('convert_from_poc/{batch}', 'BatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
 			

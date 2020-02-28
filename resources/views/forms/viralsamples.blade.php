@@ -46,6 +46,13 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
+                        <div class="alert alert-info">
+                            <center>
+                                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b>
+                            </center>
+                        </div>
+                        <br />
+
                         <div class="alert alert-warning">
                             <center>
                                 Please fill the form correctly. <br />
@@ -519,6 +526,14 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Recency Number</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
+                            </div>
+                        </div>
+
 
                         <div class="hr-line-dashed"></div> 
 

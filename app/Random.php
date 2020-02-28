@@ -2276,16 +2276,12 @@ class Random
     {
         $consumption = $procClass->consumption;
         $beginning = $prevConsumption->endingqualkit;
-/*
-        print_r("Beginning -->" . $beginning);echo "\n";
-*/
+
         $received = (isset($deliveries)) ? ($deliveries->qualkitreceived - $deliveries->qualkitdamaged) : 0;
         $positive = (int) $posAdj;$negative = (int) $negAdj;$wasted = (int) $wasted;$used = (int) $used;$requested = (int) $requested;
-/*
-        print_r("Received -->" . $received);echo "\n";
-        print_r("Used -->" . $used);echo "\n";
-*/
+
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
+        // return "Beginning -->" . $beginning . "     Received -->" . $received . "     Positive -->" . $positive;
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
@@ -2357,7 +2353,7 @@ class Random
             echo "\t Getting previous month consumptions\n";
             $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->where('testtype', $testtype)->first();
             echo "\t Getting deliveries made\n";
-            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
+            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->where('testtype', $testtype)->first();
             $prefices = ['wasted','issued','request','pos','ending'];
             echo "\t Get test data\n";
             $consumptionClass = $procClass->consumption;
@@ -2366,11 +2362,10 @@ class Random
             $kit = (object)collect($procClass->kits)->first();
             $typetest = ($testtype == 1) ? 'EID' : 'VL';
             $testFactor = $kit->testFactor[$typetest];
-            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, @($testsModel/$testFactor), $wasted, $posAdj, $negAdj, $requested);
-//            dd($consumption);
+            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, round(@($testsModel/$testFactor)), $wasted, $posAdj, $negAdj, $requested);
+            // dd($consumption);
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
-            
             $consumption->year = $year;
             $consumption->month = $month;
             $consumption->testtype = $testtype;
@@ -2378,6 +2373,7 @@ class Random
             $consumption->datesubmitted = date('Y-m-d');
             $consumption->submittedBy = 88;
             $consumption->lab_id = env('APP_LAB');
+            // dd($consumption);
             echo "\t Saving consumption\n"; 
             $consumption->save();
         } else {

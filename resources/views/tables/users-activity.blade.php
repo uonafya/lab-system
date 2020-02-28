@@ -37,9 +37,10 @@
                                 <tr>
                                     <th rowspan="2">#</th>
                                     <th rowspan="2">Full Names</th>
+                                    <th rowspan="2">Email</th>
                                     <th colspan="2"><center>Samples Entered ({{ $data->year }} {{ $data->monthName }})</center></th>
                                     <th colspan="2"><center>Site Samples Approved ({{ $data->year }} {{ $data->monthName }})</center></th>
-                                    <!-- <th rowspan="2">Action</th> -->
+                                    <th rowspan="2">Action</th>
                                 </tr>
                                 <tr>
                                     <th><center>EID</center></th>
@@ -53,6 +54,7 @@
                                 <tr>
                                     <td>{{ $key+1 }}</td>
                                     <td>{{ $user->full_name }}</td>
+                                    <td>{{ $user->email ?? '' }}</td>
                                     <td>{{ $user->samples_entered('EID', $data->year, $data->month) }}</td>
                                     <td>{{ $user->samples_entered('VL', $data->year, $data->month) }}</td>
                                     <td>{{ $user->sitesamplesapproved('EID', $data->year, $data->month) }}</td>
@@ -75,6 +77,7 @@
                             <thead>
                                 <tr>
                                     <th>Full Names</th>
+                                    <th>Email</th>
                                     <th>Samples Logged/Approved</th>
                                     <th>Worksheets Sorted</th>
                                     <th>Worksheets Aliquoted</th>
