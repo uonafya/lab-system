@@ -45,8 +45,8 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-body">
-                        
-                        <div class="alert alert-primary">
+
+                        <div class="alert alert-info">
                             <center>
                                 Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b>
                             </center>
