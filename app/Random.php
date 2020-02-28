@@ -167,6 +167,61 @@ class Random
 
     }
 
+    public static function county_tat_report($year)
+    {
+        $d = [
+            'Eid' => [
+                'model' => \App\SampleView::class,
+                'table' => 'samples_view',
+            ],
+            'VL' => [
+                'model' => \App\ViralsampleView::class,
+                'table' => 'viralsamples_view',
+            ],
+        ];
+        $files = [];
+
+        $divs = ['County', 'Subcounty'];
+
+        $sql = ", AVG(tat1) AS `Collection to Receipt at the Lab (TAT 1)`, AVG(tat2) AS `Receipt to Testing (TAT 2)`, AVG(tat3) AS `Testing to Dispatch (TAT 3)`, AVG(tat4) AS `Collection to Dispatch (TAT 4)`, AVG(tat5) AS `Receipt to Dispatch (Lab TAT)`, COUNT(id) AS `Number of Samples` ";
+
+        foreach ($d as $key => $value) {
+            $m = $value['model'];
+
+            foreach ($divs as $div) {
+                $query = $div . str_replace('id', $value['table'] . '.id', $sql);
+                if($div == 'Subcounty') $query = 'County, ' . $query;
+
+                $data = $m::selectRaw($query)
+                ->join('view_facilitys', 'view_facilitys.id', '=', $value['table'] . '.facility_id')
+                ->where(['repeatt' => 0, 'receivedstatus' => 1, 'batch_complete' => 1])
+                ->where('site_entry', '!=', 2)
+                ->whereBetween('datetested', [$year . '-01-01', $year . '-12-31'])
+                ->groupBy($div)
+                ->orderBy($div, 'asc')
+                ->get();
+                $rows = [];
+
+                foreach ($data as $row) {
+                    // $row['Month'] = date('M', strtotime("2019-{$row['Month']}-01"));
+                    $rows[] = $row->toArray();
+                }
+
+                $file = $key . '_' . $div . '_tat_data';
+
+                Excel::create($file, function($excel) use($rows){
+                    $excel->sheet('Sheetname', function($sheet) use($rows) {
+                        $sheet->fromArray($rows);
+                    });
+                })->store('csv');
+
+                $files[] = storage_path("exports/" . $file . ".csv");
+            }
+        }  
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
+    }
+
     public static function tat_report($year, $month)
     {
     	$d = [
@@ -2221,16 +2276,12 @@ class Random
     {
         $consumption = $procClass->consumption;
         $beginning = $prevConsumption->endingqualkit;
-/*
-        print_r("Beginning -->" . $beginning);echo "\n";
-*/
+
         $received = (isset($deliveries)) ? ($deliveries->qualkitreceived - $deliveries->qualkitdamaged) : 0;
         $positive = (int) $posAdj;$negative = (int) $negAdj;$wasted = (int) $wasted;$used = (int) $used;$requested = (int) $requested;
-/*
-        print_r("Received -->" . $received);echo "\n";
-        print_r("Used -->" . $used);echo "\n";
-*/
+
         $ending = (int) (($beginning + $received + $positive)-($negative + $wasted + $used));
+        // return "Beginning -->" . $beginning . "     Received -->" . $received . "     Positive -->" . $positive;
         $data = ['wasted' => $wasted,'issued' => $negative,'pos' => $positive,'ending' => $ending,'request' => $requested];
         foreach ($prefices as $key => $prefix) {
             $column = $prefix.'qualkit';
@@ -2302,7 +2353,7 @@ class Random
             echo "\t Getting previous month consumptions\n";
             $prevConsumption = $procClass->consumption::where('month', $prevMonth)->where('year', $prevYear)->where('testtype', $testtype)->first();
             echo "\t Getting deliveries made\n";
-            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->first();
+            $deliveries = $procClass->deliveries::whereMonth('datereceived', $month)->whereYear('datereceived', $year)->where('testtype', $testtype)->first();
             $prefices = ['wasted','issued','request','pos','ending'];
             echo "\t Get test data\n";
             $consumptionClass = $procClass->consumption;
@@ -2311,11 +2362,10 @@ class Random
             $kit = (object)collect($procClass->kits)->first();
             $typetest = ($testtype == 1) ? 'EID' : 'VL';
             $testFactor = $kit->testFactor[$typetest];
-            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, @($testsModel/$testFactor), $wasted, $posAdj, $negAdj, $requested);
-//            dd($consumption);
+            $consumption = self::computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, round(@($testsModel/$testFactor)), $wasted, $posAdj, $negAdj, $requested);
+            // dd($consumption);
             echo "\t Computing other kits\n";
             $consumption = self::computeOtherKits($prefices, $procClass->kits, $consumption);
-            
             $consumption->year = $year;
             $consumption->month = $month;
             $consumption->testtype = $testtype;
@@ -2323,6 +2373,7 @@ class Random
             $consumption->datesubmitted = date('Y-m-d');
             $consumption->submittedBy = 88;
             $consumption->lab_id = env('APP_LAB');
+            // dd($consumption);
             echo "\t Saving consumption\n"; 
             $consumption->save();
         } else {
