@@ -742,7 +742,10 @@ class MiscViral extends Common
                 // ->where('input_complete', true)
                 ->whereIn('receivedstatus', [1, 3])
                 ->whereRaw("(result IS NULL OR result='0')")
-                ->orderBy('viralsamples_view.id', 'asc')
+                ->when((env('APP_LAB') == 2), function($query){
+                    return $query->orderBy('viralsamples_view.batch_id', 'asc');
+                })
+                ->orderBy('viralsamples_view.id', 'asc')  
                 ->limit($limit)
                 ->get();
             $limit -= $repeats->count();

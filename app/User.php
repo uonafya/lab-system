@@ -331,7 +331,7 @@ class User extends Authenticatable implements JWTSubject
     public function dailyLogs()
     {
         $data = [];
-        for ($i=0; $i < 14; $i++) { 
+        for ($i=0; $i < 60; $i++) { 
             $date = date("Y-m-d", strtotime("-" .$i. " days"));
             $data[] = (object)[
                     'date' => $date,

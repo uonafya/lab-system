@@ -17,6 +17,12 @@
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
+        <div class="alert alert-primary">
+            <center>
+                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b>
+            </center>
+        </div>
+        <br />
 
         @if ($errors->any())
             <div class="row">
@@ -519,6 +525,14 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Recency Number</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
+                            </div>
+                        </div>
+
 
                         <div class="hr-line-dashed"></div> 
 

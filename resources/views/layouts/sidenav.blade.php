@@ -34,7 +34,7 @@
             </li> -->--}}
         @endif
         
-        @if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
+        @if (in_array(Auth::user()->user_type_id, [0,1,4]))
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -123,7 +123,7 @@
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve NHRL Samples</a></li>
                     <hr />
                 @endif
-                @if(env('APP_LAB') == 2 && (auth()->user()->user_type_id == 0 || auth()->user()->lab_id == 10))
+                @if(env('APP_LAB') == 2 && (in_array(auth()->user()->user_type_id, [0, 8]) || auth()->user()->lab_id == 10))
                     <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
                     <hr />
                 @endif
@@ -225,8 +225,7 @@
                     <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                 </a>
             </li> -->
-        @endif
-        @if (Auth::user()->user_type_id == 5)
+        @elseif (Auth::user()->user_type_id == 5)
             <li>
                 <a href="{{ url('patient') }}">EID Patient List</a>
             </li>
@@ -288,6 +287,17 @@
                 <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
             </li>
             <hr />
+        @elseif (Auth::user()->user_type_id == 8)
+            <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
+            <hr />
+            <li>
+                <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
+            </li>
+            <li>
+                <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
+            </li>
+            <hr />
+        
         @endif
             <!-- <li>
                 <a href="#"> <span class="nav-label">Search</span></a>
@@ -424,7 +434,7 @@
             <hr />
         @endif
         --}}
-        @if (!(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 8))
+        @if (!(Auth::user()->user_type_id == 5))
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
