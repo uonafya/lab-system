@@ -9,148 +9,45 @@
  
 <div class="content">
 
-    <div class="row">
-        <div class="col-md-12">
-            Click To View:
-            <a href="{{ $myurl2 }}"> all samples</a> | 
-            @foreach($dr_sample_statuses as $dr_sample_status)
-                <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
-            @endforeach
-        </div>
-    </div>
-
-    <br />
-    <br />
-
-    <div class="row">
-        <div class="col-md-4"> 
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Select Date</label>
-                <div class="col-sm-8">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="filter_date" required class="form-control">
-                    </div>
-                </div> 
-
-                <div class="col-sm-2">                
-                    <button class="btn btn-primary" id="submit_date">Filter</button>  
-                </div>                         
-            </div> 
+    @isset($myurl)
+        <div class="row">
+            <div class="col-md-12">
+                Click To View:
+                <a href="{{ $myurl2 }}"> all samples</a> | 
+                @foreach($dr_sample_statuses as $dr_sample_status)
+                    <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
+                @endforeach
+            </div>
         </div>
 
-        <div class="col-md-8"> 
-            <div class="form-group">
-
-                <label class="col-sm-1 control-label">From:</label>
-                <div class="col-sm-4">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="from_date" required class="form-control">
-                    </div>
-                </div> 
-
-                <label class="col-sm-1 control-label">To:</label>
-                <div class="col-sm-4">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text" id="to_date" required class="form-control">
-                    </div>
-                </div> 
-
-                <div class="col-sm-2">                
-                    <button class="btn btn-primary" id="date_range">Filter</button>  
-                </div>                         
-            </div> 
-
-        </div>
-    </div>
-
-    <br />
-    <br />
-
-    <form method="post" action="{{ url('/dr_sample/index') }}" class='my_form'>
-        @csrf
+        <br />
+        <br />
 
         <div class="row">
-
-            <div class="alert alert-success">
-                <center>
-                    Select facility and/or partner and/or subcounty. <br />
-                    If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
-                    Click on filter to get the list of batches based on selected criteria. <br />
-                    The Download As Excel depends on all the selected criteria.
-                </center>
-            </div>
-            
-            <br />
-
             <div class="col-md-4"> 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Select Facility</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" name="facility_id" id="facility_id">
-                            <option></option>
-                            @if(isset($facility) && $facility)
-                                <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
-                            @endif
-                        </select>
-                    </div>                        
+                    <label class="col-sm-2 control-label">Select Date</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" id="filter_date" required class="form-control">
+                        </div>
+                    </div> 
+
+                    <div class="col-sm-2">                
+                        <button class="btn btn-primary" id="submit_date">Filter</button>  
+                    </div>                         
                 </div> 
             </div>
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Select Subcounty</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" name="subcounty_id" id="subcounty_id">
-                            <option></option>
-                            @foreach ($subcounties as $subcounty)
-                                <option value="{{ $subcounty->id }}"
 
-                                @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
-                                    selected
-                                @endif
-
-                                > {{ $subcounty->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>                        
-                </div> 
-            </div>
-            <div class="col-md-4"> 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Select Partner</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" name="partner_id" id="partner_id">
-                            <option></option>
-                            @foreach ($partners as $partner)
-                                <option value="{{ $partner->id }}"
-
-                                @if (isset($partner_id) && $partner_id == $partner->id)
-                                    selected
-                                @endif
-
-                                > {{ $partner->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>                        
-                </div> 
-            </div>
-        </div>
-
-
-        <div class="row">
-
-            <div class="col-md-9"> 
+            <div class="col-md-8"> 
                 <div class="form-group">
 
                     <label class="col-sm-1 control-label">From:</label>
                     <div class="col-sm-4">
                         <div class="input-group date">
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="from_date" name="from_date" class="form-control">
+                            <input type="text" id="from_date" required class="form-control">
                         </div>
                     </div> 
 
@@ -158,26 +55,131 @@
                     <div class="col-sm-4">
                         <div class="input-group date">
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            <input type="text" id="to_date" name="to_date" class="form-control">
+                            <input type="text" id="to_date" required class="form-control">
                         </div>
                     </div> 
 
                     <div class="col-sm-2">                
-                        <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
+                        <button class="btn btn-primary" id="date_range">Filter</button>  
                     </div>                         
                 </div> 
-            </div>
 
-            <div class="col-md-3">
-                <div class="form-group">              
-                    <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download Susceptability Report</button> 
-                </div>                
             </div>
         </div>
 
         <br />
         <br />
-    </form>
+
+        <form method="post" action="{{ url('/dr_sample/index') }}" class='my_form'>
+            @csrf
+
+            <div class="row">
+
+                <div class="alert alert-success">
+                    <center>
+                        Select facility and/or partner and/or subcounty. <br />
+                        If you wish to get for a particular day, set only the From field. Set the To field also to get for a date range. <br />
+                        Click on filter to get the list of batches based on selected criteria. <br />
+                        The Download As Excel depends on all the selected criteria.
+                    </center>
+                </div>
+                
+                <br />
+
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Facility</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="facility_id" id="facility_id">
+                                <option></option>
+                                @if(isset($facility) && $facility)
+                                    <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
+                                @endif
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Subcounty</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="subcounty_id" id="subcounty_id">
+                                <option></option>
+                                @foreach ($subcounties as $subcounty)
+                                    <option value="{{ $subcounty->id }}"
+
+                                    @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
+                                        selected
+                                    @endif
+
+                                    > {{ $subcounty->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Partner</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="partner_id" id="partner_id">
+                                <option></option>
+                                @foreach ($partners as $partner)
+                                    <option value="{{ $partner->id }}"
+
+                                    @if (isset($partner_id) && $partner_id == $partner->id)
+                                        selected
+                                    @endif
+
+                                    > {{ $partner->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-9"> 
+                    <div class="form-group">
+
+                        <label class="col-sm-1 control-label">From:</label>
+                        <div class="col-sm-4">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="from_date" name="from_date" class="form-control">
+                            </div>
+                        </div> 
+
+                        <label class="col-sm-1 control-label">To:</label>
+                        <div class="col-sm-4">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="to_date" name="to_date" class="form-control">
+                            </div>
+                        </div> 
+
+                        <div class="col-sm-2">                
+                            <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Filter</button>  
+                        </div>                         
+                    </div> 
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">              
+                        <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download Susceptability Report</button> 
+                    </div>                
+                </div>
+            </div>
+
+            <br />
+            <br />
+        </form>
+    @endisset
 
     <div class="row">
         <div class="col-lg-12">
@@ -231,7 +233,7 @@
                                             <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank"> View Details </a> | 
                                             <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Edit </a> | 
 
-                                            @if(!$sample->datereceived && auth()->user()->user_type_id <= 1)
+                                            @if(!$sample->datereceived && auth()->user()->is_lab_user)
                                                 <a href="{{ url('dr_sample/' . $sample->id . '/edit') }}" target="_blank"> Verify Sample </a> | 
                                             @endif
 
@@ -244,7 +246,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if(!$sample->worksheet_id)
+                                            @if((!$sample->worksheet_id && auth()->user()->is_lab_user) || (!$sample->datereceived && auth()->user()->facility_id))
                                                 <form action="{{ url('dr_sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                     @csrf
                                                     @method('DELETE')

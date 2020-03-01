@@ -465,11 +465,16 @@ class FacilityController extends Controller
 
         $poc = false;
         if($div_id == "#lab_id") $poc = true;
+
+        $user = auth()->user();
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->when($poc, function($query){
                 return $query->where(['poc' => 1]);
+            })
+            ->when(($user && $user->is_partner), function($query) use ($user){
+                return $query->where(['partner_id' => $user->facility_id]);
             })
             ->paginate(10);
 

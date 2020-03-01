@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\UserType;
 use App\User;
+use DB;
 
 class UserController extends Controller
 {
@@ -63,8 +64,8 @@ class UserController extends Controller
             return $query->where('id', '<>', 5);
         })->get();*/
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
-
-        return view('forms.users', compact('accounts'))->with('pageTitle', 'Add User');
+        $partners = DB::table('partners')->get();
+        return view('forms.users', compact('accounts', 'partners'))->with('pageTitle', 'Add User');
     }
 
     /**

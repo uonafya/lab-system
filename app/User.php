@@ -102,6 +102,18 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function getIsPartnerAttribute()
+    {
+        if($this->user_type_id == 10) return true;
+        return false;
+    }
+
+    public function getIsNotLabUserAttribute()
+    {
+        if(in_array($this->user_type_id, [5,10])) return true;
+        return false;
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');

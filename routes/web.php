@@ -355,10 +355,12 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 	
-	Route::post('viralpatient/search/', 'ViralpatientController@search');
+
 	Route::prefix('viralpatient')->name('viralpatient.')->group(function () {
 		Route::post('search/{facility_id?}/{female?}', 'ViralpatientController@search');
+		Route::post('nat_id', 'ViralpatientController@nat_id');
 		Route::get('index/{facility_id?}', 'ViralpatientController@index');	
+		Route::get('dr/{patient}', 'ViralpatientController@dr');	
 
 		// Merging of patients	
 		Route::get('{patient}/merge', 'ViralpatientController@merge');		

@@ -33,16 +33,21 @@ class DrSampleController extends Controller
     {
         $user = auth()->user();
         $date_column = "datereceived";
-        if(in_array($sample_status, [1, 6])) $date_column = "datedispatched";
-        $string = "(user_id='{$user->id}' OR dr_samples.facility_id='{$user->facility_id}')";
+        if(in_array($sample_status, [1, 2, 3])) $date_column = "datedispatched";
+        else if(in_array($sample_status, [11])) $date_column = "dr_samples.created_at";
+
+        $string=null;
+        if($user->is_facility) $string = "(user_id='{$user->id}' OR dr_samples.facility_id='{$user->facility_id}')";
+        else if($user->is_partner) $string = "(facilitys.partner='{$user->facility_id}')";
+        
 
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::select(['dr_samples.*'])
             ->with(['patient.facility'])
-            ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
+            // ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->where(['control' => 0, 'repeatt' => 0])
-            ->when(($user->user_type_id == 5), function($query) use ($string){
+            ->when($string, function($query) use ($string){
                 return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
@@ -183,6 +188,7 @@ class DrSampleController extends Controller
         $drSample->fill($data);
 
         $drSample->patient_id = $viralpatient->id;
+        $drSample->facility_id = $viralpatient->facility_id;
 
         if(!$viralpatient) $viralpatient = $drSample->patient;
 
@@ -284,7 +290,7 @@ class DrSampleController extends Controller
      */
     public function destroy(DrSample $drSample)
     {
-        if($drSample->worksheet_id){
+        if($drSample->worksheet_id || ($drSample->datereceived && auth()->user()->facility_id)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot delete this sample.']);
             return back();
         }

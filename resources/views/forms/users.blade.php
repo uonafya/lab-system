@@ -42,12 +42,8 @@
                                             <option value="" selected disabled>Select Account Type</option>
                                         @endif
                                         @forelse ($accounts as $account)
-                                            @if(isset($user))
-                                                @if($account->id == $user->user_type_id)
-                                                    <option value="{{ $account->id }}" selected>{{ $account->user_type }}</option>
-                                                @else
-                                                    <option value="{{ $account->id }}">{{ $account->user_type }}</option>
-                                                @endif
+                                            @if(isset($user) && $account->id == $user->user_type_id)
+                                                <option value="{{ $account->id }}" selected>{{ $account->user_type }}</option>
                                             @else
                                                 <option value="{{ $account->id }}">{{ $account->user_type }}</option>
                                             @endif
@@ -57,6 +53,22 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="form-group" id="partners">
+                                    <label class="col-sm-4 control-label">Partner</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="facility_id" id="partner_select" disabled="disabled">
+                                            <option value="" selected disabled>Select Partner</option>
+                                        @forelse ($partners as $partner)
+                                            <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                        @empty
+                                            <option value="" disabled="true">No Partners available</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Email</label>
                                     <div class="col-sm-8">
@@ -146,7 +158,12 @@
         @endslot
 
         @slot('val_rules')
-           
+            ,
+            rules:{
+                confirm-password: {
+                    equalTo: '#password'
+                },   
+            }            
         @endslot
 
     @endcomponent
@@ -154,7 +171,22 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $(".submit").click(function(e){
+            $("#partners").hide();
+
+            $("#user_type").change(function(){
+                val = $(this).val();
+                if(val == 10){
+                    $("#partners").show();
+                    $('#partners').attr("required", "required");
+                    $('#partners').removeAttr("disabled");  
+                } 
+                else{
+                    $("#partners").hide();
+                    $('#partners').removeAttr("required");                    
+                }
+            });
+
+            /*$(".submit").click(function(e){
                 password = $("#password").val();
                 confirm = $("#confirm-password").val();
                 if (password !== confirm) {
@@ -163,7 +195,7 @@
                     $("#confirm-password").val("");
                     $("#confirm-password").focus();
                 }
-            });
+            });*/
         });
     </script>
 @endsection

@@ -34,6 +34,12 @@
 		set_select_orderno("sidebar_order_no_search", "{{ url('sample/ord_no') }}", 1, "Search by EID Order No");
 		set_select_orderno("sidebar_viral_order_no_search", "{{ url('viralsample/ord_no') }}", 1, "Search by VL Order No");
 		set_select("sidebar_cd4labID_search", "{{ url('cd4/sample/search') }}", 1, "Search by CD4 Lab ID");
+
+
+		set_select_patient("dr_patient_search", "{{ url('/viralpatient/search') }}", 2, "Search for DR patient", "{{ url('/viralpatient/dr') }}");
+		set_select_patient("dr_nat_id_search", "{{ url('/viralpatient/nat_id') }}", 2, "Search for DR nat ID", "{{ url('/viralpatient/dr') }}");
+		set_select("dr_sample_search", "{{ url('/dr_sample/search') }}", 2, "Search for DR ID");
+
 	
 	});
 	
@@ -117,6 +123,11 @@
 									text	: row.patient_name + ' - ' + row.medicalrecordno,
 									id		: row.id		
 								};
+							}else if(typeof cd4name === 'string'){
+								return {
+									text	: row[cd4name] + ' - ' + row.name,
+									id		: row.id		
+								};
 							} else {
 								return {
 									text	: row.patient + ' - ' + row.name,
@@ -131,8 +142,13 @@
 				}
 			}
 		});
-		if(send_url != false)
-			set_change_listener(div_name, url);	
+		if(send_url != false){
+			if(typeof send_url === 'string'){
+				set_change_listener(div_name, send_url);	
+			}else{
+				set_change_listener(div_name, url);	
+			}
+		}
 	}
 
 	function set_select_facility(div_name, url, minimum_length, placeholder, send_url=false) {

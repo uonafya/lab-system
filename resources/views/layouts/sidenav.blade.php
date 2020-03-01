@@ -226,13 +226,16 @@
                 </a>
             </li> -->
         @endif
-        @if (Auth::user()->user_type_id == 5)
+        @if (in_array(Auth::user()->user_type_id, [5,10]))
             @if(env('APP_LAB') == 7)
                 <li>
                     <a href="{{ url('dr_sample/create') }}">Add DR Sample</a>
                 </li>
                 <li>
                     <a href="{{ url('dr_sample') }}">DR Sample List</a>
+                </li>
+                <li>
+                    <a href="{{ url('dr_sample/index/1') }}">DR Results</a>
                 </li>
 
             @else
@@ -463,15 +466,22 @@
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)
-            @if(Auth::user()->user_type_id == 5)
-                <!-- EID Searches -->
-                <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
-                <!-- VL Searches -->
-                <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @if(in_array(Auth::user()->user_type_id, [5,10]))
+                @if(env('APP_LAB') == 7)
+                    <!-- DR Searches -->
+                    <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
+                @else
+                    <!-- EID Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+                    <!-- VL Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+                @endif
             @else
                 @if(session('testingSystem') == 'Viralload')
                     <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
@@ -499,6 +509,10 @@
                     <li><a href="#"><select class="form-control" id="sibebar_cd4medrecNo_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4facility_search"></select></a></li>
+                @elseif(Session('testingSystem') == 'DR')
+                    <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
                 @endif
             @endif
         @endif
