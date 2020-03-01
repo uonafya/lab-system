@@ -43,8 +43,8 @@ class DrDetailedReportExport implements FromArray
 		";*/
 
         $this->sql = "
-            nat AS `CDC Lab ID`, viralpatients.patient AS `Original Specimen ID`, 
-            datecollected AS `Date of Collection`, datetested AS `Date Tested`,
+            id, viralpatients.nat, viralpatients.patient, 
+            datecollected, datetested ,
 
         ";
     }
@@ -70,6 +70,7 @@ class DrDetailedReportExport implements FromArray
         $string = $this->facility_query;
 
         $samples = DrSample::selectRaw($this->sql)
+            ->with(['dr_call'])
             ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('view_facilitys', 'viralpatients.facility_id', '=', 'view_facilitys.id')
             ->when($string, function($query) use ($string){
@@ -87,7 +88,13 @@ class DrDetailedReportExport implements FromArray
         ];
 
         foreach ($samples as $key => $sample) {
-            
+            $nrti = $sample->dr_call->where('drug_class_id', 3)->first()->mutations_string ?? '';
+            $nnrti = $sample->dr_call->where('drug_class_id', 2)->first()->mutations_string ?? '';
+            $pi = $sample->dr_call->where('drug_class_id', 4)->first()->mutations_string ?? '';
+            $insti = $sample->dr_call->where('drug_class_id', 1)->first()->mutations_string ?? '';
+
+            $rows[] = [$sample->nat, $sample->patient, $sample->datecollected, $sample->datetested, '', '', $nrti, $nnrti, $pi, $insti, ''];
         }
+        return $rows;
     }
 }

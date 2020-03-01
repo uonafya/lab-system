@@ -21,6 +21,15 @@ class DrCall extends BaseModel
         return $this->hasMany('App\DrCallDrug', 'call_id');
     }
 
+    public function getMutationsStringAttribute()
+    {
+        $str = '';
+        foreach ($this->mutations as $key => $mutation) {
+            $str .= $mutation . ', ';
+        }
+        $str = substr($str, 0, -2);
+        return $str;
+    }
     
 
     /*public function setMutationsAttribute($value)
