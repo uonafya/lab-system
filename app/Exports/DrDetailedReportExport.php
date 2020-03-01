@@ -44,7 +44,7 @@ class DrDetailedReportExport implements FromArray, Responsable
 
         $this->sql = "
             id, viralpatients.nat, viralpatients.patient, 
-            datecollected, datetested ,
+            datecollected, datetested
 
         ";
     }
