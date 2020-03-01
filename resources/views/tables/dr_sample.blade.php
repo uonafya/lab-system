@@ -80,7 +80,7 @@
                                     <tr>
                                         <td> {{ $call->drug_class }} </td>
                                         <td>
-                                            @if($call->mutations_array)
+                                            @if($call->mutations)
                                                 @foreach($call->mutations_array as $key => $value)
                                                     {{ ($key+1) }}. {{ $value }} <br />
                                                 @endforeach
