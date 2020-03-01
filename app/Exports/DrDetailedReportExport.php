@@ -4,7 +4,7 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Excel;
 use Illuminate\Contracts\Support\Responsable;
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
