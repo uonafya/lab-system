@@ -88,6 +88,7 @@ class DrDetailedReportExport implements FromArray
         ];
 
         foreach ($samples as $key => $sample) {
+            
             $nrti = $sample->dr_call->where('drug_class_id', 3)->first()->mutations_string ?? '';
             $nnrti = $sample->dr_call->where('drug_class_id', 2)->first()->mutations_string ?? '';
             $pi = $sample->dr_call->where('drug_class_id', 4)->first()->mutations_string ?? '';
