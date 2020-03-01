@@ -67,7 +67,7 @@
 						<td>  </td>
 					</tr>
 					<tr>
-						<td> NASCOP No. NAT </td>
+						<td> NASCOP No. NAT: {{ $sample->patient->nat }} </td>
 						<td> Requesting Clinician: {{ $sample->clinician_name }} </td>
 					</tr>
 					<tr>
