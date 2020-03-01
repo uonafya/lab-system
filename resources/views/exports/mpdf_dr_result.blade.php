@@ -115,7 +115,7 @@
 								@else
 									<td>{{ $dr_call->drug_class }}  </td>
 								@endif
-									<td>{{ $dr_call->mutations_array[$key] ?? '' }}  </td>
+									<td>{{ $dr_call->mutations[$key] ?? '' }}  </td>
 									<td>{{ $call_drug->short_name }} </td>
 									<td>{{ $call_drug->resistance }} </td>
 									{!! $call_drug->resistance_cell !!}

@@ -6,6 +6,10 @@ use App\BaseModel;
 
 class DrCall extends BaseModel
 {
+    protected $casts = [
+        'mutations' => 'array',
+    ];
+
 
     public function sample()
     {
@@ -19,7 +23,7 @@ class DrCall extends BaseModel
 
     
 
-    public function setMutationsAttribute($value)
+    /*public function setMutationsAttribute($value)
     {
         if($value){
             $val = '[';
@@ -37,7 +41,9 @@ class DrCall extends BaseModel
     public function getMutationsArrayAttribute()
     {
         return eval("return " . $this->mutations . ";");
-    }
+    }*/
+
+
 
 	
 

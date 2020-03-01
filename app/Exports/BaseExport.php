@@ -28,7 +28,8 @@ class BaseExport implements FromQuery, Responsable, WithHeadings
         $this->fileName = 'download.xlsx';
         $this->facility_query = null;
         $user = auth()->user();
-        if($user && $user->is_facility_id) $this->facility_query = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        if($user && $user->is_facility) $this->facility_query = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        if($user && $user->is_partner) $this->facility_query = "(partner_id='{$user->facility_id}')";
     }
 
     public function headings() : array
