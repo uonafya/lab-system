@@ -12,13 +12,16 @@ use \App\MiscDr;
 use \App\DrSample;
 
 
-class DrSusceptabilityExport extends Base implements FromArray, WithEvents
+class DrSusceptabilityExport implements FromArray, WithEvents
 {
+    use RequestFilters;
 	public $request;
 
 	public function __construct($request)
 	{
-		parent::__construct();
+        Sheet::macro('styleCells', function (Sheet $sheet, string $cellRange, array $style) {
+            $sheet->getDelegate()->getStyle($cellRange)->applyFromArray($style);
+        }); 
 		$this->request = $request;
 	}
 

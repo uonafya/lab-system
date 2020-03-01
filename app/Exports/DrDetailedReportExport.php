@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use DB;
 use \App\DrSample;
 
-class DrDetailedReportExport implements FromArray
+class DrDetailedReportExport implements FromArray, Responsable
 {
     use Exportable;
     use RequestFilters;

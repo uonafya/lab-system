@@ -6,7 +6,6 @@ use \Maatwebsite\Excel\Sheet;
 
 class Base
 {
-	use RequestFilters;
 
 	public function __construct()
 	{
