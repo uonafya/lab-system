@@ -25,6 +25,7 @@
 		set_select_facility("facility_search", "{{ url('/facility/search') }}", 3, "Search for facility", "{{ url('/batch/facility') }}");
 		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/batch/facility') }}");
 		set_select_facility("sidebar_viralfacility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/viralbatch/facility') }}");
+		set_select_facility("sidebar_dr_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility samples", "{{ url('/dr_sample/facility') }}");
 		set_select_facility("sidebar_cd4facility_search", "{{ url('/facility/search') }}", 3, "Search Site Samples", "{{ url('/cd4/sample/facility') }}")
 
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");

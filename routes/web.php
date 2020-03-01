@@ -215,13 +215,14 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('dr_report', 'DrReportController@reports');
 
 	Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
-		Route::group(['middleware' => ['utype:5']], function () {
+		// Route::group(['middleware' => ['utype:5']], function () {
 			Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
+			Route::get('facility/{facility_id}', 'DrSampleController@facility')->name('facility');			
 			Route::post('index', 'DrSampleController@sample_search');
 			// Route::put('{drSample}', 'DrSampleController@update')->name('update');
 			Route::get('results/{drSample}/{print?}', 'DrSampleController@results')->name('results');
 			Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
-		});
+		// });
 	});
 
 	Route::group(['middleware' => ['utype:4']], function () {

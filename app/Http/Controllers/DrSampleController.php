@@ -106,6 +106,11 @@ class DrSampleController extends Controller
         return redirect("dr_sample/index/{$sample_status}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
+    public function facility($facility_id)
+    {
+        return redirect("dr_sample/index/0/0/0/{$facility_id}");        
+    }
+
     /**
      * Show the form for creating a new resource.
      *

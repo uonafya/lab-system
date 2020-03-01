@@ -469,6 +469,7 @@
             @if(in_array(Auth::user()->user_type_id, [5,10]))
                 @if(env('APP_LAB') == 7)
                     <!-- DR Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_dr_facility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
@@ -510,6 +511,7 @@
                     <li><a href="#"><select class="form-control" id="sidebar_cd4worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4facility_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'DR')
+                    <li><a href="#"><select class="form-control" id="sidebar_dr_facility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
