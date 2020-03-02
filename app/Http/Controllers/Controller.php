@@ -94,12 +94,12 @@ class Controller extends BaseController
 
         foreach ($testype as $key => $value) {
             if ($abbot == 1) {//Check for both abbot and taqman
-                $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value);
+                $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', '=', env('APP_LAB'))->where('testtype', $value);
                 $abbottproc[] = $abbottmodel->count();
                 $abbottoday = $abbottmodel->where('datesubmitted', '=', date('Y-m-d'))->count();
             }
                      
-            $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', auth()->user()->lab_id)->where('testtype', $value);
+            $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', '=', env('APP_LAB'))->where('testtype', $value);
             $taqman[] = $taqmanmodel->count();
             $taqmantoday = $taqmanmodel->where('datesubmitted', '=', date('Y-m-d'))->count();
         }

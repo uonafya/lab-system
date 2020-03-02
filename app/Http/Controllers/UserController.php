@@ -17,8 +17,9 @@ class UserController extends Controller
      **/
     public function index()
     {
-        $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access','Action']);
-        if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access','Action']);
+        $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
+        if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
+
         $row = "";
 
         $users = User::select('users.*','user_types.user_type')
@@ -36,6 +37,9 @@ class UserController extends Controller
             $passreset = url("user/passwordReset/$id");
             $statusChange = url("user/status/$id");
             $delete = url("user/delete/$id");
+            $alocationNotificationStatus = ($value->allocation_notification == 1) ? "<span class='badge badge-success'>YES</span>" : '';
+            $allocationNotificationDate = (null !== $value->allocation_notification_date) ? date('l, d F Y', strtotime($value->allocation_notification_date)) : '';
+            $allocationLinkText = ($value->allocation_notification == 0) ? 'Set' : 'Remove';
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
             $row .= '<td>'.$value->full_name.'</td>';
@@ -45,8 +49,10 @@ class UserController extends Controller
             }
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
-            $row .= '<td>'.gmdate('l, d F Y', strtotime($value->last_access)).'</td>';
-            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a></td>';
+            $row .= '<td>'.date('l, d F Y', strtotime($value->last_access)).'</td>';
+            $row .= '<td>'. $alocationNotificationStatus .'</td>';
+            $row .= '<td>'. $allocationNotificationDate .'</td>';
+            $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
         }
 
@@ -182,7 +188,7 @@ class UserController extends Controller
         return back();
     }
 
-    public function activity($user_id = null, $year = null, $month = null) {
+    public function activity(User $user, $year = null, $month = null) {
         if ($year==null || $year=='null'){
             if (session('activityYear')==null)
                 session(['activityYear' => Date('Y')]);
@@ -204,14 +210,13 @@ class UserController extends Controller
             $monthName = "- ".date("F", mktime(null, null, null, $month));
 
         $data = (object)['year'=>$year,'monthName'=>$monthName, 'month'=>$month];
-        // dd($data);
-        // if (isset($user_id)) {
-        //     $users = User::whereNotIn('user_type_id', [2,5,6])->get();
-        //     return view('users.user-activity', compact('users'))->with('pageTitle', 'Users Activity');
-        // } else {
+        
+        if (!empty($user->toArray())) {
+            return view('users.user-activity', compact('user'))->with('pageTitle', 'User Activity');
+        } else {
         $users = User::whereNotIn('user_type_id', [2,5,6])->get();
         return view('tables.users-activity', compact('users'), compact('data'))->with('pageTitle', 'Users Activity');
-        // }
+        }
     }
 
     public function switch_user($id)
@@ -233,6 +238,20 @@ class UserController extends Controller
             $user = self::__unHashUser($id);
             return view('forms.passwordReset', compact('user'))->with('pageTitle', 'Password Reset');
         }
+    }
+
+    public function allocationcontact(User $user)
+    {
+        $text = '';
+        if ($user->allocation_notification == 0){
+            $user->allocation_notification = 1;
+        } else {
+            $user->allocation_notification = 0;
+            $text = 'not';
+        }
+        $user->save();
+        session(['toast_message' => $user->full_name . ' will ' . $text . ' be receiving allocation notifications']);
+        return back();
     }
 
     private static function __unHashUser($hashed){

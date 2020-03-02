@@ -4,6 +4,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use DB;
 
 use App\Sample;
@@ -20,10 +21,13 @@ use App\Viralworksheet;
 use App\Facility;
 use App\FacilityChange;
 
+use App\Mail\AllocationReview;
+
 class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	private static $allocationReactionCounts, $users, $lab, $from, $to;
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -187,6 +191,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
+            'debug' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -603,13 +608,16 @@ class Synch
 		$today = date('Y-m-d');
 
 		$url = 'insert/allocations';
-
+		
 		while (true) {
 			$allocations = Allocation::with(['details', 'details.breakdowns'])->where('synched', 0)->limit(20)->get();
+			
 			if($allocations->isEmpty())
 				break;
 			
 			$response = $client->request('post', $url, [
+				'http_errors' => false,
+				'debug' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -622,29 +630,32 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			// dd($body);
+			
 			foreach ($body->allocations as $key => $value) {
 				$update_data = ['national_id' => $value->id, 'synched' => 1, 'datesynched' => $today];
 				$allocationUpdate = Allocation::find($value->original_allocation_id);
 				if (isset($allocationUpdate)){
 					$allocationUpdate->update($update_data);
 					foreach ($value->details as $key => $detailvalue) {
+						
 						$detail_update_data = ['national_id' => $detailvalue->id, 'synched' => 1, 'datesynched' => $today];
 						$allocationDetailUpdate = AllocationDetail::find($detailvalue->original_allocation_detail_id);
 						if (isset($allocationDetailUpdate)) {
 							$allocationDetailUpdate->update($detail_update_data);
-							foreach ($detailvalue->breakdown as $key => $breakdownvalue) {
+							
+							foreach ($detailvalue->breakdowns as $key => $breakdownvalue) {
 								$breakdown_update_data = ['national_id' => $breakdownvalue->id, 'synched' => 1, 'datesynched' => $today];
 								$allocationDetailBreakdownUpdate = AllocationDetailsBreakdown::find($breakdownvalue->original_allocation_details_breakdown_id);
-								if (isset($allocationDetailBreakdownUpdate))
+								if (isset($allocationDetailBreakdownUpdate)){
 									$allocationDetailBreakdownUpdate->update($breakdown_update_data);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-		return true;
+		return 'All Allocations Synched';
 	}
 
 	public static function synch_allocations_updates() {
@@ -1515,7 +1526,72 @@ class Synch
         }
     }
 
+    public static function sendAllocationReview($allocationReactionCounts = null)
+    {
+    	$users = new User;
+		$users = $users->notifiedAllocation()->orWhere('user_type_id', 0)->get();
+		// dd($users);
+		$lab = Lab::find(env('APP_LAB'));
+		$date = date('Y-m-d');
+		$fromAllocationDate = date('d M, Y', strtotime($date));
+		$toAllocationDate = date('d M, Y', strtotime($date. ' + 14 days'));
+		self::$allocationReactionCounts = $allocationReactionCounts;
+		self::$users = $users;
+		self::$lab = $lab;
+		self::$from = $fromAllocationDate;
+		self::$to = $toAllocationDate;
+		// return self::$users;
+		self::sendAllocationReviewSms();
+		self::sendAllocationReviewEmail();
+		// if (self::$allocationReactionCounts->approved > 0)
+		// 	Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, true, false));
+		// 	// Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview($allocationReactionCounts, $lab, $from, $to, true, false));
+		// if (self::$allocationReactionCounts->rejected > 0)
+		// 	Mail::to(self::$users->pluck('email')->toArray())->send(new AllocationReview(self::$allocationReactionCounts, self::$lab, self::$from, self::$to, false, true));
+		foreach ($users as $key => $user) {
+			$user->allocation_notification_date = date('Y-m-d H:i:s');
+			$user->save();
+		}
+		return true;
+    }
 
 
+	private static function sendAllocationReviewSms()
+	{
+		$message = "";
+		$body = null;
+		foreach (self::$users as $user) {
+			if (null !== $user->telephone) {
+				$labname = self::$lab->labname;
+				$approved = self::$allocationReactionCounts->approved;
+				$rejected = self::$allocationReactionCounts->rejected;
+				$month = self::$allocationReactionCounts->month;
+				$year = self::$allocationReactionCounts->year;
+				$from = self::$from;
+				$to = self::$to;
+				if (self::$allocationReactionCounts->approved > 0)
+					$message .= "{$labname}, {$approved} of your {$month} {$year} allocation have been approved. The commodities will be the delivered between {$from} and {$to} by KEMSA.\n\n";
+				if (self::$allocationReactionCounts->rejected > 0)
+					$message .= "{$labname}, {$rejected} of your {$month} {$year} allocation have been rejected. Kindly log into the system under the ‘Kits’ link to view the comments for your review then re-submit the allocation as soon as possible.";
+				$client = new Client(['base_uri' => \App\Common::$sms_url]);
 
+				$response = $client->request('post', '', [
+					'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+					'http_errors' => false,
+					'json' => [
+						'sender' => env('SMS_SENDER_ID'),
+						'recipient' => $user->telephone,
+						'message' => $message,
+					],
+				]);
+				$body = json_decode($response->getBody());
+			}
+		}
+		return $body;
+	}
+
+	private static function sendAllocationReviewEmail()
+	{
+		Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview(self::$allocationReactionCounts));
+	}
 }

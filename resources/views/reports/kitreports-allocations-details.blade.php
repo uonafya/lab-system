@@ -30,6 +30,9 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
+                <div class="row" style="margin-bottom: 1em;">
+                    <a href="{{ url('printallocation/' . $data->parent_allocation->id . '/' . $data->testtype) }}" class="btn btn-primary btn-lg pull-right" style="margin-right: 2em;">Print</a>
+                </div>
                 @foreach ($data->allocations as $allocation)
                 @if($allocation->approve == 2)
                 <form action="{{ url('/kitallocation/'. $allocation->id . '/edit') }}" class="form-horizontal" method="POST" >
@@ -90,17 +93,17 @@
                                 @endphp
                                 <tr>
                                     <td>{{ str_replace("REPLACE", $replace, $detail->breakdown->name) }}</td>
-                                    @if ($globaltesttype != 'CONSUMABLES') {
-                                    <td>{{ $amc }}</td>
+                                    @if ($globaltesttype != 'CONSUMABLES')
+                                    <td>{{ round($amc, 1) }}</td>
                                     <td>
                                     @if(is_nan($mos))
                                         {{ 0 }}
                                     @else
-                                        {{ $mos }}
+                                        {{ round($mos) }}
                                     @endif
                                     </td>
                                     <td>{{ $ending }}</td>
-                                    <td>{{ ($amc * 2) - $ending }}</td>
+                                    <td>{{ round(($amc * 2) - $ending, 1) }}</td>
                                     @endif
                                     <td>
                                         @if ($allocation->approve == 2)

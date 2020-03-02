@@ -479,4 +479,13 @@ class AlterRegimen
 			$offset += $limit;
 		}
 	}
+
+	public static function recency_testing()
+	{
+		DB::statement("INSERT INTO `viraljustifications` (`id`, `name`, `flag`, `rank`) VALUES
+			(12, 'Recency Testing', 1, 9)
+		");
+		DB::statement('ALTER TABLE viralsamples ADD COLUMN `recency_number` VARCHAR(30) DEFAULT NULL after `justification`;');
+	}
+
 }

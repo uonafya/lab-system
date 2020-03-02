@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `cd4samples` (
   `facility_id` int(10) unsigned NOT NULL,
   `lab_id` int(10) unsigned NOT NULL DEFAULT '5',
   `parentid` int(10) unsigned DEFAULT '0',
-  # `serial_no` int(10) unsigned NULL DEFAULT '0',
+  `serial_no` int(10) unsigned NULL DEFAULT '0',
 
   `amrs_location` tinyint(4) unsigned DEFAULT NULL,
   `provider_identifier` varchar(100) DEFAULT NULL,

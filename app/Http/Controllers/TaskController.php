@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Taqmandeliveries;
-use App\Taqmanprocurement;
 use App\Abbotdeliveries;
 use App\Abbotprocurement;
+use App\Allocation;
+use App\AllocationDetail;
+use App\AllocationDetailsBreakdown;
+use App\Consumption;
+use App\ConsumptionDetail;
+use App\ConsumptionDetailBreakdown;
+use App\Taqmandeliveries;
+use App\Taqmanprocurement;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
 use App\Requisition;
@@ -14,15 +19,14 @@ use App\User;
 use App\SampleView;
 use App\ViralsampleView;
 use App\Kits;
-use App\Consumption;
 use App\Machine;
-use App\Allocation;
-use App\AllocationDetail;
-use App\AllocationDetailsBreakdown;
 use App\GeneralConsumables;
 use App\Synch;
 
 use DB;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class TaskController extends Controller
 {
@@ -335,6 +339,10 @@ class TaskController extends Controller
         $abbottproc = Abbotprocurement::selectRaw("count(*) as entries")->where('month', $previousMonth)->where('year', $year)->first()->entries;
 
         if ($taqproc > 0 && $abbottproc > 0) {
+            Consumption::truncate();
+            ConsumptionDetail::truncate();
+            ConsumptionDetailBreakdown::truncate();
+            Artisan::call('transfer:consumptions');
             return redirect()->route('allocation');
             // return redirect()->route('pending');
         }

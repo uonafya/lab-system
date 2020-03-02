@@ -39,4 +39,9 @@ class Kits extends BaseModel
     {
         return $this->morphMany('App\AllocationDetailsBreakdown', 'breakdown');
     }
+   
+    public function deliveredkits()
+    {
+        return $this->morphMany('App\DeliveryDetail', 'kit');
+    }
 }

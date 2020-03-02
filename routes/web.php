@@ -95,7 +95,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('labels/{batch}', 'BatchController@labels');
 
 		Route::group(['middleware' => ['only_utype:1,4']], function () {
-
+			
 			Route::get('convert_from_poc/{batch}', 'BatchController@convert_to_site_entry');
 			Route::post('destroy_multiple/', 'BatchController@destroy_multiple');
 			
@@ -329,6 +329,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('reports/kitdeliveries', 'KitsController@kits');
 	Route::get('report/allocation/{allocation?}/{type?}/{approval?}', 'KitsController@allocation')->name('report.allocation');
 	Route::put('kitallocation/{allocation}/edit', 'KitsController@editallocation');
+	Route::get('printallocation/{allocation}/{testtype}', 'KitsController@printallocation');
 
 	Route::prefix('patient')->name('patient.')->group(function () {
 		Route::post('search/{facility_id?}', 'PatientController@search');
@@ -418,6 +419,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('user/add', 'UserController@create')->name('user.add');
 		Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 		Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
+		Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
 	});
 	Route::resource('user', 'UserController');	
 

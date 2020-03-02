@@ -57,6 +57,7 @@ class AllocationController extends Controller
      */
     public function update(ApiRequest $request)
     {
+        $allocationReactionCounts = null;
         $fields = json_decode($request->input('allocation'));
         $allocation_details = $fields->details;
         $allocation = Allocation::findOrFail($fields->original_allocation_id);
@@ -65,19 +66,22 @@ class AllocationController extends Controller
         foreach ($unset_array as $value) {
             unset($fields->$value);
         }
+        $allocationReactionCounts = ['month' => $allocation->month, 'year' => $allocation->year];
+        $allocation_details = $this->updateAllocationDetails($allocation_details, $allocationReactionCounts);
+        $return = \App\Synch::sendAllocationReview($allocationReactionCounts);
         $allocation->fill(get_object_vars($fields));
         $allocation->synched = 1;
         $allocation->datesynched = date('Y-m-d');
         $allocation->save();
-        $allocation_details = $this->updateAllocationDetails($allocation_details);
-
+        
         return response()->json([
                 'message' => 'The update was successful.',
                 'status_code' => 200,
             ], 200);
     }
 
-    protected function updateAllocationDetails($allocation_details) {
+    protected function updateAllocationDetails($allocation_details, &$allocationReactionCounts) {
+        $allocationReactionCounts = (object)['approved' => 0, 'rejected' => 0, 'month' => $allocationReactionCounts['month'], 'year' => $allocationReactionCounts['year']];
         foreach($allocation_details as $details) {
             $allocation_details_breakdown = $details->breakdowns;
             $new_alloc_details = AllocationDetail::findOrFail($details->original_allocation_detail_id);
@@ -90,6 +94,10 @@ class AllocationController extends Controller
             $new_alloc_details->synched = 1;
             $new_alloc_details->datesynched = date('Y-m-d');
             $new_alloc_details->save();
+            if ($new_alloc_details->approve == 1)
+                $allocationReactionCounts->approved += 1;
+            else if ($new_alloc_details->approve == 2)
+                $allocationReactionCounts->rejected += 1;
             $allocation_detail_breakdown = $this->updateAllocationDetailBreakdown($allocation_details_breakdown);
         }
         return $new_alloc_details;

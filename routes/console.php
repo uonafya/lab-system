@@ -17,7 +17,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
-
 Artisan::command('clean:emails', function(){
     $str = \App\Synch::clean_emails();
     $this->info($str);
@@ -64,7 +63,6 @@ Artisan::command('compute:vl-stat {sample_id}', function($sample_id){
     $this->info($str);
 })->describe('Compute Vl Tat.');
 
-
 Artisan::command('dispatch:results', function(){
     $str = \App\Common::dispatch_results('eid');
     $str = \App\Common::dispatch_results('vl');
@@ -88,13 +86,11 @@ Artisan::command('dispatch:nhrl', function(){
     \App\Common::nhrl('vl');
 })->describe('Set NHRL & Edarp samples to be dispatched.');
 
-
 Artisan::command('input-complete', function(){
     $str = \App\Common::input_complete_batches('eid');
     $str = \App\Common::input_complete_batches('vl');
     $this->info($str);
 })->describe('Mark batches as input completed.');
-
 
 Artisan::command('batch-complete', function(){
     $str = \App\Common::check_batches('eid');
@@ -102,19 +98,16 @@ Artisan::command('batch-complete', function(){
     $this->info($str);
 })->describe('Check if batch is ready for dispatch.');
 
-
 Artisan::command('fix:noage', function(){
     $str = \App\Common::fix_no_age('eid');
     $str = \App\Common::fix_no_age('vl');
     $this->info($str);
 })->describe('Fix no age.');
 
-
 Artisan::command('delete:delayed-batches', function(){
     \App\Common::delete_delayed_batches('eid');
     \App\Common::delete_delayed_batches('vl');
 })->describe('Delete batches that have not been received after 2 weeks.');
-
 
 Artisan::command('transfer:missing-samples', function(){
     $str = \App\Common::transfer_delayed_samples('eid');
@@ -128,28 +121,21 @@ Artisan::command('transfer:delayed-samples', function(){
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
-
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');
     $str .= \App\Common::reject_delayed_samples('vl');
     $this->info($str);
 })->describe('Reject samples that have not been received despite a long duration.');
 
-
 Artisan::command('delete:empty-batches', function(){
     \App\Misc::delete_empty_batches();
     \App\MiscViral::delete_empty_batches();
 })->describe('Delete empty batches.');
 
-
 Artisan::command('delete:pdfs', function(){
     $str = \App\Common::delete_folder(storage_path('app/batches'));
     $this->info($str);
 })->describe('Delete pdfs from hard drive.');
-
-
-
-
 
 Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');
@@ -170,13 +156,11 @@ Artisan::command('lablog', function(){
 //     $this->info($str);
 // })->describe('Synch vl patients to the national database.');
 
-
 Artisan::command('send:nodata', function(){
     $str = \App\Common::no_data_report('eid');
     $str = \App\Common::no_data_report('vl');
     $this->info($str);
 })->describe('Send no data report.');
-
 
 Artisan::command('send:gender', function(){
     $str = \App\Nat::save_gender_results();
@@ -189,26 +173,21 @@ Artisan::command('send:communication', function(){
     $this->info($str);
 })->describe('Send any pending emails.');
 
-
 Artisan::command('send:sms', function(){
     $str = \App\Misc::patient_sms();
     $str .= \App\MiscViral::patient_sms();
     $this->info($str);
 })->describe('Send result sms.');
 
-
 Artisan::command('send:weekly-activity', function(){
     $str = \App\Synch::send_weekly_activity();
     $this->info($str);
 })->describe('Send out weekly activity sms alert.');
 
-
 Artisan::command('send:weekly-backlog', function(){
     $str = \App\Synch::send_weekly_backlog();
     $this->info($str);
 })->describe('Send out weekly backlog sms alert.');
-
-
 
 Artisan::command('synch:patients', function(){
     // if($type == 'eid') $str = \App\Synch::synch_eid_patients();
@@ -217,7 +196,6 @@ Artisan::command('synch:patients', function(){
     $str .= \App\Synch::synch_vl_patients();  
     $this->info($str);
 })->describe('Synch patients to the national database.');
-
 
 Artisan::command('synch:batches', function(){
     $str = \App\Synch::synch_batches('eid');
@@ -228,20 +206,17 @@ Artisan::command('synch:batches', function(){
     $this->info($str);
 })->describe('Synch batches to the national database.');
 
-
 Artisan::command('synch:worksheets', function(){
     $str = \App\Synch::synch_worksheets('eid');
 	$str = \App\Synch::synch_worksheets('vl');
     $this->info($str);
 })->describe('Synch worksheets to the national database.');
 
-
 Artisan::command('synch:updates', function(){
     $str = \App\Synch::synch_updates('eid');
     $str = \App\Synch::synch_updates('vl');
     $this->info($str);
 })->describe('Synch updates to the national database.');
-
 
 Artisan::command('synch:deletes', function(){
     $str = \App\Synch::synch_deletes('eid');
@@ -292,12 +267,10 @@ Artisan::command('copy:vl', function(){
     $this->info($str);
 })->describe('Copy vl data from old database to new database.');
 
-
 Artisan::command('copy:worksheet', function(){
 	$str = \App\Copier::copy_worksheet();
     $this->info($str);
 })->describe('Copy worksheet data from old database to new database.');
-
 
 Artisan::command('copy:worklist', function(){
     $str = \App\Copier::copy_worklist();
@@ -331,26 +304,21 @@ Artisan::command('match:eid-patients', function(){
     $this->info($str);
 })->describe('Copy facility contacts from old database to new database.');
 
-
-
 Artisan::command('match:patients {type}', function($type){
     if($type == 'eid') $str = \App\Synch::match_eid_patients();
     else { $str = \App\Synch::match_vl_patients(); }    
     $this->info($str);
 })->describe('Match patients with records on the national database.');
 
-
 Artisan::command('match:batches {type}', function($type){
     $str = \App\Synch::match_batches($type);
     $this->info($str);
 })->describe('Match batches with records on the national database.');
 
-
 Artisan::command('match:samples {type}', function($type){
     $str = \App\Synch::match_samples($type);
     $this->info($str);
 })->describe('Match samples with records on the national database.');
-
 
 Artisan::command('match:poc', function(){
     $str = \App\Copier::match_eid_poc_batches();
@@ -420,6 +388,12 @@ Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued}
     $str = \App\Random::adjust_procurement($platform, $id, $ending, $wasted, $issued, $request, $pos);
     $this->info($str);
 })->describe('Adjust Consumptions');
+
+
+Artisan::command('backdate:consumption {plartform} {testtype} {month} {year} {used} {wasted} {posAdj} {negAdj} {requested}', function($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested){
+    $str = \App\Random::backdateprocurement($plartform, $testtype, $month, $year, $used, $wasted, $posAdj, $negAdj, $requested);
+    $this->info($str);
+})->describe('Add consumptions that were left intentionally');
 // Quick fix for consumptions
 
 //Quick fix add EDARP samples to KEMRI
@@ -480,3 +454,9 @@ Artisan::command('get:linelist', function(){
     $this->info($str);
 });
 //Quick fixes
+
+Artisan::command('alloc', function(){
+    $str = \App\Synch::sendAllocationReviewEmail();
+    $this->info($str);
+});
+
