@@ -633,7 +633,7 @@ class ReportController extends Controller
                                 if ($testtype == 'EID')
                                     return $query->whereIn('result', [3])->where('repeatt', '=', 0);
                                 if ($testtype == 'VL')
-                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed');
+                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed']);
                             });
         }
 
