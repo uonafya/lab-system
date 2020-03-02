@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index()
     {
         $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
-        if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
+        if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access', 'Action']);
 
         $row = "";
 
@@ -50,8 +50,10 @@ class UserController extends Controller
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.date('l, d F Y', strtotime($value->last_access)).'</td>';
+            if(env('APP_LAB') != 7){
             $row .= '<td>'. $alocationNotificationStatus .'</td>';
             $row .= '<td>'. $allocationNotificationDate .'</td>';
+            }
             $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
         }
