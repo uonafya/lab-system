@@ -60,6 +60,8 @@ class ViralworksheetController extends Controller
             ->groupBy('viralworksheets.id')
             ->paginate();
 
+        if($state == 4) dd($worksheets);
+
         $worksheets->setPath(url()->current());
 
         $data = Lookup::worksheet_lookups();
