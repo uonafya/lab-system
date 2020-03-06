@@ -2,6 +2,8 @@
 
 namespace App\Exports;
 
+use DB;
+
 trait RequestFilters{
 	
 
