@@ -28,7 +28,7 @@ class DrDetailedReportExport implements FromArray, Responsable
 
     function __construct($request)
     {
-        $this->fileName = $this->get_name('DR Detailed', $request) . 'xlsx';
+        $this->fileName = $this->get_name('DR Detailed', $request) . '.xlsx';
         $this->facility_query = null;
         $user = auth()->user();
         if($user && $user->is_facility) $this->facility_query = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";

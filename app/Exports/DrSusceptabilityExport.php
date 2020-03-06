@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Illuminate\Contracts\Support\Responsable;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -13,7 +14,7 @@ use \App\MiscDr;
 use \App\DrSample;
 
 
-class DrSusceptabilityExport implements FromArray, WithEvents
+class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
 {
     use Exportable;
     use RequestFilters;
@@ -24,7 +25,7 @@ class DrSusceptabilityExport implements FromArray, WithEvents
 
 	public function __construct($request)
 	{
-        $this->fileName = $this->get_name('DR Susceptablity Report', $request) . 'xlsx';
+        $this->fileName = $this->get_name('DR Susceptablity Report', $request) . '.xlsx';
         Sheet::macro('styleCells', function (Sheet $sheet, string $cellRange, array $style) {
             $sheet->getDelegate()->getStyle($cellRange)->applyFromArray($style);
         }); 
