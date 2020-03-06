@@ -145,7 +145,7 @@
 		});
 		if(send_url != false){
 			if(typeof send_url === 'string'){
-				set_change_listener(div_name, send_url);	
+				set_change_listener(div_name, send_url, false);	
 			}else{
 				set_change_listener(div_name, url);	
 			}

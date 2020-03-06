@@ -411,6 +411,7 @@ class DashboardCacher
 
         $pending_testing = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
             ->whereNotNull('datereceived')
+            ->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
             ->where('control', 0)
             ->whereNull('worksheet_id')
             ->first()->my_count;
