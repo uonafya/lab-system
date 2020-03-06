@@ -80,16 +80,20 @@ trait RequestFilters{
             $division = 'Partner';
         }
 
-        if($request->input('category') != 'overall'){
-            $title .= ' overall ';
-            if(is_array($param)){
+        if($request->input('category') != 'overall' && $param){
+            $title .= ' ';
+            if(is_array($param) && count($param) > 1){
                 $names = DB::table($table)->whereIn('id', $param)->get()->pluck('name')->toArray();
                 $title .= implode(',', $names).' '. str_plural($division);
             }
             else{
+                if(is_array($param)) $param = $param[0];
                 $names = DB::table($table)->where('id', $param)->first()->name;
                 $title .= DB::table($table)->where('id', $param)->first()->name .' '. $division;                
             }
+            $title .= ' ';
+        }else{
+            $title .= ' overall ';            
         }
 
         $period = $request->input('period');
