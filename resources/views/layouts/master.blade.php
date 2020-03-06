@@ -101,13 +101,15 @@
                                 </p>
                             </center>
                         </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
-                                Switch to Viralload
-                            </button>
-                        </div>
+                        @if(env('APP_LAB') != 7)
+                            <div class="col-md-4">
+                                <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
+                                    Switch to Viralload
+                                </button>
+                            </div>
+                        @endif
                     </div>
-                        @if(in_array(env('APP_LAB'), [1, 7]))
+                        @if(in_array(env('APP_LAB'), [1]))
                             @if(Auth()->user()->user_type_id < 2)
                             <div class="col-md-1">
                                 <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">

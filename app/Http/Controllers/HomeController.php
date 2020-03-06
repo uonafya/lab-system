@@ -493,7 +493,7 @@ class HomeController extends Controller
     public function countysearch(Request $request)
     {
         $search = $request->input('search');
-        $county = DB::table('countys')->select('id', 'name', 'letter as facilitycode')
+        $county = DB::table('countys')->select('id', 'name')
             ->whereRaw("(name like '%" . $search . "%')")
             ->paginate(10);
         return $county;

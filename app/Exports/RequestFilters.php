@@ -20,7 +20,7 @@ trait RequestFilters{
                     return $query->whereBetween($column, $date_range);
                 }
                 else if ($request->input('period') == 'quarterly'){
-                    $quarters = [[], [1, 3], [4, 6], [7, 9], [10, 12]];
+                    $quarters = ['Q1' => [1, 3], 'Q2' => [4, 6], 'Q3' => [7, 9], 'Q4' => [10, 12]];
                     $year = $request->input('year');
                     $q = $quarters[$request->input('quarter')];
                     $date_range = \App\Lookup::get_date_range($year, $q[0], $year, $q[1]);
@@ -55,5 +55,52 @@ trait RequestFilters{
             if(is_array($param)) return $query->whereIn($column, $param);
             return $query->where($column, $param);          
         };
+    }
+
+    public function get_name($title = '', $request)
+    {
+        $param = $column = $table = $division = null;
+        if ($request->input('category') == 'county') {
+            $param = $request->input('county');
+            $table = 'countys';
+            $division = 'County';
+        } else if ($request->input('category') == 'subcounty') {
+            $param = $request->input('district');
+            $table = 'districts';
+            $division = 'Subcounty';
+        } else if ($request->input('category') == 'facility') {
+            $param = $request->input('facility');
+            $table = 'facilitys';
+            $division = 'Facility';
+        } else if ($request->input('category') == 'partner') {
+            $param = $request->input('partner');
+            $table = 'partners';
+            $division = 'Partner';
+        }
+
+        if($request->input('category') != 'overall'){
+            $title .= ' overall ';
+            if(is_array($param)){
+                $names = DB::table($table)->whereIn('id', $param)->get()->pluck('name')->toArray();
+                $title .= implode(',', $names).' '. str_plural($division);
+            }
+            else{
+                $names = DB::table($table)->where('id', $param)->first()->name;
+                $title .= DB::table($table)->where('id', $param)->first()->name .' '. $division;                
+            }
+        }
+
+        $period = $request->input('period');
+
+        if(!$period || $period == 'range'){
+            $title  .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
+        }else if($period == 'monthly'){
+            $title .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
+        }else if ($period == 'quarterly'){
+            $title .= $request->input('quarter').' - '.$request->input('year');
+        }else if ($request->input('period') == 'annually') {
+            $title .= $request->input('year');            
+        }
+        return $title;
     }
 }

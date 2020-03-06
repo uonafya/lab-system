@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -14,11 +15,16 @@ use \App\DrSample;
 
 class DrSusceptabilityExport implements FromArray, WithEvents
 {
+    use Exportable;
     use RequestFilters;
+
+    
 	public $request;
+    protected $fileName;
 
 	public function __construct($request)
 	{
+        $this->fileName = $this->get_name('DR Susceptablity Report', $request) . 'xlsx';
         Sheet::macro('styleCells', function (Sheet $sheet, string $cellRange, array $style) {
             $sheet->getDelegate()->getStyle($cellRange)->applyFromArray($style);
         }); 

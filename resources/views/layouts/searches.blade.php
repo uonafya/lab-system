@@ -154,7 +154,7 @@
 
 	function set_select_facility(div_name, url, minimum_length, placeholder, send_url=false) {
 		div_name = '#' + div_name;	
-		console.log(div_name);	
+		// console.log(div_name);	
 
 		$(div_name).select2({
 			minimumInputLength: minimum_length,

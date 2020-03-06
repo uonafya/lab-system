@@ -81,13 +81,13 @@ class Common
     	return \App\Viralpatient::class;
     }
 
-    public static function downloadCSV($data, $filename='export.csv', $delimiter=";")
+    public static function downloadCSV($data, $filename='export.csv')
     {
     	$f = fopen('php://output', 'w');
-    	fputcsv($f, array_keys($data[0]), $delimiter);
+    	fputcsv($f, array_keys($data[0]));
 
     	foreach ($data as $line) {
-    		fputcsv($f, $line, $delimiter);
+    		fputcsv($f, $line);
     	}
     	header('Content-Type: application/csv');
     	header('Content-Disposition: attachment; filename="'.$filename.'";');
