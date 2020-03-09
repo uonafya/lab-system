@@ -277,7 +277,6 @@ class Nat
 			$i++;
 		}
 		$ages['a_all_ages'] = [];
-		return $ages;
 
 		$counties = DB::table('countys')->get();
 
