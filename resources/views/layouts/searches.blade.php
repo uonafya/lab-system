@@ -39,7 +39,7 @@
 
 		set_select_patient("dr_patient_search", "{{ url('/viralpatient/search') }}", 2, "Search for DR patient", "{{ url('/viralpatient/dr') }}");
 		set_select_patient("dr_nat_id_search", "{{ url('/viralpatient/nat_id') }}", 2, "Search for DR nat ID", "{{ url('/viralpatient/dr') }}");
-		set_select("dr_sample_search", "{{ url('/dr_sample/search') }}", 2, "Search for DR ID");
+		set_select("dr_sample_search", "{{ url('/dr_sample/search') }}", 1, "Search for DR ID");
 
 	
 	});
