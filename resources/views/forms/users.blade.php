@@ -37,7 +37,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Account Type</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" required name="user_type" id="user_type">
+                                        <select class="form-control" required name="user_type_id" id="user_type_id">
                                         @if(!isset($user))
                                             <option value="" selected disabled>Select Account Type</option>
                                         @endif
@@ -57,7 +57,7 @@
                                 <div class="form-group" id="partners">
                                     <label class="col-sm-4 control-label">Partner</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" name="facility_id" id="partner_select">
+                                        <select class="form-control" name="facility_id" id="partner_select" disabled="disabled">
                                             <option value="" selected disabled>Select Partner</option>
                                         @forelse ($partners as $partner)
                                             <option value="{{ $partner->id }}">{{ $partner->name }}</option>
@@ -85,7 +85,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Confirm Password</label>
                                         <div class="col-sm-8">
-                                            <input class="form-control" name="confirm-password" id="confirm-password" type="password" value="">
+                                            <input class="form-control" name="password_confirmation" id="password_confirmation" type="password" value="">
                                         </div>
                                     </div>
                                 </div>
@@ -160,7 +160,7 @@
         @slot('val_rules')
             ,
             rules:{
-                confirm-password: {
+                password_confirmation: {
                     equalTo: '#password'
                 },   
             }            
