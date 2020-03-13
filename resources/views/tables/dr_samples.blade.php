@@ -198,6 +198,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Sample Code / Patient ID</th>
+                                    <th>NAT ID</th>
                                     <th>Facility</th>
                                     <th>Lab ID</th>
                                     <th>Exatype Status</th>
@@ -218,6 +219,7 @@
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {!! $sample->patient->hyper_link ?? '' !!} </td>
+                                        <td> {!! $sample->patient->nat ?? '' !!} </td>
                                         <td> {{ $sample->patient->facility->name ?? '' }} </td>
                                         <td> {{ $sample->id }} </td>
                                         <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
