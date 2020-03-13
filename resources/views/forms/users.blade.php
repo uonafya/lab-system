@@ -57,7 +57,7 @@
                                 <div class="form-group" id="partners">
                                     <label class="col-sm-4 control-label">Partner</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" name="facility_id" id="partner_select" disabled="disabled">
+                                        <select class="form-control" name="facility_id" id="partner_select">
                                             <option value="" selected disabled>Select Partner</option>
                                         @forelse ($partners as $partner)
                                             <option value="{{ $partner->id }}">{{ $partner->name }}</option>
