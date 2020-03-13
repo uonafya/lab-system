@@ -173,7 +173,7 @@
         $(document).ready(function(){
             $("#partners").hide();
 
-            $("#user_type").change(function(){
+            $("#user_type_id").change(function(){
                 val = $(this).val();
                 if(val == 10){
                     $("#partners").show();
