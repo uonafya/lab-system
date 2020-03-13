@@ -177,12 +177,12 @@
                 val = $(this).val();
                 if(val == 10){
                     $("#partners").show();
-                    $('#partners').attr("required", "required");
-                    $('#partners').removeAttr("disabled");  
+                    $('#partner_select').attr("required", "required");
+                    $('#partner_select').removeAttr("disabled");  
                 } 
                 else{
                     $("#partners").hide();
-                    $('#partners').removeAttr("required");                    
+                    $('#partner_select').removeAttr("required");                    
                 }
             });
 
