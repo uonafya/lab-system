@@ -28,6 +28,24 @@ Route::redirect('/nyumbani', '/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
 Route::get('labtrackertest', 'RandomController@testlabtracker');
+Route::get('/uliza', function () {
+	return view('layouts.uliza');
+});
+
+Route::prefix('uliza')->name('uliza.')->group(function(){
+	Route::get('home', 'UlizaController@home');
+	Route::get('uliza', 'UlizaController@uliza');
+	Route::get('ushauri', 'UlizaController@ushauri');
+	Route::get('trainsmart', 'UlizaController@trainsmart');
+	Route::get('echo', 'UlizaController@echo_page');
+	Route::get('faqs', 'UlizaController@faqs');
+	Route::get('contactus', 'UlizaController@contactus');
+
+	Route::get('pages', 'UlizaController@pages');
+
+	
+	Route::get('clinicalform', 'UlizaController@clinicalform');
+});
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');
