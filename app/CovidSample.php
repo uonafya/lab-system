@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\BaseModel;
+
 class CovidSample extends BaseModel
 {
 	protected $dates = ['dob', 'datecollected', 'datereceived', 'datetested', 'datedispatched',];

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\BaseModel;
+
 class CovidWorksheet extends BaseModel
 {
 
