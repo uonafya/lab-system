@@ -1163,17 +1163,21 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'transfer', [
+            'debug' => false,
+            'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
 			],
 			'json' => [
+				'type' => $type,
 				'samples' => $samples->toJson(),
 				'lab_id' => env('APP_LAB', null),
 				'to_lab' => $to_lab,
-				'type' => $type,
 			],
 		]);
+
+		dd($response->getBody());
 
 		$body = json_decode($response->getBody());
 

@@ -25,12 +25,12 @@ class ViralworksheetController extends Controller
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples_view.id) AS samples_no, users.surname, users.oname')
             ->leftJoin('viralsamples_view', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id')
-            ->join('users', 'users.id', '=', 'viralworksheets.createdby')
-            ->where('site_entry', '!=', 2)
+            ->leftJoin('users', 'users.id', '=', 'viralworksheets.createdby')
             ->when($worksheet_id, function ($query) use ($worksheet_id){
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
+                if($state != 4) $query->where('site_entry', '!=', 2);
                 if($state == 1 || $state == 12) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
