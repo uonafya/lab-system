@@ -64,7 +64,7 @@
                         <li class="">
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
-                    @if(Session('testingSystem') == 'Covid')
+                    @elseif(Session('testingSystem') == 'Covid')
                         <li class="">
                             <a href="{{ url('home') }}">Home</a>
                         </li>
@@ -207,7 +207,7 @@
                     <li class="">
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
-                @if(Session('testingSystem') == 'Covid')
+                @elseif(Session('testingSystem') == 'Covid')
                     <li class="">
                         <a href="{{ url('home') }}">Home</a>
                     </li>
