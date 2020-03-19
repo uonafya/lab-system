@@ -205,6 +205,7 @@
                                     <th rowspan="2">Received</th>
                                     <th rowspan="2">Results</th>                                    
                                     <th rowspan="2">Task</th>
+                                    <th rowspan="2">Delete</th>
                                 </tr>
                                 <tr>
                                     <th>Collected</th>
@@ -230,11 +231,21 @@
                                         @endif
 
                                         <td> {{ $sample->rsurname . ' ' . $sample->roname }} </td>
+
+                                        <td> 
+                                            @if($sample->receivedstatus == 1)
+                                                Received
+                                            @elseif($sample->receivedstatus == 2)
+                                                Rejected
+                                            @endif
+                                        </td>
+
                                         <td> {{ $sample->results }} </td>
                                         <td>
-                                            <a href="{{ url('covidsamples/' . $sample->id . '/edit') }}">Edit</a> |
-                                            {!! $sample->delete_form !!}
+                                            <a href="{{ url('covidsample/' . $sample->id . '/edit') }}">Edit</a> |
+                                            
                                         </td>
+                                        <td> {!! $sample->delete_form !!} </td>
                                     </tr>
 
 
