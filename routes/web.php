@@ -125,8 +125,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('index', 'CovidSampleController@sample_search');
 		
 	});
-	Route::resource('covidsample', 'CovidSampleController');
-	Route::resource('covidworksheet', 'CovidWorksheetController');
+	Route::resource('covid_sample', 'CovidSampleController');
+	Route::resource('covid_worksheet', 'CovidWorksheetController');
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
