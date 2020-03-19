@@ -46,11 +46,12 @@ class BaseModel extends Model
     {
         $user = auth()->user();
         $c = get_class($this);
-        $c = strtolower($c);
-        $c = str_replace_first('app\\', '', $c);
+        // $c = strtolower($c);
+        $c = str_replace_first('App\\', '', $c);
+        $c = snake_case($c);
 
         $url = url($c . '/' . $this->id);
-        if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
+        // if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
         if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
 
         if(str_contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
@@ -69,17 +70,18 @@ class BaseModel extends Model
     {
         $user = auth()->user();
         $c = get_class($this);
-        $c = strtolower($c);
-        $c = str_replace_first('app\\', '', $c);
+        $c = str_replace_first('App\\', '', $c);
+        $c = snake_case($c);
 
         $pre = '';
         if(str_contains($c, 'viral')) $pre = 'viral';
         if(str_contains($c, 'dr')) $pre = 'dr_';
+        if(str_contains($c, 'covid')) $pre = 'covid_';
         $user = auth()->user();
 
         if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
-        else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
-        else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
+        else if(str_contains($attr, 'worksheet')) $url = url($c . '/approve/' . $this->$attr);
+        // else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($c . '/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
