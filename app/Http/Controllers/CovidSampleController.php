@@ -14,14 +14,14 @@ class CovidSampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($index=1, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    public function index($type=1, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
     {
         // 0 - not received
         // 1 - all
         // 2 - dispatched
         $user = auth()->user();
         $date_column = "covid_samples.created_at";
-        if($index == 2) $date_column = "covid_samples.datedispatched";
+        if($type == 2) $date_column = "covid_samples.datedispatched";
 
         $samples = CovidSample::select(['covid_samples.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_samples.facility_id')
@@ -44,13 +44,13 @@ class CovidSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
-            ->when(true, function($query) use ($index){
-                if($index == 0) return $query->whereNull('datereceived');
-                else if($index == 2) return $query->whereNotNull('datedispatched', 1);
+            ->when(true, function($query) use ($type){
+                if($type == 0) return $query->whereNull('datereceived');
+                else if($type == 2) return $query->whereNotNull('datedispatched', 1);
             })
-            ->when(true, function($query) use ($index, $date_column){
-                if($index == 2) return $query->orderBy($date_column, 'desc');
-                else if($index == 0) return $query->orderBy($date_column, 'asc');
+            ->when(true, function($query) use ($type, $date_column){
+                if($type == 2) return $query->orderBy($date_column, 'desc');
+                else if($type == 0) return $query->orderBy($date_column, 'asc');
                 else{
                     return $query->orderBy($date_column, 'desc');
                 }
@@ -59,7 +59,7 @@ class CovidSampleController extends Controller
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
             ->paginate();
-        $myurl = url('/covidsamples/index/' . $index);
+        $myurl = url('/covidsamples/index/' . $type);
         $myurl2 = url('/covidsamples/index/');        
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'index'));
@@ -69,7 +69,7 @@ class CovidSampleController extends Controller
     public function sample_search(Request $request)
     {
         dd($request->all());
-        $index = $request->input('index', 1);
+        $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
         $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
@@ -87,7 +87,7 @@ class CovidSampleController extends Controller
         if($subcounty_id == '') $subcounty_id = 0;
         if($facility_id == '') $facility_id = 0;
 
-        return redirect("covidsample/index/{$index}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        return redirect("covidsample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**

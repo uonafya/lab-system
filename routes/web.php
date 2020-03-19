@@ -121,7 +121,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('batch', 'BatchController');
 
 	Route::prefix('covidsample')->name('covidsample.')->group(function () {
-		Route::get('index/{index?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
+		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
 		
 	});
