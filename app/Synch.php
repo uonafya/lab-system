@@ -1164,6 +1164,7 @@ class Synch
 
 		$response = $client->request('post', 'transfer', [
             'debug' => false,
+            'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
