@@ -23,9 +23,6 @@ class CovidSampleController extends Controller
         $date_column = "covid_samples.created_at";
         if($index == 2) $date_column = "covid_samples.datedispatched";
 
-
-
-
         $samples = CovidSample::select(['covid_samples.*', , 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_samples.facility_id')
             ->leftJoin('users as u', 'u.id', '=', 'covid_samples.user_id')
