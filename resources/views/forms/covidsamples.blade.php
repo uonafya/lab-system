@@ -198,14 +198,28 @@
                     <div class="panel-body" style="padding-bottom: 6px;">
 
                         <div class="travel_item">
-                            <div class="form-group">
+                            <div class="col-sm-4">
+                                <div class="input-group date date-normal">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" placeholder="Date of Travel" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
+                                </div>
+                            </div> 
+                            <div class="col-sm-4">
+                                <input class="form-control requirable" placeholder="City Visited" required name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
+                            </div>  
+                            <div class="col-sm-4">
+                                <input class="form-control requirable" placeholder="Duration Visited" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
+                            </div>
+
+
+                           <!--  <div class="form-group">
                                 <label class="col-sm-4 control-label">Date of Travel
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
                                     <div class="input-group date date-normal">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="travel_date" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
+                                        <input type="text" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
                                     </div>
                                 </div>                            
                             </div>
@@ -226,12 +240,14 @@
                                 <div class="col-sm-8">
                                     <input class="form-control requirable" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
                                 </div>
-                            </div>                            
+                            </div>  -->  
+                            <br />                         
                         </div>
 
                         <div id="travel_container"></div>
 
-                        <button class="btn btn-warning" id="add_travel"> Add </button>
+                        <button class="btn btn-success btn-large" id="add_travel"> Add </button>
+                        <button class="btn btn-warning btn-large" id="remove_travel"> Remove </button>
 
                     </div>
                 </div>
@@ -509,7 +525,7 @@
 
             $('#add_travel').click(function(event){
                 event.preventDefault();
-                $(".travel_item").clone().appendTo("#travel_container");
+                $(".travel_item :first").clone().appendTo("#travel_container");
 
                 $(".date-normal").datepicker({
                     startView: 0,
@@ -521,7 +537,12 @@
                     endDate: new Date(),
                     format: "yyyy-mm-dd"
                 });
-            })
+            });
+
+            $('#remove_travel').click(function(event){
+                event.preventDefault();
+                $('#travel_container .travel_item').last().remove();
+            });
 
 
         });
