@@ -148,7 +148,7 @@ class MiscCovid extends Common
 				`updated_at` timestamp NULL DEFAULT NULL,
 				PRIMARY KEY (`id`),
 				KEY `covid_national_travel_id_index` (`national_travel_id`),
-				KEY `covid_status_id_index` (`status_id`)
+				KEY `covid_sample_id_index` (`sample_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
