@@ -183,7 +183,7 @@ class BaseModel extends Model
         $form = "<form action='" . url($r . '/' . $this->id) . "' method='POST'>";
         $form .= csrf_field() . method_field('DELETE');
         // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";
-        $form .= "<a href='#' class='btn btn-sm btn-primary delete-btn'>Delete</a>";
+        $form .= "<button class='btn btn-sm btn-primary delete-btn'>Delete</button>";
         $form .= '</form>';
         return $form;
     }
