@@ -508,7 +508,8 @@
                 $(".alupe-div").hide();
             @endif  
 
-            $('#add_travel').click(function(){
+            $('#add_travel').click(function(event){
+                event.preventDefault();
                 $("#travel_item").clone().appendTo("#travel_container");
             })
 
