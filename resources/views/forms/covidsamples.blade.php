@@ -210,9 +210,7 @@
                             <div class="col-sm-4">
                                 <input class="form-control requirable" placeholder="Duration Visited (In Days)" number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
                             </div>
-                            <br />       
-                            <br />  
-                            <br />                         
+                            <div class="col-sm-12"><br/><br/></div>                      
                         </div>
 
                         <div id="travel_container"></div>
