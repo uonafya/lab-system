@@ -201,21 +201,38 @@
                             <div class="col-sm-4">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
+                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel[travel_date][]">
                                 </div>
                             </div> 
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="City Visited" name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
+                                <input class="form-control requirable" placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $sample->city_visited ?? '' }}">
                             </div>  
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="Duration Visited (In Days)" number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
+                                <input class="form-control requirable" placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
                             </div>
                             <div class="col-sm-12"><br/><br/></div>                      
                         </div>
 
+                        @isset(isset($sample))
+                            @foreach($sample->travel as $key => $travel)
+                                <input type="hidden" name="travel[travel_id][]" value="{{ $travel->id }}">
+                                <div class="col-sm-4">
+                                    <div class="input-group date date-normal">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" required placeholder="Date of Travel" class="form-control requirable" value="{{ $travel->travel_date ?? '' }}" name="travel[travel_date][]">
+                                    </div>
+                                </div> 
+                                <div class="col-sm-4">
+                                    <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}">
+                                </div>  
+                                <div class="col-sm-4">
+                                    <input class="form-control requirable" required placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" value="{{ $travel->duration_visited ?? '' }}">
+                                </div>
+                                <div class="col-sm-12"><br/><br/></div>    
+                            @endforeach
+                        @endif
+
                         <div id="travel_container"></div>
-
-
 
                         <button class="btn btn-success btn-lg" id="add_travel"> Add Travel Detail </button>
                         <button class="btn btn-warning btn-lg" id="remove_travel"> Remove Travel Detail </button>
@@ -342,7 +359,7 @@
                 <div class="form-group">
                     <center>
                         <div class="col-sm-4 col-sm-offset-4">
-                            <button class="btn btn-primary" type="submit" name="submit_type" value="add">
+                            <button class="btn btn-primary" type="submit">
                                 @if(isset($sample))
                                     Update Sample
                                 @else
@@ -432,13 +449,12 @@
             });
 
             $(".date-dob").datepicker({
-                startView: 1,
-                todayBtn: "linked",
+                startView: 2,
                 keyboardNavigation: false,
                 forceParse: true,
                 autoclose: true,
-                startDate: "-3y",
-                endDate: new Date(),
+                startDate: '-100y',
+                endDate: "-1m",
                 format: "yyyy-mm-dd"
             });
 

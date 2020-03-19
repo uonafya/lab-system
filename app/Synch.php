@@ -1168,10 +1168,10 @@ class Synch
 				'Authorization' => 'Bearer ' . self::get_token(),
 			],
 			'json' => [
+				'type' => $type,
 				'samples' => $samples->toJson(),
 				'lab_id' => env('APP_LAB', null),
 				'to_lab' => $to_lab,
-				'type' => $type,
 			],
 		]);
 
