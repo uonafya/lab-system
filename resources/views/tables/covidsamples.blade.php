@@ -68,13 +68,14 @@
 
     @if(auth()->user()->user_type_id != 5)
 
-        {{ Form::open(['url' => $pre . 'batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+        <form action="{{ url('covidsample/index') }}" method="POST" class="my_form">
+            @csrf
 
             @isset($to_print)
                 <input type="hidden" name="to_print" value="1">
             @endisset
 
-            <input type="hidden" name="batch_complete" value="{{ $batch_complete }}">
+            <input type="hidden" name="index" value="{{ $index }}">
 
             <div class="row">
 
@@ -180,7 +181,7 @@
                 </div>
             </div>
 
-        {{ Form::close() }}
+        </form>
 
     @endif
     
