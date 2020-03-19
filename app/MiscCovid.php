@@ -8,6 +8,8 @@ class MiscCovid extends Common
 {
 
 
+
+
 	public static function create_tables(){
 		DB::statement("DROP TABLE IF EXISTS `covid_worksheets`;");
 
@@ -76,17 +78,15 @@ class MiscCovid extends Common
 				`provider_identifier` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`order_no` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 
-				`sample_type` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-
-				`receivedstatus` tinyint(3) unsigned DEFAULT NULL,
-				`sample_received_by` int(10) unsigned DEFAULT NULL,
-
 				`dob` date DEFAULT NULL,
 				`age` tinyint unsigned DEFAULT NULL,
 				`sex` tinyint unsigned DEFAULT NULL,
 				`residence` varchar(80) COLLATE utf8_unicode_ci NOT NULL,
 				`symptoms_date` date DEFAULT NULL,
 
+				`receivedstatus` tinyint(3) unsigned DEFAULT NULL,
+				`user_id` int(10) unsigned DEFAULT NULL,
+				`received_by` int(10) unsigned DEFAULT NULL,
 				`entered_by` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`comments` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`labcomment` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
