@@ -75,7 +75,7 @@
                 <input type="hidden" name="to_print" value="1">
             @endisset
 
-            <input type="hidden" name="index" value="{{ $index }}">
+            <input type="hidden" name="type" value="{{ $type }}">
 
             <div class="row">
 
