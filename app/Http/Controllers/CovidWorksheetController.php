@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\CovidWorksheet;
+use App\Lookup;
+use App\MiscCovid;
 use Illuminate\Http\Request;
 
 class CovidWorksheetController extends Controller
@@ -22,9 +24,14 @@ class CovidWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($machine_type=2, $limit=null)
     {
-        //
+        $data = MiscCovid::get_worksheet_samples($machine_type, $limit);
+        if(!$data){
+            session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
+            return back();
+        }
+        return view('forms.worksheets', $data)->with('pageTitle', 'Create Worksheet');
     }
 
     /**
