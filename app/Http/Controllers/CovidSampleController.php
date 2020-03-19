@@ -38,7 +38,17 @@ class CovidSampleController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
+
+        $sample = new CovidSample;
+        $sample->fill($request->except(['_token', 'method', 'travel']));
+        $sample->calc_age();
+        $sample->save();
+
+        $travels = $request->input('travel');
+        if($travels){
+            $count = count($travels['travel_date'])
+        }
     }
 
     /**
