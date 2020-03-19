@@ -213,7 +213,7 @@
                             <div class="col-sm-12"><br/><br/></div>                      
                         </div>
 
-                        @isset(isset($sample))
+                        @if(isset($sample))
                             @foreach($sample->travel as $key => $travel)
                                 <input type="hidden" name="travel[travel_id][]" value="{{ $travel->id }}">
                                 <div class="col-sm-4">
