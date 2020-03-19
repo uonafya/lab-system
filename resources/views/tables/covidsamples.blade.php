@@ -15,7 +15,10 @@
                 All Samples
             </a> |
             <a href="{{ $myurl2 }}/2">
-                Dispatched Batches
+                Dispatched Samples
+            </a> |
+            <a href="{{ $myurl2 }}/0">
+                Samples Pending Receipt at the Lab
             </a>
         </div>
     </div>
