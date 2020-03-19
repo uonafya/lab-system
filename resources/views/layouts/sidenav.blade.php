@@ -351,7 +351,7 @@
                 <hr />
             @endif
         --}}
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 7]))
+        @if(in_array(Session('testingSystem'), ['EID', 'Viralsample']) && in_array(Auth::user()->user_type_id, [0, 7]))
             <li>
                 <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
             </li>
