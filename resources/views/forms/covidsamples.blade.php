@@ -197,7 +197,7 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        <div class="travel_item">
+                        <div class="travel_item" id="first_travel_item">
                             <div class="col-sm-4">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -208,46 +208,19 @@
                                 <input class="form-control requirable" placeholder="City Visited" required name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
                             </div>  
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="Duration Visited" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
+                                <input class="form-control requirable" placeholder="Duration Visited (In Days)" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
                             </div>
-
-
-                           <!--  <div class="form-group">
-                                <label class="col-sm-4 control-label">Date of Travel
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date date-normal">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
-                                    </div>
-                                </div>                            
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">City Visited
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Duration of Visit (days)
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input class="form-control requirable" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
-                                </div>
-                            </div>  -->  
+                            <br />       
+                            <br />  
                             <br />                         
                         </div>
 
                         <div id="travel_container"></div>
 
-                        <button class="btn btn-success btn-large" id="add_travel"> Add </button>
-                        <button class="btn btn-warning btn-large" id="remove_travel"> Remove </button>
+
+
+                        <button class="btn btn-success btn-lg" id="add_travel"> Add Travel Detail </button>
+                        <button class="btn btn-warning btn-lg" id="remove_travel"> Remove Travel Detail </button>
 
                     </div>
                 </div>
@@ -348,22 +321,6 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- <div class="row">
-            <div class="col-lg-7 col-lg-offset-2">
-                <div class="hpanel">
-                    <div class="panel-heading">
-                        <center>Infant Information</center>
-                    </div>
-                    <div class="panel-body">
-
-
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
                 
         <div class="row">
             <div class="col-lg-12">
@@ -438,6 +395,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#rejection").hide();
+            $("#first_travel_item").hide();
 
             @if(isset($sample))                
                 @if($sample->receivedstatus == 2)
@@ -526,6 +484,8 @@
             $('#add_travel').click(function(event){
                 event.preventDefault();
                 $(".travel_item :first").clone().appendTo("#travel_container");
+                $('#travel_container .travel_item').last().show().removeAttr('id');
+                $('#travel_container input').attr("required", "required");
 
                 $(".date-normal").datepicker({
                     startView: 0,
