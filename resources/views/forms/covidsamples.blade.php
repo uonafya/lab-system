@@ -193,11 +193,11 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
-                        <center>Travel Details</center>
+                        <center>History of Travel</center>
                     </div>
-                    <div class="panel-body" style="padding-bottom: 6px;" id="travel_details">
+                    <div class="panel-body" style="padding-bottom: 6px;">
 
-                        <div>
+                        <div class="travel_item">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date of Travel
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -205,7 +205,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date date-normal">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="travel_date" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel_date">
+                                        <input type="text" id="travel_date" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
                                     </div>
                                 </div>                            
                             </div>
@@ -215,7 +215,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="city_visited" type="text" value="{{ $sample->city_visited ?? '' }}" id="city_visited">
+                                    <input class="form-control requirable" required name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
                                 </div>
                             </div>
 
@@ -224,12 +224,14 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required number="number" name="duration_visited" type="text" value="{{ $sample->duration_visited ?? '' }}" id="duration_visited">
+                                    <input class="form-control requirable" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
                                 </div>
-                            </div>
-
-                            
+                            </div>                            
                         </div>
+
+                        <div id="travel_container"></div>
+
+                        <button class="btn btn-warning" id="add_travel"> Add </button>
 
                     </div>
                 </div>
@@ -368,7 +370,7 @@
                 <div class="hr-line-dashed"></div>
                 <div class="form-group">
                     <center>
-                        <div class="col-sm-8 col-sm-offset-4">
+                        <div class="col-sm-4 col-sm-offset-4">
                             <button class="btn btn-primary" type="submit" name="submit_type" value="add">
                                 @if(isset($sample))
                                     Update Sample
@@ -381,8 +383,7 @@
                 </div>
             </div>
         </div>
-
-        {{ Form::close() }}
+        </form>
 
       </div>
     </div>
@@ -506,6 +507,10 @@
             @if(env('APP_LAB', 3))
                 $(".alupe-div").hide();
             @endif  
+
+            $('#add_travel').click(function(){
+                $("#travel_item").clone().appendTo("#travel_container");
+            })
 
 
         });
