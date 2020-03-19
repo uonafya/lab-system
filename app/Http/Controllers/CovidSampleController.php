@@ -62,13 +62,13 @@ class CovidSampleController extends Controller
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
-        $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'index'));
+        $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
         return view('tables.covidsamples', $data);
     }
 
     public function sample_search(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
         $to_print = $request->input('to_print');
@@ -83,9 +83,9 @@ class CovidSampleController extends Controller
         $subcounty_id = $request->input('subcounty_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
-        if($partner_id == '') $partner_id = 0;
-        if($subcounty_id == '') $subcounty_id = 0;
-        if($facility_id == '') $facility_id = 0;
+        if(!$partner_id) $partner_id = 0;
+        if(!$subcounty_id) $subcounty_id = 0;
+        if(!$facility_id) $facility_id = 0;
 
         return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
