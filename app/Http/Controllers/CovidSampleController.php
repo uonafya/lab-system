@@ -155,6 +155,7 @@ class CovidSampleController extends Controller
     public function edit(CovidSample $covidSample)
     {
         $data = Lookup::viralsample_form();
+        $covidSample->load(['facility']);
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
