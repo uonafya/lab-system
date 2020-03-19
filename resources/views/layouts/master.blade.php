@@ -193,7 +193,7 @@
             else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
             @if(in_array(env('APP_LAB'), [1,3]))
                 else if (current == 'Viralload'){ test = 'Covid'; text = '<strong>VIRAL LOAD</strong>'; } 
-                else if (current == 'Covid'){ test = 'Covid'; text = '<strong>Covid 19</strong>'; } 
+                else if (current == 'Covid'){ test = 'EID'; text = '<strong>Covid 19</strong>'; } 
             @else
                 else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
             @endif
