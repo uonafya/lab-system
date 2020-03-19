@@ -137,7 +137,7 @@ class ViralsampleController extends Controller
             $b->fill($batch_details);
             $b->user_id = $user_id;
             $b->lab_id = env('APP_LAB');
-            unset($b->id);
+            // unset($b->id);
             unset($b->creator);
             // return response()->json(['batch' => $b], 400);
             $b->pre_update();
