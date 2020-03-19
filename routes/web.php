@@ -120,13 +120,13 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
-	Route::prefix('covidsample')->name('covidsample.')->group(function () {
+	Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
 		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
 		
 	});
-	Route::resource('covidsample', 'CovidSampleController');
-	Route::resource('covidworksheet', 'CovidWorksheetController');
+	Route::resource('covid_sample', 'CovidSampleController');
+	Route::resource('covid_worksheet', 'CovidWorksheetController');
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){

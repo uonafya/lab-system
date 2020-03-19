@@ -175,7 +175,7 @@ class BaseModel extends Model
     {
         $a = explode('\\', get_class($this));
         $c = end($a);
-        $r = strtolower($c);
+        $r = snake_case($c);
         $f = trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $c));
         
         $form = "<form action='" . url($r . '/' . $this->id) . "' method='POST'>";

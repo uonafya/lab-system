@@ -59,8 +59,8 @@ class CovidSampleController extends Controller
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
             ->paginate();
-        $myurl = url('/covidsamples/index/' . $type);
-        $myurl2 = url('/covidsamples/index/');        
+        $myurl = url('/covid_sample/index/' . $type);
+        $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'index'));
         return view('tables.covidsamples', $data);
@@ -87,7 +87,7 @@ class CovidSampleController extends Controller
         if($subcounty_id == '') $subcounty_id = 0;
         if($facility_id == '') $facility_id = 0;
 
-        return redirect("covidsample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**
@@ -193,7 +193,7 @@ class CovidSampleController extends Controller
             }
         }
         session(['toast_message' => "The sample has been updated."]);
-        return redirect('/covidsample');
+        return redirect('/covid_sample');
     }
 
     /**
