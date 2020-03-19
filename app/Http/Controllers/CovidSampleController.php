@@ -143,7 +143,7 @@ class CovidSampleController extends Controller
      */
     public function show(CovidSample $covidSample)
     {
-        
+
     }
 
     /**
@@ -154,6 +154,7 @@ class CovidSampleController extends Controller
      */
     public function edit(CovidSample $covidSample)
     {
+        dd($covidSample);
         $data = Lookup::viralsample_form();
         $covidSample->load(['facility']);
         $data['sample'] = $covidSample;
