@@ -28,8 +28,7 @@ class MiscCovid extends Common
                 ->where('datereceived', '>', date('Y-m-d', strtotime('-4 months')))
                 ->where('parentid', '>', 0)
                 ->whereNull('datedispatched')
-                ->whereRaw("(worksheet_id is null or worksheet_id=0)")
-                // ->where('input_complete', true)
+                ->whereNull('worksheet_id')
                 ->where('receivedstatus', 1)
                 ->whereNull('result')
                 ->orderBy('covid_samples.id', 'desc')
@@ -49,7 +48,7 @@ class MiscCovid extends Common
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
-            ->whereRaw("(worksheet_id is null or worksheet_id=0)")
+            ->whereNull('worksheet_id')
             ->where('receivedstatus', 1)
             ->whereNull('result')            
             ->orderBy('run', 'desc')
@@ -57,8 +56,7 @@ class MiscCovid extends Common
             ->when((!in_array(env('APP_LAB'), [8])), function($query){
                 return $query->orderBy('time_received', 'asc');
             })
-            ->orderBy('site_entry', 'asc')
-            ->orderBy('batch_id', 'asc')     
+            ->orderBy('covid_samples.id', 'asc')     
             ->limit($temp_limit)
             ->get();
 
