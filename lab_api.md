@@ -98,6 +98,7 @@ The following fields are common to vl requests
  - **sampletype** - **Required**
  - **justification** - **Required**
  - **pmtct** - *(**Required** if sex is **2** i.e. **female**. 1 for pregnant, 2 for breast-feeding and 3 is for none of the above)*
+ - **recency_number** - *The recency number of the sample*
 
 
 ---

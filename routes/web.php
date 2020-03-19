@@ -120,6 +120,12 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::prefix('covidsample')->name('covidsample.')->group(function () {
+		
+	});
+	Route::resource('covidsample', 'CovidSampleController');
+	Route::resource('covidworksheet', 'CovidWorksheetController');
+
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
 			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');

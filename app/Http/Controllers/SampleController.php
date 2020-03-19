@@ -539,6 +539,7 @@ class SampleController extends Controller
             $sample->worksheet_id = null;
             $sample->result = null;
             $sample->interpretation = null;
+            $sample->repeatt = 0;
         }
 
         if($sample->receivedstatus == 1 && $sample->getOriginal('receivedstatus') == 2){
