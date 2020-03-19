@@ -61,7 +61,31 @@ class CovidSampleController extends Controller
             ->paginate();
         $myurl = url('/covidsamples/index/' . $index);
         $myurl2 = url('/covidsamples/index/');
-        return view('tables.covidsamples', compact('samples', 'myurl', 'myurl2'));
+        return view('tables.covidsamples', compact('samples', 'myurl', 'myurl2', 'index'));
+    }
+
+    public function sample_search(Request $request)
+    {
+        dd($request->all());
+        $index = $request->input('index', 1);
+        $submit_type = $request->input('submit_type');
+        $to_print = $request->input('to_print');
+        $date_start = $request->input('from_date', 0);
+        if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
+        $date_end = $request->input('to_date', 0);
+
+        if($date_start == '') $date_start = 0;
+        if($date_end == '') $date_end = 0;
+
+        $partner_id = $request->input('partner_id', 0);
+        $subcounty_id = $request->input('subcounty_id', 0);
+        $facility_id = $request->input('facility_id', 0);
+
+        if($partner_id == '') $partner_id = 0;
+        if($subcounty_id == '') $subcounty_id = 0;
+        if($facility_id == '') $facility_id = 0;
+
+        return redirect("covidsample/index/{$index}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
 
     /**
