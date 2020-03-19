@@ -60,8 +60,10 @@ class CovidSampleController extends Controller
             })
             ->paginate();
         $myurl = url('/covidsamples/index/' . $index);
-        $myurl2 = url('/covidsamples/index/');
-        return view('tables.covidsamples', compact('samples', 'myurl', 'myurl2', 'index'));
+        $myurl2 = url('/covidsamples/index/');        
+        $p = Lookup::get_partners();
+        $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'index'));
+        return view('tables.covidsamples', $data);
     }
 
     public function sample_search(Request $request)
