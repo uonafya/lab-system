@@ -1177,7 +1177,7 @@ class Synch
 			],
 		]);
 
-		dd($response->getStatusCode());
+		dd($response->getBody());
 
 		$body = json_decode($response->getBody());
 
