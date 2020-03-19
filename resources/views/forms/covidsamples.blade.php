@@ -201,14 +201,14 @@
                             <div class="col-sm-4">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" placeholder="Date of Travel" required class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
+                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel['travel_date'][]">
                                 </div>
                             </div> 
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="City Visited" required name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
+                                <input class="form-control requirable" placeholder="City Visited" name="travel['city_visited'][]" type="text" value="{{ $sample->city_visited ?? '' }}">
                             </div>  
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="Duration Visited (In Days)" required number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
+                                <input class="form-control requirable" placeholder="Duration Visited (In Days)" number="number" name="travel['duration_visited'][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
                             </div>
                             <br />       
                             <br />  
@@ -483,7 +483,8 @@
 
             $('#add_travel').click(function(event){
                 event.preventDefault();
-                $(".travel_item :first").clone().appendTo("#travel_container");
+                // $(".travel_item :first").clone().appendTo("#travel_container");
+                $("#first_travel_item").clone().appendTo("#travel_container");
                 $('#travel_container .travel_item').last().show().removeAttr('id');
                 $('#travel_container input').attr("required", "required");
 
