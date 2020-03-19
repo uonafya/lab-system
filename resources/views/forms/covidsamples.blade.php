@@ -413,38 +413,6 @@
         @endslot
 
         // $(".date :not(.date-dob, .date-dispatched)").datepicker({
-        $(".date-normal").datepicker({
-            startView: 0,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            startDate: "-6m",
-            endDate: new Date(),
-            format: "yyyy-mm-dd"
-        });
-
-        $(".date-dob").datepicker({
-            startView: 1,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            startDate: "-3y",
-            endDate: new Date(),
-            format: "yyyy-mm-dd"
-        });
-
-        $(".date-dispatched").datepicker({
-            startView: 0,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            startDate: "-6m",
-            endDate: "+7d",
-            format: "yyyy-mm-dd"
-        });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
@@ -478,9 +446,40 @@
                 else{
                     $('.requirable').attr("required", "required");
                 }
-            }); 
+            });
 
+            $(".date-normal").datepicker({
+                startView: 0,
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                autoclose: true,
+                startDate: "-6m",
+                endDate: new Date(),
+                format: "yyyy-mm-dd"
+            });
 
+            $(".date-dob").datepicker({
+                startView: 1,
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                autoclose: true,
+                startDate: "-3y",
+                endDate: new Date(),
+                format: "yyyy-mm-dd"
+            });
+
+            $(".date-dispatched").datepicker({
+                startView: 0,
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                autoclose: true,
+                startDate: "-6m",
+                endDate: "+7d",
+                format: "yyyy-mm-dd"
+            });
 
             $("#receivedstatus").change(function(){
                 var val = $(this).val();
@@ -511,6 +510,17 @@
             $('#add_travel').click(function(event){
                 event.preventDefault();
                 $(".travel_item").clone().appendTo("#travel_container");
+
+                $(".date-normal").datepicker({
+                    startView: 0,
+                    todayBtn: "linked",
+                    keyboardNavigation: false,
+                    forceParse: true,
+                    autoclose: true,
+                    startDate: "-6m",
+                    endDate: new Date(),
+                    format: "yyyy-mm-dd"
+                });
             })
 
 
