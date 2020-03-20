@@ -32,7 +32,7 @@ class CovidWorksheetController extends Controller
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
         }
-        dd($data);
+        // dd($data);
         return view('forms.worksheets', $data)->with('pageTitle', 'Create Worksheet');
     }
 

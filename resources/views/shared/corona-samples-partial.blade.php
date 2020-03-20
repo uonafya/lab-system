@@ -29,7 +29,7 @@
 					@endif
 					
 					<td> {{ $sample->my_date_format('datecollected') }} </td>
-	                <td> <a href="{{ url($sample->route_name . '/release/' . $sample->id) }}" class="confirmAction"> Release</a> </td>
+	                <td> <a href="{{ url('covid_sample/release/' . $sample->id) }}" class="confirmAction"> Release</a> </td>
 	                <td> {!! $sample->edit_link !!} </td>
 	                <td> {!! $sample->delete_form !!} </td>
 				</tr>
