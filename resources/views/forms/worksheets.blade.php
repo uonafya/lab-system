@@ -135,9 +135,6 @@
                                     </div>                            
                                 </div>
 
-
-
-
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Calibrator</label>
                                     <div class="col-sm-3">
@@ -150,10 +147,6 @@
                                         </div>
                                     </div>                            
                                 </div>
-
-
-
-
 
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Amplification Kit</label>

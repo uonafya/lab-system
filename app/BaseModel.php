@@ -173,6 +173,23 @@ class BaseModel extends Model
         }
     }
 
+    public function getRouteNameAttribute()
+    {
+        $a = explode('\\', get_class($this));
+        $c = end($a);
+        return snake_case($c);
+    }
+
+    public function getViewLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id) . "'> View </a>";
+    }
+
+    public function getEditLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id . '/edit') . "'> Edit </a>";
+    }
+
     public function getDeleteFormAttribute()
     {
         $a = explode('\\', get_class($this));
