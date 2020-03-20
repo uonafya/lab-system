@@ -171,7 +171,7 @@ class CovidSampleController extends Controller
     {
         $covidSample->fill($request->except(['_token', 'method', 'travel']));
         $covidSample->calc_age();
-        if($sample->isDirty('datereceived') && !$sample->received_by) $sample->received_by = auth()->user()->id;
+        if($covidSample->isDirty('datereceived') && !$covidSample->received_by) $covidSample->received_by = auth()->user()->id;
         $covidSample->pre_update();
 
         $travels = $request->input('travel');
