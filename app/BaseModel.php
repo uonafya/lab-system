@@ -45,10 +45,12 @@ class BaseModel extends Model
     public function getHyperlinkAttribute()
     {
         $user = auth()->user();
-        $c = get_class($this);
+        /*$c = get_class($this);
         // $c = strtolower($c);
         $c = str_replace_first('App\\', '', $c);
-        $c = snake_case($c);
+        $c = snake_case($c);*/
+
+        $c = $this->route_name;
 
         $url = url($c . '/' . $this->id);
         // if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
@@ -180,6 +182,11 @@ class BaseModel extends Model
         return snake_case($c);
     }
 
+    public function getViewUrlAttribute()
+    {
+        return url($this->route_name . '/' . $this->id);
+    }
+
     public function getViewLinkAttribute()
     {
         return "<a href='" . url($this->route_name . '/' . $this->id) . "'> View </a>";
@@ -192,12 +199,12 @@ class BaseModel extends Model
 
     public function getDeleteFormAttribute()
     {
-        $a = explode('\\', get_class($this));
+        /*$a = explode('\\', get_class($this));
         $c = end($a);
         $r = snake_case($c);
-        $f = trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $c));
+        $f = trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $c));*/
         
-        $form = "<form action='" . url($r . '/' . $this->id) . "' method='POST'>";
+        $form = "<form action='" . $this->view_url . "' method='POST'>";
         $form .= csrf_field() . method_field('DELETE');
         // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";
         $form .= "<button class='btn btn-sm btn-primary delete-btn'>Delete</button>";
