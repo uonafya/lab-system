@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Cache;
 use DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\CovidSample;
 use App\Sample;
 use App\SampleView;
 use App\Viralsample;
@@ -108,6 +109,7 @@ class HomeController extends Controller
         $testingSystem = 'eid';
         if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
         if (session('testingSystem') == 'DR') $testingSystem = 'dr';
+        if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
         $chart = [];
         $count = 0;
         $period = strtolower(trim($period));
@@ -308,6 +310,9 @@ class HomeController extends Controller
         } else if (session('testingSystem') == 'DR') {
             if(Cache::has('drdayentered'))
                 return true;
+        } else if (session('testingSystem') == 'Covid') {
+            if(Cache::has('coviddayentered'))
+                return true;
         } else{
             return true;
         }
@@ -317,6 +322,7 @@ class HomeController extends Controller
             $testingSystem = 'eid';
             if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
             if (session('testingSystem') == 'DR') $testingSystem = 'dr';
+            if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
             Cache::put($testingSystem.$periodvalue."entered", self::__getEnteredSamples($periodvalue), $minutes);
             Cache::put($testingSystem.$periodvalue."received", self::__getReceivedSamples($periodvalue), $minutes);
             Cache::put($testingSystem.$periodvalue."tested", self::__getTestedSamples($periodvalue), $minutes);
@@ -326,154 +332,94 @@ class HomeController extends Controller
         
     }
 
+    static function get_classname()
+    {
+        $model = '';
+        if (session('testingSystem') == 'Viralload') $model = ViralsampleView::class;
+        else if (session('testingSystem') == 'EID') $model = SampleView::class;
+        else if (session('testingSystem') == 'DR') $model = DrSample::class;
+        else if (session('testingSystem') == 'Covid') $model = CovidSample::class;
+        return $model;
+    }
+
     static function __getEnteredSamples($period = 'day') 
     {
         $param = self::starting_day($period);
         if($period == 'day') $param = date('Y-m-d', strtotime('-1day'));
-        if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(id) as total")
+        $model = self::get_classname();
+
+        return $model::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
+            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+                return $query->where('site_entry', '<>', 2);
+            })
             ->when(true, function($query) use ($period, $param){
                 return $query->where('created_at', '>', $param);
             })->first()->total;
-        } else if (session('testingSystem') == 'EID'){
-            return SampleView::selectRaw("count(id) as total")
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
-            ->when(true, function($query) use ($period, $param){
-                return $query->where('created_at', '>', $param);
-            })->first()->total;
-        } else if (session('testingSystem') == 'DR'){
-            return DrSample::selectRaw("count(id) as total")
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->when(true, function($query) use ($period, $param){
-                return $query->where('created_at', '>', $param);
-            })->first()->total;
-        }
     }
 
     static function __getReceivedSamples($period = 'day')
     {
         $param = self::starting_day($period);
-        if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(id) as total")
-            ->where('repeatt', 0)
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
-            ->whereIn('receivedstatus', [1, 3])
+        $model = self::get_classname();
+
+        return $model::selectRaw("count(id) as total")
+            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
+            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+                return $query->where('site_entry', '<>', 2);
+            })
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
                 return $query->where('datereceived', $param);
             })->first()->total;
-        } else if (session('testingSystem') == 'EID') {
-            return SampleView::selectRaw("count(id) as total")
-            ->where('repeatt', 0)
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
-            ->whereIn('receivedstatus', [1, 3])
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datereceived', '>', $param);
-                return $query->where('datereceived', $param);
-            })->first()->total;
-        } else if (session('testingSystem') == 'DR') {
-            return DrSample::selectRaw("count(id) as total")
-            ->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datereceived', '>', $param);
-                return $query->where('datereceived', $param);
-            })->first()->total;
-        }
     }
 
     static function __getRejectedSamples($period = 'day')
     {
         $param = self::starting_day($period);
-        if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(id) as total")
-            ->where('receivedstatus', 2)
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
+        $model = self::get_classname();
+
+        return $model::selectRaw("count(id) as total")
+            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 2])
+            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+                return $query->where('site_entry', '<>', 2);
+            })
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datereceived', '>', $param);
                 return $query->where('datereceived', $param);
             })->first()->total;
-        } else if (session('testingSystem') == 'EID') {
-            return SampleView::selectRaw("count(id) as total")
-            ->where('receivedstatus', 2)
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datereceived', '>', $param);
-                return $query->where('datereceived', $param);
-            })->first()->total;
-        } else if (session('testingSystem') == 'DR') {
-            return DrSample::selectRaw("count(id) as total")
-            ->where(['repeatt' => 0, 'lab_id' => env('APP_LAB'), 'receivedstatus' => 2])
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datereceived', '>', $param);
-                return $query->where('datereceived', $param);
-            })->first()->total;
-        }
     }
 
     static function __getTestedSamples($period = 'day')
     {
         $param = self::starting_day($period);
-        if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(id) as total")
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
+        $model = self::get_classname();
+
+        return $model::selectRaw("count(id) as total")
+            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
+            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+                return $query->where('site_entry', '<>', 2);
+            })
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datetested', '>', $param);
                 return $query->where('datetested', $param);
             })->first()->total;
-        } else if (session('testingSystem') == 'EID') {
-            return SampleView::selectRaw("count(id) as total")
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datetested', '>', $param);
-                return $query->where('datetested', $param);
-            })->first()->total;
-        } else if (session('testingSystem') == 'DR') {
-            return DrSample::selectRaw("count(id) as total")
-            ->where(['lab_id' => env('APP_LAB')])
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datetested', '>', $param);
-                return $query->where('datetested', $param);
-            })->first()->total;
-        }
     }
 
     static function __getDispatchedSamples($period = 'day')
     {
         $param = self::starting_day($period);
+        $model = self::get_classname();
 
-        if (session('testingSystem') == 'Viralload') {
-            return ViralsampleView::selectRaw("count(id) as total")
-            ->where('repeatt', 0)
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
+        return $model::selectRaw("count(id) as total")
+            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
+            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+                return $query->where('site_entry', '<>', 2);
+            })
             ->when(true, function($query) use ($period, $param){
                 if($period != 'day') return $query->where('datedispatched', '>', $param);
                 return $query->where('datedispatched', $param);
             })->first()->total;
-        } else if (session('testingSystem') == 'EID') {
-            return SampleView::selectRaw("count(id) as total")
-            ->where('repeatt', 0)
-            ->where('lab_id', '=', env('APP_LAB'))
-            ->where('site_entry', '<>', 2)
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datedispatched', '>', $param);
-                return $query->where('datedispatched', $param);
-            })->first()->total;
-        } else if (session('testingSystem') == 'DR') {
-            return DrSample::selectRaw("count(id) as total")
-            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0,])
-            ->when(true, function($query) use ($period, $param){
-                if($period != 'day') return $query->where('datedispatched', '>', $param);
-                return $query->where('datedispatched', $param);
-            })->first()->total;
-        }
     }
 
     public static function starting_day($period)
