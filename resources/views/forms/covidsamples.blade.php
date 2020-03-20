@@ -22,7 +22,7 @@
         <div>
 
         @if(isset($sample))
-            <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/{$sample->id}/edit") }}' >
+            <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/{$sample->id}") }}' >
             @method('PUT')
         @else
             <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/") }}'>
