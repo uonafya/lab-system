@@ -350,7 +350,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where('lab_id', '=', env('APP_LAB'))
-            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -365,7 +365,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
-            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -381,7 +381,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 2])
-            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -397,7 +397,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
-            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -413,7 +413,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
-            ->when(in_aray(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
