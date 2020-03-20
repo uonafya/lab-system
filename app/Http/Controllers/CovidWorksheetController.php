@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CovidWorksheet;
+use App\CovidSample;
 use App\Lookup;
 use App\MiscCovid;
 use Illuminate\Http\Request;
@@ -42,7 +43,25 @@ class CovidWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $worksheet = new CovidWorksheet;
+        $worksheet->fill($request->except('_token', 'limit'));
+        $worksheet->createdby = auth()->user()->id;
+        $worksheet->lab_id = auth()->user()->lab_id;
+        $worksheet->save();
+
+        $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
+
+        if(!$data || !$data['create']){
+            $worksheet->delete();
+            session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
+            return back();            
+        }
+        $samples = $data['samples'];
+        $sample_ids = $samples->pluck('id');
+
+        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+
+        return redirect()->route('worksheet.print', ['worksheet' => $worksheet->id]);
     }
 
     /**
@@ -53,7 +72,18 @@ class CovidWorksheetController extends Controller
      */
     public function show(CovidWorksheet $covidWorksheet)
     {
-        //
+        $samples = $covidWorksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
+
+        $data = ['worksheet' => $covidWorksheet, 'samples' => $samples, 'i' => 0];
+
+        if($print) $data['print'] = true;
+
+        if($worksheet->machine_type == 1){
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
+        }
+        else{
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
+        }
     }
 
     /**
