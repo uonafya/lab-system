@@ -61,7 +61,7 @@ class CovidWorksheetController extends Controller
 
         CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
-        return redirect()->route('worksheet.print', ['worksheet' => $worksheet->id]);
+        return redirect()->route('covid_worksheet.print', ['worksheet' => $worksheet->id]);
     }
 
     /**
@@ -118,5 +118,33 @@ class CovidWorksheetController extends Controller
     public function destroy(CovidWorksheet $covidWorksheet)
     {
         //
+    }
+
+    public function labels(CovidWorksheet $worksheet)
+    {
+        $samples = $worksheet->sample;
+        return view('worksheets.labels', ['samples' => $samples]);
+    }
+
+    public function print(CovidWorksheet $worksheet)
+    {
+        return $this->show($worksheet, true);
+    }
+
+    public function cancel(CovidWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        $worksheet->sample()->update(['worksheet_id' => null, 'result' => null]);
+        $worksheet->status_id = 4;
+        $worksheet->datecancelled = date("Y-m-d");
+        $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->save();
+
+        session(['toast_message' => 'The worksheet has been cancelled.']);
+        return redirect("/covid_worksheet");
     }
 }

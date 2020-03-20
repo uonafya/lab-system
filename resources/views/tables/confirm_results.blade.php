@@ -160,11 +160,13 @@
                                         <td> {{ $sample->interpretation }} </td>
                                         <td>  
                                             @if( $class == 'noneditable' )
-                                                @foreach($results as $result)
+                                                {{--@foreach($results as $result)
                                                     @if($sample->result == $result->id)
                                                         {!! $result->name_colour !!}
                                                     @endif
-                                                @endforeach
+                                                @endforeach--}}
+
+                                                {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}
 
                                             @else
                                             <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
