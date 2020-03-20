@@ -74,7 +74,7 @@ class CovidWorksheetController extends Controller
     {
         $samples = $covidWorksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
 
-        $data = ['worksheet' => $covidWorksheet, 'samples' => $samples, 'i' => 0];
+        $data = ['worksheet' => $covidWorksheet, 'samples' => $samples, 'i' => 0, 'type' => 'Covid'];
 
         if($print) $data['print'] = true;
 
