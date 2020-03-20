@@ -32,8 +32,12 @@
                         </div>
                     </div>                
                 </div>
-            
-                <form method="POST" action="/{{ $worksheet->route_name }}" class="form-horizontal" target="_blank">
+
+                @if(isset($covid))            
+                <form method="POST" action="/covid_worksheet" class="form-horizontal" target="_blank">
+                @else
+                <form method="POST" action="/worksheet" class="form-horizontal" target="_blank">
+                @endif
                     @csrf
 
 
