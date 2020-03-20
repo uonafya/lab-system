@@ -245,7 +245,7 @@
 
                                         <td> {{ $sample->results }} </td>
                                         <td>
-                                            <a href="{{ url('covidsample/' . $sample->id . '/edit') }}">Edit</a> |
+                                            <a href="{{ url('covid_sample/' . $sample->id . '/edit') }}">Edit</a> |
                                             
                                         </td>
                                         <td> {!! $sample->delete_form !!} </td>
