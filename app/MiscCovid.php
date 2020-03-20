@@ -40,7 +40,7 @@ class MiscCovid extends Common
         $samples = CovidSample::selectRaw("covid_samples.*, facilitys.name, users.surname, users.oname")
             ->leftJoin('users', 'users.id', '=', 'covid_samples.user_id')
             ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_samples.facility_id')
-            ->where('datereceived', '>', strtotime('-4 months')))
+            ->where('datereceived', '>', date('Y-m-d', strtotime('-4 months')))
             ->when($test, function($query) use ($user){
                 // return $query->where('received_by', $user->id)->where('parentid', 0);
                 return $query->where('parentid', 0)
