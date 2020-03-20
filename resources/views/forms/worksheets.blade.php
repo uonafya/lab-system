@@ -23,7 +23,11 @@
                                 <center>Samples</center>
                             </div>
                             <div class="panel-body">
-                                @include('shared/samples-partial')
+                                @if(isset($covid))
+                                    @include('shared/corona-samples-partial')
+                                @else
+                                    @include('shared/samples-partial')
+                                @endif
                             </div>
                         </div>
                     </div>                
@@ -214,7 +218,11 @@
                             <center>Samples</center>
                         </div>
                         <div class="panel-body">
-                            @include('shared/samples-partial')
+                            @if(isset($covid))
+                                @include('shared/corona-samples-partial')
+                            @else
+                                @include('shared/samples-partial')
+                            @endif
                         </div>
                     </div>
                 </div>                
