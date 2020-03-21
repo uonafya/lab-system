@@ -19,12 +19,12 @@ class CovidWorksheetController extends Controller
     {
         $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
         ->when($worksheet_id, function ($query) use ($worksheet_id){
-            return $query->where('worksheets.id', $worksheet_id);
+            return $query->where('id', $worksheet_id);
         })
         ->when($state, function ($query) use ($state){
-            if($state == 1 || $state == 12) $query->orderBy('worksheets.id', 'asc');
+            if($state == 1 || $state == 12) $query->orderBy('id', 'asc');
             if($state == 12){
-                return $query->where('status_id', 1)->whereRaw("worksheets.id in (
+                return $query->where('status_id', 1)->whereRaw("id in (
                     SELECT DISTINCT worksheet_id
                     FROM samples_view
                     WHERE parentid > 0 AND site_entry != 2
@@ -35,12 +35,12 @@ class CovidWorksheetController extends Controller
         ->when($date_start, function($query) use ($date_start, $date_end){
             if($date_end)
             {
-                return $query->whereDate('worksheets.created_at', '>=', $date_start)
-                ->whereDate('worksheets.created_at', '<=', $date_end);
+                return $query->whereDate('created_at', '>=', $date_start)
+                ->whereDate('created_at', '<=', $date_end);
             }
-            return $query->whereDate('worksheets.created_at', $date_start);
+            return $query->whereDate('created_at', $date_start);
         })
-        ->orderBy('worksheets.created_at', 'desc')
+        ->orderBy('created_at', 'desc')
         ->paginate();
 
         $worksheets->setPath(url()->current());
@@ -223,5 +223,55 @@ class CovidWorksheetController extends Controller
 
         session(['toast_message' => 'The worksheet has been cancelled.']);
         return redirect("/covid_worksheet");
+    }
+
+    public function get_worksheets($worksheet_id=NULL)
+    {
+        if(!$worksheet_id) return false;
+        $samples = CovidSample::selectRaw("count(*) as totals, worksheet_id, result")
+            ->whereNotNull('worksheet_id')
+            ->when($worksheet_id, function($query) use ($worksheet_id){                
+                if (is_array($worksheet_id)) {
+                    return $query->whereIn('worksheet_id', $worksheet_id);
+                }
+                return $query->where('worksheet_id', $worksheet_id);
+            })
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('worksheet_id', 'result')
+            ->get();
+
+        return $samples;
+    }
+
+    public function get_reruns($worksheet_id=NULL)
+    {
+        if(!$worksheet_id) return false;
+        $samples = CovidSample::selectRaw("count(*) as totals, worksheet_id")
+            ->whereNotNull('worksheet_id')
+            ->when($worksheet_id, function($query) use ($worksheet_id){                
+                if (is_array($worksheet_id)) {
+                    return $query->whereIn('worksheet_id', $worksheet_id);
+                }
+                return $query->where('worksheet_id', $worksheet_id);
+            })
+            ->where('parentid', '>', 0)
+            ->where('receivedstatus', '!=', 2)
+            ->groupBy('worksheet_id')
+            ->get();
+
+        return $samples;
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $worksheets = CovidWorksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $worksheets->setPath(url()->current());
+        return $worksheets;
+    }
+
+    public function checknull($var)
+    {
+        return $var->first()->totals ?? 0;
     }
 }

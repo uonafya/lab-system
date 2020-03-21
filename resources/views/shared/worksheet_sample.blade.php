@@ -1,11 +1,7 @@
 <td > 
 	@if($sample->parentid)
-		<div align='right'> 
-			<table>
-				<tr>
-					<td style='background-color:#FAF156'><small>R ({{ $sample->parentid }})</small></td>
-				</tr>
-			</table> 
+		<div align='right'  style='background-color:#FAF156'> 
+			<small>R ({{ $sample->parentid }})</small></td>
 		</div>
 	@endif
 	{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>
@@ -22,8 +18,8 @@
 				unset($sample->batch);
 			}
 		?>
-		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id }}</b> 
-		{{ $sample->patient->patient }}
+		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id ?? $sample->facility->name }}</b> 
+		{{ $sample->patient->patient ?? $sample->patient }}
 		@if(env('APP_LAB') != 5) 
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
 		@endif 
