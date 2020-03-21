@@ -92,6 +92,7 @@ class CovidWorksheetController extends Controller
             ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('covid_worksheet/index/' . $state . '/');
+        $data['link_extra'] = 'covid_';
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');        
     }

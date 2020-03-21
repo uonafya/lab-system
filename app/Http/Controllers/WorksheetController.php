@@ -97,6 +97,7 @@ class WorksheetController extends Controller
             ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('worksheet/index/' . $state . '/');
+        $data['link_extra'] = '';
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
     }
