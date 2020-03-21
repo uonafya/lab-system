@@ -15,9 +15,85 @@ class CovidWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        //
+        $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
+        ->when($worksheet_id, function ($query) use ($worksheet_id){
+            return $query->where('worksheets.id', $worksheet_id);
+        })
+        ->when($state, function ($query) use ($state){
+            if($state == 1 || $state == 12) $query->orderBy('worksheets.id', 'asc');
+            if($state == 12){
+                return $query->where('status_id', 1)->whereRaw("worksheets.id in (
+                    SELECT DISTINCT worksheet_id
+                    FROM samples_view
+                    WHERE parentid > 0 AND site_entry != 2
+                )");
+            }
+            return $query->where('status_id', $state);
+        })
+        ->when($date_start, function($query) use ($date_start, $date_end){
+            if($date_end)
+            {
+                return $query->whereDate('worksheets.created_at', '>=', $date_start)
+                ->whereDate('worksheets.created_at', '<=', $date_end);
+            }
+            return $query->whereDate('worksheets.created_at', $date_start);
+        })
+        ->orderBy('worksheets.created_at', 'desc')
+        ->paginate();
+
+        $worksheets->setPath(url()->current());
+
+        $worksheet_ids = $worksheets->pluck(['id'])->toArray();
+        $samples = $this->get_worksheets($worksheet_ids);
+        $reruns = $this->get_reruns($worksheet_ids);
+        $data = Lookup::worksheet_lookups();
+
+        $worksheets->transform(function($worksheet, $key) use ($samples, $reruns, $data){
+            $status = $worksheet->status_id;
+            $total = $worksheet->sample_count;
+
+            if(($status == 2 || $status == 3) && $samples){
+                $neg = $samples->where('worksheet_id', $worksheet->id)->where('result', 1)->first()->totals ?? 0;
+                $pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 2)->first()->totals ?? 0;
+                $failed = $samples->where('worksheet_id', $worksheet->id)->where('result', 3)->first()->totals ?? 0;
+                $redraw = $samples->where('worksheet_id', $worksheet->id)->where('result', 5)->first()->totals ?? 0;
+                $noresult = $samples->where('worksheet_id', $worksheet->id)->where('result', 0)->first()->totals ?? 0;
+
+                $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+            }
+            else{
+                $neg = $pos = $failed = $redraw = $noresult = $rerun = 0;
+
+                if($status == 1){
+                    $noresult = $worksheet->sample_count;
+                    $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+                }
+            }
+            $worksheet->rerun = $rerun;
+            $worksheet->neg = $neg;
+            $worksheet->pos = $pos;
+            $worksheet->failed = $failed;
+            $worksheet->redraw = $redraw;
+            $worksheet->noresult = $noresult;
+            $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
+            $worksheet->machine = $data['machines']->where('id', $worksheet->machine_type)->first()->output ?? '';
+            $worksheet->status = $data['worksheet_statuses']->where('id', $status)->first()->output ?? '';
+
+            return $worksheet;
+        });
+
+        $data = Lookup::worksheet_lookups();
+        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id, machine_type")
+            ->groupBy('status_id', 'machine_type')
+            ->orderBy('status_id', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->get();
+        $data['worksheets'] = $worksheets;
+        $data['myurl'] = url('covid_worksheet/index/' . $state . '/');
+
+        return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');        
     }
 
     /**
