@@ -512,7 +512,7 @@
 
                 $('#travel_container select').last().attr('id', id);
 
-                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for facility", false);
+                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for City", false);
 
                 $(".date-normal").datepicker({
                     startView: 0,
