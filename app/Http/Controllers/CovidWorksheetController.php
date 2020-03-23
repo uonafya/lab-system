@@ -148,7 +148,7 @@ class CovidWorksheetController extends Controller
      * @param  \App\CovidWorksheet  $covidWorksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(CovidWorksheet $covidWorksheet)
+    public function show(CovidWorksheet $covidWorksheet, $print=false)
     {
         $samples = $covidWorksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
 
