@@ -206,7 +206,7 @@
                             </div> 
                             <div class="col-sm-4">
                                 <!-- <input class="form-control requirable" disabled placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $sample->city_visited ?? '' }}"> -->
-                                <select class="form-control requirable city_select" disabled placeholder="City Visited" name="travel[city_id][]" type="text" ></select>
+                                <select class="form-control requirable city_select" disabled name="travel[city_id][]" ></select>
                             </div>  
                             <div class="col-sm-4">
                                 <input class="form-control requirable" disabled placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" >
@@ -224,7 +224,13 @@
                                     </div>
                                 </div> 
                                 <div class="col-sm-4">
-                                    <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}">
+                                    <!-- <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}"> -->
+                                    <select class="form-control requirable city_select" name="travel[city_id][]" >
+                                        @if($travel->city)
+                                            <option value="{{ $travel->city_id }}"> {{ $travel->city->name }} </option>
+                                        @endif
+                                    </select>
+
                                 </div>  
                                 <div class="col-sm-4">
                                     <input class="form-control requirable" required placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" value="{{ $travel->duration_visited ?? '' }}">
@@ -510,8 +516,8 @@
                 $('#travel_container input').attr("required", "required");
                 $('#travel_container input').removeAttr("disabled");
 
-                $('#travel_container select').attr("required", "required");
-                $('#travel_container select').removeAttr("disabled");
+                // $('#travel_container select').attr("required", "required");
+                // $('#travel_container select').removeAttr("disabled");
 
 
                 $(".date-normal").datepicker({
@@ -524,7 +530,7 @@
                     endDate: new Date(),
                     format: "yyyy-mm-dd"
                 });
-                
+
                 set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
             });
 
