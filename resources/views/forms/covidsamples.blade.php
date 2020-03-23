@@ -225,7 +225,7 @@
                                 </div> 
                                 <div class="col-sm-4">
                                     <!-- <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}"> -->
-                                    <select class="form-control requirable city_select" name="travel[city_id][]" >
+                                    <select class="form-control requirable saved_city_select" id="saved_city_select_{{ $key }}" name="travel[city_id][]" >
                                         @if($travel->city)
                                             <option value="{{ $travel->city_id }}"> {{ $travel->city->name }} </option>
                                         @endif
@@ -410,6 +410,7 @@
         // $(".date :not(.date-dob, .date-dispatched)").datepicker({
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility('.saved_city_select', "{{ url('/city/search') }}", 3, "Search for city", false);
 
     @endcomponent
 
