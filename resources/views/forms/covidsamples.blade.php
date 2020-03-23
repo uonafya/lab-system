@@ -500,6 +500,12 @@
                 event.preventDefault();
                 // $(".travel_item :first").clone().appendTo("#travel_container");
                 $("#first_travel_item").clone().appendTo("#travel_container");
+
+                var rand = Math.floor(Math.random() * 1000);
+                var id = 'select_city_'+rand;
+
+                $('#travel_container select').last().attr('id', id);
+
                 $('#travel_container .travel_item').last().show().removeAttr('id');
                 $('#travel_container input').attr("required", "required");
                 $('#travel_container input').removeAttr("disabled");
@@ -507,12 +513,6 @@
                 $('#travel_container select').attr("required", "required");
                 $('#travel_container select').removeAttr("disabled");
 
-                var rand = Math.floor(Math.random() * 1000);
-                var id = 'select_city_'+rand;
-
-                $('#travel_container select').last().attr('id', id);
-
-                // set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
 
                 $(".date-normal").datepicker({
                     startView: 0,
@@ -524,6 +524,8 @@
                     endDate: new Date(),
                     format: "yyyy-mm-dd"
                 });
+                
+                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
             });
 
             $('#remove_travel').click(function(event){
