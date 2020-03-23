@@ -504,6 +504,9 @@
                 $('#travel_container input').attr("required", "required");
                 $('#travel_container input').removeAttr("disabled");
 
+                $('#travel_container select').attr("required", "required");
+                $('#travel_container select').removeAttr("disabled");
+
                 var rand = Math.floor(Math.random() * 1000);
                 var id = 'select_city_'+rand;
 
