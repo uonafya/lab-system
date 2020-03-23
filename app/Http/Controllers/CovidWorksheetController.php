@@ -77,7 +77,7 @@ class CovidWorksheetController extends Controller
             $worksheet->failed = $failed;
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;
-            $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
+            // $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
             $worksheet->machine = $data['machines']->where('id', $worksheet->machine_type)->first()->output ?? '';
             $worksheet->status = $data['worksheet_statuses']->where('id', $status)->first()->output ?? '';
 
