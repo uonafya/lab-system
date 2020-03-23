@@ -307,7 +307,7 @@ class MiscCovid extends Common
 				`subcounty_id` smallint(5) unsigned DEFAULT NULL,
 				PRIMARY KEY (`id`),
 				KEY `name` (`name`),
-				KEY `country` (`country`),
+				KEY `country` (`country`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
