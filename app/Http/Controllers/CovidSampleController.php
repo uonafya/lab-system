@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CovidSample;
 use App\CovidTravel;
+use App\City;
 use App\Lookup;
 use Illuminate\Http\Request;
 
@@ -210,5 +211,14 @@ class CovidSampleController extends Controller
         $covidSample->delete();
         session(['toast_message' => 'The sample has been deleted.']);
         return back();
+    }
+
+
+    public function cities(Request $request)
+    {
+        $search = $request->input('search');
+        $cities = City::whereRaw("(name like '%" . $search . "%')")
+            ->paginate(10);
+        return $cities;
     }
 }
