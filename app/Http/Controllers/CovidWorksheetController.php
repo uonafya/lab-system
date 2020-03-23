@@ -17,7 +17,7 @@ class CovidWorksheetController extends Controller
      */
     public function index($state=0, $date_start=NULL, $date_end=NULL, $worksheet_id=NULL)
     {
-        $worksheets = Worksheet::with(['creator'])->withCount(['sample'])
+        $worksheets = CovidWorksheet::with(['creator'])->withCount(['sample'])
         ->when($worksheet_id, function ($query) use ($worksheet_id){
             return $query->where('id', $worksheet_id);
         })
