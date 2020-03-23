@@ -201,14 +201,15 @@
                             <div class="col-sm-4">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" disabled name="travel[travel_date][]">
+                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" disabled name="travel[travel_date][]">
                                 </div>
                             </div> 
                             <div class="col-sm-4">
-                                <input class="form-control requirable" disabled placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $sample->city_visited ?? '' }}">
+                                <!-- <input class="form-control requirable" disabled placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $sample->city_visited ?? '' }}"> -->
+                                <select class="form-control requirable city_select" disabled placeholder="City Visited" name="travel[city_id][]" type="text" ></select>
                             </div>  
                             <div class="col-sm-4">
-                                <input class="form-control requirable" disabled placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
+                                <input class="form-control requirable" disabled placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" >
                             </div>
                             <div class="col-sm-12"><br/><br/></div>                      
                         </div>
@@ -502,6 +503,13 @@
                 $('#travel_container .travel_item').last().show().removeAttr('id');
                 $('#travel_container input').attr("required", "required");
                 $('#travel_container input').removeAttr("disabled");
+
+                var rand = Math.floor(Math.random() * 1000);
+                var id = 'select_city_'+rand;
+
+                $('#travel_container select').last().show().attr('id', id);
+
+                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for facility", false);
 
                 $(".date-normal").datepicker({
                     startView: 0,
