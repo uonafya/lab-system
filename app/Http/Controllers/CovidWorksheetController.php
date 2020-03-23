@@ -156,7 +156,7 @@ class CovidWorksheetController extends Controller
 
         if($print) $data['print'] = true;
 
-        if($worksheet->machine_type == 1){
+        if($covidWorksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
         }
         else{
