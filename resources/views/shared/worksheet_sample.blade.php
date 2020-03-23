@@ -1,7 +1,7 @@
 <td > 
 	@if($sample->parentid)
 		<div align='right'  style='background-color:#FAF156'> 
-			<small>R ({{ $sample->parentid }})</small></td>
+			<small>R ({{ $sample->parentid }})</small>
 		</div>
 	@endif
 	{{--<span class='style7'>Sample: {{ $sample->patient->patient }}  {{$parent}}</span><br>
