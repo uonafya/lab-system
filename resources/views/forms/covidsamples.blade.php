@@ -510,7 +510,7 @@
                 var rand = Math.floor(Math.random() * 1000);
                 var id = 'select_city_'+rand;
 
-                $('#travel_container select').last().show().attr('id', id);
+                $('#travel_container select').last().attr('id', id);
 
                 set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for facility", false);
 
