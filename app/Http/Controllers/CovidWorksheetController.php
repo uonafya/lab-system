@@ -85,7 +85,7 @@ class CovidWorksheetController extends Controller
         });
 
         $data = Lookup::worksheet_lookups();
-        $data['status_count'] = Worksheet::selectRaw("count(*) AS total, status_id, machine_type")
+        $data['status_count'] = CovidWorksheet::selectRaw("count(*) AS total, status_id, machine_type")
             ->groupBy('status_id', 'machine_type')
             ->orderBy('status_id', 'asc')
             ->orderBy('machine_type', 'asc')
