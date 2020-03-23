@@ -8,6 +8,10 @@ class CovidSample extends BaseModel
 {
 	protected $dates = ['dob', 'datecollected', 'datereceived', 'datetested', 'datedispatched',];
 
+    protected $casts = [
+        'symptoms' => 'array',
+    ];
+
 
     public function facility()
     {
@@ -27,5 +31,16 @@ class CovidSample extends BaseModel
     public function calc_age()
     {
     	$this->age = $this->datecollected->diffInYears($this->dob);
+    }
+
+    public function setSexAttribute($value)
+    {
+        if(is_numeric($value)) $this->attributes['sex'] = $value;
+        else{
+            if(str_contains($value, ['F', 'f'])) $this->attributes['sex'] = 2;
+            else{
+                $this->attributes['sex'] = 1;
+            }
+        }
     }
 }

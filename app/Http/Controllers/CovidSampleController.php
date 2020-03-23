@@ -113,9 +113,9 @@ class CovidSampleController extends Controller
 
         $sample = new CovidSample;
         $sample->fill($request->except(['_token', 'method', 'travel']));
-        $sample->calc_age();
-        $sample->user_id = auth()->user()->id;
-        if($sample->datereceived) $sample->received_by = auth()->user()->id;
+        // $sample->calc_age();
+        // $sample->user_id = auth()->user()->id;
+        // if($sample->datereceived) $sample->received_by = auth()->user()->id;
         $sample->save();
 
         $travels = $request->input('travel');
@@ -170,8 +170,8 @@ class CovidSampleController extends Controller
     public function update(Request $request, CovidSample $covidSample)
     {
         $covidSample->fill($request->except(['_token', 'method', 'travel']));
-        $covidSample->calc_age();
-        if($covidSample->isDirty('datereceived') && !$covidSample->received_by) $covidSample->received_by = auth()->user()->id;
+        // $covidSample->calc_age();
+        // if($covidSample->isDirty('datereceived') && !$covidSample->received_by) $covidSample->received_by = auth()->user()->id;
         $covidSample->pre_update();
 
         $travels = $request->input('travel');
