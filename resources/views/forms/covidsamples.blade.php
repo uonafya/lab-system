@@ -533,7 +533,7 @@
                 });
 
                 set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
-                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
+                // set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
                 // set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
             });
 
