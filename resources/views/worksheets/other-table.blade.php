@@ -81,7 +81,7 @@ width:1180px;
 			</tr>
 			<tr >
 				<td class="comment style1 style4"> Created By	    </td>
-				<td class="comment"  ><span class="style5"> {{ $worksheet->creator->full_name }}</span></td>
+				<td class="comment"  ><span class="style5"> {{ $worksheet->creator->full_name ?? '' }}</span></td>
 				<td class="comment style1 style4"> Rack <strong>#</strong></td>
 				<td><span class="comment style1 style4">{{ $worksheet->rack_no }}</span></td>
 				<td><span class="style5">Date Reviewed</span></td>

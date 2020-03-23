@@ -70,7 +70,6 @@ class MiscCovid extends Common
 
 
 	public static function create_tables(){
-		DB::statement("DROP TABLE IF EXISTS `covid_worksheets`;");
 
 		DB::statement("
 			CREATE TABLE `covid_worksheets` (
@@ -124,7 +123,6 @@ class MiscCovid extends Common
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
-		DB::statement("DROP TABLE IF EXISTS `covid_samples`;");
 
 		DB::statement("
 			CREATE TABLE `covid_samples` (
@@ -133,15 +131,25 @@ class MiscCovid extends Common
 				`lab_id` tinyint(3) unsigned NOT NULL,
 				`facility_id` int(10) unsigned NOT NULL,
 				`patient` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+				`patient_name` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`amrs_location` tinyint(4) DEFAULT NULL,
 				`provider_identifier` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`order_no` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`site_entry` tinyint(3) unsigned DEFAULT NULL,
 
 				`dob` date DEFAULT NULL,
 				`age` tinyint unsigned DEFAULT NULL,
 				`sex` tinyint unsigned DEFAULT NULL,
 				`residence` varchar(80) COLLATE utf8_unicode_ci NOT NULL,
+				`phone_no` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`symptoms_date` date DEFAULT NULL,
+				`isolation_status` tinyint(3) unsigned DEFAULT NULL,
+				`symptoms` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL,
+
+				`suspected` tinyint(3) unsigned DEFAULT NULL,
+				`exposure` tinyint(3) unsigned DEFAULT NULL,
+				`exposure_details` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`sample_type` tinyint(3) unsigned DEFAULT NULL,
 
 				`receivedstatus` tinyint(3) unsigned DEFAULT NULL,
 				`user_id` int(10) unsigned DEFAULT NULL,
@@ -189,8 +197,6 @@ class MiscCovid extends Common
 		");
 
 
-		DB::statement("DROP TABLE IF EXISTS `covid_travels`;");
-
 		DB::statement("
 			CREATE TABLE `covid_travels` (
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -198,7 +204,9 @@ class MiscCovid extends Common
 				`sample_id` int(10) unsigned DEFAULT NULL,
 
 				`travel_date` date DEFAULT NULL,
+				`return_date` date DEFAULT NULL,
 				`city_visited` varchar(50) DEFAULT NULL,
+				`city_id` smallint(5) unsigned DEFAULT NULL,
 				`duration_visited` smallint unsigned DEFAULT NULL,
 
 				`synched` tinyint(4) NOT NULL DEFAULT '0',
@@ -207,10 +215,109 @@ class MiscCovid extends Common
 				`updated_at` timestamp NULL DEFAULT NULL,
 				PRIMARY KEY (`id`),
 				KEY `covid_national_travel_id_index` (`national_travel_id`),
-				KEY `covid_sample_id_index` (`sample_id`)
+				KEY `covid_sample_id_index` (`sample_id`),
+				KEY `city_id` (`city_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+	}
+
+	public static function lookups()
+	{
+		DB::statement("DROP TABLE IF EXISTS `covid_symptoms`;");
+		DB::statement("
+			CREATE TABLE `covid_symptoms` (
+				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
+		DB::table('covid_symptoms')->insert([
+			['id' => 1, 'name' => 'Fever'],
+			['id' => 2, 'name' => 'Dry Cough'],
+			['id' => 3, 'name' => 'Sore Throat'],
+			['id' => 4, 'name' => 'Shortness of Breath'],
+		]);
 
+		DB::statement("DROP TABLE IF EXISTS `covid_isolations`;");
+		DB::statement("
+			CREATE TABLE `covid_isolations` (
+				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_isolations')->insert([
+			['id' => 1, 'name' => 'Admitted and Isolation'],
+			['id' => 2, 'name' => 'In Patient Ward'],
+			['id' => 3, 'name' => 'Self Quarantine'],
+			['id' => 4, 'name' => 'ICU - critical condition'],
+		]);
+
+		DB::statement("DROP TABLE IF EXISTS `covid_sample_types`;");
+		DB::statement("
+			CREATE TABLE `covid_sample_types` (
+				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_sample_types')->insert([
+			['id' => 1, 'name' => 'Nasopharygneal swab in UTM'],
+			['id' => 2, 'name' => 'Oropharygneal swab in UTM'],
+		]);
+	}
+
+	public static function drop_tables()
+	{
+		DB::statement("DROP TABLE IF EXISTS `covid_worksheets`;");
+		DB::statement("DROP TABLE IF EXISTS `covid_samples`;");
+		DB::statement("DROP TABLE IF EXISTS `covid_travels`;");
+
+	}
+
+	public static function alter_tables()
+	{		
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `patient_name` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL after patient;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `isolation_status` tinyint(3) unsigned DEFAULT NULL after symptoms_date;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `site_entry` tinyint(3) unsigned DEFAULT NULL after order_no;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `phone_no` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL after residence;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `symptoms` varchar(60) COLLATE utf8_unicode_ci DEFAULT NULL after isolation_status;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `exposure` tinyint(3) unsigned DEFAULT NULL after symptoms;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `suspected` tinyint(3) unsigned DEFAULT NULL after symptoms;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `exposure_details` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL after exposure;');
+		DB::statement('ALTER TABLE covid_samples ADD COLUMN `sample_type` tinyint(3) unsigned DEFAULT NULL after exposure_details;');
+
+
+		DB::statement('ALTER TABLE covid_travels ADD COLUMN `return_date` date DEFAULT NULL after travel_date;');
+		DB::statement('ALTER TABLE covid_travels ADD COLUMN `city_id` smallint(5) unsigned DEFAULT NULL after city_visited;');
+	}
+
+	public static function cities()
+	{
+		DB::statement("DROP TABLE IF EXISTS `cities`;");
+		DB::statement("
+			CREATE TABLE `cities` (
+				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				`subcountry` varchar(50) DEFAULT NULL,
+				`country` varchar(50) DEFAULT NULL,
+				`subcounty_id` smallint(5) unsigned DEFAULT NULL,
+				PRIMARY KEY (`id`),
+				KEY `name` (`name`),
+				KEY `country` (`country`),
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		$a = file_get_contents(public_path('cities/world-cities_json.json'));
+		$b = json_decode($a);
+
+		foreach ($b as $key => $row) {
+			DB::table('cities')->insert([
+				['id' => $key+1, 'name' => $row->name, 'subcountry' => $row->subcountry, 'country' => $row->country]
+			]);
+		}
 	}
 }
