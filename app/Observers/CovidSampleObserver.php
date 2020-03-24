@@ -16,15 +16,15 @@ class CovidSampleObserver
     public function saving(CovidSample $covidSample)
     {
         $user = auth()->user();
-        if(!$covidSample->site_entry){
+        if(!$covidSample->site_entry && $user){
             if($user->user_type_id == 5) $covidSample->site_entry = 1;
             else{
                 $covidSample->site_entry = 0;
             }
         }
-        if(!$covidSample->lab_id) $covidSample->lab_id = env('APP_LAB');
-        if(!$covidSample->user_id) $covidSample->user_id = $user->id ?? null;
-        if(!$covidSample->received_by && $covidSample->datereceived) $covidSample->received_by = $user->id;
+        if(!$covidSample->lab_id && $user) $covidSample->lab_id = env('APP_LAB');
+        if(!$covidSample->user_id && $user) $covidSample->user_id = $user->id ?? null;
+        if(!$covidSample->received_by && $covidSample->datereceived && $user) $covidSample->received_by = $user->id;
         if(($covidSample->dob && !$covidSample->age) || $covidSample->isDirty('dob')) $covidSample->calc_age();
 
         if($covidSample->county && !$covidSample->county_id){
