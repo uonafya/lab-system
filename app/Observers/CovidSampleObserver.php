@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\CovidSample;
+use DB;
 
 class CovidSampleObserver
 {
@@ -22,9 +23,13 @@ class CovidSampleObserver
             }
         }
         if(!$covidSample->lab_id) $covidSample->lab_id = env('APP_LAB');
-        if(!$covidSample->user_id) $covidSample->user_id = $user->id;
+        if(!$covidSample->user_id) $covidSample->user_id = $user->id ?? null;
         if(!$covidSample->received_by && $covidSample->datereceived) $covidSample->received_by = $user->id;
         if(($covidSample->dob && !$covidSample->age) || $covidSample->isDirty('dob')) $covidSample->calc_age();
+
+        if($covidSample->county && !$covidSample->county_id){
+            $covidSample->county_id = DB::table('countys')->where('name', $covidSample->county)->first()->id ?? null;
+        }
     }
 
     /**
