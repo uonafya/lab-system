@@ -120,6 +120,38 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('batch', 'BatchController');
 
+	Route::post('city/search/', 'CovidSampleController@cities')->name('cities');
+
+	Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
+		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
+		Route::post('index', 'CovidSampleController@sample_search');
+		
+	});
+	Route::resource('covid_sample', 'CovidSampleController');
+
+	Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
+
+		Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidWorksheetController@index')->name('list');
+		Route::get('create/{machine_type}/{limit}', 'CovidWorksheetController@create')->name('create_any');
+		Route::get('find/{worksheet}', 'CovidWorksheetController@find')->name('find');
+		Route::get('print/{worksheet}', 'CovidWorksheetController@print')->name('print');
+		Route::get('labels/{worksheet}', 'CovidWorksheetController@labels')->name('labels');
+		Route::get('cancel/{worksheet}', 'CovidWorksheetController@cancel')->name('cancel');
+		Route::get('convert/{machine_type}/{worksheet}', 'CovidWorksheetController@convert_worksheet')->name('convert');
+
+		Route::group(['middleware' => ['only_utype:1']], function () {
+			Route::get('cancel_upload/{worksheet}', 'CovidWorksheetController@cancel_upload')->name('cancel_upload');
+			Route::get('reverse_upload/{worksheet}', 'CovidWorksheetController@reverse_upload')->name('reverse_upload');
+			Route::get('upload/{worksheet}', 'CovidWorksheetController@upload')->name('upload');
+			Route::put('upload/{worksheet}', 'CovidWorksheetController@save_results')->name('save_results');
+			Route::get('approve/{worksheet}', 'CovidWorksheetController@approve_results')->name('approve_results');
+			Route::put('approve/{worksheet}', 'CovidWorksheetController@approve')->name('approve');
+		});
+
+		Route::post('search/', 'CovidWorksheetController@search')->name('search');		
+	});
+	Route::resource('covid_worksheet', 'CovidWorksheetController');
+
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
 			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');

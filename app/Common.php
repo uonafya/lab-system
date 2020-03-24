@@ -347,7 +347,8 @@ class Common
         	else{
         		$new_mail = new $mail_class($batch);
         	}
-        	Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+        	Mail::to($mail_array)
+        	// ->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
         	->send($new_mail);
         	// $batch->save();
         } catch (Exception $e) {

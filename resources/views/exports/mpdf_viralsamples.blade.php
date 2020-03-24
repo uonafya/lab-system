@@ -135,6 +135,15 @@ p.breakhere {page-break-before: always}
 					</span>
 				</td>
 			</tr>
+
+			@if($sample->recency_number)
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<strong>Recency Number:</strong> &nbsp; {{ $sample->recency_number  }}
+					</td>					
+				</tr>
+			@endif
+			
 			<tr >
 				<td colspan="1" class="style4 style1 comment"><strong>DOB & Age (Years)</strong></td>
 				<td colspan="3">
@@ -374,6 +383,7 @@ p.breakhere {page-break-before: always}
 
 			@if($sample->previous_tests->count() > 0)
 				@foreach($sample->previous_tests as $prev)
+					@break($loop->iteration > 3)
 					<br />
 
 					<tr class="evenrow">

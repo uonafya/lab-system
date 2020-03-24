@@ -97,6 +97,7 @@ class WorksheetController extends Controller
             ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('worksheet/index/' . $state . '/');
+        $data['link_extra'] = '';
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
     }
@@ -339,7 +340,10 @@ class WorksheetController extends Controller
         $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
 
         // $samples = Sample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
-        $samples = Sample::where(['worksheet_id' => $worksheet->id])->get();
+        // $samples = Sample::where(['worksheet_id' => $worksheet->id])->get();
+
+        $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Sample::whereIn('id', $sample_array)->get();
 
         foreach ($samples as $key => $sample) {
             if($sample->parentid == 0) $del_samples = Sample::where('parentid', $sample->id)->get();

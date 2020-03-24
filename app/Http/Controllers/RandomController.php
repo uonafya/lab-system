@@ -69,6 +69,8 @@ class RandomController extends Controller
 			$new = session(['testingSystem' => 'DR']);
 		}else if ($sys == 'CD4'){
 			$new = session(['testingSystem' => 'CD4']);
+		}else if ($sys == 'Covid'){
+			$new = session(['testingSystem' => 'Covid']);
 		}
 		
 		echo json_encode(session('testingSystem'));

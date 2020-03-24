@@ -15,6 +15,8 @@ use App\Viralsample;
 use App\Worksheet;
 use App\Viralworksheet;
 
+use App\CovidSample;
+
 use App\Facility;
 
 use App\Observers\MotherObserver;
@@ -27,6 +29,8 @@ use App\Observers\SampleObserver;
 use App\Observers\ViralsampleObserver;
 use App\Observers\WorksheetObserver;
 use App\Observers\ViralworksheetObserver;
+
+use App\Observers\CovidSampleObserver;
 
 use App\Observers\FacilityObserver;
 
@@ -67,6 +71,10 @@ class AppServiceProvider extends ServiceProvider
             Worksheet::observe(WorksheetObserver::class);
             Viralworksheet::observe(ViralworksheetObserver::class);
 
+        }
+
+        if(in_array(env('APP_LAB'), [1,3])){
+            CovidSample::observe(CovidSampleObserver::class);
         }
         
         Facility::observe(FacilityObserver::class);

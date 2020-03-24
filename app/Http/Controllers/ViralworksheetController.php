@@ -25,12 +25,12 @@ class ViralworksheetController extends Controller
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples_view.id) AS samples_no, users.surname, users.oname')
             ->leftJoin('viralsamples_view', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id')
-            ->join('users', 'users.id', '=', 'viralworksheets.createdby')
-            ->where('site_entry', '!=', 2)
+            ->leftJoin('users', 'users.id', '=', 'viralworksheets.createdby')
             ->when($worksheet_id, function ($query) use ($worksheet_id){
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
+                if($state != 4) $query->where('site_entry', '!=', 2);
                 if($state == 1 || $state == 12) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
@@ -347,7 +347,10 @@ class ViralworksheetController extends Controller
         $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
 
         // $samples = Viralsample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
-        $samples = Viralsample::where(['worksheet_id' => $worksheet->id])->get();
+        // $samples = Viralsample::where(['worksheet_id' => $worksheet->id])->get();
+
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Viralsample::whereIn('id', $sample_array)->get();
 
         foreach ($samples as $key => $sample) {
             if($sample->parentid == 0) $del_samples = Viralsample::where('parentid', $sample->id)->get();
