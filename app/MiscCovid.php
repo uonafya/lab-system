@@ -88,7 +88,7 @@ class MiscCovid extends Common
 				`site_entry` tinyint(3) unsigned DEFAULT NULL,
 
 
-				`lab_id` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`identifier` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`sample_number` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 				`county` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
 
@@ -167,7 +167,7 @@ class MiscCovid extends Common
         		'created_at' => $row->date_entered,
         		'datecollected' => $row->date_collected,
         		'datereceived' => $row->date_received,
-        		'lab_id' => $row->lab_id,
+        		'identifier' => $row->lab_id,
         		'patient_id' => $row->patient_id,
         		'county' => $row->county,
         		'age' => $row->age,
