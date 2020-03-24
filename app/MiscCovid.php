@@ -168,7 +168,7 @@ class MiscCovid extends Common
         		'datecollected' => $row->date_collected,
         		'datereceived' => $row->date_received,
         		'identifier' => $row->lab_id,
-        		'patient_id' => $row->patient_id,
+        		'patient' => $row->patient_id,
         		'county' => $row->county,
         		'age' => $row->age,
         		'sex' => $row->gender,
