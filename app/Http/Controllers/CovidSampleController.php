@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\CovidSample;
 use App\CovidTravel;
 use App\City;
+use App\Facility;
 use App\Lookup;
+use Excel;
 use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
@@ -211,6 +213,34 @@ class CovidSampleController extends Controller
         $covidSample->delete();
         session(['toast_message' => 'The sample has been deleted.']);
         return back();
+    }
+
+
+
+
+    public function upload(Request $request)
+    {
+        $file = $request->upload->path();
+        // config(['excel.import.heading' => false]);
+        $data = Excel::load($file, function($reader){
+            $reader->toArray();
+        })->get();
+
+        foreach ($data as $key => $row) {
+            if(!$key) continue;
+
+            $f = Facility::locate($row[2])->first();
+            $s = CovidSample::create([
+                'facility_id' => $f->id,
+                'patient_name' => $row[4],
+                'patient' => $row[5],
+                'dob' => $row[6],
+                'age' => $row[7],
+                'sex' => $row[8],
+                'residence' => $row[9],
+                'phone_no' => $row[10],
+            ]);
+        }
     }
 
 
