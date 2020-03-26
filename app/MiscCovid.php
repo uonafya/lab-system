@@ -184,9 +184,11 @@ class MiscCovid extends Common
     	DB::statement(' delete from covid_samples where result=2');
         config(['excel.import.heading' => true]);
 
-        $data = Excel::load(public_path('covid_cases.xlsx'), function($reader){
+        $data = Excel::load(public_path('covid_cases.csv'), function($reader){
             $reader->toArray();
         })->get();
+
+        // dd($data);
 
         foreach ($data as $key => $row) {
         	CovidSample::create([
