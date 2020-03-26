@@ -179,6 +179,26 @@ class MiscCovid extends Common
         }
     }
 
+    public static function add_data_two()
+    {    	
+    	DB::statement(' delete from covid_samples where result=2');
+        config(['excel.import.heading' => true]);
+
+        $data = Excel::load(public_path('covid_cases.xlsx'), function($reader){
+            $reader->toArray();
+        })->get();
+
+        foreach ($data as $key => $row) {
+        	CovidSample::create([
+        		'patient' => $row->case_id,
+        		'county_id' => $row->county,
+        		'age' => $row->age,
+        		'sex' => $row->sex,
+        		'result' => 2,
+        	]);
+        }
+    }
+
 
 	public static function create_tables(){
 
