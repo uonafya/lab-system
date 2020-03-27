@@ -4,7 +4,7 @@ namespace App\CorruptModels;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Viralsample extends Model
+class Viralsample extends BaseModel
 {
     public function patient()
     {
@@ -32,5 +32,20 @@ class Viralsample extends Model
     public function child()
     {
         return $this->hasMany('App\CorruptModels\Viralsample', 'parentid');
+    }
+
+    public function corrupt_version()
+    {
+        $batch = Viralbatch::where('old_id', '=', $this->batch_id)->first();
+        $worksheet = Viralworksheet::where('old_id', '=', $this->worksheet_id)->first();
+        $patient = Viralpatient::where('old_id', '=', $this->patient_id)->first();
+        if (isset($batch))
+            $this->batch_id = $batch->id;
+        if (isset($worksheet))
+            $this->worksheet_id = $worksheet->id;
+        if (isset($patient))
+            $this->patient_id = $patient->id;
+        
+        $this->save();
     }
 }
