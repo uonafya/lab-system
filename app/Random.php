@@ -3384,83 +3384,83 @@ class Random
     public static function rectify()
     {
         $correction_classes = [
-                // [
-                //     'incomingclass' => \App\CorruptModels\Batch::class, 
-                //     'restclass' => Batch::class, 
-                //     'check_columns' => ['facility_id', 'datereceived', 'lab_id'],
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Viralbatch::class, 
-                //     'restclass' => Viralbatch::class, 
-                //     'check_columns' => ['facility_id', 'datereceived', 'lab_id'],
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Sample::class,
-                //     'restclass' => Sample::class, 
-                //     'check_columns' => ['patient_id', 'batch_id', 'created_at'],
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Viralsample::class,
-                //     'restclass' => Viralsample::class, 
-                //     'check_columns' => ['patient_id', 'batch_id', 'created_at'],
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
-                //     'restclass' => Abbotdeliveries::class,
-                //     'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Batch::class, 
+                    'restclass' => Batch::class, 
+                    'check_columns' => ['facility_id', 'datereceived', 'lab_id'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Viralbatch::class, 
+                    'restclass' => Viralbatch::class, 
+                    'check_columns' => ['facility_id', 'datereceived', 'lab_id'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Sample::class,
+                    'restclass' => Sample::class, 
+                    'check_columns' => ['patient_id', 'batch_id', 'created_at'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Viralsample::class,
+                    'restclass' => Viralsample::class, 
+                    'check_columns' => ['patient_id', 'batch_id', 'created_at'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
+                    'restclass' => Abbotdeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
                 
-                // [
-                //     'incomingclass' => \App\CorruptModels\Abbotprocurement::class,
-                //     'restclass' => Abbotprocurement::class,
-                //     'check_columns' => ['year', 'month', 'testtype']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
-                //     'restclass' => Abbotdeliveries::class,
-                //     'check_columns' => ['year', 'quarter', 'testtype']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Taqmanprocurement::class,
-                //     'restclass' => Taqmanprocurement::class,
-                //     'check_columns' => ['year', 'month', 'testtype']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Taqmandeliveries::class,
-                //     'restclass' => Taqmandeliveries::class,
-                //     'check_columns' => ['year', 'quarter', 'testtype']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Taqmandeliveries::class,
-                //     'restclass' => Taqmandeliveries::class,
-                //     'check_columns' => ['year', 'quarter', 'testtype']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\LabEquipmentTracker::class,
-                //     'restclass' => LabEquipmentTracker::class,
-                //     'check_columns' => ['year', 'month', 'equipment_id']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\LabPerformanceTracker::class,
-                //     'restclass' => LabPerformanceTracker::class,
-                //     'check_columns' => ['year', 'month', 'testtype', 'sampletype']],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Patient::class,
-                //     'restclass' => Patient::class,
-                //     'check_columns' => ['facility_id', 'patient']
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Viralpatient::class,
-                //     'restclass' => Viralpatient::class,
-                //     'check_columns' => ['facility_id', 'patient']
-                // ], 
-                // [
-                //     'incomingclass' => \App\CorruptModels\Viralworksheet::class,
-                //     'restclass' => Viralworksheet::class,
-                //     'check_columns' => ['createdby', 'created_at']
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Worksheet::class,
-                //     'restclass' => Worksheet::class,
-                //     'check_columns' => ['createdby', 'created_at']
-                // ],
-                // [
-                //     'incomingclass' => \App\CorruptModels\Mother::class,
-                //     'restclass' => Mother::class
-                // ],
+                [
+                    'incomingclass' => \App\CorruptModels\Abbotprocurement::class,
+                    'restclass' => Abbotprocurement::class,
+                    'check_columns' => ['year', 'month', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
+                    'restclass' => Abbotdeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Taqmanprocurement::class,
+                    'restclass' => Taqmanprocurement::class,
+                    'check_columns' => ['year', 'month', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Taqmandeliveries::class,
+                    'restclass' => Taqmandeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Taqmandeliveries::class,
+                    'restclass' => Taqmandeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\LabEquipmentTracker::class,
+                    'restclass' => LabEquipmentTracker::class,
+                    'check_columns' => ['year', 'month', 'equipment_id']],
+                [
+                    'incomingclass' => \App\CorruptModels\LabPerformanceTracker::class,
+                    'restclass' => LabPerformanceTracker::class,
+                    'check_columns' => ['year', 'month', 'testtype', 'sampletype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Patient::class,
+                    'restclass' => Patient::class,
+                    'check_columns' => ['facility_id', 'patient']
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Viralpatient::class,
+                    'restclass' => Viralpatient::class,
+                    'check_columns' => ['facility_id', 'patient']
+                ], 
+                [
+                    'incomingclass' => \App\CorruptModels\Viralworksheet::class,
+                    'restclass' => Viralworksheet::class,
+                    'check_columns' => ['createdby', 'created_at']
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Worksheet::class,
+                    'restclass' => Worksheet::class,
+                    'check_columns' => ['createdby', 'created_at']
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Mother::class,
+                    'restclass' => Mother::class
+                ],
         ];
 
         echo "==>Begin transaction\n";
