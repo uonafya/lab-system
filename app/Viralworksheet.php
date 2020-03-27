@@ -109,4 +109,9 @@ class Viralworksheet extends BaseModel
             \App\MiscViral::check_batch($s->batch_id);
         }
     }
+
+    public function scopeExisting($query, $createdby, $created_at)
+    {
+        return $query->where(['createdby' => $createdby, 'created_at' => $created_at]);
+    }
 }
