@@ -301,11 +301,23 @@ class Viralsample extends BaseModel
             return $this->prev_run->worksheet_id;
         }
     }
-    
+
 
     public function scopeExisting($query, $patient_id, $batch_id, $created_at)
     {
         return $query->where(['patient_id' => $patient_id, 'batch_id' => $batch_id, 'created_at' => $created_at]);
+    }
+
+    public function corrupt_version()
+    {
+        $batch = Viralbatch::where('old_id', '=', $this->batch_id)->first();
+        $worksheet = Viralworksheet::where('old_id', '=', $this->worksheet_id)->first();
+        $patient = Viralpatient::where('old_id', '=', $this->patient_id)->first();
+
+        $this->batch_id = $batch->id;
+        $this->worksheet_id = $worksheet->id;
+        $this->patient_id = $patient->id;
+        $this->save();
     }
     
 }

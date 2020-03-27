@@ -3460,6 +3460,8 @@ class Random
         ];
 
         echo "==>Begin transaction\n";
+
+        echo "==> Inserting the data\n";
         foreach ($correction_classes as $key => $class) {
             echo "==> Processing {$class['incomingclass']}\n";
             $objects = self::process_incoming_model($class);
@@ -3468,24 +3470,14 @@ class Random
                 $model->old_id = $model->id;
                 unset($model->id);
                 $save = self::format_for_and_save($model, $class, $insertclass);
-                // $save = (object)['id' => 120];
-                // if (null !== $class['children']) {
-                //     foreach ($class['children'] as $childkey => $class) {
-                //         dd($model->sample);
-                //         $childData = $model->$key;
-                //         dd($childData);
-                //         $insertclass = $class['restclass'];
-                //         foreach ($childData as $key => $model) {
-                //             $id = $model->id;
-                //             unset($model->id);
-                //             $replace_id = $class['parent'] . '_id';
-                //             $model->$replace_id = $save->id;
-                //             dd($model);
-                //             $save = self::format_for_and_save($model, $class, $insertclass);
-                //         }
-                //     }
-                // }
             }
+        }
+        echo "==> Correcting the reference ids\n";
+        foreach (Viralsample::whereNotNull('old_id') as $key => $sample) {
+            $sample->corrupt_version();
+        }
+        foreach (Sample::whereNotNull('old_id') as $key => $sample) {
+            $sample->corrupt_version();
         }
         echo "==> End transaction\n";
     }

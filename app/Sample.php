@@ -203,4 +203,16 @@ class Sample extends BaseModel
         return $query->where(['patient_id' => $patient_id, 'batch_id' => $batch_id, 'created_at' => $created_at]);
     }
 
+    public function corrupt_version()
+    {
+        $batch = Batch::where('old_id', '=', $this->batch_id)->first();
+        $worksheet = Worksheet::where('old_id', '=', $this->worksheet_id)->first();
+        $patient = Patient::where('old_id', '=', $this->patient_id)->first();
+
+        $this->batch_id = $batch->id;
+        $this->worksheet_id = $worksheet->id;
+        $this->patient_id = $patient->id;
+        $this->save();
+    }
+
 }
