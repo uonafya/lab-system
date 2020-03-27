@@ -198,4 +198,9 @@ class Sample extends BaseModel
         }
     }
 
+    public function scopeExisting($query, $patient_id, $batch_id, $created_at)
+    {
+        return $query->where(['patient_id' => $patient_id, 'batch_id' => $batch_id, 'created_at' => $created_at]);
+    }
+
 }

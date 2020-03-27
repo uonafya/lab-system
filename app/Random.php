@@ -3397,12 +3397,12 @@ class Random
                 [
                     'incomingclass' => \App\CorruptModels\Sample::class,
                     'restclass' => Sample::class, 
-                    'check_columns' => ['year', 'quarter', 'testtype'],
+                    'check_columns' => ['patient_id', 'batch_id', 'created_at'],
                 ],
                 [
                     'incomingclass' => \App\CorruptModels\Viralsample::class,
                     'restclass' => Viralsample::class, 
-                    'check_columns' => ['year', 'quarter', 'testtype'],
+                    'check_columns' => ['patient_id', 'batch_id', 'created_at'],
                 ],
                 [
                     'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
