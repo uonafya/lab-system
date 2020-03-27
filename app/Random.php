@@ -3478,12 +3478,17 @@ class Random
             }
         }
         echo "==> Correcting the reference ids\n";
+        echo "\tViralsample correction\n";
         foreach (\App\CorruptModels\Viralsample::whereNotNull('old_id')->get() as $key => $sample) {
             $sample->corrupt_version();
         }
+
+        echo "\tSample correction\n";
         foreach (\App\CorruptModels\Sample::whereNotNull('old_id')->get() as $key => $sample) {
             $sample->corrupt_version();
         }
+
+        echo "\tPatient correction\n";
         foreach (\App\CorruptModels\Patient::whereNotNull('old_id')->get() as $key => $patient) {
             $patient->corrupt_version();
         }
