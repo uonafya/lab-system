@@ -311,7 +311,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group" id="rejection" >
+                            {{--<div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
@@ -330,7 +330,7 @@
 
                                     </select>
                                 </div>
-                            </div>
+                            </div>--}}
                         @endif
                         
                         @if(auth()->user()->user_type_id == 5)
