@@ -17,10 +17,4 @@
 							@isset($placeholder) placeholder="{{ $placeholder }}" @endisset 
 						>
 					</div>
-
-					@error($prop)
-						<span class="offset-sm-3 col-sm-9 alert alert-danger" role="alert">
-							<strong>{{ $message }}</strong>
-						</span>
-					@enderror
 				</div>
