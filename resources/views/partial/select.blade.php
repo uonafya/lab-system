@@ -3,8 +3,12 @@
 				?>
 
 				<div class="form-group">
-					<label for="{{ $prop }}" class="col-sm-3 col-form-label"><div class="text-right">{{ $label }}</div></label>
-					<div class="col-sm-9">
+                    <label class="col-sm-4 control-label">  {{ $label }}
+                        @if(isset($required) && $required)
+                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                        @endif
+                    </label>
+					<div class="col-sm-8">
 						<select class="form-control" id="{{ $prop }}" name="{{ $prop }}" @isset($required) required @endisset> 
 							<option></option>
 							@foreach($items as $item)
