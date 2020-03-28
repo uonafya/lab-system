@@ -27,7 +27,6 @@
         @else
             <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/") }}'>
         @endif
-            <?php $m = $sample ?? null; ?>
 
         @csrf
 
@@ -119,18 +118,14 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        <!-- <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient Identifier
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Patient/Sample Identifier
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
                                 <input class="form-control requirable" required name="patient" type="text" value="{{ $sample->patient ?? '' }}" id="patient">
                             </div>
-                        </div> -->
-
-
-
-                        @include('partial.input', ['model' => $m, 'prop' => 'patient', 'required' => true, 'label' => 'Patient Identifier'])
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Birth
@@ -317,7 +312,7 @@
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
                                         <option></option>
-                                        @foreach ($viralrejectedreasons as $rejectedreason)
+                                        @foreach ($rejectedreasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
                                             @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)

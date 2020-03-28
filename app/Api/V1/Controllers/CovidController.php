@@ -66,7 +66,7 @@ class CovidController extends Controller
      * @param  \App\Batch  $batch
      * @return \Illuminate\Http\Response
      */
-    public function show(Batch $batch)
+    public function show($id)
     {
         //
     }
@@ -80,28 +80,7 @@ class CovidController extends Controller
      */
     public function update(ApiRequest $request, $id)
     {
-        $batch = Batch::findOrFail($id);
-        $fields = json_decode($request->input('batch'));
-        $site_entry = $request->input('site_entry');
 
-        if($site_entry == 2 && $batch->site_entry != 2) return $this->response->errorBadRequest("This batch does not exist here.");
-
-        $unset_array = ['id', 'original_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent', 'printedby'];
-
-        foreach ($unset_array as $value) {
-            unset($fields->$value);
-        }
-
-        $batch->fill(get_object_vars($fields));
-
-        $batch->synched = 1;
-        $batch->datesynched = date('Y-m-d');
-        $batch->save();
-
-        return response()->json([
-                'message' => 'The update was successful.',
-                'status_code' => 200,
-            ], 200);
     }
 
     /**
@@ -110,7 +89,7 @@ class CovidController extends Controller
      * @param  \App\Batch  $batch
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Batch $batch)
+    public function destroy($id)
     {
         //
     }
