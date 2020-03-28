@@ -556,6 +556,8 @@ class Lookup
         foreach ($tables as $key => $value) {
             $data[$value] = DB::table($value)->get();
         }
+        $data['amrs'] = self::$amrs;
+        $data['sms'] = self::$sms;
         return $data;
     }
 
