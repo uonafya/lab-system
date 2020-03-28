@@ -1,6 +1,6 @@
 				<?php $prop2 = $prop2 ?? null; ?>
 				<div class="form-group">
-					<label class="col-sm-4 control-label">{{ $label }
+					<label class="col-sm-4 control-label">{{ $label }}
                         @if(isset($required) && $required)
                             <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                         @endif
