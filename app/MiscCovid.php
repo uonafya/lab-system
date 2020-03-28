@@ -4,6 +4,8 @@ namespace App;
 
 use DB;
 
+use Excel;
+
 class MiscCovid extends Common
 {
 
@@ -66,6 +68,137 @@ class MiscCovid extends Common
         $covid = true;
 
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
+    }
+
+    public static function create_nat_table()
+    {
+    	DB::statement("DROP TABLE IF EXISTS `covid_samples`;");
+		DB::statement("
+			CREATE TABLE `covid_samples` (
+				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`national_sample_id` int(10) unsigned DEFAULT NULL,
+				`county_id` tinyint(3) unsigned DEFAULT NULL,
+				`lab_id` tinyint(3) unsigned DEFAULT NULL,
+				`facility_id` int(10) unsigned DEFAULT NULL,
+				`patient` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`patient_name` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`amrs_location` tinyint(4) DEFAULT NULL,
+				`provider_identifier` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`order_no` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`site_entry` tinyint(3) unsigned DEFAULT NULL,
+
+
+				`identifier` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`sample_number` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`county` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+
+				`dob` date DEFAULT NULL,
+				`age` tinyint unsigned DEFAULT NULL,
+				`sex` tinyint unsigned DEFAULT NULL,
+				`residence` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`phone_no` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`symptoms_date` date DEFAULT NULL,
+				`isolation_status` tinyint(3) unsigned DEFAULT NULL,
+				`symptoms` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL,
+
+				`suspected` tinyint(3) unsigned DEFAULT NULL,
+				`exposure` tinyint(3) unsigned DEFAULT NULL,
+				`exposure_details` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`sample_type` tinyint(3) unsigned DEFAULT NULL,
+
+				`receivedstatus` tinyint(3) unsigned DEFAULT NULL,
+				`user_id` int(10) unsigned DEFAULT NULL,
+				`received_by` int(10) unsigned DEFAULT NULL,
+				`entered_by` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`comments` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`labcomment` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`parentid` int(10) unsigned DEFAULT '0',
+				`rejectedreason` tinyint(3) unsigned DEFAULT NULL,
+				`reason_for_repeat` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+
+				`interpretation` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+				`result` tinyint(3) unsigned DEFAULT NULL,
+				`worksheet_id` int(10) unsigned DEFAULT NULL,
+				`run` tinyint(3) unsigned DEFAULT '1',
+				`repeatt` tinyint(3) unsigned DEFAULT '0',
+				`approvedby` int(10) unsigned DEFAULT NULL,
+				`approvedby2` int(10) unsigned DEFAULT NULL,
+
+				`datecollected` date DEFAULT NULL,
+				`datereceived` date DEFAULT NULL,
+				`datetested` date DEFAULT NULL,
+				`datedispatched` date DEFAULT NULL,
+
+				`datemodified` date DEFAULT NULL,
+				`dateapproved` date DEFAULT NULL,
+				`dateapproved2` date DEFAULT NULL,
+
+				`tat1` tinyint(3) unsigned DEFAULT '0',
+				`tat2` tinyint(3) unsigned DEFAULT '0',
+				`tat3` tinyint(3) unsigned DEFAULT '0',
+				`tat4` tinyint(3) unsigned DEFAULT '0',
+
+				`synched` tinyint(4) DEFAULT '0',
+				`datesynched` date DEFAULT NULL,
+				`created_at` timestamp NULL DEFAULT NULL,
+				`updated_at` timestamp NULL DEFAULT NULL,
+				PRIMARY KEY (`id`),
+				KEY `covid_national_sample_id_index` (`national_sample_id`),
+				KEY `covid_patient_index` (`patient`),
+				KEY `covid_order_no_index` (`order_no`),
+				KEY `covid_parentid_index` (`parentid`),
+				KEY `covid_worksheet_id_index` (`worksheet_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+    }
+
+    public static function add_data()
+    {    	
+        config(['excel.import.heading' => true]);
+
+        $data = Excel::load(public_path('nic_data.xlsx'), function($reader){
+            $reader->toArray();
+        })->get();
+
+        foreach ($data as $key => $row) {
+        	CovidSample::create([
+        		'sample_number' => $row->sample_number,
+        		'created_at' => $row->date_entered,
+        		'datecollected' => $row->date_collected,
+        		'datereceived' => $row->date_received,
+        		'identifier' => $row->lab_id,
+        		'patient' => $row->patient_id,
+        		'county' => $row->county,
+        		'age' => $row->age,
+        		'sex' => $row->gender,
+        		'datetested' => $row->date_tested,
+        		'result' => $row->result,
+        		'residence' => $row->area_of_residence,
+        	]);
+        }
+    }
+
+    public static function add_data_two()
+    {    	
+    	DB::statement(' delete from covid_samples where result=2');
+        config(['excel.import.heading' => true]);
+
+        $data = Excel::load(public_path('covid_cases.csv'), function($reader){
+            $reader->toArray();
+        })->get();
+
+        // dd($data);
+
+        foreach ($data as $key => $row) {
+        	CovidSample::create([
+        		'patient' => $row->case_id,
+        		'county_id' => $row->county,
+        		'age' => $row->age,
+        		'sex' => $row->sex,
+        		'result' => 2,
+        	]);
+        }
     }
 
 
