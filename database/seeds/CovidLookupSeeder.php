@@ -28,6 +28,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'National ID of parent'],
 			['id' => 5, 'name' => 'Passport No of parent'],
 			['id' => 6, 'name' => 'Foreign ID of parent'],
+			['id' => 7, 'name' => 'Other'],
 		]);
 
 
