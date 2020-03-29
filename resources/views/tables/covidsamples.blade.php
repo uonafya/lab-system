@@ -226,7 +226,7 @@
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
-                                        <td> {{ $sample->get_link('worksheet_id') }} </td>
+                                        <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
