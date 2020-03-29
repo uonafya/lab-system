@@ -113,7 +113,7 @@ class CovidWorksheetController extends Controller
             ->withTrashed()
             ->get();
 
-        return view('forms.covid_worksheet', $data)->with('pageTitle', 'Set Worksheet Details');
+        return view('forms.set_covidworksheet', $data)->with('pageTitle', 'Set Worksheet Details');
     }
 
 
