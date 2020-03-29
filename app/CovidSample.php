@@ -2,21 +2,28 @@
 
 namespace App;
 
-use App\BaseModel;
 use DB;
 
 class CovidSample extends BaseModel
 {
-	protected $dates = ['dob', 'datecollected', 'datereceived', 'datetested', 'datedispatched',];
 
-    protected $casts = [
-        'symptoms' => 'array',
-    ];
+	protected $dates = ['datecollected', 'datereceived', 'datetested', 'datedispatched', 'dateapproved', 'dateapproved2'];
+
+	protected $casts = [
+		'symptoms' => 'array',
+		'observed_signs' => 'array',
+		'underlying_conditions' => 'array',		
+	];
 
 
-    public function facility()
+    public function travel()
     {
-        return $this->belongsTo('App\Facility');
+        return $this->belongsTo('App\CovidTravel', 'sample_id');
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo('App\CovidPatient', 'patient_id');
     }
 
     public function worksheet()
@@ -24,26 +31,11 @@ class CovidSample extends BaseModel
         return $this->belongsTo('App\CovidWorksheet', 'worksheet_id');
     }
 
-    public function travel()
-    {
-        return $this->hasMany('App\CovidTravel', 'sample_id');
-    }
-
     public function calc_age()
     {
-    	$this->age = $this->datecollected->diffInYears($this->dob);
+        $this->age = $this->datecollected->diffInYears($this->patient->dob);
     }
 
-    public function setSexAttribute($value)
-    {
-        if(is_numeric($value)) $this->attributes['sex'] = $value;
-        else{
-            if(str_contains($value, ['F', 'f'])) $this->attributes['sex'] = 2;
-            else{
-                $this->attributes['sex'] = 1;
-            }
-        }
-    }
 
     public function setResultAttribute($value)
     {
@@ -57,17 +49,6 @@ class CovidSample extends BaseModel
         }
     }
 
-    public function setIsolationStatusAttribute($value)
-    {
-        if(is_numeric($value)) $this->attributes['isolation_status'] = $value;
-        else{
-            $a = explode(' ', $value);
-            if(count($a) == 1) $a = explode('-', $value);
-            $word = $a[0];
-            $this->attributes['isolation_status'] = DB::table('covid_isolations')->where('name', 'like', "{$value}%")->first()->id ?? null;
-        }
-    }
-
     public function setSampleTypeAttribute($value)
     {
         if(is_numeric($value)) $this->attributes['sample_type'] = $value;
@@ -78,4 +59,5 @@ class CovidSample extends BaseModel
             $this->attributes['sample_type'] = DB::table('covid_sample_types')->where('name', 'like', "{$value}%")->first()->id ?? null;
         }
     }
+
 }

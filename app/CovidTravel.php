@@ -2,19 +2,9 @@
 
 namespace App;
 
-use App\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
 class CovidTravel extends BaseModel
 {
-
-
-    public function sample()
-    {
-        return $this->belongsTo('App\CovidSample', 'sample_id');
-    }
-
-    public function city()
-    {
-        return $this->belongsTo('App\City', 'city_id');
-    }
+	protected $dates = ['travel_date'];
 }
