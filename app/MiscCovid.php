@@ -20,9 +20,8 @@ class MiscCovid extends Common
         $temp_limit = $limit;     
 
         if($entered_by){
-            $repeats = CovidSampleView::selectRaw("covid_sample_view.*, facilitys.name, users.surname, users.oname")
-                ->leftJoin('users', 'users.id', '=', 'covid_samples.user_id')
-                ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_patients.facility_id')
+            $repeats = CovidSampleView::selectRaw("covid_sample_view.*, users.surname, users.oname")
+                ->leftJoin('users', 'users.id', '=', 'covid_sample_view.user_id')
                 ->where('datereceived', '>', date('Y-m-d', strtotime('-4 months')))
                 ->where('parentid', '>', 0)
                 ->whereNull('datedispatched')
@@ -30,22 +29,15 @@ class MiscCovid extends Common
                 ->where('receivedstatus', 1)
                 ->where('site_entry', '!=', 2)
                 ->whereNull('result')
-                ->orderBy('covid_samples.id', 'desc')
+                ->orderBy('covid_sample_view.id', 'desc')
                 ->limit($temp_limit)
                 ->get();
             $temp_limit -= $repeats->count();
         }
 
-        $samples = CovidSample::selectRaw("covid_samples.*, covid_patients.identifier, facilitys.name, users.surname, users.oname")
-        	->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
-            ->leftJoin('users', 'users.id', '=', 'covid_samples.user_id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_samples.facility_id')
+        $samples = CovidSampleView::selectRaw("covid_sample_view.*, users.surname, users.oname")
+            ->leftJoin('users', 'users.id', '=', 'covid_sample_view.user_id')
             ->where('datereceived', '>', date('Y-m-d', strtotime('-4 months')))
-            ->when($test, function($query) use ($user){
-                // return $query->where('received_by', $user->id)->where('parentid', 0);
-                return $query->where('parentid', 0)
-                	->where("received_by",  $user->id);
-            })
             ->when($entered_by, function($query) use ($entered_by){
             	$query->where('parentid', 0);
                 if(is_array($entered_by)) return $query->whereIn('received_by', $entered_by);
@@ -58,7 +50,7 @@ class MiscCovid extends Common
             ->whereNull('result')            
             ->orderBy('run', 'desc')
             ->orderBy('datereceived', 'asc')
-            ->orderBy('covid_samples.id', 'asc')     
+            ->orderBy('covid_sample_view.id', 'asc')     
             ->limit($temp_limit)
             ->get();
 

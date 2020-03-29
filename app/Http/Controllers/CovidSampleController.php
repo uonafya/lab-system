@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CovidPatient;
 use App\CovidSample;
+use App\CovidSampleView;
 use App\CovidTravel;
 use App\City;
 use App\Facility;
@@ -24,22 +25,20 @@ class CovidSampleController extends Controller
         // 1 - all
         // 2 - dispatched
         $user = auth()->user();
-        $date_column = "covid_samples.created_at";
-        if($type == 2) $date_column = "covid_samples.datedispatched";
+        $date_column = "covid_sample_view.created_at";
+        if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSample::select(['covid_samples.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
-            ->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_patients.facility_id')
-            ->leftJoin('users as u', 'u.id', '=', 'covid_samples.user_id')
-            ->leftJoin('users as r', 'r.id', '=', 'covid_samples.received_by')
+        $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
+            ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
+            ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
             ->when($facility_id, function($query) use ($facility_id){
-                return $query->where('covid_samples.facility_id', $facility_id);
+                return $query->where('covid_sample_view.facility_id', $facility_id);
             })
             ->when($subcounty_id, function($query) use ($subcounty_id){
-                return $query->where('facilitys.district', $subcounty_id);
+                return $query->where('district', $subcounty_id);
             })
             ->when($partner_id, function($query) use ($partner_id){
-                return $query->where('facilitys.partner', $partner_id);
+                return $query->where('partner', $partner_id);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
@@ -61,7 +60,7 @@ class CovidSampleController extends Controller
                 }
             })
             ->when(($user->user_type_id == 5), function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
             ->paginate();
         $myurl = url('/covid_sample/index/' . $type);

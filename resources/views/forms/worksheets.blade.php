@@ -40,6 +40,19 @@
                 @endif
                     @csrf
 
+                @isset($combined)
+                    <input type="hidden" value="{{ $combined }}" name="combined" >
+                @endisset
+
+                @isset($sampletype)
+                    <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
+                @endisset
+
+                @isset($entered_by)
+                    <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                @endisset
+
+
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
