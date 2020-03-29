@@ -9,11 +9,11 @@
 						<input class="form-control" type="{{ $input_type ?? 'text' }}" 
 							name="{{ $prop }}" 
 							id="{{ $prop }}" 
-							value="{{ $default_val ?? ?? $model->$prop ??'' }}" 
+							value="{{ $default_val ?? $model->$prop ?? '' }}" 
                             @if(isset($required) && $required)
                                 required                                 
                             @endif
-							{!! $attributes ?? '' !!} 
+							{!! $attributes ?? null !!} 
 							@isset($is_number) number='number' @endisset 
 							@isset($placeholder) placeholder="{{ $placeholder }}" @endisset 
 						>

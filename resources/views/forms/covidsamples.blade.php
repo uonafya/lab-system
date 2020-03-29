@@ -70,7 +70,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control requirable" required name="facility_id" id="facility_id">
                                     @isset($sample)
-                                        <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
+                                        <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endisset
                                 </select>
                             </div>
@@ -120,6 +120,10 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
+                        @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'justification', 'label' => 'Justification', 'items' => $covid_justifications, 'default_val' => $sample->patient->justification ?? null])
+
+                        @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'test_type', 'label' => 'Test Type', 'items' => $covid_test_types, ])
+
                         @include('partial.date', ['model' => $m, 'prop' => 'date_symptoms', 'label' => 'Date Symptoms Began Showing', 'default_val' => $sample->patient->date_symptoms ?? null,])
 
                         @include('partial.date', ['model' => $m, 'prop' => 'date_admission', 'label' => 'Date of Admission to Hospital', 'default_val' => $sample->patient->date_admission ?? null,])
@@ -155,6 +159,8 @@
                         <center>Exposure and travel information in the 14 days prior to symptom onset (prior to reporting if asymptomatic)</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'occupation', 'default_val' => $sample->patient->occupation ?? null, 'label' => 'Occupation'])
 
                         <div class="travel_item" id="first_travel_item">
                             <div class="col-sm-4">
@@ -217,53 +223,17 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Collection
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date date-normal">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
-                                </div>
-                            </div>                            
-                        </div> 
+                        @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'sample_type', 'label' => 'Sample Type', 'items' => $covid_sample_types, ])
+
+                        @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datecollected', 'label' => 'Date of Collection',])
 
                         @if(auth()->user()->user_type_id != 5)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date date-normal">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
-                                    </div>
-                                </div>                            
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Received Status
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+                            @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datereceived', 'label' => 'Date of Received',])
 
-                                        <option></option>
-                                        @foreach ($receivedstatuses as $receivedstatus)
-                                            <option value="{{ $receivedstatus->id }}"
+                            @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'receivedstatus', 'label' => 'Received Status', 'items' => $receivedstatus, ])
 
-                                            @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $receivedstatus->name }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
+                            @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
                             {{--<div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>
@@ -288,14 +258,9 @@
                         @endif
                         
                         @if(auth()->user()->user_type_id == 5)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Entered By
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->entered_by ?? '' }}">
-                                </div>
-                            </div>
+
+                            @include('partial.input', ['model' => $m, 'prop' => 'entered_by', 'label' => 'Entered By'])
+
                         @endif
 
                     </div>

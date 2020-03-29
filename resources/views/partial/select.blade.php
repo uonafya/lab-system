@@ -2,7 +2,7 @@
 					if(!isset($prop2)) $prop2 = 'name';
 				?>
 
-				<div class="form-group {{ $form_class ?? '' }} ">
+				<div class="form-group {{ $form_class ?? '' }} " {!! $row_attr ?? null !!}>
                     <label class="col-sm-4 control-label">  {{ $label }}
                         @if(isset($required) && $required)
                             <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
