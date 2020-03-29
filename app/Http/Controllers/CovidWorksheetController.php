@@ -181,7 +181,7 @@ class CovidWorksheetController extends Controller
         $worksheet->fill($request->except(['_token', 'limit', 'entered_by', 'sampletype']));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
-        $worksheet->save();
+        // $worksheet->save();
 
         $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
@@ -202,6 +202,8 @@ class CovidWorksheetController extends Controller
                 session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
                 return back();            
             }
+
+            dd($new_data);
         
             $samples = $data['samples'];
             $sample_ids = $samples->pluck('id');
@@ -209,7 +211,7 @@ class CovidWorksheetController extends Controller
 
             $samples = $new_data['samples'];
             $sample_ids = $samples->pluck('id');
-            $class::whereIn('id', $sample_ids)->whereNull('worksheet_id')->update(['worksheet_id' => $worksheet->id]);
+            $class::whereIn('id', $sample_ids)->whereNull('worksheet_id')->update(['worksheet_id' => $worksheet->id, 'updated_at' => now()]);
         }else{
             if(!$data || !$data['create']){
                 $worksheet->delete();
