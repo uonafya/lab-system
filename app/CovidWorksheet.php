@@ -64,7 +64,7 @@ class CovidWorksheet extends BaseModel
 		if($this->combined == 1){
 			$class = Sample::class;
 		}else{
-			$class = Viralample::class;			
+			$class = Viralsample::class;			
 		}
 		$dateuploaded = $this->dateuploaded;
 		$samples = $class::where(['worksheet_id' => $worksheet_id])
