@@ -12,7 +12,8 @@ class BaseModel extends Model
     // protected $historyLimit = 500; 
     
     // protected $guarded = ['created_at'];
-    protected $guarded = ['id'];
+    // protected $guarded = ['id'];
+    protected $guarded = [];
     // protected $hidden = [];
 
     protected static function boot()
