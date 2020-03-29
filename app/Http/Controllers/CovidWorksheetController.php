@@ -125,7 +125,7 @@ class CovidWorksheetController extends Controller
         $entered_by = $request->input('entered_by');
         // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
 
-        return $this->create($sampletype, $machine_type, $calibration, $limit, $entered_by);
+        return $this->create($machine_type, $limit, $combined, $entered_by, $sampletype);
     }
 
     /**
@@ -133,7 +133,7 @@ class CovidWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type, $limit, $combined=0, $entered_by)
+    public function create($machine_type, $limit, $combined=0, $entered_by=null, $sampletype=null)
     {
         $data = MiscCovid::get_worksheet_samples($machine_type, $limit, $entered_by);
         if(!$data){
@@ -143,6 +143,20 @@ class CovidWorksheetController extends Controller
         if(!$data['count']){
             session(['toast_message' => 'There are no covid samples for testing.', 'toast_error' => 1]);
             return back();            
+        }
+        if($combined){
+            $new_limit = $limit - $data['count'];
+            if($combined == 1){
+                $new_data = Misc::get_worksheet_samples($machine_type, $new_limit);
+            }else{
+                $new_data = MiscViral::get_worksheet_samples($machine_type, false, $sampletype, $new_limit, $entered_by);                
+            }
+            if($new_data['count']){
+                $data['count'] += $new_data['count'];
+                // $data['samples'] = array_merge($data['samples'], $new_data['samples']);
+                $data['samples'] = $data['samples']->merge($new_data['samples']);
+                $data['sampletype'] = $sampletype;
+            }
         }
         // dd($data);
         return view('forms.worksheets', $data)->with('pageTitle', 'Create Worksheet');

@@ -71,9 +71,7 @@ class BaseModel extends Model
     public function get_link($attr)
     {
         $user = auth()->user();
-        $c = get_class($this);
-        $c = str_replace_first('App\\', '', $c);
-        $c = snake_case($c);
+        $c = $this->route_name;
 
         $pre = '';
         if(str_contains($c, 'viral')) $pre = 'viral';
@@ -82,7 +80,7 @@ class BaseModel extends Model
         $user = auth()->user();
 
         if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
-        else if(str_contains($attr, 'worksheet')) $url = url($c . '/approve/' . $this->$attr);
+        else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
         // else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($c . '/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
@@ -179,7 +177,9 @@ class BaseModel extends Model
     {
         $a = explode('\\', get_class($this));
         $c = end($a);
-        return snake_case($c);
+        $c =  snake_case($c);
+
+        return str_replace('_view', '', $c);
     }
 
     public function getViewUrlAttribute()

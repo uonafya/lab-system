@@ -10,22 +10,17 @@ class MiscCovid extends Common
 {
 
 
-    public static function get_worksheet_samples($machine_type, $limit)
+    public static function get_worksheet_samples($machine_type, $limit, $entered_by=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
 
-        // $test = in_array(env('APP_LAB'), Lookup::$worksheet_received);
-        $test = false;
         $user = auth()->user();
-
-        // if($machine == NULL || $machine->eid_limit == NULL) return false;
 
         $temp_limit = $limit;     
 
-        if($test){
-            $repeats = CovidSample::selectRaw("covid_samples.*, covid_patients.identifier, facilitys.name, users.surname, users.oname")
-            	->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+        if($entered_by){
+            $repeats = CovidSampleView::selectRaw("covid_sample_view.*, facilitys.name, users.surname, users.oname")
                 ->leftJoin('users', 'users.id', '=', 'covid_samples.user_id')
                 ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_patients.facility_id')
                 ->where('datereceived', '>', date('Y-m-d', strtotime('-4 months')))
@@ -51,6 +46,11 @@ class MiscCovid extends Common
                 return $query->where('parentid', 0)
                 	->where("received_by",  $user->id);
             })
+            ->when($entered_by, function($query) use ($entered_by){
+            	$query->where('parentid', 0);
+                if(is_array($entered_by)) return $query->whereIn('received_by', $entered_by);
+                return $query->where('received_by', $entered_by);
+            })
             ->whereNull('datedispatched')
             ->whereNull('worksheet_id')
             ->where('receivedstatus', 1)
@@ -64,7 +64,7 @@ class MiscCovid extends Common
 
         // dd($samples);
 
-        if($test && $repeats->count() > 0) $samples = $repeats->merge($samples);
+        if($entered_by && $repeats->count() > 0) $samples = $repeats->merge($samples);
         $count = $samples->count();        
 
         $create = false;
