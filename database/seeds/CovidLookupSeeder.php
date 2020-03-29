@@ -214,12 +214,13 @@ class CovidLookupSeeder extends Seeder
 		");
 
 		DB::table('covid_sample_types')->insert([
-			['id' => 1, 'name' => 'Nasopharygneal swab in UTM'],
-			['id' => 2, 'name' => 'Oropharygneal swab in UTM'],
-			['id' => 3, 'name' => 'Serum'],
-			['id' => 4, 'name' => 'Sputum'],
-			['id' => 5, 'name' => 'Tracheal Aspirate'],
-			['id' => 6, 'name' => 'Other'],
+			['id' => 1, 'name' => 'Nasopharygneal & Oropharygneal swabs'],
+			['id' => 2, 'name' => 'Nasopharygneal swab in UTM'],
+			['id' => 3, 'name' => 'Oropharygneal swab in UTM'],
+			['id' => 4, 'name' => 'Serum'],
+			['id' => 5, 'name' => 'Sputum'],
+			['id' => 6, 'name' => 'Tracheal Aspirate'],
+			['id' => 7, 'name' => 'Other'],
 		]);
 
 
