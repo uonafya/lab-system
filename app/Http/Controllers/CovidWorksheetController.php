@@ -125,6 +125,7 @@ class CovidWorksheetController extends Controller
         $machine_type = $request->input('machine_type');
         $limit = $request->input('limit', 0);
         $entered_by = $request->input('entered_by');
+        $sampletype = $request->input('sampletype');
         // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
 
         return $this->create($machine_type, $limit, $combined, $entered_by, $sampletype);
@@ -177,6 +178,9 @@ class CovidWorksheetController extends Controller
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
+
+        $vars = $reque->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
+        extract($vars);
 
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
