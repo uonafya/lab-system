@@ -157,6 +157,7 @@ class CovidWorksheetController extends Controller
             }
             if($new_data && $new_data['count']){
                 $data['count'] += $new_data['count'];
+                if($data['count'] == $limit) $data['create'] = true;
                 // $data['samples'] = array_merge($data['samples'], $new_data['samples']);
                 $data['samples'] = $data['samples']->merge($new_data['samples']);
                 $data['sampletype'] = $sampletype;
