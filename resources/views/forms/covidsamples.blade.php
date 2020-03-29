@@ -96,7 +96,7 @@
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'identifer', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'required' => true, 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
