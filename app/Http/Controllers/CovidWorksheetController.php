@@ -232,7 +232,7 @@ class CovidWorksheetController extends Controller
     public function show(CovidWorksheet $covidWorksheet, $print=false)
     {
         $samples = $covidWorksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
-        if($covidWorksheet->combined) $samples->merge($covidWorksheet->other_samples());
+        if($covidWorksheet->combined) $samples = $samples->merge($covidWorksheet->other_samples());
 
         $data = ['worksheet' => $covidWorksheet, 'samples' => $samples, 'i' => 0, 'covid' => true];
 
